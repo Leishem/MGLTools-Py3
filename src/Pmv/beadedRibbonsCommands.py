@@ -22,7 +22,7 @@ from Pmv.extruder import ExtrudeObject, ExtrudeCirclesWithRadii
 from mglutil.util.callback import CallbackFunction
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 from MolKit.molecule import MoleculeSet
-from types import StringType
+from mglcompat.pytypes import StringType
 
 from Pmv.displayCommands import DisplayCommand
 

@@ -2293,7 +2293,7 @@ Only the the current value will be saved.""",
         if value is None:
             return
 
-        if value is '' and run:
+        if value == '' and run:
             self.scheduleNode()
             return
 
@@ -3176,7 +3176,7 @@ class WidgetEditor:
             else:
                 valid = {}
 
-                if type is 'boolean':
+                if type == 'boolean':
                     var = tkinter.IntVar()
                     opt['variable']=var
                     w = tkinter.Checkbutton(*(self.top,), **opt)

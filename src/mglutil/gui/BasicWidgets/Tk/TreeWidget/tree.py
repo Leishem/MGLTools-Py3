@@ -1756,7 +1756,7 @@ Up / Down / Left / Right arrow keys are supported"""
                 return
         children = selection.parent.children
         idx = children.index(selection)
-        if idx is not 0:
+        if idx != 0:
             self.Select ( self.lastVisibleNodeOf(  children[ idx -1 ] ) )
             return
         else:
@@ -1773,7 +1773,7 @@ Up / Down / Left / Right arrow keys are supported"""
     def moveSelectionDown(self):
         """handle the 'down' key..  """
         selection = self.GetSelected()
-        if selection.expanded and len(selection.children) is not 0:
+        if selection.expanded and len(selection.children) != 0:
             self.Select(selection.children[0])
             return
 

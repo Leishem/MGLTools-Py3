@@ -23,7 +23,7 @@
 ######################################################################
 
 from mglcompat.oldnumeric import *
-from types import *
+from mglcompat.pytypes import *
 import os, math; from mglcompat import pystring as string
 #import isocontour
 from UTpackages.UTisocontour import isocontour
@@ -938,7 +938,7 @@ class Grid:
         from DejaVu.IndexedPolylines import IndexedPolylines
         from DejaVu import Viewer      
         if viewer==None:
-            raise "viewer is None"
+            raise RuntimeError("viewer is None")
             #self.viewer = self.GetViewer()
         else:
             assert isinstance(viewer, Viewer)

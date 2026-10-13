@@ -354,7 +354,7 @@ class ligand_charge_handler(MOL2MOLECULE):
             if ele in BondiiRadiiDict:
                 radius = BondiiRadiiDict[ele]
             else:
-                raise 'radius not known for',ele
+                raise RuntimeError('radius not known for', ele)
             #
             # Store the radii and charges
             #

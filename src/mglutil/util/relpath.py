@@ -64,7 +64,7 @@ def relpath(base, path):
     if len(l1) > 0:
         p = [ parent * len(l1) ]
     p = p + l2
-    if len(p) is 0:
+    if len(p) == 0:
         return "."
     return os.path.join( *p )
     

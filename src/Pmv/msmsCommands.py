@@ -1500,7 +1500,7 @@ DisplayMSMSGUI.addMenuCommand('menuRoot', 'Display', 'Molecular Surface')
 
 
 
-from types import StringType
+from mglcompat.pytypes import StringType
 
 class UndisplayMSMS(DisplayCommand):
     """The undisplayMSMS command allows the user to undisplay displayedMSMS\n

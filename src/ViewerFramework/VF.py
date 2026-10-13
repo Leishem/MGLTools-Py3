@@ -285,7 +285,7 @@ class ViewerFramework:
         global __debug__
         self.withShell = withShell
         self.trapExceptions = trapExceptions
-        self.__debug__ = 0
+        self._mgl_debug = 0
         # create a socket communication object
         try:
             self.socketComm = Comm()

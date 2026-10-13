@@ -27,7 +27,7 @@ from DejaVu.Cylinders import Cylinders
 from Pmv.mvCommand import MVInteractiveCmdCaller
 from mglutil.util.packageFilePath import getResourceFolderWithVersion, findFilePath
 import _thread
-from types import StringType, ListType
+from mglcompat.pytypes import StringType, ListType
 import Pmw
 import os, sys
 from mglcompat.oldnumeric import array, fabs, maximum

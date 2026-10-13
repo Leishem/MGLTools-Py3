@@ -14,7 +14,7 @@ from mglutil.gui.InputForm.Tk.gui import AutoPlaceWidget
 import time
 import numpy
 import mglcompat.oldnumeric as Numeric
-from types import ListType
+from mglcompat.pytypes import ListType
 
 class coarseMolSurface(MVCommand):
     """Command to compute a coarse molecular surface.
@@ -577,7 +577,7 @@ class coarseMolSurface(MVCommand):
         if not mols:
             atomSet = [atomSet]
             mols = [None]
-        from types import ListType
+        from mglcompat.pytypes import ListType
         if type(self.isovalue) != ListType:
             isovals = [self.isovalue]
         else:
@@ -870,7 +870,7 @@ class coarseMolSurface(MVCommand):
     def get_precise_isovalue(self, resolution):
         """Computes precise isovalue using methods from computeIsovalue.py """
         
-        from types import ListType
+        from mglcompat.pytypes import ListType
         if type(self.atomSet) == ListType:
             atomSets = self.atomSet
         else:

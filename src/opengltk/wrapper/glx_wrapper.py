@@ -17,7 +17,7 @@ def glXChooseVisual( dpy, screen, attribpairs):
     screen - int
     attribpairs - seq( (attribute, value))
     """
-    from types import IntType
+    from mglcompat.pytypes import IntType
     larray = Numeric.zeros( 2 * len( attribpairs) + 1, Numeric.Int32)
     idx = 0
     for assg in attribpairs:

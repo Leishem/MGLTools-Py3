@@ -12,7 +12,7 @@
 import tkinter, Pmw
 from string import join
 import webbrowser,os,sys
-from types import StringType
+from mglcompat.pytypes import StringType
 from tkinter import *
 import warnings
 #from htmlDoc import *

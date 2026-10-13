@@ -25,7 +25,7 @@ def get_atoms(mol, list_of_indicies, names_to_use=['N','CA','C'], verbose=False)
         print("in get_atoms with list of indicies:") 
         print(list_of_indicies)
     if not len(list_of_indicies):
-        raise 'invalid input: list of indicies is empty!'
+        raise RuntimeError('invalid input: list of indicies is empty!')
     atoms = AtomSet()
     num_res = 0
     for item in list_of_indicies:
@@ -173,12 +173,12 @@ if __name__ == "__main__":
     #check that there are some
     if len(refCoords)==0:
         print("NO REF COORDS!!!")
-        raise 'Unable to superimpose because no reference coordinates were specified!!!' 
+        raise RuntimeError('Unable to superimpose because no reference coordinates were specified!!!')
     mobAtoms = get_atoms(mobMol, moblist, names_to_use, verbose)
     mobCoords = mobAtoms.coords
     if len(mobCoords)==0:
         print("NO MOB COORDS!!!")
-        raise 'Unable to superimpose because no mobile coordinates were specified!!!' 
+        raise RuntimeError('Unable to superimpose because no mobile coordinates were specified!!!')
     #check that moblist and reflist are of the same length    
     assert len(refCoords)==len(mobCoords)
 

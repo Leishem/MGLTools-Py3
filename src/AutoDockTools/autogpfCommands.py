@@ -1191,7 +1191,7 @@ class GpfAddSol(MVCommand):
                 #at.AtSolPar,at.AtVol=(0.00,0.00)
 
         #if not going to write to outfile, return here
-        if outfile is None or outfile is -1 or outfile == ():
+        if outfile is None or outfile == -1 or outfile == ():
             return -1
 
         #Renumber HERE!??!

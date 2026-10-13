@@ -11,8 +11,8 @@
 
 from mglcompat.oldnumeric import *
 import math
-from types import *
-from types import TupleType,ListType
+from mglcompat.pytypes import *
+from mglcompat.pytypes import TupleType,ListType
 
 ArrayType = type(asarray(1.0))
 

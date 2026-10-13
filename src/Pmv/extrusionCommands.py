@@ -129,7 +129,7 @@ class ComputeSheet2DCommand(MVCommand):
     def doit(self, nodes, sheet2DName, ctlAtmName, torsAtmName,
              buildIsHelix=False, nbrib=2, nbchords=8, width=1.5, offset=1.2):
         from MolKit.protein import Chain
-        from types import StringType, IntType
+        from mglcompat.pytypes import StringType, IntType
         """ Function that will compute the sheet2D elements for a molecule.
         1- Get the residues with a CA and O and the coordinates of these
         atoms.

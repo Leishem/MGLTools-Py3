@@ -38,7 +38,7 @@ from tkinter.simpledialog import SimpleDialog
 
 from MolKit.tree import TreeNode, TreeNodeSet
 from Pmv.moleculeViewer import EditAtomsEvent 
-from types import ListType, TupleType, StringType, IntType, FloatType, LongType
+from mglcompat.pytypes import ListType, TupleType, StringType, IntType, FloatType, LongType
 
 
 class SuperimposeCommand(MVCommand):

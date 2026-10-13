@@ -131,7 +131,7 @@ if __name__ == '__main__':
     DPO4['set_psw1']['value'] = 1
     DPO4['set_psw1_flag']['value'] = 1
     res = DPO4.set_ligand_types_from_filename(ligand_filename)
-    if res=="ERROR": raise 'unreadable file', ligand_filename
+    if res=="ERROR": raise RuntimeError('unreadable file', ligand_filename)
     if verbose: 
         print("ligand_types=", DPO4['ligand_types']['value'])
         print('set ligand to  ', ligand_filename)

@@ -66,7 +66,7 @@ class WaterMapBuilder:
         self.verbose = verbose
         output_stem = None
         if receptor_file is None and (OAmap_file is None or HDmap_file is None):
-            raise "receptor filename or both oxygen map file AND hydrogen map file must be specified"
+            raise RuntimeError("receptor filename or both oxygen map file AND hydrogen map file must be specified")
         #???
         self.O = 0
         self.H = 0
@@ -79,7 +79,7 @@ class WaterMapBuilder:
             output_stem = OAmap_file.split('.')[0] 
             if self.verbose: print("set output_stem from OAmap to ", output_stem)
         if output_stem is None:
-            raise "output_stem is None!"
+            raise RuntimeError("output_stem is None!")
         self.output_stem = output_stem
         if self.Wmap_file is None:
             self.Wmap_file = "protein.W.map.%s.w%1.2f.O%1.1f.H%1.1f.E%1.1f" % (mix_method, weight, O_weight, hd_boost, ENTROPY )
@@ -87,9 +87,9 @@ class WaterMapBuilder:
             #by default self.Wmap_file = output_stem + ".W.map"
             if self.verbose: print("set self.Wmap_file to ", self.Wmap_file)
         if self.OAmap_file is None:
-            raise "oxygen map file not specified"
+            raise RuntimeError("oxygen map file not specified")
         if self.HDmap_file is None:
-            raise "hydrogen map file not specified"
+            raise RuntimeError("hydrogen map file not specified")
         if mix_method not in ['best','avg','coop','boost','best_w']: #mode
             msg = 'Unrecognized mix_method:' + mix_method 
             raise  msg
@@ -260,7 +260,7 @@ class WaterMapBuilder:
             O = float(self.O)
             H = float(self.H)
             tot = H+O
-            if tot == 0: raise 'O+H == zero !'
+            if tot == 0: raise RuntimeError('O+H == zero !')
             o_pc = (O/tot)*100
             h_pc = (H/tot)*100
 

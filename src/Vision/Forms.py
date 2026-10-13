@@ -19,7 +19,7 @@ from mglcompat import pystring as string
 import webbrowser
 from string import join
 from tkinter import *
-from types import StringType
+from mglcompat.pytypes import StringType
 import tkinter.filedialog
 
 from NetworkEditor.customizedWidgets import kbScrolledCanvas

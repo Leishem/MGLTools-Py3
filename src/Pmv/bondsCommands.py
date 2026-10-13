@@ -26,7 +26,7 @@ from DejaVu.IndexedPolylines import IndexedPolylines
 from ViewerFramework.VFCommand import CommandGUI
 from MolKit.molecule import Atom, AtomSet, Bond, BondSet
 from MolKit.protein import Chain
-from types import StringType
+from mglcompat.pytypes import StringType
 var=0
 """
 Package: Pmv

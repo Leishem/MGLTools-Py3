@@ -1655,7 +1655,7 @@ translation is done in checkValues()
         help == (None) if a help string is provided the buildHelpButton will be called
                 with the f1 frame so that the 3 buttons are in the same frame.
         """
-        from types import DictType
+        from mglcompat.pytypes import DictType
         # Frame for the buttons.
         f1 = tkinter.Frame(self.root, bd=4, relief='groove')
         f1.pack(side='bottom', fill ='x', expand=0)

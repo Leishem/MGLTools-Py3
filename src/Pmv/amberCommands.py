@@ -19,7 +19,7 @@ import glob
 from math import pi, sqrt, ceil
 from string import split, strip
 from os.path import basename, exists
-from types import StringType
+from mglcompat.pytypes import StringType
 
 from sff.amber import Amber94, AmberParm
 from sff.amber import prmlib
@@ -1257,7 +1257,7 @@ class ConstrainAtomsAmber94(MVCommand):
         #print 'in updateLabels'
         if numConstr==None:
             print('skipping update to None')
-            raise 'abc'
+            raise RuntimeError('abc')
             return
         cstr = 'Currently ' + str(numConstr) + ' constrained Atoms'
         for c in [self.vf.minimize_Amber94, self.vf.md_Amber94, self]:

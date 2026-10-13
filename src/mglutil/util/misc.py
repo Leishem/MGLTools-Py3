@@ -89,7 +89,7 @@ def uniq(objectSequence):
 def deepCopySeq(sequence):
     """ returns the deep copy of the given sequence """
     import mglcompat.oldnumeric as Numeric
-    from types import TupleType, ListType
+    from mglcompat.pytypes import TupleType, ListType
     assert type(sequence) in (TupleType, ListType, type(Numeric.array([1,2,3])))
     if hasattr(sequence, 'copy'):
         dcSeq = sequence.copy()

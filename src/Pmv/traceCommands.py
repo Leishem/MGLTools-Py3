@@ -46,7 +46,7 @@ from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser
 
 from ViewerFramework.VFCommand import CommandGUI
 from opengltk.OpenGL import GL
-from types import StringType
+from mglcompat.pytypes import StringType
 import tkinter, Pmw,types
 
 

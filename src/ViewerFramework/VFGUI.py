@@ -1502,7 +1502,7 @@ move the menu window under the Camera
         kw['label'] = name
         kw['command'] = cb
         #print name
-        if index is -1:
+        if index == -1:
             #if after: print name, 'AFTER', after, index
 
             if after is not None:
@@ -1608,7 +1608,7 @@ move the menu window under the Camera
             index = gui[5]['cascadeIndex']
             before = gui[5]['cascadeBefore']
             after = gui[5]['cascadeAfter']
-            if index is -1:
+            if index == -1:
                 if after is not None:
                     try:
                         index = but.menu.index(after)+1

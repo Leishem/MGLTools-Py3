@@ -19,7 +19,7 @@
 
 import math; from mglcompat import pystring as string
 import mglcompat.oldnumeric as Numeric
-from types import IntType
+from mglcompat.pytypes import IntType
 import tkinter
 #from Tkinter import *
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr,InputForm,CallBackFunction

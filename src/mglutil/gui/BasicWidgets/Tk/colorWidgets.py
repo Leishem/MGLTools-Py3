@@ -13,7 +13,7 @@
 
 import tkinter, Pmw, os
 import mglcompat.oldnumeric as Numeric
-from types import ListType, TupleType
+from mglcompat.pytypes import ListType, TupleType
 from mglutil.util.callback import CallbackFunction, CallbackManager
 from mglutil.util.colorUtil import ToRGB, ToHSV, ToHEX
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr,InputForm,evalString

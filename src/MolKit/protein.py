@@ -26,7 +26,7 @@ in a 4 level tree (from leafs to root: atoms, residues, chains, molecule)
 from MolKit.tree import TreeNode, TreeNodeSet, TreeNodeSetSelector
 from MolKit.molecule import Molecule, MoleculeSet, Atom, AtomSet, Bond
 import re
-from types import NoneType, StringType, IntType, TupleType, FloatType, ListType
+from mglcompat.pytypes import NoneType, StringType, IntType, TupleType, FloatType, ListType
 from string import split, upper, find
 from mglcompat.oldnumeric import sum
 global bhtreeFlag

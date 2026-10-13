@@ -384,7 +384,7 @@ class get_ligand_topology:
         #
         # Reformat the lists of lists of lists of ... that we get from the ring detection
         #
-        from types import *
+        ListType = list
         if type(item) is ListType:
             real_list=[]
             for sub_item in item:
@@ -399,7 +399,7 @@ class get_ligand_topology:
                 self.biglist.append(real_list)
             return 
         else:
-            raise 'this should not happen'
+            raise RuntimeError('this should not happen')
 
     #
     # -----

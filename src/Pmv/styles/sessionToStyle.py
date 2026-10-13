@@ -1,7 +1,7 @@
 import os, sys
 
 if len(sys.argv) < 3:
-    print "Usage: python sessionToStyle sessionFile, molName"
+    print("Usage: python sessionToStyle sessionFile, molName")
     sys.exit(1)
     
 filename = sys.argv[1]
@@ -14,8 +14,7 @@ name, ext = os.path.splitext(filename)
 f = open(name+'_style.py', 'w')
 f.write("numberOfMolecules = 1\n\n")
 
-f.write("__doc__ = """Style_01: Applies to X molecules. It displays ..
-"""\n")
+f.write('__doc__ = """Style_01: Applies to X molecules. It displays ..\n"""\n')
 
 f.write("def applyStyle(mv, molName):\n")
 f.write("    mode='both'\n")

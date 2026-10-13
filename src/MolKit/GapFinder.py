@@ -18,7 +18,7 @@
 import mglcompat.oldnumeric as Numeric, math, types
 from .molecule import Atom, AtomSet
 from .protein import Residue
-from types import ListType, TupleType, StringType, IntType, FloatType, LongType
+from mglcompat.pytypes import ListType, TupleType, StringType, IntType, FloatType, LongType
 from mglcompat.oldnumeric import ArrayType, sum
 """
     GapFinder contain class to find Gap between residues.

@@ -9,7 +9,7 @@ from sets import Set
 from .ligandclean.trial_templates import *
 from .ligandclean.lookuptable import *
 from .substruct import Algorithms
-from types import *
+from mglcompat.pytypes import *
 
 def length(vector):
     # This function returns the length of vector
@@ -405,7 +405,7 @@ class get_ligand_topology:
                 self.biglist.append(real_list)
             return 
         else:
-            raise 'this should not happen'
+            raise RuntimeError('this should not happen')
 
     #
     # -----

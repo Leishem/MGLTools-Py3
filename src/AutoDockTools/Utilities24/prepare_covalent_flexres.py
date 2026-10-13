@@ -358,7 +358,7 @@ if __name__ == '__main__':
             if verbose: print("removed %s-%s bond from %s and from %s"%(b.atom1.name, b.atom2.name, otherAt.full_name(), rat3.full_name()))
     if bond_to_break is None:
         print("unable to locate the bond to break in receptor residue %s: expected a bond from %s to an atom other than %s"%(resP.full_name(), rat3.name, rat2.name))
-        raise 'invalid input'
+        raise RuntimeError('invalid input')
 
     #setup for the superposition
     ref_coords = ref_atoms.coords 

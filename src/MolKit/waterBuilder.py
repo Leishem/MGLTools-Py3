@@ -801,7 +801,7 @@ class WaterBuilder:
                 print("now %d input line set to %s"%(index,  line))
                 print("~~~numbering_stuff[%d]=%s"%(ctr, numbering_stuff[ctr]))
             ctr+=1
-            #if index==20: raise 'abc'
+            #if index==20: raise RuntimeError('abc')
         count = 1
         # nicely split and format the lines that need to be splitted from
         # the previous addition of water molecules
@@ -813,7 +813,7 @@ class WaterBuilder:
                 print("ZZZZ: line=", end=' ') 
                 for  YYYY in line: print(YYYY)
             if len(line)==3 and line[-1]!='': 
-                raise 'THREE!'
+                raise RuntimeError('THREE!')
                 line = line.remove(line[1])
             ct = 0
             for item in line:

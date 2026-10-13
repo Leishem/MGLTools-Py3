@@ -136,7 +136,7 @@ class inputGen:
             #
             # Not a known type
             #
-            raise 'unknown type',type
+            raise RuntimeError('unknown type', type)
         return
         
     def getText_sub(self):
@@ -165,7 +165,7 @@ class inputGen:
             text += "    nlev 4\n"
             
         else:
-            raise 'unknown method'
+            raise RuntimeError('unknown method')
         #
         text += "    mol 1\n"                            
         text += "    lpbe\n"                             
@@ -214,7 +214,7 @@ class inputGen:
         #
         # Eh?
         #
-        raise 'type not set'
+        raise RuntimeError('type not set')
 
     #
     # ------

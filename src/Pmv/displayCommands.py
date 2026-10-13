@@ -16,7 +16,7 @@
 
 import warnings
 import traceback, math
-from types import ListType, TupleType, StringType, IntType, FloatType, LongType, StringType
+from mglcompat.pytypes import ListType, TupleType, StringType, IntType, FloatType, LongType, StringType
 import tkinter, Pmw
 from mglcompat import pystring as string
 import numpy
@@ -3326,7 +3326,7 @@ class ShowMolecules(MVCommand):
 
 
     def doit(self, molName, negate=False):
-        from types import TupleType, ListType
+        from mglcompat.pytypes import TupleType, ListType
         if not type(molName) in [TupleType, ListType]:
             return
         mols = []

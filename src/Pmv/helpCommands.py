@@ -25,7 +25,7 @@ from string import join
 global commandslist
 import webbrowser,os,sys
 from tkinter import *
-from types import StringType
+from mglcompat.pytypes import StringType
 import pickle
 from mglutil.util.packageFilePath import getResourceFolder
 #from htmlDoc import *

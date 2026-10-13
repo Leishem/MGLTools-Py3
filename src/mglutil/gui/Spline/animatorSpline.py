@@ -9,7 +9,7 @@
 from .splineGUI import splineGUI
 from .spline import Spline
 from mglutil.util.callback import CallbackFunction
-from types import IntType,FloatType
+from mglcompat.pytypes import IntType,FloatType
 
 class AnimatorSpline(splineGUI):
 

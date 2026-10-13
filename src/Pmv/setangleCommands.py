@@ -429,7 +429,7 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
                 #s = self.atomList[2].full_name()+'--'+self.atomList[3].full_name()
                 #self.bondString.set(s)
             self.updateHistory()
-            ##if self.undoNow: raise 'abc'
+            ##if self.undoNow: raise RuntimeError('abc')
             #return float(self.labelStrs[-1])
             return
 

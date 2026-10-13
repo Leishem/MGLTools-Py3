@@ -1839,7 +1839,7 @@ deletes a Network object from the editor
     def stopNetworkAndQuit_cb(self, event=None):
         """
 """
-        if self.currentNetwork.execStatus is 'running':
+        if self.currentNetwork.execStatus == 'running':
             self.stopCurrentNet_cb(event=event)
         lMaster = self.master
         while hasattr(lMaster, 'master') and lMaster.master is not None:
@@ -1854,7 +1854,7 @@ deletes a Network object from the editor
 """
         net = self.currentNetwork
         net.execStatusLock.acquire()
-        if net.execStatus is 'running':
+        if net.execStatus == 'running':
             self.stopCurrentNet_cb(event=event)
         else:
             self.runCurrentNet_cb(event=event)

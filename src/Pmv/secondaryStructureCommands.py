@@ -15,7 +15,7 @@
 from tkinter import Label, Checkbutton, Radiobutton, StringVar, IntVar
 import Pmw
 import types
-from types import StringType, IntType
+from mglcompat.pytypes import StringType, IntType
 import numpy
 
 from opengltk.OpenGL import GL

@@ -159,7 +159,8 @@ from src.server import *
 from io import *
 from src.hydrogens import *
 
-from . import ligandclean.ligff
+from . import ligandclean
+from .ligandclean import ligff
 from .apbs import *
 
 ##
@@ -867,7 +868,7 @@ class pKaRoutines:
         if abs(totphi)<0.01 or abs(totcrg)<0.01:
             print('total abs phi',totphi)
             print('total abs crg',totcrg)
-            raise 'Something is rotten'
+            raise RuntimeError('Something is rotten')
         print()
         print()
         return energy
@@ -1071,7 +1072,7 @@ class pKaRoutines:
         #
         if get_neutral_state:
             if not neutral_state:
-                raise "no neutral state for",residue.resSeq
+                raise RuntimeError("no neutral state for", residue.resSeq)
             return neutral_state
         #
         # Make sure that the charges add up to integers by adding extra atoms
@@ -1129,7 +1130,7 @@ class pKaRoutines:
             if added is None and sum>0.001:
                 print(sum)
                 print(atomnames)
-                raise 'Could not find integer charge state'
+                raise RuntimeError('Could not find integer charge state')
         return atomnames
 
     #
@@ -1536,7 +1537,7 @@ def pre_init(pdbfilename=None,ff=None,ligand=None,verbose=1):
     size=src.psize.Psize()
 
     method=""
-    async=0
+    async_=0
     split=0
     from . import inputgen_pKa
     igen = inputgen_pKa.inputGen(pdbfilename)

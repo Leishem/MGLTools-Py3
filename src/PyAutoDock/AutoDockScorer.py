@@ -914,7 +914,7 @@ class AutoDock41Scorer(WeightedMultiTerm, AutoDockTermWeights41):
             elif len(t)==3:
                 odd_length.append(t)
             else:
-                raise "get_supported_types found badly formed autodock_element", t
+                raise RuntimeError("get_supported_types found badly formed autodock_element", t)
         #check the 3-length autodock_elements [where did this come from??]
         for t in odd_length:
             t1 = t[:2]
@@ -925,7 +925,7 @@ class AutoDock41Scorer(WeightedMultiTerm, AutoDockTermWeights41):
             if t2 in supported_types and t[0] in supported_types:
                 ok = 1
             if not ok:
-                raise "get_supported_types found badly formed autodock_element", t
+                raise RuntimeError("get_supported_types found badly formed autodock_element", t)
         return supported_types
 
 

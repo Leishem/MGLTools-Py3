@@ -49,7 +49,7 @@ from PyBabel.util import vec3
 
 import tkinter, mglcompat.oldnumeric as Numeric, math, os; from mglcompat import pystring as string
 from string import strip, split
-from types import StringType
+from mglcompat.pytypes import StringType
 
 from opengltk.OpenGL import GL
 

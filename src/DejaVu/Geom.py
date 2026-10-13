@@ -263,7 +263,7 @@ saved in the state
             #'textureCoords': FIXME TODO
             #'transient': covered by visible
             'translation':list(self.translation),
-            'transparent':self.transparent is 1,
+            'transparent':self.transparent == 1,
             'vertexArrayFlag':self.vertexArrayFlag,
             #'vertices': geometry definition rather than attributes
             #'vnormals': geometry definition rather than attributes

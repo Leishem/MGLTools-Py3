@@ -860,7 +860,7 @@ class ADReadVSResult(MVCommand):
                         print("ligand name: ", ligand.name, " not found in hb_str ", hb_str)
                         ok = False                    
                         print("not ok!: lig_str=", lig_str, ' rec_str=', rec_str)
-                        raise 'ligand name!'
+                        raise RuntimeError('ligand name!')
                     if ok:
                         #print "ok!: lig_str=", lig_str, ' rec_str=', rec_str
                         #rec_str xJ1_xtal:B:GLY16:N,HN

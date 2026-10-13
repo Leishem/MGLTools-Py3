@@ -1626,7 +1626,7 @@ class LigandRandomizer:
                 x,y,z,w  = quat 
                 # TODO handle big W! Singularities line219 qmultiply.cc
                 #check for identity
-                if abs(w)>1.001: raise 'too big W' #?@@?
+                if abs(w)>1.001: raise RuntimeError('too big W')  #?@@?
                 if w>1.: w = 1.
                 if w<-1.: w = -1. #if abs(w)==1 return sidentityAxisAngle==[1.,0.,0.,0.]
                 angle = 2. * math.acos(w)

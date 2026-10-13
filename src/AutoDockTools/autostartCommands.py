@@ -265,7 +265,7 @@ class ADProcessManager(MVCommand):
             if not p in self.kill.pList:
                 self.kill.pList.append(p) 
         else: 
-            raise 'unknown process type: ', p
+            raise RuntimeError('unknown process type: ', p)
         if not self.kill.master.winfo_ismapped() and not self.kill.done:
             self.kill.master.deiconify()
 

@@ -765,10 +765,10 @@ class DlgParser(ResultParser):
             for ind in range(len(xx)):
                 if xx[ind][-1]==',': 
                     xx[ind] = xx[ind][:-1]
-                    raise 'comma'
+                    raise RuntimeError('comma')
                 if xx[ind][-1]=='.': 
                     xx[ind] = xx[ind][:-1]
-                    raise 'period'
+                    raise RuntimeError('period')
                 
             #transList = xx[1:4]
             trans = []
