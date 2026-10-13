@@ -8,7 +8,7 @@
 %}
 
 %{
-#include "numpy/arrayobject.h"
+#include "mgl_npcompat.h"
 
 #define Get2D(arr, dims, i, j)        arr[(i * dims[1]) + j]
 #define Get3D(arr, dims, i, j, k)     arr[(i * dims[1] * dims[2]) + \
@@ -198,7 +198,7 @@ static PyArrayObject *contiguous_typed_array(PyObject *obj, int typecode,
       Py_DECREF((PyObject *)array$argnum);
 %}
 
-%typemap(python,in) double ARRAY3D_NULL[ANY][ANY][ANY] (PyArrayObject *array) {
+%typemap(in) double ARRAY3D_NULL[ANY][ANY][ANY] (PyArrayObject *array) {
   if ($input == Py_None) {
     $1 = NULL;
   } else {

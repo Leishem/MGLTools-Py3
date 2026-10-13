@@ -26,7 +26,7 @@ using namespace std;
 #define	T_4_H	4
 #define	TETRA2	5	
 
-%typemap(python,in) (const unsigned char *data)(PyArrayObject *array)
+%typemap(in) (const unsigned char *data)(PyArrayObject *array)
 {
 	if ($input != Py_None)
 	{

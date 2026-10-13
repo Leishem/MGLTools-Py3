@@ -56,7 +56,7 @@
 %typemap(argout)
   Glvoid**
 {
-  $result = PyCObject_FromVoidPtr( *$1, NULL);
+  $result = PyCapsule_New( *$1, NULL, NULL);
 }
 
 %typemap(out)

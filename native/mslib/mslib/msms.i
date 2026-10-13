@@ -1100,7 +1100,7 @@ extern void  MS_reset_msms_err(void);
 */
 %{
 
-/*#include "arrayobject.h"*/
+/*#include "mgl_npcompat.h"*/
 #include "arrayget.h"  /* function to get data from Numeric array */
 
 static PyObject *_wrap_MS_get_triangles(PyObject *self, PyObject *args) {
@@ -1192,49 +1192,28 @@ static PyObject *_wrap_MS_get_triangles(PyObject *self, PyObject *args) {
     dims[1] = 8;
     v_array = (PyArrayObject *)PyArray_FromDimsAndData(2, dims, PyArray_FLOAT,
 						       (char *)v);
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: v_array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  v_array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(v_array); 
+
 
     dims[0] = nv;
     dims[1] = 3;
     vi_array = (PyArrayObject *)PyArray_FromDimsAndData(2, dims, PyArray_INT,
 							(char *)ind);
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: vi_array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  vi_array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(vi_array); 
+
 
     dims[0] = nf;
     dims[1] = 5;
     f_array = (PyArrayObject *)PyArray_FromDimsAndData(2, dims, PyArray_INT,
 						       (char *)f);
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: f_array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  f_array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(f_array); 
+
 
   } else {
     Py_INCREF(Py_None); v_array = (PyArrayObject *)Py_None;

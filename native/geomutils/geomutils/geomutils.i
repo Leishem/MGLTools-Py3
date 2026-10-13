@@ -401,17 +401,10 @@ float computeRMSD(float Coords[][3], float refCoords[][3], int lenCoords)
       return NULL;
     }
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: out->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  out->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(out); 
+
 
   $result = l_output_helper2($result, (PyObject *)out);
 %}
@@ -473,17 +466,10 @@ int triangleNormalsPerFace(double *v_data, int lenv[2],
       return NULL;
     }
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: out->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  out->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(out); 
+
 
   $result = l_output_helper2($result, (PyObject *)out);
   

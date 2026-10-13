@@ -33,7 +33,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <assert.h>
-#include "numpy/arrayobject.h"
+#include "mgl_npcompat.h"
 
 
 #define TRY(E) if(! (E)) return NULL
@@ -2664,17 +2664,10 @@ void bitmapString(char *fontname, char *string)
   out_dims[1] = $1_dim1;
   array = (PyArrayObject *)PyArray_FromDims(2, out_dims, PyArray_DOUBLE);
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(array); 
+
 
   $1 = (double (*)[$1_dim1])array->data;
 %}
@@ -3039,17 +3032,10 @@ GLuint glDrawIndexedGeom(int type, float *coordinates, int lenc,
       return NULL;
     }
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: out->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  out->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(out); 
+
 
   $result = l_output_helper2($result, (PyObject *)out);
 %}
@@ -3111,17 +3097,10 @@ int triangleNormalsPerFace(double *v_data, int lenv[2],
       return NULL;
     }
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: out->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  out->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(out); 
+
 
   $result = l_output_helper2($result, (PyObject *)out);
   

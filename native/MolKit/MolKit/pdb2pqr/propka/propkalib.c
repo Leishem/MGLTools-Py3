@@ -1016,8 +1016,8 @@ PySwigPacked_Check(PyObject *op) {
  * ----------------------------------------------------------------------------- */
 
 #define PySwigObject_GetDesc(obj)	           PyCObject_GetDesc(obj)
-#define PySwigObject_Check(obj)	           PyCObject_Check(obj)
-#define PySwigObject_AsVoidPtr(obj)	   PyCObject_AsVoidPtr(obj)
+#define PySwigObject_Check(obj)	           PyCapsule_CheckExact(obj)
+#define PySwigObject_AsVoidPtr(obj)	   PyCapsule_GetPointer(obj, NULL)
 #define PySwigObject_FromVoidPtrAndDesc(p, d)  PyCObject_FromVoidPtrAndDesc(p, d, NULL)
 
 #endif
@@ -1347,7 +1347,7 @@ SWIG_Python_SetModule(swig_module_info *swig_module) {
 
   PyObject *module = Py_InitModule((char*)"swig_runtime_data" SWIG_RUNTIME_VERSION,
 				   swig_empty_runtime_method_table);
-  PyObject *pointer = PyCObject_FromVoidPtr((void *) swig_module, NULL);
+  PyObject *pointer = PyCapsule_New((void *) swig_module, NULL, NULL);
   if (pointer && module) {
     PyModule_AddObject(module, (char*)"type_pointer" SWIG_TYPE_TABLE_NAME, pointer);
   }

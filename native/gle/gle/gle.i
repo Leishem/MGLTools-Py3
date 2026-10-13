@@ -499,34 +499,20 @@ static PyObject *gleGetTriangleMesh(PyObject *self, PyObject *args)
   v_array = (PyArrayObject *)PyArray_FromDimsAndData(2, dims, PyArray_DOUBLE,
 						     (char *)vertices);
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: v_array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  v_array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(v_array); 
+
 
   dims[0] = nbnorm;
   dims[1] = 3;
   n_array = (PyArrayObject *)PyArray_FromDimsAndData(2, dims, PyArray_DOUBLE,
 						     (char *)normals);
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: n_array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  n_array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(n_array); 
+
 
   
   dims[0] = nbstrip;
@@ -534,17 +520,10 @@ static PyObject *gleGetTriangleMesh(PyObject *self, PyObject *args)
   s_array = (PyArrayObject *)PyArray_FromDimsAndData(2, dims, PyArray_INT,
 						     (char *)strips);
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: s_array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  s_array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(s_array); 
+
 
   return Py_BuildValue("OOO", v_array, n_array, s_array);
 }

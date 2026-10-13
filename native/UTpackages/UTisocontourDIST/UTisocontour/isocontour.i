@@ -468,17 +468,10 @@ static PyObject *string2Float(PyObject *self, PyObject *args) {
 						       PyArray_FLOAT,
 						       (char *)floatlist);
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(array); 
+
 
     }
   } else {
@@ -531,17 +524,10 @@ static PyObject *getSliceArray(PyObject *self, PyObject *args) {
 				      PyArray_FLOAT, (char *)_result->fdata);
     }
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: slice_array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  slice_array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(slice_array); 
+
 
     return (PyObject *)slice_array;
 }

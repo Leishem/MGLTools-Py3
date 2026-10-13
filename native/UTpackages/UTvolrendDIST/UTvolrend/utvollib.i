@@ -16,7 +16,7 @@
 
 #include "VolumeRenderer.h"
 #include "MyExtensions.h"
-#include "numpy/arrayobject.h"
+#include "mgl_npcompat.h"
 #include <GL/gl.h>
 #include <string.h>
 
@@ -138,7 +138,7 @@ static bool check_size(int x, int y, int z)
 
 %include "typemaps.i"
 /*****************************
-%typemap(python,in) (const GLubyte* data, int width, int height, int depth)(PyArrayObject *array)
+%typemap(in) (const GLubyte* data, int width, int height, int depth)(PyArrayObject *array)
 {
 	if ($input != Py_None)
 	{
@@ -163,7 +163,7 @@ static bool check_size(int x, int y, int z)
 	}
 }
 ******************/
-%typemap(python,in) (const GLubyte* data)(PyArrayObject *array)
+%typemap(in) (const GLubyte* data)(PyArrayObject *array)
 {
 	if ($input != Py_None)
 	{
@@ -180,7 +180,7 @@ static bool check_size(int x, int y, int z)
 	}
 }
 
-%typemap(python,in) (const GLubyte* colorMap)(PyArrayObject *array)
+%typemap(in) (const GLubyte* colorMap)(PyArrayObject *array)
 {
 	
 	if ($input != Py_None)
@@ -252,17 +252,10 @@ static PyObject *Py_createNumArr(PyObject *self, PyObject *args)
       return NULL;
     }
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: out->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  out->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(out); 
+
 
   return Py_BuildValue("O", (PyObject *)out);
 }

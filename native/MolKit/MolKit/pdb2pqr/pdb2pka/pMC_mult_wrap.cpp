@@ -2323,12 +2323,12 @@ SWIG_Python_TypeQuery(const char *type)
   PyObject *obj = PyDict_GetItem(cache, key);
   swig_type_info *descriptor;
   if (obj) {
-    descriptor = (swig_type_info *) PyCObject_AsVoidPtr(obj);
+    descriptor = (swig_type_info *) PyCapsule_GetPointer(obj, NULL);
   } else {
     swig_module_info *swig_module = SWIG_Python_GetModule();
     descriptor = SWIG_TypeQueryModule(swig_module, swig_module, type);
     if (descriptor) {
-      obj = PyCObject_FromVoidPtr(descriptor, NULL);
+      obj = PyCapsule_New(descriptor, NULL, NULL);
       PyDict_SetItem(cache, key, obj);
       Py_DECREF(obj);
     }

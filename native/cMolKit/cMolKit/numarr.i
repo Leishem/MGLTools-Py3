@@ -3,7 +3,7 @@
 %}
 
 %{
-#include "numpy/arrayobject.h"
+#include "mgl_npcompat.h"
 
 #define Get2D(arr, dims, i, j)        arr[(i * dims[1]) + j]
 #define Get3D(arr, dims, i, j, k)     arr[(i * dims[1] * dims[2]) + \

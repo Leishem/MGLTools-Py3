@@ -7,7 +7,7 @@
 int checkArraySize = 1;
 int checkArgumentsInCWrapper=1;
 
-#include "numpy/arrayobject.h"
+#include "mgl_npcompat.h"
 
 int NumericTypecode(char *type)
 {

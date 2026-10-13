@@ -10,7 +10,7 @@ FLOAT_ARRAY2D(xyz, [1][3], nbxyz)
 FLOAT_VECTOR(rad, [1], nbrad)
 INT_VECTOR( ids, [1], nb )
 
-%typemap( python, out) int *
+%typemap(out) int *
 {
   if ($1)
     {
@@ -30,7 +30,7 @@ INT_VECTOR( ids, [1], nb )
 	free($1);
 	  /*
 	    , (char *)($1+1));
-	      array->flags |= NPY_OWNDATA;
+	      MGL_SET_OWNDATA(array);
 	  */
 	
     }

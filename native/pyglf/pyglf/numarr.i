@@ -9,7 +9,7 @@
 #define WinVerMajor() LOBYTE(LOWORD(GetVersion()))
 #endif
 
-#include "numpy/arrayobject.h"
+#include "mgl_npcompat.h"
 static PyArrayObject *contiguous_typed_array(PyObject *obj, int typecode,
                                       int expectnd, int *expectdims)
 {
@@ -114,17 +114,10 @@ static PyObject* l_output_helper2(PyObject* target, PyObject* o) {
   array = (PyArrayObject *)PyArray_FromDimsAndData(1, out_dims,
 					PyArray_INT, (char *)$1);
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(array); 
+
 
 %}
 
@@ -142,17 +135,10 @@ static PyObject* l_output_helper2(PyObject* target, PyObject* o) {
 						   PyArray_INT,
 						   (char *)(data));
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(array); 
+
 
   $1 = (int (*)[$1_dim1])data;
 }
@@ -178,17 +164,10 @@ static PyObject* l_output_helper2(PyObject* target, PyObject* o) {
   array = (PyArrayObject *)PyArray_FromDimsAndData(1, out_dims,
 						PyArray_FLOAT, (char *)($1));
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(array); 
+
 
 %}
 
@@ -206,17 +185,10 @@ static PyObject* l_output_helper2(PyObject* target, PyObject* o) {
 						   PyArray_FLOAT,
 						   (char *)(data));
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(array); 
+
 
   $1 = (float (*)[$1_dim1])data;
 }
@@ -244,17 +216,10 @@ static PyObject* l_output_helper2(PyObject* target, PyObject* o) {
 						   PyArray_FLOAT,
 						   (char *)(vdata));
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: varray->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  varray->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(varray); 
+
 
   memcpy(ndata, normalArray, tri*3*3*sizeof(float));
   free(normalArray);
@@ -271,17 +236,10 @@ static PyObject* l_output_helper2(PyObject* target, PyObject* o) {
 						   PyArray_FLOAT,
 						   (char *)(ndata));
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: narray->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  narray->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(narray); 
+
 
   $result = l_output_helper2($result, (PyObject *)varray);
   $result = l_output_helper2($result, (PyObject *)narray);
@@ -311,17 +269,10 @@ static PyObject* l_output_helper2(PyObject* target, PyObject* o) {
   array = (PyArrayObject *)PyArray_FromDimsAndData(1, out_dims,
 						PyArray_DOUBLE, (char *)($1));
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(array); 
+
 
 }
 
@@ -339,17 +290,10 @@ static PyObject* l_output_helper2(PyObject* target, PyObject* o) {
 						   PyArray_DOUBLE,
 						   (char *)(data));
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: array->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  array->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(array); 
+
 
   $1 = (double (*)[$1_dim1])data;
 }

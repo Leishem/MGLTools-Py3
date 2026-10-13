@@ -40,7 +40,7 @@
 #include "Python.h"
 #include "clique/bk.h"
 #include "clique/util.h"
-#include "arrayobject.h"
+#include "mgl_npcompat.h"
 //#include "smiles.h"
 /*----------------------------------------------------------------------------*/
 using namespace std;

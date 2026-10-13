@@ -11,7 +11,7 @@
 #define WinVerMajor() LOBYTE(LOWORD(GetVersion()))
 #endif
 
-#include "numpy/arrayobject.h"
+#include "mgl_npcompat.h"
 
 static PyArrayObject *contiguous_typed_array(PyObject *obj, int typecode,
                                       int expectnd, int *expectdims)
@@ -181,17 +181,10 @@ static PyObject *Py_createNumArr(PyObject *self, PyObject *args)
       return NULL;
     }
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: out->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  out->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(out); 
+
 
   return Py_BuildValue("O", (PyObject *)out);
 }

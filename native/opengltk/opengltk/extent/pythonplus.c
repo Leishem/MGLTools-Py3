@@ -40,7 +40,7 @@ void* PypImport_ModuleCobjAttr( char const* module, char const* name)
 
   attr = PypImport_ModuleAttr( module, name);
   if (NOT attr) return NULL;
-  result = PyCObject_AsVoidPtr( attr);
+  result = PyCapsule_GetPointer( attr, NULL);
   Py_DECREF( attr);
   return result;
 }

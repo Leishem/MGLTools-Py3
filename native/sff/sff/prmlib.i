@@ -55,7 +55,7 @@ void foo (int *obj);
 }
 
 /***********************************
-%typemap( python, in)
+%typemap(in)
   char*
 {
   int buffer_len;
@@ -67,7 +67,7 @@ void foo (int *obj);
 
 /* must be called once and only once (see wrapper) */
 /******
-%typemap( python, out)
+%typemap(out)
   _REAL*,
   int*,
   char*
@@ -81,10 +81,10 @@ void foo (int *obj);
 }
 ********/
 /********
-%typemap( python, out)
+%typemap(out)
   _REAL[3]
 {
-  $result = PyCObject_FromVoidPtr( $1, NULL);
+  $result = PyCapsule_New( $1, NULL, NULL);
 }
 *********/
 
@@ -163,17 +163,10 @@ static PyObject *Py_createNumArr(PyObject *self, PyObject *args)
       return NULL;
     }
 
-#ifdef _MSC_VER
-  switch ( WinVerMajor() )
-  {
-    case 6: break; // Vista
-	default: out->flags |= NPY_OWNDATA;
-  }
-#else
   // so we'll free this memory when this
   // array will be garbage collected
-  out->flags |= NPY_OWNDATA; 
-#endif
+  MGL_SET_OWNDATA(out); 
+
 
   return Py_BuildValue("O", (PyObject *)out);
 }
@@ -198,8 +191,8 @@ void sffC_PyCallback(int cbNum, int nbat, _REAL *coords, _REAL *energies, int it
   PyEval_RestoreThread( s_pythread);
   s_pythread = NULL;
   
-  obj0 = PyCObject_FromVoidPtr( coords, NULL);
-  obj1 = PyCObject_FromVoidPtr( energies, NULL);
+  obj0 = PyCapsule_New( coords, NULL, NULL);
+  obj1 = PyCapsule_New( energies, NULL, NULL);
 
   arglist = Py_BuildValue("iiOOi", cbNum, nbat, obj0, obj1, iter);
   result = PyObject_CallObject(Py_mme_callback_func[cbNum], arglist);
