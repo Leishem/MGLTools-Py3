@@ -70,7 +70,7 @@ color scales in the color editor.
         from opengltk.exception import GLerror
         from tkinter import TclError
         try:
-            tkinter.Widget.__init__(self, master, 'togl', cnf, kw)
+            tkinter.Widget.__init__(self, master, 'tkgl', cnf, kw)
             try:
                 GL.glAccum(GL.GL_LOAD, 1.0)
                 self.accumBuffersError = False
@@ -79,7 +79,7 @@ color scales in the color editor.
         except TclError as e:
             self.accumBuffersError = True
             kw.pop('accum')
-            tkinter.Widget.__init__(self, master, 'togl', cnf, kw)
+            tkinter.Widget.__init__(self, master, 'tkgl', cnf, kw)
 
         #currentcontext = self.tk.call(self._w, 'contexttag')
         #print "OGLWidget.__init__ currentcontext", currentcontext, title

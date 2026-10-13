@@ -89,20 +89,6 @@ static inline void mgl_set_owndata(PyObject *a)
 }
 #define MGL_SET_OWNDATA(a) mgl_set_owndata((PyObject *)(a))
 
-/* Python 2 C-API names used by hand-written wrapper code. */
-#ifndef PyInt_Check
-#define PyInt_Check          PyLong_Check
-#define PyInt_AsLong         PyLong_AsLong
-#define PyInt_AS_LONG        PyLong_AsLong
-#define PyInt_FromLong       PyLong_FromLong
-#endif
-#ifndef PyString_Check
-#define PyString_Check       PyUnicode_Check
-#define PyString_FromString  PyUnicode_FromString
-#define PyString_AsString    PyUnicode_AsUTF8
-#define PyString_AS_STRING   PyUnicode_AsUTF8
-#define PyString_Size        PyUnicode_GetLength
-#define PyString_FromStringAndSize PyUnicode_FromStringAndSize
-#endif
+#include "mgl_py2compat.h"
 
 #endif /* MGL_NPCOMPAT_H */

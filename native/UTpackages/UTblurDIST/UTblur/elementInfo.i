@@ -175,9 +175,9 @@ elementTable = {
 def getRadii(names):
     radii = []
     for n in names:
-	if elementTable.has_key(n):
+        if n in elementTable:
             radii.append(elementTable[n][0])
-	else:
+        else:
             radii.append(1.0)
     return radii
 

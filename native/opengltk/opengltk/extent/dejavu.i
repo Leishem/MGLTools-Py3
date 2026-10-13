@@ -2383,37 +2383,14 @@ static PyObject *Pytrackball(PyObject *self, PyObject *args)
 
 
 static struct PyMethodDef PyObjtrackball_methods[] = {
-    {"update", Pytrackball, 1},
+    {"update", Pytrackball, METH_VARARGS},
     {NULL, NULL}
 };
 
 
 static void PyObjtrackball_dealloc(PyObjtrackball *self)
 {
-  PyMem_DEL(self);
-}
-
-static int PyObjtrackball_print(PyObjtrackball *self)
-{
-  printf("  size  : %f\n", self->trackballsize);
-  printf("  scale : %f\n", self->scale);
-  printf("  renorm: %i\n", self->renormcount);
-  printf("  quat  : %6.3f %6.3f %6.3f %6.3f\n",
-	 self->quat[0],self->quat[1],self->quat[2],self->quat[3]);
-  printf("  mat   : %6.3f %6.3f %6.3f %6.3f\n",
-	 self->matrix[0][0],self->matrix[0][1],
-	 self->matrix[0][2],self->matrix[0][3]);
-  printf("          %6.3f %6.3f %6.3f %6.3f\n",
-	 self->matrix[1][0],self->matrix[1][1],
-	 self->matrix[1][2],self->matrix[1][3]);
-  printf("          %6.3f %6.3f %6.3f %6.3f\n",
-	 self->matrix[2][0],self->matrix[2][1],
-	 self->matrix[2][2],self->matrix[2][3]);
-  printf("          %6.3f %6.3f %6.3f %6.3f\n",
-	 self->matrix[3][0],self->matrix[3][1],
-	 self->matrix[3][2],self->matrix[3][3]);
-
-  return 0;
+  PyObject_Del(self);
 }
 
 /*
@@ -2435,8 +2412,10 @@ static PyArrayObject *track_array_vector_float(float *data, int len)
 }
 
 
-static PyObject *PyObjtrackball_getattr(PyObjtrackball *self, char *name)
+static PyObject *PyObjtrackball_getattr(PyObjtrackball *self, PyObject *nameobj)
 {
+  const char *name = PyUnicode_AsUTF8(nameobj);
+  if (name == NULL) return NULL;
   if(strcmp(name, "size") == 0)
     return Py_BuildValue("f", self->trackballsize);
   if(strcmp(name, "scale") == 0)
@@ -2448,13 +2427,17 @@ static PyObject *PyObjtrackball_getattr(PyObjtrackball *self, char *name)
   else if (strcmp(name, "renorm") == 0)
       return Py_BuildValue("i", self->renormcount);
 
-  return Py_FindMethod(PyObjtrackball_methods,
-		       (PyObject *)self, 
-		       name);
+  return PyObject_GenericGetAttr((PyObject *)self, nameobj);
 }
 
-static int PyObjtrackball_setattr(PyObjtrackball *self, char *name, PyObject *v)
+static int PyObjtrackball_setattr(PyObjtrackball *self, PyObject *nameobj, PyObject *v)
 {
+  const char *name = PyUnicode_AsUTF8(nameobj);
+  if (name == NULL) return -1;
+  if (v == NULL) {
+    PyErr_SetString(PyExc_AttributeError, "cannot delete trackball attributes");
+    return -1;
+  }
   if(strcmp(name, "size") == 0)
     {
       Py_Try(PyArg_Parse(v, "f", &self->trackballsize));
@@ -2472,39 +2455,25 @@ static int PyObjtrackball_setattr(PyObjtrackball *self, char *name, PyObject *v)
     }
 
   PyErr_SetString(PyExc_ValueError, "Sorry, bad or ReadOnly data member");
-  return 1;
+  return -1;
 }
 
 static PyObject *PyObjtrackball_repr(PyObjtrackball *self)
 {
-  return Py_BuildValue("s", "Trackball Object");
+  return PyUnicode_FromString("Trackball Object");
 }
 
 
 static PyTypeObject PyObjtrackball_type = {
-#ifdef MS_WIN32
-	PyObject_HEAD_INIT(NULL)  
-#else
-    PyObject_HEAD_INIT(&PyType_Type)
-#endif
-    0,                                  /* Object size              */
-    "trackball",
-    sizeof(PyObjtrackball),
-    0,                                  /* Item size                */
-    (destructor)PyObjtrackball_dealloc,
-    (printfunc)PyObjtrackball_print,
-    (getattrfunc)PyObjtrackball_getattr,
-    (setattrfunc)PyObjtrackball_setattr,
-    (cmpfunc)0,                         /* Comparing method         */
-    (reprfunc)PyObjtrackball_repr,
-    0,                                  /* As number                */
-    0,                                  /* As sequence              */
-    0,                                  /* As mapping               */
-    (hashfunc)0,                        /* Hash function            */
-    (ternaryfunc)0,                     /* Ternary function (call)  */
-    (reprfunc)0,                        /* Unknown                  */
-    0L, 0L, 0L, 0L,                     /* Free space               */
-    0L                                  /* Documentation            */
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "trackball",
+    .tp_basicsize = sizeof(PyObjtrackball),
+    .tp_dealloc = (destructor)PyObjtrackball_dealloc,
+    .tp_getattro = (getattrofunc)PyObjtrackball_getattr,
+    .tp_setattro = (setattrofunc)PyObjtrackball_setattr,
+    .tp_repr = (reprfunc)PyObjtrackball_repr,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_methods = PyObjtrackball_methods,
 };
 
 
@@ -2516,7 +2485,8 @@ static PyObjtrackball *Newtrackball(float size, float scale, int renorm)
   PyObjtrackball *self;
   int i,j;
 
-  Py_Try((self = PyObject_NEW(PyObjtrackball, &PyObjtrackball_type)));
+  if (PyType_Ready(&PyObjtrackball_type) < 0) return NULL;
+  Py_Try((self = PyObject_New(PyObjtrackball, &PyObjtrackball_type)));
 
 /******Initialize your structure values here******/
   self->trackballsize = size;

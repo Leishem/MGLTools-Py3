@@ -151,7 +151,9 @@ int PypObject_SetAttrCobject( PyObject* obj, char const* name,
     PyObject_t cobject;
     int res;
 
-    cobject = PyCObject_FromVoidPtr( ptr, destr);
+    /* PyCObject is gone in Python 3; every caller passes destr == NULL */
+    (void)destr;
+    cobject = PyCapsule_New( ptr, NULL, NULL);
     if (NOT cobject) return -1;
     res = PyObject_SetAttrString( obj, (char*)name, cobject);
     Py_DECREF( cobject);

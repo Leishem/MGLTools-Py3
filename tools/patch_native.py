@@ -47,8 +47,15 @@ def patch(path):
         print("skip", path, e)
         return False
     new = text
-    for rx, rep in RULES + (SWIG_RULES if path.suffix == ".i" else []):
+    for rx, rep in RULES:
         new = rx.sub(rep, new)
+    if path.suffix == ".i":
+        # only outside %{ ... %} blocks, which hold verbatim C or Python
+        parts = re.split(r"(%\{.*?%\})", new, flags=re.S)
+        for i in range(0, len(parts), 2):
+            for rx, rep in SWIG_RULES:
+                parts[i] = rx.sub(rep, parts[i])
+        new = "".join(parts)
     if new != text:
         path.write_text(new, encoding="latin-1", newline="")
         return True

@@ -88,15 +88,37 @@ void foo (int *obj);
 }
 *********/
 
+%{
+#ifdef _WIN32
+#include <io.h>
+#define mgl_dup _dup
+#define mgl_fdopen _fdopen
+#else
+#include <unistd.h>
+#define mgl_dup dup
+#define mgl_fdopen fdopen
+#endif
+%}
+/* Python 3 file objects have no FILE*: flush the Python-side buffer, then
+   write through a FILE* opened on a duplicate of the file descriptor. */
 %typemap(in) FILE * {
   if ($input == Py_None) {
     $1=NULL;
-  } else if (!PyFile_Check($input)) {
-    PyErr_SetString(PyExc_TypeError, "Need a file!");
-    return NULL;
   } else {
-    $1 = PyFile_AsFile($input);
+    int fd = PyObject_AsFileDescriptor($input);
+    PyObject *r;
+    if (fd < 0) return NULL;
+    r = PyObject_CallMethod($input, "flush", NULL);
+    Py_XDECREF(r);
+    $1 = mgl_fdopen(mgl_dup(fd), "a");
+    if ($1 == NULL) {
+      PyErr_SetString(PyExc_IOError, "could not open FILE* on file descriptor");
+      return NULL;
+    }
   }
+}
+%typemap(freearg) FILE * {
+  if ($1) fclose($1);
 }
 
 %exception

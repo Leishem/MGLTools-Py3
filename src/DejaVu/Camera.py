@@ -1896,16 +1896,14 @@ This only applies when the camera is in its own top level.
         #print "Togl Version:", toglVersion
 
         if os.name == 'nt':
-            if kw['stereo'] == 'none':
-                kw['stereo'] = 0
-            else:
-                kw['stereo'] = 1
+            # TkGL's WGL backend needs the parent window to exist
+            self.frame.update()
 
         # after this line self.master will be set to self frame
         from tkinter import TclError
         from opengltk.exception import GLerror
         try:
-            tkinter.Widget.__init__(self, self.frame, 'togl', cnf, kw)
+            tkinter.Widget.__init__(self, self.frame, 'tkgl', cnf, kw)
             try:
                 GL.glAccum(GL.GL_LOAD, 1.0)
                 viewer.accumBuffersError = False
@@ -1916,7 +1914,7 @@ This only applies when the camera is in its own top level.
             print("Warning: disabling accumulation buffers", e)
             kw.pop('accum')
             viewer.accumBuffersError = True
-            tkinter.Widget.__init__(self, self.frame, 'togl', cnf, kw)
+            tkinter.Widget.__init__(self, self.frame, 'tkgl', cnf, kw)
 
         #currentcontext = self.tk.call(self._w, 'contexttag')
         #print "StandardCamera.__init__ currentcontext", currentcontext
@@ -5931,7 +5929,7 @@ void main(void)
             root = tkinter.Tk()
             root.withdraw()
             loadTogl(root)
-            tkinter.Widget(root, 'togl', (), {'stereo':'native'} )
+            tkinter.Widget(root, 'tkgl', (), {'stereo':'native'} )
             #currentcontext = self.tk.call(self._w, 'contexttag')
             #print "StandardCamera.activeStereoSupport currentcontext", currentcontext
 
@@ -5941,7 +5939,7 @@ void main(void)
                 #print 'Stereo buffering is not available'
                 lReturn = False
 
-            tkinter.Widget(root, 'togl', (), {'stereo':'none'} )
+            tkinter.Widget(root, 'tkgl', (), {'stereo':'none'} )
             return lReturn
 
         except Exception as e:
@@ -5954,7 +5952,7 @@ void main(void)
             else:
                 print('something else happend',e)
                 lReturn = False
-            tkinter.Widget(root, 'togl', (), {'stereo':'none'} )
+            tkinter.Widget(root, 'tkgl', (), {'stereo':'none'} )
             return lReturn
 
 

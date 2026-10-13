@@ -9,7 +9,7 @@ if [ ${#pkgs[@]} -eq 0 ]; then
   pkgs=($(python - <<'EOF'
 import re
 src = open("setup.py").read()
-print(" ".join(sorted(set(re.findall(r'name="(\w+)\._', src)))))
+print(" ".join(sorted(set(re.findall(r'name="(\w+)\.[\w.]*_\w+"', src)))))
 EOF
 ))
 fi

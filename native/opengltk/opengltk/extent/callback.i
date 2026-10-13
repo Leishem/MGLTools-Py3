@@ -4,7 +4,7 @@
 
 static PyObject_t converter_voidstar2buffer( void* ptr)
 {
-return PyBuffer_FromMemory( ptr, 0x100000);
+return PyMemoryView_FromMemory( (char *)ptr, 0x100000, PyBUF_READ);
 }
 %}
 

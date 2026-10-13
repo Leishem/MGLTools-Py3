@@ -101,6 +101,18 @@ MODULES = [
          cflags=[] if WIN else ["-fpermissive", "-w"], libs=LIBM),
 ]
 
+# opengltk: GL/GLU bindings now come from PyOpenGL; only the DejaVu C
+# helpers (utillib: dejavu.i drawing loops, trackball, normals) stay native.
+OGL = ("opengltk", "opengltk", "extent")
+MODULES += [
+    dict(name="opengltk.extent._utillib", pkgdir="opengltk/extent",
+         swig=n(*OGL, "utillib.i"),
+         sources=[n(*OGL, "pythonplus.c")],
+         inc=[n(*OGL)],
+         macros=[("WIN32", None)] if WIN else [],
+         libs=GL_LIBS + LIBM, ldflags=GL_LINK),
+]
+
 # UTpackages (Bajaj lab, UT Austin): all C++, one sub-package each.
 UT = ("UTpackages",)
 UT_CFLAGS = [] if WIN else ["-fpermissive", "-w"]
@@ -202,11 +214,13 @@ def make_ext(spec):
     macros = list(spec.get("macros", []))
     if sys.platform == "win32":
         macros.append(("WIN32", None))
+    # Python 2 C-API aliases for every translation unit
+    force = ["/FImgl_py2compat.h"] if WIN else ["-include", "mgl_py2compat.h"]
     ext = Extension(spec["name"], sources=[], include_dirs=inc,
                     define_macros=macros,
                     libraries=spec.get("libs", []),
                     library_dirs=spec.get("libdirs", []),
-                    extra_compile_args=spec.get("cflags", []),
+                    extra_compile_args=force + spec.get("cflags", []),
                     extra_link_args=spec.get("ldflags", []),
                     language="c++" if spec.get("cpp") else "c")
     ext._mgl = spec

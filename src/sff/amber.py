@@ -4,7 +4,7 @@
 # Copyright_notice
 #
 
-import _prmlib as prmlib
+from . import _prmlib as prmlib
 import re
 import os
 import mglcompat.oldnumeric as Numeric

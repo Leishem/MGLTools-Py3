@@ -242,35 +242,32 @@ int read_next_frame_xtc(float coords[1][3], int natoms,
 void close_xtc();
 
 %pythoncode %{
-//
-// this Python function uses the module interface for reading an xtc trajectory file
-// the function does not check if file exists or if it has .xtc extension
-//
+#
+# this Python function uses the module interface for reading an xtc trajectory file
+# the function does not check if file exists or if it has .xtc extension
+#
 def read_xtc(file):
-    
+
     nframes = 0
     _xtcparser.open_xtc(file)
     headers = []
     status, magic, natoms, step, time =_xtcparser.read_header_xtc()
     if not status:
-        print "Error in reading header of file %s"%file
+        print("Error in reading header of file %s"%file)
         return 0
-    import numpy.oldnumeric as Numeric
-    cs = Numeric.zeros((natoms, 3), typecode="f")
+    import numpy
+    cs = numpy.zeros((natoms, 3), "f")
     status, prec = _xtcparser.read_first_frame_xtc(magic, cs)
     coords=[]
-    
+
     if not status:
-        print "Error in reading frame %d"%nframes
+        print("Error in reading frame %d"%nframes)
         return 0
     while status:
         nframes = nframes + 1
         coords.append(cs.astype("f")) # to make a copy of the array
         headers.append({'frame':nframes, 'step':step, 'time':time, 'prec':prec})
-        #cs = Numeric.zeros((natoms, 3), typecode="f")
         status, step,time,prec = _xtcparser.read_next_frame_xtc(cs)
-          
+
     return coords, headers
-
-
 %}
