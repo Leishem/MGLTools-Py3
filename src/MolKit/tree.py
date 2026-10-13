@@ -933,13 +933,15 @@ range specified using the '-' character
         return name
 
 
-    def sort(self, func = None):
+    def sort(self, func = None, key = None):
         if len(self.data)==0: return
         
-        if func is None:
-            self.data.sort(key=cmp_to_key(self.data[0].compare))
-        else:
+        if key is not None:
+            self.data.sort(key=key)
+        elif func is not None:
             self.data.sort(key=cmp_to_key(func))
+        else:
+            self.data.sort(key=cmp_to_key(self.data[0].compare))
 
 
 ##      def compare(self, tn1, tn2):

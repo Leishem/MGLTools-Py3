@@ -735,7 +735,7 @@ class MeasureAngleGUICommand(MeasureGUICommand):
                                       stippleLines=1, protected=True,
                                       pickable=0)
         self.fan = Fan3D('angles', materials = ((1,.5,0),), culling=GL.GL_NONE,
-                         inheritMaterial=0, stipplePolygons=1, radii=(1.,),
+                         inheritMaterial=0, stipplePolygons=0, radii=(1.,),
                          inheritStipplePolygons=0, backPolyMode=GL.GL_FILL,
                          pickable=0)
         self.fan.polygonstipple.Set(pattern=pat3)
@@ -934,7 +934,7 @@ class MeasureTorsionGUICommand(MeasureGUICommand):
             self.vf.GUI.VIEWER.AddObject(self.masterGeom, parent = measure_geoms)
         self.lines = IndexedPolygons(
             'torsionLine', materials = ((0,1,1),), culling=GL.GL_NONE,
-            inheritStipplePolygons=0, inheritMaterial=0, stipplePolygons=1,
+            inheritStipplePolygons=0, inheritMaterial=0, stipplePolygons=0,
             backPolyMode=GL.GL_FILL, frontPolyMode=GL.GL_FILL, protected=True,
             pickable=0)
         if self.vf.userpref['Sharp Color Boundaries for MSMS']['value'] == 'blur':

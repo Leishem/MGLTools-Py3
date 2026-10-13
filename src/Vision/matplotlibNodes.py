@@ -2396,7 +2396,7 @@ solid_capstyle, dash_capstyle, dash_joinstyle, drawAreaDef):
     kw={'solid_joinstyle':solid_joinstyle,'solid_capstyle':solid_capstyle,'dash_capstyle':dash_capstyle,'dash_joinstyle':dash_joinstyle}
     self.axes.clear()
     self.setDrawAreaDef(drawAreaDef)
-    if self.markers.has_key(marker):
+    if marker in self.markers:
         marker = self.markers[marker]
     res = self.axes.scatter( x, y, s, c, marker)
     #collections properties
@@ -3704,23 +3704,23 @@ barsabove, controlmarkers, drawAreaDef):
         self.axes.errorbar(x,y,xerr=xerr,yerr=yerr,fmt=fmt,ecolor=ecolor,capsize=capsize,barsabove=barsabove)
     else:
         def set_markerparams(dAD):
-            if dAD.has_key('marker'):
+            if 'marker' in dAD:
                 marker = dAD['marker']
             else:
                 marker = 'solid'
-            if dAD.has_key('markerfacecolor'):   
+            if 'markerfacecolor' in dAD:   
                 markerfacecolor = dAD['markerfacecolor']
             else:
                 markerfacecolor = 'blue'
-            if dAD.has_key('markeredgecolor'): 
+            if 'markeredgecolor' in dAD: 
                 markeredgecolor = dAD['markeredgecolor']
             else:
                 markeredgecolor = 'blue'
-            if dAD.has_key('markersize'):
+            if 'markersize' in dAD:
                 markersize = dAD['markersize']  
             else:
                 markersize = 6
-            if dAD.has_key('makeredgewidth'):
+            if 'makeredgewidth' in dAD:
                 makeredgewidth = dAD['makeredgewidth']
             else:
                 makeredgewidth = 0.5

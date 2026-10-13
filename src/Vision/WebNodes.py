@@ -364,7 +364,7 @@ class ConsurfClientNode(NetworkNode):
     self.clientObj.setArguments( pdb_ID=mol.name,
             chain=chain[0], ALGORITHM=algorithm[0])
     key = self.getKey()
-    if self.cache.has_key(key):
+    if key in self.cache:
         resultUrl = self.cache[key]
         scores = self.clientObj.getConservationScores(resultUrl)
 

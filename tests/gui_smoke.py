@@ -159,6 +159,7 @@ if mols:
     step("surface geometry info", surf_info)
     step("color surface by atom type",
          lambda: mv.colorByAtomType("hsg1", ['MSMS-MOL'], log=0))
+    step("surface screenshot", lambda: shot("5_surface"))
 
 def window_shot():
     # let pending redraws (scheduled with after()) run before capturing
@@ -173,8 +174,11 @@ def window_shot():
            r.winfo_rootx() + r.winfo_width(), r.winfo_rooty() + r.winfo_height())
     try:
         img = ImageGrab.grab(bbox=box)
-    except Exception:  # noqa: BLE001  (e.g. Pillow without XCB)
-        img = ImageGrab.grab()
+    except Exception:  # noqa: BLE001  (e.g. Pillow without XCB or headless Windows)
+        try:
+            img = ImageGrab.grab()
+        except Exception:
+            img = cam.GrabFrontBuffer()
     img.save(OUT / "0_window.png")
 
 

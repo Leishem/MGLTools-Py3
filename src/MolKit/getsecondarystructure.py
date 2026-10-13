@@ -461,14 +461,14 @@ class GetSecondaryStructureFromPross(GetSecondaryStructure):
         tData = [Turn]
         cData = [Coil]
 
-        is_PII = PII.has_key
+        is_PII = PII.__contains__
 
         for i in range(nres-1):
             code = codes[i]
             if is_PII(code):
                 sst[i] = 'P'
 
-        is_turn = TURNS.has_key
+        is_turn = TURNS.__contains__
 
         for i in range(nres-1):
             code = codes[i] + codes[i+1]

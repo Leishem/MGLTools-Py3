@@ -4459,6 +4459,9 @@ for all instances of obj
             if obj.scissor:
                 glDisable(GL_SCISSOR_TEST)
 
+            if obj.getStipplePolygons() in (True, 1):
+                GL.glDisable(GL.GL_POLYGON_STIPPLE)
+
             if not obj.inheritXform:
                 glPopMatrix()
 

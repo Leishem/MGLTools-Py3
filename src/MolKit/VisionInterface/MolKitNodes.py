@@ -398,7 +398,7 @@ Input:  filename (string)"""
         code = """def doit(self, mols, filename, sort, records):
     if mols and filename and len(filename):
         ext = filename.split('.')[-1]
-        if not self.writers.has_key(ext):
+        if ext not in self.writers:
             print('unrecognized outputfile type', ext)
             return 
         writer = self.writers[ext]()
@@ -1624,8 +1624,8 @@ OutputPort:
     # the faces list
     psa1 = 0.0
     psa2 = 0.0
-    for i in xrange(len(vf)):
-         if usedvDict.has_key(i):
+    for i in range(len(vf)):
+         if i in usedvDict:
             psa1 = psa1 + vf[i][6]
             psa2 = psa2 + vf[i][7]
 

@@ -1444,7 +1444,7 @@ Output Ports:
     pts = []
     removed = {}
     for p in points:
-        if removed.has_key('%9.6f,%9.6f,%9.6f'%tuple(p)):
+        if ('%9.6f,%9.6f,%9.6f'%tuple(p)) in removed:
             continue
         pts.append(p)
         nb = bht.ClosePointsDist2( tuple(p), cutoff, result, dist )

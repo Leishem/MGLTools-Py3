@@ -2694,7 +2694,7 @@ Output:
     bside = (Box.xside, Box.yside, Box.zside) 
     # compute indices into large grid array
     shape = grid3D.data.shape
-    if grid3D.header.has_key('acell'):
+    if 'acell' in grid3D.header:
         stepSize = [ grid3D.header['acell']/grid3D.header['nx'],
                      grid3D.header['bcell']/grid3D.header['ny'],
                      grid3D.header['ccell']/grid3D.header['nz'] ]
@@ -3052,7 +3052,7 @@ Output:
 
     from Volume.Grid3D import Grid3DUC
     h = grid3D.header.copy()
-    if h.has_key('nx'):
+    if 'nx' in h:
         h['ncstart'] = round(h['nx']*grid3D.origin[0])
         h['nrstart'] = round(h['ny']*grid3D.origin[1])
         h['nsstart'] = round(h['nz']*grid3D.origin[2])

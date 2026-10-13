@@ -455,22 +455,35 @@ class AdtSetMode(MVCommand):
         #remember the current modeStr as 'ADmode'
         self.vf.ADmode = ModeStr
         if ModeStr=="AD4.2":
-            self.vf.ADgpf4_setAtomTypes = self.vf.AD41gpf_setAtomTypes
-            self.vf.ADtors_defineRotBonds = self.vf.AD41tors_defineRotBonds
-            self.vf.ADtors_markRoot = self.vf.AD41tors_markRoot
-            self.vf.ADtors_setCarbonNames = self.vf.AD41tors_setCarbonNames
-            self.vf.ADgpf_setGrid = self.vf.AD41gpf_setGrid
-            self.vf.ADdpf4_initLigand = self.vf.AD41dpf_initLigand
-            self.vf.ADflex_setResidues = self.vf.AD41flex_setResidues
+            if hasattr(self.vf, 'AD41gpf_setAtomTypes'):
+                self.vf.ADgpf4_setAtomTypes = self.vf.AD41gpf_setAtomTypes
+            if hasattr(self.vf, 'AD41tors_defineRotBonds'):
+                self.vf.ADtors_defineRotBonds = self.vf.AD41tors_defineRotBonds
+            if hasattr(self.vf, 'AD41tors_markRoot'):
+                self.vf.ADtors_markRoot = self.vf.AD41tors_markRoot
+            if hasattr(self.vf, 'AD41tors_setCarbonNames'):
+                self.vf.ADtors_setCarbonNames = self.vf.AD41tors_setCarbonNames
+            if hasattr(self.vf, 'AD41gpf_setGrid'):
+                self.vf.ADgpf_setGrid = self.vf.AD41gpf_setGrid
+            if hasattr(self.vf, 'AD41dpf_initLigand'):
+                self.vf.ADdpf4_initLigand = self.vf.AD41dpf_initLigand
+            if hasattr(self.vf, 'AD41flex_setResidues'):
+                self.vf.ADflex_setResidues = self.vf.AD41flex_setResidues
             if hasattr(self.vf, 'AD41analyze_showGridIsocontours'):
                 self.vf.ADanalyze_showGridIsocontours = self.vf.AD41analyze_showGridIsocontours
             #self.vf.ADanalyze_showHistogram = self.vf.AD41analyze_showHistogram
-            self.vf.ADanalyze_showDockingsAsSpheres = self.vf.AD41analyze_showDockingsAsSpheres
-            self.vf.ADanalyze_showBindingSite = self.vf.AD41analyze_showBindingSite
-            self.vf.ADanalyze_readDLG = self.vf.AD41analyze_readDLG
-            self.vf.ADanalyze_selectDLG = self.vf.AD41analyze_selectDLG
-            self.vf.ADanalyze_chooseDockedConformations = self.vf.AD41analyze_chooseDockedConformations
-            self.vf.ADanalyze_makeSubsetClustering = self.vf.AD41analyze_makeSubsetClustering
+            if hasattr(self.vf, 'AD41analyze_showDockingsAsSpheres'):
+                self.vf.ADanalyze_showDockingsAsSpheres = self.vf.AD41analyze_showDockingsAsSpheres
+            if hasattr(self.vf, 'AD41analyze_showBindingSite'):
+                self.vf.ADanalyze_showBindingSite = self.vf.AD41analyze_showBindingSite
+            if hasattr(self.vf, 'AD41analyze_readDLG'):
+                self.vf.ADanalyze_readDLG = self.vf.AD41analyze_readDLG
+            if hasattr(self.vf, 'AD41analyze_selectDLG'):
+                self.vf.ADanalyze_selectDLG = self.vf.AD41analyze_selectDLG
+            if hasattr(self.vf, 'AD41analyze_chooseDockedConformations'):
+                self.vf.ADanalyze_chooseDockedConformations = self.vf.AD41analyze_chooseDockedConformations
+            if hasattr(self.vf, 'AD41analyze_makeSubsetClustering'):
+                self.vf.ADanalyze_makeSubsetClustering = self.vf.AD41analyze_makeSubsetClustering
         elif ModeStr=="AD3.05":
             self.vf.ADtors_defineRotBonds = self.vf.AD3tors_defineRotBonds
             self.vf.ADtors_markRoot = self.vf.AD3tors_markRoot
