@@ -561,8 +561,8 @@ void getBoundingBox(float coords[1][3], float radii[1], int dlen,
 /***
 from Python interface the function is called as follows:
 import blurr
-#coords - array(n, 3) of xyz coodinates
-# radii - array(n)  
+//coords - array(n, 3) of xyz coodinates
+// radii - array(n)  
 data, origin, span = blur.generateBlurmap(coords, radii, [dimx, dimy,dimz],
                                           blobbyness)
 ***/

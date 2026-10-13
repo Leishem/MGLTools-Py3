@@ -30,11 +30,18 @@
 #define PyArray_CDOUBLE NPY_CDOUBLE
 #define PyArray_OBJECT  NPY_OBJECT
 #endif
-#ifndef PyArray_NTYPES
-#define PyArray_NTYPES  NPY_NTYPES_LEGACY
+#ifndef PyArray_SBYTE
+#define PyArray_SBYTE   NPY_BYTE
 #endif
-#ifndef NPY_NTYPES_LEGACY
-#define NPY_NTYPES_LEGACY NPY_NTYPES
+#ifndef PyArray_NOTYPE
+#define PyArray_NOTYPE  NPY_NOTYPE
+#endif
+#ifndef PyArray_NTYPES
+#if NPY_ABI_VERSION >= 0x02000000
+#define PyArray_NTYPES  NPY_NTYPES_LEGACY
+#else
+#define PyArray_NTYPES  NPY_NTYPES
+#endif
 #endif
 
 #ifndef CONTIGUOUS

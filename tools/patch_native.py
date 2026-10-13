@@ -16,6 +16,8 @@ RULES = [
      '#include "mgl_npcompat.h"'),
     (re.compile(r'#include\s*[<"]Numeric/arrayobject\.h[>"]'),
      '#include "mgl_npcompat.h"'),
+    (re.compile(r'#include\s*[<"]numpy/oldnumeric\.h[>"]'),
+     '#include "mgl_npcompat.h"'),
     # SWIG 1.1 language-qualified typemaps: %typemap(python, in) -> %typemap(in)
     (re.compile(r'%typemap\(\s*python\s*,\s*'), '%typemap('),
     # Windows Vista ownership hack: keep only the portable branch
@@ -31,6 +33,12 @@ RULES = [
     (re.compile(r'\bPyCObject_Check\b'), 'PyCapsule_CheckExact'),
 ]
 
+# SWIG-only rules (.i files): '#comment' lines that SWIG 4 parses as directives
+SWIG_RULES = [
+    (re.compile(r'^#(?!\s*(?:include|define|if|ifdef|ifndef|else|elif|endif|undef|error|warning|pragma|line)\b)',
+                re.M), '//'),
+]
+
 
 def patch(path):
     try:
@@ -39,7 +47,7 @@ def patch(path):
         print("skip", path, e)
         return False
     new = text
-    for rx, rep in RULES:
+    for rx, rep in RULES + (SWIG_RULES if path.suffix == ".i" else []):
         new = rx.sub(rep, new)
     if new != text:
         path.write_text(new, encoding="latin-1", newline="")

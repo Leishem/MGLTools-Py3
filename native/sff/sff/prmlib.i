@@ -17,7 +17,7 @@
 #endif
 
 #include <stdlib.h>
-#include "numpy/oldnumeric.h"
+#include "mgl_npcompat.h"
 #include "prm.h"
 
 static parmstruct* parmcalloc( void)

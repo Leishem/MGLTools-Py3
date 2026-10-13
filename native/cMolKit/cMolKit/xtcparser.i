@@ -242,10 +242,10 @@ int read_next_frame_xtc(float coords[1][3], int natoms,
 void close_xtc();
 
 %pythoncode %{
-#
-# this Python function uses the module interface for reading an xtc trajectory file
-# the function does not check if file exists or if it has .xtc extension
-#
+//
+// this Python function uses the module interface for reading an xtc trajectory file
+// the function does not check if file exists or if it has .xtc extension
+//
 def read_xtc(file):
     
     nframes = 0

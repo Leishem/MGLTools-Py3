@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <fstream>
+#include <string.h>
 
 #include "objfile.h"
 
