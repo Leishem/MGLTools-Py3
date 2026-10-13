@@ -11,6 +11,7 @@ from pathlib import Path
 
 import numpy
 from setuptools import Extension, find_packages, setup
+from setuptools.command.build import build
 from setuptools.command.build_ext import build_ext
 
 HERE = Path(__file__).resolve().parent
@@ -212,38 +213,61 @@ def make_ext(spec):
     root = str(Path(spec["swig"]).parent.parent)
     inc = [n("common"), numpy.get_include(), root] + spec["inc"]
     macros = list(spec.get("macros", []))
-    if sys.platform == "win32":
-        macros.append(("WIN32", None))
-    # Python 2 C-API aliases for every translation unit
+    cflags = list(spec.get("cflags", []))
+    if WIN:
+        macros += [("WIN32", None), ("_USE_MATH_DEFINES", None),
+                   ("_CRT_SECURE_NO_WARNINGS", None)]
+    if MAC:
+        # <GL/gl.h> -> <OpenGL/gl.h> forwarding headers; OpenGL is deprecated
+        # on macOS but still supported (legacy 2.1 profile)
+        inc.insert(0, n("common", "macos"))
+        macros.append(("GL_SILENCE_DEPRECATION", None))
+        cflags += ["-Wno-deprecated-declarations"]
+    # Python 2 C-API aliases (and Windows GL macros) for every translation unit
     force = ["/FImgl_py2compat.h"] if WIN else ["-include", "mgl_py2compat.h"]
     ext = Extension(spec["name"], sources=[], include_dirs=inc,
                     define_macros=macros,
                     libraries=spec.get("libs", []),
                     library_dirs=spec.get("libdirs", []),
-                    extra_compile_args=force + spec.get("cflags", []),
+                    extra_compile_args=force + cflags,
                     extra_link_args=spec.get("ldflags", []),
                     language="c++" if spec.get("cpp") else "c")
     ext._mgl = spec
     return ext
 
 
+class BuildExtFirst(build):
+    """Run build_ext before build_py so SWIG-generated proxies are packaged."""
+    sub_commands = [c for c in build.sub_commands if c[0] == "build_ext"] + \
+                   [c for c in build.sub_commands if c[0] != "build_ext"]
+
+
 setup(
     name="mgltools",
     version="1.5.6.post1",
-    description="MGLTools (AutoDockTools, PMV) ported to Python 3",
+    description="MGLTools 1.5.6 (AutoDockTools, PMV, Vision) on Python 3",
+    long_description=(HERE / "README.md").read_text(encoding="utf-8")
+    if (HERE / "README.md").exists() else "",
+    long_description_content_type="text/markdown",
     license="MGLTools license (non-commercial); see LICENSES",
     package_dir={"": "src"},
     packages=find_packages("src"),
-    include_package_data=True,
+    package_data={"": ["**/*"]},
+    exclude_package_data={"": ["**/__pycache__/*", "**/*.pyc", "**/CVS/*",
+                               "**/*.o", "**/*.obj"]},
     ext_modules=[make_ext(m) for m in selected_modules()],
-    cmdclass={"build_ext": SwigBuildExt},
+    cmdclass={"build_ext": SwigBuildExt, "build": BuildExtFirst},
     python_requires=">=3.10",
     install_requires=[
         "numpy>=1.22",
+        "scipy>=1.10",         # mslib molecular surfaces
         "Pmw>=2.1",
         "Pillow",
         "PyOpenGL>=3.1.7",
         "tkinter-gl>=1.1",     # TkGL: Togl-compatible Tk OpenGL widget
         "simpy==2.3.1",        # classic SimPy API used by Scenario2 animations
     ],
+    entry_points={"gui_scripts": ["adt = mgltools.launch:adt",
+                                  "pmv = mgltools.launch:pmv",
+                                  "vision = mgltools.launch:vision"]},
 )

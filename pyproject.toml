@@ -1,0 +1,4 @@
+[build-system]
+# numpy: C headers for the extensions; swig: generates the wrappers
+requires = ["setuptools>=69", "wheel", "numpy>=2.0", "swig>=4.2"]
+build-backend = "setuptools.build_meta"

@@ -51,7 +51,7 @@ void* PypImport_ModuleCobjAttr( char const* module, char const* name)
 			     "OpenGL is attached to a different thread");
       PyEval_ReleaseThread( s_opengltk->pythread);
     }
-  $function
+  $action
   if (s_opengltk->checkerror)
 	
     {	

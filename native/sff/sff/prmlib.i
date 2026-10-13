@@ -128,7 +128,7 @@ void foo (int *obj);
   s_pythread = PyThreadState_Get();
   PyEval_ReleaseThread( s_pythread);
 
-  $function
+  $action
 
   PyEval_RestoreThread( s_pythread);
   s_pythread = NULL;

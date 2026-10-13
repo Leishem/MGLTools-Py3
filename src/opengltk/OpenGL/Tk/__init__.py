@@ -13,11 +13,22 @@ import sys
 WIDGET_CLASS = "tkgl"
 
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+
 def tkgl_dir():
-    """Directory holding the TkGL Tcl package for this platform."""
+    """Directory holding the TkGL Tcl package for this platform.
+
+    Order: $MGL_TKGL_DIR, a TkGL build bundled with this package
+    (tkgl/<platform>-<machine>, e.g. Windows ARM64, which tkinter-gl does not
+    ship), then the tkinter-gl package."""
     override = os.environ.get("MGL_TKGL_DIR")
     if override:
         return override
+    machine = platform.machine().lower()
+    bundled = os.path.join(HERE, "tkgl", "%s-%s" % (sys.platform, machine))
+    if os.path.isdir(bundled):
+        return bundled
     import tkinter_gl
     target = sys.platform
     if target.startswith("linux"):

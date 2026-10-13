@@ -4,7 +4,7 @@
 cd "$(dirname "$0")/.."
 pkill -f "tests/gui_smoke.py" 2>/dev/null; pkill -x Xvfb 2>/dev/null
 rm -rf build/gui; mkdir -p build/gui
-MGL_TK_WARN=${MGL_TK_WARN:-1} PYTHONUNBUFFERED=1 FORCE_XVFB=1 timeout -k 5 "${TIMEOUT:-300}" \
+MGL_USE_SRC=1 MGL_TK_WARN=${MGL_TK_WARN:-1} PYTHONUNBUFFERED=1 FORCE_XVFB=1 timeout -k 5 "${TIMEOUT:-300}" \
   bash tools/xrun.sh python -W ignore tests/gui_smoke.py build/gui "$@" \
   > build/gui/log.txt 2>&1 < /dev/null
 echo "exit=$?"

@@ -232,7 +232,7 @@ extern void APIENTRY glGenFramebuffersEXT (GLsizei a, GLuint * b)
 {
 	PyObject * o = PyString_FromString((char *) $1);
 	//printf ( "resultobject %ld \n" , (long) * $1 ) ;
-    $result = t_output_helper($result, o);
+    $result = mgl_t_output_helper($result, o);
 }
 
 

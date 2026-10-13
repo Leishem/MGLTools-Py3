@@ -1,0 +1,6 @@
+include README.md LICENSES pyproject.toml setup.py
+graft native
+graft tools
+graft tests
+prune build
+global-exclude __pycache__ *.pyc *.o *.obj *.so *.pyd

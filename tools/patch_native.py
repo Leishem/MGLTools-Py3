@@ -49,6 +49,12 @@ def patch(path):
     new = text
     for rx, rep in RULES:
         new = rx.sub(rep, new)
+    if path.suffix == ".i":
+        # %exception's $function placeholder was renamed $action (removed in
+        # SWIG 4.3+)
+        new = new.replace("$function", "$action")
+        # t_output_helper was removed in SWIG 4.3; mgl_npcompat.h has a copy
+        new = re.sub(r"\bt_output_helper\(", "mgl_t_output_helper(", new)
     if path.suffix == ".i" and "%module" in new and "python:cdefaultargs" not in new:
         # SWIG 4 writes C default args into the Python proxy (NULL becomes
         # 0, which typemaps then treat as data). SWIG 1.3 let C apply them.

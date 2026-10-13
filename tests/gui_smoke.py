@@ -14,9 +14,11 @@ import traceback
 faulthandler.enable()
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "src"))
+if os.environ.get("MGL_USE_SRC"):
+    sys.path.insert(0, str(ROOT / "src"))
+import Pmv  # noqa: E402
 OUT = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else ROOT / "build" / "gui")
-PDB = sys.argv[2] if len(sys.argv) > 2 else str(ROOT / "src" / "Pmv" / "doc" / "hsg1.pdb")
+PDB = sys.argv[2] if len(sys.argv) > 2 else os.path.join(os.path.dirname(Pmv.__file__), "doc", "hsg1.pdb")
 OUT.mkdir(parents=True, exist_ok=True)
 
 failures = []
@@ -109,8 +111,20 @@ if mols:
     step("color surface by atom type",
          lambda: mv.colorByAtomType("hsg1", ['MSMS-MOL'], log=0))
 
-step("full window screenshot", lambda: os.system(
-    f"import -window root {OUT / '0_window.png'} 2>/dev/null"))
+def window_shot():
+    mv.GUI.ROOT.update()
+    from PIL import ImageGrab
+    r = mv.GUI.ROOT
+    box = (r.winfo_rootx(), r.winfo_rooty(),
+           r.winfo_rootx() + r.winfo_width(), r.winfo_rooty() + r.winfo_height())
+    try:
+        img = ImageGrab.grab(bbox=box)
+    except Exception:  # noqa: BLE001  (e.g. Pillow without XCB)
+        img = ImageGrab.grab()
+    img.save(OUT / "0_window.png")
+
+
+step("full window screenshot", window_shot)
 print(f"\n{len(failures)} failures in {time.time() - t0:.1f}s; screenshots in {OUT}")
 try:
     mv.Exit(0)

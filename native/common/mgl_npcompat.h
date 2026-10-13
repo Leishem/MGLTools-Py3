@@ -96,4 +96,31 @@ static inline void mgl_set_owndata(PyObject *a)
 
 #include "mgl_py2compat.h"
 
+/* SWIG < 4.3 shipped t_output_helper (append an output value to the result,
+   turning it into a tuple); newer SWIG removed it. The interface files call
+   this copy instead (tools/patch_native.py renames the calls). */
+static PyObject *mgl_t_output_helper(PyObject *target, PyObject *o)
+{
+  PyObject *o2, *o3;
+  if (!target) {
+    target = o;
+  } else if (target == Py_None) {
+    Py_DECREF(Py_None);
+    target = o;
+  } else {
+    if (!PyTuple_Check(target)) {
+      o2 = target;
+      target = PyTuple_New(1);
+      PyTuple_SetItem(target, 0, o2);
+    }
+    o3 = PyTuple_New(1);
+    PyTuple_SetItem(o3, 0, o);
+    o2 = target;
+    target = PySequence_Concat(o2, o3);
+    Py_DECREF(o2);
+    Py_DECREF(o3);
+  }
+  return target;
+}
+
 #endif /* MGL_NPCOMPAT_H */

@@ -107,7 +107,7 @@ typedef vector<vector<float> > FloatArray;
 	  PyList_SetItem(res,i, res1);
 	}
     }
-  $result = t_output_helper($result, res);
+  $result = mgl_t_output_helper($result, res);
 }
 
 %typemap(in, numinputs=0) FloatArray *vertset (FloatArray temp)
@@ -138,7 +138,7 @@ typedef vector<vector<float> > FloatArray;
 	  PyList_SetItem(res,i, res1);
 	}
     }
-  $result = t_output_helper($result, res);
+  $result = mgl_t_output_helper($result, res);
 
 }
 

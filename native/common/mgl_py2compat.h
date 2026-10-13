@@ -25,4 +25,21 @@
 #define staticforward        static
 #define statichere           static
 
+/* Windows: the SDK's GL/gl.h and GL/glu.h expect windows.h to have defined
+   these; many MGLTools sources include GL/gl.h directly. Also expose M_PI. */
+#ifdef _WIN32
+#ifndef APIENTRY
+#define APIENTRY __stdcall
+#endif
+#ifndef WINGDIAPI
+#define WINGDIAPI __declspec(dllimport)
+#endif
+#ifndef CALLBACK
+#define CALLBACK __stdcall
+#endif
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#endif
+
 #endif /* MGL_PY2COMPAT_H */
