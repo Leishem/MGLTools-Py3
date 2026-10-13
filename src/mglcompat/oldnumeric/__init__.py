@@ -39,6 +39,7 @@ Complex = 'D'
 PyObject = 'O'
 
 ArrayType = ndarray
+arraytype = ndarray
 NewAxis = None
 typecodes = {'Character': 'c', 'Integer': '1sil', 'UnsignedInteger': 'bwu',
              'Float': 'fd', 'Complex': 'FD'}

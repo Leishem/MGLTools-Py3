@@ -13,6 +13,7 @@
 #
 # $Id: colorMap.py,v 1.2 2007/07/24 17:30:39 vareille Exp $
 #
+import itertools
 from tkinter import *
 from DejaVu.colorTool import RGBRamp, ToRGB, ToHSV
 import types, mglcompat.oldnumeric as Numeric
@@ -326,7 +327,7 @@ class ColorMapGUI(Frame):
         s = (Numeric.array(self.values['Sat'])-25)/175.0
         v = (Numeric.array(self.values['Val'])-25)/175.0
         a = (Numeric.array(self.values['Opa'])-25)/175.0
-        self.hsva = map( None, h,s,v,a )
+        self.hsva = list(itertools.zip_longest(h,s,v,a))
         self.rgbMap = list(map( ToRGB, self.hsva))
 
 

@@ -49,6 +49,7 @@ AddISOTxt = "An ISO value can be added by pressing 'Add new isovalue'\nbutton of
 
 DescriptionText = "Widget description:\nThe function is drawn at the top of the interface\nas a series of circles (dots) connected by line segments.\nThe X location of each dot indicates the data value,\nthe Y location indicates the opacity of that data value.\n" + SelectPointTxt + SetOpacityTxt + SetColorTxt + AddDotShapeTxt + MoveShapeTxt + DeleteDotTxt + LoadLUTTxt+ SaveLUTTxt+ SaveTFTxt + SplitMenuTxt+ ResetMenuTxt + AddISOTxt
 
+import itertools
 import tkinter
 import mglcompat.oldnumeric as Numeric
 import Pmw
@@ -1889,7 +1890,7 @@ class LUT:
         isoVal = self.isoVals.pop(iso_ind)
         dots_id = c.find_withtag('isodot')
         lines_id = c.find_withtag('isoline')
-        for i , j in map(None, dots_id, lines_id):
+        for i , j in list(itertools.zip_longest(dots_id, lines_id)):
             d_ind = int(c.gettags(i)[1][6:])
             l_ind = int(c.gettags(j)[1][7:])
             if d_ind > iso_ind:

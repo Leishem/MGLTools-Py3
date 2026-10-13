@@ -113,7 +113,7 @@ INT_VECTOR( ids, [1], nb )
       return self;
     }
 
-  ~BHTree() {
+  ~BHtree() {
     freeBHtree(self);
   }
 

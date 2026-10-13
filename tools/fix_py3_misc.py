@@ -143,8 +143,64 @@ def token_edits(text):
     return edits
 
 
+def fix_map_none(text):
+    """map(None, a)    -> list(a)
+       map(None, a, b) -> list(itertools.zip_longest(a, b))   (py2 padding)"""
+    try:
+        toks = list(tokenize.generate_tokens(io.StringIO(text).readline))
+    except (tokenize.TokenError, SyntaxError, IndentationError):
+        return text
+    lines = text.split("\n")
+    offs = [0]
+    for l in lines:
+        offs.append(offs[-1] + len(l) + 1)
+    pos = lambda rc: offs[rc[0] - 1] + rc[1]  # noqa: E731
+    code = [t for t in toks if t.type not in (tokenize.NL, tokenize.COMMENT,
+                                               tokenize.NEWLINE, tokenize.INDENT,
+                                               tokenize.DEDENT)]
+    edits = []
+    for i in range(len(code) - 3):
+        a, b, c, d = code[i:i + 4]
+        if not (a.type == tokenize.NAME and a.string == "map" and b.string == "("
+                and c.string == "None" and d.string == ","):
+            continue
+        if i > 0 and code[i - 1].string == ".":
+            continue
+        depth, commas, j = 0, 0, i + 4
+        while j < len(code):
+            s = code[j].string
+            if s in "([{":
+                depth += 1
+            elif s in ")]}":
+                if depth == 0:
+                    break
+                depth -= 1
+            elif s == "," and depth == 0:
+                commas += 1
+            j += 1
+        if j >= len(code):
+            continue
+        args = text[pos(d.end):pos(code[j].start)].strip()
+        if args.endswith(","):
+            args = args[:-1].rstrip()
+            commas -= 1
+        rep = f"list({args})" if commas == 0 else f"list(itertools.zip_longest({args}))"
+        edits.append((pos(a.start), pos(code[j].end), rep))
+    if not edits:
+        return text
+    for s, e, rep in sorted(edits, reverse=True):
+        text = text[:s] + rep + text[e:]
+    if "itertools.zip_longest" in text and not re.search(r"(?m)^import itertools\b", text):
+        m = re.search(r"(?m)^(import |from (?!__future__))", text)
+        at = m.start() if m else 0
+        text = text[:at] + "import itertools\n" + text[at:]
+    return text
+
+
 def fix_file(p):
     text = p.read_text(encoding="utf-8")
+    text_in = text
+    text = fix_map_none(text)
     lines = text.split("\n")
     lines = [fix_modules(fix_types_import(fix_raise(l))) for l in lines]
     text2 = "\n".join(lines)
@@ -155,7 +211,7 @@ def fix_file(p):
             l = lines[row - 1]
             lines[row - 1] = l[:c0] + rep + l[c1:]
         text2 = "\n".join(lines)
-    if text2 != text:
+    if text2 != text_in:
         p.write_text(text2, encoding="utf-8", newline="")
         return True
     return False

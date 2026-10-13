@@ -6,6 +6,7 @@
 # $Id: SLCommands.py,v 1.33 2009/10/16 23:18:01 annao Exp $
 #
 
+import itertools
 import tkinter, mglcompat.oldnumeric as Numeric, Pmw
 from DejaVu.IndexedPolygons import IndexedPolygons
 from ViewerFramework.VFCommand import CommandGUI
@@ -570,7 +571,7 @@ class SLCommand(MVCommand):
     def sort_entries(self, name_dict):
         keys = list(name_dict.keys())
         vals = list(name_dict.values())
-        vals_sorted = map(None, vals, list(range(len(vals))))
+        vals_sorted = list(itertools.zip_longest(vals, list(range(len(vals)))))
         vals_sorted.sort()
         keys_sorted = []
         for v in vals_sorted:

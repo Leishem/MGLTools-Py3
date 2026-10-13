@@ -22,6 +22,7 @@
 #
 ######################################################################
 
+import itertools
 from mglcompat.oldnumeric import *
 from mglcompat.pytypes import *
 import os, math; from mglcompat import pystring as string
@@ -900,7 +901,7 @@ class Grid:
         if tick == 0 :
             return  result
         else:
-            return map(None, result, varray1,varray2)
+            return list(itertools.zip_longest(result, varray1,varray2))
     
     # display Gridbox
     def displayBox(self,viewer=None, materials=None):

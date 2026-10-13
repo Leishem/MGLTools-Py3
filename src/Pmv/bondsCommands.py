@@ -14,6 +14,7 @@
 # $Id: bondsCommands.py,v 1.52.2.4 2011/06/23 21:24:27 sargis Exp $
 #
 #
+import itertools
 import mglcompat.oldnumeric as Numeric
 from opengltk.OpenGL import GL
 
@@ -100,7 +101,7 @@ class BuildBondsByDistance(MVCommand, MVAtomICOM):
         # Get the molecules and the atomSets per molecules in the set of nodes.
         molecules, atomSets = self.vf.getNodesByMolecule(nodes, Atom)
         # Loop over the molecules and the sets of atoms
-        for mol, atm in map(None, molecules, atomSets):
+        for mol, atm in list(itertools.zip_longest(molecules, atomSets)):
             if self.hasBhtree:
                 mol.buildBondsByDistance()
             else:

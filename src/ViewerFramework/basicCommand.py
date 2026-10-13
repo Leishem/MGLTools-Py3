@@ -23,6 +23,7 @@ a ViewerFramework class or ViewerFramework derived class.
 #
 # $Id: basicCommand.py,v 1.139.2.4 2013/06/07 21:55:33 annao Exp $
 #
+import itertools
 import os, sys, subprocess
 
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
@@ -961,7 +962,7 @@ class loadModuleCommand(Command):
         names, docs = self.loadModules(pack)
         w = ebn['Module List']['widget']
         w.clear()
-        for n,d in map(None, names, docs):
+        for n,d in list(itertools.zip_longest(names, docs)):
             w.insert('end', n, d)
 
     def buildFormDescr(self, formName):

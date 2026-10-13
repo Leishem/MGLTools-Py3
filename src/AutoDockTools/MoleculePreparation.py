@@ -2113,8 +2113,10 @@ class RotatableBondManager:
             atoms_to_check = mol.allAtoms
             if verbose: print("mol.largest_fragment doesn't exists=> using ", len(mol.allAtoms))
         #mol.bestBranch = len(mol.allAtoms)
-        mol.bestBranch = atoms_to_check
-        if verbose: print("length mol.bestBranch=", len(mol.bestBranch))
+        # 1.5.6 set this to the AtomSet itself; Python 2 ordered any int below
+        # an object, so the first candidate always won. inf keeps that.
+        mol.bestBranch = float('inf')
+        if verbose: print("length mol.bestBranch=", len(atoms_to_check))
         bestList = []
         #for item in mol.allAtoms:
         for item in atoms_to_check:

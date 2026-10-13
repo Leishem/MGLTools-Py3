@@ -14,6 +14,7 @@
 # $Id: msmsCommands.py,v 1.149.2.9 2011/10/12 23:38:42 sanner Exp $
 #
 
+import itertools
 import types, os
 import tkinter, Pmw
 from math import sqrt
@@ -770,7 +771,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
         else:
             molecules, atmSets = self.vf.getNodesByMolecule(nodes, Atom)
 
-        for mol, atms in map(None, molecules, atmSets):
+        for mol, atms in list(itertools.zip_longest(molecules, atmSets)):
             if self.vf.hasGui and 'dashboard' in self.vf.commands:
                 self.vf.dashboard.resetColPercent(
                     mol, '_showMSMSStatus_%s'%surfName)
@@ -1237,7 +1238,7 @@ upon atom deletion.
 
     def setupUndoBefore(self, nodes, surfName='all', negate=False, only=False, nbVert=1):
         molecules, atomSets = self.vf.getNodesByMolecule(nodes, Atom)
-        for mol, atoms in map(None, molecules, atomSets):
+        for mol, atoms in list(itertools.zip_longest(molecules, atomSets)):
             geomC = mol.geomContainer
             surfNames = list(geomC.msms.keys())
             if surfName == 'all':
@@ -1629,7 +1630,7 @@ class ComputeMSMSApprox(ComputeMSMS):
         else:
             molecules, resSets = self.vf.getNodesByMolecule(nodes, Residue)
         
-        for mol, res in map(None, molecules, resSets):
+        for mol, res in list(itertools.zip_longest(molecules, resSets)):
 
             # get radii if necessary
             try:
@@ -2012,7 +2013,7 @@ class DisplayBuriedTriangles(DisplayCommand):
         # was used previously and results in displaying what faces were displayed previously
         nodes = self.vf.expandNodes(nodes)
         molecules, atomSets = self.vf.getNodesByMolecule(nodes, Atom)
-        for mol, atoms in map(None, molecules, atomSets):
+        for mol, atoms in list(itertools.zip_longest(molecules, atomSets)):
             geomC = mol.geomContainer
             surfNames = list(geomC.msms.keys())
             if surfaceName == 'all':
@@ -2072,7 +2073,7 @@ class DisplayBuriedTriangles(DisplayCommand):
         """
 
         molecules, atomSets = self.vf.getNodesByMolecule(nodes, Atom)
-        for mol, atoms in map(None, molecules, atomSets):
+        for mol, atoms in list(itertools.zip_longest(molecules, atomSets)):
             geomC = mol.geomContainer
             surfNames = list(geomC.msms.keys())
             if not type(surfaceName) in [list, tuple]:
@@ -2288,7 +2289,7 @@ class DisplayIntermolecularBuriedTriangles(DisplayCommand):
         for nodes, surfaceName in [(nodes1, surfaceName1), (nodes2, surfaceName2)]:
             nodes = self.vf.expandNodes(nodes)
             molecules, atomSets = self.vf.getNodesByMolecule(nodes, Atom)
-            for mol, atoms in map(None, molecules, atomSets):
+            for mol, atoms in list(itertools.zip_longest(molecules, atomSets)):
                 geomC = mol.geomContainer
                 surfNames = list(geomC.msms.keys())
                 if len(surfNames)==0:
@@ -2362,7 +2363,7 @@ class DisplayIntermolecularBuriedTriangles(DisplayCommand):
         """
         for nodes, surfaceName in [(nodes1, surfaceName1), (nodes2, surfaceName2)]:
             molecules, atomSets = self.vf.getNodesByMolecule(nodes, Atom)
-            for mol, atoms in map(None, molecules, atomSets):
+            for mol, atoms in list(itertools.zip_longest(molecules, atomSets)):
                 geomC = mol.geomContainer
                 #print "doit: processing ", mol.name
                 surfNames = list(geomC.msms.keys())
@@ -2589,7 +2590,7 @@ previousely\n
         
         # loop over arrays and accumulate buried area values over atoms indices
         d = {}
-        for atInd, vfloat in map(None, bvi, bvf):
+        for atInd, vfloat in list(itertools.zip_longest(bvi, bvf)):
             ii = int(atInd)
             if ii not in d:
                 d[ii] = [0.0, 0.0]

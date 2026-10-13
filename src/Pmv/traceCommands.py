@@ -25,6 +25,7 @@ This module provides a set of commands:
 #$Id: traceCommands.py,v 1.32 2010/10/13 01:37:28 sanner Exp $
 #
 
+import itertools
 from MolKit.protein import Coil, Chain, ResidueSet, SecondaryStructureSet
 from MolKit.protein import Residue
 from MolKit.tree import TreeNode, TreeNodeSet
@@ -231,7 +232,7 @@ class ComputeTraceCommand(MVCommand):
         
         self.traceName = traceName
         molecules, chainSet = self.vf.getNodesByMolecule(nodes, Chain)
-        for mol, chains in map(None, molecules, chainSet):
+        for mol, chains in list(itertools.zip_longest(molecules, chainSet)):
             for chain in chains:
                 if not hasattr(chain, 'trace'): chain.trace = {}
                 if chain.sheet2D[traceName] is None:
@@ -441,7 +442,7 @@ class ExtrudeTraceCommand(MVCommand):
         molecules, atomsSet = self.vf.getNodesByMolecule(nodes, Atom)
         self.shape = shape2D
         arrowf = 0
-        for mol, atoms in map(None, molecules, atomsSet):
+        for mol, atoms in list(itertools.zip_longest(molecules, atomsSet)):
             chains = atoms.findType(Chain).uniq()
             gc = mol.geomContainer
             for chain in chains:
@@ -780,7 +781,7 @@ class DisplayTraceCommand(DisplayCommand):
         ###############################################################
 
         molecules, residueSets = self.vf.getNodesByMolecule(nodes, Residue)
-        for mol,residues in map(None,molecules, residueSets):
+        for mol,residues in list(itertools.zip_longest(molecules, residueSets)):
             for chain in mol.chains:
                 if not hasattr(chain, 'trace'): continue
                 if traceName not in chain.trace:

@@ -13,6 +13,7 @@
 #
 #
 
+import itertools
 from mglutil.util.misc import ensureFontCase
 
 from MolKit.molecule import Atom,AtomSet
@@ -112,7 +113,7 @@ class ComputeSplineCommand(MVCommand):
             return
         
         
-        for mol, atoms in map(None, molecules, atomSets):
+        for mol, atoms in list(itertools.zip_longest(molecules, atomSets)):
             # Get a handle on the molecule geomContainer.
             geomC = mol.geomContainer
             # chainsInSel is the ChainSet of the chain having at least one
@@ -570,7 +571,7 @@ class ExtrudeSplineCommand(MVCommand):
             shape2D = Circle2D(radius=0.1, firstDup=1)
         molecules, atomsSet = self.vf.getNodesByMolecule(nodes, Atom)
         self.shape = shape2D
-        for mol, atoms in map(None, molecules, atomsSet):
+        for mol, atoms in list(itertools.zip_longest(molecules, atomsSet)):
             #self.createGeometries(mol)
             chains = atoms.findType(Chain).uniq()
             gc = mol.geomContainer
@@ -968,7 +969,7 @@ class DisplayExtrudedSplineCommand(DisplayCommand):
 
         
         molecules, atomSets = self.vf.getNodesByMolecule(nodes, Atom)
-        for mol, atoms in map(None, molecules, atomSets):
+        for mol, atoms in list(itertools.zip_longest(molecules, atomSets)):
             gc = mol.geomContainer
             chains = atoms.findType(Chain).uniq()
             for chain in chains:
@@ -1343,7 +1344,7 @@ class DisplaySplineAsLineCommand(DisplayCommand):
         ##############################################################
 
         molecules, atomssSet = self.vf.getNodesByMolecule(nodes, Atom)
-        for mol, atoms in map(None, molecules, atomssSet):
+        for mol, atoms in list(itertools.zip_longest(molecules, atomssSet)):
             self.createGeometries(mol)
             chains = atoms.findType(Chain).uniq()
             gc = mol.geomContainer

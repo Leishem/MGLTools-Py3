@@ -23,6 +23,7 @@ for example:
     etc ...
     
 """
+import itertools
 from mglutil.util.colorUtil import ToHEX
 from Pmv.colorPalette import ColorPalette, ColorPaletteNG, \
      ColorPaletteFunction, ColorPaletteFunctionNG
@@ -102,7 +103,7 @@ class ColorCommand(MVCommand):
         if len(colors)==len(nodes) and not isinstance(nodes[0], Atom):
             #expand colors from nodes to atoms
             newcolors = []
-            for n,c in map(None,nodes,colors):
+            for n,c in list(itertools.zip_longest(nodes,colors)):
                 newcolors.extend( [c]*len(n.findType(Atom)) )
             colors = newcolors
         for g in geomsToColor:
@@ -111,7 +112,7 @@ class ColorCommand(MVCommand):
                     if g not in a.colors: continue
                     a.colors[g] = tuple( colors[0] )
             else:
-                for a, c in map(None, atms, colors):
+                for a, c in list(itertools.zip_longest(atms, colors)):
                     if g not in a.colors: continue
                     #a.colors[g] = tuple(c[:3])
                     a.colors[g] = tuple(c)

@@ -104,6 +104,7 @@ class BHtree(object):
 
     def __init__(self, xyz, rad, granularity):
         _bhtreelib.BHtree_swiginit(self, _bhtreelib.new_BHtree(xyz, rad, granularity))
+    __swig_destroy__ = _bhtreelib.delete_BHtree
 
     def closePoints(self, pt, cutoff, result):
         return _bhtreelib.BHtree_closePoints(self, pt, cutoff, result)

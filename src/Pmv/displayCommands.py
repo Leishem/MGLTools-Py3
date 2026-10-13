@@ -14,6 +14,7 @@
 # $Id: displayCommands.py,v 1.213.2.4 2012/06/14 19:30:33 rhuey Exp $
 #
 
+import itertools
 import warnings
 import traceback, math
 from mglcompat.pytypes import ListType, TupleType, StringType, IntType, FloatType, LongType, StringType
@@ -638,7 +639,7 @@ class DisplayLines(DisplayCommand):
         molecules, atomSets = self.getNodes(nodes)
         setOn = AtomSet([])
         setOff = AtomSet([])
-        for mol, atms, in map(None, molecules, atomSets):
+        for mol, atms, in list(itertools.zip_longest(molecules, atomSets)):
             # Get the set of atoms currently represented as wireframe
             geomC = mol.geomContainer
             son, sof = drawAtoms(mol, atms, displayBO, lineWidth, only, negate)
@@ -996,7 +997,7 @@ class DisplayCPK(DisplayCommand):
             self.vf.assignAtomsRadii(molecules, 
                                      overwrite=False, topCommand=False)
 
-        for mol, atms in map(None, molecules, atmSets):
+        for mol, atms in list(itertools.zip_longest(molecules, atmSets)):
             if byproperty:
                 son, sof = drawAtoms(
                     mol, atms, only, negate, scaleFactor, cpkRad,
@@ -1648,7 +1649,7 @@ current selection cannot be colored using this function."
             self.vf.assignAtomsRadii(molecules, 
                                      overwrite=False, topCommand=False)
 
-        for mol, atms in map(None, molecules, atmSets):
+        for mol, atms in list(itertools.zip_longest(molecules, atmSets)):
             drawAtoms(mol, atms, only, negate, 
                       scaleFactor, cpkRad, quality)
         if only and len(molecules)!=len(self.vf.Mols):
@@ -2452,7 +2453,7 @@ Synopsis:
                                      united=False,
                                      topCommand=False)
 
-        for mol, atm in map(None, molecules, atomSets):
+        for mol, atm in list(itertools.zip_longest(molecules, atomSets)):
              try:
                  if sticksBallsLicorice == 'Licorice':
                      son, sof = drawBalls(mol, atm, only, 0, negate, cradius,
@@ -3144,7 +3145,7 @@ form buildFormDescr will be called for each formName.
                                      united=False,
                                      topCommand=False)
 
-        for mol, atom in map(None, molecules, atmSets):
+        for mol, atom in list(itertools.zip_longest(molecules, atmSets)):
            #for chain in mol.chains:
 
              try:
@@ -3844,7 +3845,7 @@ class DisplayBoundGeom(DisplayCommand, BindGeomToMolecularFragmentBase):
         molecules, atomSets = self.vf.getNodesByMolecule(nodes, Atom)
         if not molecules: return
         # get all objects(geometries) that were bound with  'bindGeomToMolecularFragment' command:
-        for mol, atm  in map(None,molecules,atomSets):
+        for mol, atm  in list(itertools.zip_longest(molecules,atomSets)):
             # find geoms that were bound to molecule mol:
             allatoms = mol.allAtoms
             for obj in geomNames:

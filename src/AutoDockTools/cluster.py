@@ -15,6 +15,7 @@ Some definitions:
                 clusterings (keyed by tolerance).
 """
 
+import itertools
 from mglcompat import pystring as string
 import sys
 import mglcompat.oldnumeric as Numeric
@@ -622,9 +623,9 @@ If comment is '#':
         #should this be extend or add or something?
         self.clustering_dict[tolerance] = clusters
         #tell all the conformations about this_clustering: 'clusters'
-        for (cx, cl) in map(None, range(len(clusters)),
-                                 clusters):
-            for (rank, conf) in map(None, range(len(cl)), cl):
+        for (cx, cl) in list(itertools.zip_longest(range(len(clusters)),
+                                 clusters)):
+            for (rank, conf) in list(itertools.zip_longest(range(len(cl)), cl)):
                 conf.cluster_dict[tolerance] = (cx, rank)
 
 

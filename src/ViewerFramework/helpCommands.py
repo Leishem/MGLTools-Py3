@@ -15,6 +15,7 @@ Module implementing classes to provide documentation on the application
 # $Id: helpCommands.py,v 1.19 2010/09/30 18:17:32 sargis Exp $
 #
 
+import itertools
 from ViewerFramework.basicCommand import loadCommandCommand
 import tkinter, Pmw, tkinter.filedialog
 ##  from ViewerFramework.gui import InputFormDescr
@@ -743,7 +744,7 @@ class SearchCommand(Command):
                         packDict[modName]={}
                         keys = [x['name'] for x in m.commandList]
                         values = [x['cmd'].__doc__ for x in m.commandList]
-                        for k, v in map(None, keys, values):
+                        for k, v in list(itertools.zip_longest(keys, values)):
                             packDict[modName][k] = v
                 except:
                     continue

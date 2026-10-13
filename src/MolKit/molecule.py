@@ -20,6 +20,7 @@ The class Molecule is expected to be specialized to represent molecular
 structures with higher level of hierarchies (see protein.py)
 """
 
+import itertools
 import types, re; from mglcompat import pystring as string
 #import misc
 from mglutil.util import misc
@@ -243,7 +244,7 @@ class AtomSet(TreeNodeSet):
     def addCharges(self, chargeSet, newCharges):
         """Add a set of charges with key 'chargeSet'"""
         assert len(newCharges) == len(self.data)
-        for a, c in map(None, self.data, newCharges):
+        for a, c in list(itertools.zip_longest(self.data, newCharges)):
             a._charges[chargeSet] = c
   
 
@@ -1033,7 +1034,8 @@ class MoleculeSet(TreeNodeSet):
         else:
             levelBelow = self[0].isAbove(what)
             if levelBelow>1:
-                exec("result=self"+".children"*levelBelow)
+                result = self
+                for _i in range(levelBelow): result = result.children
                 result = result.copy()
                 if uniq:
                     result = result.uniq()
@@ -1047,7 +1049,8 @@ class MoleculeSet(TreeNodeSet):
             else:
                 levelAbove = self[0].isBelow(what)
                 if levelAbove>1:
-                    exec("result=self"+".parent"*levelAbove)
+                    result = self
+                    for _i in range(levelAbove): result = result.parent
                     if uniq:
                         result = result.uniq()
                     return result

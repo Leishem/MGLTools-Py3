@@ -1,3 +1,4 @@
+import itertools
 #
 # WARNING: a comment is required after the fucntion prototype
 #
@@ -25,7 +26,7 @@ def assignAtomicSurfaceArea():
     from MolKit.molecule import Atom
     mols, atoms = self.getNodesByMolecule(selection, Atom)
     #
-    for m,atomSet in map(None, mols, atoms):
+    for m,atomSet in list(itertools.zip_longest(mols, atoms)):
         if hasattr(m.geomContainer, 'msms'):
             for a in atomSet:
                 a.ses_area = {}
@@ -48,7 +49,7 @@ def computeAtomicSphereArea():
     from MolKit.molecule import Atom
     mols, atoms = self.getNodesByMolecule(selection, Atom)
 
-    for m,atomSet in map(None, mols, atoms):
+    for m,atomSet in list(itertools.zip_longest(mols, atoms)):
         if hasattr(m.geomContainer, 'msms'):
             ms = m.geomContainer.msms
             for a in atomSet:
@@ -70,7 +71,7 @@ def avgPercentageOfExposedSurface():
     mols, atoms = self.getNodesByMolecule(selection, Atom)
     sumSES = sumSAS = 0.0
     nbSES = nbSAS = 0
-    for m,atomSet in map(None, mols, atoms):
+    for m,atomSet in list(itertools.zip_longest(mols, atoms)):
         for a in atomSet:
             if hasattr(a, 'atom_ses_area'):
                 if hasattr(a, 'ses_area'):

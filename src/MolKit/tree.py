@@ -707,7 +707,8 @@ By default, no message is returned.
             stringRepr = self.stringRepr
             levelBelow = self[0].isAbove(what)
             if levelBelow>1:
-                exec("result=self"+".children"*levelBelow)
+                result = self
+                for _i in range(levelBelow): result = result.children
                 if uniq:
                     result = result.uniq()
                 if stringRepr is not None:
@@ -726,7 +727,8 @@ By default, no message is returned.
             else:
                 levelAbove = self[0].isBelow(what)
                 if levelAbove>1:
-                    exec("result=self"+".parent"*levelAbove)
+                    result = self
+                    for _i in range(levelAbove): result = result.parent
                     if uniq:
                         result = result.uniq()
                     if stringRepr is not None:
@@ -764,7 +766,8 @@ By default, no message is returned.
         else:
             levelBelow = self[0].isAbove(what)
             if levelBelow>1:
-                exec("result=self"+".children"*levelBelow)
+                result = self
+                for _i in range(levelBelow): result = result.children
                 if uniq:
                     result = result.uniq()
                 return result
@@ -777,7 +780,8 @@ By default, no message is returned.
             else:
                 levelAbove = self[0].isBelow(what)
                 if levelAbove>1:
-                    exec("result=self"+".parent"*levelAbove)
+                    result = self
+                    for _i in range(levelAbove): result = result.parent
                     if uniq:
                         result = result.uniq()
                     return result

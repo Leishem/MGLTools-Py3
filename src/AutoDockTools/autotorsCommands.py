@@ -65,6 +65,7 @@ last line of the pdbq file.
 
 
 
+import itertools
 from .MoleculePreparation import LigandPreparation, AD4LigandPreparation, LigandRandomizer
 from DejaVu import viewerConst
 from DejaVu.Geom  import Geom
@@ -3166,7 +3167,7 @@ versa"""
             return 'ERROR'
         atorsAtoms = None
         molecules, ats = self.vf.getNodesByMolecule(aSet)
-        for mol, atomSets in map(None, molecules, ats):
+        for mol, atomSets in list(itertools.zip_longest(molecules, ats)):
             if mol == self.vf.atorsDict['molecule']:
                 atorsAtoms = atomSets
                 break

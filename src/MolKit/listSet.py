@@ -17,6 +17,7 @@ This module implements a Set class that uses a List to store the objects
 in the set.
 """
 
+import itertools
 import types
 from collections import UserList
 from mglutil.util import misc
@@ -261,7 +262,7 @@ class ListSet(UserList):  # would (list) work???
 
                 else: # sequence of many values
                     assert len(self.data) == len(value)
-                    for o,v in map(None, self.data, value):
+                    for o,v in list(itertools.zip_longest(self.data, value)):
                         setattr(o, member, v)
 #                    for i in xrange(len(self.data)):
 #                        self.data[i].__dict__[member] = value[i]

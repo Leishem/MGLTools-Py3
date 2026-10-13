@@ -13,6 +13,7 @@
 #
 # $Id: selectionCommands.py,v 1.165.2.9 2011/10/05 17:24:57 sargis Exp $
 #
+import itertools
 from ViewerFramework.VF import VFEvent
 
 class SelectionEvent(VFEvent):
@@ -220,7 +221,7 @@ current selection
                                     highlight[int(lVertexIndex)] = 1
                     lGeom.Set(highlight=highlight)
 
-        for mol, atoms in map(None, selMols, selAtms):
+        for mol, atoms in list(itertools.zip_longest(selMols, selAtms)):
             for geomName, lGeom in list(mol.geomContainer.geoms.items()):
                 if   isinstance(lGeom, Spheres) \
                   or isinstance(lGeom, Cylinders):
@@ -331,7 +332,7 @@ current selection
             else:
                 selMols, selAtms = self.vf.getNodesByMolecule(self.vf.selection,
                                                               Atom)
-                for mol, atms in map(None, selMols, selAtms):
+                for mol, atms in list(itertools.zip_longest(selMols, selAtms)):
                     if self.vf.userpref['Selection Object']['value'] == 'spheres':
                         g = mol.geomContainer.geoms['selectionSpheres']
                     else:

@@ -26,6 +26,7 @@ This Module implements commands to label the current selection different ways.
 For example:
     by properties  of the current selection
 """
+import itertools
 import warnings
 import types, tkinter; from mglcompat import pystring as string
 import mglcompat.oldnumeric as Numeric
@@ -298,7 +299,7 @@ class LabelByProperties(MVCommand, MVAtomICOM):
 
     def getRelatedLabelsGeom(self):
         molecules, nodeSets = self.vf.getNodesByMolecule(self.selection)
-        for mol, nodes in map(None, molecules, nodeSets):
+        for mol, nodes in list(itertools.zip_longest(molecules, nodeSets)):
             break
         nodes.sort()
         geomName = nodes[0].__class__.__name__+'Labels'
@@ -577,7 +578,7 @@ class LabelByProperties(MVCommand, MVAtomICOM):
                 warnings.warn("IndexError for %s" %textcolor)
         molecules, nodeSets = self.vf.getNodesByMolecule(nodes)
 
-        for mol, nodes in map(None, molecules, nodeSets):
+        for mol, nodes in list(itertools.zip_longest(molecules, nodeSets)):
             nodes.sort()
             drawLabels(mol, nodes, materials, 
                        properties , font, location, only, negate, format)
@@ -1006,7 +1007,7 @@ the current selection:"""
 
         molecules, nodeSets = self.vf.getNodesByMolecule(nodes)
 
-        for mol, nodes in map(None, molecules, nodeSets):
+        for mol, nodes in list(itertools.zip_longest(molecules, nodeSets)):
             nodes.sort()
             drawLabels(mol, nodes, materials, function , lambdaFunc, font,
                        location, only, negate, format)

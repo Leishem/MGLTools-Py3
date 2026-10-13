@@ -21,6 +21,7 @@
 # $Id: sdCommands.py,v 1.80 2009/09/09 18:09:53 sanner Exp $
 #
 
+import itertools
 import Pmv 
 import Pmw
 import tkinter
@@ -594,7 +595,7 @@ class ColorMolIndexedPolygons(ColorCommand):
             self.colorMap.gui = self.colorMapGUI
         molecules, atomSets = self.vf.getNodesByMolecule(nodes, Atom)  
         geometries={}
-        for mol, atm in map(None, molecules, atomSets):
+        for mol, atm in list(itertools.zip_longest(molecules, atomSets)):
             geomC = mol.geomContainer
             fmax = -9999.0
             fmin = 9999.0
@@ -923,7 +924,7 @@ class DisplayMolIndexedPolygons(DisplayCommand):
     def doit(self, nodes, name = 'all', only=0, negate=0, **kw):
 
         molecules, atomSets = self.vf.getNodesByMolecule(nodes, Atom)
-        for mol, atm in map(None, molecules, atomSets):
+        for mol, atm in list(itertools.zip_longest(molecules, atomSets)):
             idf = InputFormDescr(title ="Display indexedpolygons for %s:"%mol.name)
             geomC = mol.geomContainer
             if name == 'ask':

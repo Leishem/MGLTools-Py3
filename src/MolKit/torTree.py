@@ -6,6 +6,7 @@
 #
 
 
+import itertools
 from mglutil.util.tree import TreeNode
 from mglutil.math.transformation import Transformation
 from mglcompat import pystring as string
@@ -276,7 +277,7 @@ class TorTree:
         if len(angList) != len(self.torsionMap):
             raise ValueError("invalid torsion angle list: ").with_traceback(angList)
         # @@ should use zip here
-        for angle, node in map(None, angList, self.torsionMap):
+        for angle, node in list(itertools.zip_longest(angList, self.torsionMap)):
             node.angle = angle
 
 

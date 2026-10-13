@@ -14,6 +14,7 @@
 # $Id: superimposeCommandsNew.py,v 1.15.4.1 2010/12/30 21:56:18 rhuey Exp $
 #
 
+import itertools
 import mglcompat.oldnumeric as Numeric, os, tkinter, Pmw
 
 from Pmv.stringSelectorGUI import StringSelectorGUI
@@ -558,7 +559,7 @@ class SuperimposeAtomsGUICommand(SuperimposeCommand, MVAtomICOM):
             return
         ebn = self.cmdForms['pairs'].descr.entryByName
         lc = ebn['newpairs']['widget']
-        for refatm, mobatm in map(None, refFiltAtms, mobFiltAtms):
+        for refatm, mobatm in list(itertools.zip_longest(refFiltAtms, mobFiltAtms)):
             #self.pairs.append((refatm, mobatm))
             pairName = refatm.full_name() + '---' + mobatm.full_name()
             self.newPairs[pairName]=(refatm,mobatm)

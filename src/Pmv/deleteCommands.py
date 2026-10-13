@@ -19,6 +19,7 @@ for examples:
     Delete Molecule
 """
 
+import itertools
 import types; from mglcompat import pystring as string
 
 from ViewerFramework.VFCommand import CommandGUI
@@ -485,7 +486,7 @@ class DeleteAtomSet(MVCommand):
         self.vf.dispatchEvent(event)
 
         allAtoms = AtomSet([])
-        for mol, atSet in map(None, molecules, atomSets):
+        for mol, atSet in list(itertools.zip_longest(molecules, atomSets)):
             if len(atSet)==len(mol.allAtoms):
                 #have to add atoms back to allAtoms for deleteMol to work
                 self.vf.allAtoms = self.vf.allAtoms + atSet

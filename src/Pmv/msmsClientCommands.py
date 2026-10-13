@@ -4,6 +4,7 @@
 #
 # Authors: M. Sanner and S. Dallakyan
 
+import itertools
 import socket
 import subprocess
 import numpy
@@ -444,7 +445,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
         else:
             molecules, atmSets = self.vf.getNodesByMolecule(nodes, Atom)
 
-        for mol, atms in map(None, molecules, atmSets):
+        for mol, atms in list(itertools.zip_longest(molecules, atmSets)):
             if not surfName:
                 surfName = mol.name + '-MSMS'
             geomC = mol.geomContainer

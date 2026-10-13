@@ -481,7 +481,7 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
             if not len(icomVals): break
             if not hasattr(self.vf, item):
                 continue
-            exec('cmd = self.vf.'+item)
+            cmd = eval('self.vf.'+item)
             if cmd in icomVals:
                 #cmd.update()
                 s = self.callbackDict[item]

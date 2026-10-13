@@ -816,15 +816,16 @@ class MoleculeViewer(ViewerFramework):
         if withShell:
             from traceback import print_exception
             
-            def print_exception_modified(etype, value, tb, limit=None, file=None):
+            def print_exception_modified(etype, value=None, tb=None, limit=None,
+                                         file=None, chain=True):
                 """
                 Modified version of traceback.print_exception
                 Deiconifies pyshell when Traceback is printed
                 """
-                print_exception(etype, value, tb, limit, file)
+                print_exception(etype, value, tb, limit=limit, file=file, chain=chain)
                 if hasattr(self, 'GUI'):
                     self.GUI.pyshell.top.deiconify()
-                if not 'Pmv' in tb.tb_frame.f_code.co_filename:
+                if tb is None or not 'Pmv' in tb.tb_frame.f_code.co_filename:
                     return
                 if etype == ImportError:
                     if hasattr(value,'message'):

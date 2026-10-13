@@ -12,6 +12,7 @@
 #
 # $Id: extrusionCommands.py,v 1.45.2.1 2012/06/20 20:58:59 sanner Exp $
 #
+import itertools
 import tkinter, mglcompat.oldnumeric as Numeric,Pmw
 import types; from mglcompat import pystring as string
 from tkinter.colorchooser import askcolor
@@ -477,7 +478,7 @@ class DisplayPath3DCommand(MVCommand):
         #################################################################
             
         molecules, residueSets = self.vf.getNodesByMolecule(nodes, Residue)
-        for mol,residues in map(None, molecules, residueSets):
+        for mol,residues in list(itertools.zip_longest(molecules, residueSets)):
             for chain in mol.chains:
                 if not hasattr(chain, 'sheet2D'):
                     chain.sheet2D = {}

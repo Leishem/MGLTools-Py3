@@ -12,6 +12,7 @@
 #
 
 
+import itertools
 from tkinter import Label, Checkbutton, Radiobutton, StringVar, IntVar
 import Pmw
 import types
@@ -688,7 +689,7 @@ class ExtrudeSecondaryStructureCommand(MVCommand):
                                                           Residue)
         molSelectedResiduesDict = dict( zip( selMols, selResidues) )
         # Create a sheet2 object.
-        for mol, residues in map(None, molecules, residueSets):
+        for mol, residues in list(itertools.zip_longest(molecules, residueSets)):
             if not mol.hasSS:
                 # Compute the secondarystructure if not there
                 self.vf.computeSecondaryStructure(mol, topCommand=0)
@@ -1344,7 +1345,7 @@ class ExtrudeSecondaryStructureCommandUnic(ExtrudeSecondaryStructureCommand):
         molSelectedResiduesDict = dict( zip( selMols, selResidues) )
 
         # Create a sheet2 object.
-        for mol, residues in map(None, molecules, residueSets):
+        for mol, residues in list(itertools.zip_longest(molecules, residueSets)):
             if not mol.hasSS:
                 # Compute the secondarystructure if not there
                 self.vf.computeSecondaryStructure(mol, topCommand=0)
@@ -1772,7 +1773,7 @@ upon atom deletion.
         molecules, residueSets = self.getNodes(nodes)
         setOn = ResidueSet([])
         setOff = ResidueSet([])
-        for mol, residues in map(None, molecules, residueSets):
+        for mol, residues in list(itertools.zip_longest(molecules, residueSets)):
             if not mol.hasSS:
                 self.vf.computeSecondaryStructure(mol,topCommand=0,log=0)
                 self.vf.extrudeSecondaryStructure(
@@ -2062,7 +2063,7 @@ class ColorBySSElementType(ColorFromPalette):
                 for a in atms:
                     a.colors[g] = tuple( colors[0] )
             else:
-                for a, c in map(None, atms, colors):
+                for a, c in list(itertools.zip_longest(atms, colors)):
                     a.colors[g] = tuple(c)
 
         updatedGeomsToColor = []

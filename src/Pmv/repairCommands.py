@@ -14,6 +14,7 @@
 #
 
 
+import itertools
 from ViewerFramework.VFCommand import CommandGUI
 from Pmv.moleculeViewer import AddAtomsEvent, DeleteAtomsEvent
 ##  from ViewerFramework.gui import InputFormDescr
@@ -1338,7 +1339,7 @@ class EditHistHydrogens(MVCommand):
         if len(newHydrogens):
             self.vf.allAtoms = self.vf.allAtoms + newHydrogens
             mols, atms = self.vf.getNodesByMolecule(newHydrogens, Atom)
-            for m, ats in map(None, mols, atms):
+            for m, ats in list(itertools.zip_longest(mols, atms)):
                 m.allAtoms = m.allAtoms + ats
             if self.hasKollman:
                 self.vf.addKollmanCharges(newHydrogens, topCommand=0)

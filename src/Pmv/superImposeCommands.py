@@ -13,6 +13,7 @@
 # $Id: superImposeCommands.py,v 1.24.4.1 2010/12/30 21:56:18 rhuey Exp $
 #
 
+import itertools
 import mglcompat.oldnumeric as Numeric, os
 import tkinter, Pmw
 
@@ -644,7 +645,7 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
 
 
     def updateChooser(self, set1, set2):
-        for elt1, elt2 in map(None, set1, set2):
+        for elt1, elt2 in list(itertools.zip_longest(set1, set2)):
             key = elt1.full_name() + '--' + elt2.full_name()
             self.newPairs[key] = (elt1, elt2)
             if not self.pairForm is None:
