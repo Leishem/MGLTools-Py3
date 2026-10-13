@@ -1,78 +1,106 @@
-# MGLTools 1.5.6 on Python 3
+# MGLTools 1.5.6 for Python 3 — AutoDockTools GUI, portable for Windows
 
-A port of **MGLTools 1.5.6** — AutoDockTools (ADT), the Python Molecular Viewer
-(PMV) and Vision — from Python 2.5 / Numeric / Togl to **Python 3.10+ /
-NumPy 2 / modern OpenGL**, so it runs natively on current macOS (Apple
-Silicon), Linux (x86_64, ARM64) and Windows (x64, ARM64).
+**AutoDockTools (ADT)**, the **Python Molecular Viewer (PMV)** and **Vision** from
+MGLTools 1.5.6, ported from Python 2.5 / Numeric / Togl to **Python 3 /
+NumPy 2 / modern OpenGL**.
 
-![ADT 4.2 on Python 3, molecular surface of HIV protease](docs/screenshots/adt_linux_hsg1_msms.png)
+The Windows release is **portable**: no installation, no Python needed.
+Download, unzip, double-click `adt.exe`.
 
-## Install
+![AutoDockTools 4.2 on Windows (Python 3): molecular surface of HIV protease](docs/screenshots/adt_windows_surface.png)
+
+## Download and run (Windows)
+
+1. Download **`MGLTools-1.5.6-Py3-Win64-Portable.zip`** from the
+   [Releases page](../../releases/latest).
+2. Unzip it anywhere — a local folder or a USB drive.
+3. Double-click **`adt.exe`** (AutoDockTools), **`pmv.exe`** (molecular viewer)
+   or **`vision.exe`** (Vision).
+
+If Windows SmartScreen shows "Windows protected your PC", click
+**More info → Run anyway** (the launchers are not code-signed).
+
+### Supported systems
+
+| Processor | Status |
+|---|---|
+| Intel / AMD 64-bit (x64) | Native — tested |
+| ARM64 (e.g. Qualcomm Snapdragon) | Runs through Windows 11's built-in x64 emulation — expected to work, not yet tested |
+
+Windows 10 or 11 (64-bit) with a current graphics driver (Intel, AMD or NVIDIA).
+32-bit Windows is not supported.
+
+### Command-line preparation scripts
+
+From a command prompt in the unzipped folder:
 
 ```
-pip install mgltools-*.whl      # wheel from the CI artifacts / releases
-adt                             # AutoDockTools
-pmv                             # Python Molecular Viewer
-vision                          # Vision
+adt-util.bat prepare_receptor4.py -r receptor.pdb -o receptor.pdbqt
+adt-util.bat prepare_ligand4.py   -l ligand.pdb   -o ligand.pdbqt
+adt-util.bat prepare_gpf4.py      -l ligand.pdbqt -r receptor.pdbqt -o grid.gpf
+adt-util.bat prepare_dpf42.py     -l ligand.pdbqt -r receptor.pdbqt -o dock.dpf
 ```
 
-Requires a Python with Tk (python.org installers, Homebrew `python-tk`, or
-your Linux distribution's `python3-tk`). Dependencies (NumPy, SciPy, Pillow,
-Pmw, PyOpenGL, tkinter-gl, SimPy 2.3.1) are installed automatically.
+Settings are stored in `%USERPROFILE%\.mgltools\1.5.6-py3`, separate from any
+original MGLTools 1.5.6 installation.
 
-The ADT command-line scripts work as before, e.g.
+## Reporting a problem
 
-```
-python -m AutoDockTools.Utilities24.prepare_receptor4 -r hsg1.pdb -o hsg1.pdbqt
-```
+Please [open an issue](../../issues/new/choose) and include:
+
+- **a screenshot** of the problem (and of the Python shell window if an error
+  appears there),
+- your Windows version and processor (*Settings → System → About*) and graphics card,
+- the steps that led to the problem and, if possible, the input files.
 
 ## What was validated
 
 | Check | Result |
 |---|---|
-| ADT `prepare_receptor4`, `prepare_ligand4`, `prepare_gpf4`, `prepare_dpf42` on the ADT tutorial (hsg1 + indinavir) | **byte-identical** to MGLTools 1.5.6 (`tests/test_adt_pipeline.py`) |
-| Molecular surface (mslib) vs MSMS 1.4.4 on hsg1 | vertices within 0.12 Å (sd) of the analytical SES, no bias; SES area −3 %, volume −2 % (`tests/test_mslib.py`) |
-| All 18 native extensions | import and run; heap-checked (`tests/test_native.py`) |
-| PMV/ADT GUI | starts, loads a molecule, lines/sticks/CPK/ribbon/surface/selection/colouring render (`tests/gui_smoke.py`) |
+| `prepare_receptor4`, `prepare_ligand4`, `prepare_gpf4`, `prepare_dpf42` on the ADT tutorial (HIV protease hsg1 + indinavir) | **byte-identical** output to the original MGLTools 1.5.6, on Windows and Linux |
+| Molecular surface vs the original MSMS | vertices within ~0.1 Å of MSMS's surface; area within ~3 % |
+| GUI | loads molecules; lines, sticks & balls, CPK, ribbons, molecular surfaces, selection and colouring render correctly |
 
-## How the port works
+| CPK | Ribbon |
+|---|---|
+| ![CPK](docs/screenshots/adt_windows_cpk.png) | ![Ribbon](docs/screenshots/adt_windows_ribbon.png) |
 
-* **Python 2 → 3**: `tools/convert_py.py` (2to3 plus text rules),
-  `tools/fix_py3_misc.py`, `tools/fix_code_strings.py` (code stored in
-  strings: resource files, Vision nodes), `tools/convert_division.sh`
-  (`/` → `old_div`, Python 2 integer division semantics).
-* **Compatibility shims** in `src/mglcompat/`: `numpy.oldnumeric`
-  (Numeric API on NumPy 2), Python 2 `string`/`types`/`user`/`Canvas`
-  modules, `cmp`, old-style-class properties, Tk 8.4 leniency on Tk 8.6+
-  (`tkcompat`), non-fatal GLX errors (`x11errors`).
-* **Native code** (`native/`, 1.5.4 sources): SWIG 4 wrappers rebuilt for
-  Python 3 and NumPy 2 (`native/common/mgl_npcompat.h`,
-  `mgl_py2compat.h`, `tools/patch_native.py`).
-* **OpenGL**: opengltk's SWIG GL/GLU bindings are replaced by **PyOpenGL**
-  with adapters keeping opengltk's conventions (`src/opengltk/_pyogl.py`);
-  the Tk GL widget is **TkGL** (a maintained Togl 2 descendant) instead of
-  Togl 1.7.
-* **Molecular surfaces**: MSMS was only available as closed binaries for old
-  platforms. `src/mslib/` is an open-source, MSMS-API-compatible replacement
-  (grid-based solvent excluded surface + marching cubes).
+## How it was ported
+
+* **Python 2 → 3**: automated conversion plus compatibility shims for Python 2
+  behaviour the code relies on (`src/mglcompat/`).
+* **Native code**: the 15 C/C++ extension modules were rebuilt for Python 3 and
+  NumPy 2 with SWIG 4 (`native/`).
+* **OpenGL**: the old Togl widget and SWIG GL bindings were replaced by
+  [TkGL](https://github.com/3-manifolds/tkinter_gl) and PyOpenGL.
+* **Molecular surfaces**: MSMS was available only as closed binaries for old
+  platforms; `src/mslib/` is a new open-source, MSMS-compatible implementation.
+
+### Building from source
+
+```
+pip install .                       # Windows needs Visual Studio Build Tools
+adt                                 # or pmv / vision
+python -m pytest                    # test suite (compares with MGLTools 1.5.6 outputs)
+```
+
+Linux and macOS builds are supported by the source; release packages for them
+are not published yet.
 
 ## Known limitations
 
-* Surfaces: narrow channels thinner than the grid step (~0.6 Å at the default
-  density) may be closed off, so a few internal-pocket surface patches MSMS
-  shows can be missing. SES areas are ~3–5 % lower than MSMS's analytical
-  values.
-* Accumulation buffers (jittered anti-aliasing) and multisampling are opt-in
-  (`MGL_GL_ACCUM=1`, `MGL_GL_MULTISAMPLE=1`); many modern drivers lack them.
-* Not ported: `cMolKit` GROMACS `.xtc` reader on Windows (no XDR library),
-  the Blender/Cinema4D/Maya plugins, web-service (ZSI) clients.
-* Licensing is unchanged: MGLTools is free for non-commercial use; `mslib`
-  here is new code. See `LICENSES`.
+* Surfaces: channels narrower than the surface grid (~0.6 Å at the default
+  density) may be closed, so a few internal-pocket patches can be missing.
+* Not included: the GROMACS `.xtc` trajectory reader on Windows, web-service
+  (Opal/ZSI) clients, and the Blender/Cinema 4D/Maya plugins.
 
-## Development
+## License
 
-```
-python setup.py build_ext --inplace        # build extensions into src/
-MGL_USE_SRC=1 python -m pytest              # test the in-place build
-tests/compare_adt.sh, tests/compare_msms.sh # compare with a local MGLTools 1.5.6
-```
+MGLTools is © The Scripps Research Institute and is **free for non-commercial
+educational and academic research use**; some components (e.g. the UT
+packages) carry their own academic terms. See [`LICENSES`](LICENSES). This
+port does not change those terms. For commercial use, contact the original
+authors.
+
+Original software: [MGLTools](https://ccsb.scripps.edu/mgltools/) by the
+Molecular Graphics Laboratory, The Scripps Research Institute.

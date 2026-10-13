@@ -1,0 +1,43 @@
+name: Bug report
+description: Something does not work or looks wrong
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: >
+        Drag and drop a screenshot of the problem here. If an error appears in
+        the Python shell window, include a screenshot of that window too.
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version and processor
+      description: From Settings → System → About (e.g. "Windows 11 23H2, Intel Core i7-14700HX")
+    validations:
+      required: true
+  - type: input
+    id: gpu
+    attributes:
+      label: Graphics card
+      placeholder: e.g. Intel UHD Graphics, NVIDIA RTX 4060
+  - type: input
+    id: version
+    attributes:
+      label: Package
+      description: Which download did you use?
+      value: MGLTools-1.5.6-Py3-Win64-Portable.zip
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The menu commands you used, and attach input files (PDB/PDBQT) if possible.
