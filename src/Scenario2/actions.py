@@ -94,7 +94,7 @@ class Actions:
         for i in range(nblines):
             labelLines.append( " "*(nameLength+1) )
 
-        for i, pos in enumerate(xrange(pos1,pos2+1)):
+        for i, pos in enumerate(range(pos1,pos2+1)):
             obj = self.getInterval(pos)
 
             # build posStr
@@ -223,7 +223,7 @@ class Actions:
                 assert i.kf1!=kf
                 assert i.kf2!=kf
         except AssertionError:
-            print "could not remove kf, belongs to interval", kf, kf.pos
+            print("could not remove kf, belongs to interval", kf, kf.pos)
             return
         self.keyframes.remove(kf)
 

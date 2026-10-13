@@ -5,7 +5,7 @@
 from mglutil.gui.BasicWidgets.Tk.progressBar import ProgressBar
 from mglutil.util.packageFilePath import getResourceFolderWithVersion, findFilePath
 from mglutil.util.misc import ensureFontCase
-import Tkinter, os, sys, time
+import tkinter, os, sys, time
 
 class SplashScreen:
     """
@@ -44,7 +44,7 @@ class SplashScreen:
             if len(lines) < 10:
                 self.registered = True
         
-        self.waitTk = Tkinter.IntVar()
+        self.waitTk = tkinter.IntVar()
         self.percent = 0
         if self.timing_rc is None:
             self.timing_data = []
@@ -68,16 +68,16 @@ class SplashScreen:
         if self.registered and self.noSplash:
             return
         
-        self.splash_win = Tkinter.Toplevel()
+        self.splash_win = tkinter.Toplevel()
         self.splash_win.overrideredirect(1)
         self.splash_win.withdraw()        
  
-        frame = Tkinter.Frame(self.splash_win,relief='raised', bd=3)
+        frame = tkinter.Frame(self.splash_win,relief='raised', bd=3)
         frame.pack()
         try:
             about.gui(master=frame)
-        except Exception, inst:
-            print inst
+        except Exception as inst:
+            print(inst)
         self.progressBar = ProgressBar(master=frame, labelside=None,
                                 width=420, height=20, mode='percent')
         self.progressBar.setLabelText('Loading Modules...')
@@ -87,11 +87,11 @@ class SplashScreen:
             text = """ Please Register! It helps us secure funding for 
 supporting development and you won't have to 
 click these buttons again in the future. Thanks."""
-            Tkinter.Label(frame, text = text, font =(ensureFontCase('helvetica'), 14, 'bold') ).\
+            tkinter.Label(frame, text = text, font =(ensureFontCase('helvetica'), 14, 'bold') ).\
                                                                           pack()
-            Tkinter.Button(frame, text='Register Now', bg = 'Green',
+            tkinter.Button(frame, text='Register Now', bg = 'Green',
                             command=self.Register_Now).pack(side='left')
-            self.Later_Button = Tkinter.Button(frame, text='Remind Me Later', 
+            self.Later_Button = tkinter.Button(frame, text='Remind Me Later', 
                        state='disabled', command=self.Later )
             self.Later_Button.pack(side='right')
       

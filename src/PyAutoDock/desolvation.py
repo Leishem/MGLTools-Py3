@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
 #
@@ -13,8 +13,8 @@
 #
 
 
-import numpy.oldnumeric as Numeric, math
-from scorer import DistDepPairwiseScorer
+import mglcompat.oldnumeric as Numeric, math
+from .scorer import DistDepPairwiseScorer
 
 
     
@@ -109,7 +109,7 @@ class DesolvationRefImpl(DistDepPairwiseScorer):
         # get the score array from the derived class
         # self.score_array = self.get_score_array()
         
-        for row in xrange(len(atoms_a)):
+        for row in range(len(atoms_a)):
             # we need to call get_entities to reset the iterator after firts loop
             for i,ats in enumerate(self.ms.get_entities(atoms_bx)):
                 element = ats.element
@@ -385,4 +385,4 @@ NewDesolvationDesolvMap = NewDesolvationDesolvMapRefImpl
 #end NewDesolvation
 
 if __name__ == '__main__':
-    print "run tests in Tests.test_desolvation"
+    print("run tests in Tests.test_desolvation")

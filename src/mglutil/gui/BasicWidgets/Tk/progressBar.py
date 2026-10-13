@@ -8,7 +8,7 @@
 #
 #########################################################################
 
-import Tkinter
+import tkinter
 
 class ProgressBarConf:
     """callable object to call the progress bar configure method. Used to
@@ -19,7 +19,7 @@ class ProgressBarConf:
         self.pb = pb
 
     def __call__(self, **kw):
-        apply(self.pb.configure, (), kw)
+        self.pb.configure(*(), **kw)
         
 
 class ProgressBarUpd:
@@ -109,7 +109,7 @@ THE SET METHOD
                  mode='percent', labelside='top'):
 
         if master is None:
-            master = Tkinter.Toplevel()
+            master = tkinter.Toplevel()
             master.protocol('WM_DELETE_WINDOW', self.hide )
         self.master = master           # master of this widget
 
@@ -147,9 +147,9 @@ THE SET METHOD
 
 
     def createWidget(self):
-        self.frame = Tkinter.Frame(self.master, borderwidth=self.borderwidth,
+        self.frame = tkinter.Frame(self.master, borderwidth=self.borderwidth,
                                    relief='sunken')
-        self.canvas = Tkinter.Canvas(self.frame)
+        self.canvas = tkinter.Canvas(self.frame)
 
         # create the background bar geometry
         bw = self.borderwidth
@@ -166,7 +166,7 @@ THE SET METHOD
             int(self.width/2), int((self.height/2)+1), text="0%")
         self.canvas.itemconfig(self.progressLabel, fill='white')
         # create the text label geometry
-        self.label = Tkinter.Label(self.frame, text='', width=20)
+        self.label = tkinter.Label(self.frame, text='', width=20)
         if self.labelside is not None:
             self.label.pack(side=self.labelside)
         self.canvas.pack()
@@ -314,7 +314,7 @@ THE SET METHOD
     def setMode(self, mode):
         if mode not in ['percent', 'absolute', 'increment']:
             mode = 'percent'
-            print 'PROGRESSBAR Warning: illegal mode, set to "percent"'
+            print('PROGRESSBAR Warning: illegal mode, set to "percent"')
         self.mode = mode
         if mode == 'increment':
             self.setIncrement() # this needs to be reset
@@ -330,8 +330,8 @@ THE SET METHOD
     def setProgressFormat(self, format):
         if format not in ['percent','ratio']:
             format = 'percent'
-            print 'PROGRESSBAR Warning: illegal progressformant, '+ \
-                  'set to "percent"'
+            print('PROGRESSBAR Warning: illegal progressformant, '+ \
+                  'set to "percent"')
         self.progressformat = format
 
         
@@ -341,7 +341,7 @@ THE SET METHOD
         
 
     def show(self):
-        if isinstance(self.master, Tkinter.Toplevel):
+        if isinstance(self.master, tkinter.Toplevel):
             self.master.deiconify()
         else:
             self.frame.pack(side='left', pady=3)
@@ -350,7 +350,7 @@ THE SET METHOD
 
 
     def hide(self):
-        if isinstance(self.master, Tkinter.Toplevel):
+        if isinstance(self.master, tkinter.Toplevel):
             self.master.withdraw()
         else:
             self.frame.forget()
@@ -374,7 +374,7 @@ THE SET METHOD
             mode = None
             init = 0
 
-            for key,value in kw.items():
+            for key,value in list(kw.items()):
                 if key=='width':
                     self.setWidth(value)
                 elif key=='height':
@@ -405,7 +405,7 @@ if __name__ == '__main__':
 
     bar = ProgressBar(width=150, height=18)
 
-    print 'type "loop()" and "loop2(max=value)" to run the progress bar'
+    print('type "loop()" and "loop2(max=value)" to run the progress bar')
     
     def loop(sleep=None):
         if sleep is None:

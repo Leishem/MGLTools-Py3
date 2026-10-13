@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ##############################################################################
 #
@@ -17,14 +17,14 @@
 #app=GraphApp(root)
 #app.caluculate_ramp() returns current ramp
 #from ViewerFramework.VFCommand import Command, CommandGUI
-from Tkinter import *
-import Tkinter
-import tkFileDialog
+from tkinter import *
+import tkinter
+import tkinter.filedialog
 import types,os
 from mglutil.util.callback import CallBackFunction
 from mglutil.util.callback import CallbackManager
 from mglutil.util.misc import ensureFontCase
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 import Pmw
 from Pmw import *
@@ -42,17 +42,17 @@ class GraphApp:
         self.canvas=canvas = Canvas(self.master,width=345,height=320,bg='white') 
         self.toolbar = Frame(master)             # Create Toolbar
         self.toolbar.pack(side='top', expand=1, fill='both') 
-        self.menuFrame1 = Tkinter.Frame(self.toolbar, relief='raised', borderwidth=3)
+        self.menuFrame1 = tkinter.Frame(self.toolbar, relief='raised', borderwidth=3)
         self.menuFrame1.pack(side='top', expand=1, fill='x')
-        self.filebutton = Tkinter.Menubutton(self.menuFrame1, text='File')
+        self.filebutton = tkinter.Menubutton(self.menuFrame1, text='File')
         self.filebutton.pack(side='left')
-        self.filemenu = Tkinter.Menu(self.filebutton, {})
+        self.filemenu = tkinter.Menu(self.filebutton, {})
         self.filemenu.add_command(label='Read', command=self.read_cb)
         self.filemenu.add_command(label='Write', command=self.write_cb)
         self.filebutton['menu'] = self.filemenu
-        self.editbutton = Tkinter.Menubutton(self.menuFrame1, text='Edit')
+        self.editbutton = tkinter.Menubutton(self.menuFrame1, text='Edit')
         self.editbutton.pack(side='left', anchor='w')
-        self.editmenu = Tkinter.Menu(self.editbutton, {})
+        self.editmenu = tkinter.Menu(self.editbutton, {})
         self.editmenu.add_command(label='Reset to first in history', command=self.resetAll_cb)
         self.editmenu.add_command(label='Step back in history loop', command=self.stepBack_cb)
         self.editmenu.add_command(label='Default Curve', command=self.defaultcurve_cb)
@@ -62,10 +62,10 @@ class GraphApp:
         self.editmenu.add_checkbutton(label='Histogram',var=self.histvar,command=self.drawHistogram)
         self.editbutton['menu'] = self.editmenu
         self.optionType = IntVar()
-        self.updatebutton = Tkinter.Menubutton(self.menuFrame1, text='Update')
+        self.updatebutton = tkinter.Menubutton(self.menuFrame1, text='Update')
         self.updatebutton.pack(side='left', anchor='w')
-        self.updatemenu = Tkinter.Menu(self.updatebutton,{} )
-        for v,s in {0:'Continuous',1:'MouseButtonUp',2:'Update'}.items():
+        self.updatemenu = tkinter.Menu(self.updatebutton,{} )
+        for v,s in list({0:'Continuous',1:'MouseButtonUp',2:'Update'}.items()):
             self.updatemenu.add_radiobutton(label=s,
                                 var=self.optionType,
                                 value = v,command=self.calloption)
@@ -76,17 +76,17 @@ class GraphApp:
         self.CurveType = IntVar()
         self.CurveType.set(0) 
         self.Smooth=1
-        self.curvebutton = Tkinter.Menubutton(self.menuFrame1, text='Curve')
+        self.curvebutton = tkinter.Menubutton(self.menuFrame1, text='Curve')
         self.curvebutton.pack(side='left', anchor='w')
-        self.curvemenu = Tkinter.Menu(self.curvebutton,{} )
-        for v,s in {0:'Smooth',1:'Freehand'}.items():
+        self.curvemenu = tkinter.Menu(self.curvebutton,{} )
+        for v,s in list({0:'Smooth',1:'Freehand'}.items()):
             self.curvemenu.add_radiobutton(label=s,
                                 var=self.CurveType,
                                 value = v,command=self.curveoption)
         
             
         self.curvebutton['menu'] = self.curvemenu
-        f1 = Tkinter.Frame(self.master)
+        f1 = tkinter.Frame(self.master)
         f1.pack(side='bottom', fill='both', expand=1)
         self.d1scalewheellab=Label(f1,text="Sensitivity")
         self.d1scalewheellab.pack(side="left")
@@ -162,7 +162,7 @@ class GraphApp:
         self.curovals=[]
         self.default_points=[(50,275),(88, 238), (101, 150), (154, 78), (75, 271),(305,20)]
         # now set the constructor options correctly using the configure method
-        apply( self.configure, (),{'callback':callback,'continuous':continuous})
+        self.configure(*(), **{'callback':callback,'continuous':continuous})
         self.continuous=continuous
         self.mousebuttonup=0
         self.update=0
@@ -370,13 +370,13 @@ class GraphApp:
                     if self.curx>=self.limit_xcoord[1][0] and self.cury<self.limit_xcoord[1][1]:
                         dx=self.curx=self.limit_xcoord[1][0]
         #Limit graph with in the axis
-        if self.curx not in range(50,305):
+        if self.curx not in list(range(50,305)):
                 if self.curx<50:
                     self.curx=dx=50
                 else:
                     self.curx=dx=305
                     
-        if self.cury not in range(20,275):
+        if self.cury not in list(range(20,275)):
                 if self.cury<20:
                     self.cury=dy=20
                 else:
@@ -578,11 +578,11 @@ class GraphApp:
             return self.caluculate_ramp()
         
     def configure(self, **kw):
-        if 'type' in kw.keys(): # make sure type is set first
+        if 'type' in list(kw.keys()): # make sure type is set first
             self.setType(kw['type'])
             del kw['type']
             
-        for key,value in kw.items():
+        for key,value in list(kw.items()):
             if key=='callback': 
                 self.setCallbacks(value)
             
@@ -591,10 +591,10 @@ class GraphApp:
         """Set widget callback. Must be callable function. Callback is called
 every time the widget value is set/modified"""
 
-        assert cb is None or callable(cb) or type(cb) is types.ListType,\
+        assert cb is None or callable(cb) or type(cb) is list,\
                "Illegal callback: must be either None or callable. Got %s"%cb
         if cb is None: return
-        elif type(cb) is types.ListType:
+        elif type(cb) is list:
             for func in cb:
                 assert callable(func), "Illegal callback must be callable. Got %s"%func
                 self.callbacks.AddCallback(func)
@@ -739,7 +739,7 @@ every time the widget value is set/modified"""
     def fileOpenAsk(self, idir=None, ifile=None, types=None,
                     title='Open'):
         if types==None: types = [ ('All files', '*') ]
-        file = tkFileDialog.askopenfilename( filetypes=types,
+        file = tkinter.filedialog.askopenfilename( filetypes=types,
                                              initialdir=idir,
                                              initialfile=ifile,
                                              title=title)
@@ -767,7 +767,7 @@ every time the widget value is set/modified"""
     def fileSaveAsk(self, idir=None, ifile=None, types = None,
                 title='Save'):
         if types==None: types = [ ('All files', '*') ]
-        file = tkFileDialog.asksaveasfilename( filetypes=types,
+        file = tkinter.filedialog.asksaveasfilename( filetypes=types,
                                                initialdir=idir,
                                                initialfile=ifile,
                                                title=title)
@@ -881,7 +881,7 @@ every time the widget value is set/modified"""
                             if p[0]==305 or p[0]==304:
                                 pns.remove(self.endpoint)
                       
-                print pns
+                print(pns)
                 if self.Smooth:
                     self.curline=self.canvas.create_line(pns,width=1,fill='black',smooth=1)
                 else:
@@ -930,7 +930,7 @@ every time the widget value is set/modified"""
                 
     def setControlPoints(self,points):
         """function to set curve control points"""
-        assert isinstance(points, types.ListType),"Illegal type for points"
+        assert isinstance(points, list),"Illegal type for points"
         
         for (x,y) in points:
             assert  x in range(50,306),"coordinates are out of range,x should be in [50,305]"

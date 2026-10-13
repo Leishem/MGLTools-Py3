@@ -1,6 +1,6 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from string import split
 
 class ReadGamessOrbitals:
@@ -10,13 +10,13 @@ class ReadGamessOrbitals:
 
         # allocate numeric array that is **2
         dim = int(round(len(values)**(1./3)))
-        print dim, dim**3, len(values)
+        print(dim, dim**3, len(values))
         if dim**3!=len(values):
-            raise ValueError, "Length of array is not **3"
+            raise ValueError("Length of array is not **3")
         dim2 = 2
         while dim2<dim:
             dim2 = dim2*2
-        print 'dim: padding from:', dim, 'to:', dim2
+        print('dim: padding from:', dim, 'to:', dim2)
         intval = Numeric.zeros( (dim2,dim2,dim2), Numeric.UnsignedInt8 )
 
         valuesN = Numeric.array(values)
@@ -42,10 +42,10 @@ class ReadGamessOrbitals:
         myfile.close()
         self.header = {}
 
-        dataspl = map( split, data )
+        dataspl = list(map( split, data ))
         values = []
         for l in dataspl:
-            values.extend( map(float, l) )
+            values.extend( list(map(float, l)) )
 
         # Fixme this should be done in separate nodes
         self.data, mini, maxi = self.mapArray(values, 1, 255)

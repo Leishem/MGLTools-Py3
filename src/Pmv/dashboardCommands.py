@@ -1,4 +1,4 @@
-import Tkinter, numpy
+import tkinter, numpy
 from Pmv.mvCommand import MVCommand, MVCommandGUI
 from Pmv.moleculeViewer import DeleteGeomsEvent, AddGeomsEvent, EditGeomsEvent
 
@@ -32,10 +32,10 @@ class AddSelectionToDashboardCommand(MVCommand):
 
     def guiCallback(self, evt=None):
         if len(self.vf.selection)==0:
-            from tkMessageBox import showwarning
+            from tkinter.messagebox import showwarning
             showwarning("Warning", "select something first")
         else:
-            from tkSimpleDialog import askstring
+            from tkinter.simpledialog import askstring
             l = len(self.vf.dashboard.tree.root.children)
             name = askstring("set name in dashboard", "name:",
                              initialvalue="set_%d"%l)
@@ -81,11 +81,11 @@ class FloatDashboard(MVCommand):
         # get handle to old tree
         oldtree = self.vf.dashboard.tree
 
-        if isinstance(oldtree.master, Tkinter.Toplevel):
+        if isinstance(oldtree.master, tkinter.Toplevel):
             return
 
         # create window for new tree
-        master = Tkinter.Toplevel()
+        master = tkinter.Toplevel()
         #master.withdraw()
         #master.protocol('WM_DELETE_WINDOW',self.vf.dashboard.hide)
         master.protocol('WM_DELETE_WINDOW',self.vf.dockDashboard)
@@ -161,13 +161,13 @@ class ShowDashboard(MVCommand):
         tree = self.vf.dashboard.tree
         if val:
             self.vf.GUI.toolbarCheckbuttons['Dashboard']['Variable'].set(1)
-            if isinstance(tree.master, Tkinter.Toplevel):
+            if isinstance(tree.master, tkinter.Toplevel):
                 self.vf.dashboard.tree.master.deiconify()
             else:
                 self.vf.dashboard.tree.pack(side='bottom', expand=0, fill='x')
         else:
             self.vf.GUI.toolbarCheckbuttons['Dashboard']['Variable'].set(0)
-            if isinstance(tree.master, Tkinter.Toplevel):
+            if isinstance(tree.master, tkinter.Toplevel):
                 self.vf.dashboard.tree.master.withdraw()
             else:
                 self.vf.dashboard.tree.forget()
@@ -299,7 +299,7 @@ class Dashboard(MVCommand):
         
         rootnode = MolFragNodeWithButtons(syst, None,buttonType='OnOffButtons')
         # master2 is master for tree
-        master2 = Tkinter.Frame(self.vf.GUI.dockDashMaster)
+        master2 = tkinter.Frame(self.vf.GUI.dockDashMaster)
         self.master2 = master2
         tree = MolFragTreeWithButtons(master2, rootnode,
                                       self.vf, selectionMode='multiple')
@@ -352,7 +352,7 @@ class Dashboard(MVCommand):
             surfName = event.objects[1][0][0]
             #if surfName=='MSMS-MOL':
             for mol in self.vf.Mols:#nodes.top.uniq():
-                if mol.geomContainer.atoms.has_key(surfName):
+                if surfName in mol.geomContainer.atoms:
                     #ats = mol.geomContainer.atoms[surfName]
                     self.setColPercent(event.setOn, event.setOff,
                                        '_showMSMSStatus_%s'%surfName)
@@ -362,7 +362,7 @@ class Dashboard(MVCommand):
             for mol in self.vf.Mols:#nodes.top.uniq():
                 geoms = mol.geomContainer.atoms
                 res = ResidueSet([])
-                for k,v in geoms.items():
+                for k,v in list(geoms.items()):
                     if k[:4] in ['Turn', 'Coil', 'Heli', 'Stra']:
                         res += v
                 self.setColPercent(event.setOn, event.setOff,
@@ -534,7 +534,7 @@ class Dashboard(MVCommand):
         deletedMolecules = event.arg
         for child in self.tree.root.children:
             if isinstance(child, SetWithButtons):
-                obj = child.getNodes(0).values()[0][0]
+                obj = list(child.getNodes(0).values())[0][0]
                 mols = obj.top.uniq()
                 for m in mols:
                     if m in deletedMolecules:
@@ -597,17 +597,17 @@ class Dashboard(MVCommand):
             self.resetColPercent(mol, '_showLinesStatus')
             self.setColPercent(ats, [], '_showLinesStatus')
 
-            if gca.has_key('cpk'):
+            if 'cpk' in gca:
                 ats = gca['cpk']
                 self.resetColPercent(mol, '_showCPKStatus')
                 self.setColPercent(ats, [], '_showCPKStatus')
             
-            if gca.has_key('sticks'):
+            if 'sticks' in gca:
                 ats = gca['sticks']
                 self.resetColPercent(mol, '_showS&BStatus')
                 self.setColPercent(ats, [], '_showS&BStatus')
             
-            if gca.has_key('balls'):
+            if 'balls' in gca:
                 ats = gca['balls']
                 self.setColPercent(ats, [], '_showS&BStatus')
 

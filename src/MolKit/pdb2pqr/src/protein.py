@@ -47,10 +47,10 @@
 __date__ = "28 February 2006"
 __author__ = "Todd Dolinsky"
 
-from pdb import *
-from structures import *
-from aa import *
-from na import *
+from .pdb import *
+from .structures import *
+from .aa import *
+from .na import *
 
 class Protein:
     """
@@ -142,11 +142,11 @@ class Protein:
 
         # Make a list for sequential ordering of chains
         
-        if dict.has_key(""):
+        if "" in dict:
             dict["ZZ"] = dict[""]
             del dict[""]
 
-        keys = dict.keys()
+        keys = list(dict.keys())
         keys.sort()
 
         for key in keys:
@@ -158,7 +158,7 @@ class Protein:
                 # It is unclear whether they are Nterm, Cterm, or both.
                 residue = chain.residues[0]
                 if isinstance(residue, Amino):
-                    raise ValueError, "Unable to support amino acid chains of only one residue (%s)" % residue
+                    raise ValueError("Unable to support amino acid chains of only one residue (%s)" % residue)
                 
             for residue in chain.getResidues():
                 self.residues.append(residue)
@@ -185,7 +185,7 @@ class Protein:
             else:
                 obj = "%s(residue, refobj)" % resname
                 residue = eval(obj)
-        except KeyError, NameError:
+        except KeyError as NameError:
             residue = Residue(residue)
         return residue
 
@@ -215,8 +215,8 @@ class Protein:
                 definition: The definition objects.
                 outfilename:  The name of the file to write (string)
         """
-        from forcefield import Forcefield
-        from server import STYLESHEET
+        from .forcefield import Forcefield
+        from .server import STYLESHEET
 
         # Cache the initial atom numbers
         numcache = {}

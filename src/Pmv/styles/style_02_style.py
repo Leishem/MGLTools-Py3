@@ -9,7 +9,7 @@ colored by atom type.
 
 def applyStyle(mv, molName1, molName2, quality='preview'):
     mode='both'
-    if mv.getMolFromName(molName1).geomContainer.geoms.has_key('MSMS-MOL'):
+    if 'MSMS-MOL' in mv.getMolFromName(molName1).geomContainer.geoms:
         mv.displayMSMS("%s::AminoAcids,Nucleotides"%molName1, log=0, setupUndo=0)
     else:
         mv.computeMSMS("%s::AminoAcids,Nucleotides"%molName1, perMol=False, log=0, setupUndo=0)
@@ -23,10 +23,10 @@ def applyStyle(mv, molName1, molName2, quality='preview'):
         ## Cameras
         ## Camera Number 0
         state = {'color': [1, 1, 1, 1.0], 'd2off': 1, 'sideBySideTranslation': 0.0, 'stereoMode': 'MONO', 'sideBySideRotAngle': 3.0, 'boundingbox': 0, 'projectionType': 0, 'contours': False, 'd2cutL': 150, 'd2cutH': 255, 'd1off': 4, 'd1cutH': 60, 'antialiased': 4, 'd1cutL': 0, 'd2scale': 0.0, 'drawThumbnail': False, 'd1scale': 0.012999999999999999}
-        apply(mv.GUI.VIEWER.cameras[0].Set, (), state)
+        mv.GUI.VIEWER.cameras[0].Set(*(), **state)
     
         state = {'end': 233.50498132315809, 'density': 0.10000000000000001, 'color': [1, 1, 1, 1.0], 'enabled': 1, 'start': 135.17698030081922, 'mode': 'GL_LINEAR'}
-        apply(mv.GUI.VIEWER.cameras[0].fog.Set, (), state)
+        mv.GUI.VIEWER.cameras[0].fog.Set(*(), **state)
     
         ## End Cameras
     
@@ -56,13 +56,13 @@ def applyStyle(mv, molName1, molName2, quality='preview'):
         state = {'scissorAspectRatio': 1.0, 'inheritStippleLines': True, 'stippleLines': False, 'disableStencil': False, 'replace': True, 'visible': 1, 'immediateRendering': False, 'inheritLighting': True, 'invertNormals': False, 'pivot': [0.0, 0.0, 0.0], 'quality': 5, 'rotation': [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], 'instanceMatricesFromFortran': [[1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]], 'scissorH': 200, 'frontPolyMode': 'fill', 'blendFunctions': ('GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA'), 'outline': (False, False), 'vertexArrayFlag': False, 'scissorX': 0, 'scissorY': 0, 'listed': True, 'inheritPointWidth': True, 'pickable': True, 'pointWidth': 2, 'scissorW': 200, 'needsRedoDpyListOnResize': False, 'stipplePolygons': False, 'pickableVertices': False, 'inheritMaterial': 0, 'depthMask': 1, 'inheritSharpColorBoundaries': True, 'scale': [1.0, 1.0, 1.0], 'lighting': True, 'inheritCulling': True, 'inheritShading': True, 'shading': 'smooth', 'translation': [0.0, 0.0, 0.0], 'transparent': 0, 'sharpColorBoundaries': True, 'culling': 'back', 'name': 'sticks', 'backPolyMode': 'fill', 'inheritFrontPolyMode': True, 'inheritStipplePolygons': True, 'inheritBackPolyMode': True, 'scissor': 0, 'protected': True, 'inheritLineWidth': True, 'lineWidth': 2, 'inheritXform': 1}
         obj = mv.GUI.VIEWER.FindObjectByName('root|'+molName2+'|sticks')
         if obj:
-            apply(obj.Set, (), state)
+            obj.Set(*(), **state)
     
         ## Material for sticks
         if obj:
             from opengltk.OpenGL import GL
             state = {'opacity': [1.0], 'binding': [10, 10, 10, 10, 10, 10], 'shininess': [13.0], 'emission': [[0.0, 0.0, 0.0, 1.0]], 'specular': [[0.89999997615814209, 0.89999997615814209, 0.89999997615814209, 1.0]], 'ambient': [[0.0, 0.0, 0.0, 1.0]], 'diffuse': [[0.0555555559694767, 0.0555555559694767, 0.0555555559694767, 1.0]]}
-            apply(obj.materials[GL.GL_FRONT].Set, (), state)
+            obj.materials[GL.GL_FRONT].Set(*(), **state)
     
         ## End Materials for sticks
     
@@ -77,13 +77,13 @@ def applyStyle(mv, molName1, molName2, quality='preview'):
         state = {'scissorAspectRatio': 1.0, 'inheritStippleLines': True, 'stippleLines': False, 'disableStencil': False, 'replace': True, 'immediateRendering': False, 'inheritLighting': True, 'invertNormals': False, 'pivot': [0.0, 0.0, 0.0], 'quality': 4, 'rotation': [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], 'instanceMatricesFromFortran': [[1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]], 'scissorH': 200, 'frontPolyMode': 'fill', 'blendFunctions': ('GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA'), 'outline': (False, False), 'vertexArrayFlag': False, 'scissorX': 0, 'scissorY': 0, 'listed': True, 'inheritPointWidth': True, 'pickable': True, 'pointWidth': 2, 'scissorW': 200, 'needsRedoDpyListOnResize': False, 'stipplePolygons': False, 'pickableVertices': False, 'inheritMaterial': 0, 'depthMask': 1, 'inheritSharpColorBoundaries': True, 'scale': [1.0, 1.0, 1.0], 'lighting': True, 'inheritCulling': False, 'inheritShading': True, 'shading': 'smooth', 'translation': [0.0, 0.0, 0.0], 'transparent': False, 'sharpColorBoundaries': True, 'culling': 'none', 'name': 'balls', 'backPolyMode': 'line', 'inheritFrontPolyMode': True, 'inheritStipplePolygons': True, 'inheritBackPolyMode': False, 'scissor': 0, 'protected': True, 'inheritLineWidth': True, 'lineWidth': 2, 'inheritXform': 1}
         obj = mv.GUI.VIEWER.FindObjectByName('root|'+molName2+'|balls')
         if obj:
-            apply(obj.Set, (), state)
+            obj.Set(*(), **state)
     
         ## Material for balls
         if obj:
             from opengltk.OpenGL import GL
             state = {'opacity': [1.0], 'binding': [10, 10, 10, 10, 10, 10], 'shininess': [13.0], 'emission': [[0.0, 0.0, 0.0, 1.0]], 'specular': [[0.0, 0.0, 0.0, 1.0]], 'ambient': [[0.0, 0.0, 0.0, 1.0]], 'diffuse': [[0.0, 0.0, 0.0, 1.0]]}
-            apply(obj.materials[GL.GL_BACK].Set, (), state)
+            obj.materials[GL.GL_BACK].Set(*(), **state)
     
             pass  ## needed in case there no modif
         ## End Materials for balls
@@ -99,7 +99,7 @@ def applyStyle(mv, molName1, molName2, quality='preview'):
         state = {'scissorAspectRatio': 1.0, 'inheritStippleLines': True, 'stippleLines': False, 'disableStencil': False, 'replace': True, 'visible': 1, 'immediateRendering': False, 'inheritLighting': True, 'invertNormals': False, 'pivot': [0.0, 0.0, 0.0], 'rotation': [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], 'instanceMatricesFromFortran': [[1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]], 'scissorH': 200, 'frontPolyMode': 'fill', 'blendFunctions': ('GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA'), 'outline': (False, False), 'vertexArrayFlag': False, 'scissorX': 0, 'scissorY': 0, 'listed': True, 'inheritPointWidth': True, 'pickable': True, 'pointWidth': 2, 'scissorW': 200, 'needsRedoDpyListOnResize': False, 'stipplePolygons': False, 'pickableVertices': True, 'inheritMaterial': 0, 'depthMask': 1, 'inheritSharpColorBoundaries': False, 'scale': [1.0, 1.0, 1.0], 'lighting': True, 'inheritCulling': False, 'inheritShading': True, 'shading': 'smooth', 'translation': [0.0, 0.0, 0.0], 'transparent': True, 'sharpColorBoundaries': False, 'culling': 'none', 'name': 'MSMS-MOL', 'backPolyMode': 'line', 'inheritFrontPolyMode': True, 'inheritStipplePolygons': True, 'inheritBackPolyMode': False, 'scissor': 0, 'protected': True, 'inheritLineWidth': True, 'lineWidth': 2, 'inheritXform': 1}
         obj = mv.GUI.VIEWER.FindObjectByName('root|'+molName1+'|MSMS-MOL')
         if obj:
-            apply(obj.Set, (), state)
+            obj.Set(*(), **state)
     
         ## Material for MSMS-MOL
         if obj:
@@ -110,7 +110,7 @@ def applyStyle(mv, molName1, molName2, quality='preview'):
             
             from opengltk.OpenGL import GL
             state = {'opacity': [1.0], 'binding': [10, 10, 10, 10, 10, 10], 'shininess': [13.0], 'emission': [[0.0, 0.18888889253139496, 0.037533920258283615, 1.0]], 'specular': [[0.0, 0.0, 0.0, 1.0]], 'ambient': [[0.0, 0.0, 0.0, 1.0]], 'diffuse': [[0.0, 0.21111111342906952, 0.041949696838855743, 1.0]]}
-            apply(obj.materials[GL.GL_BACK].Set, (), state)
+            obj.materials[GL.GL_BACK].Set(*(), **state)
     
         ## End Materials for MSMS-MOL
     
@@ -125,17 +125,17 @@ def applyStyle(mv, molName1, molName2, quality='preview'):
         state = {'scissorAspectRatio': 1.0, 'inheritStippleLines': True, 'stippleLines': False, 'disableStencil': False, 'replace': True, 'visible': True, 'immediateRendering': False, 'inheritLighting': True, 'invertNormals': False, 'pivot': [0.0, 0.0, 0.0], 'rotation': [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], 'instanceMatricesFromFortran': [[1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]], 'scissorH': 200, 'frontPolyMode': 'fill', 'blendFunctions': ('GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA'), 'outline': (False, False), 'vertexArrayFlag': False, 'scissorX': 0, 'scissorY': 0, 'listed': True, 'inheritPointWidth': True, 'pickable': True, 'pointWidth': 2, 'scissorW': 200, 'needsRedoDpyListOnResize': False, 'stipplePolygons': False, 'pickableVertices': False, 'inheritMaterial': 0, 'depthMask': 1, 'inheritSharpColorBoundaries': True, 'scale': [1.0, 1.0, 1.0], 'lighting': True, 'inheritCulling': False, 'inheritShading': True, 'shading': 'smooth', 'translation': [0.0, 0.0, 0.0], 'transparent': False, 'sharpColorBoundaries': True, 'culling': 'none', 'name': 'secondarystructure', 'backPolyMode': 'line', 'inheritFrontPolyMode': True, 'inheritStipplePolygons': True, 'inheritBackPolyMode': False, 'scissor': 0, 'protected': True, 'inheritLineWidth': True, 'lineWidth': 2, 'inheritXform': 1}
         obj = mv.GUI.VIEWER.FindObjectByName('root|'+molName1+'|secondarystructure')
         if obj:
-            apply(obj.Set, (), state)
+            obj.Set(*(), **state)
     
         ## Material for secondarystructure
         if obj:
             from opengltk.OpenGL import GL
             state = {'opacity': [1.0], 'binding': [10, 10, 10, 10, 10, 10], 'shininess': [13.0], 'emission': [[0.0, 0.0, 0.0, 1.0]], 'specular': [[0.0, 0.0, 0.0, 1.0]], 'ambient': [[0.10000000149011612, 0.10000000149011612, 0.10000000149011612, 1.0]], 'diffuse': [[0.65363794565200806, 0.83888888359069824, 0.0, 1.0]]}
-            apply(obj.materials[GL.GL_FRONT].Set, (), state)
+            obj.materials[GL.GL_FRONT].Set(*(), **state)
     
             from opengltk.OpenGL import GL
             state = {'opacity': [1.0], 'binding': [10, 10, 10, 10, 10, 10], 'shininess': [13.0], 'emission': [[0.0, 0.0, 0.0, 1.0]], 'specular': [[0.0, 0.0, 0.0, 1.0]], 'ambient': [[0.0, 0.0, 0.0, 1.0]], 'diffuse': [[0.0, 0.0, 0.0, 1.0]]}
-            apply(obj.materials[GL.GL_BACK].Set, (), state)
+            obj.materials[GL.GL_BACK].Set(*(), **state)
     
             pass  ## needed in case there no modif
         ## End Materials for secondarystructure

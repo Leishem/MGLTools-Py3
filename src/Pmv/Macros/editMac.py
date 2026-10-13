@@ -30,8 +30,8 @@ def deleteBond():
                 bond = b
                 break
     if bond is None:
-        print 'WARNING: atoms %s %s are not bonded'%(atoms[0].full_name(),
-                                                     atoms[1].full_name())
+        print('WARNING: atoms %s %s are not bonded'%(atoms[0].full_name(),
+                                                     atoms[1].full_name()))
         return
     b.atom1.bonds.remove(b)
     b.atom2.bonds.remove(b)

@@ -60,8 +60,8 @@
 # REDFAC = 0.25               # The maximum factor by which a domain
                               # dimension can be reduced during focusing
 
-import string, sys
-import psize
+import sys; from mglcompat import pystring as string
+from . import psize
 
 class Elec:
     """
@@ -343,7 +343,7 @@ def main():
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], shortOptList, longOptList)
-    except getopt.GetoptError, details:
+    except getopt.GetoptError as details:
         sys.stderr.write("Option error (%s)!\n" % details)
         usage()
         

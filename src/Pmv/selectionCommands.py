@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -18,9 +18,9 @@ from ViewerFramework.VF import VFEvent
 class SelectionEvent(VFEvent):
     pass
 
-import Tkinter, types, string, Pmw, os
+import tkinter, types, Pmw, os; from mglcompat import pystring as string
 import time
-from SimpleDialog import SimpleDialog
+from tkinter.simpledialog import SimpleDialog
 import numpy
 
 from Pmv.mvCommand import MVCommand, MVAtomICOM
@@ -77,7 +77,7 @@ class MVSelectCommand(MVCommand, MVAtomICOM):
         self.selection = TreeNodeSet()
 
     def onAddObjectToViewer(self, obj):
-        if self.vf.hasGui and self.vf.commands.has_key('dashboard'):
+        if self.vf.hasGui and 'dashboard' in self.vf.commands:
             self.vf.dashboard.resetColPercent(obj, '_selectionStatus')
         
     def setupUndoBefore(self, nodes, negate=False,
@@ -104,7 +104,7 @@ class MVSelectCommand(MVCommand, MVAtomICOM):
                   nodes is converted to a set of objects of type Klass and
                   current selection level is set to klass   
         """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
            self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         #if len(nodes)==0: return self.selection
@@ -118,7 +118,7 @@ class MVSelectCommand(MVCommand, MVAtomICOM):
         kw['only']= only
         kw['xor']= xor
         kw['intersect']= intersect
-        return apply( self.doitWrapper, (nodes,), kw )
+        return self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes, negate=False, only=False, xor=False, intersect=False):
@@ -197,11 +197,11 @@ current selection
         allMols = set( self.vf.Mols[:] )
         unselectedMols = allMols.difference(selMols)
         for mol in unselectedMols:
-            for geomName, lGeom in mol.geomContainer.geoms.items():
+            for geomName, lGeom in list(mol.geomContainer.geoms.items()):
                 if isinstance(lGeom, Spheres) \
                   or isinstance(lGeom, Cylinders) \
                   or (    isinstance(lGeom, IndexedPolygons) \
-                      and hasattr(mol.geomContainer,'msmsAtoms') and mol.geomContainer.msmsAtoms.has_key(geomName) ):
+                      and hasattr(mol.geomContainer,'msmsAtoms') and geomName in mol.geomContainer.msmsAtoms ):
                     lGeom.Set(highlight=[])
                 elif isinstance(lGeom, IndexedPolygons) \
                   and lGeom.parent.name == 'secondarystructure':
@@ -209,24 +209,24 @@ current selection
 
         selMols2, selResidueSets = self.vf.getNodesByMolecule(self.vf.selection, Residue)
         molSelectedResiduesDict = dict( zip( selMols2, selResidueSets) )
-        for mol, selectedResidueSet in molSelectedResiduesDict.items():
-            for lGeom in mol.geomContainer.geoms.values():
+        for mol, selectedResidueSet in list(molSelectedResiduesDict.items()):
+            for lGeom in list(mol.geomContainer.geoms.values()):
                 if isinstance(lGeom, IndexedPolygons) and lGeom.parent.name == 'secondarystructure':
                     highlight = [0] * len(lGeom.vertexSet.vertices.array)
                     for selectedResidue in selectedResidueSet:
-                        if hasattr(lGeom, 'resfacesDict') and lGeom.resfacesDict.has_key(selectedResidue):
+                        if hasattr(lGeom, 'resfacesDict') and selectedResidue in lGeom.resfacesDict:
                             for lFace in lGeom.resfacesDict[selectedResidue]:
                                 for lVertexIndex in lFace:
                                     highlight[int(lVertexIndex)] = 1
                     lGeom.Set(highlight=highlight)
 
         for mol, atoms in map(None, selMols, selAtms):
-            for geomName, lGeom in mol.geomContainer.geoms.items():
+            for geomName, lGeom in list(mol.geomContainer.geoms.items()):
                 if   isinstance(lGeom, Spheres) \
                   or isinstance(lGeom, Cylinders):
                     lAtomSet = mol.geomContainer.atoms[geomName]
                     if len(lAtomSet) > 0:
-                        lAtomSetDict = dict(zip(lAtomSet, range(len(lAtomSet))))
+                        lAtomSetDict = dict(zip(lAtomSet, list(range(len(lAtomSet)))))
                         highlight = [0] * len(lAtomSet)
                         for i in range(len(atoms)):
                             lIndex = lAtomSetDict.get(atoms[i], None)
@@ -234,10 +234,10 @@ current selection
                                 highlight[lIndex] = 1
                         lGeom.Set(highlight=highlight)
                 elif isinstance(lGeom, IndexedPolygons):
-                  if hasattr(mol.geomContainer,'msmsAtoms') and mol.geomContainer.msmsAtoms.has_key(geomName):
+                  if hasattr(mol.geomContainer,'msmsAtoms') and geomName in mol.geomContainer.msmsAtoms:
                     lAtomSet = mol.geomContainer.msmsAtoms[geomName]
                     if len(lAtomSet) > 0:
-                        lAtomSetDict = dict(zip(lAtomSet, range(len(lAtomSet))))
+                        lAtomSetDict = dict(zip(lAtomSet, list(range(len(lAtomSet)))))
                         lAtomIndices = []
                         for i in range(len(atoms)):
                             lIndex = lAtomSetDict.get(atoms[i], None)
@@ -253,8 +253,8 @@ current selection
                             highlight[int(lThreeIndices[1])] = 1
                             highlight[int(lThreeIndices[2])] = 1
                         lGeom.Set(highlight=highlight)
-                  elif self.vf.bindGeomToMolecularFragment.data.has_key(lGeom.fullName) \
-                    and self.vf.bindGeomToMolecularFragment.data[lGeom.fullName].has_key('atomVertices'):
+                  elif lGeom.fullName in self.vf.bindGeomToMolecularFragment.data \
+                    and 'atomVertices' in self.vf.bindGeomToMolecularFragment.data[lGeom.fullName]:
                       bindcmd = self.vf.bindGeomToMolecularFragment
                       lSelectedAtoms = atoms
                       if len(lSelectedAtoms) > 0:
@@ -276,7 +276,7 @@ current selection
 
     
     def setLevel(self, Klass, KlassSet=None):
-        print "this method is deprecated"
+        print("this method is deprecated")
         return "ERROR"
         #assert issubclass(Klass, TreeNode)
         #if Klass==self.vf.ICmdCaller.level.value:
@@ -395,7 +395,7 @@ class MVAddSelectCommand(MVSelectCommand):
         """
         kw['negate']= 0
         kw['klass'] = klass
-        apply( self.vf.select, (nodes,), kw )
+        self.vf.select(*(nodes,), **kw)
 
         
 class MVXorSelectCommand(MVSelectCommand):
@@ -425,7 +425,7 @@ class MVXorSelectCommand(MVSelectCommand):
             new_sel = current ^ nodes
         else:
             new_sel = nodes
-        apply( self.vf.select, (new_sel,), kw )
+        self.vf.select(*(new_sel,), **kw)
         #apply( self.vf.select, (nodes,), kw )
 
 
@@ -451,7 +451,7 @@ class MVDeSelectCommand(MVSelectCommand):
         """
         kw['negate']= 1
         kw['klass'] = klass
-        apply( self.vf.select, (nodes,), kw )
+        self.vf.select(*(nodes,), **kw)
 
 
 
@@ -485,7 +485,7 @@ class MVClearSelection(MVCommand):
             return
 
         for mol in self.vf.Mols:
-            for geomName, lGeom in mol.geomContainer.geoms.items():
+            for geomName, lGeom in list(mol.geomContainer.geoms.items()):
                 if   isinstance(lGeom, Spheres) \
                   or isinstance(lGeom, Cylinders) \
                   or isinstance(lGeom, IndexedPolygons):
@@ -495,10 +495,10 @@ class MVClearSelection(MVCommand):
     def __call__(self, **kw):
         """None <- clearSelection(**kw)"""
         
-        apply( self.doitWrapper, (), kw )
+        self.doitWrapper(*(), **kw)
         
 MVClearSelectionGUI = CommandGUI()
-from moleculeViewer import ICONPATH
+from .moleculeViewer import ICONPATH
 MVClearSelectionGUI.addToolBar('Clear', icon1 = 'eraser.gif', 
                              type = 'ToolBarButton', icon_dir=ICONPATH,
                              balloonhelp = 'Clear Selection', index = 3)
@@ -537,7 +537,7 @@ class MVSaveSetCommand(MVCommand):
 
     def handleDeleteAtomsEvents(self, event):
         atoms = event.objects
-        for setName, _set in self.vf.sets.items():
+        for setName, _set in list(self.vf.sets.items()):
             if isinstance(_set[0], Atom):
                 newSet = _set - atoms
                 if len(newSet):
@@ -559,7 +559,7 @@ class MVSaveSetCommand(MVCommand):
         if addToDashboard:
             n = nodes[0].isBelow(Molecule)
             kstr = n*':' + name
-            if  self.vf.commands.has_key('dashboard'):
+            if  'dashboard' in self.vf.commands:
                 self.vf.dashboard.tree.selectorEntry.insert('end', kstr)
         # if vision is started add the set to the Pmv library
         if self.vf.visionAPI:
@@ -585,26 +585,26 @@ class MVSaveSetCommand(MVCommand):
             \ncomments --- description of the saved set, default is 'No description'
         """
         #if name in sets__.keys():
-        if name in self.vf.sets.keys():
-            newname = name + '_' + str(len(self.vf.sets.keys()))
+        if name in list(self.vf.sets.keys()):
+            newname = name + '_' + str(len(list(self.vf.sets.keys())))
             self.vf.warningMsg('set name %s already used\nrenaming it %s' % (
                 name, newname ) )
             name = newname
 
         kw['comments'] = comments
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'" + nodes +"'"
             nodes = self.vf.expandNodes(nodes)
-        return apply( self.doitWrapper, (nodes, name), kw )
+        return self.doitWrapper(*(nodes, name), **kw)
         
     def buildFormDescr(self, formName):
         if formName=='saveSet':
             idf = InputFormDescr(title = 'Set Name')
             idf.append( { 'name': 'setname', 
-                          'widgetType':Tkinter.Entry,'required':1,
+                          'widgetType':tkinter.Entry,'required':1,
                           'wcfg':{'label':'Set Name'}} )
             idf.append( {'name': 'comments',
-                         'widgetType':Tkinter.Entry,
+                         'widgetType':tkinter.Entry,
                          'defaultValue':'No description',
                          'wcfg':{'label':'Comments'}} )
             self.idf = idf
@@ -631,7 +631,7 @@ class MVSaveSetCommand(MVCommand):
 ##         val = self.vf.getUserInput(idf)
         val = self.showForm('saveSet')
         if val:
-            while len(val)==0 or val['setname'] in self.vf.sets.keys():
+            while len(val)==0 or val['setname'] in list(self.vf.sets.keys()):
                 t = 'set name %s already used' % val['setname']
                 d = SimpleDialog(self.vf.GUI.ROOT, text=t,
                                  buttons=["Continue"],
@@ -640,7 +640,7 @@ class MVSaveSetCommand(MVCommand):
                 val = self.vf.getUserInput(self.idf)
             name = val['setname']
             del val['setname']
-            return apply( self.doitWrapper, (self.vf.getSelection()[:], name,), val )
+            return self.doitWrapper(*(self.vf.getSelection()[:], name,), **val)
 
 mvSaveSetCommandGuiDescr = {'widgetType':'Menu', 'menuBarName':'menuRoot',
                             'menuButtonName':'Select',
@@ -698,14 +698,14 @@ class MVCreateSetIfNeeded(MVCommand):
         \nname --- name under which the selected set will be saved
         \ncomments --- description of the saved set, default is 'No description'
         """
-        if name in self.vf.sets.keys():
+        if name in list(self.vf.sets.keys()):
             return
 
         kw['comments'] = comments
         nodes = self.vf.expandNodes(nodes)
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'" + nodes +"'"
-        apply( self.doitWrapper, (nodes, name), kw )
+        self.doitWrapper(*(nodes, name), **kw)
         
 # we do not expose this command in the menu bar
 
@@ -725,8 +725,8 @@ class MVSelectSetCommand(MVCommand):
         \nonly=1,negate=0: selected set is the only thing selected"""
 
     def onRemoveObjectFromViewer(self, mol):
-        if not self.vf.sets.keys(): return
-        for k in self.vf.sets.keys():
+        if not list(self.vf.sets.keys()): return
+        for k in list(self.vf.sets.keys()):
             nodes = self.vf.sets[k]
             if mol in nodes.top.uniq():
                 if len(nodes.top.uniq())==1:
@@ -763,7 +763,7 @@ class MVSelectSetCommand(MVCommand):
         \nonly=0, negate=1: selected set is removed from the selection
         \nonly=1, negate=0: selected set is the only thing selected"""
 
-        if type(setNames)==types.StringType:
+        if type(setNames)==bytes:
             names = [setNames]
         else:
             try:
@@ -777,7 +777,7 @@ class MVSelectSetCommand(MVCommand):
             self.vf.clearSelection(topCommand=0)
         
         nodes = []
-        set_names = self.vf.sets.keys()
+        set_names = list(self.vf.sets.keys())
         for name in names:
             if name not in set_names:
                 msgStr='\''+name+'\'' + ' not a previously defined set!'
@@ -799,10 +799,10 @@ class MVSelectSetCommand(MVCommand):
         idf = InputFormDescr(title ='')
         entries = []
         #names = sets__.keys()
-        names = self.vf.sets.keys()
+        names = list(self.vf.sets.keys())
         names.sort()
         #for n in names:
-        for key, value in self.vf.sets.items():
+        for key, value in list(self.vf.sets.items()):
             entries.append( (key, value.comments) )
             #entries.append( (n, sets__[n][1]) )
 
@@ -811,20 +811,20 @@ class MVSelectSetCommand(MVCommand):
                     'wcfg':{'mode':'extended',
                             'entries': entries,
                             'title':'Choose an item: '}})
-        idf.append({'name': 'only', 'widgetType':Tkinter.Checkbutton,
+        idf.append({'name': 'only', 'widgetType':tkinter.Checkbutton,
                     'wcfg':{'text': 'Select this set only',
-                            'variable': Tkinter.IntVar()},
-                    'gridcfg':{'sticky': Tkinter.W}})
-        idf.append({'name': 'negate', 'widgetType':Tkinter.Checkbutton,
+                            'variable': tkinter.IntVar()},
+                    'gridcfg':{'sticky': tkinter.W}})
+        idf.append({'name': 'negate', 'widgetType':tkinter.Checkbutton,
                     'wcfg':{'text': 'Deselect this set',
-                            'variable': Tkinter.IntVar()},
-                    'gridcfg':{'sticky': Tkinter.W}})
+                            'variable': tkinter.IntVar()},
+                    'gridcfg':{'sticky': tkinter.W}})
         vals = self.vf.getUserInput(idf)
         self.ipf = idf
         if len(vals)>0 and len(vals['set'])> 0:
             setNames = vals['set']
             del vals['set']
-            apply( self.doitWrapper, (setNames,), vals )
+            self.doitWrapper(*(setNames,), **vals)
 
 
     def __call__(self, setNames, negate=False, only=False, **kw):
@@ -835,7 +835,7 @@ class MVSelectSetCommand(MVCommand):
         \nonly=1, negate=0: selected set is the only thing selected"""
         kw['negate'] = negate
         kw['only'] = only
-        apply( self.doitWrapper, (setNames,), kw )
+        self.doitWrapper(*(setNames,), **kw)
 
 mvSelectSetCommandGuiDescr = {'widgetType':'Menu', 'menuBarName':'menuRoot',
                               'menuButtonName':'Select',
@@ -875,8 +875,8 @@ class MVSelectFromStringCommand(MVCommand):
 
     def onAddCmdToViewer(self):
         if self.vf.hasGui:
-            self.selPick = Tkinter.IntVar()
-            self.showSelSpheres = Tkinter.IntVar()
+            self.selPick = tkinter.IntVar()
+            self.showSelSpheres = tkinter.IntVar()
         self.molCts={}
         self.chainCts={}
 
@@ -996,47 +996,47 @@ class MVSelectFromStringCommand(MVCommand):
         elif isinstance(nodes, TreeNode):
             nodes = nodes.setClass([nodes])
         kw['nodes'] = nodes
-        return apply( self.doitWrapper, (), kw )
+        return self.doitWrapper(*(), **kw)
 
 
     def buildForm(self, event=None):
         self.selPick.set(0)
         ifd = self.ifd = InputFormDescr(title = 'Select From String')
-        ifd.append({'widgetType':Tkinter.Label,
+        ifd.append({'widgetType':tkinter.Label,
                     'wcfg':{'text': 'Molecule'}, 
                     'gridcfg':{'sticky':'w'} })
         ifd.append({'name':'molWid',
-                    'widgetType':Tkinter.Entry,
+                    'widgetType':tkinter.Entry,
                     'wcfg':{'highlightcolor':'white'}, 
                     'gridcfg':{'sticky':'ew','row':-1, 'column':1, 'columnspan':3} })
                     #'gridcfg':{'sticky':Tkinter.E,'columnspan':4} })
-        ifd.append({'widgetType':Tkinter.Label,
+        ifd.append({'widgetType':tkinter.Label,
                     'wcfg':{'text': 'Chain'}, 
                     'gridcfg':{'sticky':'w'} })
         ifd.append({'name': 'chainWid',
-                    'widgetType':Tkinter.Entry,
+                    'widgetType':tkinter.Entry,
                     'wcfg':{'highlightcolor':'white'}, 
                     'gridcfg':{'sticky':'ew','row':-1, 'column':1, 'columnspan':3} })
         #ifd.append({'widgetType':Tkinter.Entry,
         #            'wcfg':{'label': 'Chain'}, 
         #            'gridcfg':{'sticky':'ew','columnspan':4} })
         #            #'gridcfg':{'sticky':Tkinter.E, 'columnspan':4} })
-        ifd.append({'widgetType':Tkinter.Label,
+        ifd.append({'widgetType':tkinter.Label,
                     'wcfg':{'text': 'Residue'}, 
                     'gridcfg':{'sticky':'w'} })
         ifd.append({'name':'resWid',
-                    'widgetType':Tkinter.Entry,
+                    'widgetType':tkinter.Entry,
                     'wcfg':{'highlightcolor':'white'}, 
                     'gridcfg':{'sticky':'ew','row':-1, 'column':1, 'columnspan':3} })
         #ifd.append({'widgetType':Tkinter.Entry,
         #            'wcfg':{'label': 'Residue'}, 
         #            'gridcfg':{'sticky':'ew','columnspan':4} })
         #            #'gridcfg':{'sticky':Tkinter.E, 'columnspan':4} })
-        ifd.append({'widgetType':Tkinter.Label,
+        ifd.append({'widgetType':tkinter.Label,
                     'wcfg':{'text': 'Atom'}, 
                     'gridcfg':{'sticky':'w'} })
         ifd.append({'name':'atomWid',
-                    'widgetType':Tkinter.Entry,
+                    'widgetType':tkinter.Entry,
                     'wcfg':{'highlightcolor':'white'}, 
                     'gridcfg':{'sticky':'ew','row':-1, 'column':1, 'columnspan':3} })
         #ifd.append({'widgetType':Tkinter.Entry,
@@ -1044,24 +1044,24 @@ class MVSelectFromStringCommand(MVCommand):
         #            'gridcfg':{'sticky':'ew','columnspan':4} })
         #            #'gridcfg':{'sticky':Tkinter.E,'columnspan':4} })
         ifd.append({'name': 'Mol List',
-                    'widgetType':Tkinter.Menubutton,
+                    'widgetType':tkinter.Menubutton,
                     'wcfg':{ 'text': 'Molecule List ...'},
-                    'gridcfg':{'sticky':Tkinter.W,'row':-4,'column':4,
+                    'gridcfg':{'sticky':tkinter.W,'row':-4,'column':4,
                                'columnspan':2} })
         ifd.append({'name': 'Chain List',
-                    'widgetType':Tkinter.Menubutton,
+                    'widgetType':tkinter.Menubutton,
                     'wcfg':{'text': 'Chain List ...'},
-                    'gridcfg':{'sticky':Tkinter.W, 'column':4,'row':-3,
+                    'gridcfg':{'sticky':tkinter.W, 'column':4,'row':-3,
                                'columnspan':2} })
         ifd.append({'name': 'Residue Sets',
-                    'widgetType':Tkinter.Menubutton,
+                    'widgetType':tkinter.Menubutton,
                     'wcfg':{'text': 'Residue Sets...'},
-                    'gridcfg':{'sticky':Tkinter.W, 'column':4,'row':2,
+                    'gridcfg':{'sticky':tkinter.W, 'column':4,'row':2,
                                'columnspan':2} })
         ifd.append({'name': 'Atom Sets',
-            'widgetType':Tkinter.Menubutton,
+            'widgetType':tkinter.Menubutton,
             'text': 'Atom Sets...',
-            'gridcfg':{'sticky':Tkinter.W, 'column':4,'row':3,
+            'gridcfg':{'sticky':tkinter.W, 'column':4,'row':3,
                  'columnspan':2} })
         #ifd.append({'name': 'Sets List',
         #            'widgetType':Tkinter.Menubutton,
@@ -1069,31 +1069,31 @@ class MVSelectFromStringCommand(MVCommand):
         #            'gridcfg':{'sticky':Tkinter.W, 'column':4,
         #                       'row':3,'columnspan':2} })
         ifd.append({'name': 'addBut',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'bd':3, 'text': 'Add',
                             'command': self.add},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W,'row':4,
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W,'row':4,
                                'column':0, 'columnspan':1},
                     })
         ifd.append({'name': 'removeBut',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'bd':3, 'text': 'Remove',
                             'command': self.remove},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W,'row':4,
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W,'row':4,
                                'column':1, 'row':-1, 'columnspan':2},
                     })
         ifd.append({'name': 'xorBut',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'bd':3, 'text': 'Xor',
                             'command': self.xor},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W,'row':4,
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W,'row':4,
                                'column':3,'row':-1, 'columnspan':1},
                     })
         ifd.append({'name': 'intersectBut',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'bd':3, 'text': 'Intersect',
                             'command': self.intersect},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W,'row':4,
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W,'row':4,
                                'column':4, 'row':-1, 'columnspan':2},
                     })
                                
@@ -1114,32 +1114,32 @@ class MVSelectFromStringCommand(MVCommand):
 #                               'columnspan':2},
 #                    })
         ifd.append({'name': 'Clear Selection',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text': 'Clear Selection',
                             'borderwidth':1, 'command': self.clearSel},
-                    'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                    'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                'columnspan':2},
                     })
         ifd.append({'name': 'invertBut',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text': 'Invert Selection',
                             'borderwidth':1, 'command': self.invert},
-                    'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                    'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                'row':-1, 'column':2, 'columnspan':2},
                     })
         ifd.append({'name': 'Save Selection',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text': 'Store Selection',
                             'borderwidth':1, 'command': self.saveSel},
-                    'gridcfg':{'sticky':Tkinter.W+Tkinter.E,'row':-1, 
+                    'gridcfg':{'sticky':tkinter.W+tkinter.E,'row':-1, 
                                'column':4,'columnspan':2},
                     })
         ifd.append({'name': 'Clear Form',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text': 'Clear Form',
                             'borderwidth':1,
                             'command': self.clearForm},
-                    'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                    'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                'column':0, 'columnspan':2},
                     })
 
@@ -1152,12 +1152,12 @@ class MVSelectFromStringCommand(MVCommand):
                              'items': ["none", "crosses", "spheres"],
                              'command':self.changeSelectionObject,
                              },
-                    'gridcfg':{'sticky':Tkinter.W,'row':-1,'column':3, 'columnspan':2},
+                    'gridcfg':{'sticky':tkinter.W,'row':-1,'column':3, 'columnspan':2},
                     })
-        ifd.append({'widgetType':Tkinter.Button,
+        ifd.append({'widgetType':tkinter.Button,
                     'wcfg':{'bd':4, 'text':'Dismiss',
                             'command': self.Dismiss_cb},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W,
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W,
                                'columnspan':6}})
         self.form = self.vf.getUserInput(self.ifd, modal = 0, blocking=0)
         self.form.root.protocol('WM_DELETE_WINDOW',self.Dismiss_cb)
@@ -1201,7 +1201,7 @@ class MVSelectFromStringCommand(MVCommand):
 
 
     def increaseCts(self,dict, newStr):
-        if dict.has_key(newStr):
+        if newStr in dict:
             dict[newStr]=dict[newStr]+1
         else:
             dict[newStr]=1
@@ -1211,7 +1211,7 @@ class MVSelectFromStringCommand(MVCommand):
         #print "decreaseCts dict=", dict
         #print "newStr=", newStr
         #print "dict.has_key(", newStr,")=", dict.has_key(newStr)
-        if dict.has_key(newStr):
+        if newStr in dict:
             currentVal=dict[newStr]
             #print "currentVal =", currentVal
             if currentVal<=1: currentVal=1
@@ -1222,7 +1222,7 @@ class MVSelectFromStringCommand(MVCommand):
     def getMolVal(self, event=None):
         molWidget=self.ifd.entryByName['molWid']['widget']
         #molWidget=self.ifd[0]['widget']
-        for molStr in self.molVar.keys():
+        for molStr in list(self.molVar.keys()):
             #figure out which check button was just changed
             newVal=self.molVar[molStr].get()
             if newVal==self.oldmolVar[molStr]: continue
@@ -1249,7 +1249,7 @@ class MVSelectFromStringCommand(MVCommand):
                     # chain menu may not have been built yet:
                     if not hasattr(self, 'chainVar'):
                         self.buildChainMenus()
-                    for ch in self.chainVar.keys():
+                    for ch in list(self.chainVar.keys()):
                         if ch in ['dna', 'proteic']: continue
                         chKeyList = string.split(ch,':')
                         thisMolStr=chKeyList[0]
@@ -1272,7 +1272,7 @@ class MVSelectFromStringCommand(MVCommand):
         #molWidget= self.ifd[0]['widget']
         chainWidget=self.ifd.entryByName['chainWid']['widget']
         #chainWidget= self.ifd[1]['widget']
-        for item in self.chainVar.keys():
+        for item in list(self.chainVar.keys()):
             if item in ['proteic', 'dna']:
                 newVal = self.chainVar[item].get()
                 if newVal==self.oldchainVar[item]:
@@ -1316,15 +1316,15 @@ class MVSelectFromStringCommand(MVCommand):
                             chainWidget.insert('end',chainStr)
                         else:
                             chainWidget.insert('end',','+chainStr)
-                    if hasattr(self, 'molVar') and self.molVar.has_key(molStr):
+                    if hasattr(self, 'molVar') and molStr in self.molVar:
                         self.molVar[molStr].set(1)
                     else: 
                         self.buildMolMenus()
                         self.molVar[molStr].set(1)
                     self.oldmolVar[molStr]=1
                 else:
-                    if not self.molCts.has_key(molStr): continue
-                    if not self.chainCts.has_key(chainStr): continue
+                    if molStr not in self.molCts: continue
+                    if chainStr not in self.chainCts: continue
                     self.decreaseCts(self.molCts,molStr)
                     self.decreaseCts(self.chainCts,chainStr)
                     chainList=string.split(chainWidget.get(),',')
@@ -1332,7 +1332,7 @@ class MVSelectFromStringCommand(MVCommand):
                         if chainStr in chainList and self.chainCts[chainStr]==0:
                             chainList.remove(chainStr)
                         if self.molCts[molStr]==0:
-                            if hasattr(self, 'molVar') and self.molVar.has_key(molStr):
+                            if hasattr(self, 'molVar') and molStr in self.molVar:
                                 self.molVar[molStr].set(0)
                                 self.oldmolVar[molStr]=0
                             #also remove it from Molecule entry
@@ -1350,7 +1350,7 @@ class MVSelectFromStringCommand(MVCommand):
         w=self.ifd.entryByName['resWid']['widget']
         #w=self.ifd[2]['widget']
         ssList=string.split(w.get(),',')
-        for newStr in self.ResSetsVar.keys():
+        for newStr in list(self.ResSetsVar.keys()):
             if self.ResSetsVar[newStr].get()==1:
                 if newStr not in ssList:
                     if w.index('end')==0:
@@ -1370,7 +1370,7 @@ class MVSelectFromStringCommand(MVCommand):
         w=self.ifd.entryByName['atomWid']['widget']
         #w=self.ifd[3]['widget']
         ssList=string.split(w.get(),',')
-        for newStr in self.AtomSetsVar.keys():
+        for newStr in list(self.AtomSetsVar.keys()):
             if self.AtomSetsVar[newStr].get()==1:
                 if newStr not in ssList:
                     if w.index('end')==0:
@@ -1385,7 +1385,7 @@ class MVSelectFromStringCommand(MVCommand):
                     w.delete(0,'end')
                     w.insert(0,string.join(ssList,','))
 
-        for i in self.setsVar.keys():
+        for i in list(self.setsVar.keys()):
             if i not in specialCases:
                 newSet = self.vf.sets[i]
                 #newSet = sets__[i][0]
@@ -1402,9 +1402,9 @@ class MVSelectFromStringCommand(MVCommand):
         #process 'backbone', backbone+H and sidechain separately
         #these 4 are hard-wired atom sets
         specialCases = ['backbone', 'backbone+H' , 'sidechain', 'hetatm']
-        sets = self.vf.sets.keys()
+        sets = list(self.vf.sets.keys())
         #sets = sets__.keys()
-        for newStr in self.setsVar.keys():
+        for newStr in list(self.setsVar.keys()):
             if newStr not in specialCases:
                 node0 = self.vf.sets[newStr][0]
                 #node0 = sets__[newStr][0][0]
@@ -1436,15 +1436,15 @@ class MVSelectFromStringCommand(MVCommand):
     def buildMenu(self, mB, nameList, varDict, oldvarDict, cmd):
         if nameList:
             #prune non-valid entries
-            for i in varDict.keys():
+            for i in list(varDict.keys()):
                 #print i, " in nameList is ", i in nameList
                 if i not in nameList:
                     del varDict[i]
                     del oldvarDict[i]
             #add anything new
             for i in nameList:
-                if i not in varDict.keys():
-                    varDict[i]=Tkinter.IntVar()
+                if i not in list(varDict.keys()):
+                    varDict[i]=tkinter.IntVar()
                     oldvarDict[i]=0
         else:
             varDict={}
@@ -1454,10 +1454,10 @@ class MVSelectFromStringCommand(MVCommand):
         if hasattr(mB, 'menu'):
             mB.menu.delete(1,'end')
         else:
-            mB.menu = Tkinter.Menu(mB)
+            mB.menu = tkinter.Menu(mB)
             mB['menu']=mB.menu
         #PACK all the entries
-        for i in varDict.keys():
+        for i in list(varDict.keys()):
             mB.menu.add_checkbutton(label=i, var=varDict[i], command=cmd)
 
 
@@ -1476,7 +1476,7 @@ class MVSelectFromStringCommand(MVCommand):
         chainMenubutton = self.ifd.entryByName['Chain List']['widget']
         if not hasattr(self,'chainVar'): self.chainVar={}
         if not hasattr(self,'oldchainVar'): self.oldchainVar={}
-        chMols=MoleculeSet(filter(lambda x: Chain in x.levels, self.vf.Mols))
+        chMols=MoleculeSet([x for x in self.vf.Mols if Chain in x.levels])
         chainIDList = []
         if len(chMols):
             chains=chMols.findType(Chain)
@@ -1495,7 +1495,7 @@ class MVSelectFromStringCommand(MVCommand):
         if not hasattr(self,'ResSetsVar'): self.ResSetsVar={}
         if not hasattr(self,'oldResSetsVar'): self.oldResSetsVar={}
         resSelector = ResidueSetSelector()
-        ResSetsList = resSelector.residueList.keys()
+        ResSetsList = list(resSelector.residueList.keys())
         for key in self.vf.sets.get(stype=ResidueSet):
             ResSetsList.append( key )
         self.buildMenu(ResSetsMenubutton,ResSetsList,self.ResSetsVar,self.oldResSetsVar,self.getResSetsVal)
@@ -1506,7 +1506,7 @@ class MVSelectFromStringCommand(MVCommand):
         if not hasattr(self,'AtomSetsVar'): self.AtomSetsVar={}
         if not hasattr(self,'oldAtomSetsVar'): self.oldAtomSetsVar={}
         self.atomList = AtomSetSelector().atomList
-        AtomSetsList = self.atomList.keys()
+        AtomSetsList = list(self.atomList.keys())
         for key in self.vf.sets.get(stype=AtomSet):
             AtomSetsList.append( key )
         self.buildMenu(AtomSetsMenubutton,AtomSetsList,self.AtomSetsVar,self.oldAtomSetsVar,self.getAtomSetsVal)
@@ -1518,7 +1518,7 @@ class MVSelectFromStringCommand(MVCommand):
         if not hasattr(self,'oldsetsVar'): self.oldsetsVar={}
         sets = ['backbone', 'backbone+H', 'sidechain', 'hetatm']
         #for k in sets__.keys():
-        for k in self.vf.sets.keys():
+        for k in list(self.vf.sets.keys()):
             sets.append(k)
         #sets = sets__.keys()  #
         self.buildMenu(setsMenubutton,sets,self.setsVar,self.oldsetsVar,self.getSetsVal)
@@ -1568,9 +1568,9 @@ class MVSelectFromStringCommand(MVCommand):
             levelNames = ['all','molecule']
             # create the form descriptor
             idf  = InputFormDescr(title = 'Set Level for Invert Selection')
-            idf.append({ 'name': 'level', 'widgetType':Tkinter.Radiobutton,
+            idf.append({ 'name': 'level', 'widgetType':tkinter.Radiobutton,
                          'listtext': levelNames,
-                         'gridcfg':{'sticky':Tkinter.W}})
+                         'gridcfg':{'sticky':tkinter.W}})
             val = self.vf.getUserInput(idf)            
             if len(val)>0: 
                 newparam = val['level']
@@ -1601,25 +1601,25 @@ class MVSelectFromStringCommand(MVCommand):
         ###SHOULD ALL THE VARIABLES BE ZEROED HERE???
         self.molCts={}
         if hasattr(self, 'oldmolVar'):
-            for item in self.oldmolVar.keys():
+            for item in list(self.oldmolVar.keys()):
                 self.oldmolVar[item]=0
         if hasattr(self, 'oldchainVar'):
-            for item in self.oldchainVar.keys():
+            for item in list(self.oldchainVar.keys()):
                 self.oldchainVar[item]=0
         if hasattr(self, 'molVar'):
-            for item in self.molVar.keys():
+            for item in list(self.molVar.keys()):
                 self.molVar[item].set(0)
         if hasattr(self, 'chainVar'):
-            for item in self.chainVar.keys():
+            for item in list(self.chainVar.keys()):
                 self.chainVar[item].set(0)
         if hasattr(self, 'ResSetsVar'):
-            for item in self.ResSetsVar.keys():
+            for item in list(self.ResSetsVar.keys()):
                 self.ResSetsVar[item].set(0)
         if hasattr(self, 'AtomSetsVar'):
-            for item in self.AtomSetsVar.keys():
+            for item in list(self.AtomSetsVar.keys()):
                 self.AtomSetsVar[item].set(0) 
         if hasattr(self, 'setsVar'):
-            for item in self.setsVar.keys():
+            for item in list(self.setsVar.keys()):
                 self.setsVar[item].set(0)
         if self.form: self.form.lift()
         self.setButtonState()
@@ -1722,7 +1722,7 @@ class MVSelectFromStringCommand(MVCommand):
         #self.lastCmdLog.append(lastCmdLog)
         #self.vf.message( lastCmdLog )
         #self.vf.log(lastCmdLog)
-        apply(self.doitWrapper, (), kwargs)
+        self.doitWrapper(*(), **kwargs)
 
 
     def callDoit(self):
@@ -1732,11 +1732,11 @@ class MVSelectFromStringCommand(MVCommand):
         kw = kwargs.copy()
         kw['silent'] = True
         kwargs['nodes'] = self.vf.Mols
-        lastCmdLog = apply( self.logString, (), kw)
+        lastCmdLog = self.logString(*(), **kw)
         #self.lastCmdLog.append(lastCmdLog)
         #self.vf.message( lastCmdLog )
         #self.vf.log(lastCmdLog)
-        apply(self.doitWrapper, (), kwargs)
+        self.doitWrapper(*(), **kwargs)
 
 
     def callIt(self, args):
@@ -1748,7 +1748,7 @@ class MVSelectFromStringCommand(MVCommand):
         #self.lastCmdLog.append(lastCmdLog)
         #self.vf.message( lastCmdLog )
         #self.vf.log(lastCmdLog)
-        apply(self.doitWrapper, (), args)
+        self.doitWrapper(*(), **args)
         
 
 
@@ -1796,28 +1796,28 @@ class MVDirectSelectCommand(MVSelectFromStringCommand):
             return
         ifd = self.ifd = InputFormDescr(title = 'Direct Select')
         ifd.append({'name': 'Mol List',
-                    'widgetType':Tkinter.Menubutton,
+                    'widgetType':tkinter.Menubutton,
                     'wcfg':{'text': 'Molecule List ...'},
-                    'gridcfg':{'sticky':Tkinter.W, 'columnspan':2}})
+                    'gridcfg':{'sticky':tkinter.W, 'columnspan':2}})
         ifd.append({'name': 'Chain List',
-                    'widgetType':Tkinter.Menubutton,
+                    'widgetType':tkinter.Menubutton,
                     'wcfg':{'text': 'Chain List ...'},
-                    'gridcfg':{'sticky':Tkinter.W, 'columnspan':2} })
+                    'gridcfg':{'sticky':tkinter.W, 'columnspan':2} })
         ifd.append({'name': 'Sets List',
-                    'widgetType':Tkinter.Menubutton,
+                    'widgetType':tkinter.Menubutton,
                     'wcfg':{'text': 'Sets List ...'},
-                    'gridcfg':{'sticky':Tkinter.W, 'columnspan':2} })
+                    'gridcfg':{'sticky':tkinter.W, 'columnspan':2} })
         ifd.append({'name': 'Show SelSpheres',
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'wcfg':{'text': 'Highlight Selection',
                             'variable': self.showSelSpheres,
                             'command': self.toggleSelSpheres},
-                    'gridcfg':{'sticky':Tkinter.W,'row':3,'column':0},
+                    'gridcfg':{'sticky':tkinter.W,'row':3,'column':0},
                     })
-        ifd.append({'widgetType':Tkinter.Button,
+        ifd.append({'widgetType':tkinter.Button,
                     'wcfg':{'bd':6, 'text':'Dismiss',
                             'command': self.Dismiss_cb},
-                            'gridcfg':{'sticky':Tkinter.E+Tkinter.W,
+                            'gridcfg':{'sticky':tkinter.E+tkinter.W,
                                        'columnspan':6},
                     })
         self.form = self.vf.getUserInput(self.ifd, modal = 0, blocking=0)
@@ -1845,10 +1845,10 @@ class MVDirectSelectCommand(MVSelectFromStringCommand):
                 dict = getattr(self, dictName)
                 if len(sellist):
                     selnames = sellist.name
-                    for item in dict.keys():
+                    for item in list(dict.keys()):
                         dict[item].set(item in selnames)
                 else:
-                    for item in dict.keys():
+                    for item in list(dict.keys()):
                         dict[item].set(0)
             else: continue
         if self.vf.userpref['Selection Object']['value'] == 'none':
@@ -1890,7 +1890,7 @@ class MVDirectSelectCommand(MVSelectFromStringCommand):
             chains = self.vf.Mols.findType(Chain)
             newChain=self.findItemFromID(chains, nameStr)
             self.vf.select(newChain, topCommand=0, )
-        elif nameStr in self.vf.sets.keys():
+        elif nameStr in list(self.vf.sets.keys()):
             newSet = self.vf.sets[nameStr]
             newNode0 = newSet[0]
             lev=newNode0.__class__
@@ -1905,7 +1905,7 @@ class MVDirectSelectCommand(MVSelectFromStringCommand):
         """None <- directSelect(nameStr, **kw)
         \nnameStr --- name of selection from the string list"""
         
-        apply( self.doitWrapper, (nameStr,), kw )
+        self.doitWrapper(*(nameStr,), **kw)
         
 
 
@@ -1916,16 +1916,16 @@ class MVDirectSelectCommand(MVSelectFromStringCommand):
         molNames = self.vf.Mols.name
         if molNames:
             for i in molNames:
-                if i not in self.molVar.keys():
-                    self.molVar[i]=Tkinter.IntVar()
+                if i not in list(self.molVar.keys()):
+                    self.molVar[i]=tkinter.IntVar()
                     self.oldmolVar[i]=0
             if len(self.vf.selection):
                 selNames = self.vf.selection.top.uniq().name
-                for n in self.molVar.keys():
+                for n in list(self.molVar.keys()):
                     self.molVar[n].set(n in selNames)
                     self.oldmolVar[n] = n in selNames
             else:
-                for n in self.molVar.keys():
+                for n in list(self.molVar.keys()):
                     self.molVar[n].set(0)
                     self.oldmolVar[n] = 0
         self.buildMenu(molMenubutton,molNames,self.molVar,self.oldmolVar,self.getMolVal)
@@ -1933,7 +1933,7 @@ class MVDirectSelectCommand(MVSelectFromStringCommand):
     def getMolVal(self, event=None):
         self.vf.setSelectionLevel(Protein, busyIdle=0, log=0, setupUndo=0)
         #self.vf.setIcomLevel(Protein, busyIdle=0, log=0)
-        for i in self.molVar.keys():
+        for i in list(self.molVar.keys()):
             newMol=self.findItemFromName(self.vf.Mols, i)
             newVal = self.molVar[i].get()
             if newVal!=self.oldmolVar[i]:
@@ -1951,15 +1951,15 @@ class MVDirectSelectCommand(MVSelectFromStringCommand):
         if not hasattr(self,'chainVar'): self.chainVar = {}
         if not hasattr(self,'oldchainVar'): self.oldchainVar = {}
         #NB this assumes there may be molecules with no chains
-        chMols = MoleculeSet(filter(lambda x: Chain in x.levels, self.vf.Mols))
+        chMols = MoleculeSet([x for x in self.vf.Mols if Chain in x.levels])
         chainIDList = []
         if len(chMols):
             chains = chMols.findType(Chain)
             for ch in chains:
                 newname = ch.full_name()
                 chainIDList.append(newname)
-                if newname not in self.chainVar.keys():
-                    self.chainVar[newname]=Tkinter.IntVar()
+                if newname not in list(self.chainVar.keys()):
+                    self.chainVar[newname]=tkinter.IntVar()
                     self.oldchainVar[newname]=0
             if len(self.vf.selection):
                 selChains = self.vf.selection.findType(Chain)
@@ -1968,7 +1968,7 @@ class MVDirectSelectCommand(MVSelectFromStringCommand):
             if len(selChains):
                 for ch in selChains:
                     selNames.append(ch.full_name())
-            for n in self.chainVar.keys():
+            for n in list(self.chainVar.keys()):
                 ans = n in selNames
                 self.chainVar[n].set(ans)
                 self.oldchainVar[n] = ans
@@ -1979,7 +1979,7 @@ class MVDirectSelectCommand(MVSelectFromStringCommand):
         self.vf.setSelectionLevel(Chain, busyIdle=0, log=0, setupUndo=0)
         #self.vf.setIcomLevel(Chain, busyIdle=0, log=0)
         chains = self.vf.Mols.findType(Chain)
-        for i in self.chainVar.keys():
+        for i in list(self.chainVar.keys()):
             newChain=self.findItemFromID(chains,i)
             newVal= self.chainVar[i].get()
             if newVal!=self.oldchainVar[i]:
@@ -2000,14 +2000,14 @@ class MVDirectSelectCommand(MVSelectFromStringCommand):
         #sets = ['backbone', 'backbone+H', 'sidechain']
         sets = []
         #for k in sets__.keys():
-        for k in self.vf.sets.keys():
+        for k in list(self.vf.sets.keys()):
             sets.append(k)
         #sets = sets__.keys()  #
         self.buildMenu(setsMenubutton,sets,self.setsVar,self.oldsetsVar,self.getSetsVal)
     
 
     def getSetsVal(self, event=None):
-        for i in self.setsVar.keys():
+        for i in list(self.setsVar.keys()):
             #newSet = sets__[i][0]
             newSet = self.vf.sets[i]
             newNode0 = newSet[0]
@@ -2038,7 +2038,7 @@ MVDirectSelectCommandGUI.addMenuCommand('menuRoot', 'Select', 'Direct Select', s
 
 
 
-import numpy.oldnumeric as Numeric 
+import mglcompat.oldnumeric as Numeric 
 class MVSelectSphericalRegion(MVCommand):
     """This Command selects nodes from a specified base within specified spherical region(s) 
     \nPackage : Pmv
@@ -2085,9 +2085,9 @@ class MVSelectSphericalRegion(MVCommand):
         if self.vf.hasGui:
             miscGeom = self.vf.GUI.miscGeom
             self.vf.GUI.VIEWER.AddObject(self.masterGeom, parent=miscGeom)
-            self.selLevel = Tkinter.StringVar()
-            self.selectionBase = Tkinter.StringVar()
-            self.selectionCenter = Tkinter.StringVar()
+            self.selLevel = tkinter.StringVar()
+            self.selectionBase = tkinter.StringVar()
+            self.selectionCenter = tkinter.StringVar()
             self.vf.GUI.VIEWER.AddObject(self.selSph, redo=0,
                                 parent=self.masterGeom)
             self.vf.GUI.VIEWER.AddObject(self.cenCross, redo=0,
@@ -2140,7 +2140,7 @@ class MVSelectSphericalRegion(MVCommand):
                 possible selList values are ['all'], a list of sets or a list
                 of molecule names. 
         """
-        apply( self.doitWrapper, (centerList, radius, selList), kw )
+        self.doitWrapper(*(centerList, radius, selList), **kw)
 
 
     def getAtoms(self, centerList, radius, selList):
@@ -2148,7 +2148,7 @@ class MVSelectSphericalRegion(MVCommand):
         base_nodes = AtomSet([])
         if selList[0]=='all':
             base_nodes = self.vf.allAtoms
-        elif selList[0] in self.vf.sets.keys():
+        elif selList[0] in list(self.vf.sets.keys()):
             #elif selList[0] in sets__.keys():
             #need to get all atoms in all sets specified
             for item in selList:
@@ -2187,11 +2187,11 @@ class MVSelectSphericalRegion(MVCommand):
     def doit(self, centerList, radius, selList):
         """centerList, radius, selList"""
         #this cmd logs centerList as a list of arrays of coords
-        #this cannot be replayed without from numpy.oldnumeric import array
+        #this cannot be replayed without from mglcompat.oldnumeric import array
         #however, in the tests self.vf has no logAllFile
         #hence this ugliness:  -rh 8/05
         if hasattr(self.vf, 'logAllFile'):
-            self.vf.logAllFile.write("from numpy.oldnumeric import array, float32\n")
+            self.vf.logAllFile.write("from mglcompat.oldnumeric import array, float32\n")
         if not centerList:
             t = 'no centerList specified'
             self.vf.warningMsg(t)
@@ -2253,40 +2253,40 @@ class MVSelectSphericalRegion(MVCommand):
         #build ifd and form
         ifd = self.ifd = InputFormDescr(title='Select In Spherical Region')
         self.selectionBase.set('all')
-        ifd.append({'widgetType': Tkinter.Label,
+        ifd.append({'widgetType': tkinter.Label,
                     'name':'cenSphLab',
                     'wcfg':{'text':'Center Spherical Region On:',
                             'bd':2,'relief':'ridge'},
-                    'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                    'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                'columnspan':4}})
-        ifd.append({'widgetType':Tkinter.Radiobutton,
+        ifd.append({'widgetType':tkinter.Radiobutton,
                     'name':'atomRB',
                     'wcfg':{'variable':self.selectionCenter,
                             'text':'an atom',
                             'value':'atom',
                             'command':self.updateCenter},
-                    'gridcfg':{'sticky':Tkinter.W}}),
-        ifd.append({'widgetType':Tkinter.Radiobutton,
+                    'gridcfg':{'sticky':tkinter.W}}),
+        ifd.append({'widgetType':tkinter.Radiobutton,
                     'name':'curselRB',
                     'wcfg':{'variable':self.selectionCenter,
                             'text':'current selection',
                             'value':'cursel',
                             'command':self.updateCenter},
-                    'gridcfg':{'sticky':Tkinter.W,'row':-1,'column':1, 'columnspan':3}}),
-        ifd.append({'widgetType':Tkinter.Radiobutton,
+                    'gridcfg':{'sticky':tkinter.W,'row':-1,'column':1, 'columnspan':3}}),
+        ifd.append({'widgetType':tkinter.Radiobutton,
                     'name':'pt3DRB',
                     'wcfg':{'variable':self.selectionCenter,
                             'text':'x y z',
                             'value':'xyz',
                             'command':self.updateCenter},
-                    'gridcfg':{'sticky':Tkinter.W}}),
-        ifd.append({'widgetType':Tkinter.Radiobutton,
+                    'gridcfg':{'sticky':tkinter.W}}),
+        ifd.append({'widgetType':tkinter.Radiobutton,
                     'name':'cenSelectionRB',
                     'wcfg':{'variable':self.selectionCenter,
                             'text':'center of current selection',
                             'value':'cen_cursel',
                             'command':self.updateCenter},
-                    'gridcfg':{'sticky':Tkinter.W,'row':-1,'column':1, 'columnspan':3}}),
+                    'gridcfg':{'sticky':tkinter.W,'row':-1,'column':1, 'columnspan':3}}),
         
         ifd.append({'name':'xval_tw',
             'widgetType':ThumbWheel,
@@ -2337,10 +2337,10 @@ class MVSelectSphericalRegion(MVCommand):
                     'oneTurn':50.,},
              'gridcfg':{'columnspan':1,'sticky':'e', 'row':-1, 'column':2}})
             
-        ifd.append({'widgetType': Tkinter.Label,
+        ifd.append({'widgetType': tkinter.Label,
                     'wcfg':{ 'text':'Selection Sphere Radius:',
                              'bd':2,'relief':'ridge'},
-                    'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                    'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                'columnspan':4}})
         ifd.append( {'name':'radSlider',
                      'widgetType': ExtendedSliderWidget,
@@ -2352,37 +2352,37 @@ class MVSelectSphericalRegion(MVCommand):
                              'command':self.setRadius_cb,
                              'sliderType':'float',
                              'entrypackcfg':{'side':'right'}},
-                     'gridcfg':{'sticky':Tkinter.W, 'columnspan':4}})
-        ifd.append({'widgetType': Tkinter.Label,
+                     'gridcfg':{'sticky':tkinter.W, 'columnspan':4}})
+        ifd.append({'widgetType': tkinter.Label,
                     'wcfg':{'bd':2,'relief':'ridge',
                             'text':'Molecules To Use As Base For Selection:'},
-                    'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                    'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                'columnspan':4}})
-        ifd.append({'widgetType': Tkinter.Label,
+        ifd.append({'widgetType': tkinter.Label,
                     'wcfg':{'text':' '},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W,
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W,
                                'columnspan':4}})
-        ifd.append({'widgetType':Tkinter.Radiobutton,
+        ifd.append({'widgetType':tkinter.Radiobutton,
                     'name':'allRB',
                     'wcfg':{'variable':self.selectionBase,
                             'text':'all molecules',
                             'value':'all',
                             'command':self.updateBase},
-                    'gridcrf':{'sticky':Tkinter.W}})
-        ifd.append({'widgetType':Tkinter.Radiobutton,
+                    'gridcrf':{'sticky':tkinter.W}})
+        ifd.append({'widgetType':tkinter.Radiobutton,
                     'name':'selectionRB',
                     'wcfg':{'text':'from list',
                             'variable':self.selectionBase,
                             'value':'fromList',
                             'command':self.updateBase},
-                    'gridcf':{'sticky':Tkinter.W}})
-        ifd.append({'widgetType':Tkinter.Radiobutton,
+                    'gridcf':{'sticky':tkinter.W}})
+        ifd.append({'widgetType':tkinter.Radiobutton,
                     'name':'setRB',
                     'wcfg':{'text':'a saved set',
                             'variable':self.selectionBase,
                             'value':'set',
                             'command':self.updateBase},
-                    'gridcf':{'sticky':Tkinter.W}})
+                    'gridcf':{'sticky':tkinter.W}})
         ifd.append({'widgetType':ListChooser,
                     'name':'baseMols',
                     'wcfg':{'title':'Use Spheres to Select Atoms From:',
@@ -2391,21 +2391,21 @@ class MVSelectSphericalRegion(MVCommand):
                     'gridcfg':{'sticky':'w','column':1,'row':-4,
                                'rowspan':10, 'columnspan':3}})
         ifd.append({'name':'selectB',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Select',
                             'command':self.select_cb},
-                    'gridcfg':{'sticky':Tkinter.W+Tkinter.E}})
+                    'gridcfg':{'sticky':tkinter.W+tkinter.E}})
         ifd.append({'name':'clearB',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Clear',
                             'command':self.clear_cb},
-                    'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                    'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                'row':-1, 'column':1, 'columnspan':2}})
         ifd.append({'name':'closeB',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Close',
                             'command':self.close_cb},
-                    'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                    'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                'row':-1,'column':3}})
         self.form = self.vf.getUserInput(ifd, modal=0,blocking=0)
         self.form.root.protocol('WM_DELETE_WINDOW',self.close_cb)
@@ -2550,7 +2550,7 @@ class MVSelectSphericalRegion(MVCommand):
                 self.lb.select_clear(0,'end')
                 self.lb.delete(0,'end')
                 #for item in sets__.items():
-                for item in self.vf.sets.keys():
+                for item in list(self.vf.sets.keys()):
                     self.lb.insert(0,item)
             for item in self.lb.curselection():
                 newstr= self.lb.get(item)
@@ -2563,7 +2563,7 @@ class MVSelectSphericalRegion(MVCommand):
     def select_cb(self, event=None):
         #callback for select button
         #NB: only in this call back if there is a form...
-        apply(self.doitWrapper, (self.centerList,self.radius, self.selList),{})
+        self.doitWrapper(*(self.centerList,self.radius, self.selList), **{})
 
 
     def clear_cb(self, event=None):
@@ -2628,7 +2628,7 @@ class MVInvertSelection(MVCommand):
 
     def onAddCmdToViewer(self):
         if self.vf.hasGui:
-            self.invertlevel = Tkinter.StringVar()
+            self.invertlevel = tkinter.StringVar()
         
 
     def setupUndoBefore(self,  *args, **kw):
@@ -2717,7 +2717,7 @@ class MVInvertSelection(MVCommand):
             subset = self.vf.expandNodes(subset)
         if invertLevel is None and subset is None:
             return
-        apply(self.doitWrapper,(invertLevel,subset), kw)
+        self.doitWrapper(*(invertLevel,subset), **kw)
 
         
     def guiCallback(self):
@@ -2726,9 +2726,9 @@ class MVInvertSelection(MVCommand):
             # create the form descriptor
             levelNames = ['all', 'molecule']
             idf = self.ifd = InputFormDescr(title = 'Set Level for Invert Selection')
-            idf.append({ 'name': 'level', 'widgetType':Tkinter.Radiobutton,
+            idf.append({ 'name': 'level', 'widgetType':tkinter.Radiobutton,
                          'listtext': levelNames, 'variable': self.invertlevel,
-                         'gridcfg':{'sticky':Tkinter.W}})
+                         'gridcfg':{'sticky':tkinter.W}})
             val = self.vf.getUserInput(idf)            
             if len(val)>0: 
                 self.doitWrapper(val['level'])
@@ -2788,14 +2788,14 @@ class SelectNoWaterHeteroAtomsCommand(MVSelectFromStringCommand, MVSelectCommand
             \nintersect -- when True hetero atoms are intersected with current selection
         """
         if nodes is None: nodes = self.vf.Mols
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
            self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         kw['negate']= negate
         kw['only']= only
         kw['xor']= xor
         kw['intersect']= intersect
-        return apply( self.doitWrapper, (nodes,), kw )
+        return self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes, negate=False, only=False, xor=False, intersect=False):
@@ -2842,37 +2842,37 @@ class SelectNoWaterHeteroAtomsCommand(MVSelectFromStringCommand, MVSelectCommand
         ifd = self.ifd = InputFormDescr(title = 'Select no water Hetero')
 
         ifd.append({'name': 'addBut',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'bd':3, 'text': 'Add',
                             'command': self.add},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W,'row':4,
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W,'row':4,
                                'column':0, 'columnspan':1},
                     })
         ifd.append({'name': 'removeBut',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'bd':3, 'text': 'Remove',
                             'command': self.remove},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W,'row':4,
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W,'row':4,
                                'column':1, 'row':-1, 'columnspan':2},
                     })
         ifd.append({'name': 'xorBut',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'bd':3, 'text': 'Xor',
                             'command': self.xor},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W,'row':4,
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W,'row':4,
                                'column':3,'row':-1, 'columnspan':1},
                     })
         ifd.append({'name': 'intersectBut',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'bd':3, 'text': 'Intersect',
                             'command': self.intersect},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W,'row':4,
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W,'row':4,
                                'column':4, 'row':-1, 'columnspan':2},
                     })
-        ifd.append({'widgetType':Tkinter.Button,
+        ifd.append({'widgetType':tkinter.Button,
                     'wcfg':{'bd':4, 'text':'Dismiss',
                             'command': self.Dismiss_cb},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W,
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W,
                                'columnspan':6}})
         self.form = self.vf.getUserInput(self.ifd, modal = 0, blocking=0)
         self.form.root.protocol('WM_DELETE_WINDOW',self.Dismiss_cb)

@@ -38,7 +38,7 @@ class LigandDictionaryMaker:
         type_dict = {}
         for a in ligand.allAtoms:
             type_dict[a.autodock_element] = 1
-        atom_types = type_dict.keys()
+        atom_types = list(type_dict.keys())
         atom_types.sort()
         ostr = "d['" + ligand.name +"'] = {"
         ostr = ostr + "'atom_types': [" 
@@ -74,16 +74,16 @@ class LigandDictionaryMaker:
  
 
 def usage():
-    print "Usage: prepare_ligand_dict.py -l ligand_filename -d ligand_dict_filename"
-    print
-    print "Optional parameters:"
-    print "    [-d ligand_dict_filename]"
-    print "    [-v] verbose output"
-    print
-    print "Write a python dictionary 'summary' comprised of dictionaries of atom_types, rbonds and zero_charge atoms with an entry for each ligand filename."
-    print
-    print "   The filename will be ligand_dict.py.  "
-    print "This may be overridden using the -d flag."
+    print("Usage: prepare_ligand_dict.py -l ligand_filename -d ligand_dict_filename")
+    print()
+    print("Optional parameters:")
+    print("    [-d ligand_dict_filename]")
+    print("    [-v] verbose output")
+    print()
+    print("Write a python dictionary 'summary' comprised of dictionaries of atom_types, rbonds and zero_charge atoms with an entry for each ligand filename.")
+    print()
+    print("   The filename will be ligand_dict.py.  ")
+    print("This may be overridden using the -d flag.")
 
     
 if __name__ == '__main__':
@@ -92,8 +92,8 @@ if __name__ == '__main__':
 
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'hvl:d:')
-    except getopt.GetoptError, msg:
-        print 'prepare_ligand_dict.py: %s' % msg
+    except getopt.GetoptError as msg:
+        print('prepare_ligand_dict.py: %s' % msg)
         usage()
         sys.exit(2)
 
@@ -101,23 +101,23 @@ if __name__ == '__main__':
     ligand_dict_filename = None
     verbose = None
     for o, a in opt_list:
-        if verbose: print "o=", o, ' a=', a
+        if verbose: print("o=", o, ' a=', a)
         if o in ('-v', '--v'):
             verbose = 1
-            if verbose: print 'verbose output'
+            if verbose: print('verbose output')
         if o in ('-l', '--l'):
             ligand_filename = a
-            if verbose: print 'ligand_filename =', ligand_filename
+            if verbose: print('ligand_filename =', ligand_filename)
         if o in ('-d', '--d'):
             ligand_dict_filename = a
-            if verbose: print 'ligand_dict_filename =', ligand_dict_filename
+            if verbose: print('ligand_dict_filename =', ligand_dict_filename)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
 
     if not ligand_filename:
-        print "prepare_ligand_dict.py: ligand filename must be specified."
+        print("prepare_ligand_dict.py: ligand filename must be specified.")
         usage()
         sys.exit()
 

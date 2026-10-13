@@ -51,7 +51,7 @@ def readInstancesMatsFromFile(filename):
 
     mats = []
     for line in data:
-        mats.append( map(float, line.split()) )
+        mats.append( list(map(float, line.split())) )
 
     mats = numpy.array(mats)
     mats.shape = (-1,4,4)

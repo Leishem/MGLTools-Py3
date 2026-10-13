@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 30, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 30, 2007 by 
 
 #
 # copyright_notice
@@ -9,9 +9,9 @@
 
 # the function that are checked in the C wrapper are commented out
 
-import numpy.oldnumeric as Numeric
-from gl_auto import *
-from gl_deprec import *
+import mglcompat.oldnumeric as Numeric
+from .gl_auto import *
+from .gl_deprec import *
 
 from opengltk.extent import _gllib
 from opengltk import util
@@ -588,7 +588,7 @@ __all__ = [
     'glVertexPointer',
     ]
 
-import gl_auto
+from . import gl_auto
 __all__ += gl_auto.__all__
-import gl_deprec
+from . import gl_deprec
 __all__ += gl_deprec.__all__

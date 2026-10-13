@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -13,10 +13,10 @@
 #
 #$Id: MeshVolume.py,v 1.2 2007/07/24 17:30:45 vareille Exp $
 #
-import numpy.oldnumeric as Numeric, struct
+import mglcompat.oldnumeric as Numeric, struct
 import sys
 
-import mesh
+from . import mesh
 #
 # load low resolution volume
 class MeshVolume:
@@ -36,12 +36,12 @@ class MeshVolume:
         self.elementAttributes = self.sma.getElementAttributes()
         self.bounds = ( self.gda[0].getSize(), self.gda[1].getSize(),
                         self.gda[2].getSize() )
-        print "***Mesh_info*****************"
-        print "inputFile:" , self.inputFile
-        print "MaximumCachePageCount:", self.ca.getMaximumCachePageCount()
-        print " MaximumCacheSize:", self.ca.getMaximumCacheSize()
-        print "MaximumPageSize:" , self.ca.getMaximumPageSize()
-        print "*****************************"
+        print("***Mesh_info*****************")
+        print("inputFile:" , self.inputFile)
+        print("MaximumCachePageCount:", self.ca.getMaximumCachePageCount())
+        print(" MaximumCacheSize:", self.ca.getMaximumCacheSize())
+        print("MaximumPageSize:" , self.ca.getMaximumPageSize())
+        print("*****************************")
 
     def getSubVolume(self, fieldName, x1, x2, y1, y2, z1, z2):
         fieldNameIndex = self.elementAttributes.getFieldIndex(fieldName)

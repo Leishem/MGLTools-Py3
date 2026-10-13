@@ -1,5 +1,5 @@
 import os, weakref
-import Tkinter, Pmw
+import tkinter, Pmw
 
 from Scenario2.gui.Tk.clipboard import ClipboardGUI
 from Scenario2.sequenceAnimator import SequenceAnimator
@@ -143,7 +143,7 @@ class colorsMAAGUI(AnimationPanel):
         for lastRow, txt in enumerate(colorCmds.keys()):
             #if txt == "choose color": continue
             cb = CallbackFunction(self.makeMAA, PmvColorObjectMAA, (), {'pmv':pmv, 'colortype':txt})
-            w = Tkinter.Button(parent, text=txt, command=cb)
+            w = tkinter.Button(parent, text=txt, command=cb)
             w.grid(column=0, row=lastRow, columnspan = 2, sticky='ew')
             w.bind('<Button-3>', CallbackFunction( self.showMaaEditor_cb, PmvColorObjectMAA, (), {'pmv':pmv, 'colortype':txt}) )
         
@@ -176,7 +176,7 @@ class colorsMAAGUI(AnimationPanel):
         """
         geometries, geomkw = self.getSelectedGeoms()
         if len(geometries)==0:
-            from tkMessageBox import showwarning
+            from tkinter.messagebox import showwarning
             showwarning("Warning", 'No geometry selected',
                         parent = self.geomChooser.root)
             return
@@ -199,7 +199,7 @@ class colorsMAAGUI(AnimationPanel):
         geometries = gc.get()
 
         if len(geometries)==0:
-            from tkMessageBox import showwarning
+            from tkinter.messagebox import showwarning
             showwarning("Warning", 'No geometry selected',
                         parent = gc.root)
             return
@@ -256,13 +256,13 @@ class movePmvObjectsMAAGUI(ShowHideGeomPanel):
         cb = CallbackFunction(self.makeMAA, PartialFadeMolGeomsMAA,
                               (gc,), {'pmv':pmv})
         parent = self.makeActionsG.interior()
-        w = self.pfadeB = Tkinter.Button(parent, text='Partial fade',
+        w = self.pfadeB = tkinter.Button(parent, text='Partial fade',
                                          command=cb)
         w.grid(column=0, row=self.lastRow, sticky='ew')
         w.bind('<Button-3>', CallbackFunction( self.showMaaEditor_cb, PartialFadeMolGeomsMAA, (), {'pmv':pmv}))
 
 
-import tkFileDialog
+import tkinter.filedialog
 
 class AnimationNotebook:
 
@@ -275,7 +275,7 @@ class AnimationNotebook:
         """
         self.master = master
         if master is None:
-            self.master = master = Tkinter.Toplevel()
+            self.master = master = tkinter.Toplevel()
             self.ownsMaster = True
         else:
             self.ownsMaster = False
@@ -288,12 +288,12 @@ class AnimationNotebook:
         self.master = sf.interior()        
 
         # create menu bar
-        self.mBar = Tkinter.Frame(self.master, relief=Tkinter.RAISED, borderwidth=2)
+        self.mBar = tkinter.Frame(self.master, relief=tkinter.RAISED, borderwidth=2)
         self.menuButtons = {}
-        File_button = Tkinter.Menubutton(self.mBar, text='File', underline=0)
-        File_button.menu = Tkinter.Menu(File_button)
+        File_button = tkinter.Menubutton(self.mBar, text='File', underline=0)
+        File_button.menu = tkinter.Menu(File_button)
         File_button['menu'] = File_button.menu
-        File_button.pack(side=Tkinter.LEFT, padx="1m")
+        File_button.pack(side=tkinter.LEFT, padx="1m")
         File_button.menu.add_command(label='Load animation script', underline=0,
                                      #accelerator='(Ctrl-o)',
                                      command=self.loadAnimation)
@@ -307,7 +307,7 @@ class AnimationNotebook:
 ##                                      #accelerator="(Ctrl-s)",
 ##                                      command=self.saveSnapshots)
         
-        self.mBar.pack(side='top',fill=Tkinter.X)
+        self.mBar.pack(side='top',fill=tkinter.X)
         # create notebook widget:
         self.showHidePanel = None
         self.colorsGUI = None
@@ -339,7 +339,7 @@ class AnimationNotebook:
         self.sequenceP = nb.add("Sequence Anim.")
         self.addSequenceAnim()
         
-        nb.pack(padx=5, pady = 5, fill=Tkinter.BOTH, expand=1)
+        nb.pack(padx=5, pady = 5, fill=tkinter.BOTH, expand=1)
         nb.setnaturalsize()
         
         self.balloon = Pmw.Balloon(self.master)
@@ -406,10 +406,10 @@ class AnimationNotebook:
         dialog = Pmw.Dialog(self.master, buttons = ('OK','Cancel'),
                             defaultbutton = 'OK', title=title)
         dialog.withdraw()
-        savesession = Tkinter.IntVar()
+        savesession = tkinter.IntVar()
         savesession.set(1)
         frame = dialog.interior()
-        checkb = Tkinter.Checkbutton(frame, text = "Save Pmv Session",
+        checkb = tkinter.Checkbutton(frame, text = "Save Pmv Session",
                                      variable=savesession)
         checkb.pack(side='top', anchor='w')
         
@@ -417,7 +417,7 @@ class AnimationNotebook:
         entry.pack(expand = 1, fill = 'both', padx = 4, pady = 4, side='left')
         self.balloon.bind(entry, "Enter a filename.\nfilename%s.py and filename_session.psf\nwill be created" % (fileext,))
         
-        button = Tkinter.Button(frame, text="BROWSE",
+        button = tkinter.Button(frame, text="BROWSE",
                                 command=CallbackFunction(self.saveFileDialog_cb,
                                                          entry, fileext))
         button.pack(side='left')
@@ -433,7 +433,7 @@ class AnimationNotebook:
         (stripped of the '_animation.py' extension) """
         
         fname = None
-        file = tkFileDialog.asksaveasfilename(parent = self.master,
+        file = tkinter.filedialog.asksaveasfilename(parent = self.master,
                                               initialdir = '.',
                           filetypes=[('animation', '*%s.py'% fileext), ('all', '*')],
                           initialfile = "my%s.py" % fileext, title='Save Animation')
@@ -455,8 +455,8 @@ class AnimationNotebook:
                         try:
                             self.pmv.readSourceMolecule(sessionfile)
                         except:
-                            import tkMessageBox
-                            tkMessageBox.showwarning('Load Session Warning', "Load Session %s  Failed" % sessionfile)
+                            import tkinter.messagebox
+                            tkinter.messagebox.showwarning('Load Session Warning', "Load Session %s  Failed" % sessionfile)
                             import traceback
                             traceback.print_exc()
                 pmv = self.pmv
@@ -464,7 +464,7 @@ class AnimationNotebook:
                 if lastAnimationFrame > 0: lastAnimationFrame += 1
                 glob = {'pmv' : pmv, 'offset':lastAnimationFrame,
                         'animator':self.seqAnim}
-                execfile( animfile, glob)
+                exec(compile(open( animfile, "rb").read(), animfile, 'exec'), glob)
                 self.notebook.selectpage("Sequence Anim.")
 
 
@@ -477,19 +477,19 @@ class AnimationNotebook:
         entry1 = Pmw.EntryField(frame, label_text="Animation file:", labelpos='w')
         entry1.grid(row = 0, column=0, padx = 5, pady = 5, sticky='w')
 
-        button1 = Tkinter.Button(frame, text="BROWSE")
+        button1 = tkinter.Button(frame, text="BROWSE")
         button1.grid(row = 0, column=1, padx = 5, pady = 5, sticky='w')
         
-        loadsession = Tkinter.IntVar()
+        loadsession = tkinter.IntVar()
         loadsession.set(1)
-        checkb = Tkinter.Checkbutton(frame, text = "Load Pmv Session",
+        checkb = tkinter.Checkbutton(frame, text = "Load Pmv Session",
                                      variable=loadsession)
         checkb.grid(row = 1, column=0, padx = 5, pady = 5, sticky='w')
         
         entry2 = Pmw.EntryField(frame, label_text="Session file:", labelpos='w')
         entry2.grid(row = 2, column=0, padx = 5, pady = 5, sticky='w')
 
-        button2 = Tkinter.Button(frame, text="BROWSE")
+        button2 = tkinter.Button(frame, text="BROWSE")
         button2.grid(row = 2, column=1, padx = 5, pady = 5, sticky='w')
 
         button1.configure(command=CallbackFunction(self.openFileDialog_cb, entry1,
@@ -515,7 +515,7 @@ class AnimationNotebook:
         
         file2 = None
         if entry1.cget('label_text') == 'Animation file:':
-            file1 = tkFileDialog.askopenfilename(parent = self.master,
+            file1 = tkinter.filedialog.askopenfilename(parent = self.master,
                             initialdir = '.', title="%s" % (title,),
                             filetypes=[('animation', '*%s.py' % (fileext,)), ('all', '*')] )
             if file1:
@@ -523,7 +523,7 @@ class AnimationNotebook:
                 entry1.setentry(file1)
                 file2 = fname+"_session.psf"
         else:
-            file1 = tkFileDialog.askopenfilename(parent = self.master,
+            file1 = tkinter.filedialog.askopenfilename(parent = self.master,
                             initialdir = '.', title='Load Pmv Session',
                             filetypes=[('Pmv session', '*_session.psf'), ('all', '*')] )
             if file1:
@@ -599,12 +599,12 @@ class AnimationNotebook:
                 # "if" statement
                 #(see DejaVuscenarioInterface.animations.py/SnapshotMAAGroup.getSourceCode() )
                 #lines += tab+ """maas.append(maa%d)\n""" % i
-                imstr = maa.ims.tostring()
+                imstr = maa.ims.tobytes()
                 imarr = numpy.fromstring( imstr, 'B').tolist()
                 #lines +=  tab+ """imstr%d = '%s'\n""" % (i, imstr)
                 lines +=  tab+ """imstr%d = %s\n""" % (i, imarr)
                 #lines +=  tab+ """maa%d.ims = Image.fromstring('RGB', (50, 50), imstr%d)\n"""% (i,i)
-                lines +=  tab+ """maa%d.ims = Image.fromstring('RGB', (50, 50), array(imstr%d, 'B').tostring() )\n"""% (i,i)
+                lines +=  tab+ """maa%d.ims = Image.fromstring('RGB', (50, 50), array(imstr%d, 'B').tobytes() )\n"""% (i,i)
                 lines +=  tab+ """AniMol.loadSnapshot(maa%d)\n""" % (i,)
                 lines += tab+ """AniMol.loadedMaas[%d] = maa%d\n""" % (i,i)
                 for ii , _maa in enumerate(self.seqAnim.maas):
@@ -667,7 +667,7 @@ class AnimationNotebook:
         glob = {'pmv' : pmv, 'offset':lastAnimationFrame,
                 'AniMol':self}
         if numfiles==None and animfile=="animation.py":
-            execfile(animfile, glob)
+            exec(compile(open(animfile, "rb").read(), animfile, 'exec'), glob)
         elif numfiles:
             import os
             #from time import time
@@ -678,7 +678,7 @@ class AnimationNotebook:
                 if os.path.exists(file):
                     #print "executing ...." ,
                     #t1 = time()
-                    execfile(file, glob)
+                    exec(compile(open(file, "rb").read(), file, 'exec'), glob)
                     #print "done", time() - t1 
 
 
@@ -686,8 +686,8 @@ class AnimationNotebook:
         """Saves animations from snapshots page to a file"""
         maas = self.orientGUI.getSavedMaas()
         if not len(maas):
-            import tkMessageBox
-            tkMessageBox.showwarning("Custom Animation warning", "No snapshots to save")
+            import tkinter.messagebox
+            tkinter.messagebox.showwarning("Custom Animation warning", "No snapshots to save")
             return
         
         if file is None:
@@ -715,10 +715,10 @@ class AnimationNotebook:
             if len(maasrc):
                 lines += maasrc + """\n"""
                 lines += tab+ """maas.append(snapshot%d)\n""" % i
-                imstr = maagroup.ims.tostring()
+                imstr = maagroup.ims.tobytes()
                 imarr = numpy.fromstring( imstr, 'B').tolist()
                 lines +=  tab+ """imstr%d = %s\n""" % (i, imarr)
-                lines +=  tab+ """snapshot%d.ims = Image.fromstring('RGB', (50, 50), array(imstr%d, 'B').tostring() )\n"""% (i,i)
+                lines +=  tab+ """snapshot%d.ims = Image.fromstring('RGB', (50, 50), array(imstr%d, 'B').tobytes() )\n"""% (i,i)
                 f.writelines(lines)
 
         #f.writelines(lines)
@@ -740,15 +740,15 @@ class AnimationNotebook:
                     try:
                         self.pmv.readSourceMolecule(sessionfile)
                     except:
-                        import tkMessageBox
-                        tkMessageBox.showwarning('Load Session Warning', "Load Session %s  Failed" % sessionfile)
+                        import tkinter.messagebox
+                        tkinter.messagebox.showwarning('Load Session Warning', "Load Session %s  Failed" % sessionfile)
                         import traceback
                         traceback.print_exc()
             #lastAnimationFrame = self.seqAnim.endFrame
             #if lastAnimationFrame > 0: lastAnimationFrame += 1
             glob = {'pmv' : self.pmv} #, 'offset': lastAnimationFrame, 'animator':self.seqAnim}
             filelocals = {}
-            execfile(animfile, glob, filelocals)
+            exec(compile(open(animfile, "rb").read(), animfile, 'exec'), glob, filelocals)
             maas = filelocals.get("maas")
             #print "maas in load:", maas
             if maas is not None:

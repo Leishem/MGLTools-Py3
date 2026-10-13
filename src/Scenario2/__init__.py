@@ -4,7 +4,7 @@
 MaxKF = 999999999
 
 
-from clipboard import Clipboard
+from .clipboard import Clipboard
 
 # create a default clipboard object that can be shared accros applications
 # using scenario

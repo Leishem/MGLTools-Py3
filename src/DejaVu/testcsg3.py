@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #pmv -i -d ms 1crn.pdb
 #execfile('testcsg3.py')
@@ -16,13 +16,13 @@
 ##  add support for instanceMatrices
 
 from OpenCSG import opencsglib as OpenCSG
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 ## from DejaVu.Spheres import Spheres
 
 class DejaVuPrimitive(OpenCSG.PythonPrimitive):
 
     def __init__(self, geom):
-        apply( OpenCSG.PythonPrimitive.__init__, (self, self.render, OpenCSG.Intersection, 0))
+        OpenCSG.PythonPrimitive.__init__(*(self, self.render, OpenCSG.Intersection, 0))
         # does not work for some reason
         #OpenCSG.PythonPrimitive(self.render, OpenCSG.Intersection, 1)
         self.geom = geom
@@ -114,8 +114,8 @@ class OpenCSGGeom(Geom):
 
         if __debug__:
             if check:
-                apply( checkKeywords, (name,self.keywords), kw)
-        apply( Geom.__init__, (self, name, 0), kw )
+                checkKeywords(*(name,self.keywords), **kw)
+        Geom.__init__(*(self, name, 0), **kw)
         self.primitives = OpenCSG.PrimitiveVector() # C++ primitives
         self.pyprimitives = [] # python subclasses used to call python implementation or render
         self.algo = OpenCSG.Goldfeather
@@ -148,21 +148,21 @@ class OpenCSGGeom(Geom):
 
 
     def Set(self, check=1, redo=1, **kw):
-	"""Set primitives"""
+        """Set primitives"""
 
         if __debug__:
             if check:
-                apply( checkKeywords, (self.name,self.keywords), kw)
+                checkKeywords(*(self.name,self.keywords), **kw)
 
-        apply( Geom.Set, (self, 0, 0), kw)
+        Geom.Set(*(self, 0, 0), **kw)
 
         p = kw.get( 'primitives')
-	if p:
+        if p:
             assert isinstance(p, OpenCSG.PythonPrimitiveVector)
             self.primitives = p
 
         a = kw.get( 'algo')
-	if a:
+        if a:
             if a =='automatic':
                 a = OpenCSG.Automatic
             elif a== 'goldfeather':
@@ -173,7 +173,7 @@ class OpenCSGGeom(Geom):
             self.algo = a
 
         d = kw.get( 'depthalgo')
-	if d:
+        if d:
             if d =='DepthComplexitySampling':
                 d = OpenCSG.DepthComplexitySampling
             elif d== 'NoDepthComplexitySampling':
@@ -237,7 +237,7 @@ srf1.Set(frontPolyMode='line', visible=False)
 #srf2.Set(frontPolyMode='line')
 
 err = OpenCSG.glewInit()
-print "glewInit status: ", err
+print("glewInit status: ", err)
 
 g = OpenCSGGeom('inter')
 

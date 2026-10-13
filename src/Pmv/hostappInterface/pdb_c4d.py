@@ -15,8 +15,8 @@ import c4d
 
 #standardmodule
 import numpy
-import numpy.oldnumeric as Numeric
-import sys, os, os.path, struct, math, string
+import mglcompat.oldnumeric as Numeric
+import sys, os, os.path, struct, math; from mglcompat import pystring as string
 import types
 from math import *
 from types import StringType, ListType
@@ -112,14 +112,14 @@ def lookupDGFunc(atom):
             atom.atomId=atom.parent.type+atom.name
         if atom.atomId not in DGatomIds: 
             atom.atomId=atom.element
-            if atom.atomId not in AtmRadi.keys() : atom.atomId="A"
+            if atom.atomId not in list(AtmRadi.keys()) : atom.atomId="A"
         return atom.atomId
 
 
 ResidueSelector=ResidueSetSelector()
 
 def start(debug=0):
-    if VERBOSE : print "start ePMV - debug ",debug
+    if VERBOSE : print("start ePMV - debug ",debug)
     mv = MoleculeViewer(logMode = 'unique', customizer=None, master=None,title='pmv', withShell= 0,verbose=False, gui = False)
     mv.addCommand(BindGeomToMolecularFragment(), 'bindGeomToMolecularFragment', None)
     mv.browseCommands('trajectoryCommands',commands=['openTrajectory'],log=0,package='Pmv')
@@ -132,13 +132,13 @@ def start(debug=0):
 
 def reset_ePMV(mv, debug=0):
     #need to restore the logEvent sytem for the right session
-    if VERBOSE : print "reset epmv debug",debug,mv
+    if VERBOSE : print("reset epmv debug",debug,mv)
     mv.embedInto('c4d',debug=debug)
 
 
 def compareSel(currentSel,molSelDic):
-    for selname in molSelDic.keys():
-        if VERBOSE : print "The compareSelection   ",currentSel,molSelDic[selname][3]
+    for selname in list(molSelDic.keys()):
+        if VERBOSE : print("The compareSelection   ",currentSel,molSelDic[selname][3])
         #if currentSel[-1] == ';' : currentSel=currentSel[0:-1]
         if currentSel == molSelDic[selname] : return selname
 
@@ -179,7 +179,7 @@ def update():
     getCurrentScene().message(c4d.MULTIMSG_UP)    
     #c4d.draw_views(c4d.DA_ONLY_ACTIVE_VIEW|c4d.DA_NO_THREAD|c4d.DA_NO_ANIMATION)
     c4d.draw_views(c4d.DA_NO_THREAD|c4d.DA_FORCEFULLREDRAW)
-	
+        
 def getObjectName(o):
     return o.get_name()
 
@@ -301,13 +301,13 @@ def makeAtomHierarchy(res,parent,useIK=False):
             addIKTag(bond_obj)            
         if i > 0 : prev_atom = backbone[i-1]        
         if prev_atom != None:
-            if VERBOSE : print "hierarchy backbone ",atm.name, prev_atom.name
+            if VERBOSE : print("hierarchy backbone ",atm.name, prev_atom.name)
             rePos = prev_atom.coords
             oparent = getObject(prev_atom.full_name()+"_bond")
-            if VERBOSE : print oparent.get_name()            
+            if VERBOSE : print(oparent.get_name())            
             addObjectToScene(doc,at_obj,parent=oparent,centerRoot=True,rePos=rePos)                                     
         else :
-            if VERBOSE : print "first atom", atm.name
+            if VERBOSE : print("first atom", atm.name)
             addObjectToScene(doc,at_obj,parent=parent,centerRoot=True,rePos=rePos)
         addObjectToScene(doc,bond_obj,parent=at_obj,centerRoot=False)
         if atm.name == 'CA' :
@@ -475,7 +475,7 @@ def addMaterial(name,color):
       doc = c4d.documents.get_active_document()
       # create standard material
       __mat = doc.find_material(name)
-      if VERBOSE : print name,color	  
+      if VERBOSE : print(name,color)	  
       if __mat != None :
           return __mat	  		
       else :
@@ -501,7 +501,7 @@ def retrieveColorMat(color):
         if color ==	eval(col) :
             return doc.find_material(col)		
     return None
-			
+                        
 def create_layers_material(name):
       import c4d
       import c4d.documents
@@ -511,7 +511,7 @@ def create_layers_material(name):
       __mat[900] = name
       __mat[8000]= c4d.BaseList2D(LAYER)
 
-	             
+                     
 def create_loft_material(doc=None,name='loft'):
       import c4d
       import c4d.documents
@@ -552,10 +552,10 @@ def create_sticks_materials(doc=None):
       # create standard material
       i=0
       j=0
-      atms=AtmRadi.keys()
+      atms=list(AtmRadi.keys())
       for i in range(len(atms)):
          for j in range(len(atms)):
-           if (atms[i][0]+atms[j][0]) not in sticks_materials.keys():    
+           if (atms[i][0]+atms[j][0]) not in list(sticks_materials.keys()):    
               mat=doc.find_material(atms[i][0]+atms[j][0])
               if mat == None :
                   mat=GradMat.get_clone()
@@ -648,10 +648,10 @@ def getMaterials():
 def getMaterialListe():
    Material=getMaterials()
    matlist=[]
-   matlist.extend(Material["atoms"].keys())
-   matlist.extend(Material["residus"].keys())
-   matlist.extend(Material["ss"].keys())
-   matlist.extend(Material["sticks"].keys())            
+   matlist.extend(list(Material["atoms"].keys()))
+   matlist.extend(list(Material["residus"].keys()))
+   matlist.extend(list(Material["ss"].keys()))
+   matlist.extend(list(Material["sticks"].keys()))            
    return matlist
    
 def computeRadius(protein,center=None):
@@ -675,7 +675,7 @@ def updateRTSpline(spline,selectedPoint,distance = 2.0,DistanceBumping = 1.85):
     #from Graham code 
     #print "before loop"
     nb_points = spline.get_point_count()
-    for j in xrange(selectedPoint,nb_points-1):
+    for j in range(selectedPoint,nb_points-1):
         leaderB = spline.get_point(j)
         myPos = spline.get_point(j+1)      
         deltaB = myPos-leaderB
@@ -751,7 +751,7 @@ def updateCoordFromObj(mv,sel,debug=True):
                             #from Pmv import amberCommands
                             #amberCommands.Amber94Config = {}
                             #amberCommands.CurrentAmber94 = {}
-							#amb_ins = Amber94(atoms, prmfile=filename)
+                                                        #amb_ins = Amber94(atoms, prmfile=filename)
                             mv.setup_Amber94(mol.name+":",mv.energy.name,mol.prname,indice=mol.cconformationIndex)
                             mv.minimize_Amber94(mv.energy.name, dfpred=10.0, callback_freq='10', callback=1, drms=1e-06, maxIter=100., log=0)
                             #mv.md_Amber94(mv.energy.name, 349, callback=1, filename='0', log=0, callback_freq=10)
@@ -788,7 +788,7 @@ def updateCoordFromObj(mv,sel,debug=True):
 #                    #debug using some spher
 #                    #print rec.mat_transfo_inv
                     get_nrg_score(mv.energy)
-					
+                                        
 #                if debug :
 #                        matx = matrix2c4dMat(mat)
 #                        imatx = matrix2c4dMat(rec.mat_transfo_inv)
@@ -808,7 +808,7 @@ def Cylinder(name,radius=1.,length=1.,res=16, pos = [0.,0.,0.]):
     baseCyl.make_tag(c4d.Tphong)
     #addObjectToScene(getCurrentScene(),baseCyl)
     return baseCyl
-		
+                
 def Sphere(name,radius=1.0,res=0):
     QualitySph={"0":6,"1":4,"2":5,"3":6,"4":8,"5":16} 
     baseSphere = c4d.BaseObject(c4d.Osphere)
@@ -817,11 +817,11 @@ def Sphere(name,radius=1.0,res=0):
     baseSphere.make_tag(c4d.Tphong)
     #addObjectToScene(getCurrentScene(),baseSphere)
     return baseSphere
-					              
+                                                      
 def updateSphereMesh(geom,quality=0,cpkRad=0.8,scale=0.,radius=0):
     AtmRadi = {"A":1.7,"N":"1.54","C":"1.85","O":"1.39","S":"1.85","H":"1.2","P" : "1.7"}
     #print geom.mesh
-    for name in geom.mesh.keys() : 
+    for name in list(geom.mesh.keys()) : 
         scaleFactor=float(cpkRad)+float(AtmRadi[name])*float(scale)
         if float(cpkRad) > 0. :
             scaleFactor = float(cpkRad)*float(scale)
@@ -850,7 +850,7 @@ def createBaseSphere(name="BaseMesh",quality=0,cpkRad=0.,scale=0.,radius=None,ma
     baseSphere.make_tag(c4d.Tphong)
     addObjectToScene(getCurrentScene(),baseSphere,parent=baseShape)
     if mat == None : mat=create_Atoms_materials()
-    for atn in AtmRadi.keys():
+    for atn in list(AtmRadi.keys()):
         atparent=newEmpty(name+"_"+atn)
         scaleFactor=float(cpkRad)+float(AtmRadi[atn])*float(scale)
         rad=AtmRadi[atn]
@@ -945,7 +945,7 @@ def instancesSphere(name,centers,radii,meshsphere,colors,scene,parent=None):
     return sphs
     
 def instancesAtomsSphere(name,x,iMe,doc,mat=None,scale=1.0,Res=32,
-						R=None,join=0,geom=None,dialog=None,pb=None):
+                                                R=None,join=0,geom=None,dialog=None,pb=None):
     sphers=[]
     k=0
     n='S'
@@ -962,58 +962,58 @@ def instancesAtomsSphere(name,x,iMe,doc,mat=None,scale=1.0,Res=32,
     hiera = 'default'		
     mol = x[0].getParentOfType(Protein)		
     molname = name.split("_")[0]
-    if VERBOSE : print "molname ", molname,mol
+    if VERBOSE : print("molname ", molname,mol)
     Spline = getObject("spline"+molname)
     for c in mol.chains:
-		spher=[]
-		oneparent = True 
-		atoms = c.residues.atoms
-		parent=findatmParentHierarchie(atoms[0],n,hiera)	
-		for j in xrange(len(atoms.coords)):
-			#at=res.atoms[j]
-			at=atoms[j]
-			radius = at.radius
-			scaleFactor=float(R)+float(radius)*float(scale)
-			atN=at.name
-			#print atN
-			if atN[0] not in AtmRadi.keys(): atN="A"
-			fullname = at.full_name()
-			#print fullname
-			atC=at.coords#at._coords[0]
-			spher.append( c4d.BaseObject(INSTANCE) )
-			spher[j][1001]=iMe[atN[0]]
-			#spher[j][1001]=1        
-			spher[j].set_name(n+"_"+fullname)#.replace(":","_")
-			sc = iMe[atN[0]][905].x
-			if sc != scaleFactor : 
-				spher[j][905]=c4d.Vector(float((1/sc)*scale),float((1/sc)*scale),float((1/sc)*scale))
-			#
-			if atN in ["CA","N","C"] and Spline != None and n == 'S':
-				pos= float(((j*1.) / Spline.get_point_count()))
-				path=spher[j].make_tag(Follow_PATH)
-				path[1001] = Spline
-				path[1000] = 1
-				path[1003] = pos
-			else : spher[j].set_pos(c4dv(atC))
-			texture = spher[j].make_tag(c4d.Ttexture)
-			texture[1010] = mat[atN[0]]
-			p = findatmParentHierarchie(at,n,hiera)
-			if parent != p : 
-			    cp = p
-			    oneparent = False
-			    parent = p
-			else :
-			    cp = parent							
-			addObjectToScene(getCurrentScene(),spher[j],parent=cp)
-			toggleDisplay(spher[j],False)
-			k=k+1
-			if dialog != None :
-				dialog.bc[c4d.gui.BFM_STATUSBAR_PROGRESS] = j/len(coords)
-				#dialog.bc[c4d.gui.BFM_STATUSBAR_PROGRESSFULLSIZE] = True
-				dialog.set(dialog._progess,float(j/len(coords)))#dialog.bc)
-				getCurrentScene().message(c4d.MULTIMSG_UP)       
-				c4d.draw_views(c4d.DA_ONLY_ACTIVE_VIEW|c4d.DA_NO_THREAD|c4d.DA_NO_ANIMATION)	  
-		sphers.extend(spher)
+                spher=[]
+                oneparent = True 
+                atoms = c.residues.atoms
+                parent=findatmParentHierarchie(atoms[0],n,hiera)	
+                for j in range(len(atoms.coords)):
+                        #at=res.atoms[j]
+                        at=atoms[j]
+                        radius = at.radius
+                        scaleFactor=float(R)+float(radius)*float(scale)
+                        atN=at.name
+                        #print atN
+                        if atN[0] not in list(AtmRadi.keys()): atN="A"
+                        fullname = at.full_name()
+                        #print fullname
+                        atC=at.coords#at._coords[0]
+                        spher.append( c4d.BaseObject(INSTANCE) )
+                        spher[j][1001]=iMe[atN[0]]
+                        #spher[j][1001]=1        
+                        spher[j].set_name(n+"_"+fullname)#.replace(":","_")
+                        sc = iMe[atN[0]][905].x
+                        if sc != scaleFactor : 
+                                spher[j][905]=c4d.Vector(float((1/sc)*scale),float((1/sc)*scale),float((1/sc)*scale))
+                        #
+                        if atN in ["CA","N","C"] and Spline != None and n == 'S':
+                                pos= float(((j*1.) / Spline.get_point_count()))
+                                path=spher[j].make_tag(Follow_PATH)
+                                path[1001] = Spline
+                                path[1000] = 1
+                                path[1003] = pos
+                        else : spher[j].set_pos(c4dv(atC))
+                        texture = spher[j].make_tag(c4d.Ttexture)
+                        texture[1010] = mat[atN[0]]
+                        p = findatmParentHierarchie(at,n,hiera)
+                        if parent != p : 
+                            cp = p
+                            oneparent = False
+                            parent = p
+                        else :
+                            cp = parent							
+                        addObjectToScene(getCurrentScene(),spher[j],parent=cp)
+                        toggleDisplay(spher[j],False)
+                        k=k+1
+                        if dialog != None :
+                                dialog.bc[c4d.gui.BFM_STATUSBAR_PROGRESS] = j/len(coords)
+                                #dialog.bc[c4d.gui.BFM_STATUSBAR_PROGRESSFULLSIZE] = True
+                                dialog.set(dialog._progess,float(j/len(coords)))#dialog.bc)
+                                getCurrentScene().message(c4d.MULTIMSG_UP)       
+                                c4d.draw_views(c4d.DA_ONLY_ACTIVE_VIEW|c4d.DA_NO_THREAD|c4d.DA_NO_ANIMATION)	  
+                sphers.extend(spher)
     return sphers
         
 def spheresMesh(name,x,mat=None,scale=1.0,Res=32,R=None,join=0):
@@ -1194,7 +1194,7 @@ def updateTubeObj(atm1,atm2,bicyl=False):
         name="T_"+atm1.name+str(atm1.number)+"_"+atm2.name+str(atm2.number)
         o=getObject(name)
         updateOneSctick(o,c0,c1)
-		        		
+                                        
 def updateOneSctick(o,coord1,coord2):
     laenge,mx=getStickProperties(coord1,coord2)
     o.set_ml(mx)
@@ -1237,12 +1237,12 @@ def biStick(atm1,atm2,hiera,instance):
     if mat == None :
         mat = addMaterial(atm2.name[0],[0.,0.,0.])
     texture[1010]=mat
-	#parent=getObject(mol.geomContainer.masterGeom.chains_obj[hierarchy[1]+"_balls"])
+        #parent=getObject(mol.geomContainer.masterGeom.chains_obj[hierarchy[1]+"_balls"])
     parent = findatmParentHierarchie(atm1,'B',hiera)
     addObjectToScene(getCurrentScene(),stick[0],parent=parent)
     addObjectToScene(getCurrentScene(),stick[1],parent=parent)	
     return stick
-	
+        
 def Tube(set,atms,points,faces,doc,mat=None,res=32,size=0.25,sc=1.,join=0,
          instance=None,hiera = 'perRes',bicyl=False,pb=False):
     sticks=[]
@@ -1263,7 +1263,7 @@ def Tube(set,atms,points,faces,doc,mat=None,res=32,size=0.25,sc=1.,join=0,
         else :
             pass
     return [sticks,instance]	
-	
+        
 def oldTube(set,atms,points,faces,doc,mat=None,res=32,size=0.25,sc=1.,join=0,instance=None,hiera = 'perRes'):
  bonds, atnobnd = set.bonds
  backbone = ['N', 'CA', 'C', 'O']
@@ -1298,8 +1298,8 @@ def oldTube(set,atms,points,faces,doc,mat=None,res=32,size=0.25,sc=1.,join=0,ins
  #print  atms[faces[0][0]].name[0]+atms[faces[0][1]].name[0]
  name1=atms[faces[0][0]].name[0]
  name2=atms[faces[0][1]].name[0]
- if name1 not in AtmRadi.keys(): name1="A"
- if name2 not in AtmRadi.keys(): name2="A"
+ if name1 not in list(AtmRadi.keys()): name1="A"
+ if name2 not in list(AtmRadi.keys()): name2="A"
  texture[1010]=mat[name1+name2]              
  stick[0].set_name(name)
  #stick[0].set_pos(c4d.Vector(float(z1+z2)/2,float(y1+y2)/2,float(x1+x2)/2))
@@ -1341,8 +1341,8 @@ def oldTube(set,atms,points,faces,doc,mat=None,res=32,size=0.25,sc=1.,join=0,ins
   #print i,i+1
   name1=atms[faces[i][0]].name[0]
   name2=atms[faces[i][1]].name[0]
-  if name1 not in AtmRadi.keys(): name1="A"
-  if name2 not in AtmRadi.keys(): name2="A"
+  if name1 not in list(AtmRadi.keys()): name1="A"
+  if name2 not in list(AtmRadi.keys()): name2="A"
 
   if i < len(atms) :
      #print  name1+name2
@@ -1380,7 +1380,7 @@ def oldTube(set,atms,points,faces,doc,mat=None,res=32,size=0.25,sc=1.,join=0,ins
 def c4dv(points):
     return c4d.Vector(float(points[2]),float(points[1]),float(points[0]))
     #return c4d.Vector(float(points[0]),float(points[1]),float(points[2]))
-	
+        
 def getCoordinateMatrix(pos,direction):
   offset=pos
   v_2=direction
@@ -1480,7 +1480,7 @@ def createShapes2Dspline(doc=None,parent=None):
     turnshape.set_name('turn')
     shape2D['Turn']=turnshape
     if doc : 
-        for o in shape2D.values() :
+        for o in list(shape2D.values()) :
             addObjectToScene(doc,o,parent=parent )    
     return shape2D,[circle,rectangle,fourside,helixshape,sheetshape,strandshape,coilshape,turnshape]
 
@@ -1938,7 +1938,7 @@ def piecewiseLinearInterpOnIsovalue(x):
             X = [-3.0, -2.5, -2.0, -1.5, -1.3, -1.1, -0.9, -0.7, -0.5, -0.3, -0.1]
             Y = [0.6565, 0.8000, 1.0018, 1.3345, 1.5703, 1.8554, 2.2705, 2.9382, 4.1485, 7.1852, 26.5335]
             if x<X[0] or x>X[-1]:
-                print "WARNING: Fast approximation :blobbyness is out of range [-3.0, -0.1]"
+                print("WARNING: Fast approximation :blobbyness is out of range [-3.0, -0.1]")
                 return None
             i = 0
             while x > X[i]:
@@ -1966,7 +1966,7 @@ def coarseMolSurface(mv,molFrag,XYZd,isovalue=7.0,resolution=-0.3,padding=0.0,na
     coords = atoms.coords
     radii = atoms.vdwRadius
     from UTpackages.UTblur import blur
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     volarr, origin, span = blur.generateBlurmap(coords, radii, XYZd,resolution, padding = padding)
     volarr.shape = (XYZd[0],XYZd[1],XYZd[2])
     volarr = Numeric.ascontiguousarray(Numeric.transpose(volarr), 'f')
@@ -2042,16 +2042,16 @@ def makeLines(name,points,faces,parent=None):
     addObjectToScene(getCurrentScene(),spline,parent=rootLine)    
 
 def updateLines(lines, chains=None):
-	#lines = getObject(name)	
-	#if lines == None or chains == None:
-	    #print lines,chains	
-	    parent = getObject(chains.full_name())	
-	    #print parent		
-	    bonds, atnobnd = chains.residues.atoms.bonds
-	    indices = map(lambda x: (x.atom1._bndIndex_,
-								x.atom2._bndIndex_), bonds)
-	    updatePoly(lines,vertices=chains.residues.atoms.coords,faces=indices)
-		
+        #lines = getObject(name)	
+        #if lines == None or chains == None:
+            #print lines,chains	
+            parent = getObject(chains.full_name())	
+            #print parent		
+            bonds, atnobnd = chains.residues.atoms.bonds
+            indices = [(x.atom1._bndIndex_,
+                                                                x.atom2._bndIndex_) for x in bonds]
+            updatePoly(lines,vertices=chains.residues.atoms.coords,faces=indices)
+                
 def editLines(molecules,atomSets):
     for mol, atms, in map(None, molecules, atomSets):
         #check if line exist
@@ -2060,21 +2060,21 @@ def editLines(molecules,atomSets):
             lines = getObject(ch.full_name()+'_line')
             if lines == None :
                 bonds, atnobnd = ch.residues.atoms.bonds
-                indices = map(lambda x: (x.atom1._bndIndex_,
-                                         x.atom2._bndIndex_), bonds)
+                indices = [(x.atom1._bndIndex_,
+                                         x.atom2._bndIndex_) for x in bonds]
 
                 lines = createsNmesh(ch.full_name()+'_line',ch.residues.atoms.coords,
                                      None,indices)
                 addObjectToScene(getCurrentScene(),lines[0]	,parent=parent)
             else : #need to update
                 updateLines(lines, chains=ch)
-				
+                                
 
 def PointCloudObject(name,**kw):
     #print "cloud", len(coords)
     coords=kw['vertices']
     nface = 0	
-    if kw.has_key("faces"):
+    if "faces" in kw:
         nface = len(kw['faces'])	
     obj= c4d.PolygonObject(len(coords), nface)
     obj.set_name(name)
@@ -2142,7 +2142,7 @@ def reCreatePoly(poly,vertices,faces,proxyCol=False,colors=None,parent=None,mol=
         c4d.call_command(100004787) #delete the obj    
         pObject=PolygonColorsObject(name,colors)
         addObjectToScene(doc,pObject,parent=parent)
-	
+        
 """def UVWColorTag(obj,vertColors):
       uvw=obj.make_tag(c4d.Tuvw)
     
@@ -2201,15 +2201,15 @@ def updateMesh(g,proxyCol=False,parent=None,mol=None):
         pObject=PolygonColorsObject(name,colors)
         g.color_obj=pObject
         addObjectToScene(doc,pObject,parent=parent)
-		
+                
 def polygons(name,proxyCol=False,smooth=False,color=None, material=None, **kw):
       vertices = kw["vertices"]
       faces = kw["faces"]
       normals = kw["normals"]
       frontPolyMode='fill'
-      if kw.has_key("frontPolyMode"):	  
+      if "frontPolyMode" in kw:	  
           frontPolyMode = kw["frontPolyMode"]
-      if kw.has_key("shading") :  
+      if "shading" in kw :  
           shading=kw["shading"]#'flat'
       if frontPolyMode == "line" : #wire mode
           material = getCurrentScene().find_material("wire")
@@ -2243,7 +2243,7 @@ def polygons(name,proxyCol=False,smooth=False,color=None, material=None, **kw):
           texture = polygon.make_tag(c4d.Ttexture)
           #create the dedicayed material
           if material == None :
-              if name[:4] in SSShapes.keys() : texture[1010] =    getCurrentScene().find_material(name[:4])        
+              if name[:4] in list(SSShapes.keys()) : texture[1010] =    getCurrentScene().find_material(name[:4])        
               else : texture[1010] = addMaterial(name,color[0])
           else : texture[1010] = material
       return polygon
@@ -2264,9 +2264,9 @@ def instancePolygon(name, matrices=None, mesh=None,parent=None):
           mx = matrix2c4dMat(mat)
           instance[-1].set_mg(mx)
           AddObject(instance[-1],parent=parent)
-		  #instance[-1].make_tag(c4d.Ttexture)
+                  #instance[-1].make_tag(c4d.Ttexture)
       return instance
-	  		    
+                            
 def colorMaterial(mat,col):
     #mat input is a material name or a material object
     #color input is three rgb value array
@@ -2276,18 +2276,18 @@ def colorMaterial(mat,col):
 
 def changeMaterialSchemColor(typeMat):
      if typeMat == "ByAtom":
-          for atms in AtomElements.keys() : colorMaterial(atms,AtomElements[atms])
+          for atms in list(AtomElements.keys()) : colorMaterial(atms,AtomElements[atms])
      elif typeMat == "AtomsU" :
-          for atms in DavidGoodsell.keys() :colorMaterial(atms,DavidGoodsell[atms])
+          for atms in list(DavidGoodsell.keys()) :colorMaterial(atms,DavidGoodsell[atms])
               #if (atms == "P") or (atms == "A") or (atms == "CA"): colorMaterial(atms[0],AtomElements[atms])
               #else : 
               #colorMaterial(atms,DavidGoodsell[atms])
      elif typeMat == "ByResi":
-          for res in RasmolAmino.keys(): colorMaterial(res,RasmolAmino[res])
+          for res in list(RasmolAmino.keys()): colorMaterial(res,RasmolAmino[res])
      elif typeMat == "Residu":
-          for res in Shapely.keys(): colorMaterial(res,Shapely[res])
+          for res in list(Shapely.keys()): colorMaterial(res,Shapely[res])
      elif typeMat == "BySeco":
-          for ss in SecondaryStructureType.keys(): colorMaterial(ss[0:4],SecondaryStructureType[ss])
+          for ss in list(SecondaryStructureType.keys()): colorMaterial(ss[0:4],SecondaryStructureType[ss])
      else : pass
 
 def splitName(name):
@@ -2336,15 +2336,15 @@ def checkChangeMaterial(o,typeMat,atom=None,parent=None,color=None):
                 texture[1010] = rMat#doc.find_material(requiredMatname)
             else : colorMaterial(requiredMatname,color)                
         if typeMat == "ByAtom" :
-            if matname not in AtmRadi.keys() : #switch to atom materials
+            if matname not in list(AtmRadi.keys()) : #switch to atom materials
                     texture[1010]=Material["atoms"][names[5][0]]
         if typeMat == "AtomsU" :
             #if matname not in AtmRadi.keys() : #switch to atom materials
                     texture[1010]=Material["atoms"][lookupDGFunc(atom)]
         elif typeMat == "ByResi" :
-            if matname not in ResidueSelector.r_keyD.keys() : #switch to residues materials
+            if matname not in list(ResidueSelector.r_keyD.keys()) : #switch to residues materials
                     #print matname, names[3],Material["residus"]
-                    if names[3] not in ResidueSelector.r_keyD.keys(): names[3]='hetatm'            
+                    if names[3] not in list(ResidueSelector.r_keyD.keys()): names[3]='hetatm'            
                     texture[1010]=Material["residus"][names[3]]
         elif typeMat == "BySeco" :
             if matname not in ssk : #switch to ss materials
@@ -2378,10 +2378,10 @@ def checkChangeStickMaterial(o,typeMat,atoms,parent=None,color=None):
                 texture[1010] = rMat#doc.find_material(requiredMatname)
             else : colorMaterial(requiredMatname,color)                        
         if typeMat == "ByAtom" or typeMat == "AtomsU" :
-            if matname not in Material["sticks"].keys() : #switch to atom materials
+            if matname not in list(Material["sticks"].keys()) : #switch to atom materials
                     texture[1010]=Material["sticks"][atoms[0].name[0]+atoms[1].name[0]]
         elif typeMat == "ByResi" :
-            if matname not in ResidueSelector.r_keyD.keys() : #switch to residues materials
+            if matname not in list(ResidueSelector.r_keyD.keys()) : #switch to residues materials
                     #print matname, names[3],Material["residus"]            
                     texture[1010]=Material["residus"][names[3]]
         elif typeMat == "BySeco" :
@@ -2390,12 +2390,12 @@ def checkChangeStickMaterial(o,typeMat,atoms,parent=None,color=None):
       
 def blenderColor(col):
         #blender color rgb range[0-1]
-        if max(col)<=1.0: col = map( lambda x: x*255, col)
+        if max(col)<=1.0: col = [x*255 for x in col]
         return col
         
 def c4dColor(col):
         #c4d color rgb range[0-1]
-        if max(col)>1.0: col = map( lambda x: x/255., col)
+        if max(col)>1.0: col = [x/255. for x in col]
         return col
         
 def changeColor(geom,colors,perVertex=False,proxyObject=None,doc=None,pb=False):
@@ -2456,7 +2456,7 @@ def changeSticksColor(geom,colors,type=None,indice=0,perVertex=False,proxyObject
         ncolor = c4dColor(colors[0])
     texture = obj.get_tags()[1] #should be the textureFlag
     #print texture[1010],texture[1010][900]
-    if texture[1010][8000] is None or texture[1010][900] in ResidueSelector.r_keyD.keys() or  texture[1010][900].find("selection") != -1 or  texture[1010][900] in SSShapes.keys() :
+    if texture[1010][8000] is None or texture[1010][900] in list(ResidueSelector.r_keyD.keys()) or  texture[1010][900].find("selection") != -1 or  texture[1010][900] in list(SSShapes.keys()) :
         ncolor=    c4dColor(colors[0])
         texture[1010][2100] = c4d.Vector((ncolor[0]),(ncolor[1]),(ncolor[2]))
     else :
@@ -2501,7 +2501,7 @@ def box(name,center=[0.,0.,0.],size=[1.,1.,1.],cornerPoints=None,visible=1):
     if cornerPoints != None :
         for i in range(3):
             size[i] = cornerPoints[1][i]-cornerPoints[0][i]
-	center=(numpy.array(cornerPoints[0])+numpy.array(cornerPoints[1]))/2.
+        center=(numpy.array(cornerPoints[0])+numpy.array(cornerPoints[1]))/2.
     box.set_pos(c4dv(center))
     box[1100] = c4dv(size)
     #aMat=addMaterial("wire")
@@ -2548,7 +2548,7 @@ def setupAmber(mv,name,mol,prmtopfile, type,add_Conf=True,debug = False):
                     mol.cconformationIndex = confNum
     mv.setup_Amber94(mol.name+":",name,prmtopfile,indice=mol.cconformationIndex)
     mv.minimize_Amber94(name, dfpred=10.0, callback_freq='10', callback=1, drms=1e-06, maxIter=100., log=0)	
-	
+        
 def cAD3Energies(mv,mols,atomset1,atomset2,add_Conf=False,debug = False):
     from Pmv.hostappInterface import comput_util as C
     mv.energy = C.EnergyHandler(mv)
@@ -2695,21 +2695,21 @@ def c4dMat2numpy(c4dmat,center=None):
     return numpy.array(M),numpy.array(IM)
     
 def matrix2c4dMat(mat):
-	import c4d
-	from Pmv.hostappInterface import comput_util as C
-	r,t,s = C.Decompose4x4(Numeric.array(mat).transpose().reshape(16,))    	
-	#Order of euler angles: heading first, then attitude/pan, then bank
-	axis = C.ApplyMatrix(Numeric.array([[1.,0.,0.],[0.,1.,0.],[0.,0.,1.]]),r.reshape(4,4))
-	#M = matrix(matr)
-	#euler = C.matrixToEuler(mat[0:3,0:3])
-	#mx=c4d.tools.hpb_to_matrix(c4d.Vector(euler[0],euler[1]+(3.14/2),euler[2]), c4d.tools.ROT_HPB)
-	v_1 = c4dv(r.reshape(4,4)[2,:3])
-	v_2 = c4dv(r.reshape(4,4)[1,:3])
-	v_3 = c4dv(r.reshape(4,4)[0,:3])
-	offset = c4dv(t)
-	mx = c4d.Matrix(offset,v_1, v_2, v_3)
-	#mx.off = offset
-	return mx
+        import c4d
+        from Pmv.hostappInterface import comput_util as C
+        r,t,s = C.Decompose4x4(Numeric.array(mat).transpose().reshape(16,))    	
+        #Order of euler angles: heading first, then attitude/pan, then bank
+        axis = C.ApplyMatrix(Numeric.array([[1.,0.,0.],[0.,1.,0.],[0.,0.,1.]]),r.reshape(4,4))
+        #M = matrix(matr)
+        #euler = C.matrixToEuler(mat[0:3,0:3])
+        #mx=c4d.tools.hpb_to_matrix(c4d.Vector(euler[0],euler[1]+(3.14/2),euler[2]), c4d.tools.ROT_HPB)
+        v_1 = c4dv(r.reshape(4,4)[2,:3])
+        v_2 = c4dv(r.reshape(4,4)[1,:3])
+        v_3 = c4dv(r.reshape(4,4)[0,:3])
+        offset = c4dv(t)
+        mx = c4d.Matrix(offset,v_1, v_2, v_3)
+        #mx.off = offset
+        return mx
 
 def updateLigCoord(mol):
     from Pmv.hostappInterface import comput_util as C
@@ -2738,6 +2738,6 @@ def updateMolAtomCoord(mol,index=-1):
         o = getObject(name)
         pos=o.get_mg().off
         vt.append([pos.x,pos.z,pos.y])
-	if index == -1 : index = 0	
+        if index == -1 : index = 0	
     mol.allAtoms.updateCoords(vt,ind=index)
     

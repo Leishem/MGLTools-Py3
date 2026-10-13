@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -15,21 +15,21 @@
 #
 
 from opengltk.OpenGL import GL
-import math, numpy.oldnumeric as Numeric, types
+import math, mglcompat.oldnumeric as Numeric, types
 from math import sqrt, fabs, pi, cos, sin, acos, atan2
-from Geom import Geom
-from Polylines import Polylines
-import datamodel, viewerConst
-from viewerFns import checkKeywords, getkw
+from .Geom import Geom
+from .Polylines import Polylines
+from . import datamodel, viewerConst
+from .viewerFns import checkKeywords, getkw
 from DejaVu.colorTool import resetMaterialMemory
 
 def valideFloat(values, length):
     """This function takes a single float, or int or a list of them and a
 requested length and returns a list of float of length 1 or length.
 """
-    if type(values)==types.FloatType:
+    if type(values)==float:
         return [values]
-    elif type(values)==types.IntType:
+    elif type(values)==int:
         return [float(values)]
     else:
         if len(values)==1:
@@ -49,8 +49,8 @@ either single 3D vector or list of same length as vertices""",
     
     def __init__(self, name=None, check=1, **kw):
         
-	if not kw.get('shape'):
-	    kw['shape'] = (0,3)    # default shape for sphere set
+        if not kw.get('shape'):
+            kw['shape'] = (0,3)    # default shape for sphere set
 
         self.radii = (0.2,)
         self.angles = (360.0,)
@@ -60,7 +60,7 @@ either single 3D vector or list of same length as vertices""",
         self.frontPolyMode = self.backPolyMode = GL.GL_FILL
         self.inheritFrontPolyMode = self.inheritBackPolyMode = 0
 
-        apply( Geom.__init__, (self, name, check), kw)
+        Geom.__init__(*(self, name, check), **kw)
 
         assert len(self.vertexSet.vertices.ashape)==2
         
@@ -73,7 +73,7 @@ check=1 : verify that all the keywords present can be handle by this func
 redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
-        redoFlags = apply( Geom.Set, (self, check, 0), kw)
+        redoFlags = Geom.Set(*(self, check, 0), **kw)
 
         c = self.vertexSet.vertices
 
@@ -106,7 +106,7 @@ updateOwnGui=True : allow to update owngui at the end this func
 
 
     def Draw(self):
-        for i in xrange(len(self.vertexSet)):
+        for i in range(len(self.vertexSet)):
             if len(self.radii)==1:
                 rad = self.radii[0]
             else:
@@ -182,16 +182,16 @@ class Arcs3D(Geom):
     
     def __init__(self, name=None, check=1, **kw):
 
-	if not kw.get('shape'):
-	    kw['shape'] = (0,3)    # default shape for sphere set
+        if not kw.get('shape'):
+            kw['shape'] = (0,3)    # default shape for sphere set
 
         self.radii = (0.2,)
         self.angles = (360.0,)
 
-	self.lighting = False
+        self.lighting = False
         self.nsegments = 10
 
-        apply( Geom.__init__, (self, name, check), kw)
+        Geom.__init__(*(self, name, check), **kw)
 
         assert len(self.vertexSet.vertices.ashape)==2
 
@@ -202,7 +202,7 @@ check=1 : verify that all the keywords present can be handle by this func
 redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
-        redoFlags = apply( Geom.Set, (self, check, 0), kw )
+        redoFlags = Geom.Set(*(self, check, 0), **kw)
 
         c = self.vertexSet.vertices
 
@@ -222,7 +222,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                 
         quality = getkw(kw, 'quality')
         if quality is not None:
-            assert type(quality)==types.IntType and quality > 1
+            assert type(quality)==int and quality > 1
             self.nsegments = quality
             redoFlags |= self._redoFlags['redoDisplayListFlag']
 
@@ -238,7 +238,7 @@ updateOwnGui=True : allow to update owngui at the end this func
             self._arcTemplate(self.anges[0])
             if self.materials[GL.GL_FRONT].binding[1]==viewerConst.PER_VERTEX:
                 col = self.materials[GL.GL_FRONT].prop[1]
-                for i in xrange(len(self.vertexSet)):
+                for i in range(len(self.vertexSet)):
                     if len(self.radii)==1:
                         rad = self.radii[0]
                     else:
@@ -248,7 +248,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                     GL.glPopName()
             else:
                 col = self.materials[GL.GL_FRONT].prop[1][0]
-                for i in xrange(len(self.vertexSet)):
+                for i in range(len(self.vertexSet)):
                     if len(self.radii)==1:
                         rad = self.radii[0]
                     else:
@@ -259,7 +259,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         else:
              if self.materials[GL.GL_FRONT].binding[1]==viewerConst.PER_VERTEX:
                 col = self.materials[GL.GL_FRONT].prop[1]
-                for i in xrange(len(self.vertexSet)):
+                for i in range(len(self.vertexSet)):
                     if i==0 or ang[i]!=ang[i-1]:
                         self._arcTemplate(ang[i])
                     if len(self.radii)==1:
@@ -271,7 +271,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                     GL.glPopName()
              else:
                 col = self.materials[GL.GL_FRONT].prop[1][0]
-                for i in xrange(len(self.vertexSet)):
+                for i in range(len(self.vertexSet)):
                     if i==0 or ang[i]!=ang[i-1]:
                         self._arcTemplate(ang[i])
                     if len(self.radii)==1:
@@ -287,7 +287,7 @@ updateOwnGui=True : allow to update owngui at the end this func
 
         nsegments = self.nsegments
         assert (nsegments>1)
-        import numpy.oldnumeric as Numeric, math
+        import mglcompat.oldnumeric as Numeric, math
 
         self.v = Numeric.zeros( ((nsegments+1),3), 'f')
         self.n = Numeric.zeros( ((nsegments+1),3), 'f')

@@ -79,7 +79,7 @@ class EnergyScorer:
          """
         score_int= int(score*100)
         # check number of conf save
-        if len(self.confcoords.keys()) >= 50:
+        if len(list(self.confcoords.keys())) >= 50:
             # find highest energies
             val =max(self.confcoords.keys())
             del(self.confcoords[val])
@@ -99,7 +99,7 @@ class EnergyScorer:
         writer = PdbWriter()
         if score is None:
             score = min( self.confcoords.keys())
-        if not self.confcoords.has_key(float(score)): return
+        if float(score) not in self.confcoords: return
 
         c1 = self.confcoords[score][0]
         c2 = self.confcoords[score][1]

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #!/usr/bin/env python
 #
@@ -14,7 +14,7 @@ Implements method described in:
   doi:10.1098/rspa.2007.1823
 """
 
-import numpy.oldnumeric as N
+import mglcompat.oldnumeric as N
 import math
 
     
@@ -91,7 +91,7 @@ def usr_similarity(x, y):
 
 
 def print_usr_desc(val):
-    print "%0.3f, %0.3f, %0.3f, %0.3f, %0.3f, %0.3f, %0.3f, %0.3f, %0.3f, %0.3f, %0.3f, %0.3f" %val
+    print("%0.3f, %0.3f, %0.3f, %0.3f, %0.3f, %0.3f, %0.3f, %0.3f, %0.3f, %0.3f, %0.3f, %0.3f" %val)
 
 
 #
@@ -109,7 +109,7 @@ def distance_matrix(points):
     points = N.array(points)
     num, dim = points.shape
     delta = N.zeros((num,num), 'd')
-    for d in xrange(dim):
+    for d in range(dim):
         data = points[:,d]
         delta += (data - data[:,N.NewAxis])**2
     return N.sqrt(delta)

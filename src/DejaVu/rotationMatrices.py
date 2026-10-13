@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 #  collection of standard 4x4 rotation matrices
@@ -7,7 +7,7 @@
 rotations = {
 }
 
-import math, numpy.oldnumeric as Numeric
+import math, mglcompat.oldnumeric as Numeric
 from mglutil.math.rotax import rotax
 
 orig = Numeric.array( (0,0,0), 'f')

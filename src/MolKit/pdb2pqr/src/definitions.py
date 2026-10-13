@@ -53,10 +53,10 @@ import os
 import copy
 import re
 from xml import sax
-from pdb import *
-from utilities import *
-from structures import *
-from routines import *
+from .pdb import *
+from .utilities import *
+from .structures import *
+from .routines import *
 
 class DefinitionHandler(sax.ContentHandler):
    
@@ -90,10 +90,10 @@ class DefinitionHandler(sax.ContentHandler):
         if name == "residue": # Complete Residue object
             residue = self.curholder
             if not isinstance(residue, DefinitionResidue):
-                raise ValueError, "Internal error parsing XML!"
+                raise ValueError("Internal error parsing XML!")
             resname = residue.name
             if resname == "":
-                raise ValueError, "Residue name not set in XML!"
+                raise ValueError("Residue name not set in XML!")
             else:
                 self.map[resname] = residue
                 self.curholder = None
@@ -102,10 +102,10 @@ class DefinitionHandler(sax.ContentHandler):
         elif name == "patch": # Complete patch object
             patch = self.curholder
             if not isinstance(patch, Patch):
-                raise ValueError, "Internal error parsing XML!"
+                raise ValueError("Internal error parsing XML!")
             patchname = patch.name
             if patchname == "":
-                raise ValueError, "Residue name not set in XML!"
+                raise ValueError("Residue name not set in XML!")
             else:
                 self.patches.append(patch)
                 self.curholder = None
@@ -115,10 +115,10 @@ class DefinitionHandler(sax.ContentHandler):
         elif name == "atom": # Complete atom object
             atom = self.curatom
             if not isinstance(atom, DefinitionAtom):
-                raise ValueError, "Internal error parsing XML!"
+                raise ValueError("Internal error parsing XML!")
             atomname = atom.name
             if atomname == "":
-                raise ValueError, "Atom name not set in XML!"
+                raise ValueError("Atom name not set in XML!")
             else:
                 self.curholder.map[atomname] = atom
                 self.curatom = None
@@ -171,7 +171,7 @@ class Definition:
         for path in [AAPATH, NAPATH]:
             defpath = getDatFile(path)
             if defpath == "":
-                raise ValueError, "%s not found!" % path
+                raise ValueError("%s not found!" % path)
 
             file = open(defpath)
             sax.parseString(file.read(), handler)
@@ -183,7 +183,7 @@ class Definition:
 
         defpath = getDatFile(PATCHPATH)
         if defpath == "":
-            raise ValueError, "%s not found!" % PATCHPATH
+            raise ValueError("%s not found!" % PATCHPATH)
      
         handler.map = {}
         file = open(defpath)
@@ -198,7 +198,7 @@ class Definition:
 
                 # Find all residues matching applyto
 
-                resnames = self.map.keys()
+                resnames = list(self.map.keys())
                 for name in resnames:
                     regexp = re.compile(patch.applyto).match(name)
                     if not regexp: continue

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -34,16 +34,16 @@ from MolKit.mol2Parser import Mol2Parser
 from MolKit.mmcifParser import MMCIFParser
 from MolKit.mmcifWriter import MMCIFWriter
 
-import types, os, sys, string, glob
+import types, os, sys, glob; from mglcompat import pystring as string
 import numpy
-import numpy.oldnumeric as Numeric
-import Tkinter, Pmw
+import mglcompat.oldnumeric as Numeric
+import tkinter, Pmw
 ##  from ViewerFramework.gui import InputFormDescr
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import SaveButton
 from MolKit.tree import TreeNode, TreeNodeSet
 from MolKit.molecule import Atom
-from tkMessageBox import *
+from tkinter.messagebox import *
 
 from Pmv.moleculeViewer import EditAtomsEvent
 
@@ -446,7 +446,7 @@ class MoleculeLoader(MVCommand):
                 if hasattr(a, 'alternate'):
                     delattr(a, 'alternate')
         except:
-            print "exception in MolecularLoader.onRemoveObjectFromViewer", obj.name
+            print("exception in MolecularLoader.onRemoveObjectFromViewer", obj.name)
         #del atms
 
     def guiCallback(self, event=None, *args, **kw):
@@ -527,9 +527,9 @@ class MoleculeReader(MoleculeLoader):
         self.vf.loadCommand("fileCommands", ["readMMCIF"], "Pmv",
                                 topCommand=0)
         if self.vf.hasGui:
-            self.modelsAsMols = Tkinter.IntVar()
+            self.modelsAsMols = tkinter.IntVar()
             self.modelsAsMols.set(1)
-            self.doModelUpdates = Tkinter.IntVar()
+            self.doModelUpdates = tkinter.IntVar()
             self.doModelUpdates.set(0)
         self.setModelUpdates = None
 
@@ -550,7 +550,7 @@ class MoleculeReader(MoleculeLoader):
                     event = EditAtomsEvent('coords', m.allAtoms)
                     self.vf.dispatchEvent(event)
                 else:
-                    print 'last conformation of ', m.name
+                    print('last conformation of ', m.name)
         if hasattr(event, 'keysym') and event.keysym=='Left':
             #print "Left"
             for m in mols:
@@ -562,7 +562,7 @@ class MoleculeReader(MoleculeLoader):
                     event = EditAtomsEvent('coords', m.allAtoms)
                     self.vf.dispatchEvent(event)
                 else:
-                    print 'first conformation of ', m.name
+                    print('first conformation of ', m.name)
 
 
     def buildFormDescr(self, formName):
@@ -627,7 +627,7 @@ class MoleculeReader(MoleculeLoader):
         self.fileExt = os.path.splitext(filename)[1]
         kw['parser'] = parser
         kw['ask']=0
-        return apply ( self.doitWrapper, (filename,), kw)
+        return self.doitWrapper(*(filename,), **kw)
 
 
     def doit(self, filename, parser=None, ask=True, addToRecent=True, **kw):
@@ -636,7 +636,7 @@ class MoleculeReader(MoleculeLoader):
             self.warningMsg("ERROR: %s doesn't exists"%filename)
             return None
 
-        if not parser is None and self.parserToExt.has_key(parser):
+        if not parser is None and parser in self.parserToExt:
             self.fileExt = self.parserToExt[parser]
         # Call the right parser
         if self.fileExt == ".pdb" or self.fileExt == ".ent":
@@ -649,7 +649,7 @@ class MoleculeReader(MoleculeLoader):
             # Call readPDBQS
             mols = self.vf.readPDBQS(filename,ask=ask, topCommand=0)
         elif self.fileExt == ".pdbqt":
-            foundModelsAs = kw.has_key("modelsAs")
+            foundModelsAs = "modelsAs" in kw
             #print "readMolecule: foundModelsAs=", foundModelsAs
             setupUpdates = kw.get("setupUpdates", 0)
             #print "readMolecule: setupUpdates=", setupUpdates
@@ -670,33 +670,33 @@ class MoleculeReader(MoleculeLoader):
                     ifd = InputFormDescr(title="Load MODELS as: ")
                     ifd.append({'name': 'ModelsAsMols',
                         'text': 'separate molecules',
-                        'widgetType':Tkinter.Radiobutton,
+                        'widgetType':tkinter.Radiobutton,
                         'tooltip':'Check this button to add a separate molecule for each model.',
                         'variable': self.modelsAsMols,
                         'value': '1',
                         'text': 'Molecules           ',
                         'gridcfg': {'sticky':'w','columnspan':2}})
                     ifd.append({'name': 'ModelsAsConfs',
-                        'widgetType':Tkinter.Radiobutton,
+                        'widgetType':tkinter.Radiobutton,
                         'tooltip':'Check this button to add a single molecule\n with a separate conformation for each model',
                         'variable': self.modelsAsMols,
                         'value': '0',
                         'text': 'Conformations       ',
                         'gridcfg': {'sticky':'w'}}) 
                     ifd.append({'name': 'updates label',
-                        'widgetType':Tkinter.Label,
+                        'widgetType':tkinter.Label,
                         'tooltip':'On sets changing models with arrow keys',
                         'text': 'If conformations, change models using arrow keys',
                         'gridcfg': {'sticky':'w', 'column':0, 'columnspan':2}}) 
                     ifd.append({'name': 'updates',
-                        'widgetType':Tkinter.Radiobutton,
+                        'widgetType':tkinter.Radiobutton,
                         'tooltip':'Yes sets changing models with arrow keys',
                         'variable': self.doModelUpdates,
                         'value': '1',
                         'text': 'Yes',
                         'gridcfg': {'sticky':'w', 'column':0}}) 
                     ifd.append({'name': 'no_updates',
-                        'widgetType':Tkinter.Radiobutton,
+                        'widgetType':tkinter.Radiobutton,
                         'tooltip':'No do not change models with arrow keys',
                         'variable': self.doModelUpdates,
                         'value': '0',
@@ -710,14 +710,14 @@ class MoleculeReader(MoleculeLoader):
                         modelsAs = 'conformations'
                 if modelsAs=='conformations' and (self.doModelUpdates.get() or setupUpdates):
                     e = self.vf.GUI.VIEWER.currentCamera.eventManager
-                    if "<Right>" in e.eventHandlers.keys():
+                    if "<Right>" in list(e.eventHandlers.keys()):
                         l = e.eventHandlers["<Right>"]
                         if self.processArrowEvent not in l:
                             self.vf.GUI.addCameraCallback("<Right>", self.processArrowEvent)
                     else:
                         self.vf.GUI.addCameraCallback("<Right>", self.processArrowEvent)
 
-                    if "<Left>" in e.eventHandlers.keys():
+                    if "<Left>" in list(e.eventHandlers.keys()):
                         l = e.eventHandlers["<Left>"]
                         if self.processArrowEvent not in l:
                             self.vf.GUI.addCameraCallback("<Left>", self.processArrowEvent)
@@ -818,7 +818,7 @@ class PDBReader(MoleculeLoader):
         \nfilename --- path to the PDB file"""
 
         kw['ask']=0
-        return apply ( self.doitWrapper, (filename,), kw)
+        return self.doitWrapper(*(filename,), **kw)
         
 pdbReaderGuiDescr = {'widgetType':'Menu', 'menyBarName':'menuRoot',
                      'menuButtonName':'File',
@@ -889,7 +889,7 @@ class MMCIFReader(MoleculeLoader):
         \nfilename --- path to the PDB file"""
 
         kw['ask']=0
-        return apply ( self.doitWrapper, (filename,), kw)
+        return self.doitWrapper(*(filename,), **kw)
         
     
 class GROReader(MoleculeLoader):
@@ -954,7 +954,7 @@ class GROReader(MoleculeLoader):
         \nfilename --- path to the PDB file"""
 
         kw['ask']=0
-        return apply ( self.doitWrapper, (filename,), kw)
+        return self.doitWrapper(*(filename,), **kw)
 
 
 class PDBQReader(MoleculeLoader):
@@ -1014,7 +1014,7 @@ class PDBQReader(MoleculeLoader):
         \nfilename --- path to the PDBQ file"""
 
         kw['ask']=0
-        return apply ( self.doitWrapper, (filename,), kw)
+        return self.doitWrapper(*(filename,), **kw)
         
 pdbqReaderGuiDescr = {'widgetType':'Menu', 'menyBarName':'menuRoot',
                       'menuButtonName':'File',
@@ -1084,7 +1084,7 @@ class PDBQSReader(MoleculeLoader):
         \nfilename --- path to the PDBQS file"""
 
         kw['ask']=0
-        return apply ( self.doitWrapper, (filename,), kw)
+        return self.doitWrapper(*(filename,), **kw)
         
 pdbqsReaderGuiDescr = {'widgetType':'Menu', 'menyBarName':'menuRoot',
                        'menuButtonName':'File',
@@ -1138,13 +1138,13 @@ class PDBQTReader(MoleculeLoader):
     def processArrowEvent(self, event):
         #detect molecules with conformations and vina_results
         mols = self.vf.Mols.get(len(x.allAtoms[0]._coords)>1)
-        print "readPDBQT:  mols=", mols
+        print("readPDBQT:  mols=", mols)
         if not len(mols):
             return
         if hasattr(event, 'keysym') and event.keysym=='Right':
             #print "Right"
             for m in mols:
-                print m.name
+                print(m.name)
                 geom = m.geomContainer.geoms['ProteinLabels']
                 ind = m.allAtoms[0].conformation
                 nconf = len(m.allAtoms[0]._coords)
@@ -1153,11 +1153,11 @@ class PDBQTReader(MoleculeLoader):
                     event = EditAtomsEvent('coords', m.allAtoms)
                     self.vf.dispatchEvent(event)
                 else:
-                    print 'last MODEL of ', m.name
+                    print('last MODEL of ', m.name)
         if hasattr(event, 'keysym') and event.keysym=='Left':
             #print "Left"
             for m in mols:
-                print m.name,
+                print(m.name, end=' ')
                 geom = m.geomContainer.geoms['ProteinLabels']
                 ind = m.allAtoms[0].conformation
                 if ind > 0:
@@ -1166,7 +1166,7 @@ class PDBQTReader(MoleculeLoader):
                     event = EditAtomsEvent('coords', m.allAtoms)
                     self.vf.dispatchEvent(event)
                 else:
-                    print 'first MODEL of ', m.name
+                    print('first MODEL of ', m.name)
 
 
     def doit(self, filename, ask=True, modelsAs='molecules', **kw):
@@ -1190,7 +1190,7 @@ class PDBQTReader(MoleculeLoader):
         \nfilename --- path to the PDBQT file"""
 
         kw['ask']=0
-        return apply ( self.doitWrapper, (filename,), kw)
+        return self.doitWrapper(*(filename,), **kw)
         
 
 pdbqtReaderGuiDescr = {'widgetType':'Menu', 'menyBarName':'menuRoot',
@@ -1258,7 +1258,7 @@ class PQRReader(MoleculeLoader):
         \nfilename --- path to the PQR file"""
 
         kw['ask']=0
-        return apply ( self.doitWrapper, (filename,), kw)
+        return self.doitWrapper(*(filename,), **kw)
 
 pqrReaderGuiDescr = {'widgetType':'Menu', 'menyBarName':'menuRoot',
                      'menuButtonName':'File',
@@ -1315,7 +1315,7 @@ class F2DReader(MoleculeLoader):
         \nfilename --- path to the F2D file"""
 
         kw['ask']=0
-        return apply ( self.doitWrapper, (filename,), kw)
+        return self.doitWrapper(*(filename,), **kw)
 
 f2dReaderGuiDescr = {'widgetType':'Menu', 'menyBarName':'menuRoot',
                      'menuButtonName':'File',
@@ -1375,7 +1375,7 @@ class MOL2Reader(MoleculeLoader):
         """mols <- readMOL2(filename, **kw)
         \nfilename --- path to the MOL2 file"""
         kw['ask']=0
-        return apply ( self.doitWrapper, (filename,), kw )
+        return self.doitWrapper(*(filename,), **kw)
 
 mol2ReaderGuiDescr = {'widgetType':'Menu', 'menyBarName':'menuRoot',
                       'menuButtonName':'File',
@@ -1522,11 +1522,11 @@ class PDBWriter(MVCommand):
         kw['ssOrigin'] = ssOrigin
         kw['filename'] = filename
         kw['transformed'] = transformed        
-        return apply(self.doitWrapper, (nodes,), kw)
+        return self.doitWrapper(*(nodes,), **kw)
 
 
     def dismiss_cb(self):
-        if not self.cmdForms.has_key('PDBHelp'): return
+        if 'PDBHelp' not in self.cmdForms: return
         f = self.cmdForms['PDBHelp']
         if f.root.winfo_ismapped():
             f.root.withdraw()
@@ -1556,7 +1556,7 @@ class PDBWriter(MVCommand):
         sel = lb2.getcurselection()
         all = lb2.get()
         if sel:
-            remaining = filter(lambda x: not x in sel, all)
+            remaining = [x for x in all if not x in sel]
             lb2.setlist(remaining)
             if 'CONECT' in sel:
                 self.idf.entryByName['bondOrigin']['widget'].grid_forget()
@@ -1592,7 +1592,7 @@ class PDBWriter(MVCommand):
             idf.append({'widgetType':SaveButton,
                         'name':'filebrowse',
                         'parent':'fileGroup',
-                        'wcfg':{'buttonType':Tkinter.Button,
+                        'wcfg':{'buttonType':tkinter.Button,
                                 'title':self.title,
                                 'types':self.fileType,
                                 'callback':self.setEntry_cb,
@@ -1608,14 +1608,14 @@ class PDBWriter(MVCommand):
                 avRec = uniq(self.mol.parser.keys)
                 #sargis added the following line to make sure that only 
                 #PdbParser.PDBtags are displayed
-                avRec = filter(lambda x: x in avRec, PdbParser.PDBtags)
-                defRec = filter(lambda x: x in avRec, defRec)
+                avRec = [x for x in PdbParser.PDBtags if x in avRec]
+                defRec = [x for x in defRec if x in avRec]
 
             else:
                 avRec = ['ATOM', 'HETATM', 'MODRES', 'CONECT']
 
             # Source of the secondary structure information
-            ssRec = filter(lambda x: x in avRec, ['HELIX', 'SHEET', 'TURN'])
+            ssRec = [x for x in ['HELIX', 'SHEET', 'TURN'] if x in avRec]
             if self.mol.hasSS != []:
                 avRec = avRec + ['HELIX', 'SHEET', 'TURN']
                 ssOrigin = [self.mol.hasSS[0].split('From ')[1],]
@@ -1663,7 +1663,7 @@ created with the ATOM records.',
 
             idf.append({'name':'pdbinfo',
                         'parent':'recGroup',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':'Show PDB record description',
                         'wcfg':{'text':'Records \nInfo',
                                 'command':self.showPDBHelp},
@@ -1671,7 +1671,7 @@ created with the ATOM records.',
 
             idf.append({'name':'add',
                         'parent':'recGroup',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':""" Add the selected PDB record to the list
 of saved in the file""",
                         'wcfg':{'text':'Add','command':self.add_cb},
@@ -1693,7 +1693,7 @@ of saved in the file""",
 
             idf.append({'name':'remove',
                         'parent':'recGroup',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':""" Remove the selected records from the list of records to be saved in the file.""",
                         'wcfg':{'text':'REMOVE','width':10,
                                'command':self.remove_cb},
@@ -1710,26 +1710,26 @@ of saved in the file""",
             # sort the nodes
             idf.append({'name':'sort',
                         'parent':'optionGroup',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'tooltip':'Choose whether or not to sort the nodes before writing in the PDB files',
-                        'wcfg':{'text':'Sort Nodes', 'variable':Tkinter.IntVar()},
+                        'wcfg':{'text':'Sort Nodes', 'variable':tkinter.IntVar()},
                         'gridcfg':{'sticky':'w'}})
             
             # save transformed coords
             idf.append({'name':'transformed',
                         'parent':'optionGroup',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'tooltip':'Choose to save original coordinates or the transformed coordinates in Viewer.',
-                        'wcfg':{'text':'Save Transformed Coords', 'variable':Tkinter.IntVar()},
+                        'wcfg':{'text':'Save Transformed Coords', 'variable':tkinter.IntVar()},
                         'gridcfg':{'sticky':'w'}})
 
 
             if 'CONECT' in avRec:  # bond origin
                 idf.append({'name':'bondOrigin',
                             'parent':'optionGroup',
-                            'widgetType':Tkinter.Checkbutton,
+                            'widgetType':tkinter.Checkbutton,
                             'tooltip':'When this button is not checked, only bonds created from original CONECT records and\nbonds added by the user (i.e. addBond command) will generate CONECT records in the output file.',
-                            'wcfg':{'text':'Write All Bonds as CONECT Records ', 'variable':Tkinter.IntVar()},
+                            'wcfg':{'text':'Write All Bonds as CONECT Records ', 'variable':tkinter.IntVar()},
                             'gridcfg':{'sticky':'w'}})
             
             # secondary structure origin
@@ -1757,7 +1757,7 @@ of saved in the file""",
                                  'text_height':20},
                         'gridcfg':{'sticky':'we'}})
             idf.append({'name':'dismiss',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text':'DISMISS',
                                 'command':self.dismiss_cb},
                         'gridcfg':{'sticky':'we'}})
@@ -1791,14 +1791,14 @@ The current selection contains more than one molecule.")
             if os.path.exists(fileName):
                 if not askyesno("Overwrite", "File " +fileName+ " exists. Overwrite?"):
                     return
-            if val.has_key('filebrowse'):
+            if 'filebrowse' in val:
                 del val['filebrowse']
             del val['avRec']
             ebn = self.cmdForms['saveOptions'].descr.entryByName
             w = ebn['pdbRec']['widget']
             val['pdbRec'] = w.get()
             if len(val['pdbRec'])==0: return
-            apply(self.doitWrapper, (self.nodes,), val)
+            self.doitWrapper(*(self.nodes,), **val)
 
 
 pdbWriterDescr = {'widgetType':'Menu', 'menyBarName':'menuRoot',
@@ -1852,7 +1852,7 @@ class PQRWriter(PDBWriter):
            \nsort --- default is 1
            """
         kw['sort'] = sort        
-        apply(self.doitWrapper, (filename, nodes,), kw)
+        self.doitWrapper(*(filename, nodes,), **kw)
 
         
 
@@ -1868,26 +1868,26 @@ class PQRWriter(PDBWriter):
         elif len(nodes)!=len(nodes.top.uniq().findType(nodes[0].__class__)):
             msg = 'writing only selected portion of '+ nodes[0].top.name
             self.warningMsg(msg)
-        ans = Tkinter.IntVar()
+        ans = tkinter.IntVar()
         ans.set(1)
 
         ifd = InputFormDescr(title='Write Options')
         ifd.append({'name':'sortLab',
-                    'widgetType': Tkinter.Label,
+                    'widgetType': tkinter.Label,
                     'wcfg':{'text':'Sort Nodes:'},
-                    'gridcfg': {'sticky':Tkinter.W}})
+                    'gridcfg': {'sticky':tkinter.W}})
         ifd.append({'name': 'yesWid',
-                   'widgetType':Tkinter.Radiobutton,
+                   'widgetType':tkinter.Radiobutton,
                    'value': '1',
                    'variable': ans,
                    'text': 'Yes',
-                   'gridcfg': {'sticky':Tkinter.W}}) 
+                   'gridcfg': {'sticky':tkinter.W}}) 
         ifd.append({'name': 'noWid',
-                   'widgetType':Tkinter.Radiobutton,
+                   'widgetType':tkinter.Radiobutton,
                    'value': '0',
                    'text': 'No',
                    'variable': ans,
-                   'gridcfg': {'sticky':Tkinter.W, 'row':-1,'column':1}}) 
+                   'gridcfg': {'sticky':tkinter.W, 'row':-1,'column':1}}) 
 
         val = self.vf.getUserInput(ifd)
         if val:
@@ -2008,7 +2008,7 @@ class PDBQWriter(PDBWriter):
         kw['ssOrigin'] = ssOrigin
         kw['filename'] = filename
         kw['transformed'] = transformed
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def guiCallback(self):
@@ -2031,12 +2031,12 @@ The current selection contains more than one molecule.")
                             okCfg={'text':'OK', 'command':self.dismiss_cb})
         if val:
             del val['avRec']
-            if val.has_key('filebrowse'): del val['filebrowse']
+            if 'filebrowse' in val: del val['filebrowse']
             ebn = self.cmdForms['saveOptions'].descr.entryByName
             w = ebn['pdbRec']['widget']
             val['pdbRec'] = w.get()
             if len(val['pdbRec'])==0: return
-            apply(self.doitWrapper, (self.nodes,), val)
+            self.doitWrapper(*(self.nodes,), **val)
 
 
 
@@ -2156,7 +2156,7 @@ class PDBQSWriter(PDBWriter):
         kw['ssOrigin'] = ssOrigin
         kw['filename'] = filename
         kw['transformed'] = transformed
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def guiCallback(self):
@@ -2179,12 +2179,12 @@ The current selection contains more than one molecule.")
                             okCfg={'text':'OK', 'command':self.dismiss_cb})
         if val:
             del val['avRec']
-            if val.has_key('filebrowse'): del val['filebrowse']
+            if 'filebrowse' in val: del val['filebrowse']
             ebn = self.cmdForms['saveOptions'].descr.entryByName
             w = ebn['pdbRec']['widget']
             val['pdbRec'] = w.get()
             if len(val['pdbRec'])==0: return
-            apply(self.doitWrapper, (self.nodes,), val)
+            self.doitWrapper(*(self.nodes,), **val)
 
 
 pdbqsWriterGuiDescr = {'widgetType':'Menu', 'menyBarName':'menuRoot',
@@ -2304,7 +2304,7 @@ class PDBQTWriter(PDBWriter):
         kw['ssOrigin'] = ssOrigin
         kw['filename'] = filename
         kw['transformed'] = transformed
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def guiCallback(self):
@@ -2327,12 +2327,12 @@ The current selection contains more than one molecule.")
                             okCfg={'text':'OK', 'command':self.dismiss_cb})
         if val:
             del val['avRec']
-            if val.has_key('filebrowse'): del val['filebrowse']
+            if 'filebrowse' in val: del val['filebrowse']
             ebn = self.cmdForms['saveOptions'].descr.entryByName
             w = ebn['pdbRec']['widget']
             val['pdbRec'] = w.get()
             if len(val['pdbRec'])==0: return
-            apply(self.doitWrapper, (self.nodes,), val)
+            self.doitWrapper(*(self.nodes,), **val)
 
 
 pdbqtWriterGuiDescr = {'widgetType':'Menu', 'menyBarName':'menuRoot',
@@ -2376,7 +2376,7 @@ class SaveMMCIF(MVCommand):
         \nnodes ---  TreeNodeSet holding the current selection
         """
         nodes = self.vf.expandNodes(nodes)
-        apply(self.doitWrapper, (filename, nodes), kw)
+        self.doitWrapper(*(filename, nodes), **kw)
 
     def guiCallback(self):
         filename = self.vf.askFileSave(types=[('MMCIF files', '*.cif')],
@@ -2425,14 +2425,14 @@ cylinderQuality=10 )
         
         if stl is not None and len(stl) != 0:
             f = open(filename, 'w')
-            map( lambda x,f=f: f.write(x), stl)
+            list(map( lambda x,f=f: f.write(x), stl))
             f.close()
 
 
     def __call__(self, filename, **kw):
-	"""None <--- Write STL ( filename, sphereQuality=0,
+        """None <--- Write STL ( filename, sphereQuality=0,
 cylinderQuality=0 )"""
-        apply( self.doitWrapper, (filename,), kw )
+        self.doitWrapper(*(filename,), **kw)
 
 
     def guiCallback(self):
@@ -2513,7 +2513,7 @@ colorPerVertex=True, useProto=0, sphereQuality=2, cylinderQuality=10 )
 
         if vrml2 is not None and len(vrml2) != 0:
             f = open(filename, 'w')
-            map( lambda x,f=f: f.write(x), vrml2)
+            list(map( lambda x,f=f: f.write(x), vrml2))
             f.close()
             del vrml2
 
@@ -2521,14 +2521,14 @@ colorPerVertex=True, useProto=0, sphereQuality=2, cylinderQuality=10 )
     def __call__(self, filename, saveNormals=0,
                  colorPerVertex=True, useProto=0,
                  sphereQuality=2, cylinderQuality=10, **kw):
-	"""Write VRML 2.0 file (filename, saveNormals=0,
+        """Write VRML 2.0 file (filename, saveNormals=0,
 colorPerVertex=True, useProto=0, sphereQuality=2, cylinderQuality=10 )"""
         kw['saveNormals'] = saveNormals
         kw['colorPerVertex'] = colorPerVertex
         kw['useProto'] = useProto
         kw['sphereQuality'] = sphereQuality
         kw['cylinderQuality'] = cylinderQuality
-        apply( self.doitWrapper, (filename,), kw)
+        self.doitWrapper(*(filename,), **kw)
 
 
     def guiCallback(self):
@@ -2559,7 +2559,7 @@ colorPerVertex=True, useProto=0, sphereQuality=2, cylinderQuality=10 )"""
               'colorPerVertex':di['colorPerVertex'],
               'useProto':di['usePROTO'], 'sphereQuality':di['sphereQuality'],
               'cylinderQuality':di['cylinderQuality'], 'redraw':0}
-        apply(self.doitWrapper, (newfile,), kw)
+        self.doitWrapper(*(newfile,), **kw)
         #self.doitWrapper(newfile, sn, ni, co, up, sq, cq)
 
 
@@ -2571,7 +2571,7 @@ vrml2WriterGuiDescr = {'widgetType':'Menu', 'menuBarName':'menuRoot',
 from Pmv.fileCommandsGUI import VRML2WriterGUI
 
 
-import urllib                   
+import urllib.request, urllib.parse, urllib.error                   
 
 class fetch(MVCommand):
     """This command read a molecule from the web.
@@ -2620,9 +2620,9 @@ Mouse over PDB Cache Directory label to see the path, or click Clear button to r
             keyword = keyword.replace(' ','%20')
             uri = self.searchURI+keyword
             try:
-                fURL = urllib.urlopen(uri)
-            except Exception, inst:
-                print inst
+                fURL = urllib.request.urlopen(uri)
+            except Exception as inst:
+                print(inst)
                 return        
 #            if 'content-type' not in fURL.headers.keys():
 #                self.message_box()
@@ -2636,7 +2636,7 @@ Mouse over PDB Cache Directory label to see the path, or click Clear button to r
             cur_url = newurl.split(";")[-1]
             st = "startAt=0&resultsperpage=100"
             cURL = self.resultURI+";"+cur_url+"?"+st
-            fURL = urllib.urlopen(cURL)
+            fURL = urllib.request.urlopen(cURL)
             fp = open("dataf" ,"w")
             fp.write(fURL.read())
             fp.close()
@@ -2668,11 +2668,11 @@ Mouse over PDB Cache Directory label to see the path, or click Clear button to r
 
 
     def __call__(self, pdbID=None, URL="Default", **kw):
-         if kw.has_key('f'):
+         if 'f' in kw:
             self.forceIt = kw['f']
          else :
             self.forceIt = False
-         return apply(self.doitWrapper, (pdbID,URL))
+         return self.doitWrapper(*(pdbID,URL))
 
 
     def doit(self, pdbID=None, URL="Default"):
@@ -2733,12 +2733,12 @@ Mouse over PDB Cache Directory label to see the path, or click Clear button to r
                 import WebServices
                 test = WebServices.checkURL(URI)
                 if test :
-                    fURL = urllib.urlopen(URI)
+                    fURL = urllib.request.urlopen(URI)
                 else :
-                    print "didn't exist try another ID"
+                    print("didn't exist try another ID")
                     return None
-            except Exception, inst:
-                print inst
+            except Exception as inst:
+                print(inst)
                 return None
             #if URL != "Default" or fURL.headers['content-type'] =='application/download':
             if self.rcFolder is not None:
@@ -2753,7 +2753,7 @@ Mouse over PDB Cache Directory label to see the path, or click Clear button to r
                     tmpFile.write(fURL.read())
                     tmpFile.close()
                     if gz :
-                        print "ok gunzip"
+                        print("ok gunzip")
                         out = self.rcFolder + os.sep +"pdbcache"+os.sep+pdbID+ext
                         gunzip(tmpFileName, out)
                         tmpFileName = out
@@ -2823,7 +2823,7 @@ Mouse over PDB Cache Directory label to see the path, or click Clear button to r
 
             
         ifd.append({'name':'PDBCachedir',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text':'Clear Cache Directory',
                                 'command':self.clearPDBCache},
                         'gridcfg':{'sticky':'we', 'row':4, 'column':0,  'columnspan':2}})
@@ -2925,7 +2925,7 @@ Mouse over PDB Cache Directory label to see the path, or click Clear button to r
                     os.remove(dirname+os.sep+f)
 
     def dismiss_cb(self):
-        if not self.cmdForms.has_key('FetchPDB'): return
+        if 'FetchPDB' not in self.cmdForms: return
         f = self.cmdForms['FetchPDB']
         if f.root.winfo_ismapped():
             f.root.withdraw()
@@ -3095,12 +3095,12 @@ commandList = [
     ]
 
 def gunzip(gzpath, path):
-	import gzip
-	gzf = gzip.open(gzpath)
-	f = open(path, 'wb')
-	f.write(gzf.read())
-	f.close()
-	gzf.close()
+        import gzip
+        gzf = gzip.open(gzpath)
+        f = open(path, 'wb')
+        f.write(gzf.read())
+        f.close()
+        gzf.close()
 
 
 def initModule(viewer):

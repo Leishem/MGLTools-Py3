@@ -23,7 +23,8 @@ chain
 from MolKit.protein import Helix, Strand, Turn, Coil,\
      SecondaryStructureSet, Residue, ResidueSet
 from MolKit.molecule import Atom
-import string, types
+import types; from mglcompat import pystring as string
+from functools import cmp_to_key
 
 
 class GetSecondaryStructure:
@@ -77,7 +78,7 @@ class GetSecondaryStructure:
         ssClass = datas[0]
         chainStructureSet = chain.secondarystructureset
         for i in range(1,len(datas)):
-            if type(datas[i]) is types.DictionaryType:
+            if type(datas[i]) is dict:
                 start = datas[i]['start']
                 end = datas[i]['end']
                 kw = datas[i]
@@ -109,26 +110,26 @@ class GetSecondaryStructure:
 
                 if start in chainStructureSet.residues\
                    and end in chainStructureSet.residues:
-                    print "In %s, %s and %s already belongs to %s"\
+                    print("In %s, %s and %s already belongs to %s"\
                           %(start.parent.id, start.name, end.name,
-                            start.secondarystructure.name)
+                            start.secondarystructure.name))
                             
                     continue
 
                 if start in chainStructureSet.residues:
-                    print "In %s, %s is  already the end of %s"\
+                    print("In %s, %s is  already the end of %s"\
                           %(start.parent.id, start.name,
-                            start.secondarystructure.name)
+                            start.secondarystructure.name))
                     #continue
                 if end in chainStructureSet.residues:
-                    print "In %s, %s is  already the start of %s"\
+                    print("In %s, %s is  already the start of %s"\
                           %(end.parent.id, end.name,
-                            end.secondarystructure.name)
+                            end.secondarystructure.name))
                     continue
             #kw = datas[i]
             kw['index'] = i
             kw['chain'] = chain
-            secondarystructure = apply(ssClass, (), kw)
+            secondarystructure = ssClass(*(), **kw)
             chainStructureSet.append(secondarystructure)
             secondarystructure.parent = chain
 
@@ -296,7 +297,7 @@ class GetSecondaryStructure:
             ##             residuesCoil = []
             ##             j = j+1
 
-        chain.secondarystructureset.sort(self.Compare)
+        chain.secondarystructureset.sort(key=cmp_to_key(self.Compare))
 
 
     def buildCoil(self, residuesCoil, j, chain):
@@ -317,7 +318,7 @@ class GetSecondaryStructure:
 ##             return None
         #import traceback
         #traceback.print_stack()
-        if not self.ssDataForMol.has_key(chain.id): return
+        if chain.id not in self.ssDataForMol: return
         helData, strandData, turnData, coilData= self.ssDataForMol[chain.id]
         self.createSSstructures(chain, helData, strandData,
                                 turnData, coilData)
@@ -354,7 +355,7 @@ class GetSecondaryStructureFromPross(GetSecondaryStructure):
     def __init__(self, mol, default='fgmeso'):
         """ # Setup Fine Grain Mesostate Bins (ala Pat Fleming)"""
         """ see PROSS.py """
-        from PROSS import MSDEFS
+        from .PROSS import MSDEFS
         self.mode=default
         self.MSDEFS=MSDEFS[default]
         self.mol = mol
@@ -368,8 +369,8 @@ class GetSecondaryStructureFromPross(GetSecondaryStructure):
         
     def updatePhiPsi(self, chain):
         aa = [res for res in chain.residues if res.hasCA]
-        map(lambda x: x.getPhi(), aa)
-        map(lambda x: x.getPsi(), aa)
+        list(map(lambda x: x.getPhi(), aa))
+        list(map(lambda x: x.getPsi(), aa))
 
         
     def res_rc(self,r1, r2, r3=180):
@@ -415,11 +416,11 @@ class GetSecondaryStructureFromPross(GetSecondaryStructure):
         function will return a list of mesostate codes that
         applies to the chain, as determined by res_rc.
         """
-        n = range(len(chain.residues))
+        n = list(range(len(chain.residues)))
         if phi is None: phi = chain.residues.phi
         if psi is None: psi = chain.residues.psi
         #if ome is None: ome = map(chain.omega, n)
-        return map(lambda x, y: self.res_rc(x, y), phi, psi)
+        return list(map(lambda x, y: self.res_rc(x, y), phi, psi))
 
 
     def rc_ss(self, chain, phi=None, psi=None, ome=None):
@@ -459,14 +460,14 @@ class GetSecondaryStructureFromPross(GetSecondaryStructure):
 
         is_PII = PII.has_key
 
-        for i in xrange(nres-1):
+        for i in range(nres-1):
             code = codes[i]
             if is_PII(code):
                 sst[i] = 'P'
 
         is_turn = TURNS.has_key
 
-        for i in xrange(nres-1):
+        for i in range(nres-1):
             code = codes[i] + codes[i+1]
             if is_turn(code):        
                 sst[i] = sst[i+1] = 'T'
@@ -544,7 +545,7 @@ class GetSecondaryStructureFromPross(GetSecondaryStructure):
 
         try:
             while 1:
-                mat = it.next()
+                mat = next(it)
                 matches.append((mat.start()/CODE_LENGTH, mat.end()/CODE_LENGTH))
         except StopIteration:
             pass
@@ -565,15 +566,15 @@ class GetSecondaryStructureFromStride(GetSecondaryStructure):
         from MolKit.pdbParser import PdbParser
         s = stride.STRIDE()
         if not isinstance(mol.parser, PdbParser):
-            print "cannot use stride to get the secondary structure for the %s"%mol.name
+            print("cannot use stride to get the secondary structure for the %s"%mol.name)
             return None
         
         if not 'ATOM' in mol.parser.keys:
-            print "cannot use stride to get the secondary structure for the %s, the file doens't have any ATOM record"%mol.name
+            print("cannot use stride to get the secondary structure for the %s, the file doens't have any ATOM record"%mol.name)
             return None
 
         if not s.getPDBRecords( mol.parser.allLines, len(mol.parser.allLines)):
-            print "STRIDE has failed to parse ", mol
+            print("STRIDE has failed to parse ", mol)
             self.ssDataForMol = {}
             return
         #s.run( report = 0 )
@@ -595,7 +596,7 @@ class GetSecondaryStructureFromStride(GetSecondaryStructure):
 
     def parseSSData(self, s, mol):
         ssDataForMol = {}
-        for j in xrange(s.NChain):
+        for j in range(s.NChain):
             k = 0
             # k is the constant representing the difference in indices between
             # the line index in the stride report and the residue number.
@@ -619,7 +620,7 @@ class GetSecondaryStructureFromStride(GetSecondaryStructure):
             cData = [Coil]
             ssType = None
             lenResidues = len(c.residues)
-            for i in xrange(len(asnForChain)):
+            for i in range(len(asnForChain)):
                 l = asnForChain[i]
                 if l[1] == 'B': continue # Don't know what B stands for...
                 elif (i+k) >=lenResidues: continue # Bugfix for  #1033

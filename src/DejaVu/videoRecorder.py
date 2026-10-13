@@ -1,16 +1,16 @@
-import Tkinter
+import tkinter
 import Pmw
 import os
 import weakref
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr,InputForm,evalString
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 from mglutil.util.packageFilePath import findFilePath
-import tkMessageBox
-import tkFileDialog
-from SimpleDialog import SimpleDialog
+import tkinter.messagebox
+import tkinter.filedialog
+from tkinter.simpledialog import SimpleDialog
 from os import path
 
-class Recorder(Tkinter.Frame):
+class Recorder(tkinter.Frame):
     """Implements GUI for recording movie clips( *.mpg)"""
 
     def __init__(self, master=None,
@@ -35,17 +35,17 @@ class Recorder(Tkinter.Frame):
         
         if not icondir:
             icondir = findFilePath('icons', 'mglutil.gui.BasicWidgets.Tk')
-        self.stopIcon = Tkinter.PhotoImage(file=os.path.join(icondir, "stop3.gif"), master=master)
-        self.pauseIcon = Tkinter.PhotoImage(file=os.path.join(icondir, "stop2.gif"), master=master)
-        self.recordIcon = Tkinter.PhotoImage(file=os.path.join(icondir, "record.gif"), master=master)
-        self.record1Icon = Tkinter.PhotoImage(file=os.path.join(icondir, "record1.gif"), master=master)
-        self.chmodIcon =  Tkinter.PhotoImage(file=os.path.join(icondir, 'chmod.gif'), master=master)
-        self.closeIcon = Tkinter.PhotoImage(file=os.path.join(icondir, 'close.gif'), master=master)
+        self.stopIcon = tkinter.PhotoImage(file=os.path.join(icondir, "stop3.gif"), master=master)
+        self.pauseIcon = tkinter.PhotoImage(file=os.path.join(icondir, "stop2.gif"), master=master)
+        self.recordIcon = tkinter.PhotoImage(file=os.path.join(icondir, "record.gif"), master=master)
+        self.record1Icon = tkinter.PhotoImage(file=os.path.join(icondir, "record1.gif"), master=master)
+        self.chmodIcon =  tkinter.PhotoImage(file=os.path.join(icondir, 'chmod.gif'), master=master)
+        self.closeIcon = tkinter.PhotoImage(file=os.path.join(icondir, 'close.gif'), master=master)
         self.fileTypes = filetypes
         if gui:
-            self.RecVar =  Tkinter.IntVar()
+            self.RecVar =  tkinter.IntVar()
             self.RecVar.set(0)
-            self.PauseVar =  Tkinter.IntVar()
+            self.PauseVar =  tkinter.IntVar()
             self.PauseVar.set(0)
             form = self.buildForm(master=master,
                            title=title,height=height,
@@ -62,7 +62,7 @@ class Recorder(Tkinter.Frame):
         self.master = master
         ifd = self.ifd = InputFormDescr(title=title)
         ifd.append({'name':'fileopen',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'tooltip': "Opens file browser",
                     'wcfg':{'text':"Save As:",
                             'command': self.browseFile,
@@ -91,7 +91,7 @@ class Recorder(Tkinter.Frame):
 ##                     'gridcfg':{'sticky':'w', 'column':2, 'row':-1}
 ##                     })
         ifd.append({'name': 'recordB',
-                    'widgetType': Tkinter.Checkbutton,
+                    'widgetType': tkinter.Checkbutton,
                     'tooltip':'start/stop recording',
                     'wcfg': {'variable': self.RecVar,
                              'bd':2,
@@ -105,7 +105,7 @@ class Recorder(Tkinter.Frame):
                     })
         
         ifd.append({'name': 'pauseB',
-                    'widgetType': Tkinter.Checkbutton,
+                    'widgetType': tkinter.Checkbutton,
                     'tooltip':'pause/start recording',
                     'wcfg':{'variable': self.PauseVar,
                             'bd':2,
@@ -119,7 +119,7 @@ class Recorder(Tkinter.Frame):
                     })
         
         ifd.append({'name': 'stopB',
-                    'widgetType': Tkinter.Button,
+                    'widgetType': tkinter.Button,
                     'tooltip':'stop recording',
                     'wcfg':{'bd':2,
                             'image':self.stopIcon,
@@ -202,7 +202,7 @@ class Recorder(Tkinter.Frame):
                 fileDir = path.dirname(path.realpath(self.fileName))
             else:
                 fileDir = os.getcwd()
-        file = tkFileDialog.asksaveasfilename( filetypes=self.fileTypes,
+        file = tkinter.filedialog.asksaveasfilename( filetypes=self.fileTypes,
                                                initialdir=fileDir,
                                                initialfile=None,
                                                title="Save file")
@@ -226,7 +226,7 @@ class Recorder(Tkinter.Frame):
                     #apply(self.setVideoParams, (), kw)
                     if os.path.exists(self.fileName):
                         # ask the user if he wants to overwrite the existing file
-                        from Dialog import Dialog
+                        from tkinter.dialog import Dialog
                         d = Dialog(None, {'title': 'File exisits',
                                           'text':
                                           'File "%s" already exists.'
@@ -260,7 +260,7 @@ class Recorder(Tkinter.Frame):
             if not self.camera().videoRecordingStatus == 'stopped':
                 #print "stop recording"
                 self.camera().stop()
-	    if self.ifd:
+            if self.ifd:
                 recval = self.RecVar.get()
                 if recval:
                    self.RecVar.set(0) #uncheck the Record checkbutton
@@ -356,12 +356,12 @@ class Recorder(Tkinter.Frame):
                              'continuous':0, 'wheelPad':1, 'height':15},
                      'gridcfg':{'sticky':'nesw','columnspan':2}})
         ifd2.append({'name':'okB',
-                     'widgetType': Tkinter.Button,
+                     'widgetType': tkinter.Button,
                      'wcfg':{'text': 'Apply',
                              'command': self.apply_cb,},
                      'gridcfg':{'sticky':'nesw'}})
         ifd2.append({'name':'cancelB',
-                     'widgetType': Tkinter.Button,
+                     'widgetType': tkinter.Button,
                      'wcfg':{'text': 'Cancel',
                              'command': self.cancel_cb,},
                      'gridcfg':{'sticky':'nesw', 'row':-1, 'column':1}})
@@ -432,10 +432,10 @@ class Recorder(Tkinter.Frame):
         if self.camera:
             filename = kw.get('filename')
             if filename:
-	        try:	      
+                try:	      
                     self.camera().setVideoOutputFile(filename)
-   		except IOError:
-		    button = tkMessageBox.showerror("IOError", message="Could not open file %s\nfor writing a movie."%filename, parent = self.master)
+                except IOError:
+                    button = tkinter.messagebox.showerror("IOError", message="Could not open file %s\nfor writing a movie."%filename, parent = self.master)
                     return False
             ## params = {}
 ##             w = kw.get('width')
@@ -455,7 +455,7 @@ class Recorder(Tkinter.Frame):
                 
             #use default parameters for now
             self.camera().setVideoParameters()
-	    return True
+            return True
         
     def createKeyBindings(self):
         self.master.bind('<KeyPress-space>', self.spacePress_cb)

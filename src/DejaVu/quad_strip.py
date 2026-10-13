@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -37,7 +37,7 @@ class Quad_strip(IndexedPolygons):
         ]
 
     def __init__(self, name=None, check=1, **kw):
-	""" Constructor:
+        """ Constructor:
 Takes an array of vertices and splits it into separate quad strips
 at specific vertices specified by stripBegin, which is and array of
 indices. Generates faceSet. In this class, a face corresponds to a
@@ -47,9 +47,9 @@ overwriting the binding mode set by MaterialBindingMode in the Geom
 class. Initializes frontPolyMode to FILL.  Initializes currentCol and
 currentMat.""" 
 
-        apply( IndexedPolygons.__init__, (self, name, check), kw)
+        IndexedPolygons.__init__(*(self, name, check), **kw)
 
-        for face in self.materials.keys():
+        for face in list(self.materials.keys()):
             for j in range(5):
                 self.MatBindingMode(j, face)
 
@@ -96,25 +96,25 @@ updateOwnGui=True : allow to update owngui at the end this func
 
         self.fnormals = kw.get( 'fnormals')
         
-        redoFlags = apply( IndexedPolygons.Set, (self, check, 0), kw )
+        redoFlags = IndexedPolygons.Set(*(self, check, 0), **kw)
 
         return self.redoNow(redo, updateOwnGui, redoFlags)
 
 
     def MatBindingMode(self, propNum, face=GL.GL_FRONT):
-	""" For the given face and material property corresponding to propNum,
-   	the method sets the binding mode.  If there is one value, the mode is
+        """ For the given face and material property corresponding to propNum,
+        the method sets the binding mode.  If there is one value, the mode is
         OVERALL; if the number of values equals the number of vertices, strips,
-	or faces(quads), the mode is PER_VERTEX, PER_PART, or PER_FACE,
+        or faces(quads), the mode is PER_VERTEX, PER_PART, or PER_FACE,
         respectively. Else, mode is none. """
 
         OVERALL, PER_VERTEX, PER_PART, PER_FACE = -1, 10, 11, 12, 13
         #NONE, OVERALL, PER_VERTEX, PER_PART, PER_FACE = -1, 10, 11, 12, 13
         num = propNum
-	f = face
+        f = face
 
-	nn = self.materials[f].prop[num].shape[0]
-	self.inheritMaterial = 0
+        nn = self.materials[f].prop[num].shape[0]
+        self.inheritMaterial = 0
 
         if nn == 1:
             self.materials[f].binding[num] = OVERALL
@@ -142,10 +142,10 @@ updateOwnGui=True : allow to update owngui at the end this func
 
         
     def GetNormals(self):
-	""" Gets the proper normals for smooth or flat shading.  Calls
+        """ Gets the proper normals for smooth or flat shading.  Calls
         buildIndexedFaceSet(). Sets face normals or computes them if not given.
-	Sets object normals to the vertex normals for smooth shading or to the
-	face normals for flat shading. If shading none, normals are none."""
+        Sets object normals to the vertex normals for smooth shading or to the
+        face normals for flat shading. If shading none, normals are none."""
 
         if self.shading==GL.GL_NONE:
             self.normals = None
@@ -155,10 +155,10 @@ updateOwnGui=True : allow to update owngui at the end this func
                 self.buildIndexedFaceSet()
                 self.faceSet = self.IndexedFaceSet
 
-		if self.fnormals:
-		    self.faceSet.normals.SetValues(self.fnormals)
+                if self.fnormals:
+                    self.faceSet.normals.SetValues(self.fnormals)
                 
-		else:
+                else:
                     self.FaceNormalFunction( self.ComputeFaceNormals )
                     self.faceSet.normals.ComputeMode( DejaVu.viewerConst.AUTO )
 
@@ -173,7 +173,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         
 
     def isNewColor(self, c=None):
-	""" Compares new color c to the current color.  If the same, method
+        """ Compares new color c to the current color.  If the same, method
         returns 0.  If the new color is different, the current color gets the
         values of the new color, and the method returns 1. """
 
@@ -222,7 +222,7 @@ updateOwnGui=True : allow to update owngui at the end this func
 
 
     def DisplayFunction(self):
-	""" Either executes the present display list or creates a display
+        """ Either executes the present display list or creates a display
         list to display the quad strip. """
         
         OVERALL, PER_VERTEX, PER_PART, PER_FACE = -1, 10, 11, 12, 13
@@ -420,7 +420,7 @@ updateOwnGui=True : allow to update owngui at the end this func
 
 
 if __name__=='__main__':
-    import pdb, numpy.oldnumeric as Numeric
+    import pdb, mglcompat.oldnumeric as Numeric
     from DejaVu import Viewer
     vi = Viewer()
     vert = [(0, 1, 0), (1, 0, 1), (1, 1, 0), (2, 0, -1), (2, 1, 0), (3, 0, 1),

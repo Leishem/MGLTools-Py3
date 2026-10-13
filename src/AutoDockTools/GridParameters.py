@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 
 #############################################################################
@@ -19,13 +19,13 @@
 #
 #
 
-from energyConstants import Rij, epsij, SolVol, SolPar, SolCon
+from .energyConstants import Rij, epsij, SolVol, SolPar, SolCon
 import UserDict
-import string, os.path, sys, types, glob
+import os.path, sys, types, glob; from mglcompat import pystring as string
 from MolKit import Read
 from AutoDockTools.atomTypeTools import AutoDock4_AtomTyper
-import string
-import numpy.oldnumeric as Numeric
+from mglcompat import pystring as string
+import mglcompat.oldnumeric as Numeric
 from math import ceil
 
 
@@ -285,8 +285,8 @@ class GridParameters(UserDict.UserDict):
             elif t in ['Fe','FE','fe']:  #special case: iron
                 d['f'] = 1
             else:
-                print "unrecognized ligand_atom_type:", t
-        all_types = d.keys()
+                print("unrecognized ligand_atom_type:", t)
+        all_types = list(d.keys())
         all_types.sort()
         type_str = all_types[0]
         for t in all_types[1:]:
@@ -318,13 +318,13 @@ class GridParameters(UserDict.UserDict):
         self.file_params = []
         checkedTypes = []
         extraLigandTypes = []
-        keys = self.keys()
+        keys = list(self.keys())
         for line in lines:
             words = string.split(string.replace(line, '\t', ' '))
             if words!=[] and words[0][0]!='#':
                 p = words[0]
                 if p not in keys:
-                    print "WARNING: unrecognized parameter in ", filename, ":\n", p
+                    print("WARNING: unrecognized parameter in ", filename, ":\n", p)
                     continue
                 # maintain a list of the parameters read from the file
                 if self.file_params==[] or p!=self.file_params[-1]:
@@ -338,7 +338,7 @@ class GridParameters(UserDict.UserDict):
                         break
                 values = words[1:l]
                 if ((len(values)==1) and
-                    (type(self[p]['default'])!=types.ListType)):
+                    (type(self[p]['default'])!=list)):
                     self[p]['value'] = self._get_val(values[0])
                     if words[0]=='types':
                         #in this case have to set flags for possible new type
@@ -418,10 +418,10 @@ class GridParameters(UserDict.UserDict):
             return float(val_str)
         except ValueError:
             pass
-        if type(val_str)==types.StringType:
+        if type(val_str)==bytes:
             return val_str
         else:
-            raise NotImplementedError, "value: %s of unsupport type %s" % (val_str, type(val_str).__name__)
+            raise NotImplementedError("value: %s of unsupport type %s" % (val_str, type(val_str).__name__))
 
     
     def read4(self, filename):
@@ -432,7 +432,7 @@ class GridParameters(UserDict.UserDict):
         lines = gpf_ptr.readlines()
         gpf_ptr.close()
         
-        keys = self.keys()
+        keys = list(self.keys())
         self.file_params = []
         for line in lines:
             #print "reading ", line
@@ -441,7 +441,7 @@ class GridParameters(UserDict.UserDict):
             if words!=[] and words[0][0]!='#':
                 p = words[0]
                 if p not in keys:
-                    print "WARNING: unrecognized parameter in ", filename, ":\n", p
+                    print("WARNING: unrecognized parameter in ", filename, ":\n", p)
                     continue
                 #print "p=", p
                 # maintain a list of the parameters read from the file
@@ -459,7 +459,7 @@ class GridParameters(UserDict.UserDict):
                     self['custom_parameter_file']['value'] = 1
                     self['parameter_file']['value'] = values[0]
                 elif ((len(values)==1) and
-                    (type(self[p]['default'])!=types.ListType)):
+                    (type(self[p]['default'])!=list)):
                     self[p]['value'] = self._get_val(values[0])
                     #print "    value=", self[p]['value']
                     #if words[0]=='types':
@@ -591,17 +591,17 @@ class GridParameters(UserDict.UserDict):
                 return "#\n"
             else:
                 val_str = ""
-        elif ((vt==types.IntType) or
-              (vt==types.FloatType) or
-              (vt==types.StringType)):
+        elif ((vt==int) or
+              (vt==float) or
+              (vt==bytes)):
             val_str = str(p['value'])
-        elif ((vt==types.ListType) or
-              (vt==types.TupleType)):
+        elif ((vt==list) or
+              (vt==tuple)):
             val_str = ""
             for v in p['value']:
                 val_str = val_str + str(v) + " "
         else:
-            raise NotImplementedError, "type (%s) of parameter %s unsupported" % (vt.__name__, param)
+            raise NotImplementedError("type (%s) of parameter %s unsupported" % (vt.__name__, param))
         return self._make_string(p, val_str)
 
     def make_intnbp_r_eps_string(self, atom1, atom2):
@@ -648,7 +648,7 @@ class GridParameters(UserDict.UserDict):
             dict = {}
             for a in ligand.allAtoms:
                 dict[a.autodock_element] = 1
-            d_types = dict.keys()
+            d_types = list(dict.keys())
             d_types.sort()
             types = d_types[0]
             for t in d_types[1:]:
@@ -670,7 +670,7 @@ class GridParameters(UserDict.UserDict):
             dict = {}
             for a in receptor.allAtoms:
                 dict[a.autodock_element] = 1
-            d_types = dict.keys()
+            d_types = list(dict.keys())
             d_types.sort()
             types = d_types[0]
             for t in d_types[1:]:
@@ -793,22 +793,22 @@ class GridParameterFileMaker:
 
 
     def read_reference(self, reference_filename):
-        if self.verbose: print "reading ", reference_filename
+        if self.verbose: print("reading ", reference_filename)
         self.gpo.read(reference_filename)
 
 
     def set_ligand(self, ligand_filename): 
         self.ligand_filename = os.path.basename(ligand_filename)
         if self.verbose:
-            print "set ligand_filename to", self.ligand_filename
+            print("set ligand_filename to", self.ligand_filename)
         self.gpo.set_ligand(ligand_filename)
         #expect a filename like ind.out.pdbq: get 'ind' from it
         self.ligand_stem = string.split(self.ligand_filename,'.')[0]
-        if self.verbose: print "set ligand_stem to", self.ligand_stem
+        if self.verbose: print("set ligand_stem to", self.ligand_stem)
         self.ligand = Read(ligand_filename)[0]
         #IS THIS USEFUL???
         self.gpo.ligand = self.ligand
-        if self.verbose: print "read ", self.ligand.name
+        if self.verbose: print("read ", self.ligand.name)
         #set gpo:
         #types
         d = {}
@@ -817,11 +817,11 @@ class GridParameterFileMaker:
         sortKeyList =  ['C','A','N','O','S','H','P','n','f','F','c','b','I','M']
         lig_types = ""
         for t in sortKeyList:
-            if t in d.keys():
+            if t in list(d.keys()):
                 lig_types = lig_types + t
         self.ligand.types = lig_types
         self.gpo['types']['value'] = self.ligand.types
-        if self.verbose: print "set types to ", self.gpo['types']['value']
+        if self.verbose: print("set types to ", self.gpo['types']['value'])
         #gridcenter
         self.ligand.center = self.ligand.getCenter()
         if self.size_box_to_include_ligand:
@@ -830,13 +830,13 @@ class GridParameterFileMaker:
         self.gpo['gridcenter']['value'] =  [round(cen[0],4), round(cen[1],4),\
                                         round(cen[2],4)]
         self.gpo['gridcenterAuto']['value'] =  0
-        if self.verbose: print "set gridcenter to ", self.gpo['gridcenter']['value']
+        if self.verbose: print("set gridcenter to ", self.gpo['gridcenter']['value'])
         #only make the box bigger from npts, do not make it smaller
         for ix, val in enumerate(self.gpo['npts']['value']):
             if hasattr(self.ligand, 'npts'):
                 npts = self.ligand.npts
                 if npts[ix]>val:
-                    if self.verbose: print "increasing ", ix, " grid dimension to ", val
+                    if self.verbose: print("increasing ", ix, " grid dimension to ", val)
                     self.gpo['npts']['value'][ix] =  npts[ix]
         #if self.verbose: print "set npts to ", self.gpo['npts']['value']
         
@@ -846,7 +846,7 @@ class GridParameterFileMaker:
         maxo = Numeric.maximum.reduce(c)
         mino = Numeric.minimum.reduce(c)
         sideLengths = maxo-mino
-        mol.npts = map(int, map(ceil, sideLengths/(self.gpo['spacing']['value'])))
+        mol.npts = list(map(int, list(map(ceil, sideLengths/(self.gpo['spacing']['value'])))))
         for ix, npts in enumerate(mol.npts):
             if npts>126:
                 mol.npts[ix] = 126
@@ -875,10 +875,10 @@ class GridParameterFileMaker:
         # kw = {'spacing':1.0, 'mset':'CNOSHXM'}
         # self.mv.gpo['parm']['value'] = <new value>
         # EXCEPT for 'npts' for which value must be 60,60,60
-        for parm, newvalue in kw.items():
+        for parm, newvalue in list(kw.items()):
             self.gpo[parm]['value'] = newvalue
             if parm=='npts':
-                self.gpo['npts']['value']= map(int, newvalue.split(','))
+                self.gpo['npts']['value']= list(map(int, newvalue.split(',')))
 
 
     def write_gpf(self, gpf_filename=None,
@@ -887,7 +887,7 @@ class GridParameterFileMaker:
             gpf_filename = self.receptor_stem + ".gpf"
         # now that we have a filename...
         if self.verbose:
-            print "writing ", gpf_filename
+            print("writing ", gpf_filename)
         self.gpo.write(gpf_filename, parm_list)
  
 
@@ -906,16 +906,16 @@ class GridParameter4FileMaker:
 
 
     def read_reference(self, reference_filename):
-        if self.verbose: print "reading ", reference_filename
+        if self.verbose: print("reading ", reference_filename)
         self.gpo.read4(reference_filename)
 
 
     def set_types_from_directory(self, directory):
         if self.verbose: 
-            print "reading directory ", directory
+            print("reading directory ", directory)
         filelist = glob.glob(directory + "/*.pdb*")
         if self.verbose: 
-            print "len(filelist)=", len(filelist)
+            print("len(filelist)=", len(filelist))
         ad4_typer = AutoDock4_AtomTyper()
         type_dict = {}
         for f in filelist:
@@ -931,29 +931,29 @@ class GridParameter4FileMaker:
                 if npts[ix]>val:
                     self.gpo['npts']['value'][ix] =  npts[ix]
                     if self.verbose: 
-                        print m.name, " increased grid dimension ", ix, " to ", npts[ix]
-        d_types = type_dict.keys()
+                        print(m.name, " increased grid dimension ", ix, " to ", npts[ix])
+        d_types = list(type_dict.keys())
         if self.verbose: 
-            print "found ", d_types, " atom types in directory ", directory
+            print("found ", d_types, " atom types in directory ", directory)
         self.gpo['ligand_types']['value'] =  string.join(d_types)
         if self.verbose: 
-            print "now ligand_types is ", self.gpo['ligand_types']['value']
+            print("now ligand_types is ", self.gpo['ligand_types']['value'])
 
 
     def set_ligand(self, ligand_filename, center_on_ligand=False): 
         self.ligand = Read(ligand_filename)[0]
         if self.ligand==None:
-            print 'ERROR reading: ', ligand_filename
+            print('ERROR reading: ', ligand_filename)
             return 
         if self.verbose: 
-            print "read ", self.ligand.name
+            print("read ", self.ligand.name)
         ligand_types = self.getTypes(self.ligand)
         self.gpo.set_ligand4(ligand_filename, types=ligand_types)
         #this sets ligand_types, gpo.ligand_stem and gpo.ligand_filename
         if self.verbose: 
-            print "set gpo.ligand_stem to", self.gpo.ligand_stem
-            print "set gpo.ligand_filename to", self.gpo.ligand_filename
-            print "set gpo.ligand_types to", self.gpo['ligand_types']['value'].__class__
+            print("set gpo.ligand_stem to", self.gpo.ligand_stem)
+            print("set gpo.ligand_filename to", self.gpo.ligand_filename)
+            print("set gpo.ligand_types to", self.gpo['ligand_types']['value'].__class__)
         #need to get npts
         if self.size_box_to_include_ligand:
             self.getSideLengths(self.ligand) #sets ligand.center
@@ -963,7 +963,7 @@ class GridParameter4FileMaker:
             self.gpo['gridcenter']['value'] =  [round(cen[0],4), round(cen[1],4),\
                                             round(cen[2],4)]
             self.gpo['gridcenterAuto']['value'] =  0
-            if self.verbose: print "set gridcenter to ", self.gpo['gridcenter']['value']
+            if self.verbose: print("set gridcenter to ", self.gpo['gridcenter']['value'])
         #only make the box bigger, do NOT make it smaller
         for ix, val in enumerate(self.gpo['npts']['value']):
             #npts
@@ -971,7 +971,7 @@ class GridParameter4FileMaker:
                 npts = self.ligand.npts
                 if npts[ix]>val:
                     self.gpo['npts']['value'][ix] =  npts[ix]
-        if self.verbose: print "set npts to ", self.gpo['npts']['value']
+        if self.verbose: print("set npts to ", self.gpo['npts']['value'])
         
 
     def getTypes(self, molecule):
@@ -982,13 +982,13 @@ class GridParameter4FileMaker:
         dict = {}
         for a in molecule.allAtoms:
             dict[a.autodock_element] = 1
-        d_types = dict.keys()
+        d_types = list(dict.keys())
         d_types.sort()
         mol_types = d_types[0]
         for t in d_types[1:]:
             mol_types = mol_types + " " + t
         if self.verbose: 
-            print "end of getTypes: types=", mol_types, ' class=', mol_types.__class__
+            print("end of getTypes: types=", mol_types, ' class=', mol_types.__class__)
         return mol_types
 
 
@@ -997,7 +997,7 @@ class GridParameter4FileMaker:
         maxo = Numeric.maximum.reduce(c)
         mino = Numeric.minimum.reduce(c)
         sideLengths = maxo-mino
-        mol.npts = map(int, map(ceil, sideLengths/(self.gpo['spacing']['value'])))
+        mol.npts = list(map(int, list(map(ceil, sideLengths/(self.gpo['spacing']['value'])))))
         for ix, npts in enumerate(mol.npts):
             if npts>126:
                 mol.npts[ix] = 126
@@ -1013,9 +1013,9 @@ class GridParameter4FileMaker:
         self.receptor = Read(receptor_filename)[0]
         receptor_filename = os.path.basename(receptor_filename)
         if self.receptor==None:
-            print 'ERROR reading: ', receptor_filename
+            print('ERROR reading: ', receptor_filename)
             return 
-        if self.verbose: print "set_receptor filename to ", receptor_filename
+        if self.verbose: print("set_receptor filename to ", receptor_filename)
         receptor_types = self.getTypes(self.receptor)
         self.gpo.set_receptor4(receptor_filename, types=receptor_types)
         self.receptor_filename = os.path.basename(receptor_filename)
@@ -1038,19 +1038,19 @@ class GridParameter4FileMaker:
         # kw = {'spacing':1.0, 'receptor_types':'C A NA OA N SA HD MG'}
         # self.mv.gpo['parm']['value'] = <new value>
         # EXCEPT for 'npts' for which value must be 60,60,60
-        for parm, newvalue in kw.items():
+        for parm, newvalue in list(kw.items()):
             if self.verbose:
-                print "parm=", parm
-                print "newvalue=", newvalue
+                print("parm=", parm)
+                print("newvalue=", newvalue)
             if parm=='gridcenter':
                 self.gpo['gridcenterAuto']['value'] = newvalue=='auto'
             self.gpo[parm]['value'] = newvalue
             if parm=='npts':
-                self.gpo['npts']['value']= map(int, newvalue.split(','))
+                self.gpo['npts']['value']= list(map(int, newvalue.split(',')))
             if parm=='ligand_types':
                 if newvalue.find(',')>-1:
                     newvalue = newvalue.replace(',', ' ')
-                print "setting ligand_types: newvalue=", newvalue
+                print("setting ligand_types: newvalue=", newvalue)
                 self.gpo[parm]['value']= newvalue
 
 
@@ -1060,10 +1060,10 @@ class GridParameter4FileMaker:
             gpf_filename = self.receptor_stem + ".gpf"
         # now that we have a filename...
         if self.verbose:
-            print "writing ", gpf_filename
+            print("writing ", gpf_filename)
             for item in parm_list:
-                print item,
-            print
+                print(item, end=' ')
+            print()
         self.gpo.write4(gpf_filename, parm_list)
 
 

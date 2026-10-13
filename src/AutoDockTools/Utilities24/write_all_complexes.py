@@ -19,23 +19,23 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: write_all_complexes.py -d directory"
-        print
-        print "    Description of command..."
-        print "         -d     docking filename"
-        print "         -r     receptor filename"
-        print "    Optional parameters:"
-        print "        [-b]    write complex of best result and receptor only (default is write all)"
-        print "        [-o]    output file stem"
-        print "        (default is receptorname_ligandname plus '_confnum.pdbqt')"
-        print "        [-v]    verbose output"
+        print("Usage: write_all_complexes.py -d directory")
+        print()
+        print("    Description of command...")
+        print("         -d     docking filename")
+        print("         -r     receptor filename")
+        print("    Optional parameters:")
+        print("        [-b]    write complex of best result and receptor only (default is write all)")
+        print("        [-o]    output file stem")
+        print("        (default is receptorname_ligandname plus '_confnum.pdbqt')")
+        print("        [-v]    verbose output")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'd:r:bo:vh')
-    except getopt.GetoptError, msg:
-        print 'write_all_complexes.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('write_all_complexes.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -58,30 +58,30 @@ if __name__ == '__main__':
         #print "o=", o, " a=", a
         if o in ('-d', '--d'):
             docking_filename = a
-            if verbose: print 'set docking_filename to ', a
+            if verbose: print('set docking_filename to ', a)
         if o in ('-r', '--r'):
             receptor_filename = a
-            if verbose: print 'set receptor_filename to ', a
+            if verbose: print('set receptor_filename to ', a)
         if o in ('-b', '--b'):
             write_best_only = True
-            if verbose: print 'set write_best_only to ', True
+            if verbose: print('set write_best_only to ', True)
         if o in ('-o', '--o'):
             output_stem = a
-            if verbose: print 'set output_stem to ', a
+            if verbose: print('set output_stem to ', a)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
     if not docking_filename:
-        print 'write_all_complexes: docking_filename must be specified.'
+        print('write_all_complexes: docking_filename must be specified.')
         usage()
         sys.exit()
 
     if not receptor_filename:
-        print 'write_all_complexes: receptor_filename must be specified.'
+        print('write_all_complexes: receptor_filename must be specified.')
         usage()
         sys.exit()
 
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     d = Docking()
     d.readDlg(docking_filename)
     receptor_stem = os.path.splitext(os.path.basename(receptor_filename))[0]
-    print "receptor_stem =", receptor_stem
+    print("receptor_stem =", receptor_stem)
 
     rptr = open(receptor_filename)
     receptor_lines = rptr.readlines()
@@ -97,9 +97,9 @@ if __name__ == '__main__':
     
     if write_best_only:
         if not hasattr(d, 'clusterer'):
-            print docking_filename, ' has no clustering... unable to write complex of best result'
+            print(docking_filename, ' has no clustering... unable to write complex of best result')
             sys.exit()
-        rms = d.clusterer.clustering_dict.keys()[0]
+        rms = list(d.clusterer.clustering_dict.keys())[0]
         confs = [d.clusterer.clustering_dict[rms][0][0]]
     else:
         confs = d.ch.conformations
@@ -128,7 +128,7 @@ if __name__ == '__main__':
                 ctr += 1
         fptr.close()
         if verbose:
-            print "wrote ", outputfilename
+            print("wrote ", outputfilename)
 
 
 # To execute this command type:

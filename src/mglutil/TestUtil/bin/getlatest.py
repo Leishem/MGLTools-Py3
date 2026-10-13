@@ -3,34 +3,34 @@
 ##
 ##
 import sys,getopt,os
-import types,string
+import types; from mglcompat import pystring as string
 
 ######################################################################
 #   COMMAND LINE OPTIONS
 ######################################################################
 def Usage():
     "Print helpful accurate statement to Usage statement"
-    print "Usage:getlatest"
-    print "Description of Command:"
-    print "-----------------------"
-    print "This command cvs co and installs package or pacakges "
-    print "Optional parameters:"
-    print "--------------------"
-    print "-p   :   packages seperated by commas or a pacakge"
-    print "         eg: ./getlatest -psymserv,gle,opengltk "
-    print "         or ./getlatest -psymserv" 
-    print "         or  ./getlatest -pall ,it updates all the packages "
-    print "         or ./getlatest -p platdep ,Updates only platform dependent packages ie, eg: opengltk,gle,bhtree etc"
-    print  "        or ./getlatest -p platindep ,Updates only platform independent packages ie, pure python packages eg: Pmv,Vision,AutoDockTools etc"
-    print "-t   :   tag to use with cvs"
-    print "         [consistent with all other packages] " 
-    print "-h   :    help"
+    print("Usage:getlatest")
+    print("Description of Command:")
+    print("-----------------------")
+    print("This command cvs co and installs package or pacakges ")
+    print("Optional parameters:")
+    print("--------------------")
+    print("-p   :   packages seperated by commas or a pacakge")
+    print("         eg: ./getlatest -psymserv,gle,opengltk ")
+    print("         or ./getlatest -psymserv") 
+    print("         or  ./getlatest -pall ,it updates all the packages ")
+    print("         or ./getlatest -p platdep ,Updates only platform dependent packages ie, eg: opengltk,gle,bhtree etc")
+    print("        or ./getlatest -p platindep ,Updates only platform independent packages ie, pure python packages eg: Pmv,Vision,AutoDockTools etc")
+    print("-t   :   tag to use with cvs")
+    print("         [consistent with all other packages] ") 
+    print("-h   :    help")
 
 
 try:
     exec("opt_list,args=getopt.getopt(sys.argv[1:],'p:t:h')")
-except getopt.GetoptError,msg:
-    print "getlatest:'%s'"%msg
+except getopt.GetoptError as msg:
+    print("getlatest:'%s'"%msg)
     Usage()
     sys.exit(2)
 
@@ -67,7 +67,7 @@ todays_date = str(datelines[0]).replace('/','-')[:-1]
 os.system('rm -rf datefile.txt')
 
 if not package:
-    print "packupdate requires package name to be updated"
+    print("packupdate requires package name to be updated")
     sys.exit()
 
 #find $PATH
@@ -96,7 +96,7 @@ def findswig(pathstring):
             list.append('%s/%s' %(a,yourswig))  
              
     if list == []:
-        print "YOU DON'T HAVE SWIG"
+        print("YOU DON'T HAVE SWIG")
         sys.exit()
         
 ############FIND CC##################
@@ -110,23 +110,23 @@ def findcc(pathstring):
             if  os.path.exists('%s/cc' %a) or os.path.exists('%s/CC' %a):
                 list.append('%s' %a)    
         if list == []:
-                print "YOU DO NOT HAVE A C-COMPILER"
+                print("YOU DO NOT HAVE A C-COMPILER")
                 sys.exit()
     if (sys.platform == 'cygwin') or (os.name == 'nt'):
-     	for a in pathstring:
+        for a in pathstring:
             if  os.path.exists('%s/cc' %a):
                 list.append('%s' %a)    
         if list == []:
-                print "YOU DO NOT HAVE A C-COMPILER"
+                print("YOU DO NOT HAVE A C-COMPILER")
                 sys.exit()		
 
     if (sys.platform == 'linux2') or (sys.platform == 'darwin'):
         for a in pathstring:
             if  os.path.exists('%s/gcc' %a) or os.path.exists('%s/g++' %a):
                 list.append('%s' %a)    
-        	
-	    if list == []:
-                print "YOU DO NOT HAVE A C-COMPILER"
+                
+            if list == []:
+                print("YOU DO NOT HAVE A C-COMPILER")
                 sys.exit()
 
 #############FIND CVS#################
@@ -136,7 +136,7 @@ def findcvs(pathstring):
         if  os.path.exists('%s/cvs' %a):
             list.append('%s/cvs' %a)
     if list == []:
-        print "YOU DO NOT HAVE CVS"
+        print("YOU DO NOT HAVE CVS")
         sys.exit()
 
                 
@@ -175,7 +175,7 @@ if package=='all':
     for p in PACKLIST:
         if p in DISTPACKAGES:
             PACK_DIST.append(p)
-    	 
+         
 
 if package=='platdep':
     os.chdir(dpdir)    
@@ -199,7 +199,7 @@ if not package in ['all','platdep','platindep']:
     for p in PACKLIST:
        PACK_DIST.append(p)
        
-print "PACK_DIST:", PACK_DIST
+print("PACK_DIST:", PACK_DIST)
 
 if PACK_DIST!=[]:
     for p in PACK_DIST:
@@ -229,15 +229,15 @@ if PACK_DIST!=[]:
 
 #Connecting to CVS
 #CVS login
-print "PRESS ENTER WHEN ASKED FOR PASSWORD"
+print("PRESS ENTER WHEN ASKED FOR PASSWORD")
 os.system('/usr/bin/cvs -d:pserver:anonymous@moses.scripps.edu:/export/cvs login')
 
 
-print PACK_DIST
+print(PACK_DIST)
 
 if PACK_DIST==[]:
-	print "No Packages are found in the current installation to update.Use getlatest -ppackname to update packages you want"
-	sys.exit()
+        print("No Packages are found in the current installation to update.Use getlatest -ppackname to update packages you want")
+        sys.exit()
 
 #CVS check out 
 PYTHON = sys.executable
@@ -252,7 +252,7 @@ for pack in  PACK_DIST:
         else:
             st =os.system('/usr/bin/cvs -z3 -d:pserver:anonymous@moses.scripps.edu:/export/cvs co -A %s' %pack)    
         if st!=0:
-            print "cannot cvs co package %s" % pack
+            print("cannot cvs co package %s" % pack)
             sys.exit()
     
         os.chdir('./%s' %pack)
@@ -261,11 +261,11 @@ for pack in  PACK_DIST:
         cmd = "%s setup.py install --install-platlib=%s" % (PYTHON, dpdir)
         st = os.system(cmd)
         if st!=0:
-            print "%s not installed" %pack
+            print("%s not installed" %pack)
             uninstlist.append(pack)
             continue	
         else:
-            print "Updating %s package success" %pack
+            print("Updating %s package success" %pack)
     
     else:
         if pack in INDPACKAGES:
@@ -275,18 +275,18 @@ for pack in  PACK_DIST:
             else:
                 st =os.system('/usr/bin/cvs -z3 -d:pserver:anonymous@moses.scripps.edu:/export/cvs co -A %s' %pack)    
             if st!=0:
-                print "cannot cvs co pack %s" % pack
+                print("cannot cvs co pack %s" % pack)
                 sys.exit()
      
 
 if uninstlist!=[]:
-	print "%s packages are not installed" %uninstlist
+        print("%s packages are not installed" %uninstlist)
 
 else:
     if os.path.exists('%s/MGLPACKS' %dpdir):
         os.chdir(dpdir)
         os.system('rm -rf MGLPACKS')
-    print "Installation Success"
+    print("Installation Success")
 
 
 

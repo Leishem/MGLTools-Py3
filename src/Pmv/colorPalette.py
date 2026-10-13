@@ -31,8 +31,8 @@ class ColorPaletteNG(ColorMap):
 
         if len(colorDict) > 0:
             if sortedkeys is None:
-                labels = colorDict.keys()
-                values = colorDict.values()
+                labels = list(colorDict.keys())
+                values = list(colorDict.values())
             else:
                 labels = sortedkeys
                 values = []
@@ -41,7 +41,7 @@ class ColorPaletteNG(ColorMap):
         else:
             labels = None
             values = None
-        print values
+        print(values)
         ColorMap.__init__(self, name=name, ramp=values, labels=labels)
 
         self.readonly = readonly
@@ -68,7 +68,7 @@ class ColorPaletteNG(ColorMap):
         # Maybe should try that first in case all the objects don't have the
         # lookup member
         names = objects.getAll(self.lookupMember)
-        return map( self._lookup, names)
+        return list(map( self._lookup, names))
 
 
 class ColorPaletteFunctionNG(ColorPaletteNG):
@@ -88,8 +88,8 @@ class ColorPaletteFunctionNG(ColorPaletteNG):
     def lookup(self, objects):
         # maybe should do that in a try to catch the exception in case it
         # doesnt work
-        names = map(self.lookupFunction, objects)
-        return map(self._lookup, names)
+        names = list(map(self.lookupFunction, objects))
+        return list(map(self._lookup, names))
 
 
 class ColorPalette(ColorMapGUI):
@@ -102,8 +102,8 @@ class ColorPalette(ColorMapGUI):
 
         if len(colorDict) > 0:
             if sortedkeys is None:
-                labels = colorDict.keys()
-                values = colorDict.values()
+                labels = list(colorDict.keys())
+                values = list(colorDict.values())
             else:
                 labels = sortedkeys
                 values = []
@@ -141,7 +141,7 @@ class ColorPalette(ColorMapGUI):
         # Maybe should try that first in case all the objects don't have the
         # lookup member
         names = objects.getAll(self.lookupMember)
-        return map( self._lookup, names)
+        return list(map( self._lookup, names))
     
     def undisplay(self, *args, **kw):
         pass
@@ -174,5 +174,5 @@ class ColorPaletteFunction(ColorPalette):
     def lookup(self, objects):
         # maybe should do that in a try to catch the exception in case it
         # doesnt work
-        names = map(self.lookupFunction, objects)
-        return map(self._lookup, names)
+        names = list(map(self.lookupFunction, objects))
+        return list(map(self._lookup, names))

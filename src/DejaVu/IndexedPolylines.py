@@ -9,8 +9,8 @@
 from inspect import isclass
 
 from DejaVu.IndexedGeom import IndexedGeom
-import datamodel
-import viewerConst
+from . import datamodel
+from . import viewerConst
 from DejaVu.viewerFns import checkKeywords
 
 
@@ -22,7 +22,7 @@ class IndexedPolylines(IndexedGeom):
 
         #kw['vertexArrayFlag'] = True
         #kw['immediateRendering'] = True
-        apply( IndexedGeom.__init__, (self, name, check), kw)
+        IndexedGeom.__init__(*(self, name, check), **kw)
 
 
     def Set(self, check=1, redo=1, updateOwnGui=True, **kw):
@@ -31,7 +31,7 @@ check=1 : verify that all the keywords present can be handle by this func
 redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
-        redoFlags = apply( IndexedGeom.Set, (self, check, 0), kw )
+        redoFlags = IndexedGeom.Set(*(self, check, 0), **kw)
 
         if    hasattr(self, 'faceSet') \
           and len(self.faceSet.faces.array) > 0 \
@@ -49,13 +49,13 @@ updateOwnGui=True : allow to update owngui at the end this func
 
 
     def Add(self, check=1, redo=1, **kw):
-	"""Add polygon's vertices, faces, normals or materials"""
+        """Add polygon's vertices, faces, normals or materials"""
 
         if __debug__:
             if check:
-                apply( checkKeywords, (self.name,self.keywords), kw)
+                checkKeywords(*(self.name,self.keywords), **kw)
 
-        apply( IndexedGeom.Add, (self, 0, 0), kw )
+        IndexedGeom.Add(*(self, 0, 0), **kw)
 
         if self.viewer and redo:
             if self.redoDspLst:

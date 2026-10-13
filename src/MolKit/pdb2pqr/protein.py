@@ -12,8 +12,8 @@
 __date__ = "14 November 2003"
 __author__ = "Todd Dolinsky"
 
-from pdb import *
-from structures import *
+from .pdb import *
+from .structures import *
 
 class Protein:
     """
@@ -99,11 +99,11 @@ class Protein:
             dict[previousAtom.chainID].addResidue(myResidue)
 
         chainmap = dict.copy()
-        if dict.has_key(""):
+        if "" in dict:
             dict["ZZ"] = dict[""]
             del dict[""]
 
-        keys = dict.keys()
+        keys = list(dict.keys())
         keys.sort()
 
         for key in keys:

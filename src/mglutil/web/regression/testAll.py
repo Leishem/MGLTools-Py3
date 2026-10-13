@@ -1,6 +1,6 @@
 import sys
 from mglutil.regression import testplus
-import test_htmlparser
+from . import test_htmlparser
 
 harness = testplus.TestHarness( __name__,
                                 funs = [],
@@ -9,5 +9,5 @@ harness = testplus.TestHarness( __name__,
                                 )
 
 if __name__ == '__main__':
-    print harness
+    print(harness)
     sys.exit( len( harness))

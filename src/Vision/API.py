@@ -60,7 +60,7 @@ class VisionInterface:
 
         # find out which Vision node corresponds to this object, based on our
         # lookup table
-        if obj.__class__ in self.lookup.keys():
+        if obj.__class__ in list(self.lookup.keys()):
             # add to our list of objects
             self.objects.append( (obj, name, kw) )
             
@@ -69,7 +69,7 @@ class VisionInterface:
                 self.addNodeToLibrary(obj, name, kw)
             return
         else: # the class was not found, try to see if a base class is there
-            for k in self.lookup.keys():
+            for k in list(self.lookup.keys()):
                 if isinstance(obj, k):
                     # add to our list of objects
                     self.objects.append( (obj, name, kw) )
@@ -114,7 +114,7 @@ class VisionInterface:
         self.lib.deleteNodeFromCategoryFrame(cat, node, found.name)
 
         ## STEP 2) Delete all instances of this node in all networks
-        for net in self.ed.networks.values():
+        for net in list(self.ed.networks.values()):
             for n in net.nodes:
                 if n.__class__ == node:
                     net.deleteNodes([n])
@@ -146,10 +146,10 @@ class VisionInterface:
         if kw is None:
             kw = {}
 
-        if obj.__class__ in self.lookup.keys():
+        if obj.__class__ in list(self.lookup.keys()):
             o = self.lookup[obj.__class__]
         else:
-            for k in self.lookup.keys():
+            for k in list(self.lookup.keys()):
                 if isinstance(obj, k):
                     o = self.lookup[k]
                     break

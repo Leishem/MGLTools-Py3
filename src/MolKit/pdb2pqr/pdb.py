@@ -10,7 +10,7 @@
     Washington University in St. Louis
 """
 
-import string, sys
+import sys; from mglcompat import pystring as string
 
 class END:
     """ END class
@@ -66,7 +66,7 @@ class MASTER:
             self.numTer = int(string.strip(line[55:60]))
             self.numConect = int(string.strip(line[60:65]))
             self.numSeq = int(string.strip(line[65:70]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 
 class CONECT:
@@ -122,7 +122,7 @@ class CONECT:
             except ValueError:  self.serial9 = None
             try:  self.serial10 = int(string.strip(line[56:61]))
             except ValueError:  self.serial10 = None
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class ENDMDL:
     """ ENDMDL class
@@ -163,7 +163,7 @@ class TER:
             self.resSeq = int(string.strip(line[22:26]))
             try: self.iCode = string.strip(line[26])
             except IndexError: self.iCode = None
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class SIGUIJ:
     """ SIGUIJ class
@@ -212,7 +212,7 @@ class SIGUIJ:
             self.segID = string.strip(line[72:76])
             self.element = string.strip(line[76:78])
             self.charge = string.strip(line[78:80])
-        else: raise ValueError, record
+        else: raise ValueError(record)
 
 
 class ANISOU:
@@ -262,7 +262,7 @@ class ANISOU:
             self.segID = string.strip(line[72:76])
             self.element = string.strip(line[76:78])
             self.charge = string.strip(line[78:80])
-        else: raise ValueError, record
+        else: raise ValueError(record)
 
 class SIGATM:
     """ SIGATM class
@@ -313,7 +313,7 @@ class SIGATM:
             self.segID = string.strip(line[72:76])
             self.element = string.strip(line[76:78])
             self.charge = string.strip(line[78:80])
-        else: raise ValueError, record
+        else: raise ValueError(record)
 
 class HETATM:
     """ HETATM class
@@ -366,13 +366,13 @@ class HETATM:
                 self.segID = string.strip(line[72:76])
                 self.element = string.strip(line[76:78])
                 self.charge = string.strip(line[78:80])
-            except ValueError, IndexError:
+            except ValueError as IndexError:
                 self.occupancy = 0.00
                 self.tempFactor = 0.00
                 self.segID = ""
                 self.element = ""
                 self.charge = ""
-        else: raise ValueError, record
+        else: raise ValueError(record)
 
     def __str__(self):
         """
@@ -493,14 +493,14 @@ class ATOM:
                 self.segID = string.strip(line[72:76])
                 self.element = string.strip(line[76:78])
                 self.charge = string.strip(line[78:80])
-            except ValueError, IndexError:
+            except ValueError as IndexError:
                 self.occupancy = 0.00
                 self.tempFactor = 0.00
                 self.segID = ""
                 self.element = ""
                 self.charge = ""
         else:
-            raise ValueError, record
+            raise ValueError(record)
 
     def __str__(self):
         """
@@ -587,7 +587,7 @@ class MODEL:
         record = string.strip(line[0:6])
         if record == "MODEL":
             self.serial = int(string.strip(line[10:14]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class TVECT:
     """ TVECT class
@@ -615,7 +615,7 @@ class TVECT:
             self.t2 = float(string.strip(line[20:30]))
             self.t3 = float(string.strip(line[30:40]))
             self.text = string.strip(line[40:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class MTRIX3:
     """ MTRIX3 class
@@ -648,7 +648,7 @@ class MTRIX3:
             self.mn3 = float(string.strip(line[30:40]))
             self.vn = float(string.strip(line[45:55]))
             self.iGiven = int(string.strip(line[59]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class MTRIX2:
     """ MTRIX2 class
@@ -681,7 +681,7 @@ class MTRIX2:
             self.mn3 = float(string.strip(line[30:40]))
             self.vn = float(string.strip(line[45:55]))
             self.iGiven = int(string.strip(line[59]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class MTRIX1:
     """ MTRIX1 class
@@ -716,7 +716,7 @@ class MTRIX1:
             try:  self.iGiven = int(string.strip(line[45:55]))
             except ValueError:  self.iGiven = None
             except IndexError:  self.iGiven = None
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class SCALE3:
     """ SCALE3 class
@@ -744,7 +744,7 @@ class SCALE3:
             self.sn2 = float(string.strip(line[20:30]))
             self.sn3 = float(string.strip(line[30:40]))
             self.un = float(string.strip(line[45:55]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class SCALE2:
     """ SCALE2 class
@@ -772,7 +772,7 @@ class SCALE2:
             self.sn2 = float(string.strip(line[20:30]))
             self.sn3 = float(string.strip(line[30:40]))
             self.un = float(string.strip(line[45:55]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class SCALE1:
     """ SCALE1 class
@@ -800,7 +800,7 @@ class SCALE1:
             self.sn2 = float(string.strip(line[20:30]))
             self.sn3 = float(string.strip(line[30:40]))
             self.un = float(string.strip(line[45:55]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class ORIGX2:
     """ ORIGX2 class
@@ -827,7 +827,7 @@ class ORIGX2:
             self.on2 = float(string.strip(line[20:30]))
             self.on3 = float(string.strip(line[30:40]))
             self.tn = float(string.strip(line[45:55]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class ORIGX3:
     """ ORIGX3 class
@@ -854,7 +854,7 @@ class ORIGX3:
             self.on2 = float(string.strip(line[20:30]))
             self.on3 = float(string.strip(line[30:40]))
             self.tn = float(string.strip(line[45:55]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class ORIGX1:
     """ ORIGX1 class
@@ -881,7 +881,7 @@ class ORIGX1:
             self.on2 = float(string.strip(line[20:30]))
             self.on3 = float(string.strip(line[30:40]))
             self.tn = float(string.strip(line[45:55]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class CRYST1:
     """ CRYST1 class
@@ -916,7 +916,7 @@ class CRYST1:
             self.gamma = float(string.strip(line[47:54]))
             self.sGroup = string.strip(line[55:65])
             self.z = int(string.strip(line[66:70]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 
 class SITE:
@@ -990,7 +990,7 @@ class SITE:
             self.seq4 = int(string.strip(line[56:60]))
             try:  self.iCode4 = string.strip(line[60])
             except IndexError:  self.iCode4 = None
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class CISPEP:
     """ CISPEP field
@@ -1031,7 +1031,7 @@ class CISPEP:
             self.icode2 = string.strip(line[35])
             self.modNum = int(string.strip(line[43:46]))
             self.measure = float(string.strip(line[53:59]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class SLTBRG:
     """ SLTBRG field
@@ -1077,7 +1077,7 @@ class SLTBRG:
             self.iCode2 = string.strip(line[56])
             self.sym1 = string.strip(line[59:65])
             self.sym2 = string.strip(line[66:72])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class HYDBND:
     """ HYDBND field
@@ -1134,7 +1134,7 @@ class HYDBND:
             self.ICode2 = string.strip(line[58])
             self.sym1 = string.strip(line[59:65])
             self.sym2 = string.strip(line[66:72])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class LINK:
     """ LINK field
@@ -1182,7 +1182,7 @@ class LINK:
             self.iCode2 = string.strip(line[56])
             self.sym1 = string.strip(line[59:65])
             self.sym2 = string.strip(line[66:72])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 
 class SSBOND:
@@ -1220,7 +1220,7 @@ class SSBOND:
             self.icode2 = string.strip(line[35])
             self.sym1 = string.strip(line[59:65])
             self.sym2 = string.strip(line[66:72])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class TURN:
     """ TURN field
@@ -1269,7 +1269,7 @@ class TURN:
             self.endSeqNum = int(string.strip(line[31:35]))
             self.endICode = string.strip(line[35])
             self.comment = string.strip(line[40:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class SHEET:
     """ SHEET field
@@ -1364,7 +1364,7 @@ class SHEET:
                 self.prevChainID = None
                 self.prevResSeq = None
                 self.prevICode = None
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class HELIX:
     """ HELIX field
@@ -1418,7 +1418,7 @@ class HELIX:
             self.comment = string.strip(line[40:70])
             try:  self.length = int(string.strip(line[71:76]))
             except ValueError:  self.length = None
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class FORMUL:
     """ FORMUL field
@@ -1444,7 +1444,7 @@ class FORMUL:
             self.hetID = string.strip(line[12:15])
             self.asterisk = string.strip(line[19])
             self.text = string.strip(line[19:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class HETSYN:
     """ HETSYN field
@@ -1467,7 +1467,7 @@ class HETSYN:
         if record == "HETSYN":
             self.hetID = string.strip(line[11:14])
             self.hetSynonyms = string.strip(line[15:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class HETNAM:
     """ HETNAM field
@@ -1489,7 +1489,7 @@ class HETNAM:
         if record == "HETNAM":
             self.hetID = string.strip(line[11:14])
             self.text = string.strip(line[15:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class HET:
     """ HET field
@@ -1529,7 +1529,7 @@ class HET:
             self.iCode = string.strip(line[17])
             self.numHetAtoms = int(string.strip(line[20:25]))
             self.text = string.strip(line[30:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class MODRES:
     """ MODRES field
@@ -1563,7 +1563,7 @@ class MODRES:
             string.iCode = string.strip(line[22])
             string.stdRes = string.strip(line[24:27])
             string.comment = string.strip(line[29:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class SEQRES:
     """ SEQRES field
@@ -1620,7 +1620,7 @@ class SEQRES:
             self.resName.append(string.strip(line[59:62]))
             self.resName.append(string.strip(line[63:66]))
             self.resName.append(string.strip(line[67:70]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class SEQADV:
     """ SEQADV field
@@ -1665,7 +1665,7 @@ class SEQADV:
             self.dbRes = string.strip(line[39:42])
             self.dbSeq = int(string.strip(line[43:48]))
             self.conflict = string.strip(line[49:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class DBREF:
     """ DBREF field
@@ -1730,7 +1730,7 @@ class DBREF:
             self.dbseqEnd = int(string.strip(line[62:67]))
             try:  self.dbinsEnd = string.strip(line[67])
             except IndexError:  self.dbinsEnd = None
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class REMARK:
     """ REMARK field
@@ -1798,7 +1798,7 @@ class JRNL:
         record = string.strip(line[0:6])
         if record == "JRNL":
             self.text = string.strip(line[12:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class SPRSDE:
     """ SPRSDE field
@@ -1840,7 +1840,7 @@ class SPRSDE:
             self.sIdCodes.append(string.strip(line[56:60]))
             self.sIdCodes.append(string.strip(line[61:65]))
             self.sIdCodes.append(string.strip(line[66:70]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class REVDAT:
     """ REVDAT field
@@ -1882,7 +1882,7 @@ class REVDAT:
             self.records.append(string.strip(line[46:52]))
             self.records.append(string.strip(line[53:59]))
             self.records.append(string.strip(line[60:66]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class AUTHOR:
     """ AUTHOR field
@@ -1903,7 +1903,7 @@ class AUTHOR:
         record = string.strip(line[0:6])
         if record == "AUTHOR":
             self.authorList = string.strip(line[10:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class EXPDTA:
     """ EXPDTA field
@@ -1934,7 +1934,7 @@ class EXPDTA:
         record = string.strip(line[0:6])
         if record == "EXPDTA":
             self.technique = string.strip(line[10:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class KEYWDS:
     """ KEYWDS field
@@ -1959,7 +1959,7 @@ class KEYWDS:
         record = string.strip(line[0:6])
         if record == "KEYWDS":
             self.keywds = string.strip(line[10:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class SOURCE:
     """ SOURCE field
@@ -1983,7 +1983,7 @@ class SOURCE:
         record = string.strip(line[0:6])
         if record == "SOURCE":
             self.source = string.strip(line[10:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 
 class COMPND:
@@ -2013,7 +2013,7 @@ class COMPND:
         record = string.strip(line[0:6])
         if record == "COMPND":
             self.compound = string.strip(line[10:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class CAVEAT:
     """ CAVEAT field
@@ -2036,7 +2036,7 @@ class CAVEAT:
         if record == "CAVEAT":
             self.idCode = string.strip(line[11:15])
             self.comment = string.strip(line[19:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class TITLE:
     """ TITLE field
@@ -2057,7 +2057,7 @@ class TITLE:
         record = string.strip(line[0:6])
         if record == "TITLE":
             self.title = string.strip(line[10:70])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
     
 class OBSLTE:
     """ OBSLTE field
@@ -2108,7 +2108,7 @@ class OBSLTE:
             self.rIdCodes.append(string.strip(line[56:60]))
             self.rIdCodes.append(string.strip(line[61:65]))
             self.rIdCodes.append(string.strip(line[67:70]))
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 class HEADER:
     """ HEADER field 
@@ -2135,7 +2135,7 @@ class HEADER:
             self.classification = string.strip(line[10:50])
             self.depDate = string.strip(line[50:59])
             self.IDcode = string.strip(line[62:66])
-        else:  raise ValueError, record
+        else:  raise ValueError(record)
 
 def readAtom(line):
     """
@@ -2222,14 +2222,14 @@ def readPDB(file):
                 cmdstr = "%s(line)" % record
                 obj = eval(cmdstr)
                 pdblist.append(obj)
-        except NameError, details:
+        except NameError as details:
             errlist.append(record)
-        except StandardError, details:
+        except Exception as details:
             if record == "ATOM" or record == "HETATM":
                try:
                    obj = readAtom(line)
                    pdblist.append(obj)
-               except StandardError, details:
+               except Exception as details:
                    sys.stderr.write("Error parsing line: %s\n" % details)
                    sys.stderr.write("<%s>\n" % string.strip(line))
             else:

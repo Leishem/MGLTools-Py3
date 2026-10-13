@@ -41,11 +41,11 @@ Original code by W. Patrick Walters and Matthew T. Stahl
 
 
 
-import string
+from mglcompat import pystring as string
 
-from babelAtomTypes import babel_types
-from babelElements import babel_elements
-from util import *
+from .babelAtomTypes import babel_types
+from .babelElements import babel_elements
+from .util import *
 
 
 # for valence_three
@@ -96,7 +96,7 @@ class AtomHybridization:
         if len(name)>1:
             if not name[1] in string.digits:
                 _name = _name + string.lower(name[1])
-        if _name in babel_elements.keys():
+        if _name in list(babel_elements.keys()):
             return babel_elements[_name]['num'] 
         else:
             raise ValueError( "Could not find atomic number for %s %s"% \
@@ -261,7 +261,7 @@ class AtomHybridization:
               if l==a: l = a.bonds[1].atom2
               
               if a.coords == l.coords:
-                  print  a.full_name() +" and " +l.full_name() +" have the same coordinates"
+                  print(a.full_name() +" and " +l.full_name() +" have the same coordinates")
                   
               angle1 = bond_angle(k.coords, a.coords, l.coords)
 
@@ -526,9 +526,9 @@ class AtomHybridization:
                            'bs_rad', 'max_bonds' or 'rgb'
         elements is a list of 1 or 2 character(s) strings
         """
-        if property not in babel_elements["C"].keys():
+        if property not in list(babel_elements["C"].keys()):
             raise RuntimeError("Invalid property %s, has to be in %s\n" % \
-                               (property, babel_elements["C"].keys()))
+                               (property, list(babel_elements["C"].keys())))
         prop = []
         for el in elements:
             prop.append(babel_elements[el][property])
@@ -539,7 +539,7 @@ class AtomHybridization:
 class TypeConverter:
 
     def __init__(self, outputType):
-        if outputType not in babel_types.keys():
+        if outputType not in list(babel_types.keys()):
             raise RuntimeError("Invalid format %s\n"%outputType)
         self.outputType = outputType
 
@@ -550,7 +550,7 @@ class TypeConverter:
             i = babel_types['INT'].index(input)
             return babel_types[self.outputType][i]
         except:
-            print "Unable to assign %s type to atom %s"%(self.outputType,input)
+            print("Unable to assign %s type to atom %s"%(self.outputType,input))
             if mode=='zero':
                 return 0
             elif mode=='dummy':
@@ -571,9 +571,9 @@ class TypeConverter:
 
 if __name__ == '__main__':
     import pdb, sys
-    from cycle import RingFinder
-    from bo import BondOrder
-    from aromatic import Aromatic
+    from .cycle import RingFinder
+    from .bo import BondOrder
+    from .aromatic import Aromatic
     
     from MolKit.pdbParser import NewPdbParser
     parser = NewPdbParser("/tsri/pdb/struct/%s.pdb"%sys.argv[1])
@@ -583,7 +583,7 @@ if __name__ == '__main__':
     allAtoms = mol.chains.residues.atoms
     bonds = allAtoms.bonds[0]
 
-    print "assigning atom types"
+    print("assigning atom types")
     babel = AtomHybridization()
     babel.assignHybridization(allAtoms)
 

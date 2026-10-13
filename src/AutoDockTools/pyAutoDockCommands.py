@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -26,7 +26,7 @@ and assign the results to individual atoms.
 
 """
 
-import Tkinter, numpy.oldnumeric as Numeric, Pmw
+import tkinter, mglcompat.oldnumeric as Numeric, Pmw
 
 from PyAutoDock.MolecularSystem import MolecularSystem
 from PyAutoDock.scorer import WeightedMultiTerm, Distance
@@ -116,16 +116,16 @@ second set to their closest atom in the first set can be customized."""
             
     def buildForm(self):
         ifd = self.ifd = InputFormDescr(title = "For Closest Pairs: Specify 'first' and 'second' group of atoms:")
-        self.hideDSel = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.hideASel = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.displayClosePairsVar = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.useSelection = Tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.hideDSel = tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.hideASel = tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.displayClosePairsVar = tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.useSelection = tkinter.IntVar(master=self.vf.GUI.ROOT)
         ifd.append({'name':'DkeyLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'For First atoms:',
                     'gridcfg':{'sticky':'w','columnspan':3}})
         ifd.append({'name':'selDRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Use all atoms',
                 'variable': self.hideDSel,
                 'value':1,
@@ -133,7 +133,7 @@ second set to their closest atom in the first set can be customized."""
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'selDRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Set atoms to use',
                 'variable': self.hideDSel,
                 'value':0,
@@ -151,11 +151,11 @@ second set to their closest atom in the first set can be customized."""
             'gridcfg':{'sticky':'we', 'columnspan':3 }})
         #now the acceptors
         ifd.append({'name':'AkeyLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'For Second atoms:',
                     'gridcfg':{'sticky':'w','columnspan':3}})
         ifd.append({'name':'selARB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Use all atoms',
                 'variable': self.hideASel,
                 'value':1,
@@ -163,7 +163,7 @@ second set to their closest atom in the first set can be customized."""
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'selARB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Set atoms to use',
                 'variable': self.hideASel,
                 'value':0,
@@ -180,15 +180,15 @@ second set to their closest atom in the first set can be customized."""
             },
             'gridcfg':{'sticky':'we', 'columnspan':3 }})
         ifd.append({'name': 'showClosePairs',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text': 'Display Close Pairs',
                     'variable': self.displayClosePairsVar,
                     'value':1,
                     'command':self.hideDisplay,
                     },
-            'gridcfg':{'sticky':Tkinter.W}})
+            'gridcfg':{'sticky':tkinter.W}})
         ifd.append({'name': 'hideClosePairs',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text': 'Hide Close Pairs',
                     'variable': self.displayClosePairsVar,
                     'value':0,
@@ -208,11 +208,11 @@ second set to their closest atom in the first set can be customized."""
                 'entrypackcfg':{'side':'right'}},
             'gridcfg':{'sticky':'wens', 'columnspan':3}})
         ifd.append({'name':'colorLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'Set color of lines from:',
                     'gridcfg':{'sticky':'w','columnspan':3}})
         ifd.append({'name':'firstColorLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'First atoms to closest atom in Second set:',
                     'gridcfg':{'sticky':'w','columnspan':3}})
         ifd.append( {'name':'rvalCtr1',
@@ -258,7 +258,7 @@ second set to their closest atom in the first set can be customized."""
             'increment':0.1},
             'gridcfg':{'sticky':'w','row':-1, 'column':2}})
         ifd.append({'name':'secondColorLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'Second atoms to closest atom in First set:',
                     'gridcfg':{'sticky':'w','columnspan':3}})
         ifd.append( {'name':'rvalCtr2',
@@ -303,12 +303,12 @@ second set to their closest atom in the first set can be customized."""
                                            'separator': '.'},
             'increment':0.1},
             'gridcfg':{'sticky':'w','row':-1, 'column':2}})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Ok',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'ew', 'columnspan':2 },
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'ew', 'column':2,'row':-1},
@@ -411,7 +411,7 @@ second set to their closest atom in the first set can be customized."""
                 self.first_lines.Set(visible=0)
                 self.second_lines.Set(visible=0)
             else:
-                apply(e['widget'].grid, (), e['gridcfg'])
+                e['widget'].grid(*(), **e['gridcfg'])
                 self.first_lines.Set(visible=1)
                 self.second_lines.Set(visible=1)
         self.form.autoSize() 
@@ -424,7 +424,7 @@ second set to their closest atom in the first set can be customized."""
 first:one set of atoms
 second:second set of atoms
         """
-        apply(self.doitWrapper, (first, second, display, cutoff, mat1, mat2), kw)
+        self.doitWrapper(*(first, second, display, cutoff, mat1, mat2), **kw)
 
 
     def doit(self, first, second, display, cutoff, mat1, mat2):
@@ -435,7 +435,7 @@ second:second set of atoms
         ms.add_entities(secondAts) 
         dist = ms.get_dist_mat(0,1)
         #label each first atom by distance to closest second atom
-        distances = map(min, dist) #this returns list of lowest vals
+        distances = list(map(min, dist)) #this returns list of lowest vals
         #warning: min distance is always from an atom to itself...
         if display:
             vertices = []
@@ -462,7 +462,7 @@ second:second set of atoms
             ct = 0
         #label each second atom by distance to closest first atom
         swap_dist = Numeric.swapaxes(dist, 0,1)
-        column_distances = map(min, swap_dist)
+        column_distances = list(map(min, swap_dist))
         #now do the second ones
         for i in range(len(swap_dist)):
             b = secondAts[i]
@@ -502,21 +502,21 @@ class PyADCalcVDWEnergies(MVCommand):
 
 
     def onAddCmdToViewer(self):
-        self.hideDSel = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.hideASel = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.weightLabel = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.hideDSel = tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.hideASel = tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.weightLabel = tkinter.StringVar(master=self.vf.GUI.ROOT)
         self.weightLabel.set(self.weightLabelTxt)
 
 
     def buildForm(self):
         ifd = self.ifd = InputFormDescr(title = "Specify 'first' and 'second' group of atoms:")
-        self.useSelection = Tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.useSelection = tkinter.IntVar(master=self.vf.GUI.ROOT)
         ifd.append({'name':'DkeyLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'For First atoms:',
                     'gridcfg':{'sticky':'w','columnspan':3}})
         ifd.append({'name':'selDRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Use all atoms',
                 'variable': self.hideDSel,
                 'value':1,
@@ -524,7 +524,7 @@ class PyADCalcVDWEnergies(MVCommand):
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'selDRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Set atoms to use',
                 'variable': self.hideDSel,
                 'value':0,
@@ -542,11 +542,11 @@ class PyADCalcVDWEnergies(MVCommand):
             'gridcfg':{'sticky':'we', 'columnspan':2 }})
         #now the second atoms
         ifd.append({'name':'AkeyLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'For Second atoms:',
                     'gridcfg':{'sticky':'w','columnspan':3}})
         ifd.append({'name':'selARB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Use all atoms',
                 'variable': self.hideASel,
                 'value':1,
@@ -554,7 +554,7 @@ class PyADCalcVDWEnergies(MVCommand):
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'selARB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Set atoms to use',
                 'variable': self.hideASel,
                 'value':0,
@@ -581,12 +581,12 @@ class PyADCalcVDWEnergies(MVCommand):
                 'showLabel':1,
                 'continuous':1, 'oneTurn':2, 'wheelPad':2, 'height':20},
             'gridcfg':{'sticky':'we', 'columnspan':2}})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Ok',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'ew', 'columnspan':2 },
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'ew', 'column':2,'row':-1},
@@ -683,7 +683,7 @@ first:one set of atoms
 second:second set of atoms
 weight: vdw weight to use
         """
-        apply(self.doitWrapper, (first, second, weight), kw)
+        self.doitWrapper(*(first, second, weight), **kw)
 
 
     def doit(self, first, second, weight):
@@ -730,7 +730,7 @@ first:one set of atoms
 second:second set of atoms
 weight: vdw weight to use
         """
-        apply(self.doitWrapper, (first, second, weight), kw)
+        self.doitWrapper(*(first, second, weight), **kw)
 
 
 PyAD4CalcVDWEnergiesGUI=CommandGUI()
@@ -759,7 +759,7 @@ first:one set of atoms
 second:second set of atoms
 weight: hbonding weight to use
         """
-        apply(self.doitWrapper, (first, second, weight), kw)
+        self.doitWrapper(*(first, second, weight), **kw)
 
 
 PyADCalcHBONDEnergiesGUI=CommandGUI()
@@ -788,7 +788,7 @@ first:one set of atoms
 second:second set of atoms
 weight: hbonding weight to use
         """
-        apply(self.doitWrapper, (first, second, weight), kw)
+        self.doitWrapper(*(first, second, weight), **kw)
 
 
     def doit(self, first, second, weight):
@@ -847,7 +847,7 @@ first:one set of atoms
 second:second set of atoms
 weight: electrostatics weight to use
         """
-        apply(self.doitWrapper, (first, second, weight), kw)
+        self.doitWrapper(*(first, second, weight), **kw)
 
 
 PyADCalcESTATEnergiesGUI=CommandGUI()
@@ -877,7 +877,7 @@ first:one set of atoms
 second:second set of atoms
 weight: electrostatics weight to use
         """
-        apply(self.doitWrapper, (first, second, weight), kw)
+        self.doitWrapper(*(first, second, weight), **kw)
 
 
 PyAD4CalcESTATEnergiesGUI=CommandGUI()
@@ -905,7 +905,7 @@ first:one set of atoms
 second:second set of atoms
 weight: dsolv weight to use
         """
-        apply(self.doitWrapper, (first, second, weight), kw)
+        self.doitWrapper(*(first, second, weight), **kw)
 
 
     def doit(self, first, second, weight):
@@ -932,7 +932,7 @@ weight: dsolv weight to use
         wmt.add_term( self.scorer, weight)
         result = wmt.get_score_array()
         #fix O/H in the first row: arbitrarily set to solvation constant
-        for i, n in zip(range(len(result)), result[0]):
+        for i, n in zip(list(range(len(result))), result[0]):
             if n==.236 or n==.118:
                 #print "1st row: zeroing ", i
                 result[0][i]=0
@@ -986,7 +986,7 @@ first:one set of atoms
 second:second set of atoms
 weight: dsolv weight to use
         """
-        apply(self.doitWrapper, (first, second, weight), kw)
+        self.doitWrapper(*(first, second, weight), **kw)
 
 
 PyAD4CalcDSOLVEnergiesGUI=CommandGUI()
@@ -1011,21 +1011,21 @@ class PyADCalcAD3Energies(PyADCalcVDWEnergies):
 
 
     def onAddCmdToViewer(self):
-        self.hideDSel = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.hideASel = Tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.hideDSel = tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.hideASel = tkinter.IntVar(master=self.vf.GUI.ROOT)
 
 
     def buildForm(self):
         ifd = self.ifd = InputFormDescr(title = self.title)
-        self.hideDSel = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.hideASel = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.useSelection = Tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.hideDSel = tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.hideASel = tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.useSelection = tkinter.IntVar(master=self.vf.GUI.ROOT)
         ifd.append({'name':'DkeyLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'For First atoms:',
                     'gridcfg':{'sticky':'w','columnspan':3}})
         ifd.append({'name':'selDRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Use all atoms',
                 'variable': self.hideDSel,
                 'value':1,
@@ -1033,7 +1033,7 @@ class PyADCalcAD3Energies(PyADCalcVDWEnergies):
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'selDRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Set atoms to use',
                 'variable': self.hideDSel,
                 'value':0,
@@ -1051,11 +1051,11 @@ class PyADCalcAD3Energies(PyADCalcVDWEnergies):
             'gridcfg':{'sticky':'we', 'columnspan':2 }})
         #now the acceptors
         ifd.append({'name':'AkeyLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'For Second atoms:',
                     'gridcfg':{'sticky':'w','columnspan':3}})
         ifd.append({'name':'selARB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Use all atoms',
                 'variable': self.hideASel,
                 'value':1,
@@ -1063,7 +1063,7 @@ class PyADCalcAD3Energies(PyADCalcVDWEnergies):
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'selARB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Set atoms to use',
                 'variable': self.hideASel,
                 'value':0,
@@ -1079,12 +1079,12 @@ class PyADCalcAD3Energies(PyADCalcVDWEnergies):
                     'crColor':(0.,1.,.2),
             },
             'gridcfg':{'sticky':'we', 'columnspan':2 }})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Ok',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'ew', 'columnspan':2 },
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'ew', 'column':2,'row':-1},
@@ -1146,7 +1146,7 @@ class PyADCalcAD3Energies(PyADCalcVDWEnergies):
 first:one set of atoms
 second:second set of atoms
         """
-        apply(self.doitWrapper, (first, second,), kw)
+        self.doitWrapper(*(first, second,), **kw)
 
 
     def doit(self, first, second ):
@@ -1195,7 +1195,7 @@ class PyAD4CalcAD4Energies(PyADCalcAD3Energies):
 first:one set of atoms
 second:second set of atoms
         """
-        apply(self.doitWrapper, (first, second,), kw)
+        self.doitWrapper(*(first, second,), **kw)
 
 
     def doit(self, first, second):
@@ -1258,15 +1258,15 @@ class PyAD4CalcInternalEnergies(PyAD4CalcAD4Energies):
 
     def buildForm(self):
         ifd = self.ifd = InputFormDescr(title = self.title)
-        self.hideDSel = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.hideASel = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.useSelection = Tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.hideDSel = tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.hideASel = tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.useSelection = tkinter.IntVar(master=self.vf.GUI.ROOT)
         ifd.append({'name':'DkeyLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'Atoms for internal energy calculation:',
                     'gridcfg':{'sticky':'w','columnspan':3}})
         ifd.append({'name':'selDRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Use all atoms',
                 'variable': self.hideDSel,
                 'value':1,
@@ -1274,7 +1274,7 @@ class PyAD4CalcInternalEnergies(PyAD4CalcAD4Energies):
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'selDRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Set atoms to use',
                 'variable': self.hideDSel,
                 'value':0,
@@ -1290,12 +1290,12 @@ class PyAD4CalcInternalEnergies(PyAD4CalcAD4Energies):
                     'crColor':(0.,1.,.2),
             },
             'gridcfg':{'sticky':'we', 'columnspan':2 }})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Ok',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'ew', 'columnspan':2 },
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'ew', 'column':2,'row':-1},
@@ -1414,7 +1414,7 @@ def initModule(vf):
 
 
     if hasattr(vf, 'GUI'):
-        for item in vf.GUI.menuBars['AutoToolsBar'].menubuttons.values():
+        for item in list(vf.GUI.menuBars['AutoToolsBar'].menubuttons.values()):
             item.configure(background = 'tan')
             item.configure(underline = '-1')
 

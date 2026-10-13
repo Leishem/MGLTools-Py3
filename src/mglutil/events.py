@@ -36,7 +36,7 @@ listeners to be called upon a particular Event.
         assert issubclass(event, Event)
         assert callable(function)
 
-        if not self.eventListeners.has_key(event):
+        if event not in self.eventListeners:
             self.eventListeners[event] = [function]
         else:
             if function in self.eventListeners[event]:
@@ -52,7 +52,7 @@ arguments:
     event: instance of an event
 """
         assert isinstance(event, Event)
-        if self.eventListeners.has_key(event.__class__):
+        if event.__class__ in self.eventListeners:
             for func in self.eventListeners[event.__class__]:
                 func(event)
  

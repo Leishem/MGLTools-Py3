@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 def sesExposurePercent():
     """Compute the percentage of solvent exposed surface for each amino acide.
@@ -11,7 +11,7 @@ atoms are ignored
     """
 
     import mslib
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     from Pmv.guiTools import MoleculeChooser
 
     mol = MoleculeChooser(self).go(modal=0, blocking=1)
@@ -26,7 +26,7 @@ atoms are ignored
 
     # get surface areas per atom
     ses_areas = []
-    for i in xrange(srf.nbat):
+    for i in range(srf.nbat):
         atm = srf.get_atm(i)
         ses_areas.append( atm.get_ses_area(0) )
 
@@ -42,7 +42,7 @@ atoms are ignored
     srfList = []
     for r in allResidues:
       coords = r.atoms.coords
-      rad = map(lambda x: x.radius, r.atoms)
+      rad = [x.radius for x in r.atoms]
       m = mslib.MSMS(coords=coords, radii = rad) 
       m.compute()
       m.compute_ses_area()

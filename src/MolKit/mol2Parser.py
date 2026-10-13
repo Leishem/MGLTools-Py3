@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -14,7 +14,7 @@
 # $Id: mol2Parser.py,v 1.14 2010/08/12 17:33:45 rhuey Exp $
 #
 
-import string, sys, types, os
+import sys, types, os; from mglcompat import pystring as string
 
 from MolKit.protein import Protein, Chain, ChainSet, Residue, ResidueSet, ProteinSet
 from MolKit.protein import Helix, Strand, Turn, Coil
@@ -79,7 +79,7 @@ class Mol2Parser(MoleculeParser):
         if record:
             self.keysAndLinesIndices[record].append(i)
         else:
-            print " the file %s doesn't contain any mol2 records"%self.filename
+            print(" the file %s doesn't contain any mol2 records"%self.filename)
             
 
         
@@ -94,13 +94,13 @@ class Mol2Parser(MoleculeParser):
         elif len(self.allLines)!=0:
             self.getKeysAndLinesIndices()
         else:
-            print "The file %s is empty"%self.filename
+            print("The file %s is empty"%self.filename)
             return molList
 
-        if not self.keysAndLinesIndices.has_key("@<TRIPOS>ATOM"):
-            print "The file %s doesn't have Atom records, molecules can't be built"%self.filename
+        if "@<TRIPOS>ATOM" not in self.keysAndLinesIndices:
+            print("The file %s doesn't have Atom records, molecules can't be built"%self.filename)
             return molList
-        if self.keysAndLinesIndices.has_key('@<TRIPOS>SUBSTRUCTURE'):
+        if '@<TRIPOS>SUBSTRUCTURE' in self.keysAndLinesIndices:
             
             self.parse_MOL2_Substructure(self.allLines
                                          [self.keysAndLinesIndices
@@ -110,11 +110,11 @@ class Mol2Parser(MoleculeParser):
             molList.append(self.mol)
 
         else:
-            atmlines = map(string.split, self.allLines
+            atmlines = list(map(string.split, self.allLines
                            [self.keysAndLinesIndices
                             ['@<TRIPOS>ATOM'][0]:
                             self.keysAndLinesIndices
-                            ['@<TRIPOS>ATOM'][1]])
+                            ['@<TRIPOS>ATOM'][1]]))
             self.build4LevelsTree({},atmlines)
 ##              self.build2LevelsTree(map(string.split, self.allLines
 ##                                        [self.keysAndLinesIndices
@@ -123,14 +123,14 @@ class Mol2Parser(MoleculeParser):
 ##                                         ['@<TRIPOS>ATOM'][1]]))
             molList.append(self.mol)
 
-        if self.keysAndLinesIndices.has_key('@<TRIPOS>BOND'):
+        if '@<TRIPOS>BOND' in self.keysAndLinesIndices:
             self.parse_MOL2_Bonds(self.allLines
                                   [self.keysAndLinesIndices
                                    ['@<TRIPOS>BOND'][0]:
                                    self.keysAndLinesIndices['@<TRIPOS>BOND']
                                    [1]])
 
-        if self.keysAndLinesIndices.has_key('@<TRIPOS>SET'):
+        if '@<TRIPOS>SET' in self.keysAndLinesIndices:
             self.parse_MOL2_Sets(self.keysAndLinesIndices['@<TRIPOS>SET'])
 
         return molList
@@ -142,11 +142,11 @@ class Mol2Parser(MoleculeParser):
         two residues with the same name but belonging to two different
         chains then the value corresponding to that key is a list of
         the chains ID."""
-        atomlines = map(string.split, self.allLines
+        atomlines = list(map(string.split, self.allLines
                                  [self.keysAndLinesIndices
                                   ['@<TRIPOS>ATOM'][0]:
                                   self.keysAndLinesIndices
-                                  ['@<TRIPOS>ATOM'][1]])
+                                  ['@<TRIPOS>ATOM'][1]]))
         subst_chain = {}
         if len(substlines) == 0:
             # case 1: no substructures are defined --> 2 levels tree.
@@ -183,19 +183,19 @@ class Mol2Parser(MoleculeParser):
         else:
             # case 3: at least 1 substructure and 1 chain --> 4 levels tree.
             #subst_chain = {}
-            substlines = map(string.split, substlines)
+            substlines = list(map(string.split, substlines))
             for line in substlines:
                 if len(line)<6 or line[5] == '****':
                     continue
                 else:
                     try:
-                        if line[1] in subst_chain.keys():
+                        if line[1] in list(subst_chain.keys()):
                             subst_chain[line[1]] = [subst_chain[line[1]]]
                             subst_chain[line[1]].append(line[5])
                         else:
                             subst_chain[line[1]] = line[5]
                     except:
-                        if line[1] in subst_chain.keys():
+                        if line[1] in list(subst_chain.keys()):
                             list(subst_chain[line[1]]).append('')
                         else:
                             subst_chain[line[1]] = ''
@@ -207,7 +207,7 @@ class Mol2Parser(MoleculeParser):
         """
         Function to build a two level tree. 
         """
-        print 'try to build a 2 level tree'
+        print('try to build a 2 level tree')
         self.mol= Molecule()
         self.mol.allAtoms = AtomSet()
         self.mol.atmNum = {}
@@ -341,8 +341,8 @@ class Mol2Parser(MoleculeParser):
             if subst_chain == {}:
                 chainID = 'default'
 
-            elif not subst_chain.has_key(atmline[7]):
-                if subst_chain.has_key('****'):
+            elif atmline[7] not in subst_chain:
+                if '****' in subst_chain:
                     try:
                         chainID = subst_chain[atmline[7]]
                     except:
@@ -350,11 +350,11 @@ class Mol2Parser(MoleculeParser):
                 else:
                     chainID = 'default'
 
-            elif type(subst_chain[atmline[7]]) is types.StringType:
+            elif type(subst_chain[atmline[7]]) is bytes:
                 # that is to say that only chains has this substructure name.
                 chainID = subst_chain[atmline[7]]
 
-            elif type(subst_chain[atmline[7]]) is types.ListType:
+            elif type(subst_chain[atmline[7]]) is list:
                 # That is to say that several chains have the same substructure.
                  chainID = subst_chain[atmline[7]][0]
                  subst_chain[atmline[7]] = subst_chain[atmline[7]].remove(chainID)
@@ -412,13 +412,13 @@ class Mol2Parser(MoleculeParser):
         
     def parse_MOL2_Molecule(self, mollines):
         """Function to parse the Molecule records"""
-        mollines = map(string.split, mollines)
+        mollines = list(map(string.split, mollines))
         return mollines
 
     def parse_MOL2_Bonds(self, bondlines):
         """ Function to build the bonds object using the bond record of
         the mol2 file."""
-        bondlines = map(string.split, bondlines)
+        bondlines = list(map(string.split, bondlines))
         for bd in bondlines:
             at1 = self.mol.atmNum[int(bd[1])]
             at2 = self.mol.atmNum[int(bd[2])]
@@ -440,22 +440,22 @@ class Mol2Parser(MoleculeParser):
         
     def parse_MOL2_Sets(self, setRecords):
         """ Function to parse the Sets records"""
-        setRecords = map(string.split, self.allLines[setRecords[0]:
-                                                     setRecords[1]])
+        setRecords = list(map(string.split, self.allLines[setRecords[0]:
+                                                     setRecords[1]]))
         i = 0
         while i!=len(setRecords):
             rec = []
             if len(setRecords[i]) <= 5:
                 comments = None
-                for j in xrange(len(setRecords[i])):
+                for j in range(len(setRecords[i])):
                     rec.append(setRecords[i][j])
                 rec.append(comments)
             else :
-                for j in xrange(len(setRecords[i][:5])):
+                for j in range(len(setRecords[i][:5])):
                     rec.append(setRecords[i][j])
                 
                 comments = setRecords[i][5]
-                for j in xrange(6, len(setRecords[i])):
+                for j in range(6, len(setRecords[i])):
                     comments = comments+' '+setRecords[i][j]
                 rec.append(comments)
             number = []
@@ -466,10 +466,10 @@ class Mol2Parser(MoleculeParser):
 ##                                     setRecords[i][2], setRecords[i][3],
 ##                                     setRecords[i][4],comments])
             while len(setRecords[i+1])!=0 and setRecords[i+1][-1] == '\\':
-                number = number+(map(lambda x: int(x), setRecords[i+1][:-1]))
+                number = number+([int(x) for x in setRecords[i+1][:-1]])
                 i = i+1
 
-            number = number+map(lambda x: int(x),setRecords[i+1])
+            number = number+[int(x) for x in setRecords[i+1]]
             self.setsDatas[-1].append(number)
             i = i+2
 
@@ -477,9 +477,9 @@ class Mol2Parser(MoleculeParser):
         """ Function to extract the data on the secondarystructure and
         that replace the root atom number by the residue instance
         corresonding. """
-        hData = filter(lambda x: x[0][:4] == 'HELI',self.setsDatas)
-        sData = filter(lambda x: x[0][:4] == 'SHEE',self.setsDatas)
-        tData = filter(lambda x: x[0][:4] == 'TURN',self.setsDatas)
+        hData = [x for x in self.setsDatas if x[0][:4] == 'HELI']
+        sData = [x for x in self.setsDatas if x[0][:4] == 'SHEE']
+        tData = [x for x in self.setsDatas if x[0][:4] == 'TURN']
         self.processSSEltData(sData, self.mol)
         self.processSSEltData(hData, self.mol )
         self.processSSEltData(tData, self.mol)
@@ -527,7 +527,7 @@ class Mol2Parser(MoleculeParser):
             for sheet in data:
                 strandsBreak = []
                 strandData = []
-                for i in xrange(1,len(sheet[6])):
+                for i in range(1,len(sheet[6])):
                     if i != 1 and \
                        int(sheet[6][i].number) - int(sheet[6][i-1].number)!=1:
                         strandsBreak.append(i)
@@ -562,10 +562,10 @@ class Mol2Parser(MoleculeParser):
         and the last one.
         This information is used by the class GetSecondarySTructureFromFile.
         """
-        dataByChainID = filter(lambda x, id = chain.id:
+        dataByChainID = list(filter(lambda x, id = chain.id:
                                 x[-1][1].parent.id == id,
-                                data)
-        startEnd = map(lambda x: (x[-1][1],x[-1][-1]), dataByChainID)
+                                data))
+        startEnd = [(x[-1][1],x[-1][-1]) for x in dataByChainID]
     
         return startEnd
 
@@ -575,8 +575,8 @@ class Mol2Parser(MoleculeParser):
         """
         atoms = mol.chains.residues.atoms
         for data in ssData:
-            for i in xrange(1,len(data[6])):
-                if isinstance(data[6][i], types.IntType):
+            for i in range(1,len(data[6])):
+                if isinstance(data[6][i], int):
                     data[6][i] = atoms[data[6][i]-1].parent
                 else:
                     return

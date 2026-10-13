@@ -1,7 +1,7 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from opengltk.OpenGL import GL
 from OpenCSG import opencsglib as OpenCSG
 from DejaVu.Clip import ClippingPlane
@@ -11,7 +11,7 @@ from DejaVu.IndexedPolygons import IndexedPolygons
 class DejaVuPrimitive(OpenCSG.PythonPrimitive):
 
     def __init__(self, geom):
-        apply( OpenCSG.PythonPrimitive.__init__, (self, self.render, OpenCSG.Intersection, 0))
+        OpenCSG.PythonPrimitive.__init__(*(self, self.render, OpenCSG.Intersection, 0))
         # does not work for some reason
         #OpenCSG.PythonPrimitive(self.render, OpenCSG.Intersection, 1)
         self.geom = geom
@@ -113,7 +113,7 @@ class CsgGeom(Geom):
         if depthalgo is None:
             kw['depthalgo'] = OpenCSG.DepthComplexitySampling
 
-        apply( Geom.__init__, (self, name, check), kw)
+        Geom.__init__(*(self, name, check), **kw)
 
 
     def clearPrimitives(self):
@@ -140,15 +140,15 @@ updateOwnGui=True : allow to update owngui at the end this func
 """
         #print "CsgGeom.Set"
 
-        redoFlags = apply( Geom.Set, (self, check, 0), kw)
+        redoFlags = Geom.Set(*(self, check, 0), **kw)
         
         p = kw.get( 'primitives')
-	if p:
+        if p:
             assert isinstance(p, OpenCSG.PythonPrimitiveVector)
             self.primitives = p
 
         a = kw.get( 'algo')
-	if a:
+        if a:
             if a =='automatic':
                 a = OpenCSG.Automatic
             elif a== 'goldfeather':
@@ -159,7 +159,7 @@ updateOwnGui=True : allow to update owngui at the end this func
             self.algo = a
 
         d = kw.get( 'depthalgo')
-	if d:
+        if d:
             if d =='DepthComplexitySampling':
                 d = OpenCSG.DepthComplexitySampling
             elif d== 'NoDepthComplexitySampling':

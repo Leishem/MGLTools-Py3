@@ -1,13 +1,13 @@
 import sys
 import time
-import httplib
-import urllib
+import http.client
+import urllib.request, urllib.parse, urllib.error
 import xml.dom.minidom
 import os
 import shutil
 import subprocess
 import copy
-import urlparse
+import urllib.parse
 import pickle
 
 from mglutil.web.services import AppService_client
@@ -18,7 +18,7 @@ class OpalCache:
 
         if opal_url.find("/opal2") != -1:
             service_list_url = opal_url + "/opalServices.xml"
-            opener = urllib.FancyURLopener({})
+            opener = urllib.request.FancyURLopener({})
             socket = opener.open(service_list_url)
             text = socket.read()
             feed = xml.dom.minidom.parseString(text)
@@ -28,7 +28,7 @@ class OpalCache:
                 service = link.getAttribute('href')
                 services.append(str(service))
         else:
-            print "ERROR: No opal2 contained in URL"
+            print("ERROR: No opal2 contained in URL")
 
         return services
 
@@ -65,14 +65,14 @@ class OpalCache:
             inactives = os.listdir(inactivedir)
             actives = set(files) - set(inactives)
         except:
-            print "ERROR: Cache directory for " + url + " does not exist!"
-            print "       Are you connected to the internet???"
+            print("ERROR: Cache directory for " + url + " does not exist!")
+            print("       Are you connected to the internet???")
             return []
 
         if disable_inactives:
-            services = map(lambda x: url + '/services/' + x, actives)
+            services = [url + '/services/' + x for x in actives]
         else:
-            services = map(lambda x: url + '/services/' + x, files)
+            services = [url + '/services/' + x for x in files]
 
         return services
 
@@ -91,7 +91,7 @@ class OpalCache:
             return False
 
         if (time.time() - os.path.getmtime(filename) > days * 86400):
-            print "*** [WARNING]: Cache for " + url + " is older than " + days + " days!"
+            print("*** [WARNING]: Cache for " + url + " is older than " + days + " days!")
             return False
         
         return True
@@ -107,7 +107,7 @@ class OpalCache:
         filename = os.path.join(dir, fn)
 
         if not(self.isCacheValid(url, dir, days)):
-            print "[INFO]: Writing cache for " + url + " in " + filename
+            print("[INFO]: Writing cache for " + url + " in " + filename)
 
             appLocator = AppService_client.AppServiceLocator()
             appServicePort = appLocator.getAppServicePort(url)

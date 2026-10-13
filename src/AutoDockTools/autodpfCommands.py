@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -105,7 +105,7 @@ This Module facilitates producing a docking parameter file for AutoDock. The ste
     
 """
 
-import os, numpy.oldnumeric as Numeric
+import os, mglcompat.oldnumeric as Numeric
 import Pmw
 
 from ViewerFramework.VFCommand import CommandGUI
@@ -117,25 +117,25 @@ from MolKit.tree import TreeNode, TreeNodeSet
 from MolKit.molecule import AtomSet
 from MolKit import Read
 from Pmv.guiTools import MoleculeChooser
-from SimpleDialog import SimpleDialog
-import types, string, Tkinter,os
-from energyConstants import Rij, epsij, SolVol, SolPar, SolCon
-from DockingParameters import DockingParameters, simulated_annealing_list,\
+from tkinter.simpledialog import SimpleDialog
+import types, tkinter, os; from mglcompat import pystring as string
+from .energyConstants import Rij, epsij, SolVol, SolPar, SolCon
+from .DockingParameters import DockingParameters, simulated_annealing_list,\
     local_search_list, genetic_algorithm_list, cluster_list,\
     genetic_algorithm_local_search_list
-from DockingParameters import  simulated_annealing_list4,\
+from .DockingParameters import  simulated_annealing_list4,\
     local_search_list4, genetic_algorithm_list4,\
     genetic_algorithm_local_search_list4_with_parameter_file, \
     genetic_algorithm_local_search_list4
-from DockingParameters import  simulated_annealing_list4_1,\
+from .DockingParameters import  simulated_annealing_list4_1,\
     local_search_list4_1, genetic_algorithm_list4_1,\
     genetic_algorithm_local_search_list4_1_with_parameter_file, \
     genetic_algorithm_local_search_list4_1
-from DockingParameters import  simulated_annealing_list4_2,\
+from .DockingParameters import  simulated_annealing_list4_2,\
     local_search_list4_2, genetic_algorithm_list4_2,\
     genetic_algorithm_local_search_list4_2_with_parameter_file, \
     genetic_algorithm_local_search_list4_2, epdb_list4_2
-from autotorsCommands import checkMolCharges
+from .autotorsCommands import checkMolCharges
 
 
 
@@ -208,9 +208,9 @@ class DpfSetDpo(MVCommand):
 
 
     def doit(self, *args, **kw):
-        if not len(kw.items()):
+        if not len(list(kw.items())):
             return 'ERROR'
-        for key, val in kw.items():
+        for key, val in list(kw.items()):
             self.vf.dpo[key]['value'] = val
 
 
@@ -230,7 +230,7 @@ class DpfLoadDefaults(MVCommand):
         #check that dpffile actually exists
         if not os.path.exists(dpffile):
             raise IOError
-        apply(self.doitWrapper, (dpffile,),kw)
+        self.doitWrapper(*(dpffile,), **kw)
 
 
     def doit(self, dpffile):
@@ -273,7 +273,7 @@ class DpfMacroSelector(MVCommand):
 """
         if not os.path.exists(macroFile):
             raise IOError
-        apply(self.doitWrapper,(macroFile,),kw)
+        self.doitWrapper(*(macroFile,), **kw)
 
 
     def doit(self, macroFile):
@@ -332,7 +332,7 @@ class Dpf4MacroSelector(MVCommand):
 """
         if not os.path.exists(macroFile):
             raise IOError
-        apply(self.doitWrapper,(macroFile,),kw)
+        self.doitWrapper(*(macroFile,), **kw)
 
 
     def doit(self, macroFile):
@@ -344,7 +344,7 @@ class Dpf4MacroSelector(MVCommand):
             return 'ERROR'
         self.vf.dpo.molstem = molstem
         if hasattr(self.vf, 'flexDict') and \
-                self.vf.flexDict.has_key('rigid_filename') and \
+                'rigid_filename' in self.vf.flexDict and \
                 self.vf.flexDict['rigid_filename']==macroFile:
             filename = self.vf.flexDict['rigid_filename']
         self.vf.dpo.set_receptor(filename)
@@ -381,7 +381,7 @@ class Dpf4FlexResSelector(MVCommand):
 """
         if not os.path.exists(macroFile):
             raise IOError
-        apply(self.doitWrapper,(macroFile,),kw)
+        self.doitWrapper(*(macroFile,), **kw)
 
 
     def doit(self, macroFile):
@@ -393,7 +393,7 @@ class Dpf4FlexResSelector(MVCommand):
             return 'ERROR'
 
         if hasattr(self.vf, 'flexDict') and \
-                self.vf.flexDict.has_key('flex_filename') and \
+                'flex_filename' in self.vf.flexDict and \
                 self.vf.flexDict['flex_filename']==macroFile:
             filename = os.path.basename(self.vf.flexDict['flex_filename'])
         self.vf.dpo['flexres']['value'] = filename
@@ -403,7 +403,7 @@ class Dpf4FlexResSelector(MVCommand):
         d = {}
         for a in self.vf.dpo.flexres.allAtoms:
             d[a.autodock_element] = 1
-        flex_types = d.keys()
+        flex_types = list(d.keys())
         self.vf.DPF_FLEXRES_TYPES = flex_types
         self.vf.dpo['ndihe']['value'] += self.vf.dpo.flexres.parser.keys.count('BRANCH')
         self.vf.dpo.flexres.ndihe = self.vf.dpo.flexres.parser.keys.count('BRANCH')
@@ -444,10 +444,10 @@ class DpfMacroChooser(MVCommand):
     def guiCallback(self):
         self.chooser = MoleculeChooser(self.vf, self.mode, self.title)
         self.chooser.ipf.append({'name':'Select Button',
-                                 'widgetType':Tkinter.Button,
+                                 'widgetType':tkinter.Button,
                                  'text':'Select Molecule',
                                  'wcfg':{'bd':6},
-                                 'gridcfg':{'sticky':Tkinter.E+Tkinter.W},
+                                 'gridcfg':{'sticky':tkinter.E+tkinter.W},
                                  'command': self.chooseMolecule_cb})
         self.form = self.chooser.go(modal=0, blocking=0)
         lb = self.chooser.ipf.entryByName['Molecule']['widget'].lb
@@ -455,7 +455,7 @@ class DpfMacroChooser(MVCommand):
 
 
     def __call__(self, nodes, **kw):
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes):
@@ -508,10 +508,10 @@ class Dpf4MacroChooser(MVCommand):
     def guiCallback(self):
         self.chooser = MoleculeChooser(self.vf, self.mode, self.title)
         self.chooser.ipf.append({'name':'Select Button',
-                                 'widgetType':Tkinter.Button,
+                                 'widgetType':tkinter.Button,
                                  'text':'Select Molecule',
                                  'wcfg':{'bd':6},
-                                 'gridcfg':{'sticky':Tkinter.E+Tkinter.W},
+                                 'gridcfg':{'sticky':tkinter.E+tkinter.W},
                                  'command': self.chooseMolecule_cb})
         self.form = self.chooser.go(modal=0, blocking=0)
         lb = self.chooser.ipf.entryByName['Molecule']['widget'].lb
@@ -519,13 +519,13 @@ class Dpf4MacroChooser(MVCommand):
 
 
     def __call__(self, nodes, **kw):
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes):
         macro = self.vf.expandNodes(nodes)[0]
         if hasattr(self.vf, 'flexDict') and self.vf.flexDict['macroname']==macro.name \
-                and self.vf.flexDict.has_key('rigid_filename'):
+                and 'rigid_filename' in self.vf.flexDict:
             filename = self.vf.flexDict['rigid_filename']
             errCharge, resList = self.vf.checkResCharges(residues)
             self.vf.dpo['receptor_types']['value'] = join(self.vf.flexDict['rigid_types'])
@@ -539,7 +539,7 @@ class Dpf4MacroChooser(MVCommand):
             return "ERROR"
         #call set_receptor to set 'fld'
         self.vf.dpo.set_receptor(filename)
-        print "set receptor_filename to ", self.vf.dpo.receptor_filename
+        print("set receptor_filename to ", self.vf.dpo.receptor_filename)
 
 
 Dpf4MacroChooserGUI=CommandGUI()
@@ -563,37 +563,37 @@ class DpfInitLigand(MVCommand):
         self.hTCtsnum=0
         self.torsPAngle=[]
         if self.vf.hasGui:
-            self.about= Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.about= tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.about.set('')
-            self.types = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.types = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.torsdof= 0
-            self.torsdofcoeff = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.torsdofcoeff = tkinter.StringVar(master=self.vf.GUI.ROOT)
 
-            self.barrier = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-            self.barVar = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-            self.specifyTorCts = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-            self.showtorpen = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-            self.addTorCts = Tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.barrier = tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.barVar = tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.specifyTorCts = tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.showtorpen = tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.addTorCts = tkinter.IntVar(master=self.vf.GUI.ROOT)
             #counter for gaussian torsion constraints
-            self.tcts = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.fmap = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.initTransType =Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.initQuatType = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.specifyDihe = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.tcts = tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.fmap = tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.initTransType =tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.initQuatType = tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.specifyDihe = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.specifyDihe.set('1')
-            self.initDiheType = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.tran0 = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-            self.quat0 = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-            self.dihe0 = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-            self.ligMsgStr = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.initDiheType = tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.tran0 = tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.quat0 = tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.dihe0 = tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.ligMsgStr = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.ligMsgStr.set('Ligand: ')
-            self.typesMsgStr = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.typesMsgStr = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.typesMsgStr.set('Ligand Atom Types: ' + self.types.get())
-            self.tdofMsgStr = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.tdofMsgStr = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.tdofMsgStr.set('No Torsional Degrees of Freedom\nSpecified in Ligand!')
-            self.centerMsgStr = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.centerMsgStr = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.centerMsgStr.set('Center of Ligand Molecule:  ' + self.about.get())
-            self.ndiheMsgStr=Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.ndiheMsgStr=tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.ndiheMsgStr.set('No Torsions Specified in Ligand!')
 
 
@@ -615,96 +615,96 @@ class DpfInitLigand(MVCommand):
         #the newstuff:
         ifd = self.ifd = InputFormDescr(title = "AutoDpf Ligand Parameters")
         ifd.append( {'name': 'ligLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'textvariable': self.ligMsgStr,
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':3}})
         ifd.append( {'name': 'typesLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'label': 'Ligand Atom Types:',
             'textvariable': self.typesMsgStr,
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':6}})
         ifd.append( {'name': 'centerLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'label': 'Center of Ligand Molecule:',
             'textvariable': self.centerMsgStr,
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':3}})
         ifd.append( {'name': 'initLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'Set Initial State of Ligand:',
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':3}})
         ifd.append( {'name':'tran0Ent',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'User-Specified Initial Position:',
                 'textvariable': self.tran0
             },
-            'gridcfg':{'sticky':Tkinter.E,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E,'columnspan':3}})
         ifd.append({'name': 'initTransCB',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'text': 'Random ',
             'variable': self.initTransType,
             'command': self.set_initTransType,
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1,'column':3}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1,'column':3}})
         ifd.append( {'name': 'quat0Ent',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Initial Relative Dihedral Offset(quat0):',
                 'textvariable': self.quat0
             },
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':3}})
         ifd.append({'name': 'initQuatCB',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'text': 'Random ',
             'variable': self.initQuatType,
             'command': self.set_initQuatType,
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1,'column':3}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1,'column':3}})
         ifd.append( {'name': 'ndiheLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'textvariable': self.ndiheMsgStr,
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':3}})
         ifd.append( {'name': 'tdofLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'textvariable': self.tdofMsgStr,
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':3}})
         ifd.append( {'name': 'torsdofcoeffEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Coefficient of torsional degrees of freedom:',
                 'textvariable': self.torsdofcoeff
             },
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':6}})
         ifd.append( {'name': 'diheChoic3Lab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'Specify Initial Dihedrals?',
-            'gridcfg':{'sticky':Tkinter.W, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.W, 'columnspan':2}})
         ifd.append({'name': 'yesDiheRB',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':'1'},
             'text': 'Yes',
             'variable': self.specifyDihe,
             'command': self.getDihe,
-            'gridcfg':{'sticky':Tkinter.W,'row':-1, 'column':3}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1, 'column':3}})
         ifd.append({'name': 'noDiheRB',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':'0'},
             'text': 'No',
             'command': self.getDihe,
             'variable': self.specifyDihe,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':4}})
+            'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':4}})
         ifd.append( {'name': 'useInitDiheLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'User Specified\nInitial Relative Dihedrals:',
-            'gridcfg':{'sticky':Tkinter.W}})
+            'gridcfg':{'sticky':tkinter.W}})
         ifd.append( {'name': 'dihe0Ent',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{ 'textvariable': self.dihe0 },
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W,'row':-1, 'column':1, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E+tkinter.W,'row':-1, 'column':1, 'columnspan':3}})
         ifd.append({'name': 'initDiheCB',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'text': 'Random ',
             'variable': self.initDiheType,
             'command': self.set_initDiheType,
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1,'column':4}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1,'column':4}})
         #ifd.append( {'name': 'torCtsChoic3Lab',
             #'widgetType':Tkinter.Label,
             #'text': 'Specify Ligand Torsion Constraints?',
@@ -749,16 +749,16 @@ class DpfInitLigand(MVCommand):
             #'command': self.getNewHardTorCts,
             #'gridcfg':{'sticky':Tkinter.W+Tkinter.E,'row':-1, 'column':2, 'columnspan':4}})
         ifd.append({'name': 'acceptB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Accept',
             'wcfg':{'bd':4},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':3},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':3},
             'command':self.Accept_cb})
         ifd.append({'name': 'closeB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Close',
             'wcfg':{'bd':4},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':-1, 'column':3,'columnspan':3},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':-1, 'column':3,'columnspan':3},
             'command':self.Close_cb})
 
         #initialize tran0, dihe0 and quat0
@@ -780,9 +780,9 @@ class DpfInitLigand(MVCommand):
         newTDC =  float(self.torsdofcoeff.get())
         if oldVal[0]!= self.torsdof or oldVal[1]!= newTDC:
                 changeVals['torsdof'] =  [self.torsdof, newTDC]
-        if len(changeVals.keys())>0:
+        if len(list(changeVals.keys()))>0:
             changeVals['topCommand'] = 0
-            apply(self.doitWrapper, (), changeVals)
+            self.doitWrapper(*(), **changeVals)
         self.form.withdraw()
 
 
@@ -791,7 +791,7 @@ class DpfInitLigand(MVCommand):
 
 
     def doit(self,*args,  **kw):
-        apply(self.vf.ADdpf_setDpo, (), kw)
+        self.vf.ADdpf_setDpo(*(), **kw)
         ##3/5:
         #DO SOME LIGAND CHECKING HERE?
         #ligand = self.vf.dpo.ligand
@@ -805,44 +805,44 @@ class DpfInitLigand(MVCommand):
 
     def getNewGaussTorCts(self, event=None):
         num = self.tcts.get()
-        self.torsNum.append(Tkinter.StringVar(master=self.vf.GUI.ROOT))
-        self.torsPAngle.append(Tkinter.StringVar(master=self.vf.GUI.ROOT))
-        self.halfWidth.append(Tkinter.StringVar(master=self.vf.GUI.ROOT))
+        self.torsNum.append(tkinter.StringVar(master=self.vf.GUI.ROOT))
+        self.torsPAngle.append(tkinter.StringVar(master=self.vf.GUI.ROOT))
+        self.halfWidth.append(tkinter.StringVar(master=self.vf.GUI.ROOT))
         ifd2 = self.ifd2 = InputFormDescr(title = "Gaussian Torsion Constraint Parameters")
         numStr = 'Torsion Number:\n(1-'+str(self.ndihe)+')'
         self.ifd2.append( { 'name': 'tnumEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': numStr,
                 'textvariable': self.torsNum[num]
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         self.ifd2.append( { 'name': 'pangEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Perferred Angle(degrees):',
                 'textvariable': self.torsPAngle[num]
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         self.ifd2.append( { 'name': 'hwidthEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Half-Width(degrees):',
                 'textvariable': self.halfWidth[num]
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         self.ifd2.append({'name': 'showTorpenCB',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'text': 'Store + Output torsion energies',
             'wcfg': {'value':'1'},
             'variable': self.showtorpen,
-            'gridcfg':{'sticky':Tkinter.W}})
+            'gridcfg':{'sticky':tkinter.W}})
         self.ifd2.append({'name': 'noTorpenCB',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'text': 'Don\'t Store + Output torsion energies',
             'variable': self.showtorpen,
             'wcfg': {'value':'0'},
-            'gridcfg':{'sticky':Tkinter.W}})
+            'gridcfg':{'sticky':tkinter.W}})
         val = self.vf.getUserInput(self.ifd2)
         if len(val) and val['tnumEnt']=='' or val['pangEnt']=='' or val['hwidthEnt']=='':
             val = None
@@ -860,32 +860,32 @@ class DpfInitLigand(MVCommand):
             
         
     def getNewHardTorCts(self, event=None):
-        torsNum =Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        torsPAngle=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        halfWidth=Tkinter.StringVar(master=self.vf.GUI.ROOT)
+        torsNum =tkinter.StringVar(master=self.vf.GUI.ROOT)
+        torsPAngle=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        halfWidth=tkinter.StringVar(master=self.vf.GUI.ROOT)
         ifd2 = self.ifd2 = InputFormDescr(title = "Hard Torsion Constraint Parameters")
         numStr = 'Torsion Number:\n(1-'+str(self.ndihe)+')'
         self.ifd2.append( { 'name': 'tnumEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': numStr,
                 'textvariable': torsNum
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         self.ifd2.append( { 'name': 'pangEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Perferred Relative Angle(degrees):',
                 'textvariable': torsPAngle
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         self.ifd2.append( { 'name': 'hwidthEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Full Width of allowed range(degrees):',
                 'textvariable': halfWidth
             },
-            'gridcfg':{'sticky':Tkinter.W, 'columnspan':4}})
+            'gridcfg':{'sticky':tkinter.W, 'columnspan':4}})
         val = self.vf.getUserInput(self.ifd2)
         if val:
             num = int(val['tnumEnt'])
@@ -1102,10 +1102,10 @@ class DpfLigandChooser(MVCommand):
         self.title= 'Choose Ligand'
         self.chooser = MoleculeChooser(self.vf, self.mode, self.title)
         self.chooser.ipf.append({'name':'Select Button',
-                                 'widgetType':Tkinter.Button,
+                                 'widgetType':tkinter.Button,
                                  'text':'Select Ligand',
                                  'wcfg':{'bd':6},
-                                 'gridcfg':{'sticky':Tkinter.E+Tkinter.W},
+                                 'gridcfg':{'sticky':tkinter.E+tkinter.W},
                                  'command': self.chooseLigand_cb})
         self.form = self.chooser.go(modal=0, blocking=0)
         lb = self.chooser.ipf.entryByName['Molecule']['widget'].lb
@@ -1113,7 +1113,7 @@ class DpfLigandChooser(MVCommand):
 
 
     def __call__(self, nodes, ask=1, **kw):
-        apply(self.doitWrapper,(nodes, ask),kw)
+        self.doitWrapper(*(nodes, ask), **kw)
 
 
     def doit(self, nodes, ask):
@@ -1127,7 +1127,7 @@ class DpfLigandChooser(MVCommand):
         hasTorTree = hasattr(lig, 'torTree')
 
         d = self.vf.atorsDict
-        if d.has_key('molecule') and d['molecule']==lig:
+        if 'molecule' in d and d['molecule']==lig:
             isAtorsMol = 1
             lig.ndihe = lig.torscount
             #lig.ndihe = d['torscount']
@@ -1148,7 +1148,7 @@ class DpfLigandChooser(MVCommand):
 
         if self.vf.hasGui: 
             self.vf.colorByAtomType(lig, topCommand = 0, redraw=1)
-            aromaticCs = AtomSet(filter(lambda x: x.autodock_element=='A',lig.allAtoms))
+            aromaticCs = AtomSet([x for x in lig.allAtoms if x.autodock_element=='A'])
             if len(aromaticCs):
                 self.vf.color(aromaticCs,((0.,1.,0.),),['lines'],topCommand=0, redraw=1)
             if ask:
@@ -1161,7 +1161,7 @@ class DpfLigandChooser(MVCommand):
                     d['about'] = lig.center
                     d['ndihe'] = lig.ndihe
                     d['types'] = lig.types
-                    apply(self.vf.ADdpf_setDpo,(), d)
+                    self.vf.ADdpf_setDpo(*(), **d)
 
 
 DpfLigandChooserGUI=CommandGUI()
@@ -1195,7 +1195,7 @@ class DpfLigPDBQReader(MVCommand):
         if not os.path.exists(ligFile):
             raise IOError
         kw['ask'] = ask
-        apply(self.doitWrapper,(ligFile,),kw)
+        self.doitWrapper(*(ligFile,), **kw)
 
 
     def doit(self, ligFile, ask=1):
@@ -1207,7 +1207,7 @@ class DpfLigPDBQReader(MVCommand):
         #color and check charges here
         if self.vf.hasGui and hasattr(ligand,'ndihe') and ask:
             self.vf.colorByAtomType(ligand, topCommand = 0, redraw=1)
-            aromaticCs = AtomSet(filter(lambda x: x.autodock_element=='A',ligand.allAtoms))
+            aromaticCs = AtomSet([x for x in ligand.allAtoms if x.autodock_element=='A'])
             if len(aromaticCs):
                 self.vf.color(aromaticCs,((0.,1.,0.),),['lines'],topCommand=0, redraw=1)
             self.vf.ADdpf_initLigand.guiCallback()
@@ -1235,37 +1235,37 @@ class Dpf4InitLigand(MVCommand):
         self.hTCtsnum=0
         self.torsPAngle=[]
         if self.vf.hasGui:
-            self.about= Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.about= tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.about.set('')
-            self.types = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.types = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.torsdof = 0
-            self.torsdofcoeff = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.torsdofcoeff = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.torsdofcoeff.set("")
-            self.barrier = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-            self.barVar = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-            self.specifyTorCts = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-            self.showtorpen = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-            self.addTorCts = Tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.barrier = tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.barVar = tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.specifyTorCts = tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.showtorpen = tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.addTorCts = tkinter.IntVar(master=self.vf.GUI.ROOT)
             #counter for gaussian torsion constraints
-            self.tcts = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.fmap = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.initTransType =Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.initQuatType = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.specifyDihe = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.tcts = tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.fmap = tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.initTransType =tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.initQuatType = tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.specifyDihe = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.specifyDihe.set('1')
-            self.initDiheType = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.tran0 = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-            self.quat0 = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-            self.dihe0 = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-            self.ligMsgStr = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.initDiheType = tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.tran0 = tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.quat0 = tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.dihe0 = tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.ligMsgStr = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.ligMsgStr.set('Ligand: ')
-            self.typesMsgStr = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.typesMsgStr = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.typesMsgStr.set('Ligand Atom Types: ' + self.types.get())
-            self.tdofMsgStr = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.tdofMsgStr = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.tdofMsgStr.set('No Torsional Degrees of Freedom\nSpecified in Ligand!')
-            self.centerMsgStr = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.centerMsgStr = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.centerMsgStr.set('Center of Ligand Molecule:  ' + self.about.get())
-            self.ndiheMsgStr=Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.ndiheMsgStr=tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.ndiheMsgStr.set('No Torsions Specified in Ligand!')
 
 
@@ -1287,57 +1287,57 @@ class Dpf4InitLigand(MVCommand):
         #the newstuff:
         ifd = self.ifd = InputFormDescr(title = "AutoDpf4 Ligand Parameters")
         ifd.append( {'name': 'ligLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'textvariable': self.ligMsgStr,
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':3}})
         ifd.append( {'name': 'typesLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'label': 'Ligand Atom Types:',
             'textvariable': self.typesMsgStr,
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':6}})
         ifd.append( {'name': 'centerLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'label': 'Center of Ligand Molecule:',
             'textvariable': self.centerMsgStr,
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':3}})
         ifd.append( {'name': 'initLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'Set Initial State of Ligand:',
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':3}})
         ifd.append( {'name':'tran0Ent',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'User-Specified Initial Position:',
                 'textvariable': self.tran0
             },
-            'gridcfg':{'sticky':Tkinter.E,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E,'columnspan':3}})
         ifd.append({'name': 'initTransCB',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'text': 'Random ',
             'variable': self.initTransType,
             'command': self.set_initTransType,
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1,'column':3}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1,'column':3}})
         ifd.append( {'name': 'quat0Ent',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Initial Relative Dihedral Offset(quat0):',
                 'textvariable': self.quat0
             },
-            'gridcfg':{'sticky':Tkinter.E,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E,'columnspan':3}})
         ifd.append({'name': 'initQuatCB',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'text': 'Random ',
             'variable': self.initQuatType,
             'command': self.set_initQuatType,
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1,'column':3}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1,'column':3}})
         ifd.append( {'name': 'ndiheLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'textvariable': self.ndiheMsgStr,
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':3}})
         ifd.append( {'name': 'tdofLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'textvariable': self.tdofMsgStr,
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':3}})
         #ifd.append( {'name': 'torsdofcoeffEnt',
         #    'widgetType':Tkinter.Entry,
         #    'wcfg':{
@@ -1346,37 +1346,37 @@ class Dpf4InitLigand(MVCommand):
         #    },
         #    'gridcfg':{'sticky':Tkinter.W,'columnspan':6}})
         ifd.append( {'name': 'diheChoic3Lab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'Specify Initial Dihedrals?',
-            'gridcfg':{'sticky':Tkinter.W, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.W, 'columnspan':2}})
         ifd.append({'name': 'yesDiheRB',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':'1'},
             'text': 'Yes',
             'variable': self.specifyDihe,
             'command': self.getDihe,
-            'gridcfg':{'sticky':Tkinter.W,'row':-1, 'column':3}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1, 'column':3}})
         ifd.append({'name': 'noDiheRB',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':'0'},
             'text': 'No',
             'command': self.getDihe,
             'variable': self.specifyDihe,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':4}})
+            'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':4}})
         ifd.append( {'name': 'useInitDiheLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'User Specified\nInitial Relative Dihedrals:',
-            'gridcfg':{'sticky':Tkinter.W}})
+            'gridcfg':{'sticky':tkinter.W}})
         ifd.append( {'name': 'dihe0Ent',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{ 'textvariable': self.dihe0 },
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W,'row':-1, 'column':1, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E+tkinter.W,'row':-1, 'column':1, 'columnspan':3}})
         ifd.append({'name': 'initDiheCB',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'text': 'Random ',
             'variable': self.initDiheType,
             'command': self.set_initDiheType,
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1,'column':4}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1,'column':4}})
         #ifd.append( {'name': 'torCtsChoic3Lab',
             #'widgetType':Tkinter.Label,
             #'text': 'Specify Ligand Torsion Constraints?',
@@ -1421,16 +1421,16 @@ class Dpf4InitLigand(MVCommand):
             #'command': self.getNewHardTorCts,
             #'gridcfg':{'sticky':Tkinter.W+Tkinter.E,'row':-1, 'column':2, 'columnspan':4}})
         ifd.append({'name': 'acceptB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Accept',
             'wcfg':{'bd':4},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':3},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':3},
             'command':self.Accept_cb})
         ifd.append({'name': 'closeB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Close',
             'wcfg':{'bd':4},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':-1, 'column':3,'columnspan':3},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':-1, 'column':3,'columnspan':3},
             'command':self.Close_cb})
 
         #initialize tran0, dihe0 and quat0
@@ -1451,9 +1451,9 @@ class Dpf4InitLigand(MVCommand):
         oldVal = self.vf.dpo['torsdof4']['value']
         if oldVal[0]!= self.torsdof:
                 changeVals['torsdof4'] =  [self.torsdof]
-        if len(changeVals.keys())>0:
+        if len(list(changeVals.keys()))>0:
             changeVals['topCommand'] = 0
-            apply(self.doitWrapper, (), changeVals)
+            self.doitWrapper(*(), **changeVals)
         else:
             self.form.withdraw()
 
@@ -1467,50 +1467,50 @@ class Dpf4InitLigand(MVCommand):
         d = {}
         for a in ligand.allAtoms:
             d[a.autodock_element] = 1
-        self.vf.DPF_LIGAND_TYPES = d.keys()
-        apply(self.vf.ADdpf_setDpo, (), kw)
+        self.vf.DPF_LIGAND_TYPES = list(d.keys())
+        self.vf.ADdpf_setDpo(*(), **kw)
 
 
     def getNewGaussTorCts(self, event=None):
         num = self.tcts.get()
-        self.torsNum.append(Tkinter.StringVar(master=self.vf.GUI.ROOT))
-        self.torsPAngle.append(Tkinter.StringVar(master=self.vf.GUI.ROOT))
-        self.halfWidth.append(Tkinter.StringVar(master=self.vf.GUI.ROOT))
+        self.torsNum.append(tkinter.StringVar(master=self.vf.GUI.ROOT))
+        self.torsPAngle.append(tkinter.StringVar(master=self.vf.GUI.ROOT))
+        self.halfWidth.append(tkinter.StringVar(master=self.vf.GUI.ROOT))
         ifd2 = self.ifd2 = InputFormDescr(title = "Gaussian Torsion Constraint Parameters")
         numStr = 'Torsion Number:\n(1-'+str(self.ndihe)+')'
         self.ifd2.append( { 'name': 'tnumEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': numStr,
                 'textvariable': self.torsNum[num]
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         self.ifd2.append( { 'name': 'pangEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Perferred Angle(degrees):',
                 'textvariable': self.torsPAngle[num]
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         self.ifd2.append( { 'name': 'hwidthEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Half-Width(degrees):',
                 'textvariable': self.halfWidth[num]
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         self.ifd2.append({'name': 'showTorpenCB',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'text': 'Store + Output torsion energies',
             'wcfg': {'value':'1'},
             'variable': self.showtorpen,
-            'gridcfg':{'sticky':Tkinter.W}})
+            'gridcfg':{'sticky':tkinter.W}})
         self.ifd2.append({'name': 'noTorpenCB',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'text': 'Don\'t Store + Output torsion energies',
             'variable': self.showtorpen,
             'wcfg': {'value':'0'},
-            'gridcfg':{'sticky':Tkinter.W}})
+            'gridcfg':{'sticky':tkinter.W}})
         val = self.vf.getUserInput(self.ifd2)
         if len(val) and val['tnumEnt']=='' or val['pangEnt']=='' or val['hwidthEnt']=='':
             val = None
@@ -1528,32 +1528,32 @@ class Dpf4InitLigand(MVCommand):
             
         
     def getNewHardTorCts(self, event=None):
-        torsNum =Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        torsPAngle=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        halfWidth=Tkinter.StringVar(master=self.vf.GUI.ROOT)
+        torsNum =tkinter.StringVar(master=self.vf.GUI.ROOT)
+        torsPAngle=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        halfWidth=tkinter.StringVar(master=self.vf.GUI.ROOT)
         ifd2 = self.ifd2 = InputFormDescr(title = "Hard Torsion Constraint Parameters")
         numStr = 'Torsion Number:\n(1-'+str(self.ndihe)+')'
         self.ifd2.append( { 'name': 'tnumEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': numStr,
                 'textvariable': torsNum
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         self.ifd2.append( { 'name': 'pangEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Perferred Relative Angle(degrees):',
                 'textvariable': torsPAngle
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         self.ifd2.append( { 'name': 'hwidthEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Full Width of allowed range(degrees):',
                 'textvariable': halfWidth
             },
-            'gridcfg':{'sticky':Tkinter.W, 'columnspan':4}})
+            'gridcfg':{'sticky':tkinter.W, 'columnspan':4}})
         val = self.vf.getUserInput(self.ifd2)
         if val:
             num = int(val['tnumEnt'])
@@ -1648,7 +1648,7 @@ class Dpf4InitLigand(MVCommand):
         d = {}
         for a in ligand.allAtoms:
             d[a.autodock_element] = 1
-        autodock_types = d.keys()
+        autodock_types = list(d.keys())
         for t in self.vf.DPF_FLEXRES_TYPES:
             if t not in autodock_types:
                 autodock_types.append(t)
@@ -1731,10 +1731,10 @@ class Dpf4LigandChooser(MVCommand):
         self.title= 'Choose Ligand'
         self.chooser = MoleculeChooser(self.vf, self.mode, self.title)
         self.chooser.ipf.append({'name':'Select Button',
-                                 'widgetType':Tkinter.Button,
+                                 'widgetType':tkinter.Button,
                                  'text':'Select Ligand',
                                  'wcfg':{'bd':6},
-                                 'gridcfg':{'sticky':Tkinter.E+Tkinter.W},
+                                 'gridcfg':{'sticky':tkinter.E+tkinter.W},
                                  'command': self.chooseLigand_cb})
         self.form = self.chooser.go(modal=0, blocking=0)
         lb = self.chooser.ipf.entryByName['Molecule']['widget'].lb
@@ -1742,7 +1742,7 @@ class Dpf4LigandChooser(MVCommand):
 
 
     def __call__(self, nodes, ask=1, **kw):
-        apply(self.doitWrapper,(nodes, ask),kw)
+        self.doitWrapper(*(nodes, ask), **kw)
 
 
     def doit(self, nodes, ask):
@@ -1750,14 +1750,14 @@ class Dpf4LigandChooser(MVCommand):
         d = {}
         for a in lig.allAtoms:
             d[a.autodock_element] = 1
-        self.vf.DPF_LIGAND_TYPES = d.keys()
+        self.vf.DPF_LIGAND_TYPES = list(d.keys())
         isAtorsMol = 0
         isDpoLigand = 0
 
         hasTorTree = hasattr(lig, 'torTree')
 
         d = self.vf.atorsDict
-        if d.has_key('molecule') and d['molecule']==lig:
+        if 'molecule' in d and d['molecule']==lig:
             isAtorsMol = 1
             lig.ndihe = lig.torscount
         if hasattr(self.vf, 'dpo'):
@@ -1775,7 +1775,7 @@ class Dpf4LigandChooser(MVCommand):
 
         if self.vf.hasGui: 
             self.vf.colorByAtomType(lig, topCommand = 0, redraw=1)
-            aromaticCs = AtomSet(filter(lambda x: x.autodock_element=='A',lig.allAtoms))
+            aromaticCs = AtomSet([x for x in lig.allAtoms if x.autodock_element=='A'])
             if len(aromaticCs):
                 self.vf.color(aromaticCs,((0.,1.,0.),),['lines'],topCommand=0, redraw=1)
             if ask:
@@ -1791,13 +1791,13 @@ class Dpf4LigandChooser(MVCommand):
                     w = {}
                     for a in lig.allAtoms:
                         w[a.autodock_element] = 1
-                    ligtypes = w.keys()
+                    ligtypes = list(w.keys())
                     ligtypes.sort()
                     ligtypestr = ligtypes[0]
                     for t in ligtypes[1:]:
                         lig_type_str = lig_type_str + " " + t
                     d['ligand_types'] = lig_type_str
-                    apply(self.vf.ADdpf_setDpo,(), d)
+                    self.vf.ADdpf_setDpo(*(), **d)
 
 
 Dpf4LigandChooserGUI=CommandGUI()
@@ -1832,7 +1832,7 @@ class Dpf4LigPDBQReader(MVCommand):
         if not os.path.exists(ligFile):
             raise IOError
         kw['ask'] = ask
-        apply(self.doitWrapper,(ligFile,),kw)
+        self.doitWrapper(*(ligFile,), **kw)
 
 
     def doit(self, ligFile, ask=1):
@@ -1844,10 +1844,10 @@ class Dpf4LigPDBQReader(MVCommand):
         d = {}
         for a in ligand.allAtoms:
             d[a.autodock_element] = 1
-        self.vf.DPF_LIGAND_TYPES = d.keys()
+        self.vf.DPF_LIGAND_TYPES = list(d.keys())
         if self.vf.hasGui and hasattr(ligand,'ndihe') and ask:
             self.vf.colorByAtomType(ligand, topCommand = 0, redraw=1)
-            aromaticCs = AtomSet(filter(lambda x: x.autodock_element=='A',ligand.allAtoms))
+            aromaticCs = AtomSet([x for x in ligand.allAtoms if x.autodock_element=='A'])
             if len(aromaticCs):
                 self.vf.color(aromaticCs,((0.,1.,0.),),['lines'],topCommand=0, redraw=1)
             self.vf.ADdpf4_initLigand.guiCallback()
@@ -1867,7 +1867,7 @@ class DpfEditor(MVCommand):
 
 
     def __call__(self,  **kw):
-        apply(self.doitWrapper, (), kw)
+        self.doitWrapper(*(), **kw)
 
 
     def doit(self):
@@ -1911,7 +1911,7 @@ class DpfSAWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -1956,7 +1956,7 @@ class Dpf41EPDBWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -2063,7 +2063,7 @@ class Dpf41CONFIGWriter(MVCommand):
             for ll in lines:
                 llist = ll.split()
                 if len(llist):
-                    print llist
+                    print(llist)
                     key = llist[0]
                     value = llist[-1]
                     if key in ['ligand', 'receptor','energy_range','center_x', 'center_y', 'center_z', 
@@ -2178,15 +2178,15 @@ class Dpf41CONFIGWriter(MVCommand):
              for ll in lines:
                  if ll.find("SPACING")>-1:
                      SPACING = float(ll.strip().split()[1])
-                     print "SPACING set to ", SPACING
+                     print("SPACING set to ", SPACING)
                      found_spacing=True
                  if ll.find("NELEMENTS")>-1:
-                     NELEMENTS = map(float,ll.strip().split()[1:4])
-                     print "NELEMENTS set to ", NELEMENTS
+                     NELEMENTS = list(map(float,ll.strip().split()[1:4]))
+                     print("NELEMENTS set to ", NELEMENTS)
                      found_nelements=True
                  if ll.find("CENTER")>-1:
-                     CENTER = map(float,ll.strip().split()[1:4])
-                     print "CENTER set to ", CENTER
+                     CENTER = list(map(float,ll.strip().split()[1:4]))
+                     print("CENTER set to ", CENTER)
                      found_center=True
              if found_center and found_spacing and found_nelements:
                  self.center_x.set(str(CENTER[0]))
@@ -2223,32 +2223,32 @@ class Dpf41CONFIGWriter(MVCommand):
 
     def buildForm(self):
         #vina input variables:
-        self.receptor=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.ligand=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.flex=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.center_x=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.center_y=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.center_z=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.size_x=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.size_y=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.size_z=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.outputconfig=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.refconfig=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.out=Tkinter.StringVar(master=self.vf.GUI.ROOT) #RESULT FILE!
-        self.log=Tkinter.StringVar(master=self.vf.GUI.ROOT) #1
+        self.receptor=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.ligand=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.flex=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.center_x=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.center_y=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.center_z=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.size_x=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.size_y=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.size_z=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.outputconfig=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.refconfig=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.out=tkinter.StringVar(master=self.vf.GUI.ROOT) #RESULT FILE!
+        self.log=tkinter.StringVar(master=self.vf.GUI.ROOT) #1
         self.log.set("")
-        self.cpu_number=Tkinter.StringVar(master=self.vf.GUI.ROOT) #2
-        self.seed=Tkinter.StringVar(master=self.vf.GUI.ROOT) #3
-        self.exhaustiveness=Tkinter.StringVar(master=self.vf.GUI.ROOT) #4
+        self.cpu_number=tkinter.StringVar(master=self.vf.GUI.ROOT) #2
+        self.seed=tkinter.StringVar(master=self.vf.GUI.ROOT) #3
+        self.exhaustiveness=tkinter.StringVar(master=self.vf.GUI.ROOT) #4
         self.exhaustiveness.set("8")
-        self.num_modes=Tkinter.StringVar(master=self.vf.GUI.ROOT) #5
+        self.num_modes=tkinter.StringVar(master=self.vf.GUI.ROOT) #5
         self.num_modes.set("9")
-        self.energy_range=Tkinter.StringVar(master=self.vf.GUI.ROOT) #6
+        self.energy_range=tkinter.StringVar(master=self.vf.GUI.ROOT) #6
         self.energy_range.set("3")
-        self.scoreOnly= Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.localOnly= Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.randomizeOnly= Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.show_VinaOpts = Tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.scoreOnly= tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.localOnly= tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.randomizeOnly= tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.show_VinaOpts = tkinter.IntVar(master=self.vf.GUI.ROOT)
         self.scoreOnly.set(0)
         self.localOnly.set(0)
         self.randomizeOnly.set(0)
@@ -2256,268 +2256,268 @@ class Dpf41CONFIGWriter(MVCommand):
         self.outputconfig.set("config.txt")
         ifd = self.ifd = InputFormDescr(title = "Vina Input Parameters")
         ifd.append( {'name': 'receptorLab', #R0_C0-2
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'tooltip': 'input receptor pdbqt filename',
             'wcfg':{'text': 'Receptor:' },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':3 }})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':3 }})
         ifd.append({'name': 'receptorButton', #R0_C3
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'tooltip': 'open file browser to select receptor file (pdbqt)',
             'text':'Browse',
             'wcfg':{'bd':1},
             'command':self.browseRec,
-            'gridcfg':{'sticky':Tkinter.E,'row':-1, 'column':3}})
+            'gridcfg':{'sticky':tkinter.E,'row':-1, 'column':3}})
         ifd.append( {'name': 'ligandLab', #R0_C4-6
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'tooltip': 'input ligand pdbqt filename',
             'wcfg':{'text': '   Ligand: ' },
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':4, 'columnspan':3 }})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':4, 'columnspan':3 }})
         ifd.append({'name': 'ligandButton', #R0_C7
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'tooltip': 'open file browser to select ligand file (pdbqt)',
             'text':'Browse',
             'wcfg':{'bd':1},
             'command':self.browseLig,
-            'gridcfg':{'sticky':Tkinter.W,'row':-1, 'column':7}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1, 'column':7}})
         ifd.append( {'name': 'flexLab', #R0_C8-10
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'tooltip': '[optional] input flexible residue pdbqt filename',
             'wcfg':{'text': '   Flex: ', 'foreground':'gray50' },
-            'gridcfg':{'sticky':Tkinter.E,'row':-1, 'column':8, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E,'row':-1, 'column':8, 'columnspan':3}})
         ifd.append({'name': 'flexButton', #R0_C11
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Browse',
             'tooltip': 'open file browser to select [optional] flexible residue file (pdbqt)',
             'wcfg':{'bd':1, 'foreground':'gray50'},
             'command':self.browseFlexRes,
-            'gridcfg':{'sticky':Tkinter.W,'row':-1, 'column':11}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1, 'column':11}})
         # receptor_entry  ligand_entry  flex_entry
         ifd.append( {'name': 'receptorEnt',
-            'widgetType':Tkinter.Entry, #R1_C0-3
+            'widgetType':tkinter.Entry, #R1_C0-3
             'tooltip': 'receptor pdbqt filename',
             'wcfg':{ 'textvariable': self.receptor,'width':4 },
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'columnspan':4}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'columnspan':4}})
         ifd.append( {'name': 'ligandEnt', #R1_C4-7
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': 'ligand pdbqt filename',
             'wcfg':{ 'textvariable': self.ligand,'width':4 },
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'row':-1, 'columnspan':4, 'column':4}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'row':-1, 'columnspan':4, 'column':4}})
         ifd.append( {'name': 'flexEnt', #R1_C8-11
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': '[optional] flexible residue pdbqt filename',
             'wcfg':{ 'textvariable': self.flex,'width':4, 'foreground':'gray50' },
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'row':-1, 'columnspan':4, 'column':8}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'row':-1, 'columnspan':4, 'column':8}})
         #center
         ifd.append( {'name': 'centerLab', #R2_C0-2
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'tooltip': 'xyz center of search space coords',
             'wcfg':{'text': 'Center:'},
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':3}})
         ifd.append( {'name': 'center_xEnt', #R2_C3
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': 'x coordinate of search space center',
             'wcfg':{ 'textvariable': self.center_x, 'width':3 },
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':-1, 'column':3, 'columnspan':1}})
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':-1, 'column':3, 'columnspan':1}})
         ifd.append( {'name': 'center_yEnt', #R2_C4
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{ 'textvariable': self.center_y, 'width':3 },
             'tooltip': 'y coordinate of search space center',
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':-1, 'column':4, 'columnspan':1}})
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':-1, 'column':4, 'columnspan':1}})
         ifd.append( {'name': 'center_zEnt', #R2_C5
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': 'z coordinate of search space center',
             'wcfg':{ 'textvariable': self.center_z, 'width':3 },
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':-1, 'column':5, 'columnspan':1}})
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':-1, 'column':5, 'columnspan':1}})
         #size
         ifd.append( {'name': 'sizeLab', #R2_C6-8
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'tooltip': 'Search space dimensions(Angstrom)',
             'wcfg':{ 'text': 'Size:' },
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':-1, 'column':6,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':-1, 'column':6,'columnspan':3}})
         ifd.append( {'name': 'size_xEnt',#R2_C9
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': 'x dimension of search space in Angstrom',
             'wcfg':{ 'textvariable': self.size_x, 'width':5 },
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':-1, 'column':9, 'columnspan':1}})
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':-1, 'column':9, 'columnspan':1}})
         ifd.append( {'name': 'size_yEnt',#R2_C10
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': 'y dimension of search space in Angstrom',
             'wcfg':{ 'textvariable': self.size_y, 'width':5 },
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':-1, 'column':10, 'columnspan':1}})
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':-1, 'column':10, 'columnspan':1}})
         ifd.append( {'name': 'size_zEnt',#R2_C11
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': 'z dimension of search space in Angstrom',
             'wcfg':{ 'textvariable': self.size_z, 'width':5 },
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':-1, 'column':11, 'columnspan':1}})
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':-1, 'column':11, 'columnspan':1}})
         
         #------------------------------------------------------------------
         #output result filename
         #------------------------------------------------------------------
         ifd.append( {'name': 'outEnt',  #R3_C0-3 @@ ZERO-BASED!
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': '[optional] output filename for vina results',
             'wcfg':{'label': 'Out:',
                 'textvariable': self.out,
                 'foreground':'gray50',
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':4}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':4}})
         ifd.append({'name': 'outButton', #R3_C4-5
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Browse',
             'wcfg':{'bd':2, 'foreground':'gray50'},
             'command':self.browseOut,
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E,'row':-1, 'column':4, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E,'row':-1, 'column':4, 'columnspan':2}})
         ifd.append( {'name': 'logEnt',  #R3_C6-11 @@ ZERO-BASED!
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': '[optional] write log file to this filename',
             'wcfg':{'label': ' Log:',
                 'textvariable': self.log,
                 'foreground':'gray50',
             },
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'row':-1, 'column':6, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'row':-1, 'column':6, 'columnspan':6}})
         #output config filename
         ifd.append( {'name': 'refconfigEnt',#R4_C0-5
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': '[optional] load values from reference filename containing vina input parameters',
             'wcfg':{'label': '   Refconfig filename:',# 'foreground':'gray50', 
                     'textvariable': self.refconfig,
                     'foreground':'gray50',
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':6}})
         ifd.append({'name': 'refconfigButton', #R4_C6-11
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'tooltip': 'use parameters from reference config file',
             'text':'Browse',
             'wcfg':{'bd':2, 'foreground':'gray50', },
             'command':self.browseRefConfig,
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E,'row':-1, 'column':6, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E,'row':-1, 'column':6, 'columnspan':6}})
         #output config filename
         ifd.append( {'name': 'outputconfigEnt', #R5_C0-5
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': 'specify filename for vina configuration file instead of default "config.txt"',
             'wcfg':{'label': 'Output filename:',
                 'textvariable': self.outputconfig,
                 'foreground':'gray50',
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':6}})
         #output config filename
         ifd.append({'name': 'outputButton', #R5_C6-11
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'tooltip': "[optional] select filename for new config file.\n[Default is 'config.txt']",
             'text':'Browse',
             'wcfg':{'bd':2, 'foreground':'gray50'},
             'command':self.browseOutputConfig,
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E,'row':-1, 'column':6, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E,'row':-1, 'column':6, 'columnspan':6}})
 ##############################################################
 #  10.1.2012: @@ NOW-> 12 columns in each row
 ##############################################################
         #show/hide other vina options buttons
         ifd.append({'name': 'displayVinaOptsButton', #R6_C0-3 vina:score_only,local_only, randomize_only
-             'widgetType':Tkinter.Button,
+             'widgetType':tkinter.Button,
              'text':'Show options',
              'tooltip': 'set vina options: score_only, local_only, randomize_only',
              'command':self.showVinaOpts,
              'wcfg':{'bd':2},
-             'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'columnspan':4}})
+             'gridcfg':{'sticky':tkinter.W+tkinter.E, 'columnspan':4}})
         ifd.append({'name': 'hideVinaOptsButton', #R6_C4-7
-             'widgetType': Tkinter.Button,
+             'widgetType': tkinter.Button,
              'text':'Hide options',
              'tooltip': 'hide vina options: score_only, local_only, randomize_only',
              'wcfg':{'bd':2},
              'command':self.hideVinaOpts,
-             'gridcfg':{'sticky':Tkinter.W+Tkinter.E,'row':-1, 'columnspan':4, 'column':4}})
+             'gridcfg':{'sticky':tkinter.W+tkinter.E,'row':-1, 'columnspan':4, 'column':4}})
         ifd.append({'name': 'clearVinaOptsButton', #R6_C8-11
-             'widgetType': Tkinter.Button,
+             'widgetType': tkinter.Button,
              'text':'Clear',
              'tooltip': 'turn off vina options: score_only, local_only, randomize_only',
              'wcfg':{'bd':2},
              'command':self.clearVinaOpts,
-             'gridcfg':{'sticky':Tkinter.W+Tkinter.E,'row':-1, 'columnspan':4, 'column':8}})
+             'gridcfg':{'sticky':tkinter.W+tkinter.E,'row':-1, 'columnspan':4, 'column':8}})
         ifd.append({'name': 'scoreOnlyCB', #R7_C0-3
-             'widgetType':Tkinter.Checkbutton,
+             'widgetType':tkinter.Checkbutton,
              'text': 'score_only ',
              'variable': self.scoreOnly,
              'command': self.set_scoreOnly, #@@?
-             'gridcfg':{'sticky':Tkinter.W, 'column':0, 'columnspan':4 }})
+             'gridcfg':{'sticky':tkinter.W, 'column':0, 'columnspan':4 }})
         ifd.append({'name': 'localOnlyCB',#R7_C4-7
-             'widgetType':Tkinter.Checkbutton,
+             'widgetType':tkinter.Checkbutton,
              'text': 'local_only ',
              'variable': self.localOnly,
              'command': self.set_localOnly, #@@?
-             'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':4, 'columnspan':4 }})
+             'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':4, 'columnspan':4 }})
         ifd.append({'name': 'randomizeOnlyCB',#R7_C8-11
-             'widgetType':Tkinter.Checkbutton,
+             'widgetType':tkinter.Checkbutton,
              'text': 'randomize_only ',
              'variable': self.randomizeOnly,
              'command': self.set_randomizeOnly, #@@?            
-             'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':8, 'columnspan':4 }})
+             'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':8, 'columnspan':4 }})
         #more options: cpu,seed,exhaustiveness,num_modes, energy_range
         #cpus, exhaustiveness, modes
         #------------------------------------------------------------------
         # shorter strings: cpus, modes, exhaustiveness (4 each)
         #------------------------------------------------------------------
         ifd.append( {'name': 'numCPUsLab',#R8_C0-1
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{'text': 'cpus' },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'numCPUsEnt',#R8_C2-3
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': 'number of CPUs to use (default is to try to detect number of CPUs or, failing that, use 1)',
             'wcfg':{ 'textvariable': self.cpu_number },
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':2, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':2, 'columnspan':2}})
         ifd.append( {'name': 'num_modesLab',#R8_C4-5
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{'text': 'modes' },
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':4,'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':4,'columnspan':2}})
         ifd.append( {'name': 'num_modesEnt',#R8_C6-7
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': 'maximum number of binding modes to generate\n(default is 9)',
             'wcfg':{ 'textvariable': self.num_modes},
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':6, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':6, 'columnspan':2}})
         ifd.append( {'name': 'exhaustivenessLab',#R8_C8-9
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{'text': 'exh.' },
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':8,'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':8,'columnspan':2}})
         ifd.append( {'name': 'exhaustivenessEnt',#R8_C10-11
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': 'exhaustiveness of the global search\n(roughly proportional to time): 1+\n(default is 8)',
             'wcfg':{ 'textvariable': self.exhaustiveness, },
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':10, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':10, 'columnspan':2}})
         #------------------------------------------------------------------
         # longer strings: seed and energy range (?) (6 each)
         #------------------------------------------------------------------
         ifd.append( {'name': 'seedLab',#R9_C0-2 
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{'text': 'seed' },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':3}})
         ifd.append( {'name': 'seedEnt',#R9_C3-5
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': 'explicit random seed',
             'wcfg':{ 'textvariable': self.seed },
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':3, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':3, 'columnspan':3}})
         ifd.append( {'name': 'energy_rangeLab',#R9_C6-8
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{'text': 'energy_range' },
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':6, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':6, 'columnspan':3}})
         ifd.append( {'name': 'energy_rangeEnt',#R9_C8-11
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': 'maximum energy difference between the best binding\nmode and the worst one displayed (kcal/mol)\n(default is 3)',
             'wcfg':{ 'textvariable': self.energy_range },
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':9, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':9, 'columnspan':3}})
 ##############################################################
 #       launch/cancel buttons
 ##############################################################
-        ifd.append({'widgetType': Tkinter.Button, #R3_C0-5/R8_C0-5
+        ifd.append({'widgetType': tkinter.Button, #R3_C0-5/R8_C0-5
             'text':'Save',
             'tooltip': 'Write new vina config file',
             'wcfg':{'bd':2},
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'columnspan':6, 'column':0},
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'columnspan':6, 'column':0},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button, #R3_C6-11/R8_C6-11
+        ifd.append({'widgetType': tkinter.Button, #R3_C6-11/R8_C6-11
             'text':'Cancel',
             'tooltip': "close 'Vina Input Parameters' panel",
             'wcfg':{'bd':2},
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'column': 6, 'row':-1,'columnspan':6},
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'column': 6, 'row':-1,'columnspan':6},
             'command':self.Close_cb})
         self.form = self.vf.getUserInput(self.ifd, scrolledFrame=1, modal=0, blocking=0)
         self.form.root.protocol('WM_DELETE_WINDOW',self.Close_cb)    
@@ -2544,7 +2544,7 @@ class Dpf41CONFIGWriter(MVCommand):
             if hasattr(self.vf.gpo, 'receptor_filename') and self.vf.gpo.receptor_filename!="":
                 self.receptor.set(self.vf.gpo.receptor_filename)
                 self.vf.vinaDict['receptor']=self.vf.gpo.receptor_filename
-            if self.vf.gpo.has_key('npts'): #and self.vf.gpo['npts']['value']!=[0,0,0]:?@@?
+            if 'npts' in self.vf.gpo: #and self.vf.gpo['npts']['value']!=[0,0,0]:?@@?
                 npts = self.vf.gpo['npts']['value']
                 spacing = self.vf.gpo['spacing']['value']
                 size_x = npts[0]*spacing # npts[0] -1 ??
@@ -2566,7 +2566,7 @@ class Dpf41CONFIGWriter(MVCommand):
             center_x = ""
             center_y = ""
             center_z = ""
-            if self.vf.gpo.has_key('gridcenter'):
+            if 'gridcenter' in self.vf.gpo:
                 if self.vf.gpo['gridcenter']['value']=='auto' and hasattr(self, 'receptor'): #StringVar
                     for m, filename in filenames:
                         if filename == self.receptor.get():
@@ -2603,7 +2603,7 @@ class Dpf41CONFIGWriter(MVCommand):
                 new_value = self.ifd.entryByName[item]['wcfg']['textvariable'].get()
                 if len(new_value): kw[item[:-3]] = new_value
         outputconfigFile = self.outputconfig.get()
-        apply(self.doitWrapper, (outputconfigFile,), kw ) 
+        self.doitWrapper(*(outputconfigFile,), **kw) 
         self.Close_cb()
 
 
@@ -2619,12 +2619,12 @@ class Dpf41CONFIGWriter(MVCommand):
         if not hasattr(self.vf, 'vinaDict'):
             self.vf.vinaDict = {}
         if outputconfigFile =="": 
-            if kw.has_key('outputconfigFile'):
+            if 'outputconfigFile' in kw:
                 outputconfigFile = kw['outputconfigFile']
             if len(outputconfigFile)==0:
                 outputconfigFile='config.txt' #@@
         ptr = open(outputconfigFile,'w') #@@
-        kw_keys = kw.keys()
+        kw_keys = list(kw.keys())
         options = []
         #if self.scoreOnly.get()>0:
         #    options.append('score_only')
@@ -2640,7 +2640,7 @@ class Dpf41CONFIGWriter(MVCommand):
             line = "%s = %s\n" %(k, kw.pop(k))
             #line = "%s = %s\n" %(k, str(kw[k]))
             ptr.write(line)
-        for k in kw.keys():
+        for k in list(kw.keys()):
             self.vf.vinaDict[k] = kw[k]
             if k not in self.vina_keys: 
                 options.append(k)
@@ -2656,10 +2656,10 @@ class Dpf41CONFIGWriter(MVCommand):
             for k in options: 
                 try:
                     line = "%s = %s\n" %(k,str(kw[k]))
-                    print "1: line=", line
+                    print("1: line=", line)
                 except:
                     line = "%s = True\n" %(k)
-                    print "2: line=", line
+                    print("2: line=", line)
                 ptr.write(line)
         ptr.close()
         if 'flex' in self.vina_keys:
@@ -2684,7 +2684,7 @@ class DpfGAWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -2726,7 +2726,7 @@ class DpfLSWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -2777,7 +2777,7 @@ class DpfGALSWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -2827,7 +2827,7 @@ class DpfClusterWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -2862,7 +2862,7 @@ class Dpf4SAWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -2918,7 +2918,7 @@ class Dpf4GAWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -2975,7 +2975,7 @@ class Dpf4LSWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -3032,7 +3032,7 @@ class Dpf4GALSWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -3088,7 +3088,7 @@ class Dpf41SAWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -3148,7 +3148,7 @@ class Dpf41GAWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -3209,7 +3209,7 @@ class Dpf41LSWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -3269,7 +3269,7 @@ class Dpf41GALSWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -3326,7 +3326,7 @@ class Dpf4ClusterWriter(MVCommand):
 
 
     def __call__(self, outfile, **kw):
-        apply(self.doitWrapper, (outfile,), kw)
+        self.doitWrapper(*(outfile,), **kw)
 
 
     def doit(self, outfile):
@@ -3399,17 +3399,17 @@ class SimAnneal(MVCommand):
 
     def buildForm(self):
         # reduction factor variables:
-        self.trnrf = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.quarf =  Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.dihrf = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.rtrf = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.rt0 = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.linear_schedule= Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.runs= Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.cycles= Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.accs= Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.rejs= Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.select= Tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.trnrf = tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.quarf =  tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.dihrf = tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.rtrf = tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.rt0 = tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.linear_schedule= tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.runs= tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.cycles= tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.accs= tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.rejs= tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.select= tkinter.StringVar(master=self.vf.GUI.ROOT)
 
         ## variables for trajectory output:
         #self.trajVar = Tkinter.StringVar()
@@ -3429,132 +3429,132 @@ class SimAnneal(MVCommand):
 
         ifd = self.ifd = InputFormDescr(title = "Simulated Annealing Parameters")
         ifd.append( {'name': 'numLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'NUMBER OF:',
-            'gridcfg':{'sticky':Tkinter.W+ Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W+ tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'runsEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Runs:',
                 'textvariable': self.runs
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':3}})
         ifd.append( {'name': 'accsEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Accepted steps/cycle:',
                 'textvariable': self.accs
             },
-            'gridcfg':{'sticky':Tkinter.E,'row':-1, 'column':3, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E,'row':-1, 'column':3, 'columnspan':3}})
         ifd.append( {'name': 'cyclesEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Cycles:',
                 'textvariable': self.cycles
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':3}})
         ifd.append( {'name': 'rejsEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Rejected steps/cycle:',
                 'textvariable': self.rejs
             },
-            'gridcfg':{'sticky':Tkinter.E,'row':-1, 'column':3, 'columnspan':3}})
-        ifd.append({'widgetType': Tkinter.Label,
+            'gridcfg':{'sticky':tkinter.E,'row':-1, 'column':3, 'columnspan':3}})
+        ifd.append({'widgetType': tkinter.Label,
              'text':'_______________________________________',
              'wcfg':{'bd':6},
-             'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':6}})
+             'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':6}})
         ifd.append( {'name': 'nextcycleLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'TO BEGIN NEXT CYCLE, USE:',
-            'gridcfg':{'sticky':Tkinter.W + Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W + tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'minLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'minimum state:',
             #'gridcfg':{'sticky':Tkinter.E}})
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append({'name': 'minChoice',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':'m'},
             'variable': self.select,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1,'column':2}})
+            'gridcfg':{'sticky':tkinter.W, 'row':-1,'column':2}})
         ifd.append( {'name': 'lastLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'last state:',
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':3}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':3}})
         ifd.append({'name': 'lastChoice',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':'l'},
             'variable': self.select,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1,'column':4}})
-        ifd.append({'widgetType': Tkinter.Label,
+            'gridcfg':{'sticky':tkinter.W, 'row':-1,'column':4}})
+        ifd.append({'widgetType': tkinter.Label,
              'text':'_______________________________________',
              'wcfg':{'bd':6},
-             'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':6}})
+             'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':6}})
         ifd.append( {'name': 'schLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'REDUCTION SCHEDULE TYPE:',
-            'gridcfg':{'sticky':Tkinter.W + Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W + tkinter.E, 'columnspan':6}})
         ifd.append({'name': 'schLinChoice',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':1},
             'text': 'Linear',
             'variable': self.linear_schedule,
-            'gridcfg':{'sticky':Tkinter.W,'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.W,'columnspan':3}})
         ifd.append({'name': 'schGeomChoice',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':0},
             'text': 'Geometric',
             'variable': self.linear_schedule,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':3}})
-        ifd.append({'widgetType': Tkinter.Label,
+            'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':3}})
+        ifd.append({'widgetType': tkinter.Label,
              'text':'_______________________________________',
              'wcfg':{'bd':6},
-             'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':6}})
+             'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':6}})
         ifd.append( {'name': 'rfpcLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'REDUCTION FACTORS PER CYCLE:',
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'trnrfEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Translation',
                 'textvariable': self.trnrf,
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':3}})
         ifd.append( {'name': 'quarfEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Quaternion',
                 'textvariable': self.quarf
             },
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':3, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':3, 'columnspan':3}})
         ifd.append( {'name': 'dihrfEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Dihedral',
                 'textvariable': self.dihrf
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':3}})
         ifd.append( {'name': 'rtrfEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Temperature',
                 'textvariable': self.rtrf
             },
             #'textvariable': self.temprf,
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':3, 'columnspan':3}})
-        ifd.append({'widgetType': Tkinter.Label,
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':3, 'columnspan':3}})
+        ifd.append({'widgetType': tkinter.Label,
              'text':'_______________________________________',
              'wcfg':{'bd':6},
-             'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':6}})
+             'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':6}})
         ifd.append( {'name': 'rt0Ent',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Initial Temperature(Degrees):',
                 'textvariable': self.rt0
             },
-            'gridcfg':{'sticky':Tkinter.W +Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W +tkinter.E, 'columnspan':6}})
         #ifd.append({'widgetType': Tkinter.Label,
                 #'text':'_______________________________________',
                 #'wcfg':{'bd':6},
@@ -3670,15 +3670,15 @@ class SimAnneal(MVCommand):
             #'widgetType':Tkinter.Entry,
             #'textvariable': self.watch,
             #'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':5}})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Accept',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':3, 'row':26, 'column':0},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':3, 'row':26, 'column':0},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Close',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':3, 'row':-1, 'column':3},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':3, 'row':-1, 'column':3},
             'command':self.Close_cb})
 
     
@@ -3689,14 +3689,14 @@ class SimAnneal(MVCommand):
             var = eval('self.'+item)
             if self.vf.dpo[item]['value']!= var.get():
                 changeVals[item] =  var.get()
-        if len(changeVals.keys())>0:
+        if len(list(changeVals.keys()))>0:
             changeVals['topCommand'] = 0
-            apply(self.doitWrapper, (), changeVals)
+            self.doitWrapper(*(), **changeVals)
         self.form.withdraw()
 
 
     def doit(self, *args, **kw):
-        apply(self.vf.ADdpf_setDpo, (), kw)
+        self.vf.ADdpf_setDpo(*(), **kw)
 
 
     def Close_cb(self, event=None):
@@ -3704,7 +3704,7 @@ class SimAnneal(MVCommand):
 
 
     def getTraj(self):
-        print 'in getTraj'
+        print('in getTraj')
         wlist = []
         for item in ['trajbegLab','trajbeg','trajendLab', 'trajend','trajfreqLab', 'trajfreq', 'trajectOutTypeLab','trajacconlyLab', 'trajacconly', 'trajaccrejLab', 'trajaccrej', 'trajFileEntLab', 'trajFileEnt','watchFileEntLab', 'watchFileEnt']:
             wlist.append(self.ifd.entryByName[item])
@@ -3767,43 +3767,43 @@ class GA(MVCommand):
     def buildForm(self):
         #genetic algorithm variables:
         #ga_run is for GALS, do_global_only for GA
-        self.ga_run=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.do_global_only=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.ga_pop_size=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.ga_num_evals=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.runType=Tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.ga_run=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.do_global_only=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.ga_pop_size=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.ga_num_evals=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.runType=tkinter.StringVar(master=self.vf.GUI.ROOT)
         self.runType.set('medium')
         self.runDict = {}
         self.runDict['short'] = '250000'
         self.runDict['medium'] = '2500000'
         self.runDict['long'] = '25000000'
-        self.runTypeList = self.runDict.keys()
-        self.crossover_modeType=Tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.runTypeList = list(self.runDict.keys())
+        self.crossover_modeType=tkinter.StringVar(master=self.vf.GUI.ROOT)
         self.crossover_modeType.set('twopt')
         self.crossover_modeTypeList = ['twopt', 'arithmetic', 'uniform']
-        self.ga_num_generations=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.ga_elitism=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.ga_mutation_rate=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.ga_crossover_rate=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.ga_window_size=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.ga_cauchy_alpha=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.ga_cauchy_beta=Tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.ga_num_generations=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.ga_elitism=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.ga_mutation_rate=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.ga_crossover_rate=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.ga_window_size=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.ga_cauchy_alpha=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.ga_cauchy_beta=tkinter.StringVar(master=self.vf.GUI.ROOT)
         ifd = self.ifd = InputFormDescr(title = "Genetic Algorithm Parameters")
         ifd.append( {'name': 'ga_runEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'tooltip': 'Each run will result in one docked conformation.',
             'wcfg':{'label': 'Number of GA Runs:',
                 'textvariable': self.ga_run,
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'ga_pop_sizeEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Population Size:',
                 'textvariable': self.ga_pop_size
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':6}})
-        ifd.append({'widgetType':Tkinter.Label,
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':6}})
+        ifd.append({'widgetType':tkinter.Label,
                     'tooltip': 'Set maximum number of energy evaluations for each run.\nWhen the maximum is reached, the current generation\nwill finish but a new one will not be started.\nSelect type of run to set default number of evals...',
                     'wcfg': {'text':"Maximum Number of evals:"},
                     'gridcfg':{'sticky':'w'} })
@@ -3818,44 +3818,44 @@ class GA(MVCommand):
                     },
             'gridcfg':{'sticky':'w', 'row':-1, 'column':1}})
         ifd.append( {'name': 'ga_num_evalsEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'textvariable': self.ga_num_evals
             },
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':2, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':2, 'columnspan':2}})
         ifd.append( {'name': 'ga_num_generationsEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Maximum Number of generations:',
                 'textvariable': self.ga_num_generations
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'ga_elitismEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Maximum Number of top individuals \nthat automatically survive:',
                 'textvariable': self.ga_elitism
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'ga_mutation_rateEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Rate of Gene Mutation:',
                 'textvariable': self.ga_mutation_rate
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'ga_crossover_rateEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Rate of Crossover:',
                 'textvariable': self.ga_crossover_rate
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':6}})
         ifd.append({'name': 'ga_crossovermodeLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'tooltip': "Options for crossover mode are:\n'two_pt' (default for autodock3 and autodock4)\n'arithmetic' (default for autodock4.1)\n'uniform (experimental)'",
                     'wcfg': {'text':"GA Crossover mode:"},
-                    'gridcfg':{'sticky':Tkinter.E, 'columnspan':2 } })
+                    'gridcfg':{'sticky':tkinter.E, 'columnspan':2 } })
         ifd.append({'name': 'ga_crossovermodeChoices',
                     'widgetType':Pmw.ComboBox,
                     'wcfg':{'entryfield_value':self.crossover_modeType.get(),
@@ -3867,35 +3867,35 @@ class GA(MVCommand):
                     },
             'gridcfg':{'sticky':'e', 'row':-1, 'column':1, 'columnspan':4}})
         ifd.append( {'name': 'ga_cauchy_alphaEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Mean of Cauchy distribution for\ngene mutation:',
                 'textvariable': self.ga_cauchy_alpha
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'ga_cauchy_betaEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Variance of Cauchy distribution for\ngene mutation:',
                 'textvariable': self.ga_cauchy_beta
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'ga_window_sizeEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Number of generations for picking\n worst individual:',
                 'textvariable': self.ga_window_size
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':6}})
-        ifd.append({'widgetType': Tkinter.Button,
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':6}})
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Accept',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':3, 'column':0},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':3, 'column':0},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Close',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'column': 3, 'row':-1,'columnspan':3},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'column': 3, 'row':-1,'columnspan':3},
             'command':self.Close_cb})
 
 
@@ -3920,12 +3920,12 @@ class GA(MVCommand):
             if self.vf.dpo[item]['value']!= var.get():
                 changeVals[item] =  var.get()
         if self.crossover_modeType.get()!=self.vf.dpo['ga_crossover_mode']['value']:
-            print "changing ga_crossover_mode from ", self.vf.dpo['ga_crossover_mode']['value'], ' to ', self.crossover_modeType.get()
+            print("changing ga_crossover_mode from ", self.vf.dpo['ga_crossover_mode']['value'], ' to ', self.crossover_modeType.get())
             changeVals['ga_crossover_mode_flag']=1
             changeVals['ga_crossover_mode']= self.crossover_modeType.get()
-        if len(changeVals.keys())>0:
+        if len(list(changeVals.keys()))>0:
             changeVals['topCommand'] = 0
-            apply(self.doitWrapper, (), changeVals)
+            self.doitWrapper(*(), **changeVals)
         self.form.withdraw()
 
 
@@ -3934,7 +3934,7 @@ class GA(MVCommand):
 
 
     def doit(self, *args, **kw):
-        apply(self.vf.ADdpf_setDpo, (), kw)
+        self.vf.ADdpf_setDpo(*(), **kw)
 
 
 GAGUI=CommandGUI()
@@ -3987,97 +3987,97 @@ class LS(MVCommand):
 
 
     def buildForm(self):
-        self.do_local_only=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.sw_max_its=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.sw_max_succ=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.sw_max_fail=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.sw_rho=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.sw_lb_rho=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.ls_search_freq=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.set_psw1=Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.set_sw1=Tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.do_local_only=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.sw_max_its=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.sw_max_succ=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.sw_max_fail=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.sw_rho=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.sw_lb_rho=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.ls_search_freq=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.set_psw1=tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.set_sw1=tkinter.StringVar(master=self.vf.GUI.ROOT)
         ifd = self.ifd = InputFormDescr(title = "Local Search Parameters:")
         ifd.append( {'name': 'do_local_onlyEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Number of LS Runs:',
                 'textvariable': self.do_local_only,
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'sw_max_itsEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Maximum Number of iterations:',
                 'textvariable': self.sw_max_its,
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'sw_max_succEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Maximum Number of successes in a row\nbefore changing rho:',
                 'textvariable': self.sw_max_succ,
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'sw_max_failEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Maximum Number of failures in a row\nbefore changing rho:',
                 'textvariable': self.sw_max_fail,
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'sw_rhoEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Solis&Wets parameter defining initial variance\nand size of local space to sample (rho):',
                 'textvariable': self.sw_rho,
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'sw_lb_rhoEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Lower bound on rho:',
                 'textvariable': self.sw_lb_rho,
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'ls_search_freqEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'label': 'Probability of any particular phenotype being\nsubjected to local search:',
                 'textvariable': self.ls_search_freq,
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'lsChoiceLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'FOR LOCAL SEARCH, USE: ',
-            'gridcfg':{'sticky':Tkinter.W + Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.W + tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'swLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'Solis & Wets with uniform variances:',
-            'gridcfg':{'sticky':Tkinter.E}})
+            'gridcfg':{'sticky':tkinter.E}})
         ifd.append({'name': 'swRb',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':0},
             'variable': self.set_psw1,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1,'column':1}})
+            'gridcfg':{'sticky':tkinter.W, 'row':-1,'column':1}})
         ifd.append( {'name': 'pswLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'pseudo-Solis & Wets with relative variances:',
-            'gridcfg':{'sticky':Tkinter.E}})
+            'gridcfg':{'sticky':tkinter.E}})
         ifd.append({'name': 'psw',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':1},
             'variable': self.set_psw1,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1}})
+            'gridcfg':{'sticky':tkinter.W, 'row':-1}})
         ifd.append({'name': 'acceptB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Accept',
             'wcfg':{'bd':4},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':3},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':3},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Close',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':-1, 'column':3,'columnspan':3},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':-1, 'column':3,'columnspan':3},
             'command':self.Close_cb})
     
     
@@ -4105,9 +4105,9 @@ class LS(MVCommand):
                 changeVals['set_psw1']=0
                 changeVals['set_sw1']=1
 
-        if len(changeVals.keys())>0:
+        if len(list(changeVals.keys()))>0:
             changeVals['topCommand'] = 0
-            apply(self.doitWrapper, (), changeVals)
+            self.doitWrapper(*(), **changeVals)
         self.form.withdraw()
 
 
@@ -4116,7 +4116,7 @@ class LS(MVCommand):
 
 
     def doit(self, *args, **kw):
-        apply(self.vf.ADdpf_setDpo, (), kw)
+        self.vf.ADdpf_setDpo(*(), **kw)
 
 
 LSGUI=CommandGUI()
@@ -4211,41 +4211,41 @@ class SetDockingRunParms(MVCommand):
         ifd = self.ifd = InputFormDescr(title = "Set Docking Run Options")
         #ranNumLib: 2 is platform independent one from UTexasBiomedicalSchool
         #ranNumLib: 1 is system's own implementation
-        self.showLibOpts = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.showEnergyOpts = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.showStepSizeOpts = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.showOutputOpts = Tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.showLibOpts = tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.showEnergyOpts = tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.showStepSizeOpts = tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.showOutputOpts = tkinter.IntVar(master=self.vf.GUI.ROOT)
         for v in [self.showLibOpts, self.showEnergyOpts, self.showStepSizeOpts, 
                         self.showOutputOpts]:
             v.set(0)
 
-        self.ranNumLib=Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.ranNumVar1=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.ranNumVar2=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.seed1=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.seed2=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.intelec=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.extnrg=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.e0max=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.emaxRetries=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.tstep = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.qstep = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.dstep = Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.outlev=Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.rmstol=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.rmsref=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.rmsref_flag=Tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.ranNumLib=tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.ranNumVar1=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.ranNumVar2=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.seed1=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.seed2=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.intelec=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.extnrg=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.e0max=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.emaxRetries=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.tstep = tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.qstep = tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.dstep = tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.outlev=tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.rmstol=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.rmsref=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.rmsref_flag=tkinter.IntVar(master=self.vf.GUI.ROOT)
         self.rmsref_flag.set(0)
-        self.rmsnosym=Tkinter.StringVar(master=self.vf.GUI.ROOT)
-        self.analysis=Tkinter.IntVar(master=self.vf.GUI.ROOT)
-        self.write_all_flag=Tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.rmsnosym=tkinter.StringVar(master=self.vf.GUI.ROOT)
+        self.analysis=tkinter.IntVar(master=self.vf.GUI.ROOT)
+        self.write_all_flag=tkinter.IntVar(master=self.vf.GUI.ROOT)
         self.write_all_flag.set(0)
-        ifd.append({'widgetType': Tkinter.Label,
+        ifd.append({'widgetType': tkinter.Label,
             'text':'for random number generator:',
             'wcfg':{'bd':1},
-            'gridcfg':{'sticky':Tkinter.W, 'columnspan':1}})
+            'gridcfg':{'sticky':tkinter.W, 'columnspan':1}})
         ifd.append( {'name': 'LibOpts1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.showLibOpts,
             'wcfg': {
                     'text': 'Use defaults',
@@ -4255,106 +4255,106 @@ class SetDockingRunParms(MVCommand):
             'gridcfg':{'row':-1, 'column':1, 'columnspan':2}})
             #'gridcfg':{'sticky':Tkinter.W, 'columnspan':2}})
         ifd.append( {'name': 'LibOpts2',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.showLibOpts,
             'wcfg': {
                     'text': 'Select library + set seeds',
                     'value':1,
                     'command': self.hideLibOpts,
                     },
-            'gridcfg':{'row': -1, 'sticky':Tkinter.W, 'column':3, 'columnspan':3}})
+            'gridcfg':{'row': -1, 'sticky':tkinter.W, 'column':3, 'columnspan':3}})
             
         ifd.append({'name': 'ranLibLabel',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'text':'For RANDOM NUMBER GENERATOR LIBRARY:',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.W, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W, 'columnspan':6}})
         ifd.append( {'name': 'sysRanNumLibRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.ranNumLib,
             'text': 'Built-In Library',
             'wcfg': {'value':1},
             'command': self.set_seeds,
-            'gridcfg':{'sticky':Tkinter.W}})
+            'gridcfg':{'sticky':tkinter.W}})
         ifd.append( {'name': 'indRanNumLibRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.ranNumLib,
             'text': 'Platform-Independent Library\n(from UTexas Biomedical School):',
             'wcfg': {'value':2},
             'command': self.set_seeds,
-            'gridcfg':{'sticky':Tkinter.W,'row':-1,'column':1, 'columnspan':5}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1,'column':1, 'columnspan':5}})
         ifd.append( {'name': 'ranNumChoiceLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'SELECT ONE RANDOM NUMBER GENERATOR SEED:',
-            'gridcfg':{'sticky':Tkinter.W + Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W + tkinter.E, 'columnspan':6}})
         ifd.append({'name': 'time1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':'1'},
             'text': 'time',
             'variable': self.ranNumVar1,
-            'gridcfg':{'sticky':Tkinter.W},
+            'gridcfg':{'sticky':tkinter.W},
             'command': self.getUserSeed1 })
         ifd.append({'name': 'pid1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':'2'},
             'text': 'pid',
             'variable': self.ranNumVar1,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1,'column':1, 'columnspan':2},
+            'gridcfg':{'sticky':tkinter.W, 'row':-1,'column':1, 'columnspan':2},
             'command': self.getUserSeed1 })
         ifd.append({'name': 'userSeedRb1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':'0'},
             'text': 'user defined',
             'variable': self.ranNumVar1,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1,'columnspan':2, 'column':4},
+            'gridcfg':{'sticky':tkinter.W, 'row':-1,'columnspan':2, 'column':4},
             'command': self.getUserSeed1 })
         ifd.append({'name': 'userSeedLab1',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'Enter Seed 1:',
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'columnspan':4}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'columnspan':4}})
         ifd.append( {'name': 'userSeedEnt1',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{ 'textvariable': self.seed1},
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':4}})
+            'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':4}})
         ifd.append({'name': 'time2',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':'1'},
             'text': 'time',
             'variable': self.ranNumVar2,
-            'gridcfg':{'sticky':Tkinter.W},
+            'gridcfg':{'sticky':tkinter.W},
             'command': self.getUserSeed2 })
         ifd.append({'name': 'pid2',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'text': 'pid',
             'wcfg': {'value':'2'},
             'variable': self.ranNumVar2,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1,'column':1,'columnspan':2},
+            'gridcfg':{'sticky':tkinter.W, 'row':-1,'column':1,'columnspan':2},
             'command': self.getUserSeed2 })
         ifd.append({'name': 'userSeedRb2',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':'0'},
             'text': 'user defined',
             'variable': self.ranNumVar2,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':4,'columnspan':2},
+            'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':4,'columnspan':2},
             'command': self.getUserSeed2 })
         ifd.append({'name': 'userSeedLab2',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'Enter Seed 2:',
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'columnspan':4}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'columnspan':4}})
         ifd.append( {'name': 'userSeedEnt2',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{'textvariable': self.seed2},
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':4}})
-        ifd.append({'widgetType': Tkinter.Label,
+            'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':4}})
+        ifd.append({'widgetType': tkinter.Label,
             'text':'_______________________________________',
             'wcfg':{'bd':1},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':6}})
-        ifd.append({'widgetType': Tkinter.Label,
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':6}})
+        ifd.append({'widgetType': tkinter.Label,
             'text':'for energy parameters:',
             'wcfg':{'bd':1},
-            'gridcfg':{'sticky':Tkinter.W, 'columnspan':1}})
+            'gridcfg':{'sticky':tkinter.W, 'columnspan':1}})
         ifd.append( {'name': 'EnergyOpts1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.showEnergyOpts,
             'wcfg': {
                     'text': 'Use defaults',
@@ -4364,7 +4364,7 @@ class SetDockingRunParms(MVCommand):
             'gridcfg':{'row':-1, 'column':1, 'columnspan':2}})
             #'gridcfg':{'sticky':Tkinter.W, 'columnspan':2}})
         ifd.append( {'name': 'EnergyOpts2',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.showEnergyOpts,
             'wcfg': {
                     'text': 'Customize energy parameters',
@@ -4372,77 +4372,77 @@ class SetDockingRunParms(MVCommand):
                     'command': self.hideEnergyOpts,
                     },
             #'gridcfg':{'row': -1, 'column':3, 'columnspan':2}})
-            'gridcfg':{'row': -1, 'sticky':Tkinter.W, 'column':3, 'columnspan':3}})
+            'gridcfg':{'row': -1, 'sticky':tkinter.W, 'column':3, 'columnspan':3}})
             
         ifd.append({'name': 'energyLabel',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'text':'ENERGY PARAMETERS:',
             'wcfg':{'bd':1},
-            'gridcfg':{'sticky':Tkinter.W+ Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W+ tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'extnrgLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{
                 'text': 'External Grid Energy',
              },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':4}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':4}})
         ifd.append( {'name': 'extnrgEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'textvariable': self.extnrg
             },
-            'gridcfg':{'sticky':Tkinter.W,'row':-1, 'column':5, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1, 'column':5, 'columnspan':2}})
         ifd.append( {'name': 'e0maxLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{
                 'text': 'Maximum allowable initial energy:',
              },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':4}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':4}})
         ifd.append( {'name': 'e0maxEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'textvariable': self.e0max
             },
-            'gridcfg':{'sticky':Tkinter.W,'row':-1, 'column':5, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1, 'column':5, 'columnspan':2}})
             #'gridcfg':{'sticky':Tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'emaxRetriesLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{
                 'text': 'Maximum Number of Retries:',
              },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':4}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':4}})
         ifd.append( {'name': 'emaxRetriesEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'textvariable': self.emaxRetries
             },
-            'gridcfg':{'sticky':Tkinter.W,'row':-1, 'column':5, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1, 'column':5, 'columnspan':2}})
             #'gridcfg':{'sticky':Tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'intelecLab1',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'Calculate internal electrostatic energy:',
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'intelecRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.intelec,
             'text': 'Yes',
             'wcfg': {'value':'1'},
-            'gridcfg':{'sticky':Tkinter.E,'row':-1, 'columnspan':2,'column':2}})
+            'gridcfg':{'sticky':tkinter.E,'row':-1, 'columnspan':2,'column':2}})
         ifd.append( {'name': 'intelecRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.intelec,
             'text': 'No',
             'wcfg': {'value':'0'},
-            'gridcfg':{'sticky':Tkinter.E + Tkinter.W,'row':-1,'columnspan':2, 'column':4}})
-        ifd.append({'widgetType': Tkinter.Label,
+            'gridcfg':{'sticky':tkinter.E + tkinter.W,'row':-1,'columnspan':2, 'column':4}})
+        ifd.append({'widgetType': tkinter.Label,
             'text':'_______________________________________',
             'wcfg':{'bd':1},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':6}})
-        ifd.append({'widgetType': Tkinter.Label,
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':6}})
+        ifd.append({'widgetType': tkinter.Label,
             'text':'for step size parameters:',
             'wcfg':{'bd':1},
-            'gridcfg':{'sticky':Tkinter.W, 'columnspan':1}})
+            'gridcfg':{'sticky':tkinter.W, 'columnspan':1}})
         ifd.append( {'name': 'StepSizeOpts1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.showStepSizeOpts,
             'wcfg': {
                     'text': 'Use defaults',
@@ -4452,7 +4452,7 @@ class SetDockingRunParms(MVCommand):
             'gridcfg':{'row':-1, 'column':1, 'columnspan':2}})
             #'gridcfg':{'sticky':Tkinter.W, 'columnspan':2}})
         ifd.append( {'name': 'StepSizeOpts2',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.showStepSizeOpts,
             'wcfg': {
                     'text': 'Customize step size parameters',
@@ -4460,59 +4460,59 @@ class SetDockingRunParms(MVCommand):
                     'command': self.hideStepSizeOpts,
                     },
             #'gridcfg':{'row': -1, 'column':3, 'columnspan':2}})
-            'gridcfg':{'row': -1, 'sticky':Tkinter.W, 'column':3, 'columnspan':3}})
+            'gridcfg':{'row': -1, 'sticky':tkinter.W, 'column':3, 'columnspan':3}})
             
         ifd.append({'name':'stepSizeLab',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'text':'STEP SIZE PARAMETERS:',
             'wcfg':{'bd':1},
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'tstepLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{
                 'text': 'Translation (Angstrom/step):\nEnter values for 1st , last cycles to have AutoDock calculate trnrf',
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':4}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':4}})
         ifd.append( {'name': 'tstepEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 #'label': 'Translation (Angstrom/step):\nEnter values for 1st , last cycles to have AutoDock calculate trnrf',
                 'textvariable': self.tstep
             },
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':4}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':4}})
         ifd.append( {'name': 'qstepLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{ 'text': 'Quaternion (Degree/step):',
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':3}})
         ifd.append( {'name': 'qstepEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'textvariable': self.qstep
             },
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':4}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':4}})
         ifd.append( {'name': 'dstepLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{
                 'text': 'Torsion (Degree/step):',
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':3}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':3}})
         ifd.append( {'name': 'dstepEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'textvariable': self.dstep,
             },
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'column':3, 'columnspan':3}})
-        ifd.append({'widgetType': Tkinter.Label,
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'column':3, 'columnspan':3}})
+        ifd.append({'widgetType': tkinter.Label,
             'text':'_______________________________________',
             'wcfg':{'bd':1},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':6}})
-        ifd.append({'widgetType': Tkinter.Label,
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':6}})
+        ifd.append({'widgetType': tkinter.Label,
             'text':'for output format parameters:',
             'wcfg':{'bd':1},
-            'gridcfg':{'sticky':Tkinter.W, 'columnspan':1}})
+            'gridcfg':{'sticky':tkinter.W, 'columnspan':1}})
         ifd.append( {'name': 'OutputOpt1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.showOutputOpts,
             'wcfg': {
                     'text': 'Use defaults',
@@ -4522,7 +4522,7 @@ class SetDockingRunParms(MVCommand):
             'gridcfg':{'row':-1, 'column':1, 'columnspan':2}})
             #'gridcfg':{'sticky':Tkinter.W, 'columnspan':2}})
         ifd.append( {'name': 'OutputOpt1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.showOutputOpts,
             'wcfg': {
                     'text': 'Customize output format parameters',
@@ -4530,128 +4530,128 @@ class SetDockingRunParms(MVCommand):
                     'command': self.hideOutputOpts,
                     },
             #'gridcfg':{'row': -1, 'column':3, 'columnspan':2}})
-            'gridcfg':{'row': -1, 'sticky':Tkinter.W, 'column':3, 'columnspan':3}})
+            'gridcfg':{'row': -1, 'sticky':tkinter.W, 'column':3, 'columnspan':3}})
             
         ifd.append({'name':'outputOptsLab',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'text':'OUTPUT FORMAT PARAMETERS:',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.W+ Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W+ tkinter.E, 'columnspan':6}})
             #'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':6}})
         ifd.append( {'name': 'outlevLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'Level of Detail for output:\n (use no output for GA and minimal for SA)',
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'outlevLab0',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'no output:',
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'outlevRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.outlev,
             'wcfg': {'value':0},
-            'gridcfg':{'sticky':Tkinter.E,'row':-1, 'column':2}})
+            'gridcfg':{'sticky':tkinter.E,'row':-1, 'column':2}})
         ifd.append( {'name': 'outlevLab1',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'minimal output:',
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1, 'columnspan':2,'column':3}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1, 'columnspan':2,'column':3}})
         ifd.append( {'name': 'outlevRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.outlev,
             'wcfg': {'value':1},
-            'gridcfg':{'sticky':Tkinter.E,'row':-1, 'column':5}})
+            'gridcfg':{'sticky':tkinter.E,'row':-1, 'column':5}})
         ifd.append( {'name': 'outlevLab2',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'full state output\nat end of each cycle:',
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'outlevRB2',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.outlev,
             'wcfg': {'value':2},
-            'gridcfg':{'sticky':Tkinter.E,'row':-1, 'column':2}})
+            'gridcfg':{'sticky':tkinter.E,'row':-1, 'column':2}})
         ifd.append( {'name': 'outlevLab3',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'detailed output \nfor each step:',
-            'gridcfg':{'sticky':Tkinter.E, 'row':-1,'columnspan':2,'column':3}})
+            'gridcfg':{'sticky':tkinter.E, 'row':-1,'columnspan':2,'column':3}})
         ifd.append( {'name': 'outlevRB3',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.outlev,
             'wcfg': {'value':3},
-            'gridcfg':{'sticky':Tkinter.E,'row':-1, 'column':5}})
+            'gridcfg':{'sticky':tkinter.E,'row':-1, 'column':5}})
         ifd.append( {'name': 'rmstolLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{
                 'text': 'RMS Cluster Tolerance (Angstrom):',
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'rmstolEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'textvariable': self.rmstol,
             },
-            'gridcfg':{'sticky':Tkinter.E,'row':-1, 'column':2, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.E,'row':-1, 'column':2, 'columnspan':6}})
         ifd.append( {'name': 'rmsrefLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{
                 'text': 'Reference structure file for RMS calc:',
             },
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'rmsrefEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{
                 'textvariable': self.rmsref,
             },
-            'gridcfg':{'sticky':Tkinter.E,'row':-1, 'column':2, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.E,'row':-1, 'column':2, 'columnspan':6}})
         ifd.append( {'name': 'analysisChoiceLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'for results of a docking: ',
-            'gridcfg':{'sticky':Tkinter.W +Tkinter.E, 'columnspan':6}})
+            'gridcfg':{'sticky':tkinter.W +tkinter.E, 'columnspan':6}})
         ifd.append( {'name': 'analysisLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'perform a cluster analysis:',
-            'gridcfg':{'sticky':Tkinter.E}})
+            'gridcfg':{'sticky':tkinter.E}})
         ifd.append({'name': 'analysisRB',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':1},
             'variable': self.analysis,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1,'column':1}})
+            'gridcfg':{'sticky':tkinter.W, 'row':-1,'column':1}})
         ifd.append( {'name': 'noanalysisLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'do no analysis:',
-            'gridcfg':{'sticky':Tkinter.E,'row':-1,'columnspan':3, 'column':2}})
+            'gridcfg':{'sticky':tkinter.E,'row':-1,'columnspan':3, 'column':2}})
         ifd.append({'name': 'noanalysisRB',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':0},
             'variable': self.analysis,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':5}})
+            'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':5}})
         ifd.append( {'name': 'write_allLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': '(for clustering multi-job output only:\nWrite all conformations in a cluster:',
-            'gridcfg':{'sticky':Tkinter.E}})
+            'gridcfg':{'sticky':tkinter.E}})
         ifd.append({'name': 'write_allRB',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':1},
             'variable': self.write_all_flag,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1,'column':1}})
+            'gridcfg':{'sticky':tkinter.W, 'row':-1,'column':1}})
         ifd.append( {'name': 'nowrite_allLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'do not write all conformations:',
-            'gridcfg':{'sticky':Tkinter.E,'row':-1,'columnspan':3, 'column':2}})
+            'gridcfg':{'sticky':tkinter.E,'row':-1,'columnspan':3, 'column':2}})
         ifd.append({'name': 'nowrite_allRB',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg': {'value':0},
             'variable': self.write_all_flag,
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':5}})
+            'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':5}})
         ifd.append({'name': 'acceptB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Accept',
             'wcfg':{'bd':4},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':3},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':3},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Close',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':-1, 'column':3,\
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':-1, 'column':3,\
                 'columnspan':3},
             'command':self.Close_cb})
         self.form = self.vf.getUserInput(self.ifd, modal=0, blocking=0)
@@ -4815,9 +4815,9 @@ class SetDockingRunParms(MVCommand):
         if val != oldval:
             changeVals['tstep'] = val
 
-        if len(changeVals.keys())>0:
+        if len(list(changeVals.keys()))>0:
             changeVals['topCommand'] = 0
-            apply(self.doitWrapper, (), changeVals)
+            self.doitWrapper(*(), **changeVals)
         self.form.withdraw()
 
 
@@ -4827,7 +4827,7 @@ class SetDockingRunParms(MVCommand):
 
     def doit(self, *args, **kw):
         #print 'in docking run doit'
-        apply(self.vf.ADdpf_setDpo, (), kw)
+        self.vf.ADdpf_setDpo(*(), **kw)
 
 
     def set_seeds(self):
@@ -4929,107 +4929,107 @@ class SetAutoDock4Parameters(MVCommand):
         ifd = self.ifd = InputFormDescr(title = self.ifd_title)
         #ifd = self.ifd = InputFormDescr(title = "Set AutoDock4 Options")
         # for the new AD4 parameters
-        self.pfile_flag = Tkinter.IntVar(master=self.vf.GUI.ROOT)   #whether to include parameter_file keyword in dpf
+        self.pfile_flag = tkinter.IntVar(master=self.vf.GUI.ROOT)   #whether to include parameter_file keyword in dpf
         self.pfile_flag.set(0)
-        self.parameter_file=Tkinter.StringVar(master=self.vf.GUI.ROOT)                 #AD4 specific
+        self.parameter_file=tkinter.StringVar(master=self.vf.GUI.ROOT)                 #AD4 specific
         self.parameter_file.set("")
         #self.parameter_file.set(self.param_file)
         #self.parameter_file.set("AD4_parameters.dat")
         #self.include_1_4_interactions_flag = Tkinter.IntVar(master=self.vf.GUI.ROOT)   #AD4 specific
         #self.include_1_4_interactions = Tkinter.StringVar(master=self.vf.GUI.ROOT)     #AD4 specific
         #self.include_1_4_interactions.set("1.0")
-        self.unbound = Tkinter.StringVar(master=self.vf.GUI.ROOT)                      #AD4 specific
+        self.unbound = tkinter.StringVar(master=self.vf.GUI.ROOT)                      #AD4 specific
         self.unbound.set("0.0")
-        self.epdb_flag = Tkinter.IntVar(master=self.vf.GUI.ROOT)                       #AD4 specific
+        self.epdb_flag = tkinter.IntVar(master=self.vf.GUI.ROOT)                       #AD4 specific
         self.epdb_flag.set(0)
         #self.epdb = Tkinter.StringVar(master=self.vf.GUI.ROOT)                         #AD4 specific
-        self.compute_unbound_extended_flag = Tkinter.IntVar(master=self.vf.GUI.ROOT)   #AD4 specific
+        self.compute_unbound_extended_flag = tkinter.IntVar(master=self.vf.GUI.ROOT)   #AD4 specific
         self.compute_unbound_extended_flag.set(1)
-        self.rmsatoms = Tkinter.StringVar(master=self.vf.GUI.ROOT)                     #AD4 specific
+        self.rmsatoms = tkinter.StringVar(master=self.vf.GUI.ROOT)                     #AD4 specific
         self.rmsatoms.set('ligand_only')                        #AD4 specific
         #start AD4 specific:
         ifd.append({'name': 'pfileLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'Include parameter_file in dpf:',
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'include_pfile_flag',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.pfile_flag,
             'text': 'Yes',
             'wcfg': {'value':'1'},
             'command': self.showParamFile_cb,
-            'gridcfg':{'sticky':Tkinter.W,'row':-1, 'columnspan':2,'column':2}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1, 'columnspan':2,'column':2}})
         ifd.append( {'name': 'dont_include_pfile_flag',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.pfile_flag,
             'text': 'No',
             'command': self.showParamFile_cb,
             'wcfg': {'value':'0'},
-            'gridcfg':{'sticky':Tkinter.W,'row':-1,'columnspan':2, 'column':4}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1,'columnspan':2, 'column':4}})
         ifd.append({'name': 'parameter_fileLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'Enter parameter filename:',
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'columnspan':4}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'columnspan':4}})
         ifd.append( {'name': 'parameter_fileEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{ 'textvariable': self.parameter_file},
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':4}})
+            'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':4}})
         ifd.append( {'name': 'compute_unbound_extended_flagLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'compute_unbound_extended?:',
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'compute_unbound_extendedRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.compute_unbound_extended_flag,
             'text': 'Yes',
             'wcfg': {'value':1},
-            'gridcfg':{'sticky':Tkinter.W,'row':-1, 'columnspan':2,'column':2}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1, 'columnspan':2,'column':2}})
         ifd.append( {'name': 'compute_unbound_extendedRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.compute_unbound_extended_flag,
             'text': 'No',
             'wcfg': {'value':0},
-            'gridcfg':{'sticky':Tkinter.W,'row':-1,'columnspan':2, 'column':4}}) 
+            'gridcfg':{'sticky':tkinter.W,'row':-1,'columnspan':2, 'column':4}}) 
         ifd.append({'name': 'unboundLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'Enter unbound ligand energy:',
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'columnspan':4}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'columnspan':4}})
         ifd.append( {'name': 'unboundEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{ 'textvariable': self.unbound},
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':4}})
+            'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':4}})
         ifd.append( {'name': 'rmsatoms_lab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'for rms calculation use:',
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'rmsatomsRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.rmsatoms,
             'text': 'ligand_only',
             'wcfg': {'value':'ligand_only'},
-            'gridcfg':{'sticky':Tkinter.W,'row':-1, 'columnspan':2,'column':2}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1, 'columnspan':2,'column':2}})
         ifd.append( {'name': 'rmsatomsRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.rmsatoms,
             'text': 'ligand and flexible residues',
             'wcfg': {'value':'all'},
-            'gridcfg':{'sticky':Tkinter.W,'row':-1,'columnspan':2, 'column':4}}) 
+            'gridcfg':{'sticky':tkinter.W,'row':-1,'columnspan':2, 'column':4}}) 
         ifd.append( {'name': 'epdb_flagLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'epdb?:',
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'epdbRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.epdb_flag,
             'text': 'Yes',
             'wcfg': {'value':'1'},
-            'gridcfg':{'sticky':Tkinter.W,'row':-1, 'columnspan':2,'column':2}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1, 'columnspan':2,'column':2}})
         ifd.append( {'name': 'epdbRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.epdb_flag,
             'text': 'No',
             'wcfg': {'value':'0'},
-            'gridcfg':{'sticky':Tkinter.W,'row':-1,'columnspan':2, 'column':4}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1,'columnspan':2, 'column':4}})
         #ifd.append({'name': 'epdbLab',
         #    'widgetType':Tkinter.Label,
         #    'text': 'Enter filename for epdb calculation:',
@@ -5040,15 +5040,15 @@ class SetAutoDock4Parameters(MVCommand):
         #    'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':4}})
         #end AD4 specific:
         ifd.append({'name': 'acceptB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Accept',
             'wcfg':{'bd':4},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':3},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':3},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Close',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':-1, 'column':3,\
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':-1, 'column':3,\
                 'columnspan':3},
             'command':self.Close_cb})
     
@@ -5102,9 +5102,9 @@ class SetAutoDock4Parameters(MVCommand):
         if self.vf.dpo['rmsatoms']['value']!= val:
             changeVals['rmsatoms_flag'] =  1
             changeVals['rmsatoms'] =  val
-        if len(changeVals.keys())>0:
+        if len(list(changeVals.keys()))>0:
             changeVals['topCommand'] = 0
-            apply(self.doitWrapper, (), changeVals)
+            self.doitWrapper(*(), **changeVals)
         self.form.withdraw()
 
     def Close_cb(self, event=None):
@@ -5113,7 +5113,7 @@ class SetAutoDock4Parameters(MVCommand):
 
     def doit(self, *args, **kw):
         #print 'in set AutoDock4 parameters doit'
-        apply(self.vf.ADdpf_setDpo, (), kw)
+        self.vf.ADdpf_setDpo(*(), **kw)
 
 
 SetAutoDock4ParametersGUI=CommandGUI()
@@ -5146,51 +5146,51 @@ class SetAutoDock41Parameters(MVCommand):
         ifd = self.ifd = InputFormDescr(title = self.ifd_title)
         #ifd = self.ifd = InputFormDescr(title = "Set AutoDock4 Options")
         # for the new AD4 parameters
-        self.pfile_flag = Tkinter.IntVar(master=self.vf.GUI.ROOT)   #whether to include parameter_file keyword in dpf
+        self.pfile_flag = tkinter.IntVar(master=self.vf.GUI.ROOT)   #whether to include parameter_file keyword in dpf
         self.pfile_flag.set(0)
-        self.parameter_file=Tkinter.StringVar(master=self.vf.GUI.ROOT)                 #AD4 specific
+        self.parameter_file=tkinter.StringVar(master=self.vf.GUI.ROOT)                 #AD4 specific
         self.parameter_file.set("")
         #self.parameter_file.set(self.param_file)
         #self.parameter_file.set("AD4_parameters.dat")
         #self.include_1_4_interactions_flag = Tkinter.IntVar(master=self.vf.GUI.ROOT)   #AD4 specific
         #self.include_1_4_interactions = Tkinter.StringVar(master=self.vf.GUI.ROOT)     #AD4 specific
         #self.include_1_4_interactions.set("1.0")
-        self.unbound = Tkinter.StringVar(master=self.vf.GUI.ROOT)                      #AD4 specific
+        self.unbound = tkinter.StringVar(master=self.vf.GUI.ROOT)                      #AD4 specific
         self.unbound.set("0.0")
-        self.epdb_flag = Tkinter.IntVar(master=self.vf.GUI.ROOT)                       #AD4 specific
+        self.epdb_flag = tkinter.IntVar(master=self.vf.GUI.ROOT)                       #AD4 specific
         self.epdb_flag.set(0)
         #self.epdb = Tkinter.StringVar(master=self.vf.GUI.ROOT)                         #AD4 specific
         #self.compute_unbound_extended_flag = Tkinter.IntVar(master=self.vf.GUI.ROOT)   #AD4 specific
         #self.compute_unbound_extended_flag.set(1)
-        self.rmsatoms = Tkinter.StringVar(master=self.vf.GUI.ROOT)                     #AD4 specific
+        self.rmsatoms = tkinter.StringVar(master=self.vf.GUI.ROOT)                     #AD4 specific
         self.rmsatoms.set('ligand_only')                        #AD4 specific
         #start AD4.1 specific:
         ifd.append({'name': 'pfileLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'Include parameter_file in dpf:',
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'include_pfile_flag',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.pfile_flag,
             'text': 'Yes',
             'wcfg': {'value':'1'},
             'command': self.showParamFile_cb,
-            'gridcfg':{'sticky':Tkinter.W,'row':-1, 'columnspan':2,'column':2}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1, 'columnspan':2,'column':2}})
         ifd.append( {'name': 'dont_include_pfile_flag',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.pfile_flag,
             'text': 'No',
             'command': self.showParamFile_cb,
             'wcfg': {'value':'0'},
-            'gridcfg':{'sticky':Tkinter.W,'row':-1,'columnspan':2, 'column':4}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1,'columnspan':2, 'column':4}})
         ifd.append({'name': 'parameter_fileLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'Enter parameter_file:',
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'columnspan':4}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'columnspan':4}})
         ifd.append( {'name': 'parameter_fileEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{ 'textvariable': self.parameter_file},
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':4}})
+            'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':4}})
         #ifd.append( {'name': 'include_1_4_Lab1',
         #    'widgetType':Tkinter.Label,
         #    'text': 'Include 1_4 interactions:',
@@ -5216,37 +5216,37 @@ class SetAutoDock41Parameters(MVCommand):
         #    'wcfg':{ 'textvariable': self.include_1_4_interactions},
         #    'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':4}})
         ifd.append( {'name': 'rmsatoms_lab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'for rms calculation use:',
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'rmsatomsRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.rmsatoms,
             'text': 'ligand_only',
             'wcfg': {'value':'ligand_only'},
-            'gridcfg':{'sticky':Tkinter.W,'row':-1, 'columnspan':2,'column':2}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1, 'columnspan':2,'column':2}})
         ifd.append( {'name': 'rmsatomsRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.rmsatoms,
             'text': 'ligand and flexible residues',
             'wcfg': {'value':'all'},
-            'gridcfg':{'sticky':Tkinter.W,'row':-1,'columnspan':2, 'column':4}}) 
+            'gridcfg':{'sticky':tkinter.W,'row':-1,'columnspan':2, 'column':4}}) 
         ifd.append( {'name': 'epdb_flagLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text': 'epdb?:',
-            'gridcfg':{'sticky':Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.E, 'columnspan':2}})
         ifd.append( {'name': 'epdbRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.epdb_flag,
             'text': 'Yes',
             'wcfg': {'value':'1'},
-            'gridcfg':{'sticky':Tkinter.W,'row':-1, 'columnspan':2,'column':2}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1, 'columnspan':2,'column':2}})
         ifd.append( {'name': 'epdbRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'variable': self.epdb_flag,
             'text': 'No',
             'wcfg': {'value':'0'},
-            'gridcfg':{'sticky':Tkinter.W,'row':-1,'columnspan':2, 'column':4}})
+            'gridcfg':{'sticky':tkinter.W,'row':-1,'columnspan':2, 'column':4}})
         #ifd.append({'name': 'epdbLab',
         #    'widgetType':Tkinter.Label,
         #    'text': 'Enter filename for epdb calculation:',
@@ -5257,15 +5257,15 @@ class SetAutoDock41Parameters(MVCommand):
         #    'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':4}})
         #end AD4 specific:
         ifd.append({'name': 'acceptB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Accept',
             'wcfg':{'bd':4},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':3},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':3},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Close',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':-1, 'column':3,\
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':-1, 'column':3,\
                 'columnspan':3},
             'command':self.Close_cb})
     
@@ -5310,9 +5310,9 @@ class SetAutoDock41Parameters(MVCommand):
         if self.vf.dpo['rmsatoms']['value']!= val:
             changeVals['rmsatoms_flag'] =  1
             changeVals['rmsatoms'] =  val
-        if len(changeVals.keys())>0:
+        if len(list(changeVals.keys()))>0:
             changeVals['topCommand'] = 0
-            apply(self.doitWrapper, (), changeVals)
+            self.doitWrapper(*(), **changeVals)
         self.form.withdraw()
 
 
@@ -5321,7 +5321,7 @@ class SetAutoDock41Parameters(MVCommand):
 
 
     def doit(self, *args, **kw):
-        apply(self.vf.ADdpf_setDpo, (), kw)
+        self.vf.ADdpf_setDpo(*(), **kw)
 
 
 SetAutoDock41ParametersGUI=CommandGUI()
@@ -5334,7 +5334,7 @@ class StopAutoDpf(MVCommand):
     """hides the autotools menubar and """
 
     def __call__(self, **kw):
-        apply(self.doitWrapper, (), kw)
+        self.doitWrapper(*(), **kw)
 
     def doit(self):
         if hasattr(self.vf,'ADtors_init'):
@@ -5397,11 +5397,11 @@ def initModule(vf):
         vf.addCommand(dict['cmd'], dict['name'], dict['gui'])
 
     if vf.hasGui:
-        for item in vf.GUI.menuBars['AutoToolsBar'].menubuttons.values():
+        for item in list(vf.GUI.menuBars['AutoToolsBar'].menubuttons.values()):
             item.configure(background = 'tan')
         if not hasattr(vf.GUI, 'adtBar'):
             vf.GUI.adtBar = vf.GUI.menuBars['AutoToolsBar']
-            vf.GUI.adtFrame = vf.GUI.adtBar.menubuttons.values()[0].master
+            vf.GUI.adtFrame = list(vf.GUI.adtBar.menubuttons.values())[0].master
 
 
 

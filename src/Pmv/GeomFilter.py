@@ -12,12 +12,12 @@ class GeomFilter:
 
             # build a dict of all geoms that do display something
             gd = {}
-            for gname, g in gc.geoms.items():
+            for gname, g in list(gc.geoms.items()):
                 if len(g.getVertices())>0:
                     gd[gname] = g
 
             # lines
-            if gd.has_key('bonded'):
+            if 'bonded' in gd:
                 geoms.append( ("    "+'lines', [gc.geoms['lines']]))
                 #del gd['lines']
                 #del gd['bonded']
@@ -25,18 +25,18 @@ class GeomFilter:
                 #del gd['bondorder']
 
             # surface
-            for gname, x in gc.msms.items():
-                if gd.has_key(gname):
+            for gname, x in list(gc.msms.items()):
+                if gname in gd:
                     geoms.append( ("    "+gname, [gd[gname]]))
                     #del gd[gname]
 
             # cpk
-            if gd.has_key('cpk'):
+            if 'cpk' in gd:
                 geoms.append( ("    "+'cpk', [gd['cpk']]))
                 #del gd['cpk']
             
             # sticks and balls
-            if gd.has_key('sticks') and gd.has_key('balls'):
+            if 'sticks' in gd and 'balls' in gd:
                 g = gd['sticks']
                 if len(g.getFaces()):
                     geoms.append( ("    "+'ball & stick',
@@ -45,14 +45,14 @@ class GeomFilter:
                 #del gd['balls']
 
             # CA trace
-            if gd.has_key('CAsticks') and gd.has_key('CAballs'):                
+            if 'CAsticks' in gd and 'CAballs' in gd:                
                 geoms.append( ("    "+'CA trace',
                                [gd['CAsticks'], gd['CAballs']]))
                 #del gd['CAsticks']
                 #del gd['CAballs']
 
             # secondary structure
-            if gc.geoms.has_key('secondarystructure'):
+            if 'secondarystructure' in gc.geoms:
                 # check if any of it is displayed
                 # only add it if there is at least 1 triangle
                 found = False
@@ -65,24 +65,24 @@ class GeomFilter:
                                    [gc.geoms['secondarystructure']]))
 
             # labels
-            if gd.has_key('AtomLabels'):
+            if 'AtomLabels' in gd:
                 geoms.append( ("    Atom labels", [gd['AtomLabels']]))
                 #del gd['AtomLabels']
             
-            if gd.has_key('ResidueLabels'):
+            if 'ResidueLabels' in gd:
                 geoms.append( ("    Residue labels", [gd['ResidueLabels']]))
                 #del gd['ResidueLabels']
             
-            if gd.has_key('ChainLabels'):
+            if 'ChainLabels' in gd:
                 geoms.append( ("    Chain labels", [gd['ChainLabels']]))
                 #del gd['ChainLabels']
             
-            if gd.has_key('ProteinLabels'):
+            if 'ProteinLabels' in gd:
                 geoms.append( ("    Protein labels", [gd['ProteinLabels']]))
                 #del gd['ProteinLabels']
 
             # coarse molecular surface
-            if gd.has_key('CoarseMolSurface'):
+            if 'CoarseMolSurface' in gd:
                 geoms.append( ("    Coarse surface", [gd['CoarseMolSurface']]))
                 #del gd['CoarseMolSurface']
 

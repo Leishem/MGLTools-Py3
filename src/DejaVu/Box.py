@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -14,21 +14,21 @@
 # $Id: Box.py,v 1.36 2009/09/03 19:24:15 annao Exp $
 #
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from opengltk.OpenGL import GL
 
 from DejaVu.IndexedPolygons import IndexedPolygons
 from DejaVu.Geom import Geom
 from DejaVu.IndexedGeom import IndexedGeom
-import datamodel
-import viewerConst
+from . import datamodel
+from . import viewerConst
 from DejaVu.viewerFns import checkKeywords
 
 def uniq(objectSequence):
     """ returns a list with no duplicates"""
     d = {}
     for o in objectSequence: d[id(o)] = o
-    return d.values()
+    return list(d.values())
 
 
 class CallBackFunction:
@@ -42,7 +42,7 @@ class CallBackFunction:
     def __call__(self, *args, **kw):
         args = self.args + args
         kw.update(self.kw)
-        return apply(self.function, args, kw)
+        return self.function(*args, **kw)
 
 
 class Box(IndexedPolygons):
@@ -153,7 +153,7 @@ class Box(IndexedPolygons):
 
         self.pickableVertices = 1
         kw['frontPolyMode'] = 'line'
-        apply( IndexedPolygons.__init__, (self, name, check), kw )
+        IndexedPolygons.__init__(*(self, name, check), **kw)
         self.inheritMaterial = 0
         
         #print 'calling self.Set with ', kw.get('materials')
@@ -178,7 +178,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         redoFlags = 0
 
         #newKeyList is list of keys specified in call to Set
-        newKeyList = kw.keys()
+        newKeyList = list(kw.keys())
 
         # Setting both center AND origin is a special case
         # which sets all side lengths
@@ -194,7 +194,7 @@ updateOwnGui=True : allow to update owngui at the end this func
             newKeyList.extend(['xside','yside', 'zside'])
             newKeyList = uniq(newKeyList)
 
-        apply(self.updateVal, (['xside','yside','zside'],),kw)
+        self.updateVal(*(['xside','yside','zside'],), **kw)
 
         #these are either 1 or None
         self.maxCube = kw.get('maxCube')
@@ -222,7 +222,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                 else:
                     del kw[key]
                     f = self.funcs[key]
-                cornerPoints = apply(f, (newVal,),{})
+                cornerPoints = f(*(newVal,), **{})
 
         #if cornerPoints are specified, they override other info
         newcornerPoints = kw.get('cornerPoints')
@@ -252,7 +252,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         if kw.get('faces') is None:
             kw['faces'] = self.faces
 
-        redoFlags |= apply( IndexedPolygons.Set, (self, check, 0), kw )
+        redoFlags |= IndexedPolygons.Set(*(self, check, 0), **kw)
 
         return self.redoNow(redo, updateOwnGui, redoFlags)
 
@@ -428,7 +428,7 @@ class GridBox(Box):
             spacing = (.375,.375,.375)
             kw['spacing'] = (.375, .375, .375)
 
-        apply( Box.__init__, (self, name, check), kw )
+        Box.__init__(*(self, name, check), **kw)
 
 
     def Set(self, check=1, redo=1, updateOwnGui=True, **kw):
@@ -437,10 +437,10 @@ check=1 : verify that all the keywords present can be handle by this func
 redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
-        redoFlags = apply( Box.Set, (self, check, 0), kw)
+        redoFlags = Box.Set(*(self, check, 0), **kw)
 
         #newKeyList is list of keys specified in call to Set
-        newKeyList = kw.keys()
+        newKeyList = list(kw.keys())
         npts= kw.get('npts')
         if npts:
             kw['xnpts'] = npts
@@ -459,8 +459,8 @@ updateOwnGui=True : allow to update owngui at the end this func
         newKeyList = uniq(newKeyList)
 
         #update all 6 attributes
-        apply(self.updateVal, (['xnpts','ynpts','znpts', 'xspacing',\
-            'yspacing', 'zspacing'],),kw)
+        self.updateVal(*(['xnpts','ynpts','znpts', 'xspacing',\
+            'yspacing', 'zspacing'],), **kw)
 
         if 'xnpts' in newKeyList or 'xspacing' in newKeyList:
             kw['xside'] = self.xnpts*self.xspacing

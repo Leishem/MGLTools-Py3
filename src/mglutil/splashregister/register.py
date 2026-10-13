@@ -3,15 +3,15 @@
 # $Header: /opt/cvs/python/packages/share1.5/mglutil/splashregister/register.py,v 1.21.2.6 2014/09/16 23:20:40 annao Exp $
 # $Date: 2014/09/16 23:20:40 $
 # $Id: register.py,v 1.21.2.6 2014/09/16 23:20:40 annao Exp $
-import Tkinter, tkMessageBox, Pmw
-import os, sys, socket, httplib, urllib, pickle, time, shutil
+import tkinter, tkinter.messagebox, Pmw
+import os, sys, socket, http.client, urllib.request, urllib.parse, urllib.error, pickle, time, shutil
 from mglutil.util.packageFilePath import getResourceFolderWithVersion, getResourceFolder
 
 class Register_User:
     """Opens TopLevel Dialog for User Registration"""
     def __init__(self, version=None):
         self.version = version
-        master = Tkinter.Toplevel()
+        master = tkinter.Toplevel()
         self.master = master
         #font = self.master.option_get('font', '*')
         #self.master.option_add('*font',"Times 12 bold")
@@ -21,46 +21,46 @@ class Register_User:
         self.master.geometry(geometry)
         #self.master.config(font="Helvetica 10 bold italic")
         master.title("MGLTools Registration Form")
-        Tkinter.Label(master, text="MGLTools Registration Form").\
+        tkinter.Label(master, text="MGLTools Registration Form").\
                                                         grid(row=0,columnspan=5)
         text = """This data will be kept confidential and will not be made available to any third party."""
-        Tkinter.Label(master, text=text).grid(row=1,columnspan=5)
+        tkinter.Label(master, text=text).grid(row=1,columnspan=5)
         
-        Tkinter.Label(master, text="Fields in Red are Required",fg="Red" ).\
+        tkinter.Label(master, text="Fields in Red are Required",fg="Red" ).\
                                                         grid(row=2,columnspan=5)            
         
-        Tkinter.Label(master, text="First Name", fg='Red').grid(row=3,sticky='W')
-        Tkinter.Label(master, text="Last Name", fg='Red').grid(row=4,sticky='W')
-        Tkinter.Label(master, text="Email", fg='Red').grid(row=5,sticky='W')
-        Tkinter.Label(master, text="Institution", fg='Red').grid(row=6,sticky='W')
-        Tkinter.Label(master, text="Institution Type", fg='Red').grid(row=7,sticky='W')
-        Tkinter.Label(master, text="Position").grid(row=8,sticky='W')    
-        Tkinter.Label(master, text="Department", ).grid(row=9,sticky='W')
+        tkinter.Label(master, text="First Name", fg='Red').grid(row=3,sticky='W')
+        tkinter.Label(master, text="Last Name", fg='Red').grid(row=4,sticky='W')
+        tkinter.Label(master, text="Email", fg='Red').grid(row=5,sticky='W')
+        tkinter.Label(master, text="Institution", fg='Red').grid(row=6,sticky='W')
+        tkinter.Label(master, text="Institution Type", fg='Red').grid(row=7,sticky='W')
+        tkinter.Label(master, text="Position").grid(row=8,sticky='W')    
+        tkinter.Label(master, text="Department", ).grid(row=9,sticky='W')
     
-        Tkinter.Label(master, text="      ").grid(row=6,column=2) #placeholder
-        Tkinter.Label(master, text="Address").grid(row=3,column=3,sticky='W')
-        Tkinter.Label(master, text="City" ).grid(row=4,column=3,sticky='W')
-        Tkinter.Label(master, text="State" ).grid(row=5,column=3,sticky='W')
-        Tkinter.Label(master, text="PostalCode").grid(row=6,column=3,sticky='W')
-        Tkinter.Label(master, text="Country").grid(row=7,column=3,sticky='W')
-        Tkinter.Label(master, text="Phone").grid(row=8,column=3,sticky='W')
-        Tkinter.Label(master, text="Fax").grid(row=9,column=3,sticky='W')
+        tkinter.Label(master, text="      ").grid(row=6,column=2) #placeholder
+        tkinter.Label(master, text="Address").grid(row=3,column=3,sticky='W')
+        tkinter.Label(master, text="City" ).grid(row=4,column=3,sticky='W')
+        tkinter.Label(master, text="State" ).grid(row=5,column=3,sticky='W')
+        tkinter.Label(master, text="PostalCode").grid(row=6,column=3,sticky='W')
+        tkinter.Label(master, text="Country").grid(row=7,column=3,sticky='W')
+        tkinter.Label(master, text="Phone").grid(row=8,column=3,sticky='W')
+        tkinter.Label(master, text="Fax").grid(row=9,column=3,sticky='W')
         
-        self.e_First_Name = Tkinter.Entry(master,bg="White")
-        self.e_Last_Name = Tkinter.Entry(master,bg="White")
-        self.e_Email = Tkinter.Entry(master,bg="White")
-        self.e_Institution = Tkinter.Entry(master,bg="White")
+        self.e_First_Name = tkinter.Entry(master,bg="White")
+        self.e_Last_Name = tkinter.Entry(master,bg="White")
+        self.e_Email = tkinter.Entry(master,bg="White")
+        self.e_Institution = tkinter.Entry(master,bg="White")
         self.e_Institution_Type = Pmw.OptionMenu(master, items = 
                   ['Academic','Government','Commercial'], menubutton_width = 16)
-        self.e_Position = Tkinter.Entry(master,bg="White")
-        self.e_Department = Tkinter.Entry(master,bg="White")
-        self.e_Address = Tkinter.Entry(master,bg="White")
-        self.e_City = Tkinter.Entry(master,bg="White")
-        self.e_State = Tkinter.Entry(master,bg="White")
-        self.e_PostalCode = Tkinter.Entry(master,bg="White")
-        self.e_Country = Tkinter.Entry(master,bg="White")
-        self.e_Phone = Tkinter.Entry(master,bg="White")
-        self.e_Fax = Tkinter.Entry(master,bg="White")
+        self.e_Position = tkinter.Entry(master,bg="White")
+        self.e_Department = tkinter.Entry(master,bg="White")
+        self.e_Address = tkinter.Entry(master,bg="White")
+        self.e_City = tkinter.Entry(master,bg="White")
+        self.e_State = tkinter.Entry(master,bg="White")
+        self.e_PostalCode = tkinter.Entry(master,bg="White")
+        self.e_Country = tkinter.Entry(master,bg="White")
+        self.e_Phone = tkinter.Entry(master,bg="White")
+        self.e_Fax = tkinter.Entry(master,bg="White")
         self.e_First_Name.grid(row=3, column=1)
         self.e_Last_Name.grid(row=4, column=1)
         self.e_Email.grid(row=5, column=1)
@@ -76,52 +76,52 @@ class Register_User:
         self.e_Phone.grid(row=8, column=4)
         self.e_Fax.grid(row=9, column=4)
 
-        mgl_group = Tkinter.LabelFrame(master, text="Which of the "+ 
+        mgl_group = tkinter.LabelFrame(master, text="Which of the "+ 
 "following program(s) are you planning to use?",labelanchor='n')
         mgl_group.grid(row=11,columnspan=8,sticky='WESN',pady=5) 
-        label_message = Tkinter.Label(mgl_group, text="Check all that apply")
+        label_message = tkinter.Label(mgl_group, text="Check all that apply")
         label_message.grid(row=12,columnspan=5) 
-        self.adt_var = Tkinter.IntVar()
-        checkbutton = Tkinter.Checkbutton(mgl_group, 
+        self.adt_var = tkinter.IntVar()
+        checkbutton = tkinter.Checkbutton(mgl_group, 
                text="AutoDockTools      ", variable=self.adt_var)
         checkbutton.grid(row=13, column=0)
 
-        self.pmv_var = Tkinter.IntVar()
-        checkbutton = Tkinter.Checkbutton(mgl_group, 
+        self.pmv_var = tkinter.IntVar()
+        checkbutton = tkinter.Checkbutton(mgl_group, 
                                text="PMV       ", variable=self.pmv_var)
         checkbutton.grid(row=13,column=2)
 
-        self.vision_var = Tkinter.IntVar()
-        checkbutton = Tkinter.Checkbutton(mgl_group, text="Vision      ", 
+        self.vision_var = tkinter.IntVar()
+        checkbutton = tkinter.Checkbutton(mgl_group, text="Vision      ", 
                                            variable=self.vision_var)
         checkbutton.grid(row=13,column=4)
 
-        self.DejaVu_var = Tkinter.IntVar()
-        checkbutton = Tkinter.Checkbutton(mgl_group, text="DejaVu", 
+        self.DejaVu_var = tkinter.IntVar()
+        checkbutton = tkinter.Checkbutton(mgl_group, text="DejaVu", 
                                            variable=self.DejaVu_var)
         checkbutton.grid(row=13,column=5)
 
-        bin_source = Tkinter.LabelFrame(master, text="Did you install MGLTools "+ 
+        bin_source = tkinter.LabelFrame(master, text="Did you install MGLTools "+ 
 "from Binary and/or Source?",labelanchor='n')
         bin_source.grid(row=14,columnspan=8,sticky='WESN',pady=5) 
         
-        self.bin_var = Tkinter.IntVar()
-        checkbutton = Tkinter.Checkbutton(bin_source, 
+        self.bin_var = tkinter.IntVar()
+        checkbutton = tkinter.Checkbutton(bin_source, 
                text="Binary     ", variable=self.bin_var)
         checkbutton.grid(row=15, column=0)
         
-        self.source_var = Tkinter.IntVar()
-        checkbutton = Tkinter.Checkbutton(bin_source, 
+        self.source_var = tkinter.IntVar()
+        checkbutton = tkinter.Checkbutton(bin_source, 
                                text="Source       ", variable=self.source_var)
         checkbutton.grid(row=15,column=2)
-        self.label_message = Tkinter.Label(master, text="")
+        self.label_message = tkinter.Label(master, text="")
         self.label_message.grid(row=16,columnspan=5) #placeholder
         
-        self.regButton =  Tkinter.Button(master, text='Register',
+        self.regButton =  tkinter.Button(master, text='Register',
                                                           command=self.Register)
         self.regButton.grid(row=17,column=1,columnspan=2)
     
-        Tkinter.Button(master, text='Cancel',
+        tkinter.Button(master, text='Cancel',
                        command=self.Cancel).grid(row=17, column=3, columnspan=2,
                                                                          pady=2)
         #if font:
@@ -245,12 +245,12 @@ class Register_User:
         except:
             form_dict['hostname'] = "problem"
 
-        params = urllib.urlencode(form_dict)
+        params = urllib.parse.urlencode(form_dict)
         self.label_message.configure(text = 'Please Wait', fg = 'Red')
         headers = {"Content-type": "application/x-www-form-urlencoded",
                                                          "Accept": "text/plain"}
 #        conn = httplib.HTTPConnection("www.scripps.edu:80")
-        conn = httplib.HTTPConnection("mgldev.scripps.edu:80")
+        conn = http.client.HTTPConnection("mgldev.scripps.edu:80")
         #print conn
 #        try:
 #            conn.request("POST", "/cgi-bin/sanner/register_mgltools.py", params, headers)
@@ -277,17 +277,17 @@ class Register_User:
                 c_reg_file = os.path.join(getResourceFolderWithVersion(),  '.registration')
                 shutil.copy(reg_file, c_reg_file)
             else:
-                tkMessageBox.showerror("ERROR", "Registration failed.")
+                tkinter.messagebox.showerror("ERROR", "Registration failed.")
                 self.regButton.configure(state='normal')
                 return
         else:
-            tkMessageBox.showerror("ERROR", "Unable to connect to Registration Database" +
+            tkinter.messagebox.showerror("ERROR", "Unable to connect to Registration Database" +
             "\nPlease try again")
             self.regButton.configure(state='normal')
             return
         conn.close()        
         self.Cancel()
-        tkMessageBox.showinfo("Thank You", "Thank you for registering MGLTools!")
+        tkinter.messagebox.showinfo("Thank You", "Thank you for registering MGLTools!")
 
     def Cancel(self):
         self.master.destroy()
@@ -303,33 +303,33 @@ class Register_User:
                 f.close()
             except:
                 return
-            if form_dict.has_key("First_Name"):
+            if "First_Name" in form_dict:
                 self.e_First_Name.insert(0, form_dict['First_Name'])
-            if form_dict.has_key("Last_Name"):
+            if "Last_Name" in form_dict:
                 self.e_Last_Name.insert(0, form_dict['Last_Name'])
-            if form_dict.has_key("Email"):
+            if "Email" in form_dict:
                 self.e_Email.insert(0, form_dict['Email'])
-            if form_dict.has_key("Institution"):
+            if "Institution" in form_dict:
                 self.e_Institution.insert(0, form_dict['Institution'])
-            if form_dict.has_key("Institution_Type"):
+            if "Institution_Type" in form_dict:
                 self.e_Institution_Type.setvalue(form_dict['Institution_Type'])
-            if form_dict.has_key("Position"):
+            if "Position" in form_dict:
                 self.e_Position.insert(0, form_dict['Position'])
-            if form_dict.has_key("Department"):
+            if "Department" in form_dict:
                 self.e_Department.insert(0, form_dict['Department'])
-            if form_dict.has_key("Address"):
+            if "Address" in form_dict:
                 self.e_Address.insert(0, form_dict['Address'])
-            if form_dict.has_key("City"):
+            if "City" in form_dict:
                 self.e_City.insert(0, form_dict['City'])
-            if form_dict.has_key("State"):
+            if "State" in form_dict:
                 self.e_State.insert(0, form_dict['State'])
-            if form_dict.has_key("PostalCode"):
+            if "PostalCode" in form_dict:
                 self.e_PostalCode.insert(0, form_dict['PostalCode'])
-            if form_dict.has_key("Country"):
+            if "Country" in form_dict:
                 self.e_Country.insert(0, form_dict['Country'])
-            if form_dict.has_key("Phone"):
+            if "Phone" in form_dict:
                 self.e_Phone.insert(0, form_dict['Phone'])
-            if form_dict.has_key("Fax"):
+            if "Fax" in form_dict:
                 self.e_Fax.insert(0, form_dict['Fax'])
             
         
@@ -353,11 +353,11 @@ class Register_User:
         form_dict = {}
         form_dict['UserID'] = regDict['UserID']
         form_dict['Version'] = regDict['Version']
-        import httplib, urllib
-        params = urllib.urlencode(form_dict)
+        import http.client, urllib.request, urllib.parse, urllib.error
+        params = urllib.parse.urlencode(form_dict)
         headers = {"Content-type": "application/x-www-form-urlencoded",
                                                  "Accept": "text/plain"}
-        conn = httplib.HTTPConnection("www.scripps.edu:80")
+        conn = http.client.HTTPConnection("www.scripps.edu:80")
         conn.request("POST", "/cgi-bin/sanner/update_mgltools_version.py", 
                      params, headers)
         response = conn.getresponse()
@@ -394,6 +394,6 @@ def Update_User(registration):
     pass
 
 if __name__ == '__main__':
-    m = Tkinter.Tk()
+    m = tkinter.Tk()
     Register_User('sd')
     m.mainloop()

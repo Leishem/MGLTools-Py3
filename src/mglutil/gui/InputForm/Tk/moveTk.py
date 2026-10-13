@@ -1,6 +1,6 @@
 
-import tkColorChooser
-import Tkinter
+import tkinter.colorchooser
+import tkinter
 T = Tkinter
 
 from mglutil.util.callback import CallBackFunction
@@ -50,7 +50,7 @@ class MovableWidget:
             'borderwidth':self.getInt,
        
             }
-        self.cc = tkColorChooser.Chooser()
+        self.cc = tkinter.colorchooser.Chooser()
         self.buildMenu()
         
 
@@ -71,13 +71,13 @@ class MovableWidget:
     def setOption_cb(self, option, event=None):
         value = self.optionWidgets[option]()
 ##          print option, value
-        apply( self.widget.configure, (), {option:value} )
+        self.widget.configure(*(), **{option:value})
 
 
     def buildMenu(self):
         self.menu = T.Menu(self.widget.master)
-        for k in self.widget.keys():
-            if k in self.optionWidgets.keys():
+        for k in list(self.widget.keys()):
+            if k in list(self.optionWidgets.keys()):
                 cb = CallBackFunction(self.setOption_cb, k)
                 self.menu.add_command(label=k, command=cb)
 
@@ -92,7 +92,7 @@ class MovableWidget:
         if w: kw['width'] = w
         if h: kw['height'] = h
 ##          print kw['x'], kw['y'], self.posx, self.posy
-        apply( widget.place, (), kw)
+        widget.place(*(), **kw)
 
         
     def enter(self, event=None):

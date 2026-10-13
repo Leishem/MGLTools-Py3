@@ -4,7 +4,7 @@ from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import LoadButton, \
 SaveButton, SliderWidget, ExtendedSliderWidget
 from mglutil.util.callback import CallBackFunction
-import Pmw, Tkinter
+import Pmw, tkinter
 import types
 from Pmv.mvCommand import MVCommand
 from ViewerFramework.VFCommand import CommandGUI
@@ -13,7 +13,7 @@ from Pmv.computeIsovalue import computeIsovalue
 from mglutil.gui.InputForm.Tk.gui import AutoPlaceWidget
 import time
 import numpy
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from types import ListType
 
 class coarseMolSurface(MVCommand):
@@ -65,13 +65,13 @@ class coarseMolSurface(MVCommand):
         self.vf.browseCommands('displayCommands', commands=('DisplayBoundGeom',), log=0, package='Pmv')
 
         if self.vf.hasGui:
-            self.bindFlag = Tkinter.BooleanVar()
+            self.bindFlag = tkinter.BooleanVar()
             self.bindFlag.set(self.bindGeom)
 
-            self.perMolFlag = Tkinter.BooleanVar()
+            self.perMolFlag = tkinter.BooleanVar()
             self.perMolFlag.set(self.perMol)
         
-            self.checkComponentsFlag = Tkinter.BooleanVar()
+            self.checkComponentsFlag = tkinter.BooleanVar()
             self.checkComponentsFlag.set(False)
         
             self.messageDialog = Pmw.MessageDialog(self.vf.master, buttons=(), iconpos = 'w',
@@ -133,13 +133,13 @@ class coarseMolSurface(MVCommand):
             #print "default values:", defaultValues
 
             self.immediate = False
-            ifd.append({'widgetType':Tkinter.Checkbutton,
+            ifd.append({'widgetType':tkinter.Checkbutton,
                         'tooltip':"""enables immediate update of the selected\n input parameter""",
                         'name': 'mode',
                         'defaultValue': self.immediate,
                         'wcfg':{'text':'Immediate',
                                 'command':self.mode_cb,
-                                'variable':Tkinter.BooleanVar()},
+                                'variable':tkinter.BooleanVar()},
                         'gridcfg':{'sticky':'w','columnspan':2 }
                         })
             
@@ -161,7 +161,7 @@ class coarseMolSurface(MVCommand):
             
             ifd.append({'name':'perMol',
                         'tooltip':"""Check to compute a separate surface for each molecule (using selected atoms only).\nUncheck to compute a single surface for all selected atoms (possibly across multiple molecules).""",
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue': self.perMol,
                         'wcfg':{'text':'Per Molecule',
                                 'variable':self.perMolFlag,
@@ -283,7 +283,7 @@ class coarseMolSurface(MVCommand):
                         })
 
 
-            ifd.append({'widgetType':Tkinter.Checkbutton,
+            ifd.append({'widgetType':tkinter.Checkbutton,
                     'tooltip':"""Select/deselect this button to bind/unbind\nsurface to molecule""",
                         'name': 'bindToMolecule',
                         'wcfg':{'text':'Bind Surface to molecule',
@@ -293,7 +293,7 @@ class coarseMolSurface(MVCommand):
                         'gridcfg':{'sticky':'w', 'pady': 10,'columnspan':2 }
                     })
             
-            ifd.append({'widgetType':Tkinter.Checkbutton,
+            ifd.append({'widgetType':tkinter.Checkbutton,
                     'tooltip':"""enable/disable checking for surface components.\nIf two or more componens are found - the largest\nis chosen for output""",
                         'name': 'checkComponents',
                         'wcfg':{'text':'Check surface components',
@@ -303,7 +303,7 @@ class coarseMolSurface(MVCommand):
                     })
             
             ifd.append({'name':'compute',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text':'Compute',
                                 'state': 'normal',
                                 'command':self.compute},
@@ -311,7 +311,7 @@ class coarseMolSurface(MVCommand):
                         })
                         
             ifd.append({'name':'dismiss',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text':'Dismiss',
                                 'command':self.dismiss},
                         'gridcfg':{'sticky':'wne','row': -1, 'column':1}
@@ -429,7 +429,7 @@ class coarseMolSurface(MVCommand):
                             self.isovalue = isovalue
 
                         else:
-                            print "Setting isocontour value to custom"
+                            print("Setting isocontour value to custom")
                             self.set_isovalue("custom")
                             self.isovalue_type = "custom"
                 if immediate:
@@ -437,7 +437,7 @@ class coarseMolSurface(MVCommand):
                     return
 
         if isotype:
-            if type(isotype) == types.StringType:
+            if type(isotype) == bytes:
                 self.isovalue_type = isotype
                 if isotype == 'fast approximation':
                     isovalue = self.piecewiseLinearInterpOnIsovalue(self.surf_resolution)
@@ -485,7 +485,7 @@ class coarseMolSurface(MVCommand):
         nodes = kw.get("nodes")
         if nodes:
             kw["nodes"] = self.vf.expandNodes(nodes)
-        apply(self.doitWrapper, (), kw)
+        self.doitWrapper(*(), **kw)
 
 
     ## methods to compute UTblur grid, isocontour:
@@ -558,7 +558,7 @@ class coarseMolSurface(MVCommand):
             self.isoNormals = norm
             return [vert, tri, norm]
         else:
-            print "Warning: UTisocontourData is None, using saved coords, indices and normals"
+            print("Warning: UTisocontourData is None, using saved coords, indices and normals")
             return [self.isoCoords, self.isoIndices, self.isoNormals]
         
 
@@ -648,7 +648,7 @@ class coarseMolSurface(MVCommand):
         selMols, selAtms = self.vf.getNodesByMolecule(self.vf.selection, Atom)
         lMolSelectedAtmsDict = dict( zip( selMols, selAtms) )
         for surf in surfaces:
-            if hasattr(surf, 'mol') and lMolSelectedAtmsDict.has_key(surf.mol):
+            if hasattr(surf, 'mol') and surf.mol in lMolSelectedAtmsDict:
                 lSelectedAtoms = lMolSelectedAtmsDict[surf.mol]
                 if len(lSelectedAtoms) > 0 and len(surf.vertexSet.vertices) > 0:
                     lAtomVerticesDict = bindcmd.data[surf.fullName]['atomVertices']
@@ -672,7 +672,7 @@ class coarseMolSurface(MVCommand):
         """calback of perMol check button of the input form"""
         ebn = self.ifd.entryByName
         perMol = ebn['perMol']['wcfg']['variable'].get()
-        print  "in perMol_cb:", perMol
+        print("in perMol_cb:", perMol)
         #self.perMol = perMol
         ebn = self.ifd.entryByName
         immediate = ebn['mode']['wcfg']['variable'].get()
@@ -885,7 +885,7 @@ class coarseMolSurface(MVCommand):
             # check if the precise isovalue has been computed vor this atomset and resolution:
             atmsString = atms.buildRepr()
             val = None
-            if self.precise_isovalues.has_key(atmsString):
+            if atmsString in self.precise_isovalues:
                 val = self.precise_isovalues[atmsString].get(res_str)
             else:
                 self.precise_isovalues[atmsString]={}
@@ -900,7 +900,7 @@ class coarseMolSurface(MVCommand):
                     self.messageDialog.show()
                     self.messageDialog.update()
                 else:
-                    print "Please wait. It will take time to compute..."
+                    print("Please wait. It will take time to compute...")
                 val = computeIsovalue(atms, resolution, self.gridSize)
                 if val is not None:
                     isovalue.append(val)
@@ -908,7 +908,7 @@ class coarseMolSurface(MVCommand):
                 if self.vf.hasGui:
                     self.messageDialog.withdraw()
                 else:
-                    print "...done"
+                    print("...done")
         if not len(isovalue):
             isovalue = None
         return isovalue
@@ -952,7 +952,7 @@ class coarseMolSurface(MVCommand):
         kw['nodes'] = self.vf.getSelection().copy()
         kw['padding'] = self.ifd.entryByName['padding']['widget'].get()
         self.dismiss()
-        apply(self.doitWrapper, (), kw)
+        self.doitWrapper(*(), **kw)
         #self.dismiss()
 
 
@@ -962,16 +962,16 @@ class coarseMolSurface(MVCommand):
             pass
         tw.configure(showLabel=0)
         tw.canvas.bind("<ButtonPress-1>", foo)
-	tw.canvas.bind("<ButtonRelease-1>", foo)
-	tw.canvas.bind("<B1-Motion>", foo)
+        tw.canvas.bind("<ButtonRelease-1>", foo)
+        tw.canvas.bind("<B1-Motion>", foo)
         tw.canvas.bind("<Button-3>", foo)
         
         
     def enableThumbWheel(self, tw, val =None):
         """enables a thumbwheel widgets used to specify custom resolution/isovalue"""
         tw.canvas.bind("<ButtonPress-1>", tw.mouseDown)
-	tw.canvas.bind("<ButtonRelease-1>", tw.mouseUp)
-	tw.canvas.bind("<B1-Motion>", tw.mouseMove)
+        tw.canvas.bind("<ButtonRelease-1>", tw.mouseUp)
+        tw.canvas.bind("<B1-Motion>", tw.mouseMove)
         tw.canvas.bind("<Button-3>", tw.toggleOptPanel)
         tw.configure(showLabel=1)
         if val:
@@ -985,7 +985,7 @@ class coarseMolSurface(MVCommand):
         X = [-3.0, -2.5, -2.0, -1.5, -1.3, -1.1, -0.9, -0.7, -0.5, -0.3, -0.1]
         Y = [0.6565, 0.8000, 1.0018, 1.3345, 1.5703, 1.8554, 2.2705, 2.9382, 4.1485, 7.1852, 26.5335]
         if x<X[0] or x>X[-1]:
-            print "WARNING: Fast approximation :blobbyness is out of range [-3.0, -0.1]"
+            print("WARNING: Fast approximation :blobbyness is out of range [-3.0, -0.1]")
             return None
         i = 0
         while x > X[i]:

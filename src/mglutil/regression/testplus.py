@@ -18,9 +18,11 @@
 # Contributor: Frederic Giacometti, frederic.giacometti@arakne.com
 #
 
-from __future__ import nested_scopes
+
 
 import re, sys, os, operator, types
+from functools import cmp_to_key
+from functools import reduce
 
 def chdir(directory=None):
     if directory is None:
@@ -71,7 +73,7 @@ class TestHarness:
 
     def __call__( self, fun):
         try:
-            if type(fun)==types.TupleType:
+            if type(fun)==tuple:
                 func = fun[0]
                 args = fun[1]
                 kw = fun[2]
@@ -79,7 +81,7 @@ class TestHarness:
                 func = fun
                 args = ()
                 kw = {}
-            apply( func, args, kw)
+            func(*args, **kw)
         except:
             return fun, sys.exc_info()
         else:
@@ -87,7 +89,7 @@ class TestHarness:
 
     def __getattr__( self, attr):
         if attr == 'failures':
-            result = filter( None, self.dependents)
+            result = [_f for _f in self.dependents if _f]
             if not result:
                 fail = self( self.connect )
                 if fail:
@@ -97,15 +99,15 @@ class TestHarness:
                         self.count += 1
                         testname = 'TEST%4i %s.%s ' % (self.count,
                                                       self.name,
-                                                      fun.func_name)
+                                                      fun.__name__)
                         if len(testname) < 70:
                             testname = testname + ' '*(65-len(testname))
-                        print testname,
+                        print(testname, end=' ')
                         prevstdout = sys.stdout
                         #prevstderr = sys.stderr
                         sys.stdout = logfile() # sys.stderr = logfile()
                         try:
-                            print testname
+                            print(testname)
                             sys.stdout.flush()
                             res = self( fun)
                             result.append( res )
@@ -114,11 +116,11 @@ class TestHarness:
                             sys.stdout = prevstdout
                             #sys.stderr = prevstderr
                             if res is None:
-                                print 'PASSED'
+                                print('PASSED')
                             else:
-                                print 'FAILED'
+                                print('FAILED')
                     result.append( self( self.disconnect))
-                    result = filter( None, result)
+                    result = [_f for _f in result if _f]
                     
         else:
             raise AttributeError( attr)
@@ -146,10 +148,11 @@ class TestHarness:
                                 self.totalcount())]
                            + [re.sub( '\n', '\n    ',
                                       isinstance( x, TestHarness)
-                                      and str( x) or apply( self.error2str, x))
+                                      and str( x) or self.error2str(*x))
                               for x in self.failures] + [''])
 
-    def error2str( self, fun, (exctype, excvalue, tb)):
+    def error2str( self, fun, xxx_todo_changeme):
+        (exctype, excvalue, tb) = xxx_todo_changeme
         import traceback
         return '\n%s:\n  <%s>\n' % (exctype, excvalue)\
                + ''.join( traceback.format_tb( tb.tb_next))
@@ -163,10 +166,10 @@ def testcollect( globs,
                  matchfun = lambda x: re.match( 'test', x)):
     from inspect import getfile, getsourcelines
     result = [x[ 1]
-              for x in globs.items()
+              for x in list(globs.items())
               if callable( x[ 1]) and matchfun( x[ 0])]
-    result.sort( lambda x, y: cmp( (getfile( x), getsourcelines( x)[ -1]),
-                                   (getfile( y), getsourcelines( y)[ -1])))
+    result.sort( key=cmp_to_key(lambda x, y: cmp( (getfile( x), getsourcelines( x)[ -1]),
+                                   (getfile( y), getsourcelines( y)[ -1]))))
     return result
 
 
@@ -187,7 +190,7 @@ def prun( args = sys.argv[ 1:]):
     globs = {}
     try:
         for cmd in args:
-            exec cmd in globs
+            exec(cmd, globs)
     except SystemExit:
         raise
     except:

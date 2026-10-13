@@ -3,10 +3,10 @@
 # PC 2005/09/23
 # Get ligand topologies
 #
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
     
 from sets import Set
-from ligandclean.trial_templates import *
+from .ligandclean.trial_templates import *
 
 def length(vector):
     # This function returns the length of vector
@@ -33,7 +33,7 @@ class get_ligand_topology:
         #
         if MOL2FLAG == False:
             self.atoms={}
-            import string
+            from mglcompat import pystring as string
             for line in lines:
                 split=string.split(line)
                 name=split[0]
@@ -43,7 +43,7 @@ class get_ligand_topology:
             # Get the likely types from names
             #
             trivial_types=['N','O','C','H']
-            for atom in self.atoms.keys():
+            for atom in list(self.atoms.keys()):
                 if atom[0] in trivial_types:
                     if atom[0]!='H': # Get rid of all the hydrogens
                         self.atoms[atom]['type']=atom[0]
@@ -53,9 +53,9 @@ class get_ligand_topology:
             # First approximation: Anything closer than 2.0 A is bonded
             #
             self.dists={}
-            for atom1 in self.atoms.keys():
+            for atom1 in list(self.atoms.keys()):
                 self.dists[atom1]={}
-                for atom2 in self.atoms.keys():
+                for atom2 in list(self.atoms.keys()):
                     if atom1==atom2:
                         continue
                     #
@@ -71,7 +71,7 @@ class get_ligand_topology:
             #
             # Get the torsion angles
             #
-            atoms=self.atoms.keys()
+            atoms=list(self.atoms.keys())
             atoms.sort()
             for atom in atoms:
                 self.atoms[atom]['torsions']=self.get_torsions(atom)
@@ -120,7 +120,7 @@ class get_ligand_topology:
             #
             # Get the torsion angles
             #
-            atoms=self.atoms.keys()
+            atoms=list(self.atoms.keys())
             atoms.sort()
             for atom in atoms:
                 self.atoms[atom]['torsions']=self.get_torsions(atom)
@@ -139,7 +139,7 @@ class get_ligand_topology:
         # + determine their likely order (e.g. single, double, or triple)
         #
         ambs={}
-        atoms=self.atoms.keys()
+        atoms=list(self.atoms.keys())
         for atom_name in atoms:
             bonds=self.atoms[atom_name]['bonds']
             atype=self.atoms[atom_name]['type']
@@ -162,13 +162,13 @@ class get_ligand_topology:
         #
         valences={'C':4,'O':2,'N':3}
         for atom in self.atoms:
-            print atom, self.atoms[atom]
+            print(atom, self.atoms[atom])
         #
         # ok, now it gets hairy
         #
-        print
-        print 'Guessing sybyl atom types'
-        for atom in self.atoms.keys():
+        print()
+        print('Guessing sybyl atom types')
+        for atom in list(self.atoms.keys()):
             stype=None
             at=self.atoms[atom]
             #
@@ -208,7 +208,7 @@ class get_ligand_topology:
         # Do some postchecks
         # - right now only for Carboxylic acids
         #
-        for atom in self.atoms.keys():
+        for atom in list(self.atoms.keys()):
             at=self.atoms[atom]
             if at['sybylType']=='C.2':
                 #
@@ -229,11 +229,11 @@ class get_ligand_topology:
         #
         # All Done
         #
-        atoms=self.atoms.keys()
+        atoms=list(self.atoms.keys())
         atoms.sort()
-        print '\nFinal Sybyl type results'
+        print('\nFinal Sybyl type results')
         for atom in atoms:
-            print atom,self.atoms[atom]['sybylType']
+            print(atom,self.atoms[atom]['sybylType'])
         return
 
     #
@@ -263,7 +263,7 @@ class get_ligand_topology:
         tps.sort() # To agree with dictionary layout
         best_fit=2.00
         best_type=None
-        for bond in bond_props.keys():
+        for bond in list(bond_props.keys()):
             if bond[0]==tps[0] and bond[-1]==tps[1]:
                 if abs(dist-bond_props[bond][0])<best_fit:
                     best_fit=abs(dist-bond_props[bond][0])
@@ -299,7 +299,7 @@ class get_ligand_topology:
         # Filter the torsions
         #
         # 
-        print 'Jens has to write the stuff for filtering torsions..\n'
+        print('Jens has to write the stuff for filtering torsions..\n')
         return possible_torsions
                         
     #
@@ -311,7 +311,7 @@ class get_ligand_topology:
         # Make the lines for the pdb2pqr definition
         #
         self.numbers={}
-        atoms=self.atoms.keys()
+        atoms=list(self.atoms.keys())
         atoms.sort()
         number=0
         for atom in atoms:
@@ -420,12 +420,12 @@ class get_ligand_topology:
         #
         # Look for simple substructures that would be titratable groups in the ligand
         #
-        atoms=self.atoms.keys()
+        atoms=list(self.atoms.keys())
         #
         # ring detection (including deleting redundancies & sorting issues)
         ring_list = []
         tmp=[]
-        for atom in self.atoms.keys():
+        for atom in list(self.atoms.keys()):
             temp_ring_list = []
             tmp.append(self.ring_detection(atom))
         #
@@ -449,12 +449,12 @@ class get_ligand_topology:
                     del sorted_ring_list[i]
                 else:
                     last = sorted_ring_list[i]
-        print "# overall rings (including potentially fused rings) :", len(sorted_ring_list)
+        print("# overall rings (including potentially fused rings) :", len(sorted_ring_list))
         stop ## PC 03.01.06
         #
         #
         # assigning ring attribute for every ring atom
-        for at in self.atoms.keys():
+        for at in list(self.atoms.keys()):
             self.atoms[at]['in_ring'] = 0
         for rring in sorted_ring_list:
             for current_atom in rring:
@@ -477,7 +477,7 @@ class get_ligand_topology:
                       at['ring_list'] = [rring]
                 elif rring not in at['ring_list']:
                       at['ring_list'].append(rring)
-        print  "# non-fused rings                                   :", non_fused_counter
+        print("# non-fused rings                                   :", non_fused_counter)
 
  
         
@@ -487,7 +487,7 @@ class get_ligand_topology:
         match_list=[]
             #
         # match ligand atom type with atom type from template
-        for at in t.keys():
+        for at in list(t.keys()):
             if t[at]['sybylType'] == self.atoms[atom2match]['sybylType']:
                 match_list.append(at)
             if len(match_list) != 0:
@@ -512,14 +512,14 @@ class get_ligand_topology:
                             # Now match simultaneously atom_type and neighbouring atom_types for ligand AND template
                             if len(ligand_set.difference(template_set)) == 0 and len(ligand_list) == len(nbs_in_template):
                                 for entry in matched_atom_in_template:
-                                    print "%3d"%(counter),"  Ligand %4s %5s %28s " \
+                                    print("%3d"%(counter),"  Ligand %4s %5s %28s " \
                                           %(at_lig,self.atoms[at_lig]['sybylType'],ligand_list),\
                                           "template %s %s %s %s" \
-                                          %(matched_atom_in_template,t[entry]['sybylType'],nbs_in_template,t[entry]['neighbours'])
+                                          %(matched_atom_in_template,t[entry]['sybylType'],nbs_in_template,t[entry]['neighbours']))
                                     for neighboured_template_atoms in t[entry]['neighbours']:
-                                        print neighboured_template_atoms,t[neighboured_template_atoms]['sybylType'],t[neighboured_template_atoms]['sybyl_neighbours']
+                                        print(neighboured_template_atoms,t[neighboured_template_atoms]['sybylType'],t[neighboured_template_atoms]['sybyl_neighbours'])
                                     for neighboured_ligand_atoms in self.atoms[at_lig]['lBondedAtoms']:
-                                        print neighboured_ligand_atoms.name, neighboured_ligand_atoms.sybylType,neighboured_ligand_atoms.lBondedAtoms
+                                        print(neighboured_ligand_atoms.name, neighboured_ligand_atoms.sybylType,neighboured_ligand_atoms.lBondedAtoms)
                                     stop
                 counter += 1
 
@@ -527,15 +527,15 @@ class get_ligand_topology:
             #
             # match ligand atom type with atom type from template
             if atom2match == "F14":
-                print "YYY_atom2match_YYY", atom2match
+                print("YYY_atom2match_YYY", atom2match)
 #            print "alrvis",len(already_visited),already_visited
             if matching_template == {}:
                 matching_template['MatchedFragments'] = {}
             if len(stored_nbs_of_atom2match) != 0 and stored_nbs_of_atom2match[-1] == atom2match:
-                print "bis zum erbrechen schreien!!!!", self.atoms[atom2match]['bonds']
+                print("bis zum erbrechen schreien!!!!", self.atoms[atom2match]['bonds'])
                 for e in  self.atoms[atom2match]['bonds']:
                     atom2match = e
-            for at in t.keys():
+            for at in list(t.keys()):
                 # TODO:matching ALL atom types in template => gives a match_list
                 if t[at]['sybylType'] == self.atoms[atom2match]['sybylType'] \
                    and atom2match not in already_visited:
@@ -584,9 +584,9 @@ class get_ligand_topology:
                         else:
                             matched_atom_types2(nbat,t)
                 else:
-                    print "sybylType s don't match", atom2match
+                    print("sybylType s don't match", atom2match)
             # 2nd loop to go over to the neighboured atoms
-            for at in t.keys():
+            for at in list(t.keys()):
                 if atom2match in already_visited:
                     for nbat in self.atoms[atom2match]['bonds']:
                         if nbat in already_visited:
@@ -604,7 +604,7 @@ class get_ligand_topology:
 
                         else:
                             matched_atom_types2(nbat,t)
-            print "\t\t\tlen alrvis %3d" % (len(already_visited))
+            print("\t\t\tlen alrvis %3d" % (len(already_visited)))
 
         def createsybyllistonthefly(lig_atom):
             # look in matched_atom_types2 - line 656
@@ -620,7 +620,7 @@ class get_ligand_topology:
                 if ent_lig not in already_visited:
                     already_visited.append(ent_lig)
                     # look for matching neighbours
-                    for at in t.keys():
+                    for at in list(t.keys()):
                         if t[at]['sybylType'] == self.atoms[ent_lig]['sybylType'] and ent_lig not in matchlist:
                             matchlist.append(at)
                     for matches in matchlist:
@@ -631,7 +631,7 @@ class get_ligand_topology:
                                 if putative_next_atom2match not in putative_next_a2m_list:
                                     putative_next_a2m_list.append(putative_next_atom2match)
                         else:
-                             print "sybyl neighbours don't match"
+                             print("sybyl neighbours don't match")
                 else:
                     # what's here?
                     pass
@@ -642,7 +642,7 @@ class get_ligand_topology:
 
         def matchatomtypeintemplateandgetliglist(atom2match,t,stored_nbs_of_atom2match=[],been_here_flag=False,\
                                                  already_visited=[],hit_list=[]):
-            print atom2match,"hit_list",hit_list,been_here_flag
+            print(atom2match,"hit_list",hit_list,been_here_flag)
             putative_next_a2m_list = []
             # we don't want to miss the nbs of a matched atom (see [1])
             if atom2match in stored_nbs_of_atom2match:
@@ -650,15 +650,15 @@ class get_ligand_topology:
                  gothroughallnbsofmatchlistatom(stored_nbs_of_atom2match,t,already_visited,hit_list)
             # does this really work? - to which position of the routine do we go now?
             if been_here_flag == True:
-                print "it's true...", putative_next_a2m_list
+                print("it's true...", putative_next_a2m_list)
                 for next_at in putative_next_a2m_list:
-                    print "TRUE (been_here_flag)", putative_next_a2m_list
+                    print("TRUE (been_here_flag)", putative_next_a2m_list)
                     matchatomtypeintemplateandgetliglist(next_at,t,been_here_flag=True)
             matchlist = []
-            for at in t.keys():
+            for at in list(t.keys()):
                 if t[at]['sybylType'] == self.atoms[atom2match]['sybylType'] and atom2match not in already_visited:
                     already_visited.append(atom2match)
-                    print "we found a match for %4s " %(atom2match)
+                    print("we found a match for %4s " %(atom2match))
                     matchlist.append(at)
             # look for sybylnbs of all stored entries in matchlist
             for entries in matchlist:
@@ -666,7 +666,7 @@ class get_ligand_topology:
                 if len(Set(t[entries]['sybyl_neighbours']).difference(Set(createsybyllistonthefly(atom2match)))) == 0:
                     hit_list.append(atom2match)
                     stored_nbs_of_atom2match = self.atoms[atom2match]['bonds']
-                    print "nbs %s of hit %s" %(stored_nbs_of_atom2match,atom2match)
+                    print("nbs %s of hit %s" %(stored_nbs_of_atom2match,atom2match))
                     for nbs in stored_nbs_of_atom2match:
                         # call itself!
                         #
@@ -679,7 +679,7 @@ class get_ligand_topology:
             matchatomtypeintemplateandgetliglist(start_atom,t)
 #            matched_atom_types2(start_atom,t)
 
-        for current_template in templates.keys():
+        for current_template in list(templates.keys()):
             match2(templates[current_template],atoms,start_atom=atoms[4])  # start_atom should be 0
 #            match(templates[current_template],atoms)
         

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
 #
@@ -12,7 +12,7 @@
 # $Id: trilinterp_scorer.py,v 1.7 2007/07/24 17:30:45 vareille Exp $
 #
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 from PyAutoDock.scorer import ScoringStrategy
 from PyAutoDock.MolecularSystem import MolecularSystem
@@ -112,10 +112,10 @@ class TrilinterpScorer(ScoringStrategy):
         grid_data_file = maplines[1].split()[1]
         macromolecule = maplines[2].split()[1]
         spacing = self.spacing = float(maplines[3].split()[1])
-        npts = self.npts = map(int, maplines[4].split()[1:])
+        npts = self.npts = list(map(int, maplines[4].split()[1:]))
         for i in range(3):
             if npts[i]%2==0: npts[i]+=1 
-        cen = self.cen = map(float, maplines[5].split()[1:])
+        cen = self.cen = list(map(float, maplines[5].split()[1:]))
         keys = ['gpf','grid_data_file','macromolecule','spacing','npts','cen']
         values= [gpf,grid_data_file,macromolecule,spacing,npts,cen]
         #make sure all maps have the same info
@@ -162,7 +162,7 @@ manage only checking a required attr once per entity_sets.)
 
         # check the required attribute for both subsets before going on
         listA = []
-        for k,v in self.required_attr_dictA.items():
+        for k,v in list(self.required_attr_dictA.items()):
             if not v:
                 listA.append(k)
                 self.required_attr_dictA[k] = True
@@ -179,8 +179,8 @@ manage only checking a required attr once per entity_sets.)
         for x in ligand:
             atom_type[x.autodock_element] =''
 
-        for type in atom_type.keys():
-            if type not in self.map_data.keys():
+        for type in list(atom_type.keys()):
+            if type not in list(self.map_data.keys()):
                 # try to load map from previously define stem
                 status = self.add_maps(self.stem,[type])
                 if not status:raise RuntimeError("grid map missing for atomtype %s"%type)
@@ -548,7 +548,7 @@ class TrilinterpScorer_AD3(TrilinterpScorer):
 
 
 if __name__ == '__main__':
-    print 'in main'
+    print('in main')
     tls = TrilinterpScorer('test', ['C'])
     from MolKit import Read
     m = Read("test.pdb")[0]

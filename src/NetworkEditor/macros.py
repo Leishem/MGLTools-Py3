@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #########################################################################
 #
@@ -22,8 +22,8 @@
 # $Id: macros.py,v 1.110 2009/09/02 21:15:37 vareille Exp $
 #
 
-import re, string
-import Tkinter
+import re; from mglcompat import pystring as string
+import tkinter
 import weakref
 import types
 import datetime
@@ -61,8 +61,8 @@ class MacroNode(MacroBase, NetworkNode):
     def __init__(self, name='NoName', sourceCode=None,
                  originalClass=None, constrkw={}, library=None, progbar=0,
                  **kw):
-        apply( NetworkNode.__init__, (self, name, sourceCode, originalClass,
-                                      constrkw, library, progbar), kw)
+        NetworkNode.__init__(*(self, name, sourceCode, originalClass,
+                                      constrkw, library, progbar), **kw)
         self.expanded = 0
         self.isSchedulingNode = True # the outputPort node will schedule all
                              # children of the macro node
@@ -182,7 +182,7 @@ class MacroNode(MacroBase, NetworkNode):
         ed = self.getEditor()
         if not self.expanded:
             ed.menuButtons['Networks'].menu.entryconfig(
-                "Close...", state=Tkinter.DISABLED)
+                "Close...", state=tkinter.DISABLED)
             ed.networkArea.showpage(self.macroNetwork.name)
             self.expanded = 1
         else:
@@ -194,7 +194,7 @@ class MacroNode(MacroBase, NetworkNode):
         if not self.expanded:
             return
         ed.menuButtons['Networks'].menu.entryconfig(
-            "Close...", state=Tkinter.NORMAL)
+            "Close...", state=tkinter.NORMAL)
         self.expanded = 0
         ed.networkArea.hidepage(self.macroNetwork.name)
         # make my own network the current one
@@ -299,7 +299,7 @@ in a saved file."""
                                 # node or port
 
                 # port1 or port2 deleted?
-                if type(p1) == types.NoneType or type(p2) == types.NoneType:
+                if type(p1) == type(None) or type(p2) == type(None):
                     invalid = True
 
                 # node1 deleted?
@@ -713,7 +713,7 @@ class MacroInputNode(MacroBase, NetworkNode):
                  originalClass=None, constrkw={}, library=None, progbar=0,
                  **kw):
         self.macroNode = macroNode # node representing the network
-        apply( NetworkNode.__init__, (self, name, None, None), kw)
+        NetworkNode.__init__(*(self, name, None, None), **kw)
 
         self.isSchedulingNode = True # this node's function will schedule all
           # children of ports with new data
@@ -821,7 +821,7 @@ to the node. Thus, we need to create this additional line to get a handle"""
         ed = self.getEditor()
         nodeName = self.getUniqueNodeName()
 
-        if ed._tmpListOfSavedNodes.has_key(nodeName) is False:
+        if (nodeName in ed._tmpListOfSavedNodes) is False:
             txt = "%s = %s.ipNode\n"%(nodeName, networkName)
             lines.append(indent+txt)
             ed._tmpListOfSavedNodes[nodeName] = self
@@ -834,7 +834,7 @@ class MacroOutputNode(MacroBase, NetworkNode):
                  originalClass=None, constrkw={}, library=None, progbar=0,
                  **kw):
         self.macroNode = macroNode # node representing the network
-        apply( NetworkNode.__init__, (self, name, None, None), kw)
+        NetworkNode.__init__(*(self, name, None, None), **kw)
 
         self.inputPortsDescr.append({'name':'new', 'required':False,
                                      'balloon':'Add new output port'})
@@ -981,7 +981,7 @@ to the node. Thus, we need to create this additional line to get a handle"""
         
         ed = self.getEditor()
         nodeName = self.getUniqueNodeName()
-        if ed._tmpListOfSavedNodes.has_key(nodeName) is False:
+        if (nodeName in ed._tmpListOfSavedNodes) is False:
             txt = "%s = %s.opNode\n"%(nodeName, networkName)
             lines.append(indent+txt)
             ed._tmpListOfSavedNodes[nodeName] = self

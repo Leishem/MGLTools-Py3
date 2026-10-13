@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -17,7 +17,7 @@
 """ Module implementing a special DejaVu geometric object - VolumeGeom.
 The DisplayFunction() uses volume rendering methods. """
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 
 class CropBox:
@@ -294,7 +294,7 @@ class VolumeGeom(Geom):
         self.viewer = None
         self.boundBox = None
 
-        apply( Geom.__init__, (self, name, check), kw)
+        Geom.__init__(*(self, name, check), **kw)
 
         self._modified = False
         #print "immediateRendering:", self.immediateRendering
@@ -308,7 +308,7 @@ check=1 : verify that all the keywords present can be handle by this func
 redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
-        redoFlags = apply( Geom.Set, (self, check, 0), kw )
+        redoFlags = Geom.Set(*(self, check, 0), **kw)
 
         return self.redoNow(redo, updateOwnGui, redoFlags)
 

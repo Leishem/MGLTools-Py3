@@ -11,8 +11,8 @@ from mglutil.math.crystal import Crystal
 from Pmv.mvCommand import MVCommand
 from ViewerFramework.VFCommand import CommandGUI
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
-import Pmw, Tkinter
-import tkMessageBox
+import Pmw, tkinter
+import tkinter.messagebox
 from DejaVu.Box import Box
 from mglutil.util.callback import CallBackFunction
 def instanceMatricesFromGroup(molecule):
@@ -34,7 +34,7 @@ class CrystalCommand(MVCommand):
             if hasattr(mol, 'spaceGroup'):
                 molNames.append(mol.name)
         if not molNames:
-            tkMessageBox.showinfo("Crystal Info is Needed", "No Molecule in the Viewer has Crystal Info.")    
+            tkinter.messagebox.showinfo("Crystal Info is Needed", "No Molecule in the Viewer has Crystal Info.")    
             return
         ifd = InputFormDescr(title='Crystal Info')   
         ifd.append({'name':'moleculeList',
@@ -55,7 +55,7 @@ class CrystalCommand(MVCommand):
             matrices = instanceMatricesFromGroup(molecule)
             geom = molecule.geomContainer.geoms['master']
             geom.Set(instanceMatrices=matrices)
-            if not molecule.geomContainer.geoms.has_key('Unit Cell'):
+            if 'Unit Cell' not in molecule.geomContainer.geoms:
                 fractCoords=((1,1,0),(0,1,0),(0,0,0),(1,0,0),(1,1,1),(0,1,1),
                                                                 (0,0,1),(1,0,1))
                 coords = []
@@ -70,17 +70,17 @@ class CrystalCommand(MVCommand):
             else:
                 showState = 'normal'
             ifd.append({'name': 'Show Cell',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'text': 'Hide Unit Cell',
             'state':showState,
-            'gridcfg':{'sticky':Tkinter.W},
+            'gridcfg':{'sticky':tkinter.W},
             'command': CallBackFunction(self.showUnitCell, molecule)})
 
             ifd.append({'name': 'Show Packing',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'text': 'Hide Packing',
             'state':'active',
-            'gridcfg':{'sticky':Tkinter.W},
+            'gridcfg':{'sticky':tkinter.W},
             'command': CallBackFunction(self.showPacking, molecule)})
             
             val = self.vf.getUserInput(ifd, modal=0, blocking=1)

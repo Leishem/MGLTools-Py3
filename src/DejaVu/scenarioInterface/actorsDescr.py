@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 from DejaVu.Transformable import Transformable
 from DejaVu.Displayable import Displayable
@@ -20,14 +20,14 @@ from Scenario2.interpolators import VarVectorInterpolator, FloatVectorInterpolat
 from Scenario2.datatypes import FloatType, IntType, BoolType,IntVectorType,\
      FloatVectorType, IntVarType, FloatVarType, VarVectorType
 
-from actor import DejaVuActor, DejaVuMaterialActor,  DejaVuScissorActor, \
+from .actor import DejaVuActor, DejaVuMaterialActor,  DejaVuScissorActor, \
      DejaVuClipZActor, DejaVuFogActor, DejaVuLightColorActor, \
      DejaVuSpheresRadiiActor, DejaVuRotationActor, DejaVuConcatRotationActor, \
      DejaVuGeomVisibilityActor, DejaVuTransformationActor, DejaVuGeomEnableClipPlaneActor, DejaVuCameraActor
 
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 from DejaVu.states import getRendering, setRendering, setObjectRendering
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 id4x4 = Numeric.identity(4).astype('f')
 from numpy import copy
 

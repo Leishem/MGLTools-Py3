@@ -159,7 +159,7 @@ def runPmv(*argv, **kw):
                 argv = [argv]
         else:
             argv = list(argv)
-    if kw.has_key("ownInterpreter"):
+    if "ownInterpreter" in kw:
         ownInterpreter = kw["ownInterpreter"]
     else:
         if argv is None:
@@ -247,7 +247,7 @@ def runPmv(*argv, **kw):
     
     for opt in optlist:
         if opt[ 0] in ('-h', '--help'):
-            print help_msg
+            print(help_msg)
             sys.exit()
         elif opt[ 0] in ('-a', '--again'):
             again = 1
@@ -280,7 +280,7 @@ def runPmv(*argv, **kw):
             try:
                 from Support.update import Update
             except ImportError:
-                print "Support package is needed to get updates"
+                print("Support package is needed to get updates")
                 break
                 
             update = Update()
@@ -291,7 +291,7 @@ def runPmv(*argv, **kw):
                 update.latest     = 'tested'
                 update.getUpdates()
             elif 'clear' in args:
-                print "Removing all updates"
+                print("Removing all updates")
                 update.clearUpdates()
             else:
                 waitTk = update.gui()
@@ -302,14 +302,14 @@ def runPmv(*argv, **kw):
             elif opt[1] in ('r', 'run'):
                 visionarg = 'run'
         else:
-            print "unknown option %s %s"%tuple(opt)
-            print help_msg
+            print("unknown option %s %s"%tuple(opt))
+            print(help_msg)
             sys.exit(1)
     if die:
         interactive = 0
     #import sys
     text = 'Python executable     : '+ sys.executable +'\n'
-    if kw.has_key('PmvScriptPath'):
+    if 'PmvScriptPath' in kw:
         text += 'PMV script                : '+ kw['PmvScriptPath'] +'\n'
     text += 'MGLTool packages '+'\n'
     
@@ -323,7 +323,7 @@ def runPmv(*argv, **kw):
     
     path_data = text
             
-    print 'Run PMV from ', __path__[0]
+    print('Run PMV from ', __path__[0])
     # if MGLPYTHONPATH environment variable exists - insert the specified path
     # into sys.path
     
@@ -362,7 +362,7 @@ PyMedia video encoder/decoder -- http://pymedia.org"""
             from TkinterDnD2 import TkinterDnD
             root = TkinterDnD.Tk()
         except ImportError:
-            from Tkinter import Tk
+            from tkinter import Tk
             root = Tk()    
         root.withdraw()
     
@@ -437,11 +437,11 @@ PyMedia video encoder/decoder -- http://pymedia.org"""
                     mv.vision.ed.softrunCurrentNet_cb()
     
             elif a[-3:]=='.py':     # command script
-                print 'sourcing', a
+                print('sourcing', a)
                 mv.source(a)
     
             elif a[-4:]=='.psf':     # command script
-                print 'loading session', a
+                print('loading session', a)
                 mv.readFullSession(a)
     
             elif a[-4:] in ['.pdb', '.pqr', 'pdbq', 'mol2', '.cif', '.gro', '.f2d'] or a[-5:]=='pdbqs' or a[-5:]=='pdbqt':
@@ -449,13 +449,13 @@ PyMedia video encoder/decoder -- http://pymedia.org"""
                     mv.readMolecule(a)
                 else: # try to look for molecule in cache
                     inCache = os.path.join(mv.rcFolder[:-4],"pdbcache", a)
-                    print 'INCACHE', inCache, a
+                    print('INCACHE', inCache, a)
                     if os.path.isfile(inCache):
-                        print 'getting %s from PDB CACHE'% a
+                        print('getting %s from PDB CACHE'% a)
                         mv.readMolecule(inCache)
 
                     elif len(a)==4 or (len(a)==8 and a[-4:]=='.pdb'):
-                        print 'trying to fetch %s from PDB web site'%a
+                        print('trying to fetch %s from PDB web site'%a)
                         mv.fetch(a[:4], log=0)
                     
             elif a in ['clear', 'tested', 'nighlty']:
@@ -463,7 +463,7 @@ PyMedia video encoder/decoder -- http://pymedia.org"""
             
             else:
                 if a not in scriptArguments:
-                    print 'WARNING: argument %s has not been processed'%a
+                    print('WARNING: argument %s has not been processed'%a)
         if again:
             mv.source(".tmp.py")
         if dmode is not None or cmode is not None:
@@ -474,7 +474,7 @@ PyMedia video encoder/decoder -- http://pymedia.org"""
                 mv.removeOnAddObjectCmd(c[0])
             # restore original list of commands
             for c in addCmds:
-                apply( mv.addOnAddObjectCmd, c )
+                mv.addOnAddObjectCmd(*c)
 
         if gui:
             mv.GUI.VIEWER.suspendRedraw = False
@@ -518,7 +518,7 @@ PyMedia video encoder/decoder -- http://pymedia.org"""
         import traceback
         traceback.print_exc()
         if gui:
-            raw_input("hit enter to continue")
+            input("hit enter to continue")
         import sys
         sys.exit(1)
 

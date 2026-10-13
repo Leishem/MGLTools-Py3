@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
 #
@@ -21,19 +21,19 @@
 # 6 - KNOWN BUG: color (0,0,0) per vertex does seem to work
 
 import numpy
-import numpy.oldnumeric as Numeric, math, sys
-from numpy.oldnumeric import array
+import mglcompat.oldnumeric as Numeric, math, sys
+from mglcompat.oldnumeric import array
 
 from opengltk.OpenGL import GL
 from opengltk.extent.utillib import solidCylinder
 
 import DejaVu
 from DejaVu.IndexedGeom import IndexedGeom
-import datamodel, viewerConst
-from viewerFns import checkKeywords
+from . import datamodel, viewerConst
+from .viewerFns import checkKeywords
 from mglutil.math.rotax import rotax
-from colorTool import glMaterialWithCheck, resetMaterialMemory
-from Materials import Materials
+from .colorTool import glMaterialWithCheck, resetMaterialMemory
+from .Materials import Materials
 try:
     from opengltk.extent.utillib import glDrawCylinderSet
 except:
@@ -76,7 +76,7 @@ class Cylinders(IndexedGeom):
         
         self.cyldraw = self.cyldrawWithSharpColorBoundaries
 
-        apply( IndexedGeom.__init__, (self, name, check), kw)
+        IndexedGeom.__init__(*(self, name, check), **kw)
         assert len(self.vertexSet.vertices.ashape)==2
 
         if hasattr(self, 'oneRadius') is False:
@@ -105,7 +105,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                 self.invertNormals = invertNormals
                 redoFlags |= self._redoFlags['redoDisplayListFlag']
 
-        redoFlags |= apply( IndexedGeom.Set, (self, check, 0), kw)
+        redoFlags |= IndexedGeom.Set(*(self, check, 0), **kw)
 
         rad = kw.get('radii')
         if rad is not None:
@@ -120,8 +120,8 @@ updateOwnGui=True : allow to update owngui at the end this func
             except: # it is not a number, so it has to be a sequence
                 l = len(rad)
                 import types
-                if type(rad) == types.StringType:
-                    raise TypeError, "bad value for radii"
+                if type(rad) == bytes:
+                    raise TypeError("bad value for radii")
                 elif l==len(self.vertexSet.vertices):
                     self.oneRadius = viewerConst.NO
                     self.vertexSet.radii = datamodel.ScalarProperties(
@@ -131,7 +131,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                     self.vertexSet.radii = datamodel.ScalarProperties(
                         'radii', [rad], datatype=viewerConst.FPRECISION)
                 else:
-                    raise ValueError, "bad value for radii"
+                    raise ValueError("bad value for radii")
 
         v=kw.get('vertices')
         if rad is not None or v is not None and \
@@ -279,9 +279,9 @@ updateOwnGui=True : allow to update owngui at the end this func
         else:
             radius = self.vertexSet.radii.array[0]
         pickName = 0
-        for i in xrange(len(self.faceSet.faces.array)):
+        for i in range(len(self.faceSet.faces.array)):
             #print 'CYLINDERS', i, '********************************',
-            for j in xrange(len(self.faceSet.faces.array[i])-1):
+            for j in range(len(self.faceSet.faces.array[i])-1):
                 vi1 = self.faceSet.faces.array[i][j]
                 vi2 = self.faceSet.faces.array[i][j+1]
                 if fp:
@@ -591,7 +591,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         if quality is None:
             quality = self.quality * 5
 
-        import numpy.oldnumeric as Numeric, math
+        import mglcompat.oldnumeric as Numeric, math
 
         v = Numeric.zeros( ((quality),2,3), 'f')
         n = Numeric.zeros( ((quality),3), 'f')
@@ -635,7 +635,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         if run==0:
             return 1 # yes, I can be represented as IndexedPolygons
 
-        import numpy.oldnumeric as Numeric, math
+        import mglcompat.oldnumeric as Numeric, math
         from mglutil.math.transformation import Transformation
 
         if quality in [1,2,3,4,5]:
@@ -662,7 +662,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         FF = [] # this list stores all faces of all cylinders
 
         # now loop over all cylinders in self
-        for index in xrange(len(faces)):
+        for index in range(len(faces)):
             # tv temporarily stores the transformed unit cylinder vertices
             tv = tmpltVertices.__copy__()
 
@@ -752,8 +752,8 @@ updateOwnGui=True : allow to update owngui at the end this func
             newprop = []
             props = cylGeom.materials[GL.GL_FRONT].prop[1]
 
-            for i in xrange(len(faces)):
-                for j in xrange(len(faces[i])-1):
+            for i in range(len(faces)):
+                for j in range(len(faces[i])-1):
                     vi1 = self.faceSet.faces.array[i][j]
                     vi2 = self.faceSet.faces.array[i][j+1]
                     colx = props[vi2]
@@ -786,9 +786,9 @@ class CylinderArrows(Cylinders):
 
         if __debug__:
             if check:
-                apply( checkKeywords, (name,self.keywords), kw)
+                checkKeywords(*(name,self.keywords), **kw)
 
-        apply( Cylinders.__init__, (self, name, 0), kw)
+        Cylinders.__init__(*(self, name, 0), **kw)
         self.headLength = 1.
         self.headRadius = 2.
 
@@ -847,9 +847,9 @@ class CylinderArrows(Cylinders):
             radius = self.vertexSet.radii.array[0]
 
         pickName = 0
-        for i in xrange(len(self.faceSet.faces.array)):
+        for i in range(len(self.faceSet.faces.array)):
             #print 'CYLINDERS', i, '********************************'
-            for j in xrange(len(self.faceSet.faces.array[i])-1):
+            for j in range(len(self.faceSet.faces.array[i])-1):
                 vi1 = self.faceSet.faces.array[i][j]
                 vi2 = self.faceSet.faces.array[i][j+1]
 

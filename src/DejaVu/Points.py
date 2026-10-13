@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -17,10 +17,10 @@
 from opengltk.OpenGL import GL
 from opengltk.extent.utillib import glDrawIndexedGeom
 
-from Geom import Geom
-import datamodel, viewerConst
-import numpy.oldnumeric as Numeric
-from viewerFns import checkKeywords
+from .Geom import Geom
+from . import datamodel, viewerConst
+import mglcompat.oldnumeric as Numeric
+from .viewerFns import checkKeywords
 
 class Points(Geom):
     """Class for sets of spheres"""
@@ -46,7 +46,7 @@ class Points(Geom):
         if not kw.get('inheritLighting'):
             kw['inheritLighting'] = viewerConst.NO
 
-        apply(  Geom.__init__, (self, name, check), kw)
+        Geom.__init__(*(self, name, check), **kw)
         
         assert len(self.vertexSet.vertices.ashape)==2
 
@@ -64,24 +64,24 @@ updateOwnGui=True : allow to update owngui at the end this func
         if v:
             kw['vertices'] = v     # rename centers in vertices for Geom.__init
 
-        redoFlags = apply( Geom.Set, (self, check, 0), kw)
+        redoFlags = Geom.Set(*(self, check, 0), **kw)
 
         return self.redoNow(redo, updateOwnGui, redoFlags)
 
 
     def Add(self, check=1, redo=1, **kw):
-	"""Add spheres"""
+        """Add spheres"""
 
         if __debug__:
             if check:
-                apply( checkKeywords, (self.name,self.keywords), kw)
+                checkKeywords(*(self.name,self.keywords), **kw)
 
-	v = kw.get( 'centers')
-	if v:
-	    kw['vertices'] = v     # rename centers in vertices for Geom.__init
+        v = kw.get( 'centers')
+        if v:
+            kw['vertices'] = v     # rename centers in vertices for Geom.__init
             self.redoDspLst = 1
 
-        apply(Geom.Add, (self, 0, 0), kw)
+        Geom.Add(*(self, 0, 0), **kw)
         
         if self.viewer and redo:
             if self.redoDspLst:
@@ -95,7 +95,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         if len(centers)==0:
             return
 
-        faces = map (lambda x: [x], range(len(centers)))
+        faces = [[x] for x in range(len(centers))]
 
         if self.materials[GL.GL_FRONT] and \
                not self.inheritMaterial:
@@ -150,7 +150,7 @@ class CrossSet(Points):
 #        if not kw.get('transparent'):
 #            kw['transparent'] = viewerConst.YES
 
-        apply( Points.__init__, (self, name, check), kw)
+        Points.__init__(*(self, name, check), **kw)
 
         self._modified = False
 
@@ -167,7 +167,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         if v:
             kw['vertices'] = v     # rename centers in vertices for Geom.__init
             
-        redoFlags = apply( Points.Set, (self, check, 0), kw)
+        redoFlags = Points.Set(*(self, check, 0), **kw)
 
         offset = kw.get( 'offset')
         if offset is not None:
@@ -194,7 +194,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         off = []
         for i in range(1,6): off.append(i*length)
         faces = []
-        for i in xrange(length):
+        for i in range(length):
             faces.append( (i, i+off[0]) )
             faces.append( (i+off[1], i+off[2]) )
             faces.append( (i+off[3], i+off[4]) )

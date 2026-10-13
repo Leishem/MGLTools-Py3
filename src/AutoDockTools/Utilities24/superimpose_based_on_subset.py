@@ -22,8 +22,8 @@ from mglutil.math.rigidFit import RigidfitBodyAligner
 
 def get_atoms(mol, list_of_indicies, names_to_use=['N','CA','C'], verbose=False):
     if verbose: 
-        print "in get_atoms with list of indicies:" 
-        print list_of_indicies
+        print("in get_atoms with list of indicies:") 
+        print(list_of_indicies)
     if not len(list_of_indicies):
         raise 'invalid input: list of indicies is empty!'
     atoms = AtomSet()
@@ -40,14 +40,14 @@ def get_atoms(mol, list_of_indicies, names_to_use=['N','CA','C'], verbose=False)
             these_res = mol.chains.residues[first:]
         else:
             these_res = mol.chains.residues[first:second+1]
-        if verbose: print "Adding  %3d residues " %(len(these_res)),
+        if verbose: print("Adding  %3d residues " %(len(these_res)), end=' ')
         num_res+=len(these_res)
-        if verbose: print "Now there are %d residues total" %(num_res)
+        if verbose: print("Now there are %d residues total" %(num_res))
         for r in these_res:
             for n in names_to_use:
                 atoms.append( r.atoms.get(n)[0])
     assert len(atoms), 'invalid input: lists of indicies did not correspond to any residues!'
-    if verbose: print 'returning %d atoms' %(len(atoms))
+    if verbose: print('returning %d atoms' %(len(atoms)))
     return atoms
 
 
@@ -58,27 +58,27 @@ if __name__ == "__main__":
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: superimpose_based_on_subset_file.py -r reffile -m mobfile"
-        print " Description of  command..."
-        print "       -r reference filename"
-        print "       -m moving filename"
-        print "       -f name of file listing reference residue ranges: "
-        print "            one range per line such as:\n26-26\n35-39\n"
-        print " Optional parameters:"
-        print "      [-o] output filename (default is stem of moving file + '_superimposed.pdb')"
-        print "      [-g] name of file listing mobile residue ranges, one range per line eg 32-36"
-        print "            use this option if the numbering of the residues differs  "
-        print "      [-x] string_for_atoms_to_use listing which atoms in each residue in ranges of "
-        print "           residues read from file to use for superimposition"
-        print "               (default is N_CA_C)"
-        print "      [-v] verbose output"
+        print("Usage: superimpose_based_on_subset_file.py -r reffile -m mobfile")
+        print(" Description of  command...")
+        print("       -r reference filename")
+        print("       -m moving filename")
+        print("       -f name of file listing reference residue ranges: ")
+        print("            one range per line such as:\n26-26\n35-39\n")
+        print(" Optional parameters:")
+        print("      [-o] output filename (default is stem of moving file + '_superimposed.pdb')")
+        print("      [-g] name of file listing mobile residue ranges, one range per line eg 32-36")
+        print("            use this option if the numbering of the residues differs  ")
+        print("      [-x] string_for_atoms_to_use listing which atoms in each residue in ranges of ")
+        print("           residues read from file to use for superimposition")
+        print("               (default is N_CA_C)")
+        print("      [-v] verbose output")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'r:m:f:o:x:g:vh')
-    except getopt.GetoptError, msg:
-        print "superimpose_based_on_subsetfile.py: %s" %msg
+    except getopt.GetoptError as msg:
+        print("superimpose_based_on_subsetfile.py: %s" %msg)
         usage()
         sys.exit(2)
 
@@ -118,15 +118,15 @@ if __name__ == "__main__":
 
 
     if not reference_filename:
-        print "superimpose_based_on_subsetfile: reference filename must be specified"
+        print("superimpose_based_on_subsetfile: reference filename must be specified")
         usage()
         sys.exit()
     if not moving_filename:
-        print "superimpose_based_on_subsetfile: moving filename must be specified"
+        print("superimpose_based_on_subsetfile: moving filename must be specified")
         usage()
         sys.exit()
     if not refrange_filename:
-        print "superimpose_based_on_subsetfile: refrange_filename filename must be specified"
+        print("superimpose_based_on_subsetfile: refrange_filename filename must be specified")
         usage()
         sys.exit()
      
@@ -143,9 +143,9 @@ if __name__ == "__main__":
         #handle blank lines gracefully
         l = l.strip()
         if len(l):
-            first, second  = map(int, l.split('-'))
+            first, second  = list(map(int, l.split('-')))
             reflist.append((first,second))
-    if verbose: print "reflist=", reflist
+    if verbose: print("reflist=", reflist)
     moblist = []
     if mobrange_filename is not None:
         fptr = open(mobrange_filename)
@@ -155,9 +155,9 @@ if __name__ == "__main__":
             #handle blank lines gracefully
             l = l.strip()
             if len(l):
-                first,second  = map(int, l.split('-'))
+                first,second  = list(map(int, l.split('-')))
                 moblist.append((first,second))
-        if verbose: print "moblist=", moblist
+        if verbose: print("moblist=", moblist)
     else:
         moblist = reflist[:]
     #refMol.chains.residues.atoms       # all levels of hierarchical data structure
@@ -172,12 +172,12 @@ if __name__ == "__main__":
     refCoords = refAtoms.coords #or refMol.chains.residues.atoms.get('backbone').coords
     #check that there are some
     if len(refCoords)==0:
-        print "NO REF COORDS!!!"
+        print("NO REF COORDS!!!")
         raise 'Unable to superimpose because no reference coordinates were specified!!!' 
     mobAtoms = get_atoms(mobMol, moblist, names_to_use, verbose)
     mobCoords = mobAtoms.coords
     if len(mobCoords)==0:
-        print "NO MOB COORDS!!!"
+        print("NO MOB COORDS!!!")
         raise 'Unable to superimpose because no mobile coordinates were specified!!!' 
     #check that moblist and reflist are of the same length    
     assert len(refCoords)==len(mobCoords)
@@ -199,7 +199,7 @@ if __name__ == "__main__":
         EXT = os.path.splitext(refMol.parser.filename)[1]
         outputfilename = refMol.name + "_superimposed"+ EXT
     mobMol.parser.write_with_new_coords(newCoords, outputfilename)
-    if verbose: print "wrote ", outputfilename
+    if verbose: print("wrote ", outputfilename)
 
 # To execute this command type:
 # superimpose_based_on_subset_file.py -r reffile -m mobfile -o outfile [-x  string_for_atoms_to_use] [-v]

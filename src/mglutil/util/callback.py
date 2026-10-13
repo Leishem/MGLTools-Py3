@@ -12,21 +12,21 @@ class CallbackManager:
     """Class to manage a list of callback functions"""
 
     def __init__(self):
-	self.callbacks = []
+        self.callbacks = []
 
 
     def FindFunctionByName(self, funcName):
-	"""find a function with a given name in a list of functions"""
+        """find a function with a given name in a list of functions"""
 
         for f in self.callbacks:
-	    if f.__name__==funcName: return f
-	return None
+            if f.__name__==funcName: return f
+        return None
 
 
     def SetCallback(self, func):
-	"""Delete all and set a callback fuction"""
+        """Delete all and set a callback fuction"""
 
-	assert func is None or callable(func)
+        assert func is None or callable(func)
         if func is None:
             self.callbacks = []
         else:
@@ -34,22 +34,22 @@ class CallbackManager:
 
 
     def AddCallback(self, func):
-	"""Add a callback fuction"""
+        """Add a callback fuction"""
 
-	assert callable(func)
-	self.callbacks.append(func)
+        assert callable(func)
+        self.callbacks.append(func)
 
 
     def CallCallbacks(self, *args, **kw):
-	"""call all callback fuctions"""
+        """call all callback fuctions"""
 
         results = []
-	for func in self.callbacks:
+        for func in self.callbacks:
             try:
-                results.append( apply(func, args, kw) )
+                results.append( func(*args, **kw) )
                 
             except:
-                print 'ERROR ************************************************'
+                print('ERROR ************************************************')
                 traceback.print_exc()
                 return 'ERROR'
 
@@ -58,12 +58,12 @@ class CallbackManager:
             
     def ListCallbacks(self):
         for func in self.callbacks:
-            print func.__name__,func
+            print(func.__name__,func)
 
 
     def RemoveCallback(self, func):
-	"""Delete a callback fuction"""
-        if type(func)==types.StringType:
+        """Delete a callback fuction"""
+        if type(func)==bytes:
             func = self.FindFunctionByName(func)
             if func is None: return "function %s not found"%func
         if func in self.callbacks:
@@ -83,6 +83,6 @@ class CallbackFunction:
     def __call__(self, *args, **kw):
         args = self.args + args
         kw.update(self.kw)
-        return apply(self.function, args, kw)
+        return self.function(*args, **kw)
 
 CallBackFunction = CallbackFunction

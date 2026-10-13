@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -13,7 +13,7 @@
 #
 #$Id: MapData.py,v 1.12 2007/07/24 17:30:45 vareille Exp $
 #
-import numpy.oldnumeric as Numeric , struct
+import mglcompat.oldnumeric as Numeric , struct
 from time import time
 from math import log
 
@@ -282,8 +282,8 @@ class MapData :
             if data_max > arr_max: data_max = arr_max
         else:
             data_max = arr_max
-        print "mapping data_min %4f to val_min %d, data_max %4f to val_max %d"\
-              % (data_min, val_min, data_max, val_max)
+        print("mapping data_min %4f to val_min %d, data_max %4f to val_max %d"\
+              % (data_min, val_min, data_max, val_max))
         if map_type == 'linear':
             k2,c2 = self.ScaleMap((val_min, val_max), (data_min, data_max))
             n_intervals = 3
@@ -322,7 +322,7 @@ class MapData :
             arr = Numeric.transpose(new_arr).astype(self.int_type)
             del(new_arr)
             t2 = time()
-            print "time to map : ", t2-t1
+            print("time to map : ", t2-t1)
         elif map_type == 'log':
             if arr_min < 0:
                 diff = abs(arr_min)+1.0

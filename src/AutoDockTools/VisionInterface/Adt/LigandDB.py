@@ -11,7 +11,7 @@ Ligand Library Object
 import os
 import tempfile
 import zipfile
-import string, types, re
+import types, re; from mglcompat import pystring as string
 from AutoDockTools.filterLigands import CalculateProperties, PropertyTable, LigandList, FilterLigands
 
 class LigandDB:
@@ -35,14 +35,14 @@ class LigandDB:
         self.filter_file = None
 
         if self.server_lib != None:
-            import urllib
+            import urllib.request, urllib.parse, urllib.error
             slu = "http://kryptonite.nbcr.net/ligand_props/" + server_lib + ".prop"
             pt = PropertyTable(url=slu)
             self.propertyTable = pt
             self.loc = self.server_lib
             self.loc_type = "server_lib"
         elif self.url_lib != None:
-            import urllib
+            import urllib.request, urllib.parse, urllib.error
             slu = url_lib + "/lib.prop"
             #print slu
             pt = PropertyTable(url=slu)

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
 #
@@ -15,7 +15,7 @@
 
 import math
 from math import sqrt
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 from PyAutoDock.MolecularSystem import MolecularSystem
 
@@ -29,12 +29,12 @@ class ScoringStrategy:
     def set_molecular_system(self, ms):
         """Abstract method
         """
-        raise NotImplementedError, "abstract method"
+        raise NotImplementedError("abstract method")
 
     def get_score(self):
         """Abstract method
         """
-        raise NotImplementedError, "abstract method"
+        raise NotImplementedError("abstract method")
     
 # ScoringStrategy
 
@@ -67,13 +67,13 @@ manage only checking a required attr once per entity_sets.)
 
         # check the required attribute for both subsets before going on
         listA = []
-        for k,v in self.required_attr_dictA.items():
+        for k,v in list(self.required_attr_dictA.items()):
             if not v:
                 listA.append(k)
                 self.required_attr_dictA[k] = True
         ms.check_required_attributes( ms.configuration[0], listA)
         listB = []
-        for k,v in self.required_attr_dictB.items():
+        for k,v in list(self.required_attr_dictB.items()):
             if not v:
                 listB.append(k)
                 self.required_attr_dictB[k] = True
@@ -303,5 +303,5 @@ class HBondVDWSmoothing:
 
 
 if __name__ == '__main__':
-    print "Tests are in Tests/test_scorer.py"
+    print("Tests are in Tests/test_scorer.py")
     # test_scorer.run_test()

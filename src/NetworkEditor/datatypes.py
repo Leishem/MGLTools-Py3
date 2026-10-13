@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -18,7 +18,7 @@
 #########################################################################
 
 import types
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 import warnings
 import array   
 
@@ -253,7 +253,7 @@ class FloatType(AnyArrayType):
 
     def validate(self, data):
         if self['datashape'] is None:
-            if isinstance(data, types.FloatType):
+            if isinstance(data, float):
                 return True, data
             else:
                 return False, None
@@ -266,7 +266,7 @@ class FloatType(AnyArrayType):
 
     def cast(self, data):
         if self['datashape'] is None:
-            if isinstance(data, types.FloatType):
+            if isinstance(data, float):
                 return True, data
             try:
                 data = float(data)
@@ -292,7 +292,7 @@ class IntType(AnyArrayType):
 
     def validate(self, data):
         if self['datashape'] is None:
-            if isinstance(data, types.IntType):
+            if isinstance(data, int):
                 return True, data
             else:
                 return False, None
@@ -305,7 +305,7 @@ class IntType(AnyArrayType):
 
     def cast(self, data):
         if self['datashape'] is None:
-            if isinstance(data, types.IntType):
+            if isinstance(data, int):
                 return True, data
             try:
                 data = int(data)
@@ -332,7 +332,7 @@ class BooleanType(AnyArrayType):
 
     def validate(self, data):
         if self['datashape'] is None:
-            if type(data) == types.BooleanType:
+            if type(data) == bool:
                 return True, data
             else:
                 return False, None
@@ -345,7 +345,7 @@ class BooleanType(AnyArrayType):
 
     def cast(self, data):
         if self['datashape'] is None:
-            if type(data) == types.BooleanType:
+            if type(data) == bool:
                 return True, data
             try:
                 data = bool(data)
@@ -373,7 +373,7 @@ class StringType(AnyArrayType):
 
     def validate(self, data):
         if self['datashape'] is None:
-            if type(data) == types.StringType:
+            if type(data) == bytes:
                 return True, data
             else:
                 return False, None
@@ -389,7 +389,7 @@ class StringType(AnyArrayType):
 
     def cast(self, data):
         if self['datashape'] is None:
-            if type(data) == types.StringType:
+            if type(data) == bytes:
                 return True, data
             try:
                 data = str(data)
@@ -439,12 +439,12 @@ class ListType(AnyType):
 
 
     def validate(self, data):
-        return type(data)==types.ListType
+        return type(data)==list
 
     
     def cast(self, data):
         try:
-            if type(data)==types.StringType:
+            if type(data)==bytes:
                 try:
                     lData = eval(data)
                 except:
@@ -474,7 +474,7 @@ class TupleType(AnyType):
 
 
     def validate(self, data):
-        return type(data)==types.TupleType
+        return type(data)==tuple
 
     
     def cast(self, data):
@@ -499,7 +499,7 @@ class DictType(AnyType):
 
 
     def validate(self, data):
-        return type(data)==types.DictType
+        return type(data)==dict
 
 
 
@@ -557,7 +557,7 @@ class VectorType(AnyType):
 
     def validate(self, data):
         try:
-            if type(data) != types.StringType:
+            if type(data) != bytes:
                 len(data)
                 return True
             else:
@@ -569,7 +569,7 @@ class VectorType(AnyType):
     def cast(self, data):
         """returns a success status (true, false) and the coerced data
 """
-        if type(data) == types.StringType:
+        if type(data) == bytes:
             return True, (data, )
         return False, None
 
@@ -607,9 +607,9 @@ class TkColorType(AnyType):
         del self.data['class']
 
     def validate(self, data):
-        import Tkinter
+        import tkinter
         try:
-            Tkinter._default_root.winfo_rgb(data)
+            tkinter._default_root.winfo_rgb(data)
             return True
         finally:
             return False
@@ -747,17 +747,17 @@ existingTypeName: must be a registered name
 
 
     def addSynonymDict(self, aDict):
-        if aDict.has_key('existingTypeName') is False:
+        if ('existingTypeName' in aDict) is False:
             aDict['existingTypeName'] = None
-        if aDict.has_key('datashape') is False:
+        if ('datashape' in aDict) is False:
             aDict['datashape'] = None
-        if aDict.has_key('color') is False:
+        if ('color' in aDict) is False:
             aDict['color'] = None
-        if aDict.has_key('shape') is False:
+        if ('shape' in aDict) is False:
             aDict['shape'] = None
-        if aDict.has_key('width') is False:
+        if ('width' in aDict) is False:
             aDict['width'] = None
-        if aDict.has_key('height') is False:
+        if ('height' in aDict) is False:
             aDict['height'] = None
 
         self.addSynonym(aDict['synonymName'], 
@@ -783,7 +783,7 @@ existingTypeName: must be a registered name
             if dtypeinstance['datashape'] is not None:
                 if dtypeinstance['name'].endswith(dtypeinstance['datashape']):
                     # make sure the base type exists
-                    if self.portTypeInstances.has_key(basetypename) is None:
+                    if (basetypename in self.portTypeInstances) is None:
                         msg = 'base datatype '+basetypename
                         msg += ' not found in types table when adding %s'%str(dtypeinstance)
                         warnings.warn(msg)
@@ -792,7 +792,7 @@ existingTypeName: must be a registered name
             else:
                 storagename = basetypename
 
-            if self.portTypeInstances.has_key(storagename):
+            if storagename in self.portTypeInstances:
                 if isinstance(dtypeinstance, AnyType):
                     if not ( \
                         isinstance(self.portTypeInstances[storagename], AnyType) \
@@ -814,8 +814,8 @@ existingTypeName: must be a registered name
 
             self.portTypeInstances[storagename] = dtypeinstance
 
-            if dtypeinstance.has_key('class'):
-                if not self.reverseLookUp.has_key(dtypeinstance['class']):                
+            if 'class' in dtypeinstance:
+                if dtypeinstance['class'] not in self.reverseLookUp:                
                     self.reverseLookUp[dtypeinstance['class']] = dtypeinstance
 
         else:
@@ -832,14 +832,14 @@ existingTypeName: must be a registered name
         if len(splittype)==2:
             datashape = '(' + splittype[1]
 
-        if not self.portTypeInstances.has_key(typename):
+        if typename not in self.portTypeInstances:
             msg = 'base datatype ' + typename
             msg += ' not found in types table'
             warnings.warn(msg)
             #import traceback;traceback.print_stack()
             return self.portTypeInstances['None']
 
-        if self.portTypeInstances.has_key(fullName) is False:
+        if (fullName in self.portTypeInstances) is False:
             # base class exist but not with this datashape, we add it            
             self.addSynonym(fullName, typename, datashape)
 

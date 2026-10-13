@@ -1,4 +1,4 @@
-import string, types, Numeric
+import types, Numeric; from mglcompat import pystring as string
 
 
 class ConstrainedParameterSet:
@@ -33,7 +33,7 @@ class ConstrainedParameterSet:
         #eg:
         # changes in self.center force  changes in self.offset
         # self.tie('center','offset',Numeric.multiply,'center,2.0')
-        if not self.conDict.has_key(parm1Name):
+        if parm1Name not in self.conDict:
             self.conDict[parm1Name] = []
         self.conDict[parm1Name].append((parm2Name, func, args))
         #is this at all clear?
@@ -46,7 +46,7 @@ class ConstrainedParameterSet:
         conList = self.conDict.get(parmName, None)
         if not conList:
             # do nothing + return
-            print 'no constraints on ', parmName
+            print('no constraints on ', parmName)
             return 
         #conList has tuples (func, args)
         #eg: sample value in conList
@@ -55,7 +55,7 @@ class ConstrainedParameterSet:
             #FIX THIS:
             #to update self.parm2Name:
             #   need to get (self.center, 0.5) from args='center, 0.5'
-            setattr(self,parm2Name, apply(func, eval('self.'+args)))
+            setattr(self,parm2Name, func(*eval('self.'+args)))
 
 
     def untie(self, parm1Name, parm2Name, func, args):
@@ -63,10 +63,10 @@ class ConstrainedParameterSet:
         #g.untie('center','offset',Numeric.multiply,'center,2.0')
         conList = self.conDict.get(parm1Name, None)
         if not conList:
-            print 'no constraints on ', parm1Name
+            print('no constraints on ', parm1Name)
             return "ERROR"
         if (parm2Name, func, args) not in conList:
-            print '(%s,%s,%s) not in %s constraints'%(parm2Name, func, args, parm1Name)
+            print('(%s,%s,%s) not in %s constraints'%(parm2Name, func, args, parm1Name))
             return "ERROR"
         self.conDict[parm1Name].remove((parm2Name, func, args))
 
@@ -79,16 +79,16 @@ class ConstrainedParameterSet:
 
     def validateValue(self, parm, value):
         rangeD = self.rangeDict
-        if not rangeD.has_key(parm):
+        if parm not in rangeD:
             #nothing specified for this parm
             return value
         range = rangeD[parm]
-        if type(range)==types.ListType:
+        if type(range)==list:
             if value in range:
                 return value
             else:
                 return "ERROR: value not in range list"
-        elif type(range)==types.TupleType:
+        elif type(range)==tuple:
             if value>=range[0]and value<=range[1]:
                 return value
             else:
@@ -100,7 +100,7 @@ class ConstrainedParameterSet:
                 return "ERROR: value not specified type"
         else:
             #only thing left is validation function
-            ok = apply(range, value)
+            ok = list(range(*value))
             if ok:
                 return value
             else:
@@ -110,7 +110,7 @@ class ConstrainedParameterSet:
     def update(self, parm, value):
         check = self.validateValue(parm, value)
         if check!=value:
-            print 'failed validation:\n', check
+            print('failed validation:\n', check)
             return "ERROR"
         self.updateConstraints(parm)
 
@@ -119,7 +119,7 @@ class ConstrainedParameterSet:
         #????????????????????????????
         #this method makes self.parmName constant
         #by removing any constraints which force it to change
-        for k, v in self.conDict.items():
+        for k, v in list(self.conDict.items()):
             for triple in v:
                 if triple[0]==parmName:
                     self.conDict[k].remove(triple)
@@ -145,12 +145,12 @@ class GeneralRegularGridDescriptor(ConstrainedParameterSet):
 
         consDict = kw.get('consDict', None)
         if consDict:
-            for k, v in consDict.items():
+            for k, v in list(consDict.items()):
                 self.tie(k, v[0], v[1], v[2])
 
         rangeDict = kw.get('rangeDict', None)
         if rangeDict:
-            for k, v in rangeDict.items():
+            for k, v in list(rangeDict.items()):
                 self.setRange(k, v)
 
         fixed = kw.get('fixed', None)

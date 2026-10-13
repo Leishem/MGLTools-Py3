@@ -104,7 +104,7 @@ class ParameterScoringGui:
     def getScorerAvailable(self):
         self.scoreravailable = []
         if hasattr(self.epmv.mv,'energy'):
-            self.scoreravailable = self.epmv.mv.energy.data.keys()
+            self.scoreravailable = list(self.epmv.mv.energy.data.keys())
 
     def getScore(self):
         if hasattr(self.epmv.mv,'energy'):
@@ -119,11 +119,11 @@ class parameter_epmvGUI:
         id=1005
         #need to split in epmv options and gui options - >guiClass?
         self.EPMVOPTIONS = {}
-        for key in self.epmv.keywords.keys() : 
+        for key in list(self.epmv.keywords.keys()) : 
             self.EPMVOPTIONS[key] = {"id": id, "name":self.epmv.keywords[key],'width':witdh,"height":10,"action":None}
             id = id +1
         self.GUIOPTIONS = {}
-        for key in self.epmv.gui.keywords.keys():
+        for key in list(self.epmv.gui.keywords.keys()):
             self.GUIOPTIONS[key] = {"id": id, "name":self.epmv.gui.keywords[key],'width':witdh,"height":10,"action":None}
             id = id +1
             
@@ -240,7 +240,7 @@ class epmvGui:
                          '  RibbonProtein+CPKligand','  xray','  Custom',
                          '  Save Custom As...']
         self.keyword = ['keywords:','  backbone','  sidechain','  chain','  picked']
-        kw=map(lambda x:"  "+x,ResidueSetSelector.residueList.keys())
+        kw=["  "+x for x in list(ResidueSetSelector.residueList.keys())]
         self.keyword.extend(kw)
         
         self.scriptliste = ['Open:','pymol_demo','interactive_docking','demo1','user_script']

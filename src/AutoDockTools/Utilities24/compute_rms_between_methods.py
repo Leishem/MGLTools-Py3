@@ -5,7 +5,7 @@
 # $Header: /opt/cvs/python/packages/share1.5/AutoDockTools/Utilities24/compute_rms_between_methods.py,v 1.5 2007/10/09 17:30:07 annao Exp $
 #
 import os, glob
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from math import sqrt
 
 from MolKit import Read
@@ -30,23 +30,23 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: compute_rms_between_methods.py -d directory"
-        print
-        print "    Description of command..."
-        print "         -f     reference directory"
-        print "         -d     directory"
-        print "    Optional parameters:"
-        print "        [-t]    rmsd tolerance (default is 1.5)"
-        print "        [-o]    output filename"
-        print "                      (default is 'summary_rms_results')"
-        print "        [-v]    verbose output"
+        print("Usage: compute_rms_between_methods.py -d directory")
+        print()
+        print("    Description of command...")
+        print("         -f     reference directory")
+        print("         -d     directory")
+        print("    Optional parameters:")
+        print("        [-t]    rmsd tolerance (default is 1.5)")
+        print("        [-o]    output filename")
+        print("                      (default is 'summary_rms_results')")
+        print("        [-v]    verbose output")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'f:d:o:t:vh')
-    except getopt.GetoptError, msg:
-        print 'compute_rms_between_methods.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('compute_rms_between_methods.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -67,30 +67,30 @@ if __name__ == '__main__':
         #print "o=", o, " a=", a
         if o in ('-f', '--f'):
             refdirectory = a
-            if verbose: print 'set refdirectory to ', a
+            if verbose: print('set refdirectory to ', a)
         if o in ('-d', '--d'):
             directory = a
-            if verbose: print 'set directory to ', a
+            if verbose: print('set directory to ', a)
         if o in ('-o', '--o'):
             outputfilename = a
-            if verbose: print 'set outputfilename to ', a
+            if verbose: print('set outputfilename to ', a)
         if o in ('-t', '--t'):
             rms_tolerance = float(a)
-            if verbose: print 'set rms_tolerance to ', a
+            if verbose: print('set rms_tolerance to ', a)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
     if not  refdirectory:
-        print 'compute_rms_between_methods: refdirectory must be specified.'
+        print('compute_rms_between_methods: refdirectory must be specified.')
         usage()
         sys.exit()
 
     if not  directory:
-        print 'compute_rms_between_methods: directory must be specified.'
+        print('compute_rms_between_methods: directory must be specified.')
         usage()
         sys.exit()
 
@@ -110,9 +110,9 @@ if __name__ == '__main__':
     ref_LE_coords = ref_d.ligMol.allAtoms.coords[:]
     ref_largest = clust0
     for clust in ref_d.clusterer.clustering_dict[rms_tolerance]:
-        if verbose: print "current largest cluster len= ", len(clust)
+        if verbose: print("current largest cluster len= ", len(clust))
         if len(clust)>len(ref_largest): 
-            if verbose: print "resetting largest clust: now len=", len(clust)
+            if verbose: print("resetting largest clust: now len=", len(clust))
             ref_largest = clust
     ref_d.ch.set_conformation(ref_largest[0])
     ref_LC_coords = ref_d.ligMol.allAtoms.coords[:]
@@ -143,9 +143,9 @@ if __name__ == '__main__':
     # repeat for largest cluster 
     largest = clust0
     for clust in d.clusterer.clustering_dict[rms_tolerance]:
-        if verbose: print "current largest cluster len= ", len(clust)
+        if verbose: print("current largest cluster len= ", len(clust))
         if len(clust)>len(largest): 
-            if verbose: print "resetting largest clust: now len=", len(clust)
+            if verbose: print("resetting largest clust: now len=", len(clust))
             largest = clust
     conf_LC = largest[0]  #lowest energy conformation in largest cluster
     #SET d.ligMol to LARGEST CLUSTER's LOWEST ENERGY conf

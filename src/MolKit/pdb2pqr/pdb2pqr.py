@@ -16,7 +16,7 @@ __date__  = "17 March 2007"
 __author__ = "Todd Dolinsky, Nathan Baker"
 __version__ = "1.2.1"
 
-import string
+from mglcompat import pystring as string
 import sys
 import getopt
 import os
@@ -28,22 +28,22 @@ except ImportError:
     site = os.path.split(os.__file__)[0]                    
     sys.path.remove(os.path.join(site,'site-packages'))
 import time
-from src import pdb
-from src import utilities
-from src import structures
-from src import routines
-from src import protein
-from src import server
-from src.pdb import *
-from src.utilities import *
-from src.structures import *
-from src.definitions import *
-from src.forcefield import *
-from src.routines import *
-from src.protein import *
-from src.server import *
-from src.hydrogens import *
-from StringIO import *
+from .src import pdb
+from .src import utilities
+from .src import structures
+from .src import routines
+from .src import protein
+from .src import server
+from .src.pdb import *
+from .src.utilities import *
+from .src.structures import *
+from .src.definitions import *
+from .src.forcefield import *
+from .src.routines import *
+from .src.protein import *
+from .src.server import *
+from .src.hydrogens import *
+from io import *
 
 def usage(rc):
     """
@@ -201,7 +201,7 @@ def runPDB2PQR(pdblist, ff, options):
 
     if "outname" not in options or options["outname"] == None:
         text = "Error: Output name not set!"
-        raise ValueError, text
+        raise ValueError(text)
     else:
         outname = options["outname"]
         period = string.find(outname,".")
@@ -222,24 +222,24 @@ def runPDB2PQR(pdblist, ff, options):
     start = time.time()
 
     if verbose:
-        print "Beginning PDB2PQR...\n"
+        print("Beginning PDB2PQR...\n")
 
     myDefinition = Definition()
     if verbose:
-        print "Parsed Amino Acid definition file."   
+        print("Parsed Amino Acid definition file.")   
 
     # Check for the presence of a ligand!  This code is taken from pdb2pka/pka.py
 
     if "ligand" in options:
-        from pdb2pka.ligandclean import ligff
+        from .pdb2pka.ligandclean import ligff
         myProtein, myDefinition, Lig = ligff.initialize(myDefinition, options["ligand"], pdblist, verbose)        
     else:
         myProtein = Protein(pdblist, myDefinition)
 
     if verbose:
-        print "Created protein object -"
-        print "\tNumber of residues in protein: %s" % myProtein.numResidues()
-        print "\tNumber of atoms in protein   : %s" % myProtein.numAtoms()
+        print("Created protein object -")
+        print("\tNumber of residues in protein: %s" % myProtein.numResidues())
+        print("\tNumber of atoms in protein   : %s" % myProtein.numAtoms())
         
     myRoutines = Routines(myProtein, verbose)
 
@@ -257,7 +257,7 @@ def runPDB2PQR(pdblist, ff, options):
             eval(call)  
     
         if verbose:
-            print "Total time taken: %.2f seconds\n" % (time.time() - start)
+            print("Total time taken: %.2f seconds\n" % (time.time() - start))
         return header, lines
 
     if not "assign-only" in options:
@@ -372,7 +372,7 @@ def runPDB2PQR(pdblist, ff, options):
         eval(call)
 
     if verbose:
-        print "Total time taken: %.2f seconds\n" % (time.time() - start)
+        print("Total time taken: %.2f seconds\n" % (time.time() - start))
 
     return header, lines, missedligandresidues
 
@@ -419,10 +419,10 @@ def mainCommand():
     longOptlist = ["help","verbose","ff=","ffout=","nodebump","noopt","with-ph=","apbs-input","chain","clean","assign-only", "ligand="]
 
     extensions = getAvailableExtensions(1)
-    longOptlist += extensions.keys()
+    longOptlist += list(extensions.keys())
 
     try: opts, args = getopt.getopt(sys.argv[1:], shortOptlist, longOptlist)
-    except getopt.GetoptError, details:
+    except getopt.GetoptError as details:
         sys.stderr.write("GetoptError:  %s\n" % details)
         usage(2)
 
@@ -452,7 +452,7 @@ def mainCommand():
             except ValueError:
                 text = "%s is not a valid pH!  " % a
                 text += "Please choose a pH between 0.0 and 14.0."
-                raise ValueError, text
+                raise ValueError(text)
         elif o == "--assign-only":
             del options["debump"]
             del options["opt"]
@@ -468,24 +468,24 @@ def mainCommand():
 
             defpath = getFFfile(ff)
             if defpath == "":
-                raise ValueError, "Unable to find parameter files for forcefield %s!" % ff
+                raise ValueError("Unable to find parameter files for forcefield %s!" % ff)
             
         elif o == "--chain": options["chain"] = 1
         elif o == "--ffout":
             if a in ["amber","AMBER","charmm","CHARMM","parse","PARSE","tyl06","TYL06"]:
                 options["ffout"] = a
             else:
-                raise ValueError, "Invalid forcefield naming scheme %s!" % a
+                raise ValueError("Invalid forcefield naming scheme %s!" % a)
         elif o == "--ligand":
             if os.path.isfile(a):
                 options["ligand"] = open(a)
             else:
-                raise ValueError, "Unable to find ligand file %s!\n" % a
-        elif undashed in extensions.keys():
+                raise ValueError("Unable to find ligand file %s!\n" % a)
+        elif undashed in list(extensions.keys()):
             options["extensions"][undashed] = extensions[undashed]
             
     if ff == None and "clean" not in options:
-        raise ValueError, "Forcefield not specified!"
+        raise ValueError("Forcefield not specified!")
 
     text =  "\n--------------------------\n"
     text += "PDB2PQR - a Python-based structural conversion utility\n"
@@ -504,11 +504,11 @@ def mainCommand():
     if len(pdblist) == 0 and len(errlist) == 0:
         try: os.remove(path)
         except OSError: pass
-        raise ValueError, "Unable to find file %s!\n" % path
+        raise ValueError("Unable to find file %s!\n" % path)
 
     if len(errlist) != 0 and "verbose" in options:
-        print "Warning: %s is a non-standard PDB file.\n" % path
-        print errlist
+        print("Warning: %s is a non-standard PDB file.\n" % path)
+        print(errlist)
 
     outpath = args[1]
     options["outname"] = outpath
@@ -523,8 +523,8 @@ def mainCommand():
     outfile.close()
 
     if "input" in options:
-        from src import inputgen
-        from src import psize
+        from .src import inputgen
+        from .src import psize
         method = "mg-auto"
         size = psize.Psize()
         size.parseInput(outpath)
@@ -548,9 +548,9 @@ def mainCGI():
     ff = form["FF"].value 
     input = 0
   
-    if form.has_key("DEBUMP"): options["debump"] = 1
-    if form.has_key("OPT"): options["opt"] = 1
-    if form.has_key("PROPKA"):
+    if "DEBUMP" in form: options["debump"] = 1
+    if "OPT" in form: options["opt"] = 1
+    if "PROPKA" in form:
         try:
             ph = float(form["PH"].value)
             if ph < 0.0 or ph > 14.0: raise ValueError
@@ -558,34 +558,34 @@ def mainCGI():
         except ValueError:
              text = "The entered pH of %.2f is invalid!  " % form["PH"].value
              text += "Please choose a pH between 0.0 and 14.0."
-             print "Content-type: text/html\n"
-             print text
+             print("Content-type: text/html\n")
+             print(text)
              sys.exit(2)
-    if form.has_key("PDBID"):
+    if "PDBID" in form:
         file = getPDBFile(form["PDBID"].value)
-    elif form.has_key("PDB"):
+    elif "PDB" in form:
         file = StringIO(form["PDB"].value)
-    if form.has_key("INPUT"):
+    if "INPUT" in form:
         input = 1
         options["apbs"] = 1
-    if form.has_key("USERFF"):
+    if "USERFF" in form:
         userff = StringIO(form["USERFF"].value)
         ff = "user-defined"
         options["userff"] = userff
-    if form.has_key("FFOUT"):
+    if "FFOUT" in form:
         if form["FFOUT"].value != "internal":
             options["ffout"] = form["FFOUT"].value
-    if form.has_key("CHAIN"):
+    if "CHAIN" in form:
         options["chain"] = 1
-    if form.has_key("LIGAND"):
+    if "LIGAND" in form:
         options["ligand"] = StringIO(form["LIGAND"].value)    
   
     pdblist, errlist = readPDB(file)    
     if len(pdblist) == 0 and len(errlist) == 0:
         text = "Unable to find PDB file - Please make sure this is "
         text += "a valid PDB file ID!"
-        print "Content-type: text/html\n"
-        print text
+        print("Content-type: text/html\n")
+        print(text)
         sys.exit(2)
     elif len(pdblist) > 10000 and "opt" in options:
         text = "<HTML><HEAD>"
@@ -599,8 +599,8 @@ def mainCGI():
         text += "is available from the <a href=\"http://pdb2pqr.sourceforge.net\">"
         text += "PDB2PQR SourceForge project page</a>."
         text += "</BODY></HTML>"
-        print "Content-type: text/html\n"
-        print text
+        print("Content-type: text/html\n")
+        print(text)
         sys.exit(2)
         
     try:
@@ -617,8 +617,8 @@ def mainCGI():
         file.close()
                 
         if input:
-            from src import inputgen
-            from src import psize
+            from .src import inputgen
+            from .src import psize
             method = "mg-auto"
             size = psize.Psize()
             size.parseInput(pqrpath)
@@ -631,15 +631,15 @@ def mainCGI():
         createResults(header, input, name, endtime, missedligands)
         logRun(options, endtime, len(lines), ff, os.environ["REMOTE_ADDR"])
 
-    except StandardError, details:
-        print "Content-type: text/html\n"
-        print details
+    except Exception as details:
+        print("Content-type: text/html\n")
+        print(details)
         createError(name, details)
     
 if __name__ == "__main__":
     """ Determine if called from command line or CGI """
     
-    if not os.environ.has_key("REQUEST_METHOD"):
+    if "REQUEST_METHOD" not in os.environ:
         mainCommand()    
     else:
         mainCGI()

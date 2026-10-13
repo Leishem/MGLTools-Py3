@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -13,7 +13,7 @@
 # $Id: mvCommand.py,v 1.53.2.4 2011/06/13 17:44:30 sanner Exp $
 #
 
-import types, numpy.oldnumeric as Numeric, warnings
+import types, mglcompat.oldnumeric as Numeric, warnings
 
 from ViewerFramework.VFCommand import Command, CommandGUI, \
      InteractiveCmdCaller, ActiveObject
@@ -24,7 +24,7 @@ from mglutil.util.uniq import uniq3
 
 # used by BindGeomToMolecularFragment
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
-import Pmw, Tkinter, string
+import Pmw, tkinter; from mglcompat import pystring as string
 from MolKit.molecule import AtomSet, Atom
 
 class MVInteractiveCmdCaller(InteractiveCmdCaller):
@@ -34,7 +34,7 @@ class MVInteractiveCmdCaller(InteractiveCmdCaller):
     """
 
     def __init__(self, vf, level=Molecule):
-        apply( InteractiveCmdCaller.__init__, (self, vf) )
+        InteractiveCmdCaller.__init__(*(self, vf))
         self.level = ActiveObject(level)
         self.levelColors = {
             'Atom':(1.,1.,0.),
@@ -336,13 +336,13 @@ modules implement commands.
         kw = {}
         if log!=None: kw['log']=log
         if redraw!=None: kw['redraw']=redraw
-        args, kw = apply( self.getArguments, (), kw)
-        if not kw.has_key('redraw'): kw['redraw']=1
-        if not kw.has_key('log'): kw['log']=1
+        args, kw = self.getArguments(*(), **kw)
+        if 'redraw' not in kw: kw['redraw']=1
+        if 'log' not in kw: kw['log']=1
         if event:
-            return apply( self.doitWrapper, (event,)+args, kw )
+            return self.doitWrapper(*(event,)+args, **kw)
         else:
-            return apply( self.doitWrapper, args, kw )
+            return self.doitWrapper(*args, **kw)
 
     def _strArg(self, arg):
         """
@@ -457,7 +457,7 @@ moelcular fragment name.
                 if max(instance[1])>0:
                     geomNames = instance[0].fullName.split('|')                
                     msg = msgBase+'  instance: ' + \
-                          str(zip(geomNames,instance[1]))
+                          str(list(zip(geomNames,instance[1])))
                     self.vf.message( msg )
                     lab = msg
                 else:
@@ -474,11 +474,11 @@ moelcular fragment name.
 
     def __call__(self, nodes, topCommand=0, **kw):
         # we do not want this command to log or undo itself
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
 
-        if not kw.has_key('topCommand'): kw['topCommand'] = topCommand
-        apply( self.doitWrapper, (nodes,), kw )
+        if 'topCommand' not in kw: kw['topCommand'] = topCommand
+        self.doitWrapper(*(nodes,), **kw)
 
 
 
@@ -522,10 +522,10 @@ matrices.
         # we do not want this command to log or undo itself
         kw['topCommand']=0
         kw['busyIdle']=1
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
             nodes = self.vf.expandNodes(nodes)
-        apply( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
 
 
 from DejaVu.colorTool import TkColor
@@ -560,7 +560,7 @@ class MVSetIcomLevel(MVCommand):
         set the current IcomLevel level 
         """
         kw['KlassSet'] = KlassSet
-        apply( self.doitWrapper, (Klass,), kw)
+        self.doitWrapper(*(Klass,), **kw)
 
 
 levels = ['Molecule', 'Chain', 'Residue', 'Atom']
@@ -584,10 +584,10 @@ class MVSetSelectionLevel(MVCommand):
 
     def onAddCmdToViewer(self):
         if self.vf.hasGui:
-            self.levelVar = Tkinter.StringVar()
+            self.levelVar = tkinter.StringVar()
             menu = self.GUI.menuButton.menu
-            topMenu = Tkinter.Menu(menu)
-            self.bottomMenu = Tkinter.Menu(self.vf.GUI.pickLabel, tearoff=0)
+            topMenu = tkinter.Menu(menu)
+            self.bottomMenu = tkinter.Menu(self.vf.GUI.pickLabel, tearoff=0)
             
             for level in levels:
                 topMenu.add_radiobutton(
@@ -637,8 +637,8 @@ class MVSetSelectionLevel(MVCommand):
         MVCommand.undo(self, **kw)
     
     def doit(self, Klass, KlassSet=None):
-        if type(Klass)==types.StringType:
-            if Klass in self.levelDict.keys():
+        if type(Klass)==bytes:
+            if Klass in list(self.levelDict.keys()):
                 Klass = self.levelDict[Klass]
             else:
                 msg = Klass + "string does not map to a valid level"
@@ -695,7 +695,7 @@ class MVSetSelectionLevel(MVCommand):
         this level
         """
         kw['KlassSet'] = KlassSet
-        apply( self.doitWrapper, (Klass,), kw)
+        self.doitWrapper(*(Klass,), **kw)
 
 
     def buildForm(self):
@@ -705,7 +705,7 @@ class MVSetSelectionLevel(MVCommand):
         self.levelVar.set("Molecule")
         for level, levlabel in zip(levels, levelLabels):
             ifd.append({'name':level, 
-                        'widgetType': Tkinter.Radiobutton,
+                        'widgetType': tkinter.Radiobutton,
                         'wcfg':{'text':levlabel,
                                 'variable':self.levelVar,
                                 'value':level,
@@ -715,7 +715,7 @@ class MVSetSelectionLevel(MVCommand):
                                 'command':self.setLevel_cb},
                         'gridcfg':{'sticky':'we'}})
         ifd.append({'name':'dismiss',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'defaultValue':1,
                     'wcfg':{'text':'Dismiss',
                             'command':self.Close_cb},

@@ -13,29 +13,29 @@ from NetworkEditor.widgets import TkPortWidget, PortWidget
 from mglutil.gui.BasicWidgets.Tk.xyzGUI import xyzGUI
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 from mglutil.util.callback import CallbackManager
-import Tkinter, string, math
+import tkinter, math; from mglcompat import pystring as string
 
-class VectEntry(Tkinter.Frame):
+class VectEntry(tkinter.Frame):
     """ this widget is a specialized Entry for typing in vector values.
         A setValue() method has been added which checks that the input is
         correct. The vector is used *as is* and will not be normalized """
 
     def __init__(self, master=None, label=None, width=18, callback=None, **kw):
-        Tkinter.Frame.__init__(self, master)
-        Tkinter.Pack.config(self)
+        tkinter.Frame.__init__(self, master)
+        tkinter.Pack.config(self)
 
-        self.var = Tkinter.StringVar()
+        self.var = tkinter.StringVar()
         
-        self.frame = Tkinter.Frame(self)
+        self.frame = tkinter.Frame(self)
 
         if label and label != '':
             d={'fg':'black','text':label}
-            self.tklabel = apply(Tkinter.Label, (self.frame,), d)
+            self.tklabel = tkinter.Label(*(self.frame,), **d)
             self.tklabel.pack()
             
 
         kw['width']=width
-        self.tkwidget = apply( Tkinter.Entry, (self.frame,), kw )
+        self.tkwidget = tkinter.Entry(*(self.frame,), **kw)
         self.tkwidget.bind('<Return>', self.setValue_cb)
         self.tkwidget.pack()
 
@@ -70,8 +70,8 @@ class VectEntry(Tkinter.Frame):
             self.point.append(float(val[0]))
             self.point.append(float(val[1]))
             self.point.append(float(val[2]))
-            self.text = `self.point[0]`+' '+`self.point[1]`+' '+\
-                        `self.point[2]`
+            self.text = repr(self.point[0])+' '+repr(self.point[1])+' '+\
+                        repr(self.point[2])
             self.var.set(self.text)
             self.callbacks.CallCallbacks(self.point)
         except:
@@ -119,8 +119,8 @@ class NormVectEntry(VectEntry):
             if n == 0.0: self.point = [0.0, 0.0, 1.0]
             else: v = [self.point[0]/n, self.point[1]/n, self.point[2]/n]
             self.point = v
-            self.text = `self.point[0]`+' '+`self.point[1]`+' '+\
-                        `self.point[2]`
+            self.text = repr(self.point[0])+' '+repr(self.point[1])+' '+\
+                        repr(self.point[2])
             self.var.set(self.text)
             self.callbacks.CallCallbacks(self.point)
         except:
@@ -134,7 +134,7 @@ class NormVectEntry(VectEntry):
 
     def set(self, value):
         #called when node is loaded
-        self.text = `value[0]`+' '+`value[1]`+' '+`value[2]`
+        self.text = repr(value[0])+' '+repr(value[1])+' '+repr(value[2])
         self.var.set(self.text)
         self.point = value
 
@@ -155,8 +155,8 @@ class XYZVectGUI(xyzGUI):
 
         
     def createEntries(self, master):
-        self.f = Tkinter.Frame(master)
-	self.f.grid(column=1, rowspan=6)
+        self.f = tkinter.Frame(master)
+        self.f.grid(column=1, rowspan=6)
 
         self.entryX = NormVectEntry(master=self.f, label='Vector X', width=18)
         self.entryX.grid(row=0,column=0)
@@ -223,7 +223,7 @@ class XYZVectGUI(xyzGUI):
  #####################################################################
 
     def configure(self, **kw):
-        for key,value in kw.items():
+        for key,value in list(kw.items()):
             # the 'set parameter' callbacks
             if key=='labcfgX': self.setLabel(value,'x')
             elif key=='labcfgY': self.setLabel(value,'y')
@@ -357,26 +357,26 @@ class NEXYZVectGUI(TkPortWidget):
         
         # create all attributes that will not be created by configure because
         # they do not appear on kw
-        for key in self.ownConfigOpts.keys():
+        for key in list(self.ownConfigOpts.keys()):
             v = kw.get(key, None)
             if v is None: # self.configure will not do anyting for this key
                 setattr(self, key, self.ownConfigOpts[key]['defaultValue'])
 
         # get all arguments handled by NEThumbweel and not by PortWidget
         widgetcfg = {}
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k in kw:
                 widgetcfg[k] = kw.pop(k)
 
         # call base class constructor
-        apply( PortWidget.__init__, ( self, port), kw)
+        PortWidget.__init__(*( self, port), **kw)
 
         # create the Thumbwheel widget
-        self.widget = apply( XYZVectGUI, (self.widgetFrame,), widgetcfg)
+        self.widget = XYZVectGUI(*(self.widgetFrame,), **widgetcfg)
         self.widget.callbacks.AddCallback(self.newValueCallback)
 
         # configure without rebuilding to avoid enless loop
-        apply( self.configure, (False,), widgetcfg)
+        self.configure(*(False,), **widgetcfg)
 
         if self.initialValue:
             self.set(self.initialValue, run=0)

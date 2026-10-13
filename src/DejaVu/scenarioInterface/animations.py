@@ -215,10 +215,10 @@ class RenderingTransitionMAA(MultipleActorsActions):
                 appear.append(g)
             elif r1g['visible'] == 0:
                 if r2g is not None : # g appears
-                    if r2g.has_key('faces') and len(r2g['faces']) == 0:
+                    if 'faces' in r2g and len(r2g['faces']) == 0:
                         continue
                     mod = self.compareGeomState(r1g,r2g)
-                    if mod.has_key('vertices') or mod.has_key('faces'):
+                    if 'vertices' in mod or 'faces' in mod:
                         modDict[g] = mod
                     else:
                         #print "2222, add to appear",  g.name
@@ -254,12 +254,12 @@ class RenderingTransitionMAA(MultipleActorsActions):
             self.disappear(obj)
         
         # loop over geometries and their modes:
-        for g,mod in modDict.items():
+        for g,mod in list(modDict.items()):
             scissorvals = {}
-            keys = mod.keys()
+            keys = list(mod.keys())
             gname = g.fullName
             #print 'JJJJJJJJJJJJJJJJJ', gname, keys
-            if mod.has_key('vertices'):
+            if 'vertices' in mod:
                 #print "VERTICES", gname
                 # create actors for "Spheres" or "Indexed Geoms" objects that  have different vertex sets
                 # in rendering 1 and 2
@@ -287,14 +287,14 @@ class RenderingTransitionMAA(MultipleActorsActions):
                     vv1 = mod['vertices'][1]  # vertices of the first rendering
                     vv2 = mod['vertices'][2]  # vertices of the second rendering
                     vnorms = None
-                    if mod.has_key('vnormals'):
+                    if 'vnormals' in mod:
                         vnorms = mod['vnormals'][2]                    
                     nvert1 = len(vv1)
                     nvert2 = len(vv2)
                     # 'radii'
                     radiiactor = None
                     rad1 = rad2 = None
-                    if r1[gname].has_key("radii"):
+                    if "radii" in r1[gname]:
                         radiiactor = getActor(g, "radii")
                         rad1 = r1[gname]["radii"]
                         rad2 = r2[gname]["radii"]
@@ -422,10 +422,10 @@ class RenderingTransitionMAA(MultipleActorsActions):
                     depthactor.actions.addKeyframe(kf1)
                     self.AddActions( depthactor, depthactor.actions )
                     
-                    if self.msmsPtrs.has_key(g.fullName):
+                    if g.fullName in self.msmsPtrs:
                         self.msmsPtrs[g.fullName][1] = True
 
-            elif mod.has_key("faces"):
+            elif "faces" in mod:
                 # create actors for objects that appear through faces
                 #print "FACES"
                 ff1 = mod["faces"][1]
@@ -531,7 +531,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                         intersect = 0
                         for i, f  in enumerate(ff2):
                             f1key = fs % tuple(f)
-                            if f1dict.has_key(f1key):
+                            if f1key in f1dict:
                                 intersect +=1
                                 op1[nface1+i] = origop1[f1dict[f1key]]
                                 op2[f1dict[f1key]] = origop2[i]
@@ -566,14 +566,14 @@ class RenderingTransitionMAA(MultipleActorsActions):
                         if r1[gname].get('visible') == 1:
                             # create fast lookup for vertices in ff1
                             f1key = {}.fromkeys(ff1.flatten().tolist())
-                            for i in xrange(nvert1):
-                                if f1key.has_key(i):
+                            for i in range(nvert1):
+                                if i in f1key:
                                     op1[i] = origop1[i]
-                                if f2key.has_key(i):
+                                if i in f2key:
                                     op2[i] = origop2[i]
                         else:
                             for i in range(nvert1):
-                                if f2key.has_key(i):
+                                if i in f2key:
                                     op2[i] = origop2[i]
                         kf1 = KF(self.kfpos[0], op1)
                         kf2 = KF(self.kfpos[1], op2)
@@ -602,10 +602,10 @@ class RenderingTransitionMAA(MultipleActorsActions):
                     
             # actors for other parameters     
         
-            for k, _mod in mod.items():
+            for k, _mod in list(mod.items()):
                 typ, v1, v2 = _mod
                 if k in ["rawMaterialF", "rawMaterialB"]:
-                    if mod.has_key('vertices'): continue
+                    if 'vertices' in mod: continue
                     # find out if we need to add color actor:
                     aname = "colors"
                     if k == "rawMaterialB": aname = "colorsB"
@@ -620,7 +620,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                         if (l1 == l2 and comparefloats(col1,col2) == False) or (l1 == 1 and l2 != 1) or (l2 == 1 and l1 != 1):
                             addColor = True
                         else:
-                            if r1[gname].has_key('faces'):
+                            if 'faces' in r1[gname]:
                                 nface1 = len(r1[gname]['faces'])
                                 nface2 = len(r2[gname]['faces'])
                                 if l1 != l2 and nface1 == nface2:
@@ -655,7 +655,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                         if not comparefloats(opac1, opac2):
                             aname = 'opacityF'
                             if  k == "rawMaterialB":
-                                if mod.has_key("rawMaterialF"):
+                                if "rawMaterialF" in mod:
                                     continue
                                 aname = 'opacityB'
                             opacactor = getActor(g, aname)
@@ -701,8 +701,8 @@ class RenderingTransitionMAA(MultipleActorsActions):
                     boolactor.addIntervals( [i1] )
                     self.AddActions( boolactor, boolactor.actions )
                 elif k == 'clipPlanes':
-                    clip1 = map(lambda x:x[0], v1)
-                    clip2 = map(lambda x:x[0], v2)
+                    clip1 = [x[0] for x in v1]
+                    clip2 = [x[0] for x in v2]
                     val = []
                     for i, n in enumerate(clip1):
                         if not n in clip2:
@@ -732,7 +732,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                     val1 = scissoractor.getValue()
                     val2 = scissoractor.getValue()
                     for i, var in enumerate (scissoractor.varnames):
-                        if scissorvals.has_key(var):
+                        if var in scissorvals:
                             val1[i]= scissorvals[var][0]
                             val2[i]= scissorvals[var][1]
                     kf1 = KF(self.kfpos[0], val1)
@@ -742,7 +742,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                     self.AddActions(scissoractor, scissoractor.actions)
         # camera actors
         cammod = {}
-        if r1.has_key('camera') and r2.has_key('camera'):
+        if 'camera' in r1 and 'camera' in r2:
             cammod = self.compareCameraState(r1['camera'], r2['camera'])
         
         if len(cammod):
@@ -755,7 +755,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
 ##                     self.AddActions(camclipzactor,camclipzactor.actions)
 ##                 cammod.pop('near')
 ##                 cammod.pop('far')
-            for k, val in cammod.items():
+            for k, val in list(cammod.items()):
                 if k == 'color':
                     camcoloractor = self.createActor(camera, 'backgroundColor', val[1], val[2])
                     if camcoloractor is not None:
@@ -779,9 +779,9 @@ class RenderingTransitionMAA(MultipleActorsActions):
         
         for i , cp in enumerate(viewer.clipP):
             clipname = 'clipplane%d'%i
-            if r1.has_key(clipname) and r2.has_key(clipname):
+            if clipname in r1 and clipname in r2:
                 clipmode = self.compareClipState(r1[clipname], r2[clipname])
-                for k, val in clipmode.items():
+                for k, val in list(clipmode.items()):
                     if k == 'rotation':
                         actor = getActor(cp, 'rotation')
                         kf0 = KF(self.kfpos[0] , matToQuaternion(val[1]))
@@ -830,7 +830,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
         actors = []
         opacityactorF = None
         #if len(obj.vertexSet):
-        if self.rendering[obj.fullName].has_key("vertices") and len(self.rendering[obj.fullName]["vertices"]):
+        if "vertices" in self.rendering[obj.fullName] and len(self.rendering[obj.fullName]["vertices"]):
             opacityactorF = getActor(obj, 'opacity')
             kf1 = KF(self.kfpos[0], 0.)
             opacF = numpy.array(self.rendering[obj.fullName]["rawMaterialF"]['diffuse'], "f")[:,3]
@@ -847,16 +847,16 @@ class RenderingTransitionMAA(MultipleActorsActions):
 ##             opacityactorB.addIntervals( [i1] )
 ##             actors.append( opacityactorB )
             
-        if self.rendering.has_key(obj.fullName):
+        if obj.fullName in self.rendering:
             from copy import deepcopy
             r = deepcopy(self.rendering[obj.fullName])
-            if opacityactorF and r.has_key("rawMaterialF"):
+            if opacityactorF and "rawMaterialF" in r:
                 r["rawMaterialF"]["opacity"] = [0]
-            if r.has_key('inheritMaterial'):
+            if 'inheritMaterial' in r:
                 r['inheritMaterial'] = 0
-            if r.has_key("depthMask"):
+            if "depthMask" in r:
                 r.pop("depthMask")
-            if r.has_key("visible"):
+            if "visible" in r:
                 r.pop("visible")
             ractor =  getActor(obj ,'rendering')
             kf0 = KF(self.kfpos[0], r)
@@ -956,7 +956,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
         
     def compareGeomState(self, s1, s2):
         mod = {}
-        for k in s1.keys():
+        for k in list(s1.keys()):
             # list of states that are skipped
             if k in ['protected', 'replace', 'listed', 'vertexArrayFlag',
                      'needsRedoDpyListOnResize', #'vnormals',  #'vertices',
@@ -994,7 +994,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                     fs = n*"%i,"
                     facedic2 = dict([(fs % tuple(f),None) for f in s2[k]])
                     for f in s1[k]:
-                        if not facedic2.has_key(fs % tuple(f)):
+                        if fs % tuple(f) not in facedic2:
                             mod[k] = ("faces", s1[k], s2[k])
                             break
 
@@ -1038,7 +1038,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                 else:
                     if s1[k]!=s2[k]:
                         mod[k]= ("radii", s1[k], s2[k])
-            elif k == 'clipPlanes' and s2.has_key(k):
+            elif k == 'clipPlanes' and k in s2:
                 if s1[k] != s2[k]:
                     mod[k] = ('clipPlanes', s1[k], s2[k])
                         
@@ -1048,7 +1048,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
 
     def compareCameraState(self, s1, s2):
         mod = {}
-        for k in s1.keys():
+        for k in list(s1.keys()):
             # list of states that are skipped
             if k in ['rotation', 'translation','scale','pivot',
                      'direction','lookAt', 'height', 'width', 'near', 'far']:
@@ -1065,7 +1065,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
 
     def compareClipState(self, s1, s2):
         mod = {}
-        for k in s1.keys():
+        for k in list(s1.keys()):
             if k in ['rotation', 'translation','scale','pivot', 'color']:
                 if not comparefloats(s1[k], s2[k]):
                     mod[k]= (k, s1[k], s2[k])
@@ -1102,7 +1102,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
 
 
     def getSpheresTransitionValues(self, geom, vv1, vv2, op1, op2, col1, col2, rad1=None, rad2=None, visible1 = 1):
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         vdict = {}
         inter1 = []
         #inter2 = []
@@ -1114,7 +1114,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
             vdict["%.4f,%.4f,%.4f"%(v[0],v[1],v[2])] = i
         for i, v in enumerate(vv2):
             vkey = "%.4f,%.4f,%.4f"%(v[0],v[1],v[2])
-            if vdict.has_key(vkey):
+            if vkey in vdict:
                 j = vdict[vkey]
                 inter1.append(j)
                 #inter2.append(i)
@@ -1165,7 +1165,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
         # checks if the geometries specified by vertices and faces intersect
         # returns "union" arrays of vertices and faces of the two geometries
         # returns opacity an color arrays representing transition between two states.
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         inter1 = []
         diff2 = []
         ncol1 = col1.astype("f")
@@ -1182,7 +1182,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                 ind20 = ff2[0]
                 ind21 = ff2[1]
                 st2 = "%.4f,%.4f,%.4f,"% tuple(vv2[ind20]) + "%.4f,%.4f,%.4f"% tuple(vv2[ind21])
-                if fdict.has_key(st2):
+                if st2 in fdict:
                     i = fdict[st2]
                     ind10 = f1[i][0]
                     ind11 = f1[i][1]
@@ -1202,7 +1202,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                 ind21 = ff2[1]
                 ind22 = ff2[2]
                 st2 = "%.4f,%.4f,%.4f,"% tuple(vv2[ind20]) + "%.4f,%.4f,%.4f,"% tuple(vv2[ind21])+ "%.4f,%.4f,%.4f"% tuple(vv2[ind22])
-                if fdict.has_key(st2):
+                if st2 in fdict:
                     i = fdict[st2]
                     ind10 = f1[i][0]
                     ind11 = f1[i][1]
@@ -1249,7 +1249,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
         Sorts the geometry polygons according to z values of polygon's
         geometric centers. Order=-1 sorts by furthest z first, order=1 sorts
         by closest z first"""
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         mat = geom.GetMatrix()
         mat = Numeric.reshape(mat, (4,4))
         nv = len(verts)
@@ -1282,7 +1282,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
             return verts, radii, colors1, colors2, opac1, opac2
         if radii is not None and len(radii) != nv:
             return verts, radii, colors1, colors2, opac1, opac2
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         mat = geom.GetMatrix()
         mat = Numeric.reshape(mat, (4,4))
 
@@ -1326,7 +1326,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                     #self.atomSets[obj.fullName] = AtomSet(set.data[:])
                     self.atomSets[obj.fullName] = set.__class__(set.data[:])
                 gc = mol.geomContainer
-                if gc.msms.has_key(obj.name):
+                if obj.name in gc.msms:
                     # save the msms swig pointer
                     
                     self.msmsPtrs[obj.fullName] = [(obj.name, gc.msms[obj.name]), False]
@@ -1344,9 +1344,9 @@ class RenderingTransitionMAA(MultipleActorsActions):
             #if actor.name.find("setactor") > 0 or actor.name.find("faces") > 0:
             if actor.name.split(".")[-1] in ["setactor", "faces", "rendering"]:
                 obj = actor.object
-                if self.atomSets.has_key(obj.fullName):
+                if obj.fullName in self.atomSets:
                     aset = self.atomSets[obj.fullName]
-                    if type(aset) == types.StringType:
+                    if type(aset) == bytes:
                         if self._animNB:
                             pmv = self._animNB().pmv
                             self.viewer.stopAutoRedraw()
@@ -1370,7 +1370,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                     surfname = val[0][0]
                     geomC = obj.mol.geomContainer
                     geomC.msms[surfname] = val[0][1]
-                    if hasattr(geomC,'msmsAtoms') and geomC.msmsAtoms.has_key(obj.name):
+                    if hasattr(geomC,'msmsAtoms') and obj.name in geomC.msmsAtoms:
                         surf = val[0][1][0]
                         if surf.perMol == 0:                        
                             geomC.msmsAtoms[obj.name] = aset
@@ -1382,8 +1382,8 @@ class RenderingTransitionMAA(MultipleActorsActions):
 
     def saveGeomAtomProp2File(self, name, indent):
         ats = {}
-        for k, val in self.atomSets.items():
-            if type(val) == types.StringType:
+        for k, val in list(self.atomSets.items()):
+            if type(val) == bytes:
                 ats[k] = val
             else:
                 ats[k] = val.getStringRepr()
@@ -1391,9 +1391,9 @@ class RenderingTransitionMAA(MultipleActorsActions):
         lines = indent + "%s.atomSets = %s \n" % (name, ats)
         if len(self.msmsPtrs):
             vi = self.viewer
-            for objFullname, val in self.msmsPtrs.items():
-                if self.rendering.has_key(objFullname) and self.rendering[objFullname]['visible']\
-                       and self.atomSets.has_key(objFullname):
+            for objFullname, val in list(self.msmsPtrs.items()):
+                if objFullname in self.rendering and self.rendering[objFullname]['visible']\
+                       and objFullname in self.atomSets:
                     obj = vi.FindObjectByName(objFullname)
                     #print "saveGeomAtomProp2File, swig ptr", obj.mol.geomContainer.msms[obj.name], val[0][1]
                     if obj:
@@ -1430,7 +1430,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                     atList = []
                     func = g.geomPickToAtoms.get(obj.name)
                     if func:
-                        atList = func(obj, range(len(obj.vertexSet.vertices)))
+                        atList = func(obj, list(range(len(obj.vertexSet.vertices))))
                     else:
                         allAtoms = g.atoms[obj.name]
                         if hasattr(obj, "vertexSet") and len(allAtoms) == len(obj.vertexSet):
@@ -1438,7 +1438,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                     if len(atList):
                         self.atomSets[obj.fullName] = {'atomset': set.full_name()}
                         self.atomSets[obj.fullName]['atlist'] = atList
-        print 'time to save prop', time()-t1
+        print('time to save prop', time()-t1)
 
 
         
@@ -1450,7 +1450,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
         for actor in self.actors:
             if actor.name.find("setactor") > 0 or actor.name.find("faces") > 0:
                 obj = actor.object
-                if self.atomSets.has_key(obj.fullName):
+                if obj.fullName in self.atomSets:
                     asetstr = self.atomSets[obj.fullName]['atomset']
                     atList = self.atomSets[obj.fullName].get('atlist', None)
                     g = obj.mol.geomContainer
@@ -1473,7 +1473,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                 prop = 'opacities'
             if prop:
                 obj = actor.object
-                if self.atomSets.has_key(obj.fullName):
+                if obj.fullName in self.atomSets:
                     atList = self.atomSets[obj.fullName].get('atlist', None)
                     g = obj.mol.geomContainer
                     if not atList: continue
@@ -1485,9 +1485,9 @@ class RenderingTransitionMAA(MultipleActorsActions):
                         aset = set.findType(Atom)
                         asetstr = aset.full_name(0)
                         oname = None
-                        if getattr(aset, prop).has_key(obj.name):
+                        if obj.name in getattr(aset, prop):
                             oname = obj.name
-                        elif getattr(aset, prop).has_key(obj.parent.name):
+                        elif obj.parent.name in getattr(aset, prop):
                             oname = obj.parent.name
                         if not oname: continue
                         #print "setting", prop , "to", oname, len(atList) ,
@@ -1513,7 +1513,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                         nset, msg = selector.select(atList, asetstr)
                         g.atoms[obj.name] = nset
                         #print len(self.atomSets[obj.fullName]['atlist'])
-        print 'time to restore prop', time()-t1
+        print('time to restore prop', time()-t1)
 
 class RedrawMAA(MultipleActorsActions):
     """
@@ -1629,7 +1629,7 @@ class RedrawMAA(MultipleActorsActions):
         else:
             rr = {}
             for obj in objects:
-                if self.rendering.has_key(obj.fullName):
+                if obj.fullName in self.rendering:
                     rr[obj.fullName] = self.rendering[obj.fullName]
         if len(rr):
             lines = tabs + """from numpy import *\n"""
@@ -1648,7 +1648,7 @@ class RedrawMAA(MultipleActorsActions):
         numeric arrays by lists"""
         newdict = {}
         import numpy
-        for k , val in datadict.items():
+        for k , val in list(datadict.items()):
             if type(val) == numpy.ndarray: val =  val.tolist()
             newdict[k]=val
         return """%s"""%newdict
@@ -2024,7 +2024,7 @@ class OrientationMAA(RedrawMAA):
         numeric arrays by lists"""
         orient = {}
         import numpy, types
-        allkeys = self.orient.keys()
+        allkeys = list(self.orient.keys())
         for k in ['lookFrom', 'fieldOfView']:
             val = self.orient[k]
             if type(val) == numpy.ndarray: val =  val.tolist()
@@ -2036,7 +2036,7 @@ class OrientationMAA(RedrawMAA):
         for name in allkeys:
             objorient = self.orient[name]
             orient[name] = {}
-            for k, val in objorient.items():
+            for k, val in list(objorient.items()):
                 if type(val) == numpy.ndarray: val = val.tolist()
                 orient[name][k] = val
         return """%s"""%orient
@@ -2299,7 +2299,7 @@ class FlyObjectMAA(RedrawMAA):
         self.inViewTranslation = {}
         if inViewTranslation is not None:
             for obj in self.objects:
-                if inViewTranslation.has_key(obj.fullName):
+                if obj.fullName in inViewTranslation:
                     self.inViewTranslation[obj.fullName] = inViewTranslation[obj.fullName]
                 else:
                     self.inViewTranslation[obj.fullName] = self.getInViewTranslation(obj)
@@ -2312,7 +2312,7 @@ class FlyObjectMAA(RedrawMAA):
             current = obj
             while current.parent:
                 parent = current.parent
-                if not self.geomOrients.has_key(parent):
+                if parent not in self.geomOrients:
                     cameraInfo = False
                     if parent == self.viewer.rootObject:
                         cameraInfo = True
@@ -2465,13 +2465,13 @@ class FlyObjectMAA(RedrawMAA):
         kw.pop('forceRendering')
 
         # add missing keys to avoid default values to override current values
-        if not kw.has_key('direction'):
+        if 'direction' not in kw:
             kw['direction'] = self.direction
 
-        if not kw.has_key('kfpos'):
+        if 'kfpos' not in kw:
             kw['kfpos'] = self.kfpos
 
-        if not kw.has_key('easeInOut'):
+        if 'easeInOut' not in kw:
             kw['easeInOut'] = self.easeInOut
 
         self.makeMAA( **kw )
@@ -2488,7 +2488,7 @@ class FlyObjectMAA(RedrawMAA):
         lines += tabs + """from DejaVu.scenarioInterface.animations import %s\n""" % (self.__class__.__name__)
         lines += tabs + """object = %s\n"""%(self.objectFromString)
         lines += tabs + """geomOrients={}\n"""
-        for k, val in self.geomOrients.items():
+        for k, val in list(self.geomOrients.items()):
             lines += tabs + """obj = viewer.FindObjectByName('%s')\n""" % (k.fullName,)
             lines += tabs + """objorient = %s\n""" % self.getDictString(val)
             lines += tabs + """if obj: geomOrients[obj] = objorient\n""" 
@@ -2743,16 +2743,16 @@ class FadeObjectMAA(RedrawMAA):
         kw.pop('forceRendering')
         
         # add missing keys to avoid default values to override current values
-        if not kw.has_key('sortPoly'):
+        if 'sortPoly' not in kw:
             kw['sortPoly'] = self.sortPoly
         
-        if not kw.has_key('sortOrder'):
+        if 'sortOrder' not in kw:
             kw['sortOrder'] = self.sortOrder
 
-        if not kw.has_key('kfpos'):
+        if 'kfpos' not in kw:
             kw['kfpos'] = self.kfpos
 
-        if not kw.has_key('easeInOut'):
+        if 'easeInOut' not in kw:
             kw['easeInOut'] = self.easeInOut
 
         self.makeMAA( **kw )
@@ -3021,7 +3021,7 @@ class RotationMAA(RedrawMAA):
         from DejaVu.scenarioInterface.animationGUI import Rotation_MAAEditor
         self.editorClass = Rotation_MAAEditor
 
-	if objectFromString is None:
+        if objectFromString is None:
             objectFromString = getObjectFromString(objects)
         self.objectFromString = objectFromString
         self.objectName = objectName
@@ -3121,7 +3121,7 @@ class RotationMAA(RedrawMAA):
         
         # add missing keys to avoid default values to override current values
         for attr in ['angle', 'nbFrames', 'vector', 'easeInOut', 'direction']:
-            if not kw.has_key(attr):
+            if attr not in kw:
                 kw[attr] = getattr(self, attr)
 
         self.makeMAA( **kw )
@@ -3525,10 +3525,10 @@ class ColorObjectMAA(RedrawMAA):
 ##         if not kw.has_key('sortPoly'):
 ##             kw['sortPoly'] = self.sortPoly
 
-        if not kw.has_key('kfpos'):
+        if 'kfpos' not in kw:
             kw['kfpos'] = self.kfpos
 
-        if not kw.has_key('easeInOut'):
+        if 'easeInOut' not in kw:
             kw['easeInOut'] = self.easeInOut
 
         self.makeMAA( **kw )
@@ -3685,7 +3685,7 @@ class FocusMAA(RedrawMAA):
 ##
 ############################################################################
 
-import Pmw, Tkinter
+import Pmw, tkinter
 from Scenario2 import  _clipboard
 
 class RotationMAAOptionsGUI:
@@ -3695,18 +3695,18 @@ class RotationMAAOptionsGUI:
         self.object = object
         self.objectName = objectName
         if not master:
-            self.parent = parent = Tkinter.Toplevel()
+            self.parent = parent = tkinter.Toplevel()
         else:
             self.parent = parent = master
         self.axis = 'Y'
         self.direction = 'clockwise'
         self.maa = None
-	self.dialog = Pmw.Dialog(parent,
-	    buttons = ('OK', 'Preview', 'Cancel', 'Copy To Clipboard'),
-	    defaultbutton = 'Preview',
-	    title = 'Full Rotation Options:',
-	    command = self.execute)
-	self.dialog.withdraw()
+        self.dialog = Pmw.Dialog(parent,
+            buttons = ('OK', 'Preview', 'Cancel', 'Copy To Clipboard'),
+            defaultbutton = 'Preview',
+            title = 'Full Rotation Options:',
+            command = self.execute)
+        self.dialog.withdraw()
 
         parent = self.dialog.interior()
         
@@ -3765,9 +3765,9 @@ class RotationMAAOptionsGUI:
         self.anglew.pack(side='top', padx=10, pady=5)
 
         # record checkbutton
-        self.recordVar = Tkinter.IntVar()
+        self.recordVar = tkinter.IntVar()
 
-        c = Tkinter.Checkbutton(parent, text="Record", variable=self.recordVar)
+        c = tkinter.Checkbutton(parent, text="Record", variable=self.recordVar)
         c.pack(side='top', padx=10, pady=5)
 
 
@@ -3781,12 +3781,12 @@ class RotationMAAOptionsGUI:
         self.namew.setvalue('Full Rotation '+self.axis)
 
     def _processReturnKey(self, event):
-	self.buttonBox.invoke()
+        self.buttonBox.invoke()
 
 
     def execute(self, result):
         if result == 'Preview' or result=='OK':
-	    self.preview_cb()
+            self.preview_cb()
 
         if result == 'OK' or result=='Cancel':
             self.hide()
@@ -3795,7 +3795,7 @@ class RotationMAAOptionsGUI:
             if self. maa is None:
                 return
             
-            from tkSimpleDialog import askstring
+            from tkinter.simpledialog import askstring
 
             angle = float(self.anglew.get())
             nbFrames = int(self.nbframesw.get())
@@ -3807,13 +3807,13 @@ class RotationMAAOptionsGUI:
 
 
     def getName(self, result):
-	if result is None or result == 'Cancel':
-	    self.clipboardName = None
-	    self.dialog.deactivate(result)
-	else:
-	    if result == 'OK':
-		print 'Password entered ' + self.dialog.get()
-		self.dialog.deactivate()
+        if result is None or result == 'Cancel':
+            self.clipboardName = None
+            self.dialog.deactivate(result)
+        else:
+            if result == 'OK':
+                print('Password entered ' + self.dialog.get())
+                self.dialog.deactivate()
 
     def buildMAA(self):
         angle = float(self.anglew.get())

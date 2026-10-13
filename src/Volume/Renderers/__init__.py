@@ -1,5 +1,5 @@
 #__init__.py
-import Tkinter
+import tkinter
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser
 istest = 0
 renderer = None
@@ -20,13 +20,13 @@ class ListChooserDialog:
                  list_font = None, list_command = None):
         
         assert mode in ['single', 'browse', 'multiple', 'extended' ]
-        self.root = Tkinter.Toplevel(master)
+        self.root = tkinter.Toplevel(master)
         if title:
             self.root.title(title)
             self.root.iconname(title)
         self.entry = None
-        self.entries = map(lambda x: x[0], entries)
-        self.frame = Tkinter.Frame(self.root)
+        self.entries = [x[0] for x in entries]
+        self.frame = tkinter.Frame(self.root)
         self.frame.pack()
         self.root.bind('<Return>', self.return_event)
         list_cfg = {}
@@ -40,14 +40,14 @@ class ListChooserDialog:
                                        entries = entries,
                                        lbwcfg=list_cfg,
                                        command=list_command)
-        self.listchooser.pack(fill = Tkinter.BOTH, expand=1, padx=5, pady=5)
-        ok_button = Tkinter.Button(self.frame, text="OK",
+        self.listchooser.pack(fill = tkinter.BOTH, expand=1, padx=5, pady=5)
+        ok_button = tkinter.Button(self.frame, text="OK",
                        command=(lambda self=self, num=0: self.done(num)))
-        ok_button.pack(side=Tkinter.LEFT, fill=Tkinter.BOTH, expand=1)
+        ok_button.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=1)
         if cancel :
-            cancel_button = Tkinter.Button(self.frame, text="Cancel",
+            cancel_button = tkinter.Button(self.frame, text="Cancel",
                        command=(lambda self=self, num=1: self.done(num)))
-            cancel_button.pack(side=Tkinter.LEFT, fill=Tkinter.BOTH,
+            cancel_button.pack(side=tkinter.LEFT, fill=tkinter.BOTH,
                                expand=1)
         if list_font:
             self.set_newfont(list_font)
@@ -94,42 +94,42 @@ class ListChooserDialog:
         except :
             pass
         if len(wid.children)==0: return
-        for item in wid.children.values():
+        for item in list(wid.children.values()):
             self.changefont(item, newfont)
 
             
 def ChooseRenderer(renderer = None):
-    import Tkinter
+    import tkinter
     liblist = []
     geomdict ={}
     dialog = None
     ans = None
     
-    print "************ Volume Renderer Info ************************"
+    print("************ Volume Renderer Info ************************")
     if not renderer or renderer=="vli":
-        print "Trying to import VolumePro VLI library ..."
+        print("Trying to import VolumePro VLI library ...")
         try:
-            from VLI import vli
-            from VLI.DejaVu.VLIGeom import VLIGeom
+            from .VLI import vli
+            from .VLI.DejaVu.VLIGeom import VLIGeom
             vliGeom = VLIGeom('vli', protected=1)
             liblist.append('vli')
             geomdict['vli']= vliGeom
-            print "VLI library imported."
+            print("VLI library imported.")
         except:
-            print "could not import VLI library."
+            print("could not import VLI library.")
 
     if not renderer or renderer == 'utvolren':
-        print "Trying to import UTVolumeLibrary..."    
+        print("Trying to import UTVolumeLibrary...")    
         try:
-            from UTVolumeLibrary import UTVolumeLibrary
-            from UTVolumeLibrary.DejaVu.UTVolRenGeom import UTVolRenGeom
+            from .UTVolumeLibrary import UTVolumeLibrary
+            from .UTVolumeLibrary.DejaVu.UTVolRenGeom import UTVolRenGeom
             utvolGeom = UTVolRenGeom('utvolren')
             liblist.append('utvolren')
             geomdict['utvolren'] = utvolGeom
-            print "UTVolumeLibrary imported."
+            print("UTVolumeLibrary imported.")
         except:
-            print "could not import UTVolumeLibrary."
-    print "**********************************************"
+            print("could not import UTVolumeLibrary.")
+    print("**********************************************")
 
     flag = None
     
@@ -138,7 +138,7 @@ def ChooseRenderer(renderer = None):
 
     elif len(liblist) > 1:
         # the user has to choose a library
-        root = Tkinter.Tk()
+        root = tkinter.Tk()
         root.withdraw()
         entries = (('VolumePro VLI',None), ('OpenGL based VolumeLibrary',None))
         dialog = ListChooserDialog(root, title = 'Choose Volume Library',
@@ -157,7 +157,7 @@ def ChooseRenderer(renderer = None):
                 flag = 'utvolren'
 
     else:
-        print "No volume rendering library imported."
+        print("No volume rendering library imported.")
     return (flag, geomdict)
 
 

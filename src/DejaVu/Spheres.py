@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -19,7 +19,7 @@
 #
 
 import warnings
-import numpy.oldnumeric as Numeric, math
+import mglcompat.oldnumeric as Numeric, math
 
 from opengltk.OpenGL import GL, GLU
 from opengltk.extent.utillib import glDrawSphereSet, extractedGlutSolidSphere
@@ -98,7 +98,7 @@ class GLUSpheres(Geom):
 
         #self.immediateRendering = True
 
-        apply( Geom.__init__, (self, name, check), kw )
+        Geom.__init__(*(self, name, check), **kw)
         assert len(self.vertexSet.vertices.ashape)==2
         
         self._modified = False
@@ -128,7 +128,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                 self.chooseTemplate()
                 redoFlags |= self._redoFlags['redoDisplayListFlag']
 
-        redoFlags |= apply( Geom.Set, (self, check, 0), kw)
+        redoFlags |= Geom.Set(*(self, check, 0), **kw)
         if len(kw) == 0:
             return self.redoNow(redo, updateOwnGui, redoFlags)
 
@@ -197,7 +197,7 @@ updateOwnGui=True : allow to update owngui at the end this func
             if currentcontext != self.templateDSPL[1]:
                 import traceback;traceback.print_stack()
                 warnings.warn('deleteTemplate failed because the current context is the wrong one')
-                print "currentcontext != self.templateDSPL[1]", currentcontext, self.templateDSPL[1]
+                print("currentcontext != self.templateDSPL[1]", currentcontext, self.templateDSPL[1])
             else:
                 #print '-%d'%self.templateDSPL[0], currentcontext, "glDeleteLists Spheres0"
                 #print '-%d'%(self.templateDSPL[0]+1), currentcontext, "glDeleteLists Spheres1"
@@ -284,32 +284,32 @@ updateOwnGui=True : allow to update owngui at the end this func
     def Add(self, check=1, redo=1, **kw):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Add spheres"""
+        """Add spheres"""
 
         if __debug__:
             if check:
-                apply( checkKeywords, (self.name,self.keywords), kw)
+                checkKeywords(*(self.name,self.keywords), **kw)
 
-	v = kw.get( 'centers')
-	if v:
-	    kw['vertices'] = v     # rename centers in vertices for Geom.__init
-        apply( Geom.Add, (self,0,0), kw)
+        v = kw.get( 'centers')
+        if v:
+            kw['vertices'] = v     # rename centers in vertices for Geom.__init
+        Geom.Add(*(self,0,0), **kw)
 
-	rad = kw.get( 'radii')
-	if rad:
-	    if type(rad).__name__ == 'float':
-		self.oneRadius = viewerConst.YES
-		self.radius = rad
-	    else:
-		self.vertexSet.radii.AddValues( rad )
+        rad = kw.get( 'radii')
+        if rad:
+            if type(rad).__name__ == 'float':
+                self.oneRadius = viewerConst.YES
+                self.radius = rad
+            else:
+                self.vertexSet.radii.AddValues( rad )
 
-	if rad or v:
+        if rad or v:
             self.redoDspLst=1
-	    self.vertexSet.radii.PropertyStatus(len(self.vertexSet))
-	    if self.vertexSet.radii.status < viewerConst.COMPUTED:
-		self.oneRadius = viewerConst.YES
-	    else:
-		self.oneRadius = viewerConst.NO
+            self.vertexSet.radii.PropertyStatus(len(self.vertexSet))
+            if self.vertexSet.radii.status < viewerConst.COMPUTED:
+                self.oneRadius = viewerConst.YES
+            else:
+                self.oneRadius = viewerConst.NO
 
         if self.viewer and redo:
             if self.redoDspLst and self not in self.viewer.objectsNeedingRedo:
@@ -446,7 +446,7 @@ using MakeTemplate.
             if len(self.vertexSet.vertices) != len(radii):
                 return 0
             
-            for i in xrange(centers.shape[0]):
+            for i in range(centers.shape[0]):
                 GL.glPushName(i)
                 GL.glPushMatrix()
                 GL.glTranslatef(float(centers[i][0]),
@@ -571,7 +571,7 @@ if UTImposterRendererFound:
         def __init__(self, name=None, check=1, **kw):
             if __debug__:
              if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-            apply( GLUSpheres.__init__, (self, name, check), kw)
+            GLUSpheres.__init__(*(self, name, check), **kw)
 
 
         def __init__(self, name=None, check=1, **kw):
@@ -579,7 +579,7 @@ if UTImposterRendererFound:
              if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
             self.imposterRenderer = utimposterrend.ImposterRenderer()
 
-            apply(GLUSpheres.__init__, (self, name, 0), kw )
+            GLUSpheres.__init__(*(self, name, 0), **kw)
             
             self.immediateRendering = 1
 
@@ -593,10 +593,10 @@ redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
             v = kw.get( 'centers')
-            mat = kw.has_key('materials')
+            mat = 'materials' in kw
             rad = kw.get( 'radii')
 
-            redoFlags = apply( GLUSpheres.Set, (self, 0, 0), kw)
+            redoFlags = GLUSpheres.Set(*(self, 0, 0), **kw)
 
             if mat or rad or v:
                 self.redoDspLst=1
@@ -614,7 +614,7 @@ updateOwnGui=True : allow to update owngui at the end this func
             status = self.imposterRenderer.initRenderer()
             #print "initializeImposterRenderer status:", status
             if not status:
-                print "Could not initialize the imposter renderer\n"
+                print("Could not initialize the imposter renderer\n")
                 return False
             self.imposterRenderer.initSubRenderers(0)
             self.imposterRenderer.clear()
@@ -700,7 +700,7 @@ class TriangulateIcos:
         lenF = len(faces)
         lenV = len(vertices)
 
-        for i in xrange(lenF):
+        for i in range(lenF):
             v0 = vertices[faces[i][0]]
             v1 = vertices[faces[i][1]]
             v2 = vertices[faces[i][2]]
@@ -714,7 +714,7 @@ class TriangulateIcos:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
         d = math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2])
         if d == 0.0:
-            print 'Zero length vector!'
+            print('Zero length vector!')
             return
         return [v[0] / d, v[1] / d, v[2] / d]
 
@@ -782,7 +782,7 @@ class TriangulateIcosByEdgeCenterPoint(TriangulateIcos):
         # called by subsample
         newFaces = []
         
-        for i in xrange(len(faces)):
+        for i in range(len(faces)):
             j = i
             j = j * 3
             f0 = faces[i][0]
@@ -859,7 +859,7 @@ class TriangulateIcosByFaceCenterPoint(TriangulateIcos):
         # called by subsample
         newFaces = []
         
-        for i in xrange(len(faces)):
+        for i in range(len(faces)):
             f0 = faces[i][0]
             f1 = faces[i][1]
             f2 = faces[i][2]

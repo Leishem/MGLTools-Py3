@@ -16,7 +16,7 @@ Module implementing classes to provide documentation on the application
 #
 
 from ViewerFramework.basicCommand import loadCommandCommand
-import Tkinter, Pmw, tkFileDialog
+import tkinter, Pmw, tkinter.filedialog
 ##  from ViewerFramework.gui import InputFormDescr
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser, \
@@ -124,7 +124,7 @@ secondary structure. Proc. Natl. Acad. Sci. USA  96, 14258-63.
         
         if formName=='chooseCitation':
             idf = InputFormDescr(title="Choose Package")
-            pname = self.citations.keys()
+            pname = list(self.citations.keys())
             #pname.sort()
             idf.append({'name':'packList',
                         'widgetType':Pmw.ScrolledListBox,
@@ -147,13 +147,13 @@ secondary structure. Proc. Natl. Acad. Sci. USA  96, 14258-63.
                         'gridcfg':{'sticky':'wens'}
                         })
             idf.append({'name':'dismiss',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text':'DISMISS','command':self.dismiss_cb,
                                 },
                         'gridcfg':{'sticky':'wens'}})
             return idf
     def dismiss_cb(self):
-        if self.cmdForms.has_key('chooseCitation'):
+        if 'chooseCitation' in self.cmdForms:
             self.cmdForms['chooseCitation'].withdraw()
         
     def displayCitation_cb(self, event=None):
@@ -164,7 +164,7 @@ secondary structure. Proc. Natl. Acad. Sci. USA  96, 14258-63.
         if len(packs) == 0:
             return
         packName = packs[0]
-        if not self.citations.has_key(packName): return
+        if packName not in self.citations: return
         citation = self.citations[packName]
         citWidget = ebn['citation']['widget']
         citWidget.setvalue(citation)
@@ -186,16 +186,16 @@ class CiteThisSceneCommand(Command):
     def buildFormDescr(self, formName):
         if formName=='citationHelp':
             idf = InputFormDescr(title="Choose Package")
-            citeKeys = self.vf.showCitation.citations.keys()
+            citeKeys = list(self.vf.showCitation.citations.keys())
 
             txt = """
  This widget helps you cite the use of appropriate packages in your publication. 
  Based on the information we collected, please cite the following publications:   """ 
 
             idf.append({'name':'help',
-                        'widgetType':Tkinter.Label,
+                        'widgetType':tkinter.Label,
                         'wcfg':{'text':txt,
-                                    'justify':Tkinter.LEFT
+                                    'justify':tkinter.LEFT
                                 },
                         'gridcfg':{'sticky':'wens', 'columnspan':2}})
 
@@ -212,9 +212,9 @@ class CiteThisSceneCommand(Command):
             PROSS = False
             if hasattr(self.vf, 'Mols'):
                 for mol in self.vf.Mols:
-                    if 'secondarystructure' in mol.geomContainer.geoms.keys():
+                    if 'secondarystructure' in list(mol.geomContainer.geoms.keys()):
                         PROSS = True
-                    if 'MSMS-MOL' in mol.geomContainer.geoms.keys():
+                    if 'MSMS-MOL' in list(mol.geomContainer.geoms.keys()):
                         MSMS = True
             for gridName in self.vf.grids3D:
                  if '.potential.dx' in gridName:
@@ -267,13 +267,13 @@ Secondary Structure:
                         })
             
             idf.append({'name':'save',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text':'Save As','command':self.save,
                                 },
                         'gridcfg':{'sticky':'we', 'row':2, 'column':0}})
                         
             idf.append({'name':'dismiss',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text':'DISMISS','command':self.dismiss_cb,
                                 },
                         'gridcfg':{'sticky':'we', 'row':2, 'column':1}})
@@ -281,7 +281,7 @@ Secondary Structure:
         
 
     def save(self):
-        file = tkFileDialog.asksaveasfilename(parent=self.cmdForms['citationHelp'].f,
+        file = tkinter.filedialog.asksaveasfilename(parent=self.cmdForms['citationHelp'].f,
                                               filetypes=[('Text files', '.txt'), ('BibTeX files', '.bib'), ],
                                                initialfile="cite.txt",
                                                title="Save file")
@@ -294,11 +294,11 @@ Secondary Structure:
                 PROSS = False
                 if hasattr(self.vf, 'Mols'):
                     for mol in self.vf.Mols:
-                        if 'secondarystructure' in mol.geomContainer.geoms.keys():
+                        if 'secondarystructure' in list(mol.geomContainer.geoms.keys()):
                             PROSS = True
-                        if 'MSMS-MOL' in mol.geomContainer.geoms.keys():
+                        if 'MSMS-MOL' in list(mol.geomContainer.geoms.keys()):
                             MSMS = True
-                        if 'CoarseMolSurface' in mol.geomContainer.geoms.keys():
+                        if 'CoarseMolSurface' in list(mol.geomContainer.geoms.keys()):
                             isocontour = True      
                 for gridName in self.vf.grids3D:
                      if '.potential.dx' in gridName:
@@ -374,7 +374,7 @@ pages = {14258-14263}
      
         
     def dismiss_cb(self):
-        if self.cmdForms.has_key('citationHelp'):
+        if 'citationHelp' in self.cmdForms:
             self.cmdForms['citationHelp'].destroy()
                             
     def guiCallback(self):
@@ -437,7 +437,7 @@ class mailingListsCommand(Command):
             return "ERROR: Invalid page name"
         if pack not in ["Pmv","Vision"]: 
             return "ERROR: Invalid pack name"
-        apply(self.doitWrapper,(pack,page,),{})
+        self.doitWrapper(*(pack,page,), **{})
         
         
     
@@ -472,7 +472,7 @@ class mailingListsCommand(Command):
                             },
                     'gridcfg':{'sticky':'wesn','columnspan':1}})
         idf.append({'name':'dismiss',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'DISMISS',
                             'command':self.dismiss_cb,
                             },
@@ -504,13 +504,13 @@ class mailingListsCommand(Command):
             if CmdName1[0] == 'Login Page':
                 page = "Login Page"
                 pack ="Pmv"
-                apply( self.doitWrapper,(pack, page,),{})
+                self.doitWrapper(*(pack, page,), **{})
         
             if CmdName1[0] == 'Archive Page':
          
                 page = "Archive Page"
                 pack ="Pmv"
-                apply( self.doitWrapper,(pack, page,),{})
+                self.doitWrapper(*(pack, page,), **{})
             CmdName1 =() 
             
         if  len(CmdName2) != 0:
@@ -518,12 +518,12 @@ class mailingListsCommand(Command):
             if CmdName2[0] == 'Login Page':
                 page = "Login Page"
                 pack = "Vision"
-                apply( self.doitWrapper,(pack, page,),{})
+                self.doitWrapper(*(pack, page,), **{})
          
             if CmdName2[0] == 'Archive Page':
                 page = "Archive Page"
                 pack = "Vision"
-                apply( self.doitWrapper,(pack, page,),{})
+                self.doitWrapper(*(pack, page,), **{})
             CmdName2 =()
 mailingListsCommandGUI = CommandGUI()
 mailingListsCommandGUI.addMenuCommand('menuRoot', 'Help',
@@ -571,12 +571,12 @@ class helpCommand(Command):
                 self.vf.warningMsg("ERROR: Could not show module  %s"%module) 
                 return "ERROR"
         else:
-            if not type(commands) in [types.ListType, types.TupleType]:
+            if not type(commands) in [list, tuple]:
                 commands = [commands,]
             if not hasattr(mod, 'commandList'): 
                 return
             for cmd in commands:
-                d = filter(lambda x: x['name'] == cmd, mod.commandList)
+                d = [x for x in mod.commandList if x['name'] == cmd]
                 if len(d) == 0:
                     self.vf.warningMsg("Command %s not found in module %s.%s"%
                                        (cmd, package, module))
@@ -595,7 +595,7 @@ class helpCommand(Command):
         """
         kw['commands'] = commands
         kw['package'] = package
-        apply(self.doitWrapper, (module,), kw )
+        self.doitWrapper(*(module,), **kw)
     
 
     def buildFormDescr(self, formName):
@@ -633,7 +633,7 @@ class helpCommand(Command):
                     'gridcfg':{'sticky':'wesn','row':-1,'columnspan':1,  'weight':20}})
         
         idf.append({'name':'dismiss',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'DISMISS',
                             'command':self.dismiss_cb,
                             },
@@ -667,11 +667,11 @@ class helpCommand(Command):
           name= CmdName[0] 
           #finding documentation for command from cmd_docslist imported from
           #basicCommand
-          if name in cmd_docslist.keys():
+          if name in list(cmd_docslist.keys()):
             docstring = cmd_docslist[name]
             cmdW.selection_clear()
             d =[]
-            import string 
+            from mglcompat import pystring as string
             if docstring!=None:
               if '\n' in docstring:
                 x = string.split(docstring,"\n")
@@ -724,11 +724,10 @@ class SearchCommand(Command):
         self.packModCmd = {}
 
     def buildInformation(self, packName, package ):
-        if not self.packModCmd.has_key(packName):
+        if packName not in self.packModCmd:
             modules = findModulesInPackage(package,"def initModule")
-            if modules.values():
-                modNames = map(lambda x: os.path.splitext(x)[0],
-                               modules.values()[0])
+            if list(modules.values()):
+                modNames = [os.path.splitext(x)[0] for x in list(modules.values())[0]]
             else:
                 modNames = {}
             self.packModCmd[packName]={}
@@ -742,8 +741,8 @@ class SearchCommand(Command):
                         packDict[modName]={}
                     else:
                         packDict[modName]={}
-                        keys = map(lambda x: x['name'], m.commandList)
-                        values = map(lambda x: x['cmd'].__doc__, m.commandList)
+                        keys = [x['name'] for x in m.commandList]
+                        values = [x['cmd'].__doc__ for x in m.commandList]
                         for k, v in map(None, keys, values):
                             packDict[modName][k] = v
                 except:
@@ -781,7 +780,7 @@ class SearchCommand(Command):
         kw['matchDocString']=matchDocString
         kw['caseSensitive']=caseSensitive
         kw['allPack']=allPack
-        results = apply(self.doitWrapper, (searchString,), kw)
+        results = self.doitWrapper(*(searchString,), **kw)
         return results
     
     def doit(self, searchString, matchCmdName=True, matchModName=True,
@@ -799,12 +798,12 @@ class SearchCommand(Command):
         # populate the packModCmd
         cmdsFound = []
         for pName in packages:
-            if not self.packModCmd.has_key(pName): 
+            if pName not in self.packModCmd: 
                 self.buildInformation(pName, self.allPack[pName])
                 # look for the search string at the right place.
             
             modCmd = self.packModCmd[pName]
-            for modName, cmds in modCmd.items():
+            for modName, cmds in list(modCmd.items()):
                 # match command Name
                 foundMod = False
                 if matchModName:
@@ -817,7 +816,7 @@ class SearchCommand(Command):
                         foundMod = True
                 if foundMod or \
                    (not matchCmdName and not matchDocString): continue
-                for cmd, descr in cmds.items():
+                for cmd, descr in list(cmds.items()):
                     if matchCmdName:
                         if not caseSensitive:
                             cmdName = cmd.lower()
@@ -854,7 +853,7 @@ class SearchCommand(Command):
                                   'text_height':5},
                          'gridcfg':{'sticky':'we'}})
             
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'wcfg':{'text':'Dismiss',
                                 'command':self.dismissDoc_cb},
                         'gridcfg':{'sticky':'we'}})
@@ -877,10 +876,10 @@ class SearchCommand(Command):
                         'gridcfg':{'sticky':'wnse', 'columnspan':2}})
 
             idf.append({'name':'caseSensitive',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'parent':'searchGroup',
                         'wcfg':{'text':'Case sensitive',
-                                'variable':Tkinter.IntVar(),},
+                                'variable':tkinter.IntVar(),},
                         'gridcfg':{'sticky':'w'},
                         })
 
@@ -892,32 +891,32 @@ class SearchCommand(Command):
                         'gridcfg':{'sticky':'wnse', 'columnspan':2}})
 
             idf.append({'name':'matchModName',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'parent':'matchGroup',
                         'defaultValue':1,
                         'tooltip':"The Search String will be matched against the modules name",
                         'wcfg':{'text':'Module Name',
-                                'variable':Tkinter.IntVar()},
+                                'variable':tkinter.IntVar()},
                         'gridcfg':{'sticky':'w'},
                         })
 
             idf.append({'name':'matchCmdName',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'parent':'matchGroup',
                         'defaultValue':1,
                         'tooltip':"The Search String will be matched against the commands name",
                         'wcfg':{'text':'Command Name',
-                                'variable':Tkinter.IntVar()},
+                                'variable':tkinter.IntVar()},
                         'gridcfg':{'sticky':'w'},
                         })
 
             idf.append({'name':'matchDocString',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'parent':'matchGroup',
                         'defaultValue':1,
                         'tooltip':"The Search String will be matched against the content of the documentation string",
                         'wcfg':{'text':'Documentation String',
-                                'variable':Tkinter.IntVar()},
+                                'variable':tkinter.IntVar()},
                         'gridcfg':{'sticky':'w'},
                         })
 
@@ -933,7 +932,7 @@ class SearchCommand(Command):
                         'gridcfg':{'sticky':'w'}})
 
             idf.append({'name':'search',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text':'SEARCH',
                                 'command':self.searchCmd_cb},
                         'gridcfg':{'columnspan':2}})
@@ -957,7 +956,7 @@ class SearchCommand(Command):
                         'gridcfg':{'sticky':'wesn','columnspan':2 }})
 
             idf.append({'name':'info',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'parent':'resultGroup',
                         'tooltip':"Display the documentation string of the selected command.",
                         'wcfg':{'text':'INFO','height':1,
@@ -965,7 +964,7 @@ class SearchCommand(Command):
                         'gridcfg':{'sticky':'wesn' }})
 
             idf.append({'name':'load',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'parent':'resultGroup',
                         'tooltip':"Show the selected commands in the application",
                         'wcfg':{'text':'LOAD','height':1,
@@ -987,7 +986,7 @@ class SearchCommand(Command):
 
 
             idf.append({'name':'search',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text':'DISMISS',
                                 'command':self.dismiss_cb},
                         'gridcfg':{'columnspan':2}})
@@ -1019,27 +1018,27 @@ class SearchCommand(Command):
         self.cmdForms['searchForm'].descr.entryByName['cmdFound']['widget'].clear()
         del val['searchString']
         kw = {}
-        if val.has_key('choice'):
+        if 'choice' in val:
             choice = val['choice']
             if choice == 'All Packages':
                 kw['allPack'] = True
             elif choice == 'Default Packages':
                 kw['allPack'] = False
 
-        if val.has_key('matchCmdName'):
+        if 'matchCmdName' in val:
             kw['matchCmdName'] = val['matchCmdName']
-        if val.has_key('matchDocString'):
+        if 'matchDocString' in val:
             kw['matchDocString'] = val['matchDocString']
-        if val.has_key('caseSensitive'):
+        if 'caseSensitive' in val:
             kw['caseSensitive'] = val['caseSensitive']
-        if val.has_key('matchModName'):
+        if 'matchModName' in val:
             kw['matchModName'] = val['matchModName']
 
-        results = apply(self.doitWrapper, (searchString,), kw)
+        results = self.doitWrapper(*(searchString,), **kw)
 
     def dismiss_cb(self):
         self.cmdForms['searchForm'].withdraw()
-        if self.cmdForms.has_key('infoForm') and \
+        if 'infoForm' in self.cmdForms and \
            self.cmdForms['infoForm'].root.winfo_ismapped():
             self.dismissDoc_cb
 

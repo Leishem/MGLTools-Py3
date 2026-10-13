@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 #
@@ -15,11 +15,11 @@
 
 
 
-import numpy.oldnumeric as Numeric, math, types
-from molecule import Atom, AtomSet
-from protein import Residue
+import mglcompat.oldnumeric as Numeric, math, types
+from .molecule import Atom, AtomSet
+from .protein import Residue
 from types import ListType, TupleType, StringType, IntType, FloatType, LongType
-from numpy.oldnumeric import ArrayType, sum
+from mglcompat.oldnumeric import ArrayType, sum
 """
     GapFinder contain class to find Gap between residues.
     findGap: This class finds the residues which are not connected.
@@ -48,7 +48,7 @@ class FindGap:
         if len(mat)>1:
             self.Gapresidues = self.Gapfunction(mat,mol,atoms)   
         elif len(mat)==1:
-            print "only one atom selected"
+            print("only one atom selected")
             return
 
         
@@ -59,7 +59,7 @@ class FindGap:
             if atoms!=[]:
                 for at in atoms:
                     if at.name!="CA":
-                        print "All atoms given are not CA atoms"
+                        print("All atoms given are not CA atoms")
                         return
             if atoms==[]:
                 atoms=self.chain.getAtoms().get(lambda x: x.name=='CA')
@@ -69,7 +69,7 @@ class FindGap:
                     return
                 elif len(atoms)==0 and len(mol.chains)>1:
             
-                    print "No CA atoms in %s .%s"%(mol.name,self.chain.name)
+                    print("No CA atoms in %s .%s"%(mol.name,self.chain.name))
                     return    
             
             atoms.sort()
@@ -106,7 +106,7 @@ class FindGap:
         between atoms
         """
         if len(mat)==1:
-            print "chain has only one CAatom"
+            print("chain has only one CAatom")
             return
         self.dists =[]
         for num in range(0,len(mat)):

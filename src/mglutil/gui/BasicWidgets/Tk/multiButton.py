@@ -9,7 +9,7 @@
 #########################################################################
 
 import types, re
-import Pmw, Tkinter
+import Pmw, tkinter
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import KeySelectableScrolledFrame
 
 class kbScrolledFrame(Pmw.ScrolledFrame, KeySelectableScrolledFrame):
@@ -21,25 +21,25 @@ class kbScrolledFrame(Pmw.ScrolledFrame, KeySelectableScrolledFrame):
     def __init__(self, *args, **kw):
 
         # Pmw widgets are very delicate when it comes to subclassing!
-        apply( Pmw.ScrolledFrame.__init__, (self,)+args, kw)
+        Pmw.ScrolledFrame.__init__(*(self,)+args, **kw)
         
         # now remove the Pmw initialization only keywords and configure the
         # widget
-        if kw.has_key('borderframe'):
+        if 'borderframe' in kw:
             del kw['borderframe']
-        if kw.has_key('labelpos'):
+        if 'labelpos' in kw:
             del kw['labelpos']
-        if kw.has_key('usehullsize'):
+        if 'usehullsize' in kw:
             del kw['usehullsize']
 
         if len(kw):
-            apply( self.configure, (self,), kw)
+            self.configure(*(self,), **kw)
 
         myWidget = self
         KeySelectableScrolledFrame.__init__(self, myWidget)
 
 
-class MultiButtons(Tkinter.Frame):
+class MultiButtons(tkinter.Frame):
     """This base class provides everything to build a multi-button panel.
     Buttons are packed in a Pmw.ScrolledFrame widget.
     Further information is found in MultiCheckbutton and MultiRadiobutton."""
@@ -48,8 +48,8 @@ class MultiButtons(Tkinter.Frame):
     def __init__(self, master=None, valueList=None, callback=None,
                  sfcfg=None, immediate=1, **kw):
         
-	Tkinter.Frame.__init__(self, master)
-	Tkinter.Pack.config(self, fill='both', expand=1, side='left')
+        tkinter.Frame.__init__(self, master)
+        tkinter.Pack.config(self, fill='both', expand=1, side='left')
 
         self.master = master
 
@@ -98,8 +98,7 @@ class MultiButtons(Tkinter.Frame):
         self.buildPanel()
 
         # now set the constructor options correctly using the configure method
-        apply( self.configure, (),
-               {'immediate':immediate,
+        self.configure(*(), **{'immediate':immediate,
                 })
 
         
@@ -123,31 +122,31 @@ class MultiButtons(Tkinter.Frame):
             buttoncfg = {} # dict with tkinter data for checkbutton
             dataDict = {}  # dict that stores everything about a button
  
-            if type(data) == types.StringType:
+            if type(data) == bytes:
                 origName = data
                 buttonName = data + str(i)
-                buttoncfg['variable'] = Tkinter.IntVar()
+                buttoncfg['variable'] = tkinter.IntVar()
                 buttoncfg['command'] = self.callCallback
                 dataDict['value'] = 0 # default button status: off (0)
                 dataDict['name'] = buttonName
 
-            elif type(data) == types.ListType or \
-                 type(data) == types.TupleType:
+            elif type(data) == list or \
+                 type(data) == tuple:
 
                 origName = data[0]
                 buttonName = data[0] + str(i)
-                if type(data[1]) == types.DictType:
-                    if data[1].has_key('buttoncfg'):
+                if type(data[1]) == dict:
+                    if 'buttoncfg' in data[1]:
                         buttoncfg = data[1]['buttoncfg']
-                        if not buttoncfg.has_key('variable'):
-                            buttoncfg['variable'] = Tkinter.IntVar()
-                        if not buttoncfg.has_key('command'):
+                        if 'variable' not in buttoncfg:
+                            buttoncfg['variable'] = tkinter.IntVar()
+                        if 'command' not in buttoncfg:
                             buttoncfg['command'] = self.callCallback
                     else:
-                        buttoncfg['variable'] = Tkinter.IntVar()
+                        buttoncfg['variable'] = tkinter.IntVar()
                         buttoncfg['command'] = self.callCallback
                         
-                    if not data[1].has_key('value'):
+                    if 'value' not in data[1]:
                         dataDict['value'] = 0 # default button status: off (0)
                     else:
                         dataDict['value'] = data[1]['value']
@@ -183,7 +182,7 @@ class MultiButtons(Tkinter.Frame):
             self.rebuildOK = 1 # rebuild the panel
 
         for name, origName in bList:
-            if not self.buttonDict.has_key(name): # a new button was found
+            if name not in self.buttonDict: # a new button was found
                 self.rebuildOK = 1 # rebuild the panel 
           
             for i in range(len(statusList)):
@@ -247,7 +246,7 @@ class MultiButtons(Tkinter.Frame):
     
 
     def configure(self, **kw):
-        for key,value in kw.items():
+        for key,value in list(kw.items()):
             if key=='immediate': self.setImmediate(value)
  
 
@@ -259,7 +258,7 @@ class MultiButtons(Tkinter.Frame):
     def getButtonStatus(self, buttonName):
         if len(self.buttonDict) == 0:
             return 0
-        if not self.buttonDict.has_key(buttonName):
+        if buttonName not in self.buttonDict:
             return 0
         else:
             return self.buttonDict[buttonName]['button'].var.get()
@@ -312,8 +311,7 @@ USAGE: mb = MultiCheckbuttons(valueList=myList, callback=myCallback)
         
         if self.scrolledFrame:
             self.scrolledFrame.destroy()
-        self.scrolledFrame = apply( kbScrolledFrame, (self.master,),
-                                    self.sfcfg)
+        self.scrolledFrame = kbScrolledFrame(*(self.master,), **self.sfcfg)
         self.scrolledFrame.pack(padx=3, pady=3, fill='both', expand=1)
         self.frame = self.scrolledFrame.interior()
 
@@ -325,10 +323,10 @@ USAGE: mb = MultiCheckbuttons(valueList=myList, callback=myCallback)
             buttoncfg = self.buttonDict[name]['buttoncfg']
             value = self.buttonDict[name]['value']
             labelName = origName#+' ('+name+')'
-            label = apply( Tkinter.Label, (self.frame,), {'text':labelName, } )
+            label = tkinter.Label(*(self.frame,), **{'text':labelName, })
             label.grid(sticky='E', row=row, column=col)
             
-            checkbutton = apply(Tkinter.Checkbutton, (self.frame,), buttoncfg)
+            checkbutton = tkinter.Checkbutton(*(self.frame,), **buttoncfg)
             checkbutton.var = buttoncfg['variable']
             checkbutton.var.set(value)
             checkbutton.name = origName
@@ -369,7 +367,7 @@ USAGE: mb = MultiCheckbuttons(valueList=myList, callback=myCallback)
         """Select buttons using regular expression syntax"""
         if pat is None or pat == '':
             return
-        if type(pat) != types.StringType:
+        if type(pat) != bytes:
             return
         pattern = re.compile(pat)
         for tupl in self.buttonList:
@@ -399,27 +397,26 @@ class MultiRadiobuttons(MultiButtons):
         
         if self.scrolledFrame:
             self.scrolledFrame.destroy()
-        self.scrolledFrame = apply( kbScrolledFrame, (self.master,),
-                                    self.sfcfg)
+        self.scrolledFrame = kbScrolledFrame(*(self.master,), **self.sfcfg)
         self.scrolledFrame.pack(padx=3, pady=3, fill='both', expand=1)
         self.frame = self.scrolledFrame.interior()
 
         row = 0
         col = 0
 
-        var = Tkinter.IntVar()
+        var = tkinter.IntVar()
         
         for i in range(len(self.buttonList)):
             name, origName = self.buttonList[i]
             buttoncfg = self.buttonDict[name]['buttoncfg']
 
-            label = apply( Tkinter.Label, (self.frame,), {'text':origName, } )
+            label = tkinter.Label(*(self.frame,), **{'text':origName, })
             label.grid(sticky='E', row=row, column=col)
 
             buttoncfg['variable']=var
             buttoncfg['value'] = i
 
-            radiobutton = apply(Tkinter.Radiobutton, (self.frame,), buttoncfg)
+            radiobutton = tkinter.Radiobutton(*(self.frame,), **buttoncfg)
             radiobutton.var = buttoncfg['variable']
             radiobutton.name = origName
             radiobutton.grid(row=row, column=col+1)
@@ -433,28 +430,28 @@ class RegexpGUI:
     def __init__(self, master=None, callback=None, **kw):
 
         if master is None:
-            master = Tkinter.Toplevel()
+            master = tkinter.Toplevel()
         self.master = master
 
         self.callback = callback # the method called in self.input_cb
         self.visible = 1         # used to toggle show/hide
 
-        self.frame = Tkinter.Frame(self.master)
-	self.frame.pack(fill='both', expand=1)
+        self.frame = tkinter.Frame(self.master)
+        self.frame.pack(fill='both', expand=1)
         self.master.protocol('WM_DELETE_WINDOW', self.hide )
 
-        self.inputTk = Tkinter.StringVar()
-        self.reEntry = Tkinter.Entry(self.frame, textvariable=self.inputTk)
+        self.inputTk = tkinter.StringVar()
+        self.reEntry = tkinter.Entry(self.frame, textvariable=self.inputTk)
         self.reEntry.bind('<Return>', self.input_cb)
         self.reEntry.pack()
 
-        self.radioTk = Tkinter.StringVar()
+        self.radioTk = tkinter.StringVar()
         self.radioTk.set('check')
-	self.buttonCheck = Tkinter.Radiobutton(self.frame, text='Check',
+        self.buttonCheck = tkinter.Radiobutton(self.frame, text='Check',
                                                variable=self.radioTk,
                                                indicatoron=1,
                                                value='check').pack(side='left')
-	self.buttonUncheck = Tkinter.Radiobutton(self.frame, text='Uncheck',
+        self.buttonUncheck = tkinter.Radiobutton(self.frame, text='Uncheck',
                                              variable=self.radioTk,
                                              indicatoron=1,
                                              value='uncheck').pack(side='left')
@@ -483,8 +480,8 @@ class RegexpGUI:
 if __name__ == '__main__':
     def myCallback(widget, event=None):
         values =  widget.get()
-        print '*****myCallback was called'
-        print values
+        print('*****myCallback was called')
+        print(values)
         
 
     import types

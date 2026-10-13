@@ -1,6 +1,6 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from struct import unpack
 from  Volume.Grid3D import Grid3DF
 
@@ -61,8 +61,8 @@ class DelphiReaderBin:
 
 
     def describe(self):
-        print "CCP4 file: ", self.filename
-        print "center   : ", self.header['center']
-        print "nbSteps  : ", self.header['nbSteps'] 
-        print "scale    : ", self.header['scale']
+        print("CCP4 file: ", self.filename)
+        print("center   : ", self.header['center'])
+        print("nbSteps  : ", self.header['nbSteps']) 
+        print("scale    : ", self.header['scale'])
 

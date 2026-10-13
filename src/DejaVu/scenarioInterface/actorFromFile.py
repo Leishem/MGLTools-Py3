@@ -1,7 +1,7 @@
 
-import Tkinter
+import tkinter
 import Pmw
-import tkFileDialog
+import tkinter.filedialog
 
 
 class fromFileForm:
@@ -9,12 +9,12 @@ class fromFileForm:
 
     def __init__(self, scenario, propnames, object, command=None):
 
-        master = Tkinter.Toplevel(scenario.application.master)
+        master = tkinter.Toplevel(scenario.application.master)
         master.title("Create Actor from File")
         self.master = master
         #master.protocol('WM_DELETE_WINDOW', self.dismissCreateActor_cb )
-        frame = Tkinter.Frame(master, borderwidth=1, relief='ridge')
-        l = Tkinter.Label(frame, text = "Object: %s" % object.fullName)
+        frame = tkinter.Frame(master, borderwidth=1, relief='ridge')
+        l = tkinter.Label(frame, text = "Object: %s" % object.fullName)
         l.grid(column=0, row=0, sticky='w')
         self.chooser =Pmw.ComboBox(frame, labelpos ='n',
                               label_text='Actors: ',
@@ -41,7 +41,7 @@ class fromFileForm:
                             value = "set_"+propnames[0],)
 
         self.funcnameEF.grid(column = 1, row=1, columnspan = 2)
-        b = self.createB = Tkinter.Button(frame, text='Create From File ...',
+        b = self.createB = tkinter.Button(frame, text='Create From File ...',
                            command=self.getValues_cb)
 
         b.grid(column=1, row=3, columnspan = 2)
@@ -77,7 +77,7 @@ class fromFileForm:
            functionName = "func" 
         
         if actor is not None:
-            file = tkFileDialog.askopenfilename(parent = self.master,
+            file = tkinter.filedialog.askopenfilename(parent = self.master,
                                   initialdir = '.', title='Actor file',
                                   filetypes=[('', '*.py'), ('all', '*')] ,
                                                 initialfile = self.file)

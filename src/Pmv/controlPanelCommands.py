@@ -39,7 +39,7 @@
 ## Tree customization  stuff
 ##
 ##########################################################################
-import Tkinter, os, Pmw, types, re
+import tkinter, os, Pmw, types, re
 from PIL import Image, ImageTk
 
 from mglutil.gui.BasicWidgets.Tk.TreeWidget.tree import TreeView, Node, OFFSET
@@ -67,7 +67,7 @@ class NodeWithCheckbuttons(Node):
         # create all the buttons intially, so we can set the variables and keep
         # them in sync with Pmv
         for i in range(nbColumns):
-            self.chkbtVar.append(Tkinter.IntVar())
+            self.chkbtVar.append(tkinter.IntVar())
 
             
     def displayValue(self):
@@ -88,7 +88,7 @@ class NodeWithCheckbuttons(Node):
 
             v = self.chkbtVar[i]
             cb = CallbackFunction(self.buttonClick, self, i )
-            button = Tkinter.Checkbutton(canvas, variable=v, command=cb,
+            button = tkinter.Checkbutton(canvas, variable=v, command=cb,
                                          padx=0, pady=0,
                                          background=col[level-1],
                                          activeforeground='pink')
@@ -115,7 +115,7 @@ class NodeWithCheckbuttons(Node):
                     self.canvasIDs.append(cid)
 
                     cid = canvas.create_text( 162 + self.tree.offx,
-                            self.y, text=ssname, anchor=Tkinter.W)
+                            self.y, text=ssname, anchor=tkinter.W)
 #                                              fill=color)
                     self.canvasIDs.append(cid)
 
@@ -299,7 +299,7 @@ root has to be a widget supporting .bind .after
 
     def selectItem(self, item):
         """do what has to be done to show what matches the typed string"""
-        print 'selecting item', item
+        print('selecting item', item)
 
 
 
@@ -392,7 +392,7 @@ node. The node in the tree is the graphical representation of the object.
             # prevent them from being garbage collected
 
         # add the backbone menu option
-        self.bbmodevar = Tkinter.StringVar()
+        self.bbmodevar = tkinter.StringVar()
         self.bbmodevar.set("Cmd setting")
         self.bbmode_menu = Pmw.OptionMenu(
             self.master, labelpos = 'w', label_text = 'Protein:',
@@ -495,16 +495,16 @@ matches name"""
 
             # handle negate key to reflect state of checkbutton
             val = node.chkbtVar[column].get()
-            if defaultValues.has_key('negate'):
+            if 'negate' in defaultValues:
                 defaultValues['negate'] = not val
 
             defaultValues['callListener'] = False
 
             # apply the command at each level of the current selection
             for obj in node.getObjects(column):
-                apply( pmvcmd, (obj,), defaultValues)
+                pmvcmd(*(obj,), **defaultValues)
 
-            if pmvcmd.lastUsedValues['default'].has_key('callListener'):
+            if 'callListener' in pmvcmd.lastUsedValues['default']:
                 del pmvcmd.lastUsedValues['default']['callListener']
             
         if function is None:
@@ -527,9 +527,9 @@ matches name"""
             im = ImageTk.PhotoImage(image=image, master=self.master)
             self.iconList[column] = im
 
-            v = Tkinter.IntVar() 
+            v = tkinter.IntVar() 
             cb = CallbackFunction(self.editColumn, column)
-            button = Tkinter.Checkbutton(
+            button = tkinter.Checkbutton(
                 self.master, variable=v, command=cb, height=32, width=32,
                 indicatoron=0, image=im)
 
@@ -643,7 +643,7 @@ and to associate other columns with with this one
         self.editable = column < 14
 
         if master is None:
-            self.root = Tkinter.Toplevel(tree.master)
+            self.root = tkinter.Toplevel(tree.master)
             self.root.title('Editor for command: %s'%\
                             self.tree.names[column].replace('\n', ' '))
             self.ownsRoot = True
@@ -697,17 +697,17 @@ panel of the corresponding Pmv command"""
         tree = self.tree
 
         if tree.pmvcmd[self.column]:
-            b = Tkinter.Button(self.root, command=self.getOpt, height=32,
+            b = tkinter.Button(self.root, command=self.getOpt, height=32,
                                width=32, image=tree.iconList[self.column])
             b.grid(row=0, column=0, sticky='e')
         
-            tree.optionButton = Tkinter.Button(
+            tree.optionButton = tkinter.Button(
                 self.root, text='Set default Options for command',
                 command=self.getOpt)
             tree.optionButton.grid(row=0, column=1, sticky='w')
             tree.balloons.bind(tree.optionButton, self.optionHelp)
         
-        self.bbmodevar = Tkinter.StringVar()
+        self.bbmodevar = tkinter.StringVar()
         self.bbmodevar.set("All")
         bbmode_menu = Pmw.OptionMenu(
             self.root, labelpos='w', label_text='Protein:',
@@ -718,9 +718,9 @@ panel of the corresponding Pmv command"""
         bbmode_menu.grid(row=0, column=2, sticky='ew', padx=10, pady=10)
         tree.balloons.bind(bbmode_menu, tree.proteinHelp)
 
-        self.chainedPanelVar = Tkinter.IntVar()
+        self.chainedPanelVar = tkinter.IntVar()
         w = Pmw.Group(self.root,
-                      tag_pyclass = Tkinter.Checkbutton,
+                      tag_pyclass = tkinter.Checkbutton,
                       tag_text='show command chaining interface',
                       tag_variable=self.chainedPanelVar,
                       tag_foreground='blue')
@@ -760,8 +760,8 @@ panel of the corresponding Pmv command"""
 ##             )
 ##         self.argOptMenu.grid(row=0, column=0, columnspan=4)
 
-        column1 = Tkinter.Frame(groupMaster)
-        column2 = Tkinter.Frame(groupMaster)
+        column1 = tkinter.Frame(groupMaster)
+        column2 = tkinter.Frame(groupMaster)
         
         self.chainVars = []
         self.chainWhenVars = []
@@ -775,30 +775,30 @@ panel of the corresponding Pmv command"""
             row=(i% halfLength)+1
             if row==1:
                 col += 4
-                master = Tkinter.Frame(groupMaster, relief='ridge')
-                l = Tkinter.Label(master, text='Cmd:')
+                master = tkinter.Frame(groupMaster, relief='ridge')
+                l = tkinter.Label(master, text='Cmd:')
                 l.grid(row=0, column=col-3)
-                l = Tkinter.Label(
+                l = tkinter.Label(
                   master, text='Call when cmd\nbutton is:')
                 l.grid(row=0, column=col-2)
-                l = Tkinter.Label(master, text='Set chained\ncmd button to:')
+                l = tkinter.Label(master, text='Set chained\ncmd button to:')
                 l.grid(row=0, column=col-1)
-                l = Tkinter.Label(master, text='Apply to:')
+                l = tkinter.Label(master, text='Apply to:')
                 l.grid(row=0, column=col)
                 master.pack(side='left', padx=10, anchor='n')
 
-            v = Tkinter.IntVar()
+            v = tkinter.IntVar()
             self.chainVars.append(v)
             
-            whenVar = Tkinter.StringVar()
+            whenVar = tkinter.StringVar()
             whenVar.set('Checked')
             self.chainWhenVars.append(whenVar)
 
-            argVar = Tkinter.StringVar()
+            argVar = tkinter.StringVar()
             argVar.set('Same')
             self.chainArgVars.append(argVar)
 
-            protVar = Tkinter.StringVar()
+            protVar = tkinter.StringVar()
             protVar.set('All')
             self.chainProtVars.append(protVar)
 
@@ -817,14 +817,14 @@ panel of the corresponding Pmv command"""
 
             cb = CallbackFunction(self.setChain, i)
             if tree.iconList[i]:
-                b = Tkinter.Checkbutton(master, variable=v, state=status,
+                b = tkinter.Checkbutton(master, variable=v, state=status,
                                         command=cb, height=32, width=32,
                                         indicatoron=0, image=tree.iconList[i])
             else:
-                l = Tkinter.Label(master, state=status,
+                l = tkinter.Label(master, state=status,
                                   text=tree.names[i].replace('\n', ' '))
                 l.grid(column=4*col-3, row=row, sticky='e')
-                b = Tkinter.Checkbutton(master, variable=v, state=status,
+                b = tkinter.Checkbutton(master, variable=v, state=status,
                                         command=cb)
             b.grid(column=col-3, row=row, sticky='w')
             tree.balloons.bind(b, tree.balloonText[i])
@@ -862,7 +862,7 @@ panel of the corresponding Pmv command"""
         #cmdList = ['select', 'displayLines', 'displaySticksAndBalls',
         #               'displayCPK', 'displayExtrudedSS', 'displayMSMS',
         #               'LabelAtoms', 'LabelResidues', '', ]
-        self.OK = Tkinter.Button(self.root, text='OK',
+        self.OK = tkinter.Button(self.root, text='OK',
                 command=tree.colHeaderButtons[self.column].invoke)
         self.OK.grid(row=2, column=0, columnspan=3, sticky='ew')
 
@@ -940,7 +940,7 @@ class ControlPanel(MVCommand):
         self.vf.registerListener(AddAtomsEvent, self.handleAddEvents)
 
         # build the tree
-        master = Tkinter.Toplevel()
+        master = tkinter.Toplevel()
         master.withdraw()
         master.protocol('WM_DELETE_WINDOW',self.hide)
         self.tree = tvolist = TreeViewWithCheckbuttons(
@@ -961,7 +961,7 @@ class ControlPanel(MVCommand):
             if len(oldDefaultValues)==0:
                 recompute=True
             else:
-                for k,v in oldDefaultValues.items():
+                for k,v in list(oldDefaultValues.items()):
                     nv = defaultValues.get(k, None)
                     if nv!=v:
                         recompute=True
@@ -971,27 +971,27 @@ class ControlPanel(MVCommand):
             for obj in node.getObjects(column):
                 molecules, atmSets = self.vf.getNodesByMolecule(obj, Atom)
                 for mol, atoms in zip(molecules, atmSets):
-                    if molat.has_key(mol):
+                    if mol in molat:
                         molat[mol] += atoms
                     else:
                         molat[mol] = atoms
 
-            for mol, atoms in molat.items():
-                if not mol.geomContainer.geoms.has_key('MSMS-MOL'):
+            for mol, atoms in list(molat.items()):
+                if 'MSMS-MOL' not in mol.geomContainer.geoms:
                     recompute=True
                 if len(defaultValues):
                     if defaultValues['perMol']==0 and val:
                         recompute=True
-                    if type(defaultValues['surfName'])==types.TupleType:
+                    if type(defaultValues['surfName'])==tuple:
                         defaultValues['surfName']=defaultValues['surfName'][0]
 
                 if recompute:
-                    apply( self.vf.computeMSMS, (atoms,), defaultValues)
+                    self.vf.computeMSMS(*(atoms,), **defaultValues)
                 else:
                     pmvcmd = self.vf.displayMSMS
                     defaultValues['callListener'] = False
                     pmvcmd(atoms, negate= not val, callListener=False)
-                    if pmvcmd.lastUsedValues['default'].has_key('callListener'):
+                    if 'callListener' in pmvcmd.lastUsedValues['default']:
                         del pmvcmd.lastUsedValues['default']['callListener']
 
             if recompute:
@@ -1005,7 +1005,7 @@ class ControlPanel(MVCommand):
                 pmvcmd = self.vf.labelByProperty
                 pmvcmd(nodes, negate=not val, callListener=False,
                        properties=property)
-                if pmvcmd.lastUsedValues['default'].has_key('callListener'):
+                if 'callListener' in pmvcmd.lastUsedValues['default']:
                     del pmvcmd.lastUsedValues['default']['callListener']
         #    self.labelByProperty("1crn::;", textcolor=(1.0, 1.0, 1.0,), log=0, format=None, only=0, location='Center', negate=0, font='Helvetica12', properties=['name'])
 
@@ -1016,8 +1016,8 @@ class ControlPanel(MVCommand):
             cmd = node.tree.pmvcmd[column]
             if val:
                 for obj in node.getObjects(column):
-                    apply( cmd, (obj,), {'callListener':False})
-                if cmd.lastUsedValues['default'].has_key('callListener'):
+                    cmd(*(obj,), **{'callListener':False})
+                if 'callListener' in cmd.lastUsedValues['default']:
                     del pmvcmd.lastUsedValues['default']['callListener']
             else:
                 if node.selected:
@@ -1262,7 +1262,7 @@ Add the new molecule to the tree
                     node.tree.manageChildren(node, col)
         else:
             for o in molFrag:
-                if self.tree.objToNode.has_key(o):
+                if o in self.tree.objToNode:
                     node = self.tree.objToNode[o]
                 else:
                     return
@@ -1281,7 +1281,7 @@ Add the new molecule to the tree
                     
                 
 ControlPanel_GUI = MVCommandGUI()
-from moleculeViewer import ICONPATH
+from .moleculeViewer import ICONPATH
 ControlPanel_GUI.addToolBar('Control_Panel', icon1 = 'view_tree.gif', 
                  icon_dir=ICONPATH, balloonhelp='Control Panel Widget', index=8)
             

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -15,7 +15,7 @@
 # $Id: colorMap.py,v 1.98 2007/07/24 17:30:41 vareille Exp $
 #
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 import os
 import warnings
 import types
@@ -117,23 +117,23 @@ A Colormap can be associated to a ColormapGUI object.
         if hasattr(self.ramp, 'tolist'):
             self.ramp = self.ramp.tolist()
 
-        assert type(self.ramp) is types.ListType, type(self.ramp)
+        assert type(self.ramp) is list, type(self.ramp)
 
         lenRamp = len(self.ramp)
         if labels is not None:
             if len(labels) == 0:
                 # passing an empty list is a shortcut for a numeric list
-                self.labels = range(lenRamp)
+                self.labels = list(range(lenRamp))
             else:
                 assert len(labels) == lenRamp
                 self.labels = labels
         elif self.labels is not None:
             lenLabels = len(self.labels)
             if lenLabels == 0:
-                self.labels = range(lenRamp)
+                self.labels = list(range(lenRamp))
             elif lenLabels < lenRamp:
                 lMissingLength = lenRamp - lenLabels
-                lMissingLabels = range(lenLabels, lenRamp)
+                lMissingLabels = list(range(lenLabels, lenRamp))
                 #print "lMissingLabels", lMissingLabels
                 self.labels += lMissingLabels
             else:
@@ -219,12 +219,12 @@ is added for the alpha values.
         l = {}
         g = {}
         try:
-            execfile(fileName, g, l)
+            exec(compile(open(fileName, "rb").read(), fileName, 'exec'), g, l)
         except:
             return False
         
         cm = None
-        for name, object in l.items():
+        for name, object in list(l.items()):
             if isinstance(object, ColorMap):
                 cm = object
                 break
@@ -239,7 +239,7 @@ is added for the alpha values.
         if hasattr(cm,'labels'):
             cfg['labels'] = cm.labels
 
-        apply( ColorMap.configure, (self,), cfg)
+        ColorMap.configure(*(self,), **cfg)
 
         if self.ramp is None:
             return False
@@ -329,7 +329,7 @@ ignored
 
     #alternative representations of the ramp
     def asHSV(self, redo=0):
-        self.hsv = map(lambda x, conv=ToHSV: conv(x), self.ramp)
+        self.hsv = list(map(lambda x, conv=ToHSV: conv(x), self.ramp))
         #if redo or not hasattr(self, 'hsv'):
         #    self.hsv = map(lambda x, conv=ToHSV: conv(x), self.ramp)
         return self.hsv
@@ -337,12 +337,12 @@ ignored
 
     def asHSL(self, redo=0):
         from mglutil.util.colorUtil import RGBA2HSLA_list
-        return map(lambda x, conv=RGBA2HSLA_list: conv(x), self.ramp)
+        return list(map(lambda x, conv=RGBA2HSLA_list: conv(x), self.ramp))
 
 
     def asTKCOL(self, redo=0):
         if redo or not hasattr(self, 'tkcol'):
-            self.tkcol = map(lambda x, conv=TkColor: conv(x), self.ramp)
+            self.tkcol = list(map(lambda x, conv=TkColor: conv(x), self.ramp))
         return self.tkcol
 
 
@@ -352,11 +352,11 @@ ignored
             for i in range( len(self.ramp) ):
                 self.labels[i] = str(i)
 
-        if type(name) != types.StringTypes:
+        if type(name) != (str,):
             name = str(name)
 
         return self.ramp[self.labels.index(name)]
 
 
     def lookup(self, names):
-        return map( self._lookup, names)
+        return list(map( self._lookup, names))

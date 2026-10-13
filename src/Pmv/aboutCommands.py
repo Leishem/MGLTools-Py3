@@ -7,7 +7,7 @@
 
 from Pmv.mvCommand import MVCommand
 from ViewerFramework.VFCommand import CommandGUI
-import Tkinter, os, sys, Pmw
+import tkinter, os, sys, Pmw
 from mglutil.util.packageFilePath import findFilePath, getResourceFolderWithVersion
 
 import fnmatch
@@ -42,7 +42,7 @@ class About(MVCommand):
 
     def guiCallback(self):
         if self.master == None:
-            self.master = Tkinter.Toplevel()
+            self.master = tkinter.Toplevel()
             self.master.protocol('WM_DELETE_WINDOW',self.destroy)
                         
             self.vf.help_about.gui(master=self.master)
@@ -58,10 +58,10 @@ class About(MVCommand):
             from PIL import Image, ImageTk
             image = Image.open(self.vf.help_about.icon)
             self.icon_image = ImageTk.PhotoImage(master=page, image=image)
-            self.image2 = Tkinter.Label(page, image=self.icon_image)
+            self.image2 = tkinter.Label(page, image=self.icon_image)
             self.image2.pack(side='left')
 
-            Tkinter.Label(page, text=self.vf.help_about.authors, fg='#662626', 
+            tkinter.Label(page, text=self.vf.help_about.authors, fg='#662626', 
                           justify='left', anchor='w', 
                           ).pack(side='left')
 
@@ -69,7 +69,7 @@ class About(MVCommand):
             if len(self.vf.help_about.third_party):
                 page = notebook.add('Third party software components')
                 
-                Tkinter.Label(page, text=self.vf.help_about.third_party, fg='#0A3A75',
+                tkinter.Label(page, text=self.vf.help_about.third_party, fg='#0A3A75',
                               justify='left',  anchor='w',
                               ).pack(side='left')
 
@@ -77,23 +77,23 @@ class About(MVCommand):
             # app info group
             if len(self.vf.help_about.path_data):
                 page = notebook.add('Path information')
-                Tkinter.Label(page, text=self.vf.help_about.path_data, 
+                tkinter.Label(page, text=self.vf.help_about.path_data, 
                               fg='#3A9E23', justify='left', anchor='w',
                               ).pack(side='left')
 
-            Tkinter.Label(self.master,text = '              ').pack(side='left')
-            l = Tkinter.Label(self.master, fg='Blue', cursor='hand1',
+            tkinter.Label(self.master,text = '              ').pack(side='left')
+            l = tkinter.Label(self.master, fg='Blue', cursor='hand1',
                           text='http://mgltools.scripps.edu')
             l.pack(side='left')
             l.bind(sequence="<Button-1>", func=self.openurl)
-            Tkinter.Label(self.master,text = '              ').pack(side='left')
+            tkinter.Label(self.master,text = '              ').pack(side='left')
 
             registration = getResourceFolderWithVersion() + os.sep + '.registration'
             if not os.path.exists(registration):
-                reg = Tkinter.Button(self.master,text='   Register   ',
+                reg = tkinter.Button(self.master,text='   Register   ',
                                      command=self.register)
                 reg.pack(side = 'left')
-            b = Tkinter.Button(self.master,text='   Close   ',
+            b = tkinter.Button(self.master,text='   Close   ',
                                command=self.destroy)
             b.pack(side = 'left')
             notebook.setnaturalsize()

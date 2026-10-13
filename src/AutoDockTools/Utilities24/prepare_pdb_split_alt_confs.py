@@ -21,8 +21,8 @@ def getAT_types(m):
     alt_items = {}
     for ent in AT_SET_SET:
         alt_items[ent.split("@")[1]] = 1
-    print "@@returning ", alt_items.keys(), " @@"
-    return alt_items.keys()
+    print("@@returning ", list(alt_items.keys()), " @@")
+    return list(alt_items.keys())
     
 
 if __name__ == '__main__':
@@ -32,24 +32,24 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: prepare_pdb_split_alt_confs.py -r filename.pdb"
-        print
-        print "    Description of command..."
-        print "        -r   filename.pdb "
-        print "        create separate pdb files for file with alt_loc coords"
-        print "    Optional parameters:"
-        print "        [-n]  remove '   new' and '   flip' at end of lines (apparent issue from MolProbity)"
-        print "        [-f]  filename to contain lines after new and flip removed (MolProbity)"
-        print "        [-v]  verbose output (default is minimal output)"
-        print "        [-o pdb_stem]  (default creates 'filename_A.pdb', 'filename_B.pdb' etc)"
+        print("Usage: prepare_pdb_split_alt_confs.py -r filename.pdb")
+        print()
+        print("    Description of command...")
+        print("        -r   filename.pdb ")
+        print("        create separate pdb files for file with alt_loc coords")
+        print("    Optional parameters:")
+        print("        [-n]  remove '   new' and '   flip' at end of lines (apparent issue from MolProbity)")
+        print("        [-f]  filename to contain lines after new and flip removed (MolProbity)")
+        print("        [-v]  verbose output (default is minimal output)")
+        print("        [-o pdb_stem]  (default creates 'filename_A.pdb', 'filename_B.pdb' etc)")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'r:nf:vo:h')
 
-    except getopt.GetoptError, msg:
-        print 'prepare_pdb_split_alt_confs.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('prepare_pdb_split_alt_confs.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -71,26 +71,26 @@ if __name__ == '__main__':
     for o, a in opt_list:
         if o in ('-r', '--r'):
             filename = a
-            if verbose: print 'set filename to ', filename
+            if verbose: print('set filename to ', filename)
         if o in ('-n', '--n'):
             remove_new = True
-            if verbose: print 'set remove_new to ', remove_new
+            if verbose: print('set remove_new to ', remove_new)
         if o in ('-f', '--f'):
             filename_nonews = a
-            if verbose: print 'set filename for clean output ("new"+"flip" removed) to ', filename_nonews
+            if verbose: print('set filename for clean output ("new"+"flip" removed) to ', filename_nonews)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', verbose
+            if verbose: print('set verbose to ', verbose)
         if o in ('-o', '--o'):
             pdb_stem = a
-            if verbose: print 'set pdb_stem to ', pdb_stem
+            if verbose: print('set pdb_stem to ', pdb_stem)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
 
     if not filename:
-        print 'prepare_pdb_split_alt_confs: filename for cleanup must be specified.'
+        print('prepare_pdb_split_alt_confs: filename for cleanup must be specified.')
         usage()
         sys.exit()
 
@@ -100,12 +100,12 @@ if __name__ == '__main__':
 
     if filename_nonews is None:
         filename_nonews = file_stem + "_nonews.pdb"
-        if verbose: print "set filename_nonews to ", filename_nonews
+        if verbose: print("set filename_nonews to ", filename_nonews)
 
     if remove_new:
         optr = open(filename)
         lines = optr.readlines()
-        if verbose: print "len(lines)==", len(lines)
+        if verbose: print("len(lines)==", len(lines))
         new_lines = []
         for ll in lines:
             if ll.find("   new")==78:
@@ -114,26 +114,26 @@ if __name__ == '__main__':
                 ll = ll[:78] + "\n"
             new_lines.append(ll)
         nptr = open(filename_nonews, 'w')
-        if verbose: print "len(new_lines)==", len(new_lines)
+        if verbose: print("len(new_lines)==", len(new_lines))
         for ll in new_lines:
             nptr.write(ll)
         nptr.close()
         filename = filename_nonews
         mols = Read(filename)
-    if verbose: print 'read ', filename
+    if verbose: print('read ', filename)
     mol = mols[0]
     if len(mols)>1:
-        if verbose: print "more than one molecule in file using molecule with most atoms"
+        if verbose: print("more than one molecule in file using molecule with most atoms")
         #use the molecule with the most atoms
         ctr = 1
         for m in mols[1:]:
             ctr += 1
             if len(m.allAtoms)>len(mol.allAtoms):
                 mol = m
-                if verbose: print "mol set to ", ctr, "th molecule with", len(mol.allAtoms), "atoms"
+                if verbose: print("mol set to ", ctr, "th molecule with", len(mol.allAtoms), "atoms")
     ats = mol.allAtoms.get("*@*")
     if not len(ats):
-        print 'Nothing to do:no alt loc atoms found in ', filename
+        print('Nothing to do:no alt loc atoms found in ', filename)
         sys.exit()
     list_to_write = getAT_types(mol)
     ATOMLINES = mol.parser.getAtomsLines(-2,0)

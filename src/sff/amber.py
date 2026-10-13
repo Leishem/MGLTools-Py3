@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 30, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 30, 2007 by 
 
 #
 # Copyright_notice
@@ -7,8 +7,9 @@
 import _prmlib as prmlib
 import re
 import os
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from types import StringType
+from functools import reduce
 
 
 realType = Numeric.Float
@@ -94,7 +95,7 @@ def checkbuffersize( parmobj, attr, value):
         sum = reduce( add, parmobj.N14pairs )
         attrlen = sum
         if sum!=len(value):
-            print 'WARNING: N14pairlist length'
+            print('WARNING: N14pairlist length')
             attrlen = len(value)
             
     if len( value) < attrlen:
@@ -111,7 +112,7 @@ class AmberParm:
         self.name  = name
         if parmdict:
             parmptr = self._parmptr_ = prmlib.parmcalloc()
-            for name in parmattrs.keys():
+            for name in list(parmattrs.keys()):
                 value = parmdict[ name]
                 try:
                     bufdesc = parmbuffers[ name]
@@ -130,13 +131,11 @@ class AmberParm:
         else:
             assert os.path.exists( name )
             self._parmptr_ = parmptr = prmlib.readparm( name)
-            for attr in filter( lambda x: not parmbuffers.has_key( x),
-                                parmattrs.keys()):
+            for attr in [x for x in list(parmattrs.keys()) if x not in parmbuffers]:
                 value = getattr( prmlib, 'parmstruct_%s_get' % attr)( parmptr)
                 self.__dict__[ attr] = value
                
-            for attr in filter( lambda x: parmbuffers.has_key( x),
-                                parmattrs.keys()):
+            for attr in [x for x in list(parmattrs.keys()) if x in parmbuffers]:
                 # these _get() functions  must not be called from anywhere else
                 #print "attr:", attr,
                 value = getattr( prmlib, 'parmstruct_%s_get' % attr)( parmptr)
@@ -150,13 +149,13 @@ class AmberParm:
 
                 self.__dict__[ attr] = value
         if __debug__:
-            for attr in parmbuffers.keys():
+            for attr in list(parmbuffers.keys()):
                 val = getattr(self, attr)
                 if isinstance(val, Numeric.ArrayType) or isinstance(val, StringType):
                     checkbuffersize(self, attr, val)
             
     def __setattr__( self, name, value):
-        if parmattrs.has_key( name):
+        if name in parmattrs:
             raise AttributeError( 'constant parm attribute')
         self.__dict__[ name] = value
 
@@ -168,9 +167,9 @@ class AmberParm:
     def asDict(self):
         # return the content of the parm structure as a python dict
         d = {}
-        for k in self.__dict__.keys():
+        for k in list(self.__dict__.keys()):
             if k[0]=='_': continue
-            if parmbuffers.has_key(k):
+            if k in parmbuffers:
                 value = list(getattr(self, k))
             else:
                 value = getattr(self, k)
@@ -259,7 +258,7 @@ class Amber94:
                     #found in MolKit/data...which end in dat.py
                     #dataDict['allDictList']=[all_amino94_dat]
                     #if len(list)>1, the first is updated by the rest
-                    self.parmtop = apply(Parm, (), dataDict)
+                    self.parmtop = Parm(*(), **dataDict)
                 self.parmtop.processAtoms(atoms, self.parm94_dat)
                 #this read is broken
                 #self.parmtop.loadFromFile(prmfile)
@@ -318,7 +317,7 @@ class Amber94:
     def setMinimizeOptions(self, **kw):
         # WARNING when cut it set mme_init needs to be called to allocate a
         # list of non-bonded paires of the proper size
-        for k,v in kw.items():
+        for k,v in list(kw.items()):
             assert k in ['cut', 'nsnb', 'ntpr', 'scnb', 'scee',
                          'mme_init_first', 'dield', 'verbosemm',
                          'wcons']
@@ -329,7 +328,7 @@ class Amber94:
 
     def setMdOptions(self, **kw):
         #nb: for the moment set verbosemm for verbosemd
-        for k,v in kw.items():
+        for k,v in list(kw.items()):
             assert k in ['t', 'dt', 'tautp', 'temp0', 'boltz2', 'verbosemd',
                           'ntwx','vlimit', 'ntpr_md', 'zerov', 'tempi', 'idum' ]
             #prmlib.md_options(k, v)

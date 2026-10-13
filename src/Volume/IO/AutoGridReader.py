@@ -1,7 +1,7 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import numpy.oldnumeric as N
-import string, os, math
+import mglcompat.oldnumeric as N
+import os, math; from mglcompat import pystring as string
 from struct import unpack
 from Volume.Grid3D import Grid3DF
 
@@ -35,7 +35,7 @@ class ReadAutoGrid:
         
     
         # read grid points
-        points = map( lambda x: float(x), f.readlines())
+        points = [float(x) for x in f.readlines()]
        
         # data read as z,y,z, swapaxes to make the data x,y,z
         TMPGRIDS = N.swapaxes(N.reshape( points,(nz,ny,nx)), 0, 2)

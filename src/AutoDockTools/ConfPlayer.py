@@ -20,9 +20,9 @@ docking experiment
 
 """
 from mglutil.gui.BasicWidgets.Tk.player import Player
-import Tkinter, Pmw, tkMessageBox
+import tkinter, Pmw, tkinter.messagebox
 import types, time, os
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from string import find
 from mglutil.util.callback import CallBackFunction
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr, InputForm, evalString
@@ -30,7 +30,7 @@ from mglutil.util.callback import CallbackManager
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 from mglutil.util.packageFilePath import findFilePath
 from mglutil.util.misc import ensureFontCase
-import tkMessageBox
+import tkinter.messagebox
 from Pmv.moleculeViewer import EditAtomsEvent
 #from ViewerFramework.VF import ModificationEvent
 from MolKit.pdbParser import PdbqParser, PdbqtParser
@@ -59,13 +59,13 @@ class ConformationPlayer(Player):
                 self.vf.loadCommand('colorCommands', item, 'Pmv')
         self.vf.loadModule('hbondCommands')
         try:
-            if not self.vf.colorMaps.has_key('rgb256'):
+            if 'rgb256' not in self.vf.colorMaps:
                 mod = __import__("ViewerFramework")
                 VFPath = mod.__path__[0]
                 self.vf.loadColorMap(os.path.join(VFPath, "ColorMaps","rgb256_map.py"), 
                                         topCommand=0) 
         except:
-            print 'cannot load rgb256'
+            print('cannot load rgb256')
         self.startFrame = 0
         self.endFrame = len(self.sequenceList)
         kw['titleStr'] = titleStr
@@ -73,7 +73,7 @@ class ConformationPlayer(Player):
         kw['endFrame'] = self.endFrame
         kw['maxFrame'] = self.endFrame
         kw['form2'] = form2
-        apply(Player.__init__, (self,), kw)
+        Player.__init__(*(self,), **kw)
         try:
             self.form.ifd.entryByName['setanimB']['widget'].grid_forget()
             #print 'withdrew SetAnim button'
@@ -107,7 +107,7 @@ class ConformationPlayer(Player):
             self.endFrame = lenSeq
         if hasattr(self, 'startFrame'):
             if self.startFrame>lenSeq:
-                print 'startFrame> len(sequenceList)\nresetting startFrame to 0'
+                print('startFrame> len(sequenceList)\nresetting startFrame to 0')
                 self.startFrame = 0
         #update the thumbwheels here
         if hasattr(self, 'playModeForm'):
@@ -128,12 +128,12 @@ class ConformationPlayer(Player):
         ##indicies in idList are 1 more than indices in sequenceList
         if not idList:
             #insert 0 for original state
-            idL = range(0, len(self.sequenceList) + 1)
-            self.idList = map(str, idL)
+            idL = list(range(0, len(self.sequenceList) + 1))
+            self.idList = list(map(str, idL))
         else:
             #or it could be explicit
             #SHOULD always be incremented by 1 so 0 can be original coords
-            self.idList = map(str, idList)
+            self.idList = list(map(str, idList))
         #ALSO: close form3 and clear counter
         #these maynot exist yet:
         if hasattr(self, 'playModeForm'):
@@ -141,7 +141,7 @@ class ConformationPlayer(Player):
                 self.closeform3()
         if hasattr(self, 'form'):
             if hasattr(self.form, 'ent2'):
-                newLen = max(map(len, self.idList))
+                newLen = max(list(map(len, self.idList)))
                 if newLen>3:
                     self.form.ent2.config(width=newLen)
                 self.form.ent2.delete(0,'end')
@@ -255,7 +255,7 @@ class ConformationPlayer(Player):
         # factor is 1 for increment and -1 for decrement
         # increment is value of increment megawidget option
         if not text in self.idList:
-            raise ValueError, text + ' not in current idList'
+            raise ValueError(text + ' not in current idList')
         #check whether ind+factor is in range
         newval = self.idList.index(text) + factor*self.stepSize
         if newval<0 or newval>(len(self.idList)-1):
@@ -286,7 +286,7 @@ class ConformationPlayer(Player):
         try:
             colormap = self.vf.colorMaps['rgb256']
         except:
-            print 'setting colormap failed'
+            print('setting colormap failed')
             return
         if confNum=='0': 
             if colorType=='molecule':
@@ -497,7 +497,7 @@ class ConformationPlayer(Player):
         clusterer = self.docking.clusterer
         rmsTool = clusterer.rmsTool
         if not hasattr(clusterer, 'rmsTool'):
-            print 'Not available: Make a clustering first!'
+            print('Not available: Make a clustering first!')
             return
         if clusterer.usesSubset:
             rmsTool.setRefCoords(clusterer.subset.coords[:])
@@ -522,9 +522,9 @@ class ConformationPlayer(Player):
         #   3   play continuously in 2 directions
         #play framerate is frame/per second
         if not hasattr(self, 'playModeForm'):
-            self.showPlayMode = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.showFrameParmWidgets = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.playModeVar = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.showPlayMode = tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.showFrameParmWidgets = tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.playModeVar = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.playModeVar.set('once and stop')
             self.playModeList=[ 'once and stop', 
                                 'continuously in 1 direction',
@@ -534,13 +534,13 @@ class ConformationPlayer(Player):
                                   'startFrameTW', 'endFrameLabel', 'endFrameTW', 
                                   'stepSizeLabel', 'stepSizeTW']
 
-            self.showStatsVar = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.showListVar = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.doTorsionsOnly = Tkinter.IntVar(master=self.vf.GUI.ROOT)
-            self.buildHBondVar = Tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.showStatsVar = tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.showListVar = tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.doTorsionsOnly = tkinter.IntVar(master=self.vf.GUI.ROOT)
+            self.buildHBondVar = tkinter.IntVar(master=self.vf.GUI.ROOT)
             ifd2 = InputFormDescr(title='Set Play Options')    
             ifd2.append({'name':'showStatsCB',
-                'widgetType': Tkinter.Checkbutton,
+                'widgetType': tkinter.Checkbutton,
                 'tooltip':'show binding energy, docking energy etc\nfor current conf in a separate window',
                 'wcfg':{ 'text':'Show Info',
                         'command': self.showStats,
@@ -548,7 +548,7 @@ class ConformationPlayer(Player):
                        },
                 'gridcfg':{'sticky':'we'}})
             ifd2.append({'name':'hbondsCB',
-                'widgetType': Tkinter.Checkbutton,
+                'widgetType': tkinter.Checkbutton,
                 'tooltip':'build and display hydrogen bonds for current conf',
                 'wcfg':{ 'text':'Build  H-bonds',
                         'command': self.buildHBonds,
@@ -561,7 +561,7 @@ class ConformationPlayer(Player):
                             'name':'colorType',
                             'tooltip':'used to set coloring scheme for confs',
                             'wcfg':{'label_text':'Color by',
- 		                            'entryfield_value':'atom',
+                                            'entryfield_value':'atom',
                                     'labelpos':'w',
                                     'listheight':'80',
                                     'scrolledlist_items': colorTypeList,
@@ -569,7 +569,7 @@ class ConformationPlayer(Player):
                                     },
                             'gridcfg':{'sticky':'nesw'}}),
             ifd2.append({'name':'selectCB',
-                'widgetType': Tkinter.Checkbutton,
+                'widgetType': tkinter.Checkbutton,
                 'tooltip':'show ids of current ordered conformation list',
                 'wcfg':{ 'text':'Show Conf List',
                         'command': self.showStatesList,
@@ -578,28 +578,28 @@ class ConformationPlayer(Player):
                 'gridcfg':{'sticky':'ew', 'row':-1, 'column':1}})
                 #'gridcfg':{'sticky':'ew'}})
             ifd2.append({'name': 'rmsB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'tooltip':'makes current conf rms reference',
                 'text':'Make clust RMS ref',
                 'wcfg':{ 'command':self.MakeRef_cb,
                         },
                 'gridcfg':{'sticky':'we'}})
             ifd2.append({'name':'setRMSB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'tooltip':'choose a molecule as reference for rms calculation',
                 'wcfg':{ 'text':'Choose mol for RMS ref',
                         'command': self.SetRMSRef_cb,
                        },
                 'gridcfg':{'sticky':'nesw', 'row':-1, 'column':1}})
             ifd2.append({'name':'playModeMb',
-                'widgetType': Tkinter.Menubutton,
+                'widgetType': tkinter.Menubutton,
                 'tooltip':'set play mode choice',
                 'wcfg':{ 'text':'Play Mode',
                        },
                 'gridcfg':{'sticky':'we'}})
                 #'gridcfg':{'sticky':'w', 'columnspan':2}})
             ifd2.append({'name':'adjustFrameParmsMb',
-                'widgetType': Tkinter.Checkbutton,
+                'widgetType': tkinter.Checkbutton,
                 'tooltip':'opens panel to set play rate, start conf number, end conf number \nand step size for playing conf sequence',
                 'wcfg':{ 'text':'Play Parameters',
                         'command': self.showFrameParms_cb,
@@ -607,7 +607,7 @@ class ConformationPlayer(Player):
                        },
                 'gridcfg':{'sticky':'w', 'row':-1, 'column':1}})
             ifd2.append( {'name': 'framerateLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'frame rate:',
                         'font':(ensureFontCase('helvetica'),12,'bold')},
                     'gridcfg':{'sticky':'w'}})
@@ -638,7 +638,7 @@ class ConformationPlayer(Player):
                         'continuous':1, 'wheelPad':1, 'height':20},
                     'gridcfg':{'sticky':'nesw', 'row':-1, 'column':1}})
             ifd2.append( {'name': 'startFrameLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'start frame:',
                         'font':(ensureFontCase('helvetica'),12,'bold')},
                     'gridcfg':{'sticky':'w'}})
@@ -669,7 +669,7 @@ class ConformationPlayer(Player):
                         'continuous':1, 'wheelPad':1, 'height':20},
                     'gridcfg':{'sticky':'ew', 'row':-1,  'column':1}})
             ifd2.append( {'name': 'endFrameLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'end frame:',
                         'font':(ensureFontCase('helvetica'),12,'bold')},
                     'gridcfg':{'sticky':'w'}})
@@ -700,7 +700,7 @@ class ConformationPlayer(Player):
                         'continuous':1, 'wheelPad':1, 'height':20},
                     'gridcfg':{'sticky':'nesw', 'row':-1, 'column':1}})
             ifd2.append( {'name': 'stepSizeLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'step size:',
                         'font':(ensureFontCase('helvetica'),12,'bold')},
                     'gridcfg':{'sticky':'w'}})
@@ -731,7 +731,7 @@ class ConformationPlayer(Player):
                         'continuous':1, 'wheelPad':1, 'height':20},
                     'gridcfg':{'sticky':'nesw', 'row':-1, 'column':1}})
             ifd2.append({'name':'buildB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'tooltip':'build a new molecule with current conf coords\nand add it to viewer',
                 'wcfg':{ 'text':'Build Current',
                         'command': self.Build_cb,
@@ -739,35 +739,35 @@ class ConformationPlayer(Player):
                 'gridcfg':{'sticky':'we'}})
                 #'gridcfg':{'sticky':'ew', 'row':-1, 'column':1}})
             ifd2.append({'name':'buildAllB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'tooltip':'build a new molecule with each conf coords\nand add them to viewer',
                 'wcfg':{ 'text':'Build All',
                         'command': self.BuildAll_cb,
                        },
                 'gridcfg':{'sticky':'nesw', 'row':-1, 'column':1}})
             ifd2.append({'name':'writeB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'tooltip':'write a new file with current conf coords',
                 'wcfg':{ 'text':'Write Current',
                         'command': self.Write_cb,
                        },
                 'gridcfg':{'sticky':'we'}})
             ifd2.append({'name':'writeAllB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'tooltip':'write a new file with each conf coords',
                 'wcfg':{ 'text':'Write All',
                         'command': self.WriteAll_cb,
                        },
                 'gridcfg':{'sticky':'nesw', 'row':-1, 'column':1}})
             ifd2.append({'name':'cancelB',
-                        'widgetType': Tkinter.Button,
+                        'widgetType': tkinter.Button,
                         'wcfg':{
                             'text': 'Close',
                             'command': self.cancelPlayMode_cb,
                         },
                         'gridcfg':{'sticky':'ew','columnspan':1}}),
             ifd2.append({'name':'writeComplexB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'tooltip':'write a new file with receptor and current conf coords',
                 'wcfg':{ 'text':'Write Complex',
                         'command': self.Write_Complex_cb,
@@ -820,11 +820,11 @@ class ConformationPlayer(Player):
     def updateSortList(self, event=None):
         #print 'in updateSortList'
         if not hasattr(self.docking, 'clusterer'):
-            print 'self.docking has no clusterer'
+            print('self.docking has no clusterer')
             return
-        clustVals = self.docking.clusterer.clustering_dict.keys()
+        clustVals = list(self.docking.clusterer.clustering_dict.keys())
         if not len(clustVals):
-            print 'self.docking.clusterer has no clusterings'
+            print('self.docking.clusterer has no clusterings')
             return
         #if hasattr(self, 'playModeForm'):
             ##sortList = self.sortList = ['run']
@@ -839,7 +839,7 @@ class ConformationPlayer(Player):
     def updateSort(self, event=None):
         #print 'in updateSort'
         if not hasattr(self.docking, 'clusterer'):
-            print 'docking has no clusterer'
+            print('docking has no clusterer')
             return
         #update Choose Conformation widget if nec
         #FIX THIS: what if started with cluster and then went to all confs
@@ -875,9 +875,9 @@ class ConformationPlayer(Player):
             for j in range(len(l)):
                 newId = str(i+1)+'_'+str(j+1)
                 idList.append(newId)
-        newLen = max(map(len, self.idList))
+        newLen = max(list(map(len, self.idList)))
         if newLen>3:
-            print 'updating ent2 width'
+            print('updating ent2 width')
             self.form.ent2.config(width=newLen)
         self.orderedSequenceList = seqList[:][:]
         self.orderedIdList = idList[:][:]
@@ -892,7 +892,7 @@ class ConformationPlayer(Player):
         if not self.showPlayMode.get():
             #mB.config(bg='white')
             if not hasattr(mB, 'menu'):
-                mB.menu = Tkinter.Menu(mB)
+                mB.menu = tkinter.Menu(mB)
                 mB['menu'] = mB.menu
             else:
                 mB.menu.delete(1, 'end')
@@ -913,7 +913,7 @@ class ConformationPlayer(Player):
             return
         c = self.vf.showHBonds
         if not self.buildHBondVar.get():
-            print 'hiding hbonds'
+            print('hiding hbonds')
             if hasattr(c, 'ifd') and hasattr(c, 'form') and \
                         c.form.root.winfo_exists():
                 c.dismiss_cb()
@@ -934,15 +934,15 @@ class ConformationPlayer(Player):
                 hbs.update(hbs2)
         if self.docking.ch.current_conf:
             conf = self.docking.ch.current_conf
-            if len(hbs.keys()): 
+            if len(list(hbs.keys())): 
                 #link repr of these hbonds to current conformation
-                ss = '%d hydrogen bonds formed: \n'%(len(hbs.keys()))
-                for h, v in hbs.items():
-	                ss = ss + '% 24s :  % 24s\n'%(h.full_name(),AtomSet(v).full_name())
+                ss = '%d hydrogen bonds formed: \n'%(len(list(hbs.keys())))
+                for h, v in list(hbs.items()):
+                        ss = ss + '% 24s :  % 24s\n'%(h.full_name(),AtomSet(v).full_name())
                 conf.hbstr = ss
             else:
                 conf.hbstr = "no hydrogen bonds formed\n"
-        if len(hbs.keys()):    #in this case, display them
+        if len(list(hbs.keys())):    #in this case, display them
             if hasattr(c, 'ifd') and  hasattr(c, 'form') and \
                         c.form.root.winfo_exists():
                 #in this case have to destroy previous ifd and rebuild form
@@ -1001,10 +1001,10 @@ class ConformationPlayer(Player):
         self.chooser = MoleculeChooser(self.vf,mode = 'extended',
                                        title='Choose RMS Ref Molecule' )
         self.chooser.ipf.append({'name':'Rms Reference Button',
-                                 'widgetType':Tkinter.Button,
+                                 'widgetType':tkinter.Button,
                                  'text':'Select RMS Ref Molecule',
                                  'wcfg':{'bd':6},
-                                 'gridcfg':{'sticky':Tkinter.E+Tkinter.W},
+                                 'gridcfg':{'sticky':tkinter.E+tkinter.W},
                                  'command': self.rmsRefMolecule_cb})
         self.rmsRefForm = self.chooser.go(modal=0, blocking=0)
         self.rmsRefForm.autoSize()
@@ -1019,14 +1019,14 @@ class ConformationPlayer(Player):
                 return
             self.rmsRef = mol
             self.rmsTool = RMSDCalculator(mol.allAtoms.coords[:])
-            print 'set rmsRef to ', mol.name
+            print('set rmsRef to ', mol.name)
             #need to attach  this to clusterer + to conformations (?)
             for conf in self.sequenceList:
                 if hasattr(conf, 'refRMS'):
                     delattr(conf, 'refRMS')
             self.chooser.done_cb()
         else:
-            print 'nothing selected'
+            print('nothing selected')
            
 
 
@@ -1211,10 +1211,10 @@ class ConformationPlayer(Player):
                 t2 = t + ' Info\n'
             ss = self.getStatString(conf)
         if not hasattr(self, 'statsForm'):
-            self.statsString = Tkinter.StringVar(master=self.vf.GUI.ROOT)
+            self.statsString = tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.statsString.set(ss)
             ifd9 = InputFormDescr(title=t2)
-            ifd9.append({'widgetType':Tkinter.Label,
+            ifd9.append({'widgetType':tkinter.Label,
                 'name':'statsLabel',
                 'wcfg':{'text':ss,
                         'textvariable':self.statsString},
@@ -1301,7 +1301,7 @@ class ConformationPlayer(Player):
         if hasattr(conf, 'hbstr'):
             ss = ss + conf.hbstr
         if hasattr(conf, 'ss'):
-            print "conf already has ss=", ss
+            print("conf already has ss=", ss)
         else:
             conf.ss = ss
         return ss
@@ -1369,7 +1369,7 @@ class PopulationPlayer(ConformationPlayer):
         kw['delta'] = delta
         kw['form2'] = form2
         kw['ask'] = ask
-        apply(ConformationPlayer.__init__, (self, mol, docking, vf,),kw) 
+        ConformationPlayer.__init__(*(self, mol, docking, vf,), **kw) 
     
 
     def update(self, sequenceList=None, idList=None):
@@ -1392,7 +1392,7 @@ class PopulationPlayer(ConformationPlayer):
             self.endFrame = lenSeq
         if hasattr(self, 'startFrame'):
             if self.startFrame>lenSeq:
-                print 'startFrame> len(sequenceList)\nresetting startFrame to 0'
+                print('startFrame> len(sequenceList)\nresetting startFrame to 0')
                 self.startFrame = 0
         #update the thumbwheels here
         if hasattr(self, 'playModeForm'):
@@ -1408,12 +1408,12 @@ class PopulationPlayer(ConformationPlayer):
         ##indicies in idList are 1 more than indices in sequenceList
         if not idList:
             #insert 0 for original state
-            idL = range(0, len(self.sequenceList) + 1)
-            self.idList = map(str, idL)
+            idL = list(range(0, len(self.sequenceList) + 1))
+            self.idList = list(map(str, idL))
         else:
             #or it could be explicit
             #SHOULD always be incremented by 1 so 0 can be original coords
-            self.idList = map(str, idList)
+            self.idList = list(map(str, idList))
         #ALSO: close form3 and clear counter
         #these maynot exist yet:
         ##if hasattr(self, 'playModeForm'):
@@ -1421,7 +1421,7 @@ class PopulationPlayer(ConformationPlayer):
         ##        self.closeform3()
         if hasattr(self, 'form'):
             if hasattr(self.form, 'ent2'):
-                newLen = max(map(len, self.idList))
+                newLen = max(list(map(len, self.idList)))
                 if newLen>3:
                     self.form.ent2.config(width=newLen)
                 self.form.ent2.delete(0,'end')
@@ -1495,7 +1495,7 @@ class PopulationPlayer(ConformationPlayer):
         try:
             colormap = self.vf.colorMaps['rgb256']
         except:
-            print 'setting colormap failed'
+            print('setting colormap failed')
             return
         if confNum=='0': 
             if colorType=='molecule':

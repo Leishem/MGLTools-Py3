@@ -1,8 +1,8 @@
-## Automatically adapted for numpy.oldnumeric Jul 30, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 30, 2007 by 
 
 from opengltk.extent import _gllib
 from opengltk.util import glGetXXDim, GLbyte, GLdouble, GLfloat, GLint, GLdouble, GLfloat, GLushort, GLshort, GLboolean, GLuint, GLint, GLubyte
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 def glGetBooleanv( pname):
     """

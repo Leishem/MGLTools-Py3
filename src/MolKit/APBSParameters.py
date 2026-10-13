@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # $Header: /opt/cvs/python/packages/share1.5/MolKit/APBSParameters.py,v 1.24 2009/09/23 01:34:50 sanner Exp $
@@ -24,9 +24,9 @@ class Ion:
 
 def checkKeywords(_name, keywords, **kw):
     """test is all kyes in **kw are in list keywords"""
-    for key in kw.keys():
+    for key in list(kw.keys()):
         if key not in keywords:
-            print 'WARNING: Keyword %s not recognized for %s' % (key, _name)
+            print('WARNING: Keyword %s not recognized for %s' % (key, _name))
 
 import numpy
 from MolKit.molecule import Atom
@@ -203,13 +203,13 @@ class APBSParams:
         self.saltConcentration = 0.01
         self.ions = []
 
-        apply( self.Set, (), kw )
+        self.Set(*(), **kw)
 
     def Set(self, check=1, **kw):
         """Sets APBSParams member variable(s)"""
         if check:
-            apply( checkKeywords, ('APBSParam object'+self.name,
-                                   self.keywords), kw)
+            checkKeywords(*('APBSParam object'+self.name,
+                                   self.keywords), **kw)
 
         val = kw.get('APBS_Path', None)
         if val:
@@ -285,14 +285,14 @@ class APBSParams:
 
         val = kw.get('sdens', None)            
         if val:
-            assert val != '' and (isinstance(val, types.FloatType) or \
-                                isinstance(val, types.IntType)) and val > 0.0
+            assert val != '' and (isinstance(val, float) or \
+                                isinstance(val, int)) and val > 0.0
             self.splineWindow = val
 
         val = kw.get('splineWindow', None)            
         if val:
-            assert val != '' and (isinstance(val, types.FloatType) or \
-                                isinstance(val, types.IntType)) and val > 0.0
+            assert val != '' and (isinstance(val, float) or \
+                                isinstance(val, int)) and val > 0.0
             self.splineWindow = val
             
         val = kw.get('energyOutput', None)            
@@ -398,95 +398,95 @@ class APBSParams:
 
         val = kw.get('coarseLengthX', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))\
+            assert (isinstance(val, float) or isinstance(val, int))\
                                                                    and val > 0.0
             self.coarseLengthX = val
 
         val = kw.get('coarseLengthY', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))\
+            assert (isinstance(val, float) or isinstance(val, int))\
                                                                    and val > 0.0
             self.coarseLengthY = val
 
         val = kw.get('coarseLengthZ', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))\
+            assert (isinstance(val, float) or isinstance(val, int))\
                                                                    and val > 0.0
             self.coarseLengthZ = val
 
         val = kw.get('coarseCenterX', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))
+            assert (isinstance(val, float) or isinstance(val, int))
             self.coarseCenterX = val
 
         val = kw.get('coarseCenterY', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))
+            assert (isinstance(val, float) or isinstance(val, int))
             self.coarseCenterY = val
 
         val = kw.get('coarseCenterZ', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))
+            assert (isinstance(val, float) or isinstance(val, int))
             self.coarseCenterZ = val
 
         val = kw.get('coarseCenterZ', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))
+            assert (isinstance(val, float) or isinstance(val, int))
             self.coarseCenterZ = val
 
         val = kw.get('fineLengthX', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))\
+            assert (isinstance(val, float) or isinstance(val, int))\
                                                                    and val > 0.0
             self.fineLengthX = val
 
         val = kw.get('fineLengthY', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))\
+            assert (isinstance(val, float) or isinstance(val, int))\
                                                                    and val > 0.0
             self.fineLengthY = val
 
         val = kw.get('fineLengthZ', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))\
+            assert (isinstance(val, float) or isinstance(val, int))\
                                                                    and val > 0.0
             self.fineLengthZ = val
 
         val = kw.get('fineCenterX', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))
+            assert (isinstance(val, float) or isinstance(val, int))
             self.fineCenterX = val
 
         val = kw.get('fineCenterY', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))
+            assert (isinstance(val, float) or isinstance(val, int))
             self.fineCenterY = val
 
         val = kw.get('fineCenterZ', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))
+            assert (isinstance(val, float) or isinstance(val, int))
             self.fineCenterZ = val
 
         #Physical parameters       
         val = kw.get('proteinDielectric', None)            
         if val:
-            assert isinstance(val, types.FloatType)
+            assert isinstance(val, float)
             self.proteinDielectric = val
 
         val = kw.get('solventDielectric', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))
+            assert (isinstance(val, float) or isinstance(val, int))
             self.solventDielectric = val
 
         val = kw.get('solventRadius', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))\
+            assert (isinstance(val, float) or isinstance(val, int))\
                                                                    and val > 0.0
             self.solventRadius = val
 
         val = kw.get('systemTemperature', None)            
         if val:
-            assert (isinstance(val, types.FloatType) or isinstance(val, types.IntType))\
+            assert (isinstance(val, float) or isinstance(val, int))\
                                                                    and val > 0.0
             self.systemTemperature = val
 

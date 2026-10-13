@@ -1,6 +1,6 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import types, numpy.oldnumeric as Numeric, re, urllib, string
+import types, mglcompat.oldnumeric as Numeric, re, urllib.request, urllib.parse, urllib.error; from mglcompat import pystring as string
 
 from NetworkEditor.items import NetworkNode
 from mglutil.web.HTMLParser import ParseHTML
@@ -13,10 +13,10 @@ def buildCGIWidget(node, form):
         name = field[0]
         dict = eval('form.'+field[1])
 
-        if type(dict[name]) == types.DictType:
+        if type(dict[name]) == dict:
             dict = dict[name]
 
-        if dict.has_key('value'):
+        if 'value' in dict:
             value = dict['value']
         else:
             value = None
@@ -24,8 +24,8 @@ def buildCGIWidget(node, form):
 
         if fieldType == 'input':
             if dict['type'] in ['submit', 'reset', 'password']:
-                print 'INPUT OF TYPE '+dict['type']+\
-                ' NOT SUPPORTED YET!' 
+                print('INPUT OF TYPE '+dict['type']+\
+                ' NOT SUPPORTED YET!') 
                 continue
 
             elif dict['type'] in ['text', None]:
@@ -101,7 +101,7 @@ class WebBrowser(NetworkNode):
 
     def __init__(self, name='Web Browser', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append( {
             'name':'URL', 'datatype':'string', 'required':False,
@@ -141,24 +141,24 @@ class PublicHttpClient:
     def run(self):
         if self.argCheck() == 0:
             return
-        args = urllib.urlencode( self.arguments )
-        f = urllib.urlopen(self.url, args)
+        args = urllib.parse.urlencode( self.arguments )
+        f = urllib.request.urlopen(self.url, args)
         return f.read()
 
 
     def setArguments(self, **kw):
-        for k,v in kw.items():
-            if k not in self.arguments.keys():
+        for k,v in list(kw.items()):
+            if k not in list(self.arguments.keys()):
                 raise RuntimeError (k+' is not a valid argument')
             
-            if type(v) in (types.FloatType, types.IntType,
-                           types.LongType, types.StringType):
+            if type(v) in (float, int,
+                           int, bytes):
                 self.arguments[k] = v
             else:
                 pat = re.compile("[\[,\]\012]")
                 arrayStr = re.sub(pat, '', str(Numeric.array(v).ravel()) )
                 c = string.split(arrayStr)
-                c = map( float, c )
+                c = list(map( float, c ))
                 c = re.sub(pat, '', str(c) )
                 self.arguments[k] = c
 
@@ -197,25 +197,25 @@ class ConsurfClient(PublicHttpClient):
         # computation is done by checking is the page contains
         # "ConSurf finished calculation"
         url = self.urlBase + page + 'output.html'
-        print 'checkForCompletion', url
+        print('checkForCompletion', url)
         done = 0
         count = 0
         import time
         while 1:
-            f = urllib.urlopen(url)
+            f = urllib.request.urlopen(url)
             result = f.read()
             f.close()
             count = count + 1
-            print 'checkForCompletion COUNT: ', count
+            print('checkForCompletion COUNT: ', count)
             done = string.find(result, "ConSurf finished calculation")
             if done != -1:
                 break
             if string.find(result, "ERROR") != -1:
-                print "ERROR ********************************************"
-                print result
+                print("ERROR ********************************************")
+                print(result)
                 break
             if count == 40:
-                print "giving up after %d minutes"%(count*0.5,)
+                print("giving up after %d minutes"%(count*0.5,))
                 break
             time.sleep(30)
         
@@ -224,7 +224,7 @@ class ConsurfClient(PublicHttpClient):
 
 
     def getConservationScores(self, url):
-        f = urllib.urlopen(url)
+        f = urllib.request.urlopen(url)
         result = f.read()
         f.close()
         lines = string.split(result, '\n')
@@ -236,7 +236,7 @@ class ConsurfClient(PublicHttpClient):
             i = i + 1
         for l in lines[i+1:]:
             words = string.split(l)
-	    if len(words) < 5: continue
+            if len(words) < 5: continue
             if words[2] == '-':
                 continue
             col = string.find(words[2], ':')
@@ -254,7 +254,7 @@ class ConsurfClientNode(NetworkNode):
             f = open(cacheFile)
             data = f.readlines()
             f.close()
-            data = map(string.split, data)
+            data = list(map(string.split, data))
             cache = {}
             for k,v in data:
                 cache[k] = v
@@ -267,10 +267,10 @@ class ConsurfClientNode(NetworkNode):
     def saveCache(self, cacheFile):
         try:
             f = open(cacheFile, 'w')
-            map( lambda x, f=f: f.write("%s %s\n"%x), self.cache.items())
+            list(map( lambda x, f=f: f.write("%s %s\n"%x), list(self.cache.items())))
             f.close()
         except IOError:
-            print 'Could not open cache file %s for saving'%cacheFile
+            print('Could not open cache file %s for saving'%cacheFile)
 
             
     def getKey(self):
@@ -289,11 +289,11 @@ class ConsurfClientNode(NetworkNode):
             self.flashNodesWhenRun = self.editor.flashNodesWhenRun
         self.editor.flashNodesWhenRun = 0 # to prevent from turning gray
         url = clientObj.urlBase + page + 'output.html'
-        print 'checkForCompletion', url
-        f = urllib.urlopen(url)
+        print('checkForCompletion', url)
+        f = urllib.request.urlopen(url)
         result = f.read()
         f.close()
-        print 'checkForCompletion'
+        print('checkForCompletion')
         done = string.find(result, "ConSurf finished calculation")
         if done != -1:
             resultUrl = clientObj.urlBase + page + \
@@ -303,8 +303,8 @@ class ConsurfClientNode(NetworkNode):
             self.saveCache(self.cacheFile)
             scores = clientObj.getConservationScores(resultUrl)
 
-            self.outputData(Fscore=map(lambda x: x[2], scores))
-            self.outputData(Iscore=map(lambda x: x[3], scores))
+            self.outputData(Fscore=[x[2] for x in scores])
+            self.outputData(Iscore=[x[3] for x in scores])
             self.outputData(resultPageURL=resultUrl)
             self.editor.flashNodesWhenRun = self.flashNodesWhenRun
             if self.editor.flashNodesWhenRun:
@@ -320,8 +320,8 @@ class ConsurfClientNode(NetworkNode):
             return
 
         if string.find(result, "ERROR") != -1:
-            print "ERROR ********************************************"
-            print result
+            print("ERROR ********************************************")
+            print(result)
             return
         #if count == 40:
         #    print "giving up after %d minutes"%(count*0.5,)
@@ -335,7 +335,7 @@ class ConsurfClientNode(NetworkNode):
         self.runInBackground = 1
         self.cacheFile = cacheFile
         self.cache = self.readCache(cacheFile)
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append( {'name':'molecule',
                                       'datatype':'MoleculeSet'} )
@@ -386,7 +386,7 @@ class ConsurfClientNode(NetworkNode):
                                           'MolKit.VisionInterface.MolKitNodes',
                                           'molkitlib')
         except:
-            print 'Warning! Could not import molkitlib from MolKit/VisionInterface'
+            print('Warning! Could not import molkitlib from MolKit/VisionInterface')
 
 
 class GoogleClient(PublicHttpClient):
@@ -410,7 +410,7 @@ class GoogleClientNode(NetworkNode):
                  **kw):
         kw['name'] = name
 
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.widgetDescr['searchString'] = {
             'class':'NEEntry', 'master':'node'
             }
@@ -439,7 +439,7 @@ class CGIFormNode(NetworkNode):
 
         self.CGIFormObj = CGIFormObj
 
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         if CGIFormObj is not None:
             buildCGIWidget(self, CGIFormObj)
@@ -485,7 +485,7 @@ class GetCGIForms(NetworkNode):
     def __init__(self, name='GetCGIForms', **kw):
         kw['name'] = name
 
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['url'] = {'class':'NEEntry', 'master':'node',
             'labelCfg':{'text':'url:'}, 'labelSide':'left' }
@@ -538,18 +538,18 @@ weblib.addNode(GetCGIForms, 'Get CGI Forms', 'Filter')
 
 
 if __name__ == '__main__':
-    print 'Creating client Object'
+    print('Creating client Object')
     server = ConsurfServer()
-    print 'submitting job'
+    print('submitting job')
     server.setArguments( pdb_ID='2plv', chain='1', ALGORITHM="Likelihood")
     result = server.run()
-    print 'get temporary result page'
+    print('get temporary result page')
     resultPage = server.getResultPage(result)
-    print ' wait for completion'
+    print(' wait for completion')
     resultUrl = server.checkForCompletion(resultPage)
-    print ' COMPLETED'
+    print(' COMPLETED')
     scores = server.getConservationScores(resultUrl)
-    print scores
+    print(scores)
 
     #c = GoogleClient()
     #c.setArguments(q='foo')

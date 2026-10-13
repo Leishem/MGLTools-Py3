@@ -54,10 +54,10 @@ class trrParser:
         elif h["f_size"]:
             nflsize = h["f_size"]/(h["natoms"]*DIM);
         else: 
-            print "Can not determine precision of trr file"
+            print("Can not determine precision of trr file")
   
         if (nflsize != calcsize("f")) and (nflsize != calcsize("d")):
-            print "Float size %d. Maybe different CPU?"%nflsize
+            print("Float size %d. Maybe different CPU?"%nflsize)
       
         return nflsize
 
@@ -224,7 +224,7 @@ class xtcParser:
         try:
             from cMolKit import xtcparser
         except:
-            print "WARNING: could not import cMolKit.xtcparser - No parser is available for xtc files."
+            print("WARNING: could not import cMolKit.xtcparser - No parser is available for xtc files.")
             self.file=None
 
 

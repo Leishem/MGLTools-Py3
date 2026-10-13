@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 30, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 30, 2007 by 
 
 """
 Module mslib                                           Author: M. Sanner
@@ -34,9 +34,9 @@ examples:
 """
 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 #import msmsc
-import msms
+from . import msms
 
 def readxyzr(filename):
     """coords, names <- readxyzr(filename)
@@ -244,15 +244,15 @@ class MSMS(msms.MOLSRF):
             msms.MS_set_SES_density( ses.this, density,  hdensity, self.rp )
 
         if ses.nbtri:
-            raise RuntimeError, "This SES component is already triangulated"
-        print "making templates"
+            raise RuntimeError("This SES component is already triangulated")
+        print("making templates")
         status = msms.MS_make_templates( self.this, ses.this )
         if status != msms.MS_OK:
-            raise RuntimeError, "Could not construct triangulation templates"
+            raise RuntimeError("Could not construct triangulation templates")
 
         status = msms.MS_triangulate_SES_component( self.this, rs.this )
         if status != msms.MS_OK:
-            raise RuntimeError, "Could not triangulate SES component"
+            raise RuntimeError("Could not triangulate SES component")
 
 
     def triangulate(self, density=1.0, component=None):
@@ -652,18 +652,18 @@ Components are specified using 0-based integers, 0 being the external one
             msms.MS_restore_radii(self.this, rs.this)
         i = msms.MS_update_reduced_surface(self.this,rs.this,nup)
         if i==msms.MS_ERR:
-            raise RuntimeError, "ERROR while updating RS %s\n"%msms.MS_err_msg
+            raise RuntimeError("ERROR while updating RS %s\n"%msms.MS_err_msg)
         su.lsesv = None
         su.lsese = None
         su.lsesf = None
         i = msms.MS_update_ses(self.this,rs.this,nup)
         if i==msms.MS_ERR:
-            raise RuntimeError, "ERROR while updating SES %s\n"%msms.MS_err_msg
+            raise RuntimeError("ERROR while updating SES %s\n"%msms.MS_err_msg)
 
         i = msms.MS_update_triangulation_SES_component(self.this, rs.this,
                                                         mode, density, nup)
         if i==msms.MS_ERR:
-            raise RuntimeError, "ERROR while updating SES %s\n"%msms.MS_err_msg
+            raise RuntimeError("ERROR while updating SES %s\n"%msms.MS_err_msg)
 
 
     def getColorByType(self, component=None):
@@ -674,7 +674,7 @@ Components are specified using 0-based integers, 0 being the external one
         Components are specified using 0-based integers, 0 being the external one
         it returns a list of (r,g,b) tuples for each component
         """
-	colors = ( (1.,0.,1.), (1., 0.5, 0.),
+        colors = ( (1.,0.,1.), (1., 0.5, 0.),
                    (0.,1.,0.), (1., 0., 0.), (0., 0., 1.) )
         col = []
         if component is None:
@@ -756,7 +756,7 @@ Components are specified using 0-based integers, 0 being the external one
 ##  		ind = Numeric.nonzero(fact)
 ##  		fac = Numeric.take( self.sesf[:,:3], ind )
 ##  		mat = Numeric.take( self.sesfColors, ind )
-		
+                
 ##  	if only:
 ##  	    self.msmsGeom.Set( faces=fac, materials=mat )
 ##  	else:

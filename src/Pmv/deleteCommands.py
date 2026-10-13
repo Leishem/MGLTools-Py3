@@ -19,7 +19,7 @@ for examples:
     Delete Molecule
 """
 
-import types, string
+import types; from mglcompat import pystring as string
 
 from ViewerFramework.VFCommand import CommandGUI
 from Pmv.moleculeViewer import DeleteAtomsEvent
@@ -38,7 +38,7 @@ from MolKit.tree import TreeNode, TreeNodeSet
 from MolKit.molecule import MoleculeSet, AtomSet, Atom
 from MolKit.protein import SecondaryStructure
 
-import Tkinter
+import tkinter
 
 from ViewerFramework.VF import VFEvent
 
@@ -62,10 +62,10 @@ class DeleteMolecule(MVCommand):
     
     def onAddCmdToViewer(self):
         self.vf._deletedLevels = []
-        if  not self.vf.commands.has_key('select'):
+        if  'select' not in self.vf.commands:
             self.vf.loadCommand("selectionCommands", "select", "Pmv",
                                 topCommand=0)
-        if  not self.vf.commands.has_key('clearSelection'):
+        if  'clearSelection' not in self.vf.commands:
             self.vf.loadCommand("selectionCommands", "clearSelection", "Pmv",
                                 topCommand=0)
 
@@ -120,19 +120,19 @@ class DeleteMolecule(MVCommand):
         self.chooser = MoleculeChooser(self.vf,mode = 'extended',
                                        title='Choose Molecules to delete' )
 
-        self.undoableVar =Tkinter.IntVar()
+        self.undoableVar =tkinter.IntVar()
         self.undoableVar.set(1)
         self.chooser.ipf.append({'name':'Undo',
-                                 'widgetType':Tkinter.Checkbutton,
+                                 'widgetType':tkinter.Checkbutton,
                                  'wcfg':{ 'text':' Undoable Delete', 'variable':self.undoableVar},
-                                 'gridcfg':{'sticky':Tkinter.E+Tkinter.W}}
+                                 'gridcfg':{'sticky':tkinter.E+tkinter.W}}
                                  )
         
         self.chooser.ipf.append({'name':'Delete Button',
-                                 'widgetType':Tkinter.Button,
+                                 'widgetType':tkinter.Button,
                                  'text':'Delete Molecule',
                                  'wcfg':{'bd':6},
-                                 'gridcfg':{'sticky':Tkinter.E+Tkinter.W},
+                                 'gridcfg':{'sticky':tkinter.E+tkinter.W},
                                  'command': self.deleteMolecule_cb})
         self.form = self.chooser.go(modal=0, blocking=0)
 
@@ -183,7 +183,7 @@ class DeleteMolecule(MVCommand):
 
         #check for any possible reference in self.vf.GUI.VIEWER.lastPick
         if self.vf.hasGui and self.vf.GUI.VIEWER.lastPick:
-            for key in self.vf.GUI.VIEWER.lastPick.hits.keys():
+            for key in list(self.vf.GUI.VIEWER.lastPick.hits.keys()):
                 if hasattr(key,'mol'):
                     if mol==key.mol:
                         del self.vf.GUI.VIEWER.lastPick.hits[key]
@@ -204,7 +204,7 @@ class DeleteMolecule(MVCommand):
             del mol.allAtoms
     
             if self.vf.hasGui and hasattr(mol, 'geomContainer'):
-                for g in mol.geomContainer.geoms.values():
+                for g in list(mol.geomContainer.geoms.values()):
                     if hasattr(g, 'mol'):
                         delattr(g, 'mol')
     
@@ -290,7 +290,7 @@ class DeleteMolecule(MVCommand):
         """None <- deleteMol(nodes, **kw)
         \nnodes: TreeNodeSet holding the current selection.
         """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         kw['undoable'] = undoable
         self.doitWrapper( *(nodes,), **kw )
@@ -298,7 +298,7 @@ class DeleteMolecule(MVCommand):
 
     def setupUndoBefore(self, molecule, undoable=False):
         if undoable:
-            if type(molecule) is types.StringType:
+            if type(molecule) is bytes:
                 molecules, nodeSets = self.vf.getNodesByMolecule(molecule)
                 if not len(molecules):return
                 molecule = molecules[0]
@@ -343,18 +343,18 @@ class DeleteAllMolecules(DeleteMolecule):
             Do you want to continue?""" 
             if not hasattr(self, 'idf'): 
                 self.idf = InputFormDescr(title="WARNING")
-                self.idf.append({'widgetType':Tkinter.Label,
+                self.idf.append({'widgetType':tkinter.Label,
                             'wcfg':{'text':text},
                             'gridcfg':{'columnspan':3,'sticky':'w'}})
 
                 self.idf.append({'name': 'Continue Button',
-                            'widgetType':Tkinter.Button,
+                            'widgetType':tkinter.Button,
                             'wcfg':{'text':'CONTINUE',
                                     'command':self.continue_cb},
                             'gridcfg':{'sticky':'we'}})
 
                 self.idf.append({'name': 'Cancel Button',
-                            'widgetType':Tkinter.Button,
+                            'widgetType':tkinter.Button,
                             'wcfg':{'text':'CANCEL',
                                     'command':self.cancel_cb},
                             'gridcfg':{'row':-1,'sticky':'we'}})
@@ -413,7 +413,7 @@ class DeleteAllMolecules(DeleteMolecule):
         \nIt resets the undo stack automatically.
         """
         self.vf.resetUndo(topCommand=0)
-        apply ( self.doitWrapper, (), kw )
+        self.doitWrapper(*(), **kw)
 
     def setupUndoBefore(self):
         "DeleteALLMolecules is undoable"
@@ -440,13 +440,13 @@ class DeleteAtomSet(MVCommand):
     def onAddCmdToViewer(self):
         self.vf._deletedLevels = []
         #if self.vf.hasGui and not self.vf.commands.has_key('deleteMol'):
-        if not self.vf.commands.has_key('deleteMol'):
+        if 'deleteMol' not in self.vf.commands:
             self.vf.loadCommand("deleteCommands", "deleteMol", "Pmv",
                             topCommand=0)
-        if  not self.vf.commands.has_key('select'):
+        if  'select' not in self.vf.commands:
             self.vf.loadCommand("selectionCommands", "select", "Pmv",
                                 topCommand=0)
-        if  not self.vf.commands.has_key('clearSelection'):
+        if  'clearSelection' not in self.vf.commands:
             self.vf.loadCommand("selectionCommands", "clearSelection", "Pmv",
                                 topCommand=0)
 
@@ -454,14 +454,14 @@ class DeleteAtomSet(MVCommand):
     def __call__(self, atoms, **kw):
         """None <- deleteAtomSet(atoms, **kw)
         \natoms: AtomSet to be deleted."""
-        if type(atoms) is types.StringType:
+        if type(atoms) is bytes:
             self.nodeLogString = "'"+atoms+"'"
         ats = self.vf.expandNodes(atoms)
         if not len(ats):
             return 'ERROR'
         ats = ats.findType(Atom)
         kw['redraw'] = True
-        apply(self.doitWrapper, (ats,), kw)
+        self.doitWrapper(*(ats,), **kw)
 
 
     def doit(self, ats):
@@ -615,18 +615,18 @@ class DeleteCurrentSelection(DeleteAtomSet):
                 Do you want to continue?""" 
 
                 idf = self.idf = InputFormDescr(title="WARNING")
-                idf.append({'widgetType':Tkinter.Label,
+                idf.append({'widgetType':tkinter.Label,
                             'wcfg':{'text':text},
                             'gridcfg':{'columnspan':2,'sticky':'w'}})
 
                 idf.append({'name': 'continueBut',
-                            'widgetType':Tkinter.Button,
+                            'widgetType':tkinter.Button,
                             'wcfg':{'text':'CONTINUE',
                                     'command':self.continue_cb},
                             'gridcfg':{'sticky':'we'}})
 
                 idf.append({'name': 'cancelBut',
-                            'widgetType':Tkinter.Button,
+                            'widgetType':tkinter.Button,
                             'wcfg':{'text':'CANCEL', 'command':self.cancel_cb},
                             'gridcfg':{'row':-1,'sticky':'we'}})
 
@@ -695,19 +695,19 @@ class DeleteHydrogens(DeleteAtomSet):
             Do you want to continue?""" 
 
             idf = self.idf = InputFormDescr(title="WARNING")
-            idf.append({'widgetType':Tkinter.Label,
+            idf.append({'widgetType':tkinter.Label,
                         'wcfg':{'text':text},
                         'gridcfg':{'columnspan':2,'sticky':'w'}})
 
             idf.append({'name': 'continueBut',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text':'CONTINUE',
                                 'command':CallBackFunction(self.continue_cb,
                                                            hats)},
                         'gridcfg':{'sticky':'we'}})
 
             idf.append({'name': 'cancelBut',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text':'CANCEL', 'command':self.cancel_cb},
                         'gridcfg':{'row':-1,'sticky':'we'}})
 
@@ -728,7 +728,7 @@ class DeleteHydrogens(DeleteAtomSet):
     def __call__(self, atoms, **kw):
         """None <- deleteAtomSet(atoms, **kw)
         \natoms: AtomSet to be deleted."""
-        if type(atoms) is types.StringType:
+        if type(atoms) is bytes:
             self.nodeLogString = "'"+atoms+"'"
         
         ats = self.vf.expandNodes(atoms)
@@ -740,7 +740,7 @@ class DeleteHydrogens(DeleteAtomSet):
         ats = hats
         #WHY???
         #kw['log'] = 0
-        apply(self.doitWrapper, (ats,), kw)
+        self.doitWrapper(*(ats,), **kw)
 
 from Pmv.deleteCommandsGUI  import DeleteHydrogensGUI
 

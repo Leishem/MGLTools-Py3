@@ -69,7 +69,7 @@ class groParser( MoleculeParser ):
             name = n.split(' ')[-1]
             element = name 
             
-            if element in babel_elements.keys():
+            if element in list(babel_elements.keys()):
                 element = element
 
             else:
@@ -158,5 +158,5 @@ class groParser( MoleculeParser ):
         
 if __name__ == '__main__':
     parser = groParser( filename='/usr/share/gromacs/tutor/methanol/conf.gro' )
-    print "Reading molecule"
+    print("Reading molecule")
     mol = parser.parse()

@@ -116,7 +116,7 @@ class PdbParser(MoleculeParser):
         if self.allLines:
             #l = map(split, self.allLines)
             #self.keys = map(lambda x: x[0], l)
-            self.keys = map(lambda x: strip(x[:6]), self.allLines)
+            self.keys = [strip(x[:6]) for x in self.allLines]
                 
             
 
@@ -182,15 +182,15 @@ class PdbParser(MoleculeParser):
         
     def getRecords(self, reclist, key):
         """get all records starting with a given PDB tag"""
-        return filter(lambda x: x[:len(key)]==key, reclist)
+        return [x for x in reclist if x[:len(key)]==key]
 
 
     def checkForRemark4(self):
         """check wether the file contains a 'REMARK   4' line. If we find it we
         will try to interpret colums 73-80, else we will ignore them
         """
-        rem4 = filter(lambda x: x[:10] == 'REMARK   4', self.allLines)
-        rem4c = filter(lambda x: x[16:24]=='COMPLIES', rem4)
+        rem4 = [x for x in self.allLines if x[:10] == 'REMARK   4']
+        rem4c = [x for x in rem4 if x[16:24]=='COMPLIES']
         self.useAbove73 = len(rem4c)
 
 
@@ -222,7 +222,7 @@ NOTE: The list currently registered parsers is in
         if callable(parser):
             self.pdbRecordParser[key] = parser
         elif parser is None:
-            if key in self.pdbRecordParser.keys():
+            if key in list(self.pdbRecordParser.keys()):
                 del self.pdbRecordParser[key]
         else:
             if key   == 'ATOM'  : parser = self.parse_PDB_atoms
@@ -271,21 +271,21 @@ You have to provide one as the second argument' % key);
             # find which dictionary to extend
             from MolKit.PDBresidueNames import DNAnames, RNAnames, AAnames,\
                  Nucleotides, allResidueNames
-            if AAnames.has_key(originalName): # ti is a modified amino acid
+            if originalName in AAnames: # ti is a modified amino acid
                 AAnames[modifiedName] = '?'
                 allResidueNames[modifiedName] = '?'
             else:
-                if DNAnames.has_key(originalName):
+                if originalName in DNAnames:
                     DNAnames[modifiedName] = '?'
                     Nucleotides[modifiedName] = '?'
                     allResidueNames[modifiedName] = '?'
-                elif RNAnames.has_key(originalName):
+                elif originalName in RNAnames:
                     RNAnames[modifiedName] = '?'
                     Nucleotides[modifiedName] = '?'
                     allResidueNames[modifiedName] = '?'
                 else:
-                    print 'WARNING: MODRES %s not recognized in %s'%(
-                        originalName, line)
+                    print('WARNING: MODRES %s not recognized in %s'%(
+                        originalName, line))
 
                 
     def parse_PDB_CRYST1(self, lines):
@@ -319,17 +319,17 @@ You have to provide one as the second argument' % key);
             indices = [c[6:11], c[11:16], c[16:21], c[21:26], c[26:31],
                        c[31:36],c[36:41], c[41:46], c[46:51], c[51:56],
                        c[56:61]]
-            indices = map(strip, indices)
-            if self.mol.atmNum.has_key(int(indices[0])):
+            indices = list(map(strip, indices))
+            if int(indices[0]) in self.mol.atmNum:
                 a1 = self.mol.atmNum[int(indices[0])]
             else:
                 continue
 
-            for i in xrange(len(indices)-1):
+            for i in range(len(indices)-1):
                 if indices[i+1] in [ '     ', '\n', '', '   \012']:
                     break
 
-                if self.mol.atmNum.has_key(int(indices[i+1])):
+                if int(indices[i+1]) in self.mol.atmNum:
                     a2 = self.mol.atmNum[int(indices[i+1])]
                 else:
                     continue
@@ -404,9 +404,9 @@ You have to provide one as the second argument' % key);
                     hAt.hbonds = [hbond]
             except:
                 import sys
-                print >>sys.stderr,"Unable to parse Hydrogen Bond Record in",\
-                self.filename
-                print >>sys.stderr,c
+                print("Unable to parse Hydrogen Bond Record in",\
+                self.filename, file=sys.stderr)
+                print(c, file=sys.stderr)
 
     def parse_PDB_atoms(self, atoms, mol):
         """find and parse the PDB compliant ATOM.
@@ -431,8 +431,8 @@ You have to provide one as the second argument' % key);
                 at = self.parse_PDB_ATOM_record(atRec, mol)
                 if at is not None:
                     ats.append(at)
-            except Exception, inst:
-                print "Error parsing the following line in pdb:\n"+atRec
+            except Exception as inst:
+                print("Error parsing the following line in pdb:\n"+atRec)
                 raise
 
         mol.allAtoms = mol.allAtoms + AtomSet(ats)
@@ -615,8 +615,8 @@ You have to provide one as the second argument' % key);
     def addModel(self, atoms):
         """Add a conformation to the first chains of the molecule"""
         l = lambda x: [float(x[30:38]), float(x[38:46]), float(x[46:54])]
-        coords = map(l, atoms)
-        map( Atom.addConformation, self.mol.chains[0].residues.atoms, coords )
+        coords = list(map(l, atoms))
+        list(map( Atom.addConformation, self.mol.chains[0].residues.atoms, coords ))
         
         
     def parse(self, objClass=Protein):
@@ -628,7 +628,7 @@ You have to provide one as the second argument' % key);
 
         self.getKeys()
         # check if the file describe a molecule in a pdb format
-        pdbKeys = filter(lambda x: x in self.PDBtags, self.keys)
+        pdbKeys = [x for x in self.keys if x in self.PDBtags]
         if len(pdbKeys)==0:
             return 
 
@@ -638,7 +638,7 @@ You have to provide one as the second argument' % key);
         self.configureProgressBar(init=1, mode='increment',
                                   labeltext='parse atoms', max=totalAtomNumber)
         
-        if self.pdbRecordParser.has_key('ATOM'):
+        if 'ATOM' in self.pdbRecordParser:
             # deal with ATOM first to make sure self.mol,
             # an objClass instance, is created
             record='ATOM'
@@ -740,7 +740,7 @@ You have to provide one as the second argument' % key);
                 molList.append(self.mol)
                 self.pdbRecordParser[record](self.allLines[mBeg+1:mEnd],
                                              self.mol)
-                if  self.pdbRecordParser.has_key('CONECT'):
+                if  'CONECT' in self.pdbRecordParser:
                     records = self.getRecords(self.allLines, 'CONECT' )
                     self.pdbRecordParser['CONECT'](records)    
                  
@@ -760,12 +760,12 @@ You have to provide one as the second argument' % key);
                         molList.append(newmol)
                         self.pdbRecordParser[record](self.allLines[mBeg+1:mEnd],
                                                      newmol)
-                        if  self.pdbRecordParser.has_key('CONECT'):
+                        if  'CONECT' in self.pdbRecordParser:
                             records = self.getRecords(self.allLines, 'CONECT' )
                             self.pdbRecordParser['CONECT'](records)    
 
                 elif self.modelsAs=='chains': # create a new chain for each model
-                    print 'NOT YET IMPLEMENTED'
+                    print('NOT YET IMPLEMENTED')
                     raise RuntimeError
 
                 elif self.modelsAs=='conformations': # add a conformation to molecule
@@ -823,7 +823,7 @@ You have to provide one as the second argument' % key);
         # set progress bar mode to 'increment' and initialize it
         #lenRecs = len(self.pdbRecordParser.keys())
         #self.configureProgressBar(init=1, mode='increment', max=lenRecs)
-        for record in self.pdbRecordParser.keys():
+        for record in list(self.pdbRecordParser.keys()):
             #self.configureProgressBar(labeltext='parse '+record)
             #self.updateProgressBar()
             if record=='HETATM': continue # they get parsed with ATOM
@@ -858,24 +858,24 @@ You have to provide one as the second argument' % key);
             results = molList[0].vina_results[:]
             if len(molList)==len(results):
                 for m, r in zip(molList, results):
-                    m.vina_energy, m.vina_rmsd_lb, m.vina_rmsd_ub = map(float, r)
+                    m.vina_energy, m.vina_rmsd_lb, m.vina_rmsd_ub = list(map(float, r))
                     #print m.name, ':',  m.vina_energy, ',', m.vina_rmsd_lb,',', m.vina_rmsd_ub
             elif len(results):
                 m = molList[0]
                 m.vina_results = results
-                m.vina_energy, m.vina_rmsd_lb, m.vina_rmsd_ub = map(float, results[0])
+                m.vina_energy, m.vina_rmsd_lb, m.vina_rmsd_ub = list(map(float, results[0]))
 
         #have to assign ad4 attributes here
         if hasattr(molList[0],'ad4_results'):
             results = molList[0].ad4_results[:]
             if len(molList)==len(results):
                 for m, r in zip(molList, results):
-                    m.ad4_energy = map(float, r)
+                    m.ad4_energy = list(map(float, r))
                     #print m.name, ':',  m.ad4_energy
             elif len(results):
                 m = molList[0]
                 m.ad4_results = results
-                m.ad4_energy = map(float, results[0])
+                m.ad4_energy = list(map(float, results[0]))
 
         return molList
 
@@ -903,16 +903,16 @@ You have to provide one as the second argument' % key);
 
     def addModelToMolecules(self, listOfMol):
         length = len(listOfMol)
-        for i in xrange(length):
+        for i in range(length):
             listOfMol[i].model = ProteinSet()
-            for j in xrange(length):
+            for j in range(length):
                 if listOfMol[i]!= listOfMol[j]:
                     listOfMol[i].model.append(listOfMol[j])
 
 
     def getAtomsLines(self, ter, begChain):
         l = lambda x: x[:4]=='ATOM' or x[:6]=='HETATM'
-        atoms = filter(l, self.allLines[begChain:ter+1])
+        atoms = list(filter(l, self.allLines[begChain:ter+1]))
         return atoms
 
 
@@ -976,7 +976,7 @@ You have to provide one as the second argument' % key);
                                 line[71:76]       # HEL LEN
                                 ))
         
-        if not self.recordInfo.has_key('HELIX'):
+        if 'HELIX' not in self.recordInfo:
             self.recordInfo['HELIX']=hdatas
         else:
             self.recordInfo['HELIX']=hdatas
@@ -995,7 +995,7 @@ You have to provide one as the second argument' % key);
             try:
                 sense =  int(line[38:40])
             except:
-                print "Sense of this strand is not defined\n",line
+                print("Sense of this strand is not defined\n",line)
                 sense = 0
 
             if sense==0: # no registration info
@@ -1089,7 +1089,7 @@ You have to provide one as the second argument' % key);
             ##                      line[69]))
 
 
-        if not self.recordInfo.has_key('SHEET'):
+        if 'SHEET' not in self.recordInfo:
             self.recordInfo['SHEET']=sdatas
         else:
             self.recordInfo['SHEET']=sdatas
@@ -1116,7 +1116,7 @@ You have to provide one as the second argument' % key);
                             line[40:70]      # 11 COMMENT
                             ))
 
-        if not self.recordInfo.has_key('TURN'):
+        if 'TURN' not in self.recordInfo:
             self.recordInfo['TURN']=tdatas
         else:
             self.recordInfo['TURN']=tdatas
@@ -1125,7 +1125,7 @@ You have to provide one as the second argument' % key);
     def hasSsDataInFile(self):
         """ Function testing if the informations on the secondary structure
         are in the file"""
-        test = filter(lambda x: x in self.keys,['HELIX','SHEET', 'TURN'])
+        test = [x for x in ['HELIX','SHEET', 'TURN'] if x in self.keys]
         if test: return 1
         else: return 0 
 
@@ -1142,16 +1142,16 @@ You have to provide one as the second argument' % key);
 
         # Step 1: Parse the information describing each type of secondary
         # structure for the whole molecule.
-        if not self.recordInfo.has_key('HELIX'):
+        if 'HELIX' not in self.recordInfo:
             hRecords = self.getRecords(self.allLines,'HELIX')
             self.parse_PDB_Helix(hRecords)
         helDataForMol = self.recordInfo['HELIX']
         
-        if not self.recordInfo.has_key('SHEET'):
+        if 'SHEET' not in self.recordInfo:
             sRecords = self.getRecords(self.allLines,'SHEET')
             self.parse_PDB_Strand(sRecords)
         strandDataForMol = self.recordInfo['SHEET']
-        if not self.recordInfo.has_key('TURN'):
+        if 'TURN' not in self.recordInfo:
             tRecords = self.getRecords(self.allLines,'TURN')
             self.parse_PDB_Turn(tRecords)
         turnDataForMol=self.recordInfo['TURN']
@@ -1197,8 +1197,7 @@ You have to provide one as the second argument' % key);
 
     def processHelData(self, recordDataForMol, fieldIndices, chain):
         # fieldIndices[0] = chain ID
-        recordDataForChain = filter(lambda x: x[fieldIndices[0]]==chain.id,
-                                    recordDataForMol)
+        recordDataForChain = [x for x in recordDataForMol if x[fieldIndices[0]]==chain.id]
         helStartEndData = []
         for rec in recordDataForChain:
             # ResName+ResNumber+ResInsertion
@@ -1226,8 +1225,7 @@ was not found in chain %s"%(endData, chain.id))
                                                  
     def processStrData(self, recordDataForMol, fieldIndices, chain):
         # Chain id
-        recordDataForChain = filter(lambda x: x[fieldIndices[0]] == chain.id,
-                                    recordDataForMol)
+        recordDataForChain = [x for x in recordDataForMol if x[fieldIndices[0]] == chain.id]
         strStartEndData = []
         for rec in recordDataForChain:
             # Res name + Res seqnumber + Res insertion
@@ -1256,8 +1254,7 @@ was not found in chain %s"%(endData, chain.id))
 
     def processTurnData(self, recordDataForMol, fieldIndices, chain):
         # chain ID
-        recordDataForChain = filter(lambda x: x[fieldIndices[0]] == chain.id,
-                                    recordDataForMol)
+        recordDataForChain = [x for x in recordDataForMol if x[fieldIndices[0]] == chain.id]
         turnStartEndData = []
         for rec in recordDataForChain:
             startData = rec[fieldIndices[1]]+rec[fieldIndices[2]].strip()+\
@@ -1313,8 +1310,8 @@ was not found in chain %s"%(endData, chain.id))
 
     def write_with_new_coords(self, coords, filename=None):
         if len(coords)!=len(self.mol.allAtoms):
-            print "ERROR: length of new coordinates %d does not match %d " %(len(coords), len(self.mol.allAtoms))
-            print "ERROR: unable to continue"
+            print("ERROR: length of new coordinates %d does not match %d " %(len(coords), len(self.mol.allAtoms)))
+            print("ERROR: unable to continue")
             return
         has_filename = filename is not None
         newLines = []
@@ -1482,7 +1479,7 @@ class F2DParser(PQRParser):
         chainID = 'UNK'
 
         if chainID != mol.curChain.id:
-            if not mol.childByName.has_key(chainID):
+            if chainID not in mol.childByName:
                 # create a new chain
                 mol.curChain = Chain(chainID, mol, top=mol)
             else:
@@ -1535,8 +1532,8 @@ class F2DParser(PQRParser):
         if tmp =='E': atom.isSkin = True
         elif tmp=='I': atom.isSkin = False
         else:
-            raise ValueError, 'Expected E or I in column 10 got %s on line:\n%s'%(
-                rec[10], rec)
+            raise ValueError('Expected E or I in column 10 got %s on line:\n%s'%(
+                rec[10], rec))
         if len(rec)>11:
             atom.hbstatus = rec[11]
         else:
@@ -1583,7 +1580,7 @@ class PdbqParser(PdbParser):
 
     def set_stringReprs(self, mol):
         #do not reset allAtoms if there is a torTree which has a ROOT
-        if not self.pdbRecordParser.has_key('ROOT'):
+        if 'ROOT' not in self.pdbRecordParser:
             mol.allAtoms = mol.chains.residues.atoms
             # after the hierarchy has been built go set all stringRepr
             # their concise values
@@ -2130,7 +2127,7 @@ class PdbqtParser(PdbqParser):
         if not len(rec): return
         #print "in parse_PDB_ROOT: len(rec)=", len(rec)
         if hasattr(self.mol, 'torTree'):
-            print "skipping parse_PDB_ROOT"
+            print("skipping parse_PDB_ROOT")
             return
         if len(rec)==1:
             self.mol.torTree = TorTree(self)
@@ -2186,7 +2183,7 @@ class PdbqtParser(PdbqParser):
                     elif len(ll)==3:
                         res_name = ll[1]+ll[2]
                         chain_id = ' ' 
-                keys = map(lambda x: strip(x[:6]), res_lines)
+                keys = [strip(x[:6]) for x in res_lines]
                 ntors = keys.count("BRANCH")
                 #index of this chain is -ctr + i
                 ind = ctr - i
@@ -2593,17 +2590,17 @@ if __name__ == '__main__':
 
     import sys, pdb
     from MolKit.protein import Protein
-    print "reading molecule"
+    print("reading molecule")
     mol = Protein()
     mol.read("/tsri/pdb/struct/%s.pdb"%sys.argv[1], PdbParser())
-    print "Done"
+    print("Done")
 
 # bond stuff
-    print "building bonds"
+    print("building bonds")
     mol.parser.parse_PDB_CONECT(mol.parser.getRecords(mol.parser.parser.allLines, 'CONECT'))
     mol.buildBondsByDistance()
     bonds = mol.chains.residues.atoms.bonds
-    print "Done"
+    print("Done")
 
     #mol1 = Protein()
     #mol1.read("xaa.aypyd.pqr", PQRParser())

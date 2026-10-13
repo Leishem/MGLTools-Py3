@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 # 
@@ -12,7 +12,7 @@
 #############################################################################
 
 
-import numpy.oldnumeric as Numeric; N = Numeric
+import mglcompat.oldnumeric as Numeric; N = Numeric
 
 class Histogram:
 
@@ -48,7 +48,7 @@ class Histogram:
         self.max = self.max+0.
         self.bin_width = (self.max-self.min)/nbins
         if self.bin_width==0:
-            print 'range is 0 so set bin_width to 1.'
+            print('range is 0 so set bin_width to 1.')
             self.bin_width = 1.
         self.array = N.zeros((nbins, 2), N.Float)
         self.array[:, 0] = self.min + self.bin_width*(N.arange(nbins)+0.5)

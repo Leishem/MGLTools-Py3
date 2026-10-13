@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -14,7 +14,7 @@
 # $Id: bitPatterns.py,v 1.4 2007/07/24 17:30:42 vareille Exp $
 #
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 
 

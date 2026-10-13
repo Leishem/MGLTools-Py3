@@ -1,4 +1,4 @@
-import Tkinter
+import tkinter
 
 from mglutil.util.callback import CallbackManager
 
@@ -13,22 +13,22 @@ class KeyboardModifierMonitor:
             'Alt_R':0,
             'Control_R':0,
             }
-	self.keybdModifierCallbacksDown = {
-	    'Shift_L':CallbackManager(),
+        self.keybdModifierCallbacksDown = {
+            'Shift_L':CallbackManager(),
             'Alt_L':CallbackManager(),
             'Control_L':CallbackManager(),
             'Shift_R':CallbackManager(),
             'Alt_R':CallbackManager(),
             'Control_R':CallbackManager(),
-	}
-	self.keybdModifierCallbacksUp = {
-	    'Shift_L':CallbackManager(),
+        }
+        self.keybdModifierCallbacksUp = {
+            'Shift_L':CallbackManager(),
             'Alt_L':CallbackManager(),
             'Control_L':CallbackManager(),
             'Shift_R':CallbackManager(),
             'Alt_R':CallbackManager(),
             'Control_R':CallbackManager(),
-	}
+        }
 
  
     def modifierDown(self, event):
@@ -51,8 +51,8 @@ class KeyboardModifierMonitor:
             #self.oldgrab = self.master.grab_current()
             #print 'setting global grab', self.oldgrab
             #self.master.grab_set_global()
-	    self.keybdModifierCallbacksDown[event.keysym].CallCallbacks(event)
-	    
+            self.keybdModifierCallbacksDown[event.keysym].CallCallbacks(event)
+            
 
     def modifierUp(self, event):
         """track changes in SHIFT, CONTROL, ALT kyes positions"""
@@ -69,7 +69,7 @@ class KeyboardModifierMonitor:
 
             #if self.oldgrab:
             #    self.oldgrab.grab.set()
-	    self.keybdModifierCallbacksUp[event.keysym].CallCallbacks(event)
+            self.keybdModifierCallbacksUp[event.keysym].CallCallbacks(event)
 
 
     def isShift(self):

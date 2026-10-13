@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 30, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 30, 2007 by 
 
 #
 # copyright_notice
@@ -6,13 +6,13 @@
 
 """glu wrappers
 """
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from opengltk import util
 from opengltk.extent import _gllib, _glulib
 from opengltk.util import gltypmap, revtypmap ,\
      GLdouble, GLfloat, GLint, readModProjView
 from opengltk.ccallback import swigptrcallback
-import gl_wrapper
+from . import gl_wrapper
 
 
 def gluBuild1DMipMaps( target, component, format, data):

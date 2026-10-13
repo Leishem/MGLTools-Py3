@@ -6,14 +6,14 @@
 ##################################################
 
 
-import urlparse, types
+import urllib.parse, types
 from ZSI.TCcompound import Struct
 from ZSI import client
 import ZSI
 
 class SecurityuserimportImplServiceInterface:
     def getSecurityuserimportImpl(self, portAddress=None, **kw):
-        raise NonImplementationError, "method not implemented"
+        raise NonImplementationError("method not implemented")
 
 
 class SecurityuserimportImplServiceLocator(SecurityuserimportImplServiceInterface):
@@ -28,13 +28,13 @@ class SecurityuserimportImplServiceLocator(SecurityuserimportImplServiceInterfac
 class SecurityUserImportServiceSoapBindingSOAP:
 
     def __init__(self, addr, **kw):
-        netloc = (urlparse.urlparse(addr)[1]).split(":") + [80,]
-        if not kw.has_key("host"):
+        netloc = (urllib.parse.urlparse(addr)[1]).split(":") + [80,]
+        if "host" not in kw:
             kw["host"] = netloc[0]
-        if not kw.has_key("port"):
+        if "port" not in kw:
             kw["port"] = int(netloc[1])
-        if not kw.has_key("url"):
-            kw["url"] =  urlparse.urlparse(addr)[2]
+        if "url" not in kw:
+            kw["url"] =  urllib.parse.urlparse(addr)[2]
         self.binding = client.Binding(**kw)
 
 
@@ -47,14 +47,14 @@ class SecurityUserImportServiceSoapBindingSOAP:
 
         if not isinstance(request, listUsersRequest) and\
             not issubclass(listUsersRequest, request.__class__):
-            raise TypeError, "%s incorrect request type" %(request.__class__)
+            raise TypeError("%s incorrect request type" %(request.__class__))
         kw = {}
         response = self.binding.Send(None, None, request, soapaction="", **kw)
         response = self.binding.Receive(listUsersResponseWrapper())
 
         if not isinstance(response, listUsersResponse) and\
             not issubclass(listUsersResponse, response.__class__):
-            raise TypeError, "%s incorrect response type" %(response.__class__)
+            raise TypeError("%s incorrect response type" %(response.__class__))
         return response
 
 

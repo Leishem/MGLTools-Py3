@@ -1,10 +1,10 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # $Id: InternalEnergy.py,v 1.10 2007/07/24 17:30:45 vareille Exp $
 #
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from MolKit.molecule import Atom
 from PyAutoDock.MolecularSystem import MolecularSystem
 
@@ -70,7 +70,7 @@ class InternalEnergy(WeightedMultiTerm):
                 tot = elec + vdw + hb + dsolv
                 vdwhb = vdw + hb
                 ostr = "%d     % 2d-%2d       % 6.2f    % +7.4f    % +6.4f   % +6.4f     % +6.4f" %(ctr,i+1,j+1,dist, tot,elec,vdwhb,dsolv)
-                print ostr
+                print(ostr)
                 if filename:
                     ostr += '\n'
                     fptr.write(ostr)
@@ -204,7 +204,7 @@ class InternalEnergy(WeightedMultiTerm):
                 for i in atL:
                     for j in atL:
                         mask[i][j] = 0
-            print
+            print()
         return mask
 
 
@@ -212,8 +212,8 @@ class InternalEnergy(WeightedMultiTerm):
         I, J = mask.shape
         for i in range(I):
             for j in range(J):
-                print int(mask[i][j]),
-            print
+                print(int(mask[i][j]), end=' ')
+            print()
 
 
 

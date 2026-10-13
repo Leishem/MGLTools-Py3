@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -14,9 +14,9 @@
 #
 
 import sys
-import Tkinter, Pmw
+import tkinter, Pmw
 import types
-import tkMessageBox
+import tkinter.messagebox
 from mglutil.util.callback import CallBackFunction
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr,InputForm,evalString
 from mglutil.gui import widgetsOnBackWindowsCanGrabFocus
@@ -36,9 +36,9 @@ class KeySelectable:
         self.command = command
         self.oldfocus = None
         widget.bind('<ButtonPress-1>', self.setFocus_cb)
-	#widget.bind('<Enter>', self.Enter_cb)
-	#widget.bind('<Leave>', self.Leave_cb)
-	widget.bind('<KeyPress>', self.key_cb)
+        #widget.bind('<Enter>', self.Enter_cb)
+        #widget.bind('<Leave>', self.Leave_cb)
+        widget.bind('<KeyPress>', self.key_cb)
 
         if command:
             widget.bind('<Return>', self.enterKeyCb)
@@ -96,7 +96,7 @@ class KeySelectable:
                 return
 
         self.oldfocus = self.widget.focus_get()
- 	self.widget.focus_set()
+        self.widget.focus_set()
 
 
     def releaseFocus_cb(self, event=None):
@@ -118,7 +118,7 @@ class KeySelectable:
                 return
 
         self.oldfocus = self.widget.focus_get()
- 	self.widget.focus_set()
+        self.widget.focus_set()
 
 
     def Leave_cb(self, event=None):
@@ -223,7 +223,7 @@ class KeySelectableScrolledFrame(KeySelectable):
         type string."""
         
         itemNames = []
-        itemList = self.widget.interior().children.values()
+        itemList = list(self.widget.interior().children.values())
         for item in itemList:
             if hasattr(item, 'name'):
                 itemNames.append(item.name)
@@ -290,27 +290,27 @@ class ListChooser(KeySelectableListBox):
         cwcfg = cwcfg1
             
         # put everything inside a Frame
-        self.top = Tkinter.Frame(root, bd=4)
+        self.top = tkinter.Frame(root, bd=4)
 
         # Create a scrolled text widget to display comments if not None
         if withComment:
-            self.comments = apply(Pmw.ScrolledText,(self.top,),cwcfg)
+            self.comments = Pmw.ScrolledText(*(self.top,), **cwcfg)
             self.comments.pack(fill='both', expand=1)
         self.withComment = withComment
         
         # add a title
-        self.title = Tkinter.Label(self.top,text=title)
+        self.title = tkinter.Label(self.top,text=title)
         self.title.pack(side='top', anchor='n')
 
         # build the scroll list
-        f = Tkinter.Frame(self.top)
+        f = tkinter.Frame(self.top)
         self.mode = mode
-        scrollbarY = Tkinter.Scrollbar(f, orient='vertical')
-        scrollbarX = Tkinter.Scrollbar(f, orient='horizontal')
+        scrollbarY = tkinter.Scrollbar(f, orient='vertical')
+        scrollbarX = tkinter.Scrollbar(f, orient='horizontal')
         lbwcfg['selectmode'] = mode
         lbwcfg['yscrollcommand'] = scrollbarY.set
         lbwcfg['xscrollcommand'] = scrollbarX.set
-        self.lb = apply( Tkinter.Listbox, (f, ), lbwcfg)
+        self.lb = tkinter.Listbox(*(f, ), **lbwcfg)
 
         # assign command to event
         # command can either be a function name, in that case will get
@@ -319,9 +319,9 @@ class ListChooser(KeySelectableListBox):
         # commandEvent) use to assign more than one command.
         if command:
             # list of tuple [(command,commandEvent),]
-            if type(command) == types.ListType:
+            if type(command) == list:
                 for c in command:
-                    if type(c) == types.TupleType:
+                    if type(c) == tuple:
                         self.lb.bind(c[1],c[0],'+')
             else:
                 self.lb.bind(commandEvent,command,'+')
@@ -330,7 +330,7 @@ class ListChooser(KeySelectableListBox):
         scrollbarY.pack(side='right', fill='y')
         scrollbarX.config(command=self.lb.xview)
         scrollbarX.pack(side='bottom', fill='x')
-        apply( self.lb.pack, (), lbpackcfg)
+        self.lb.pack(*(), **lbpackcfg)
         f.pack(fill='both', expand=1)
         self.hasInfo = 0
         KeySelectableListBox.__init__(self, self.lb, command)
@@ -350,7 +350,7 @@ class ListChooser(KeySelectableListBox):
     def add(self, entry):
         """add an entry to the list"""
 
-        assert(type(entry)==types.TupleType)
+        assert(type(entry)==tuple)
         name = entry[0]
         if not isinstance (entry[0], str):
             name = repr(entry[0])
@@ -370,7 +370,7 @@ class ListChooser(KeySelectableListBox):
             self.entries.append( (entry, comment) )
         else:
             self.entries.insert(pos, (entry, comment))
-        if not type(entry) in types.StringTypes:
+        if not type(entry) in (str,):
             entry = repr(entry)
         self.lb.insert(pos, entry)
 
@@ -381,7 +381,7 @@ class ListChooser(KeySelectableListBox):
             return
         self.comments.delete(0.0, 'end')
         if len(self.lb.curselection())!=0:
-            s=self.entries[map( int, self.lb.curselection())[0]][1]
+            s=self.entries[list(map( int, self.lb.curselection()))[0]][1]
             self.comments.insert('end', s+'\n')
 
 
@@ -396,7 +396,7 @@ class ListChooser(KeySelectableListBox):
         specified by the items sequence of the following type
         (entryName, comment) or(entryName, None) """
         self.clear()
-        map(self.add, items)
+        list(map(self.add, items))
         
     def clearComments(self):
         """clear all entries"""
@@ -409,13 +409,13 @@ class ListChooser(KeySelectableListBox):
         ## ind = map(lambda x: x[0],self.entries).index(entry)
 ##         self.entries.remove(self.entries[ind])
 ##         self.lb.delete( ind )
-        if type(entry) in types.StringTypes:
+        if type(entry) in (str,):
             allEntries = [x[0] for x in self.entries]
             if entry in allEntries:
                 ind = allEntries.index(entry)
             else:
                 return
-        elif isinstance(entry, types.IntType):
+        elif isinstance(entry, int):
             ind = entry
 
         del self.entries[ind]
@@ -450,7 +450,7 @@ class ListChooser(KeySelectableListBox):
         # need to get the index of first
         if first in self.entries:
             firstInd = self.entries.index(first)
-        elif first in map(lambda x: x[0], self.entries):
+        elif first in [x[0] for x in self.entries]:
             firstInd = self.entries.index((first,None))
         else:
             firstInd = first
@@ -458,7 +458,7 @@ class ListChooser(KeySelectableListBox):
         # need to get the index of last
         if last in self.entries:
             lastInd = self.entries.index(last)
-        elif last in map(lambda x: x[0], self.entries):
+        elif last in [x[0] for x in self.entries]:
             lastInd = self.entries.index((last,None))
         else:
             lastInd = last
@@ -467,7 +467,7 @@ class ListChooser(KeySelectableListBox):
             try:
                 self.lb.selection_set(firstInd, lastInd)
             except:
-                print "WARNING: Could not select the given entries %s, %s"%(first, last)
+                print("WARNING: Could not select the given entries %s, %s"%(first, last))
         else:
             try:
                 self.lb.select_set(firstInd)
@@ -475,14 +475,14 @@ class ListChooser(KeySelectableListBox):
                 if self.withComment and self.hasInfo:
                     self.info()
             except:
-                print "WARNING: Could not select the given entries %s"%(first)
+                print("WARNING: Could not select the given entries %s"%(first))
 
     def deselect(self, first, last=None):
         """remove an entry to the current selection"""
         # need to get the index of first
         if first in self.entries:
             firstInd = self.entries.index(first)
-        elif first in map(lambda x: x[0], self.entries):
+        elif first in [x[0] for x in self.entries]:
             firstInd = self.entries.index((first,None))
         else:
             firstInd = first
@@ -490,7 +490,7 @@ class ListChooser(KeySelectableListBox):
         # need to get the index of last
         if last in self.entries:
             lastInd = self.entries.index(last)
-        elif last in map(lambda x: x[0], self.entries):
+        elif last in [x[0] for x in self.entries]:
             lastInd = self.entries.index((last,None))
         else:
             lastInd = last
@@ -499,21 +499,21 @@ class ListChooser(KeySelectableListBox):
             try:
                 self.lb.select_clear(firstInd, lastInd)
             except:
-                print "WARNING: Could not unselect the given entries %s, %s"%(first, last)
+                print("WARNING: Could not unselect the given entries %s, %s"%(first, last))
         else:
             try:
                 self.lb.select_clear(firstInd)
                 if self.withComment and self.hasInfo:
                     self.info()
             except:
-                print "WARNING: Could not unselect the given entries %s"%(first)
+                print("WARNING: Could not unselect the given entries %s"%(first))
 
     def set(self, item):
         """ item must be the entrie showing in """
-        assert item in map(lambda x: x[0], self.entries)
+        assert item in [x[0] for x in self.entries]
         # get the entry of the listBox corresponding to the value.
-        defaultEntry = filter(lambda x, df = item:
-                              x[0] == df, self.entries)[0]
+        defaultEntry = list(filter(lambda x, df = item:
+                              x[0] == df, self.entries))[0]
         
         # Get its index
         indexDefaultValue = self.entries.index(defaultEntry)
@@ -530,15 +530,15 @@ class ListChooser(KeySelectableListBox):
     def grid(self,**kw):
          #apply(self.top.grid,args,kw)
         self.top.grid(kw)
-        if not kw.has_key('row'):
+        if 'row' not in kw:
             row = 0
         else:
             row = kw['row']
-        if not kw.has_key('column'):
+        if 'column' not in kw:
             column=0
         else:
             column=kw['column']
-        if kw.has_key('weight'):
+        if 'weight' in kw:
             weight = kw['weight']
         else:
             weight = 1
@@ -586,14 +586,14 @@ class ObjectChooser(ListChooser):
         assert len(object)>=2
         name, object = object
         self.nameObject[name]=object
-        if not self.nameObject.has_key(name):
+        if name not in self.nameObject:
             self.nameObject[name] = object
 
         ListChooser.add(self, (name,))
 
     def insert(self, pos, object):
         name, object  = object[0]
-        if not self.nameObject.has_key(name):
+        if name not in self.nameObject:
             self.nameObject[name]=object
         ListChooser.insert(self,pos,(name,))
 
@@ -624,17 +624,17 @@ class LoadOrSaveText:
                  savewcfg = {},
                  loadwcfg = {}):
         # Put everything inside a Frame
-        self.top = Tkinter.Frame(parent, bd=4)
+        self.top = tkinter.Frame(parent, bd=4)
 
         # Create the Scrolled Text Region.
-        self.text = apply(Pmw.ScrolledText, (self.top,),textwcfg)
-        apply(self.text.pack, (), textpackcfg)
+        self.text = Pmw.ScrolledText(*(self.top,), **textwcfg)
+        self.text.pack(*(), **textpackcfg)
 
         # Create the Save and LoadButton
         savewcfg['callback'] = self.text.exportfile
-        saveButton = apply(SaveButton,(self.top,),savewcfg)
+        saveButton = SaveButton(*(self.top,), **savewcfg)
         loadwcfg['callback'] = self.text.importfile
-        loadButton = apply(LoadButton,(self.top,),loadwcfg)
+        loadButton = LoadButton(*(self.top,), **loadwcfg)
         saveButton.pack(side='right',expand = 1,fill = 'both')
         loadButton.pack(side='left',expand = 1,fill='both')
         
@@ -642,7 +642,7 @@ class LoadOrSaveText:
         return self.text.get(first,last)
 
     def set(self, value):
-        if not type(value) in types.StringTypes:
+        if not type(value) in (str,):
             return
         try:
             self.text.importfile(value)
@@ -657,20 +657,20 @@ class LoadOrSaveText:
         self.top.grid_forget()
 
     def pack(self,**kw):
-        apply(self.top.pack,(),kw)
+        self.top.pack(*(), **kw)
 
     def pack_forget(self):
         self.top.pack_forget()
 
 class SaveButton:
-    def __init__(self, root, buttonType = Tkinter.Button,
+    def __init__(self, root, buttonType = tkinter.Button,
                  widgetwcfg={'text':'Save'},
                  title='Save In File ',
                  idir = None, ifile = None, types = [('All types', '*.*')],
                  callback=None):
         widgetwcfg['command']= CallBackFunction(
             self.save_cb, title, idir, ifile, types, callback)
-        self.button = apply(buttonType, (root,), widgetwcfg)
+        self.button = buttonType(*(root,), **widgetwcfg)
         #self.master = master
         self.root = root
         self.filename = None
@@ -695,7 +695,7 @@ class SaveButton:
         return self.filename
 
     def pack(self, **kw):
-        apply(self.button.pack,(),kw)
+        self.button.pack(*(), **kw)
 
     def grid(self, **kw):
         #apply(self.button.grid,(),kw)
@@ -706,7 +706,7 @@ class SaveButton:
 
 
 class LoadButton:
-    def __init__(self, root, buttonType =Tkinter.Button,
+    def __init__(self, root, buttonType =tkinter.Button,
                  widgetwcfg={'text':'Load'},
                  title='Load File',
                  idir = None, ifile = None, types = [('All types', '*.*')],
@@ -718,7 +718,7 @@ class LoadButton:
                                            ifile,
                                            types,
                                            callback)
-        self.button = apply(buttonType, (root,), widgetwcfg)
+        self.button = buttonType(*(root,), **widgetwcfg)
         #self.master = master
         self.filename = None
 
@@ -736,7 +736,7 @@ class LoadButton:
         return self.filename
 
     def pack(self, **kw):
-        apply(self.button.pack,(),kw)
+        self.button.pack(*(), **kw)
 
     def grid(self, **kw):
         self.button.grid(kw)
@@ -747,13 +747,13 @@ class LoadButton:
 
 class FunctionButton:
 
-    def __init__(self, parent, buttonType = Tkinter.Checkbutton,
+    def __init__(self, parent, buttonType = tkinter.Checkbutton,
                  callback=None,
                  buttonwcfg={'text':'function'},textwcfg = {}):
         buttonwcfg['command'] = CallBackFunction(self.buildText,parent,
                                                  textwcfg,
                                                  buttonwcfg)
-        self.button = apply(buttonType,(parent,),buttonwcfg)
+        self.button = buttonType(*(parent,), **buttonwcfg)
         self.callback = callback
 
     def buildText(self,parent,textwcfg, buttonwcfg):
@@ -768,11 +768,11 @@ class FunctionButton:
         windows = InputForm(master,root,  self.idf)
         self.vals = windows.go()
         # Uncheck the checkbutton if needed
-        if isinstance(self.button,Tkinter.Checkbutton) and \
-           buttonwcfg.has_key('variable'):
-            if isinstance(buttonwcfg['variable'], Tkinter.StringVar):
+        if isinstance(self.button,tkinter.Checkbutton) and \
+           'variable' in buttonwcfg:
+            if isinstance(buttonwcfg['variable'], tkinter.StringVar):
                 buttonwcfg['variable'].set('0')
-            elif isinstance(buttonwcfg['variable'], Tkinter.IntVar):
+            elif isinstance(buttonwcfg['variable'], tkinter.IntVar):
                 buttonwcfg['variable'].set(0)
 
             
@@ -814,7 +814,7 @@ class FunctionButton:
         pass
 
     def pack(self, **kw):
-        apply(self.button.pack,(),kw)
+        self.button.pack(*(), **kw)
 
     def grid(self, **kw):
 ##          apply(self.button.grid,(),kw)
@@ -841,45 +841,45 @@ class SliderWidget(CallbackFunctions):
     
 
     def __init__(self, master=None, label=None, minval=0.0, maxval=100.0,
-		 incr=None, init=None, width=150, height=20, withValue=1,
-		 immediate=1, left=10, right=10 ,
+                 incr=None, init=None, width=150, height=20, withValue=1,
+                 immediate=1, left=10, right=10 ,
                  labelsCursorFormat = '%4.2f', sliderType = 'float',
                  command = None, lookup=None):
         
         # Calls the base class constructor
-	CallbackFunctions.__init__(self)
+        CallbackFunctions.__init__(self)
 
         # Create a toplevel if no master specified
         if master is None:
-            self.master = Tkinter.Toplevel()
+            self.master = tkinter.Toplevel()
         else:
             self.master = master
 
         # Create the master frame
-	self.frame = Tkinter.Frame(master)
+        self.frame = tkinter.Frame(master)
 
         # Set some attributes
-	self.lastx=0
-	self.immediate = immediate
+        self.lastx=0
+        self.immediate = immediate
         self.labelsCursorFormat = labelsCursorFormat
         self.sliderType = eval(sliderType)
 
         # Create the label widget
-	if not label: label = 'slider'
-	fnt='-*-helvetica-medium-r-narrow-*-*-120-*-*-*-*-*-*'
-	self.label = Tkinter.Label(self.frame, text=label, font=fnt)
-	self.label.pack(side=Tkinter.LEFT)
+        if not label: label = 'slider'
+        fnt='-*-helvetica-medium-r-narrow-*-*-120-*-*-*-*-*-*'
+        self.label = tkinter.Label(self.frame, text=label, font=fnt)
+        self.label.pack(side=tkinter.LEFT)
 
-	if withValue: height = max(30, height)
-	self.withValue = withValue
+        if withValue: height = max(30, height)
+        self.withValue = withValue
 
         # Create the canvas.
-	self.draw = Tkinter.Canvas(self.frame, width=width, height=height,
-                                   relief=Tkinter.SUNKEN)
-	self.width = width
-	self.height = height
-	self.left = left
-	self.right = width-right
+        self.draw = tkinter.Canvas(self.frame, width=width, height=height,
+                                   relief=tkinter.SUNKEN)
+        self.width = width
+        self.height = height
+        self.left = left
+        self.right = width-right
 
         # MS May 1st add support for discrete set of values
         self.lookup = lookup # can be set to a list of values indexed by
@@ -891,110 +891,110 @@ class SliderWidget(CallbackFunctions):
             maxval = len(lookup)-1
             incr = 1
             
-	self.max=maxval
-	self.min=minval
-	self._ComputeCst()
-	self.incr = incr
-	self.incrCanvas = None
+        self.max=maxval
+        self.min=minval
+        self._ComputeCst()
+        self.incr = incr
+        self.incrCanvas = None
 
         # Compute the increment on the canvas based on the given incr value.
-	if incr:
-	    self.incrCanvas = round(incr*self.cst)
+        if incr:
+            self.incrCanvas = round(incr*self.cst)
 
-	if withValue: m = self.height / 2
-	else: m = int(self.height * 0.75)
-	self.middle = m
+        if withValue: m = self.height / 2
+        else: m = int(self.height * 0.75)
+        self.middle = m
 
-	self.draw.create_line( self.left, m, self.right, m,
-			       width=2, fill='black', tag = 'line')
+        self.draw.create_line( self.left, m, self.right, m,
+                               width=2, fill='black', tag = 'line')
 
-	y = m-10 # 10 is the cursor's height
-	l = self.left
-	self.cursor = self.draw.create_polygon( l, m, l+5, y, l-5, y, l, m,
-						fill='blue', tag='cursor')
+        y = m-10 # 10 is the cursor's height
+        l = self.left
+        self.cursor = self.draw.create_polygon( l, m, l+5, y, l-5, y, l, m,
+                                                fill='blue', tag='cursor')
         self.valueLabel = None
         # create the cursor label which needs to be formatted properly.
-	if withValue:
-	    y = self.middle+10
+        if withValue:
+            y = self.middle+10
             lv = (self.labelsCursorFormat)%minval
-	    self.valueLabel = self.draw.create_text( l, y,
+            self.valueLabel = self.draw.create_text( l, y,
                                                      text= lv,
-						     font=fnt, tag='cursor')
+                                                     font=fnt, tag='cursor')
 
-	self.draw.pack(side = Tkinter.RIGHT)
+        self.draw.pack(side = tkinter.RIGHT)
 
-	if init is None:
+        if init is None:
             if self.lookup:
                 # SC init must be a value and not an index
                 init = self.lookup[int(round(self.min))]
             else:
                 init = self.min
 
-	self.set(init)
-	Tkinter.Widget.bind(self.draw, "<1>", self.MoveCursor)
-	Tkinter.Widget.bind(self.draw, "<B1-Motion>", self.MoveCursor)
-	if not immediate:
-	    Tkinter.Widget.bind(self.draw, "<ButtonRelease-1>", self.MouseUp)
+        self.set(init)
+        tkinter.Widget.bind(self.draw, "<1>", self.MoveCursor)
+        tkinter.Widget.bind(self.draw, "<B1-Motion>", self.MoveCursor)
+        if not immediate:
+            tkinter.Widget.bind(self.draw, "<ButtonRelease-1>", self.MouseUp)
         self.command = command
         if command:
             self.AddCallback(command)
 
 
     def Callbacks(self):
-	"""Implement call to all callbacks"""
+        """Implement call to all callbacks"""
         if self.lookup:
             val = self.lookup[int(round(self.val))]
         else:
             val = self.val
 
-	for f in self.callbacks:
-	    f(val)
+        for f in self.callbacks:
+            f(val)
 
 
     def MoveCursor(self, event):
-	"""Callback function for left mouse button"""
+        """Callback function for left mouse button"""
 
-	x = event.x - self.left
-	self._MoveCursor(x)
+        x = event.x - self.left
+        self._MoveCursor(x)
 
 
     def DrawCursor(self):
-	"""Update graphics representatin of the cursor"""
+        """Update graphics representatin of the cursor"""
 
-	# compute position
-	x = (self.val-self.min)*self.cst
-	deltax = x - self.lastx
+        # compute position
+        x = (self.val-self.min)*self.cst
+        deltax = x - self.lastx
 
-	if self.withValue:
+        if self.withValue:
             if self.lookup:
                 val = self.lookup[int(round(self.val))]
             else:
                 val = self.val
-	    self.draw.itemconfig(self.valueLabel,
+            self.draw.itemconfig(self.valueLabel,
                                  text = (self.labelsCursorFormat)%val )
-	self.draw.move('cursor', deltax, 0 )
-	self.lastx = self.lastx + deltax
+        self.draw.move('cursor', deltax, 0 )
+        self.lastx = self.lastx + deltax
 
 
     def _MoveCursor(self, x):
-	"""Compute value and move the cursor to the new position"""
+        """Compute value and move the cursor to the new position"""
 
-	# compute the new value
-	val = self.min+self.cst1 * x
-	if self.incrCanvas:
-	    val = round(val/self.incr)*self.incr
-	if val<self.min: val = self.min
-	elif val>self.max: val = self.max
+        # compute the new value
+        val = self.min+self.cst1 * x
+        if self.incrCanvas:
+            val = round(val/self.incr)*self.incr
+        if val<self.min: val = self.min
+        elif val>self.max: val = self.max
 
-	# check if redraw and callback are needed
-	if self.val != val:
-	    self.val = val
-	    self.DrawCursor()
-	    if self.immediate: self.Callbacks()
+        # check if redraw and callback are needed
+        if self.val != val:
+            self.val = val
+            self.DrawCursor()
+            if self.immediate: self.Callbacks()
 
 
     def set(self, val, update=1):
-	"""Set the cursor"""
+        """Set the cursor"""
         # Here needs to get the index of the given val in the
         # lookup table.
         # If the given val is smaller than the min then
@@ -1012,13 +1012,13 @@ class SliderWidget(CallbackFunctions):
             if val<self.min: val = self.min
             elif val>self.max: val = self.max
         
-	if self.incrCanvas:
-	    val = round(val/self.incr)*self.incr
-	self.val = val
+        if self.incrCanvas:
+            val = round(val/self.incr)*self.incr
+        self.val = val
 
-	self.DrawCursor()
-	if update: self.Callbacks()
-	#return self.val
+        self.DrawCursor()
+        if update: self.Callbacks()
+        #return self.val
 
     def setMin(self, val):
         """Set the minimum value of the slider"""
@@ -1056,19 +1056,19 @@ class SliderWidget(CallbackFunctions):
             self.DrawCursor()
 
     def get(self):
-	"""Get the slider's value"""
+        """Get the slider's value"""
         if self.lookup:
             val = self.lookup[int(round(self.val))]
         else:
             val = self.val
         
-	return val
+        return val
 
 
     def _ComputeCst(self, event=None):
-	"""Conversion factor between values and pixels"""
-	self.cst = 1.0*(self.right-self.left) / (self.max-self.min)
-	self.cst1 = 1.0 / self.cst
+        """Conversion factor between values and pixels"""
+        self.cst = 1.0*(self.right-self.left) / (self.max-self.min)
+        self.cst1 = 1.0 / self.cst
 
 
 
@@ -1078,10 +1078,10 @@ class SliderWidget(CallbackFunctions):
         if kw == {} :
             return self.options
         else:
-            keys = kw.keys()
+            keys = list(kw.keys())
             for key in keys:
                 if key not in self.options:
-                    print "WARNING: option %s is not available for the Slider widget" % key
+                    print("WARNING: option %s is not available for the Slider widget" % key)
             lf = kw.get('labelfont')
             if lf:
                 self.label.configure(font=lf)
@@ -1097,9 +1097,9 @@ class SliderWidget(CallbackFunctions):
                 if self.immediate != imm:
                     self.immediate = imm
                     if imm == 1: #immediate mode
-                        Tkinter.Widget.unbind(self.draw, "<ButtonRelease-1>")
+                        tkinter.Widget.unbind(self.draw, "<ButtonRelease-1>")
                     else: #not immediate mode
-                        Tkinter.Widget.bind(self.draw, "<ButtonRelease-1>",
+                        tkinter.Widget.bind(self.draw, "<ButtonRelease-1>",
                                             self.MouseUp)
 
             com = kw.get('command')
@@ -1117,7 +1117,7 @@ class SliderWidget(CallbackFunctions):
             width = kw.get('width')
             if width:
                 w_type = type(width)
-                assert w_type == types.IntType or w_type == types.FloatType
+                assert w_type == int or w_type == float
                 if width != self.width:
                     self.draw.configure(width = width)
                     old_width = self.width
@@ -1132,7 +1132,7 @@ class SliderWidget(CallbackFunctions):
             height = kw.get('height')
             if height:
                 h_type = type(height)
-                assert h_type == types.IntType or h_type == types.FloatType
+                assert h_type == int or h_type == float
                 if self.withValue: height = max(30, height)
                 if height != self.height:
                     self.draw.configure(height=height)
@@ -1178,7 +1178,7 @@ class SliderWidget(CallbackFunctions):
                         sv = (self.labelsCursorFormat)%withval
                         self.valueLabel = self.draw.create_text(x, y,
                                                      text= sv,
-						     font=fnt, tag='cursor')
+                                                     font=fnt, tag='cursor')
                     else:
                         m = int(self.height * 0.75)
                         if self.valueLabel:
@@ -1215,12 +1215,12 @@ class SliderWidget(CallbackFunctions):
         self.frame.pack_forget()
 
 class ExtendedSliderWidget(SliderWidget):
-	#"""Composite slider which includes a simple slider 
-	#   and an entry window used to set self.value """
-	
+        #"""Composite slider which includes a simple slider 
+        #   and an entry window used to set self.value """
+        
     def __init__(self, master=None, label=None,
                  minval=0.0, maxval=100.0,
-		 incr=None, init=None, width=150, height=20, withValue=1,
+                 incr=None, init=None, width=150, height=20, withValue=1,
                  immediate=0, left=10, right=10, entrywcfg = None,
                  entrypackcfg = {'side':'top'},
                  labelsCursorFormat = '%4.2f',
@@ -1229,12 +1229,12 @@ class ExtendedSliderWidget(SliderWidget):
         if not entrywcfg:
             entrywcfg = self.entrywcfg = {'width':5}
 
-        if entrywcfg.has_key('textvariable'):
+        if 'textvariable' in entrywcfg:
             self.entryContent = entrywcfg['textvariable']
         else:
-            self.entryContent = entrywcfg['textvariable'] = Tkinter.StringVar()
+            self.entryContent = entrywcfg['textvariable'] = tkinter.StringVar()
             
-	try:
+        try:
             SliderWidget.__init__(self, master=master, label=label,
                                   minval=minval,maxval=maxval,
                                   incr=incr, init=init, width=width,
@@ -1244,13 +1244,13 @@ class ExtendedSliderWidget(SliderWidget):
                                   labelsCursorFormat=labelsCursorFormat,
                                   sliderType=sliderType,
                                   command=command, lookup=lookup)
-	except ValueError:
-            print "problem w/Slider.__init__"
+        except ValueError:
+            print("problem w/Slider.__init__")
 
         # CREATE THE ENTRY
-        if entrywcfg.has_key('label'):
+        if 'label' in entrywcfg:
             # Label defined for the entry
-            entrylabel = Tkinter.Label(self.frame)
+            entrylabel = tkinter.Label(self.frame)
             #FIXME!!!!
             #apply(entrylabel.pack, (), entrypackcfg)
             entrylabel.pack(side='top', before = self.draw, anchor = 'w')
@@ -1261,9 +1261,9 @@ class ExtendedSliderWidget(SliderWidget):
         else:
             label = None
 
-	self.entry = apply(Tkinter.Entry, (self.frame,), entrywcfg)
+        self.entry = tkinter.Entry(*(self.frame,), **entrywcfg)
         entrypackcfg['before'] = self.draw
-        apply(self.entry.pack, (), entrypackcfg)
+        self.entry.pack(*(), **entrypackcfg)
         # Bind the setval method to the entry and Return is the event.
         self.entry.bind('<Return>', self.setval)
 
@@ -1291,23 +1291,23 @@ class ExtendedSliderWidget(SliderWidget):
             sval = self.lookup[int(round(self.val))]
         else:
             sval = self.val
- 	self.entryContent.set(self.labelsCursorFormat%sval)
+        self.entryContent.set(self.labelsCursorFormat%sval)
 
     def _FixedMoveCursor(self, x):
-	"""move cursor to new position which is typed 
-	   into the entry window"""
-	# compute the new value
+        """move cursor to new position which is typed 
+           into the entry window"""
+        # compute the new value
         # Problem with the lookup
-	val =  x
-	if self.incrCanvas:
-	    val = round(val/self.incr)*self.incr
-	if val<self.min: val = self.min
-	elif val>self.max: val = self.max
-	# check if redraw and callback are needed
-	if self.val != val:
-	    self.val = val
-	    self.DrawCursor()
-	    if self.immediate: self.Callbacks()
+        val =  x
+        if self.incrCanvas:
+            val = round(val/self.incr)*self.incr
+        if val<self.min: val = self.min
+        elif val>self.max: val = self.max
+        # check if redraw and callback are needed
+        if self.val != val:
+            self.val = val
+            self.DrawCursor()
+            if self.immediate: self.Callbacks()
 
     def set(self, val, update=1):
         """Set Both the cursor and entry window"""
@@ -1319,9 +1319,9 @@ class ExtendedSliderWidget(SliderWidget):
         self.entryContent.set(self.labelsCursorFormat%sval)
    
     def setval(self, event):
-	"""Bound to Button-1"""
+        """Bound to Button-1"""
 
-	try:
+        try:
             newx=self.sliderType(self.entryContent.get())
             if self.lookup:
                 if not newx in self.lookup:
@@ -1334,7 +1334,7 @@ class ExtendedSliderWidget(SliderWidget):
             if not self.immediate:
                 self.Callbacks()
 
-	except ValueError:
+        except ValueError:
             if self.lookup:
                 val = self.lookup[int(round(self.val))]
             else:
@@ -1360,9 +1360,9 @@ class ExtendedSliderWidget(SliderWidget):
 class kbComboBox(Pmw.ComboBox, KeySelectableListBox):
 
     def __init__(self, *args, **kw):
-        apply( Pmw.ComboBox.__init__, (self,)+args, kw)
+        Pmw.ComboBox.__init__(*(self,)+args, **kw)
         cmd=None
-        if kw.has_key('selectioncommand'):
+        if 'selectioncommand' in kw:
             cmd = kw['selectioncommand']
         lb = self.component('scrolledlist').component('listbox')
         KeySelectableListBox.__init__(self, lb, command = cmd)
@@ -1391,7 +1391,7 @@ so the case where input == '' is accessible
         if input == '': 
             self.command(input)
         else:
-            apply( Pmw.ComboBox._addHistory, (self,) , )
+            Pmw.ComboBox._addHistory(*(self,))
 
 
 
@@ -1401,15 +1401,15 @@ class kbScrolledListBox(Pmw.ScrolledListBox, KeySelectableListBox):
     Pmw.ScrolledListBox.
     """
     def __init__(self, *args, **kw):
-        apply(Pmw.ScrolledListBox.__init__, (self,)+args, kw)
+        Pmw.ScrolledListBox.__init__(*(self,)+args, **kw)
         cmd=None
-        if kw.has_key('selectioncommand'):
+        if 'selectioncommand' in kw:
             cmd = kw['selectioncommand']
         lb = self.component('listbox')
         KeySelectableListBox.__init__(self, lb, command = cmd)
         self.master = self.widget.master
-	self.widget.bind('<Enter>', self.Enter_cb)
-	self.widget.bind('<Leave>', self.Leave_cb)
+        self.widget.bind('<Enter>', self.Enter_cb)
+        self.widget.bind('<Leave>', self.Leave_cb)
 
     def selectItem(self, i, run=1):
         self.select_set(i)

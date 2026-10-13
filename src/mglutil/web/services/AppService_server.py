@@ -8,7 +8,7 @@
 
 from ZSI.schema import GED, GTD
 from ZSI.TCcompound import ComplexType, Struct
-from AppService_types import *
+from .AppService_types import *
 from ZSI.ServiceContainer import ServiceSOAPBinding
 
 # Messages  

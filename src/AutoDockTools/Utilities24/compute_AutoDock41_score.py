@@ -19,7 +19,7 @@ def check_types(molecule,std_types):
     d = {}
     for a in molecule.allAtoms:
         d[a.autodock_element] = 1
-    mol_types = d.keys()
+    mol_types = list(d.keys())
     non_std = []
     for t in mol_types:
         if t not in std_types:
@@ -35,23 +35,23 @@ if __name__ == '__main__':
 # compute_AutoDock41_score.py -r receptorfilename -l ligandfilename [-o outputfilename -x exclude_torsFreeEnergy -w write_file] -v
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: compute_AutoDock41_score.py -r receptorfilename -l ligandfilename"
-        print
-        print "    Description of command..."
-        print "         -r     receptorfilename"
-        print "         -l     ligandfilename"
-        print "    Optional parameters:"
-        print "        [-o]    outputfilename (default is 'AutoDock41_scores.txt')"
-        print "        [-p]    parameter_library_file (default built-in values from 'AD4.1_bound.dat')"
-        print "        [-x]    exclude_torsFreeEnergy (default is to report sum of intermolecular energies plus loss of torsional entropy)"
-        print "        [-w]    write_file_mode (default mode is 'a')"
-        print "        [-v]    verbose output"
+        print("Usage: compute_AutoDock41_score.py -r receptorfilename -l ligandfilename")
+        print()
+        print("    Description of command...")
+        print("         -r     receptorfilename")
+        print("         -l     ligandfilename")
+        print("    Optional parameters:")
+        print("        [-o]    outputfilename (default is 'AutoDock41_scores.txt')")
+        print("        [-p]    parameter_library_file (default built-in values from 'AD4.1_bound.dat')")
+        print("        [-x]    exclude_torsFreeEnergy (default is to report sum of intermolecular energies plus loss of torsional entropy)")
+        print("        [-w]    write_file_mode (default mode is 'a')")
+        print("        [-v]    verbose output")
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'r:l:wvxo:p:h')
-    except getopt.GetoptError, msg:
-        print 'compute_AutoDock41_score.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('compute_AutoDock41_score.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -76,37 +76,37 @@ if __name__ == '__main__':
     for o, a in opt_list:
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-r', '--r'):
             receptorfilename = a
-            if verbose: print 'set receptorfilename to ', a
+            if verbose: print('set receptorfilename to ', a)
         if o in ('-l', '--l'):
             ligandfilename = a
-            if verbose: print 'set ligandfilename to ', a
+            if verbose: print('set ligandfilename to ', a)
         if o in ('-w', '--w'):
             write_file_mode = True
-            if verbose: print 'set write_file_mode to ', True
+            if verbose: print('set write_file_mode to ', True)
         if o in ('-x', '--x'):
             exclude_torsFreeEnergy = True
-            if verbose: print 'set exclude_torsFreeEnergy to ', exclude_torsFreeEnergy
+            if verbose: print('set exclude_torsFreeEnergy to ', exclude_torsFreeEnergy)
         if o in ('-o', '--o'):
             outputfilename = a
-            if verbose: print 'set outputfilename to ', a
+            if verbose: print('set outputfilename to ', a)
         if o in ('-p', '--p'):
             parameter_library_filename = a
-            if verbose: print 'set parameter_library_filename to ', a
+            if verbose: print('set parameter_library_filename to ', a)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
 
     if not receptorfilename:
-        print 'compute_AutoDock41_score: receptorfilename must be specified.'
+        print('compute_AutoDock41_score: receptorfilename must be specified.')
         usage()
         sys.exit()
 
     if not ligandfilename:
-        print 'compute_AutoDock41_score: ligandfilename must be specified.'
+        print('compute_AutoDock41_score: ligandfilename must be specified.')
         usage()
         sys.exit()
 
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     supported_types = ad_scorer.supported_types
     receptor = Read(receptorfilename)[0]
     assert os.path.splitext(receptor.parser.filename)[-1]=='.pdbqt',"receptor file not in required '.pdbqt' format"
-    if verbose: print 'read ', receptorfilename
+    if verbose: print('read ', receptorfilename)
     receptor.buildBondsByDistance()
     rec_non_std = ""
     non_std_types = check_types(receptor, supported_types)
@@ -128,7 +128,7 @@ if __name__ == '__main__':
     #check format of receptor
     ligand = Read(ligandfilename)[0]
     assert os.path.splitext(ligand.parser.filename)[-1]=='.pdbqt',"ligand file not in required '.pdbqt' format"
-    if verbose: print 'read ', ligandfilename
+    if verbose: print('read ', ligandfilename)
     ligand.buildBondsByDistance()
     lig_non_std = ""
     non_std_types = check_types(ligand, supported_types)
@@ -142,7 +142,7 @@ if __name__ == '__main__':
     if write_file_mode:
         mode = 'w'
         first = True
-    if verbose: print 'first is ', first
+    if verbose: print('first is ', first)
     optr = open(outputfilename, mode)
     if first:
         tstr = "    Receptor      Ligand   AutoDock4.1Score     estat      hb      vdw   dsolv    tors\n"
@@ -168,7 +168,7 @@ if __name__ == '__main__':
         ostr = "%12s%12s      % 8.4f        % 6.4f % 6.4f % 6.4f % 6.4f % 6.4f\n" %(receptor.name,ligand.name, score, estat, hb, vdw, dsolv, torsEnrg)
         optr.write(ostr)
         if verbose:
-            print 'wrote %s' %outputfilename
+            print('wrote %s' %outputfilename)
     optr.close()
 
 # To execute this command type:

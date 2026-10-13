@@ -48,7 +48,7 @@ from mglutil.util.packageFilePath import setResourceFolder, getResourceFolder
 def createRoot():
     """ create a root and hide it
 """
-    from Tkinter import Tk
+    from tkinter import Tk
     root = Tk()
     root.withdraw()
     return root
@@ -185,7 +185,7 @@ listOfDemandedOuts: list of values in the output ports listed in outs
                 argv = [argv]
         else:
             argv = list(argv)
-    if kw.has_key("ownInterpreter"):
+    if "ownInterpreter" in kw:
         ownInterpreter = kw["ownInterpreter"]
     else:
         if argv is None:
@@ -221,8 +221,8 @@ listOfDemandedOuts: list of values in the output ports listed in outs
         optlist, args = getopt.getopt(argv[1:], 'hirestp', [
             'help', 'interactive', 'noTerminal', 'noSplash', 'resourceFolder=', 'run', 'runAndExit','ipython'] )
     except:
-        print "Unknown option!"
-        print help_msg
+        print("Unknown option!")
+        print(help_msg)
         return
 
     interactive = 1
@@ -232,7 +232,7 @@ listOfDemandedOuts: list of values in the output ports listed in outs
     ipython = False
     for opt in optlist:
         if opt[0] in ('-h', '--help'):
-            print help_msg
+            print(help_msg)
             return
         elif opt[0] in ('-i', '--interactive'):
             warnings.warn('-i (interactive) is default mode, use --noTerminal to disable it',
@@ -252,9 +252,9 @@ listOfDemandedOuts: list of values in the output ports listed in outs
             ipython = True
 
     from Support.path import path_text, release_path
-    print 'Run Vision from ', __path__[0]
+    print('Run Vision from ', __path__[0])
     
-    if globals().has_key('ed') is False:
+    if ('ed' in globals()) is False:
         root = createRoot()
         #root.withdraw()
         ##################################################################
@@ -328,7 +328,7 @@ listOfDemandedOuts: list of values in the output ports listed in outs
                 if runNetwork:
                     ed.softrunCurrentNet_cb()
             elif args[lArgIndex][-3:]=='.py':
-                execfile(netName)
+                exec(compile(open(netName, "rb").read(), netName, 'exec'))
                 lArgIndex += 1
             else:
                 lArgIndex += 1

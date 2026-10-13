@@ -24,6 +24,7 @@ import sys
 import warnings
 import stat
 from inspect import isclass
+import importlib
 
 
 def addDirToSysPath(dirToAdd):
@@ -39,10 +40,10 @@ def addDirToSysPath(dirToAdd):
 
 def userLibBuild(libInstance, callingFile, dependents={}):
 
-    for dep, depversion in dependents.items():
+    for dep, depversion in list(dependents.items()):
         try:
             __import__(dep) # make sure all dependent packages are loadable
-        except Exception, e:
+        except Exception as e:
             warnings.warn("""
 In order to use the vision library %s,
 you need to install: %s %s\n""" %(libInstance.name,dep, depversion))
@@ -67,8 +68,8 @@ you need to install: %s %s\n""" %(libInstance.name,dep, depversion))
                 try:
                     mod = __import__(moduleName, globals(), locals(),[filenameWithoutExt])
                     try:            
-                        reload(mod)
-                    except RuntimeError, e:
+                        importlib.reload(mod)
+                    except RuntimeError as e:
                         #print "userLibBuild: unable to reload library %s\n" % moduleName, e
                         pass # this is just to hide a potential problem in reloading (matplotlib has this issue) 
                     for modItemName in dir(mod):
@@ -77,7 +78,7 @@ you need to install: %s %s\n""" %(libInstance.name,dep, depversion))
                         if isclass(modItem) and issubclass(modItem, NetworkNode):
                             if modItem.__module__ == moduleName:
                                 if hasattr(modItem, 'mRequiredTypes'):
-                                    for lTypeName, lModuleName in modItem.mRequiredTypes.items():
+                                    for lTypeName, lModuleName in list(modItem.mRequiredTypes.items()):
                                         mad = __import__(lModuleName, globals(), locals(), [lTypeName])
                                         madItem = getattr(mad, lTypeName)
                                         libInstance.typesTable.append(madItem())
@@ -85,8 +86,8 @@ you need to install: %s %s\n""" %(libInstance.name,dep, depversion))
                                     for lSynonym in modItem.mRequiredSynonyms:
                                         libInstance.synonymsTable.append(lSynonym)
                                 libInstance.addNode(modItem, modItemName, dirItem)
-                except Exception, e:
-            		print "userLibBuild: unable to load library %s\n" % moduleName, e
+                except Exception as e:
+                        print("userLibBuild: unable to load library %s\n" % moduleName, e)
                         return False
 
     return True
@@ -197,9 +198,9 @@ elif path.isfile(path.dirname(__file__)+sep+'libTypes.py'):
     addTypes(locals()[libInstanceName], libInstanceName + '.libTypes')
 
 """ % defaultLibInit
-            map( lambda x, f=f: f.write(x), txt )
+            list(map( lambda x, f=f: f.write(x), txt ))
             f.close()
-            os.chmod(defaultLibInit, 0444) #make it read only
+            os.chmod(defaultLibInit, 0o444) #make it read only
 
             f = open(libTypesFile, "w")
             txt = """########################################################################
@@ -241,7 +242,7 @@ from NetworkEditor.datatypes import AnyArrayType
 ## in NetworkEditor.datatypes, you should have a look at the class IntType
 
 """ % libTypesFile
-            map( lambda x, f=f: f.write(x), txt )
+            list(map( lambda x, f=f: f.write(x), txt ))
             f.close()
 
         except:
@@ -347,7 +348,7 @@ fontDict['Nodes'][0],fontDict['Nodes'][1],fontDict['Nodes'][2],
 fontDict['Root'][0],fontDict['Root'][1],fontDict['Root'][2],
 )
 
-        map( lambda x, f=f: f.write(x), txt )
+        list(map( lambda x, f=f: f.write(x), txt ))
         f.close()
     except:
         txt = "can not create _fonts4vision"

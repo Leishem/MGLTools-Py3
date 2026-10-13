@@ -1,4 +1,4 @@
-import Tkinter
+import tkinter
 from mglutil.gui.BasicWidgets.Tk.trees.tree import IconsManager
 from mglutil.gui.BasicWidgets.Tk.trees.TreeWithButtons import \
      ColumnDescriptor ,TreeWithButtons, NodeWithButtons
@@ -73,7 +73,7 @@ class DejaVuGeomNode(NodeWithButtons):
         return icon
 
 if __name__ == '__main__':
-    root = Tkinter.Toplevel()
+    root = tkinter.Toplevel()
     vi = self.GUI.VIEWER
 
     iconsManager = IconsManager(['Icons'], 'DejaVu')

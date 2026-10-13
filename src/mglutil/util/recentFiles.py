@@ -4,7 +4,7 @@
 # $Id: recentFiles.py,v 1.16 2010/10/05 17:25:40 sargis Exp $
 import os, pickle
 from mglutil.util.packageFilePath import getResourceFolderWithVersion
-import Tkinter
+import tkinter
 
 class RecentFiles:
     """Class to store Recent Files"""
@@ -20,7 +20,7 @@ class RecentFiles:
         if os.path.exists(filePath):
             try:
                 self.categories = pickle.load(open(filePath))
-            except Exception, inst:
+            except Exception as inst:
                 #print inst
                 #print "Couldn't Load Recent Files."
                 self.categories = {}
@@ -37,7 +37,7 @@ class RecentFiles:
     def checkCategories(self):
         """Loops through self.categories to check if recent file still exists.
         If not, removes the file from the list"""
-        for category in self.categories.keys():
+        for category in list(self.categories.keys()):
             newList = [x for x in self.categories[category] if os.path.exists(x[0])]
             if len(newList):
                 self.categories[category] = newList
@@ -53,7 +53,7 @@ class RecentFiles:
         if hasattr(self, 'categories') is False: 
             return
 
-        if not self.categories.has_key(category):
+        if category not in self.categories:
             self.categories[category] = []
             #self.menuList[category] = Tkinter.Menu(self.mainMenu)
             #self.mainMenu.add_cascade(label=category, 
@@ -78,12 +78,12 @@ class RecentFiles:
             filePath = self.resourceFilePath
         try:
             pickle.dump(self.categories, open(filePath,'w'))
-        except Exception, inst:
-            print "Failed to save recent files"
-            print inst
+        except Exception as inst:
+            print("Failed to save recent files")
+            print(inst)
         
     def gui(self, masterMenu, menuLabel, underline=None, index=0):
-        self.mainMenu = Tkinter.Menu(masterMenu)
+        self.mainMenu = tkinter.Menu(masterMenu)
         masterMenu.insert_cascade(index, label=menuLabel,
                                   menu=self.mainMenu, underline=underline)
         self.menuList = {}

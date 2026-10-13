@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -8,8 +8,8 @@
 #
 #############################################################################
 
-import numpy.oldnumeric as Numeric, math
-import numpy.oldnumeric.linear_algebra as LinearAlgebra
+import mglcompat.oldnumeric as Numeric, math
+import mglcompat.oldnumeric.linear_algebra as LinearAlgebra
 from mglutil.math.rmsd import RMSDCalculator
 
 class RigidfitBodyAligner:
@@ -80,8 +80,8 @@ class RigidfitBodyAligner:
         # 2. Wolfgang Kabsch's method for rotation matrix rot:
         rot = Numeric.identity(3).astype('f')
         # LOOK how to modify that code.
-        for i in xrange(3):
-            for j in xrange(3):
+        for i in range(3):
+            for j in range(3):
                 rot[j][i] = Numeric.sum((refCoords[:,i]-refCentroid[i])*
                                         (mobileCoords[:,j]-mobileCentroid[j]))
 
@@ -197,7 +197,7 @@ class RigidfitBodyAligner:
 
     
 if __name__ == '__main__':
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
 
     a = [ [ 2.92666,  -5.8288,  4.7963 ],
           [ 3.4784 ,  -7.6197,  4.9499 ],

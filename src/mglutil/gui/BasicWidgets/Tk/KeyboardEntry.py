@@ -9,7 +9,7 @@
 #########################################################################
 
 import sys
-from Tkinter import Toplevel, Label
+from tkinter import Toplevel, Label
 
 from mglutil.gui import widgetsOnBackWindowsCanGrabFocus
 

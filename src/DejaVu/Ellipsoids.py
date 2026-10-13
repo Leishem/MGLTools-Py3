@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -19,7 +19,7 @@
 #
 
 import warnings
-import numpy.oldnumeric as Numeric, math
+import mglcompat.oldnumeric as Numeric, math
 
 from opengltk.OpenGL import GL, GLU
 from opengltk.extent.utillib import glDrawSphereSet, extractedGlutSolidSphere
@@ -68,7 +68,7 @@ class Ellipsoids(Geom):
 
         self.radius = 1.0
 
-        apply( Geom.__init__, (self, name, check), kw )
+        Geom.__init__(*(self, name, check), **kw)
         assert len(self.vertexSet.vertices.ashape)==2
         
         self._modified = False
@@ -97,7 +97,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                 self.chooseTemplate()
                 redoFlags |= self._redoFlags['redoDisplayListFlag']
 
-        redoFlags |= apply( Geom.Set, (self, check, 0), kw)
+        redoFlags |= Geom.Set(*(self, check, 0), **kw)
 
         if hasattr(self.vertexSet, 'scaling') is False:
             self.vertexSet.scaling = datamodel.ScalarProperties('scaling',
@@ -152,12 +152,12 @@ updateOwnGui=True : allow to update owngui at the end this func
 
         if __debug__:
             if check:
-                apply( checkKeywords, (self.name,self.keywords), kw)
+                checkKeywords(*(self.name,self.keywords), **kw)
 
         v = kw.get( 'centers')
         if v:
             kw['vertices'] = v     # rename centers in vertices for Geom.__init
-            apply( Geom.Add, (self,0,0), kw)
+            Geom.Add(*(self,0,0), **kw)
 
         if self.viewer and redo:
             if self.redoDspLst:
@@ -173,7 +173,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         if currentcontext != self.templateDSPL[1]:
             import traceback;traceback.print_stack()
             warnings.warn('deleteTemplate failed because the current context is the wrong one')
-            print "currentcontext != self.templateDSPL[1]", currentcontext, self.templateDSPL[1]
+            print("currentcontext != self.templateDSPL[1]", currentcontext, self.templateDSPL[1])
         else:
             #print '-%d'%self.templateDSPL[0], currentcontext, "glDeleteLists Ellipsoids"
             #print '-%d'%(self.templateDSPL[0]+1), currentcontext, "glDeleteLists Ellipsoids"
@@ -263,7 +263,7 @@ using MakeTemplate.
                 bp = None
                 face = GL.GL_FRONT_AND_BACK
 
-        for i in xrange(len(vertices)):
+        for i in range(len(vertices)):
             GL.glPushName(i)
 
             if fp:
@@ -404,7 +404,7 @@ class TriangulateIcos:
         lenF = len(faces)
         lenV = len(vertices)
 
-        for i in xrange(lenF):
+        for i in range(lenF):
             v0 = vertices[faces[i][0]]
             v1 = vertices[faces[i][1]]
             v2 = vertices[faces[i][2]]
@@ -416,7 +416,7 @@ class TriangulateIcos:
     def normalize(self, v):
         d = math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2])
         if d == 0.0:
-            print 'Zero length vector!'
+            print('Zero length vector!')
             return
         return [v[0] / d, v[1] / d, v[2] / d]
 
@@ -469,7 +469,7 @@ class TriangulateIcosByEdgeCenterPoint(TriangulateIcos):
         # called by subsample
         newFaces = []
         
-        for i in xrange(len(faces)):
+        for i in range(len(faces)):
             j = i
             j = j * 3
             f0 = faces[i][0]
@@ -534,7 +534,7 @@ class TriangulateIcosByFaceCenterPoint(TriangulateIcos):
         # called by subsample
         newFaces = []
         
-        for i in xrange(len(faces)):
+        for i in range(len(faces)):
             f0 = faces[i][0]
             f1 = faces[i][1]
             f2 = faces[i][2]
@@ -564,7 +564,7 @@ class TriangulateIcosByFaceCenterPoint(TriangulateIcos):
         return self.getVertices(quality=quality)
 
 
-## import numpy.oldnumeric as N
+## import mglcompat.oldnumeric as N
 ## rotcrn = N.array( [
 ##     [0.62831, -0.67899, -0.37974, 0],
 ##     [0.36979,  0.69011, -0.62210, 0],

@@ -19,23 +19,23 @@ if __name__ == '__main__':
 
 
     def usage():
-        print "Usage: write_largest_cluster_ligand.py "
-        print "    This script does the following: "
-        print "         (1) read all the files with extension '.dlg' into one Docking"
-        print "         (2) compute a clustering at the specified rms tolerance "
-        print "         (3) write the ligand with the coordinates of the "
-        print "             lowest-energy conformation in the largest cluster to a file" 
-        print "    "
-        print "    Optional parameters:"
-        print "        [-t]    rms_tolerance (default 1.5)"
-        print "        [-o pdbqt_filename] (default ligandstem_BC.pdbqt)"
-        print "        [-v]    verbose output"
+        print("Usage: write_largest_cluster_ligand.py ")
+        print("    This script does the following: ")
+        print("         (1) read all the files with extension '.dlg' into one Docking")
+        print("         (2) compute a clustering at the specified rms tolerance ")
+        print("         (3) write the ligand with the coordinates of the ")
+        print("             lowest-energy conformation in the largest cluster to a file") 
+        print("    ")
+        print("    Optional parameters:")
+        print("        [-t]    rms_tolerance (default 1.5)")
+        print("        [-o pdbqt_filename] (default ligandstem_BC.pdbqt)")
+        print("        [-v]    verbose output")
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 't:o:vh')
-    except getopt.GetoptError, msg:
-        print 'write_largest_cluster_ligand.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('write_largest_cluster_ligand.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -52,13 +52,13 @@ if __name__ == '__main__':
         #print "o=", o, " a=", a
         if o in ('-o', '--o'):
             outputfilename = a
-            if verbose: print 'set outputfilename to ', a
+            if verbose: print('set outputfilename to ', a)
         if o in ('-t', '--t'):
             rms_tolerance = float(a)
-            if verbose: print 'set rms_tolerance to ', a
+            if verbose: print('set rms_tolerance to ', a)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         outputfilename = d.ligMol.name  + '_BC.pdbqt'
     parser.write_with_new_coords(coords, outputfilename) 
     if verbose:
-        print 'wrote %s' %outputfilename
+        print('wrote %s' %outputfilename)
 
 
 # To execute this command type:

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # Last modified on Mon Oct 15 15:33:49 PDT 2001 by lindy
@@ -17,7 +17,7 @@ world coordinates (using translation, orientation, and origin).
 
 #from mglutil.math.ncoords import Ncoords
 from mglutil.math.rotax import rotax
-import numpy.oldnumeric as Numeric, math
+import mglcompat.oldnumeric as Numeric, math
 
 
 class Kinematics:
@@ -183,7 +183,7 @@ class Kinematics:
 
         # add translation
         a = node.torBase.coords
-        print "    torBase (%2d) %4f, %4f, %4f:" % (node.bond[0], a[0], a[1], a[2])
+        print("    torBase (%2d) %4f, %4f, %4f:" % (node.bond[0], a[0], a[1], a[2]))
         for i in (0,1,2):
             rot[3][i] = a[i]
             for j in (0,1,2): rot[3][i] = rot[3][i]-rot[j][i]*a[j]

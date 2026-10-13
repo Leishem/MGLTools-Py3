@@ -12,7 +12,7 @@
 #$Id: __init__.py,v 1.1 2002/01/23 20:18:31 rhuey Exp $
 #
 
-import string
+from mglcompat import pystring as string
 
 def Read(filename):
     from MolKit.pdbParser import PdbParser, PdbqParser,PdbqsParser, PQRParser
@@ -34,7 +34,7 @@ def Read(filename):
         parser = Mol2Parser(filename)
 
     else:
-        print "File Format unknown can't parse it"
+        print("File Format unknown can't parse it")
         return []
     molecules = parser.parse()
     return molecules

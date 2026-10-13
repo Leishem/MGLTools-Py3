@@ -1,11 +1,11 @@
 import sys, os
 from threading import Thread
-import Pmw, Tkinter
-import Queue
+import Pmw, tkinter
+import queue
 try:
     import subprocess
 except ImportError:
-    import process as subprocess
+    from . import process as subprocess
     
 if sys.platform=='win32':
     mswin = True
@@ -39,10 +39,10 @@ http://sourceforge.net/project/showfiles.php?group_id=78018
         self.input = input
         self.debug = 0 # to print debug message
         self.cmdstring = cmdstring
-        self.output = Queue.Queue(-1) # Thread safe queue infinite size
+        self.output = queue.Queue(-1) # Thread safe queue infinite size
         self.shell = shell
         if self.gui:
-            self.root = Tkinter.Toplevel()
+            self.root = tkinter.Toplevel()
             if type(cmdstring) == list:
                 cmdLine = ' '.join(cmdstring)
             else:
@@ -60,15 +60,15 @@ http://sourceforge.net/project/showfiles.php?group_id=78018
             self.stdoutTk.insert('end', "Running: " + cmdLine +"\n")
             self.cursor = self.stdoutTk.component('text').config('cursor')[-1]
             self.stdoutTk.component('text').config(cursor='watch')
-            f = Tkinter.Frame(self.root)
+            f = tkinter.Frame(self.root)
             f.pack(fill='x')            
             #Tkinter.Label(f, text='  ').pack(side='right') #spacer
             if not mswin:
-                self.kill = Tkinter.Button(f, text='   Kill   ', 
+                self.kill = tkinter.Button(f, text='   Kill   ', 
                                            command=self.kill_cb)
                 self.kill.pack(side='right')
             
-            self.ok = Tkinter.Button(f, text='OK', command=self.ok_cb,
+            self.ok = tkinter.Button(f, text='OK', command=self.ok_cb,
                                      state='disabled')
             self.ok.pack(side='right', expand=True, fill='x')
 
@@ -80,7 +80,7 @@ http://sourceforge.net/project/showfiles.php?group_id=78018
         try:
             self.com = subprocess.Popen(self.cmdstring, stdin=subprocess.PIPE,\
             stdout=subprocess.PIPE,stderr=subprocess.STDOUT, shell=self.shell)
-        except Exception, inst:
+        except Exception as inst:
             # FIXME: Segmentation fault is not handled
             #print >>sys.stderr, "Execution failed:", inst
             self.output.put(inst)
@@ -89,7 +89,7 @@ http://sourceforge.net/project/showfiles.php?group_id=78018
         inp, out, err = (self.com.stdin, self.com.stdout, self.com.stderr)
         # send data to stdin
         if self.input is not None:
-            map( lambda x, f=inp: f.write("%s\n"%x), self.input)
+            list(map( lambda x, f=inp: f.write("%s\n"%x), self.input))
             inp.close()
                 
         while not done:
@@ -101,7 +101,7 @@ http://sourceforge.net/project/showfiles.php?group_id=78018
                 # only there for debug, you should access the stdout and stderr
                 # by parsing self.output
                 if self.debug:
-                    print data
+                    print(data)
         self.output.put(None)
 
     def update_me(self):
@@ -121,16 +121,16 @@ http://sourceforge.net/project/showfiles.php?group_id=78018
                     self.stdoutTk.insert('end', line)
                     self.stdoutTk.component('text').yview('end')      
                 self.root.update_idletasks()
-        except Queue.Empty:
+        except queue.Empty:
             pass
         self.root.after(10, self.update_me)
 
     def kill_cb(self, event=None):
         if not mswin:
-            import signal, Tkinter
-            from SimpleDialog import SimpleDialog
+            import signal, tkinter
+            from tkinter.simpledialog import SimpleDialog
             text = "Do you really want to kill this process?"
-            d = SimpleDialog(Tkinter._default_root, text=text,
+            d = SimpleDialog(tkinter._default_root, text=text,
                              buttons=["Yes", "No"],
                              default=0, title="Kill process")
             result = d.go()

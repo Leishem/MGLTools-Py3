@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -24,19 +24,19 @@
 
 import os
 import types
-import Tkinter
+import tkinter
 import Pmw
 from weakref import ref 
 from copy import deepcopy
-import string
+from mglcompat import pystring as string
 
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
-from viewerFns import checkKeywords
+from .viewerFns import checkKeywords
 from opengltk.OpenGL import GL
 from DejaVu.IndexedGeom import IndexedGeom
-from colorTool import RGBRamp, resetMaterialMemory
+from .colorTool import RGBRamp, resetMaterialMemory
 from DejaVu.Insert2d import Insert2d
-import viewerConst
+from . import viewerConst
 from pyglf import glf
 
 
@@ -135,7 +135,7 @@ class ColorMapLegend(Insert2d):
 
         self.clickPosFromLegendBottomLeft = [0, 0]
 
-        apply( Insert2d.__init__, (self, name, check), kw)
+        Insert2d.__init__(*(self, name, check), **kw)
 
         # Insert2d initialisations 
         # (need to be done after the Insert2d.__init__ otherwise it overrides)
@@ -152,7 +152,7 @@ redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
         #print "colorMapLegend.Set"
-        redoFlags = apply( Insert2d.Set, (self, check, 0), kw)
+        redoFlags = Insert2d.Set(*(self, check, 0), **kw)
         
         ramp=kw.get('ramp')
         if ramp is not None:
@@ -195,21 +195,21 @@ updateOwnGui=True : allow to update owngui at the end this func
 
         glfFont = kw.get('glfFont')
         if glfFont is not None:
-            if glfFont in self.glfVectorFontLoadIdDict.keys():
+            if glfFont in list(self.glfVectorFontLoadIdDict.keys()):
                 self.glfFontID = self.glfVectorFontLoadIdDict[glfFont]
                 redoFlags |= self._redoFlags['updateOwnGuiFlag']
                 redoFlags |= self._redoFlags['redoDisplayListFlag']
 
         fontScale = kw.get('fontScale')
         if fontScale is not None:
-            assert isinstance(fontScale, types.IntType)
+            assert isinstance(fontScale, int)
             self.fontScale = fontScale
             redoFlags |= self._redoFlags['updateOwnGuiFlag']
             redoFlags |= self._redoFlags['redoDisplayListFlag']
 
         numOfLabels = kw.get('numOfLabels')
         if numOfLabels is not None:
-            assert isinstance(numOfLabels, types.IntType)
+            assert isinstance(numOfLabels, int)
             self.numOfLabels = numOfLabels
             redoFlags |= self._redoFlags['updateOwnGuiFlag']
             redoFlags |= self._redoFlags['redoDisplayListFlag']
@@ -419,7 +419,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         #print "pick.event.time",pick.event.time
         #print "pick.hits",pick.hits
 
-        if ( len(pick.hits) == 1) and  pick.hits.has_key(self):
+        if ( len(pick.hits) == 1) and  self in pick.hits:
             if self.viewer.currentObject != self:
                     # if the only hit is the legend, 
                     # it becomes the current object
@@ -454,11 +454,11 @@ updateOwnGui=True : allow to update owngui at the end this func
 
 
     def createOwnGui(self):
-        self.ownGui = Tkinter.Toplevel()
+        self.ownGui = tkinter.Toplevel()
         self.ownGui.title(self.name)
         self.ownGui.protocol('WM_DELETE_WINDOW', self.ownGui.withdraw )
 
-        frame1 = Tkinter.Frame(self.ownGui)
+        frame1 = tkinter.Frame(self.ownGui)
         frame1.pack(side='top')
 
         #unit
@@ -470,7 +470,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         self.unitsEnt.pack(side='top', fill='x')
 
         #glf vector font
-        self.glfFont = Tkinter.StringVar()
+        self.glfFont = tkinter.StringVar()
         self.glfFont.set('chicago1.glf')
         self.glfFontCB = Pmw.ComboBox(frame1, label_text='Font    ',
                                    labelpos='w',
@@ -525,9 +525,9 @@ updateOwnGui=True : allow to update owngui at the end this func
         self.numOfLabelsCtr.pack(side='top')
 
         # Interpolate
-        self.interpVar = Tkinter.IntVar()
+        self.interpVar = tkinter.IntVar()
         self.interpVar.set(0)
-        self.checkBoxFrame = Tkinter.Checkbutton(
+        self.checkBoxFrame = tkinter.Checkbutton(
                                 frame1, 
                                 text='Interpolate',
                                 variable=self.interpVar, 
@@ -535,9 +535,9 @@ updateOwnGui=True : allow to update owngui at the end this func
         self.checkBoxFrame.pack(side='top')
 
         # frame
-        self.frameVar = Tkinter.IntVar()
+        self.frameVar = tkinter.IntVar()
         self.frameVar.set(1)
-        self.checkBoxFrame = Tkinter.Checkbutton(
+        self.checkBoxFrame = tkinter.Checkbutton(
                                 frame1, 
                                 text='Frame',
                                 variable=self.frameVar, 
@@ -545,9 +545,9 @@ updateOwnGui=True : allow to update owngui at the end this func
         self.checkBoxFrame.pack(side='top')
 
         # invert labels color
-        self.invertLabelsColorVar = Tkinter.IntVar()
+        self.invertLabelsColorVar = tkinter.IntVar()
         self.invertLabelsColorVar.set(0)
-        self.checkBoxinvertLabelsColor = Tkinter.Checkbutton(
+        self.checkBoxinvertLabelsColor = tkinter.Checkbutton(
                                 frame1, 
                                 text='Invert labels color',
                                 variable=self.invertLabelsColorVar, 
@@ -556,7 +556,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         self.checkBoxinvertLabelsColor.pack(side='top')
 
         # colormapguiwidget:
-        self.launchColormapWidget = Tkinter.Button(
+        self.launchColormapWidget = tkinter.Button(
                                         frame1, 
                                         text="Show colormap settings",
                                         command=self.colormapguiRef().showColormapSettings_cb 
@@ -569,7 +569,7 @@ updateOwnGui=True : allow to update owngui at the end this func
 
         glfFont = self.glfFontCB.get()
         fontScale = int(self.fontScaleThumb.get())
-        labelValues = map(float, string.split(self.labelValsEnt.get()))
+        labelValues = list(map(float, string.split(self.labelValsEnt.get())))
         unitsString = self.unitsEnt.get()
         numOfLabels = int(self.numOfLabelsCtr.get())
 

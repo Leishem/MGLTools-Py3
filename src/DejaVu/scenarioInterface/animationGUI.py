@@ -1,5 +1,5 @@
 import os
-import Tkinter, Pmw
+import tkinter, Pmw
 
 #from DejaVu.GeomChooser import GeomChooser
 from mglutil.util.callback import CallbackFunction
@@ -100,7 +100,7 @@ class MAAEditor:
             title=self.title, command=self.execute)
         dialog.withdraw()
         # create a frame to hold group to force setting orient and rendering
-        bframe = Tkinter.Frame(dialog.interior())
+        bframe = tkinter.Frame(dialog.interior())
 
         ##
         ## create group to define if action sets orients
@@ -127,10 +127,10 @@ class MAAEditor:
 
         frame = grp.interior()
 
-        b1 = Tkinter.Button(frame, text='Orientation',
+        b1 = tkinter.Button(frame, text='Orientation',
                             command=self.recordOrient)
         b1.pack(side='left', anchor='w', fill='x', expand=1, padx=8, pady=8)
-        b2 = Tkinter.Button(frame, text='Rendering',
+        b2 = tkinter.Button(frame, text='Rendering',
                             command=self.recordRendering)
         b2.pack(side='left', anchor='w', fill='x', expand=1, padx=8, pady=8)
 
@@ -255,7 +255,7 @@ class MAAEditorWithSpeed(MAAEditor):
             
         sp.pack(side='left', anchor='w', fill='x', expand=1, padx=8, pady=8)
 
-        for key, val in self.speedDict.items():
+        for key, val in list(self.speedDict.items()):
             self.balloon.bind(sp.button(key), "%d frames"%val)
 
         # add counter for overall custom speed
@@ -327,13 +327,13 @@ class MAAEditorWithSpeed(MAAEditor):
         if kfpos:
             kw['nbFrames'] = kfpos[-1]-kfpos[0]
 
-        for k,v in kw.items():
+        for k,v in list(kw.items()):
             if k == 'nbFrames':
                 assert int(v)
                 assert v>0
                 # set speed radio button
                 found = False
-                for name, speed in self.speedDict.items():
+                for name, speed in list(self.speedDict.items()):
                     if speed==v:
                         self.speedw.invoke(name)
                         found = True
@@ -471,7 +471,7 @@ class OrientationMAAEditor(MAAEditorWithSpeed):
         words = text.split()
         if len(words)!=3:
             return -1
-        a,b,c = map(int, words)
+        a,b,c = list(map(int, words))
         if a>0 and b > a and c>b:
             return 1
         else:
@@ -490,7 +490,7 @@ class OrientationMAAEditor(MAAEditorWithSpeed):
         """
         return a dictionary of parameterName:parameterValues
         """
-        a,b,c = map(int, self._3intw.getvalue().split())
+        a,b,c = list(map(int, self._3intw.getvalue().split()))
         kw = {'keyframes':[0,a,b,c],
               'forceOrient':False,
               'forceRendering':False}
@@ -510,7 +510,7 @@ class OrientationMAAEditor(MAAEditorWithSpeed):
         """
         zero, a, b, c = kw['keyframes']
         found = False
-        for name, value in self.speedDict.items():
+        for name, value in list(self.speedDict.items()):
             if c==value:
                 self.speedw.invoke(name)
                 found = True
@@ -578,7 +578,7 @@ class SnapshotMAAGroupEditor(SSp_MAAEditor):
         """
         k1, k2 = kw['keyframes']
         found = False
-        for name, value in self.speedDict.items():
+        for name, value in list(self.speedDict.items()):
             if k2==value:
                 self.speedw.invoke(name)
                 found = True
@@ -595,7 +595,7 @@ class SnapshotMAAGroupEditor(SSp_MAAEditor):
             forceList.append('Rendering')
         self.forcew.setvalue(forceList)
         self.sortPolyw.setvalue(kw['sortPoly'])
-        if kw.has_key('sortOrder'):
+        if 'sortOrder' in kw:
             self.sortOrderw.setvalue(kw['sortOrder'])
 
 
@@ -610,9 +610,9 @@ class SnapshotMAAGroupEditor(SSp_MAAEditor):
         self.maa.renderMaa.sortOrder = sortOrder
         self.maa.orientMaa.sortOrder = sortOrder
         values = self.getValues()
-        if values.has_key('interpolateRendering'):
+        if 'interpolateRendering' in values:
             self.maa.interpolateRendering = values['interpolateRendering']
-        if values.has_key('interpolateOrient'):
+        if 'interpolateOrient' in values:
             self.maa.interpolateOrient = values['interpolateOrient']
         if name in ('OK', 'Preview'):
             self.maa.setKeyframePositions( self.getValues()['keyframes'] )
@@ -751,16 +751,16 @@ class SE_MAAEditor(MAAEditorWithSpeed):
             pass
         tw.configure(showLabel=0)
         tw.canvas.bind("<ButtonPress-1>", foo)
-	tw.canvas.bind("<ButtonRelease-1>", foo)
-	tw.canvas.bind("<B1-Motion>", foo)
+        tw.canvas.bind("<ButtonRelease-1>", foo)
+        tw.canvas.bind("<B1-Motion>", foo)
         tw.canvas.bind("<Button-3>", foo)
         
         
     def enableThumbWheel(self, tw, val=None):
         """enables a thumbwheel widgets used to specify easeInEnd and easeOutStart"""
         tw.canvas.bind("<ButtonPress-1>", tw.mouseDown)
-	tw.canvas.bind("<ButtonRelease-1>", tw.mouseUp)
-	tw.canvas.bind("<B1-Motion>", tw.mouseMove)
+        tw.canvas.bind("<ButtonRelease-1>", tw.mouseUp)
+        tw.canvas.bind("<B1-Motion>", tw.mouseMove)
         tw.canvas.bind("<Button-3>", tw.toggleOptPanel)
         tw.configure(showLabel=1)
         if val:
@@ -1151,17 +1151,17 @@ class orientationGUI:
         self.snapshots = {}
         self.nbOrients = 0
         self.master = master
-	self.row = 0
-	self.col = 0
+        self.row = 0
+        self.col = 0
         self.speedDict = {'slow': 50, 'medium': 30, 'fast': 10}
 
         #self.editor = OrientationMAAEditor(master=master)
         self.editor = SnapshotMAAGroupEditor(master=master)
-        self.modifyOrient = Tkinter.IntVar()
+        self.modifyOrient = tkinter.IntVar()
         self.modifyOrient.set(1)
-        self.modifyRendering = Tkinter.IntVar()
+        self.modifyRendering = tkinter.IntVar()
         self.modifyRendering.set(1)
-        self.forceRendering = Tkinter.BooleanVar()
+        self.forceRendering = tkinter.BooleanVar()
         self.forceRendering.set(False)
         self.createGUI()
         self._animNB = None # will become a reference to the AnimationNotebook instance
@@ -1173,7 +1173,7 @@ class orientationGUI:
         Create a ScrolledFrame to old orientations entries
         """
         if self.master is None:
-            self.master = master = Tkinter.Toplevel()
+            self.master = master = tkinter.Toplevel()
             self.ownsMaster = True
         else:
             self.ownsMaster = False
@@ -1182,7 +1182,7 @@ class orientationGUI:
 
         # create a group with a button to record an orientation
         w = self.orientsContainer = Pmw.Group(
-            self.master, tag_pyclass = Tkinter.Button,
+            self.master, tag_pyclass = tkinter.Button,
             tag_text='Record Snapshot')
         w.configure(tag_command = self.recordOrient)
 
@@ -1262,7 +1262,7 @@ class orientationGUI:
     def checkName(self, name):
         """check if the name exists in the self.snapshots or in the sequence player.
         If exists - create unique name"""
-        allnames = self.snapshots.keys()
+        allnames = list(self.snapshots.keys())
 ##         if self._animNB:
 ##             for maa, pos in  self._animNB().seqAnim.maas:
 ##                 if maa.name not in allnames:
@@ -1286,7 +1286,7 @@ class orientationGUI:
             self.viewer.OneRedraw()
             photo, ims = self.viewer.GUI.getButtonIcon()
             maa.ims = ims
-        b = Tkinter.Button(master=master ,compound='left', image=photo,
+        b = tkinter.Button(master=master ,compound='left', image=photo,
                            command=CallbackFunction(self.runMaa, maa))
         b.photo = photo
 
@@ -1296,10 +1296,10 @@ class orientationGUI:
 
         self.balloon.bind(b, maa.name)
         if self.col == self.nButtonsRow-1:
-	    self.col = 0
-	    self.row = self.row + 1
-	else:
-	    self.col = self.col + 1
+            self.col = 0
+            self.row = self.row + 1
+        else:
+            self.col = self.col + 1
 
     def runMaa(self, maagroup):
         orient = maagroup.orientMaa
@@ -1340,7 +1340,7 @@ class orientationGUI:
         orient = maagroup.orientMaa
         render = maagroup.renderMaa
         #orient, render = maagroup.maas
-        menu = Tkinter.Menu(self.master, title = orient.name)
+        menu = tkinter.Menu(self.master, title = orient.name)
         
         #cb = CallbackFunction(self.setForceRendering, orient)
 
@@ -1394,12 +1394,12 @@ class orientationGUI:
     def renameOrient_cb(self, maagroup):
         name = maagroup.name
         container = self.MAAContainer.interior()
-        from tkSimpleDialog import askstring
+        from tkinter.simpledialog import askstring
         newname = askstring("Rename %s"%name, "Enter new name:", initialvalue = name,
                             parent = container)
         if newname != None and newname != name:
-            if self.snapshots.has_key(newname):
-                from tkMessageBox import showwarning
+            if newname in self.snapshots:
+                from tkinter.messagebox import showwarning
                 showwarning("Warning", "Name %s already exists"%newname,parent = self.master)
                 return
             #find cooresponding button, rename it and update the bindings:
@@ -1440,8 +1440,8 @@ class orientationGUI:
                 
                 # ask the user i f he really wants to delete this snapshot
                 # since it will be removed from the sequence animator too:
-                import tkMessageBox
-                ok = tkMessageBox.askokcancel("Delete %s?"%name,"%s is in Sequence Anim.\nThis will also remove the snapshot from Sequence Anim."%name)
+                import tkinter.messagebox
+                ok = tkinter.messagebox.askokcancel("Delete %s?"%name,"%s is in Sequence Anim.\nThis will also remove the snapshot from Sequence Anim."%name)
                 if not ok:
                     return
                 ind = seqmaas.index(maagroup)
@@ -1474,7 +1474,7 @@ class orientationGUI:
         for b in reversed(self.MAAContainer.interior().grid_slaves()):
             if hasattr(b, "name"):
                 name = b.name
-                if self.snapshots.has_key(name):
+                if name in self.snapshots:
                     maas.append(self.snapshots[name])
         return maas
 

@@ -13,7 +13,7 @@
 #
 
 from MolKit.pdbParser import PdbParser
-import string, sys, copy, os, types
+import sys, copy, os, types; from mglcompat import pystring as string
 from MolKit.moleculeParser import MoleculeParser
 from MolKit.protein import Protein, Chain, ChainSet, Residue, ResidueSet, ProteinSet
 from MolKit.molecule import Atom, AtomSet, Bond, BondSet
@@ -67,7 +67,7 @@ class GenPdbParser(PdbParser):
         elif type=='string': pass
         if not ok:
             #self.f.write('WARNING: '+ fieldName+' value not of type '+type+ ' in record:\n'+rec)
-            print 'WARNING:', fieldName, 'value not of type', type, 'in record:\n', rec
+            print('WARNING:', fieldName, 'value not of type', type, 'in record:\n', rec)
             val = ''            
         return val
 
@@ -76,17 +76,17 @@ class GenPdbParser(PdbParser):
         #name = '/home/ktchan/pmvproject/debug.txt'
         #self.f = open(name, 'w')
         self.mol.curChain = Chain()
-	self.mol.curRes = Residue()
+        self.mol.curRes = Residue()
         self.mol.levels = [Protein, Chain, Residue, Atom]
         cid = self.get_Field_Value(atoms[0], 'chainID')
         if cid:   # we know the chains
-            atm = filter(lambda x, cid = cid, f = self.get_Field_Value:
-                         f(x, 'chainID')==cid, atoms)
+            atm = list(filter(lambda x, cid = cid, f = self.get_Field_Value:
+                         f(x, 'chainID')==cid, atoms))
         else: atm = atoms  # assume they are all of one chain
-        map( self.parse_PDB_ATOM_record,atm)
+        list(map( self.parse_PDB_ATOM_record,atm))
         if cid:   # only if we know the chains
-            atoms = filter(lambda x, cid = cid, f = self.get_Field_Value:
-                           f(x, 'chainID')!=cid, atoms)
+            atoms = list(filter(lambda x, cid = cid, f = self.get_Field_Value:
+                           f(x, 'chainID')!=cid, atoms))
             if len(atoms)>0: self.parse_PDB_atoms(atoms)
         #self.f.close()
 
@@ -226,7 +226,7 @@ class GenPdbParser(PdbParser):
         if tempFactor: atom.temperatureFactor = float(tempFactor)
 
         # add in user defined fields to atom attributes
-        for field_name in self.recSpecs.UserFieldsDict.keys():
+        for field_name in list(self.recSpecs.UserFieldsDict.keys()):
             value = self.get_Field_Value(rec, field_name)
             type = self.recSpecs.get(field_name, 'var_type')
             if value:
@@ -290,20 +290,20 @@ class AtomRecFieldSpecs:
 
     def remove_field(self, Fieldprops):
         fieldName = Fieldprops['field_name']
-        if self.DefFieldsDict.has_key(fieldName):
+        if fieldName in self.DefFieldsDict:
             del self.DefFieldsDict[fieldName]
-        elif self.UserFieldsDict.has_key(fieldName):
+        elif fieldName in self.UserFieldsDict:
             del self.UserFieldsDict[fieldName]
         else: pass 
 
     def get(self, fieldName, what):
         """ what is 'to', 'from', 'index', or 'var_type' """
-        if self.DefFieldsDict.has_key(fieldName):
-            if self.DefFieldsDict[fieldName].has_key(what):
+        if fieldName in self.DefFieldsDict:
+            if what in self.DefFieldsDict[fieldName]:
                 return self.DefFieldsDict[fieldName][what]
             else: return None
-        elif self.UserFieldsDict.has_key(fieldName):
-            if self.UserFieldsDict[fieldName].has_key(what):
+        elif fieldName in self.UserFieldsDict:
+            if what in self.UserFieldsDict[fieldName]:
                 return self.UserFieldsDict[fieldName][what]
             else: return None
         else: return None
@@ -315,32 +315,32 @@ class ColumnSpecs(AtomRecFieldSpecs):
         self.specType = 'c'
 
     def checkEntry(self, FDict):
-        if not ( FDict.has_key('from') and FDict.has_key('to') ):
-            print 'column specifications missing'
+        if not ( 'from' in FDict and 'to' in FDict ):
+            print('column specifications missing')
             return 0
-        if not FDict.has_key('var_type'):
-            print 'var_type missing'
+        if 'var_type' not in FDict:
+            print('var_type missing')
             return 0
-        if not FDict.has_key('field_name'):
-            print 'field_name missing'
+        if 'field_name' not in FDict:
+            print('field_name missing')
             return 0
         f, t = FDict['from'], FDict['to']
         # check that specs are integers
-        if type(f) != types.IntType or type(t) != types.IntType or \
+        if type(f) != int or type(t) != int or \
            f < 1 or t < 1 or f > 80 or t > 80:
-            print 'ERROR: column specification must be an integer between 1 and 80'
+            print('ERROR: column specification must be an integer between 1 and 80')
             return 0
-        if f > t: print "ERROR: 'from' is greater than 'to'"
+        if f > t: print("ERROR: 'from' is greater than 'to'")
         if FDict['var_type'] not in variableTypes:
-            print 'ERROR: unkown variable type'
+            print('ERROR: unkown variable type')
             return 0 
         # check that column specs don't overlap
-        for fName in (self.DefFieldsDict.keys() + self.UserFieldsDict.keys()):
+        for fName in (list(self.DefFieldsDict.keys()) + list(self.UserFieldsDict.keys())):
             if fName != FDict['field_name']:
                 beg, end = self.get(fName, 'from'), self.get(fName, 'to')
                 if (f in range(beg, end+1)) or (t in range(beg, end+1)) or \
                    (beg in range(f, t+1)) or (end in range(f, t+1)):
-                    print 'ERROR: overlapping column specifications'
+                    print('ERROR: overlapping column specifications')
                     return 0
         return 1          
 
@@ -358,29 +358,29 @@ class IndexSpecs(AtomRecFieldSpecs):
         self.specType = 'i'
 
     def checkEntry(self, FDict):
-        if not FDict.has_key('index'):
-            print 'index missing'
+        if 'index' not in FDict:
+            print('index missing')
             return 0
-        if not FDict.has_key('var_type'):
-            print 'var_type missing'
+        if 'var_type' not in FDict:
+            print('var_type missing')
             return 0
-        if not FDict.has_key('field_name'):
-            print 'field_name missing'
+        if 'field_name' not in FDict:
+            print('field_name missing')
             return 0
         i = FDict['index']
         # check that specs are integers
-        if type(i) != types.IntType or i < 1:
-            print 'ERROR: index specification must be a positive integer'
+        if type(i) != int or i < 1:
+            print('ERROR: index specification must be a positive integer')
             return 0 
         if FDict['var_type'] not in variableTypes:
-            print 'ERROR: unkown variable type'
+            print('ERROR: unkown variable type')
             return 0 
         # check that index specs don't overlap
-        for fName in (self.DefFieldsDict.keys() + self.UserFieldsDict.keys()):
+        for fName in (list(self.DefFieldsDict.keys()) + list(self.UserFieldsDict.keys())):
             if fName != FDict['field_name']:
                 index = self.get(fName, 'index')
                 if i==index:
-                    print 'ERROR: index specification already defined'
+                    print('ERROR: index specification already defined')
                     return 0 
         return 1
           

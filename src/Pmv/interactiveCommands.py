@@ -20,7 +20,7 @@ from Pmv.picker import AtomPicker
 from ViewerFramework.VFCommand import CommandGUI, ICOM, ActiveObject, Command
 ##  from ViewerFramework.gui import InputFormDescr
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
-import Tkinter, Pmw, types, string, os
+import tkinter, Pmw, types, os; from mglcompat import pystring as string
 
 
 class MVSetInteractiveCmd(MVCommand):
@@ -60,23 +60,23 @@ class MVSetInteractiveCmd(MVCommand):
             assert isinstance(cmd, ICOM)
         kw['modifier'] = modifier
         kw['mode'] = mode
-        apply( self.doitWrapper, (cmd, ), kw )
+        self.doitWrapper(*(cmd, ), **kw)
 
 
     def command_cb(self, val):
         cmd = self.vf.commands[val]
-        apply( self.doitWrapper, (cmd, None), {} )
+        self.doitWrapper(*(cmd, None), **{})
 
 
     def level_cb(self, val):
-        apply( self.vf.setIcomLevel, (eval(val),), {} )
+        self.vf.setIcomLevel(*(eval(val),), **{})
        
 
 
 def getICOMBar(viewer):
     # selection command use buttons in a selectionBar
     # this function creates the bar if it does not exist yet else returns it
-    if not viewer.GUI.menuBars.has_key('icomBar'):
+    if 'icomBar' not in viewer.GUI.menuBars:
 ##         viewer.GUI.addMenuBar('icomBar',
 ##                               {'borderwidth':2, 'relief':'raised'},
 ##                               {'side':'top', 'expand':1, 'fill':'x'})
@@ -134,9 +134,9 @@ class MVIcomGUI(MVCommand):
 
 
     def getICOMNames(self):
-        names = filter( lambda x, klass=ICOM: isinstance(x, klass),
-                        self.vf.commands.values() )
-        names = map( lambda x: x.name, names )
+        names = list(filter( lambda x, klass=ICOM: isinstance(x, klass),
+                        list(self.vf.commands.values()) ))
+        names = [x.name for x in names]
         names.sort()
         return names
 
@@ -308,7 +308,7 @@ class MVIcomGUI(MVCommand):
 
 
     def Shift_cb(self, cmdName):
-        if isinstance(cmdName, Tkinter.Event):
+        if isinstance(cmdName, tkinter.Event):
             cmdName = cmdName.widget.get(cmdName.widget.curselection())
         if cmdName=='select': # special treatment to restore default picking
             ICmdCaller =  self.vf.ICmdCaller
@@ -327,7 +327,7 @@ class MVIcomGUI(MVCommand):
 
 
     def Ctrl_cb(self, cmdName):
-        if isinstance(cmdName, Tkinter.Event):
+        if isinstance(cmdName, tkinter.Event):
             cmdName = cmdName.widget.get(cmdName.widget.curselection())
         if cmdName=='None' or cmdName is None: cmd=None
         else: cmd = self.vf.commands[cmdName]
@@ -358,7 +358,7 @@ class MVIcomGUI(MVCommand):
             self.vf.setIcomLevel(Molecule)
 
 PCOMGUI = CommandGUI()
-from moleculeViewer import ICONPATH
+from .moleculeViewer import ICONPATH
 PCOMGUI.addToolBar('PCOM', icon1 = 'mouse.gif', icon_dir=ICONPATH,
                    balloonhelp = 'Picking COMmands', index = 0)
 
@@ -391,17 +391,17 @@ class MVBindCmdToKey(MVCommand):
                                           self.processRelease_cb)
 
     def processRelease_cb(self, event):
-        if not self.bindings.has_key(event.keysym):
+        if event.keysym not in self.bindings:
             return
         dict = self.bindings[event.keysym]
         mod = self.vf.GUI.VIEWER.getModifier()
         c = dict[mod]
         if c:
-            apply( c[0], c[1], c[2] )
+            c[0](*c[1], **c[2])
 
 
     def setupUndoBefore(self, key, modifier, cmd, args, kw):
-        if not self.bindings.has_key(key): return
+        if key not in self.bindings: return
         c = self.bindings[key][modifier]
         if c: cmd = c
         else: c = None
@@ -412,7 +412,7 @@ class MVBindCmdToKey(MVCommand):
         assert isinstance(cmd, Command)
         assert modifier in ['None', 'Shift_L', 'Control_L', 'Alt_L',
                             'Shift_R', 'Control_R', 'Alt_R']
-        assert key in self.bindings.keys()
+        assert key in list(self.bindings.keys())
         if cmd is None: cmd='None'
         self.bindings[key][modifier] = (cmd, args, kw)
 
@@ -423,7 +423,7 @@ class MVBindCmdToKey(MVCommand):
            modifier: name of the modifier ('Shift_L', 'Control_L', 'Alt_L' ...)
            cmd: name of the command which wanted to be bound to the key"""
            
-        apply( self.doitWrapper, (key, modifier, cmd, args, kwa), kw)
+        self.doitWrapper(*(key, modifier, cmd, args, kwa), **kw)
         
         
  

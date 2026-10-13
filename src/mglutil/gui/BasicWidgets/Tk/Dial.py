@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #########################################################################
 #
@@ -11,7 +11,7 @@
 #
 #########################################################################
 
-import Tkinter
+import tkinter
 import math
 import types
 import sys
@@ -19,11 +19,11 @@ import os
 
 from mglutil.util.callback import CallbackManager
 from mglutil.util.misc import ensureFontCase
-from optionsPanel import OptionsPanel
+from .optionsPanel import OptionsPanel
 
-from KeyboardEntry import KeyboardEntry
+from .KeyboardEntry import KeyboardEntry
 
-class Dial(Tkinter.Frame, KeyboardEntry):
+class Dial(tkinter.Frame, KeyboardEntry):
     """This class implements a Dial widget.
 The widget has a pointer that can be moved around a circle.
 The range corresponding to one full turn can be specified as well as the min
@@ -73,8 +73,8 @@ increment will now be added to this new <value>
                  lockPrecision=0, lockShowLabel=0, lockValue=0,
                  lockType=0, lockContinuous=0, lockOneTurn=0, **kw):
 
-	Tkinter.Frame.__init__(self, master)
-        Tkinter.Pack.config(self)
+        tkinter.Frame.__init__(self, master)
+        tkinter.Pack.config(self)
 
         self.callbacks = CallbackManager() # object to manage callback
                                         # functions. They get called with the
@@ -149,9 +149,9 @@ increment will now be added to this new <value>
         self.createCanvas(master)
 
         canvas = self.canvas
-	canvas.bind("<ButtonPress-1>", self.mouseDown)
-	canvas.bind("<ButtonRelease-1>", self.mouseUp)
-	canvas.bind("<B1-Motion>", self.mouseMove)
+        canvas.bind("<ButtonPress-1>", self.mouseDown)
+        canvas.bind("<ButtonRelease-1>", self.mouseUp)
+        canvas.bind("<B1-Motion>", self.mouseMove)
         canvas.bind("<Button-3>", self.toggleOptPanel)
 
         if os.name == 'nt': #sys.platform == 'win32':
@@ -199,7 +199,7 @@ increment will now be added to this new <value>
     def setSize(self, size):
         """Set widget size. Size must be of type int and greater than 0"""
 
-        assert isinstance(size, types.IntType),\
+        assert isinstance(size, int),\
                "Illegal size: expected type %s, got %s"%(type(1), type(size) )
         assert size > 0, "Illegal size: must be > 0, got %s"%size
         self.size = size
@@ -209,10 +209,10 @@ increment will now be added to this new <value>
         """Set widget callback. Must be callable function. Callback is called
 every time the widget value is set/modified"""
 
-        assert cb is None or callable(cb) or type(cb) is types.ListType,\
+        assert cb is None or callable(cb) or type(cb) is list,\
                "Illegal callback: must be either None or callable, or list. Got %s"%cb
         if cb is None: return
-        elif type(cb) is types.ListType:
+        elif type(cb) is list:
             for func in cb:
                 assert callable(func), "Illegal callback must be callable. Got %s"%func
                 self.callbacks.AddCallback(func)
@@ -243,13 +243,13 @@ every time the widget value is set/modified"""
 
 
     def mouseDown(self, event):
-	# remember where the mouse went down
-	self.lastx = event.x
-	self.lasty = event.y
+        # remember where the mouse went down
+        self.lastx = event.x
+        self.lasty = event.y
 
 
     def mouseUp(self, event):
-	# call callbacks if not in continuous mode
+        # call callbacks if not in continuous mode
         if not self.continuous:
             self.callbacks.CallCallbacks(self.opPanel.valInput.get())
         if self.showLabel == 2:
@@ -407,19 +407,19 @@ every time the widget value is set/modified"""
         else:
             col1 = 'black'
             col2 = '#DDDDDD'
-        apply( canvas.coords, (self.arrowPolId,) + tuple(pts1+pts2) )
-        apply( canvas.coords, (self.arrowPolborder1,) + tuple(pts1) )
+        canvas.coords(*(self.arrowPolId,) + tuple(pts1+pts2))
+        canvas.coords(*(self.arrowPolborder1,) + tuple(pts1))
         canvas.itemconfigure( self.arrowPolborder1, fill=col1 )
-        apply( canvas.coords, (self.arrowPolborder2,) + tuple(pts2) )
+        canvas.coords(*(self.arrowPolborder2,) + tuple(pts2))
         canvas.itemconfigure( self.arrowPolborder2, fill=col2 )
         canvas.itemconfigure(self.arcId, extent = 0.0-self.angle)
 
        
     def createCanvas(self, master):
         size = self.size
-        self.frame = Tkinter.Frame(self, borderwidth=3, relief='sunken')
+        self.frame = tkinter.Frame(self, borderwidth=3, relief='sunken')
 
-	self.canvas = Tkinter.Canvas(self.frame, width=size+2, height=size+2)
+        self.canvas = tkinter.Canvas(self.frame, width=size+2, height=size+2)
 
         self.xm = self.ym = size/2+2
         self.rad = size/2
@@ -471,7 +471,7 @@ every time the widget value is set/modified"""
         self.opPanel = OptionsPanel(master = self, title="Dial Options")
 
         # pack em up
-        self.canvas.pack(side=Tkinter.TOP)
+        self.canvas.pack(side=tkinter.TOP)
         self.frame.pack(expand=1, fill='x')
         self.toggleWidgetLabel(self.showLabel)
 
@@ -501,10 +501,10 @@ every time the widget value is set/modified"""
 
     def setValue(self, val):
 
-        if type(val) == types.StringType:
+        if type(val) == bytes:
             val = float(val)
 
-        assert type(val) in [types.IntType, types.FloatType],\
+        assert type(val) in [int, float],\
                "Illegal type for value: expected %s or %s, got %s"%(
                    type(1), type(1.0), type(val) )
 
@@ -536,14 +536,14 @@ every time the widget value is set/modified"""
             return
 
         d={}
-        for k, w in self.labCfg.items():
+        for k, w in list(self.labCfg.items()):
             if k == 'side': continue
             else: d[k] = w
-        if not 'side' in self.labCfg.keys():
+        if not 'side' in list(self.labCfg.keys()):
             self.labCfg['side'] = 'left'
 
         if not self.lab:
-            self.lab = Tkinter.Label(self, d)
+            self.lab = tkinter.Label(self, d)
             self.lab.pack(side=self.labCfg['side'])
             self.lab.bind("<Button-3>", self.toggleOptPanel)
         else:
@@ -555,7 +555,7 @@ every time the widget value is set/modified"""
  #####################################################################
 
     def configure(self, **kw):
-        for key,value in kw.items():
+        for key,value in list(kw.items()):
             # the 'set' parameter callbacks
             if key=='labCfg': self.setLabel(value)
             elif key=='type': self.setType(value)
@@ -584,7 +584,7 @@ every time the widget value is set/modified"""
             
     def setType(self, Type):
 
-        assert type(Type) in [types.StringType, types.TypeType],\
+        assert type(Type) in [bytes, type],\
                "Illegal type for datatype. Expected %s or %s, got %s"%(
                    type('a'), type(type), type(Type) )
         
@@ -619,7 +619,7 @@ every time the widget value is set/modified"""
     def setMin(self, min):
         if min is not None:
 
-            assert type(min) in [types.IntType, types.FloatType],\
+            assert type(min) in [int, float],\
                  "Illegal type for minimum. Expected type %s or %s, got %s"%(
                      type(0), type(0.0), type(min) )
             
@@ -652,7 +652,7 @@ every time the widget value is set/modified"""
     def setMax(self, max):
         if max is not None:
 
-            assert type(max) in [types.IntType, types.FloatType],\
+            assert type(max) in [int, float],\
                  "Illegal type for maximum. Expected type %s or %s, got %s"%(
                      type(0), type(0.0), type(max) )
              
@@ -684,7 +684,7 @@ every time the widget value is set/modified"""
     def setIncrement(self, incr):
         if incr is not None:
 
-            assert type(incr) in [types.IntType, types.FloatType],\
+            assert type(incr) in [int, float],\
                 "Illegal type for increment. Expected type %s or %s, got %s"%(
                     type(0), type(0.0), type(incr) )
 
@@ -706,7 +706,7 @@ every time the widget value is set/modified"""
 
 
     def setPrecision(self, val):
-        assert type(val) in [types.IntType, types.FloatType],\
+        assert type(val) in [int, float],\
                "Illegal type for precision. Expected type %s or %s, got %s"%(
                      type(0), type(0.0), type(val) )
         val = int(val)
@@ -763,7 +763,7 @@ every time the widget value is set/modified"""
                "Illegal value for showLabel. Expected 0, 1 or 2, got %s"%val
         
         if val != 0 and val != 1 and val != 2:
-            print "Illegal value. Must be 0, 1 or 2"
+            print("Illegal value. Must be 0, 1 or 2")
             return
         self.showLabel = val
         self.toggleWidgetLabel(val)
@@ -783,7 +783,7 @@ every time the widget value is set/modified"""
 
 
     def setOneTurn(self, oneTurn):
-        assert type(oneTurn) in [types.IntType, types.FloatType],\
+        assert type(oneTurn) in [int, float],\
                "Illegal type for oneTurn. Expected %s or %s, got %s"%(
                    type(0), type(0.0), type(oneTurn) )
         
@@ -887,7 +887,7 @@ every time the widget value is set/modified"""
 
 if __name__ == '__main__':
     def foo(val):
-        print val
+        print(val)
     d = Dial(size=50)
     d.configure(showLabel=1)
     d.callbacks.AddCallback(foo)

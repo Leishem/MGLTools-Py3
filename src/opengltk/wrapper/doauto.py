@@ -1,12 +1,13 @@
-## Automatically adapted for numpy.oldnumeric Jul 30, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 30, 2007 by 
 
 #
 # copyright_notice
 #
 
-from __future__ import nested_scopes
 
-import string
+
+from mglcompat import pystring as string
+from functools import reduce
 
 typmap = {
     'b': 'GLbyte',
@@ -28,11 +29,11 @@ pixeltypes = ['f', 'ui', 'us']
 
 def gl_auto():
 
-    print '"""automatically generated"""\n'
-    print 'import numpy.oldnumeric as Numeric\n'
-    print 'from opengltk.extent import _gllib\n'
-    print 'from opengltk.util import glGetXXDim, %s\n'\
-          % string.join( typmap.values(), ', ')
+    print('"""automatically generated"""\n')
+    print('import mglcompat.oldnumeric as Numeric\n')
+    print('from opengltk.extent import _gllib\n')
+    print('from opengltk.util import glGetXXDim, %s\n'\
+          % string.join( list(typmap.values()), ', '))
     
     allnames = []
 
@@ -85,7 +86,7 @@ def gl_auto():
             ] , '\n')
     
     allnames += glGetNames( glGets)
-    print string.join( [ apply( glGetFunv, x) for x in glGets], '\n')
+    print(string.join( [ glGetFunv(*x) for x in glGets], '\n'))
 
     coltypes = ['b', 'd', 'f', 'i', 's', 'ub', 'ui', 'us']
 
@@ -102,25 +103,25 @@ def gl_auto():
     def sztypvname( name, dim, typ):
         return '%s%i%sv' % (name, dim, typ)
 
-    allnames += [apply( sztypvname, x) for x in sztypv]
+    allnames += [sztypvname(*x) for x in sztypv]
 
     for name, dim, typ in sztypv:
         fname = sztypvname( name, dim, typ)
         ctype = typmap[ typ]
-        print '\ndef %s( v):' % fname
-        print '    """\n    v - seq( %s, %i)\n    """' % (ctype, dim)
-        print '    if %i != len( v):' % dim
-        print '        raise TypeError( len( v), "%i-array expected")' % dim
-        print '    _gllib.%s( v)' % fname
+        print('\ndef %s( v):' % fname)
+        print('    """\n    v - seq( %s, %i)\n    """' % (ctype, dim))
+        print('    if %i != len( v):' % dim)
+        print('        raise TypeError( len( v), "%i-array expected")' % dim)
+        print('    _gllib.%s( v)' % fname)
 
     indimarrays = [
         ('glDeleteTextures', 'GLuint'),
         ]
     allnames += [x[ 0] for x in indimarrays]
     for fun, typ in indimarrays:
-        print '\ndef %s( seq):' % fun
-        print '    """\n    vseq - sequence( %s)\n    """' % typ
-        print '    return _gllib.%s( len( seq), seq)' % fun
+        print('\ndef %s( seq):' % fun)
+        print('    """\n    vseq - sequence( %s)\n    """' % typ)
+        print('    return _gllib.%s( len( seq), seq)' % fun)
 
 
     outdimarrays = [
@@ -128,11 +129,11 @@ def gl_auto():
         ]
     allnames += [x[ 0] for x in outdimarrays]
     for fun, typ in outdimarrays:
-        print '\ndef %s( n):' % fun
-        print '    """\nreturn - sequence( %s, n)\n    """' % typ
-        print '    result = Numeric.zeros( n, %s)' % typ
-        print '    _gllib.%s( n, result)' % fun
-        print '    return result'
+        print('\ndef %s( n):' % fun)
+        print('    """\nreturn - sequence( %s, n)\n    """' % typ)
+        print('    result = Numeric.zeros( n, %s)' % typ)
+        print('    _gllib.%s( n, result)' % fun)
+        print('    return result')
 
 
     ptrninputs = [('glIndex', 1, styp) for styp in ['d', 'f', 'i', 's', 'ub']]
@@ -149,9 +150,9 @@ def gl_auto():
             '    _gllib.%s( v)' % fname,
             ]
         return string.join( strs, '\n')
-    allnames += [apply( ptrninputname, x) for x in ptrninputs]
+    allnames += [ptrninputname(*x) for x in ptrninputs]
     for name, dim, styp in ptrninputs:
-            print ptrninputfun( name, dim, styp)
+            print(ptrninputfun( name, dim, styp))
 
 
     rectvs = [('glRect', 2, styp) for styp in 'dfis']
@@ -172,9 +173,9 @@ def gl_auto():
             '    _gllib.%s( v1, v2)' % fname,
             ]
         return string.join( strs, '\n')
-    allnames += [apply( rectvname, x) for x in rectvs]
+    allnames += [rectvname(*x) for x in rectvs]
     for name, dim, styp in rectvs:
-            print rectvfun( name, dim, styp)
+            print(rectvfun( name, dim, styp))
 
 
     inparms = []
@@ -203,9 +204,9 @@ def gl_auto():
             '                         "wrong size of parms")',
             '    _gllib.%s' % fcall,
             ] , '\n')
-    allnames += [apply( inparmvname, x[ :2]) for x in inparms]
+    allnames += [inparmvname(*x[ :2]) for x in inparms]
     for inparm in inparms:
-        print apply( inparmfun, inparm)
+        print(inparmfun(*inparm))
 
         
 ##      invectfuns = [('glNormal', 3, x) for x in 'bdfis']
@@ -222,25 +223,25 @@ def gl_auto():
             '        raise TypeError( len( v), "v must be a 3-array")',
             '    _gllib.%s( v)' % fname,
             ] , '\n')
-    allnames += [apply( invectname, x) for x in invectfuns]
+    allnames += [invectname(*x) for x in invectfuns]
     for x in invectfuns:
-        print apply( invectf, x)
+        print(invectf(*x))
         
 
     invtyp = [('glPixelMap', x, [('map', 'GLenum')]) for x in pixeltypes]
     def invtypname( name, typ, args):
         return '%s%sv' % (name, typ)
-    allnames += [apply( invtypname, x) for x in invtyp]
+    allnames += [invtypname(*x) for x in invtyp]
     for name, typdesc, args in invtyp:
         typ = typmap[ typdesc]
         argprint, argsdoc = argsdocpr( args)
         fname = invtypname( name, typdesc, args)
-        print '\ndef %s(%s values):' % (fname, argprint)
-        print '    """\n    %s' % argsdoc
-        print '    values - seq( %s)\n    """' % typ
-        print '    _gllib.%s(%s values)' % (fname, argprint)
+        print('\ndef %s(%s values):' % (fname, argprint))
+        print('    """\n    %s' % argsdoc)
+        print('    values - seq( %s)\n    """' % typ)
+        print('    _gllib.%s(%s values)' % (fname, argprint))
 
-    print '\n__all__ = ["%s"]' % string.join( allnames, '",\n    "')
+    print('\n__all__ = ["%s"]' % string.join( allnames, '",\n    "'))
 
 def gl_deprec():
     deprfuns = []
@@ -263,15 +264,15 @@ def gl_deprec():
 ##      deprfuns += [('glPolygonStipple', '( mask)',
 ##                    'what is the stipple format ??')]
 
-    print '"""automatically generated"""\n'
-    print '\n__all__ = ["%s"]' % string.join( [x[ 0] for x in deprfuns],
-                                              '",\n    "')
-    print '\nfrom warnings import warn\n'
-    print 'from opengltk.extent import _gllib\n'
-    print '\nclass ToWrap( RuntimeWarning):\n    pass\n'
+    print('"""automatically generated"""\n')
+    print('\n__all__ = ["%s"]' % string.join( [x[ 0] for x in deprfuns],
+                                              '",\n    "'))
+    print('\nfrom warnings import warn\n')
+    print('from opengltk.extent import _gllib\n')
+    print('\nclass ToWrap( RuntimeWarning):\n    pass\n')
 
     for fun, args, desc in deprfuns:
-        print '\ndef %s%s:' % (fun, args)
-        print '    """To Wrap: %s"""' % desc
-        print '    warn( desc, ToWrap)'
-        print '    return _gllib.%s%s' % (fun, args)
+        print('\ndef %s%s:' % (fun, args))
+        print('    """To Wrap: %s"""' % desc)
+        print('    warn( desc, ToWrap)')
+        print('    return _gllib.%s%s' % (fun, args))

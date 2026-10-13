@@ -1,7 +1,7 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 from struct import pack
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from Volume.Grid3D import Grid3DUC, Grid3DSI, Grid3DF
 
 class VolumeWriterBase:
@@ -27,7 +27,7 @@ class WriteCCP4(VolumeWriterBase):
         for i in (0,1,2):
             nstart[i] = round(grid3D.origin[i] / grid3D.stepSize[i])
 
-        if header.has_key('nx'):
+        if 'nx' in header:
             ncstart = round(header['nx']*grid3D.origin[2])
             nrstart = round(header['ny']*grid3D.origin[1])
             nsstart = round(header['nz']*grid3D.origin[0])
@@ -73,10 +73,10 @@ class WriteCCP4(VolumeWriterBase):
         skwmat = header.get('skwmat', (0.0,)*9)
         skwtrn = header.get('skwtrn', (0.0,)*3)
 
-        s += apply( pack, ("12f",) + skwmat + skwtrn )
+        s += pack(*("12f",) + skwmat + skwtrn)
         
         future_words = header.get('future_words', (0,)*15)
-        s += apply( pack, ("15i",) + future_words )
+        s += pack(*("15i",) + future_words)
 
         # we don't use this, but put it here for completion
         s += pack("4c", ' ', ' ', ' ', ' ')
@@ -89,20 +89,19 @@ class WriteCCP4(VolumeWriterBase):
         s += pack("1f", arms)
 
         s += pack("i", 0)
-        s += apply( pack, ("800c",) + (' ',)*800)
+        s += pack(*("800c",) + (' ',)*800)
         assert len(s)==1024
 
         #append an according length of space for the symmetry ops
-        s += apply( pack, ("%dc"%nsymbt,) + (' ',)*nsymbt)
+        s += pack(*("%dc"%nsymbt,) + (' ',)*nsymbt)
         
         f.write('%s'%s)
 
         if array.flags.contiguous:
             #print 'writing contiguous'
-            f.write('%s'% apply ( pack, ("%df"%(array.shape[0]*array.shape[1]*
+            f.write('%s'% pack(*("%df"%(array.shape[0]*array.shape[1]*
                                                 array.shape[2]),
-                                         ) + tuple(array.astype('f').ravel())
-                                  )
+                                         ) + tuple(array.astype('f').ravel()))
                     )
         else:
             #print 'writing NON contiguous'
@@ -112,7 +111,7 @@ class WriteCCP4(VolumeWriterBase):
                         f.write('%f'%array[i][j][k])
         f.close()
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 class WriteRawiv:
     """ Writes volumetric data to .rawiv file format. """
 
@@ -132,7 +131,7 @@ class WriteRawiv:
         elif arraytype in (Numeric.Float32, Numeric.Float16):
             packType = 'f'
         else:
-            print "Error in write_file() , typecode %s not supported"%(arraytype,)
+            print("Error in write_file() , typecode %s not supported"%(arraytype,))
             return
 
         if not stepSize:
@@ -168,12 +167,12 @@ class WriteRawiv:
         #open file for writting data:
         of = open(file,"wb")
         #write header:
-        of.write(apply(pack, ('>6f5I6f',)+st))
+        of.write(pack(*('>6f5I6f',)+st))
         fmt = ">%d%s"%(size, packType)
         #write data:
-        of.write( apply(pack, (fmt,)+tuple(data.ravel())))
+        of.write( pack(*(fmt,)+tuple(data.ravel())))
         of.close()
     
 
 if __name__=='__main__':
-    from volReaders import ReadCCP4
+    from .volReaders import ReadCCP4

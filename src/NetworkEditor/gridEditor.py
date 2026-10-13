@@ -12,10 +12,10 @@
 #
 #########################################################################
 
-import Tkinter, Pmw
+import tkinter, Pmw
 import warnings
 import types
-import string, types, weakref
+import types, weakref; from mglcompat import pystring as string
 from mglutil.util.callback import CallBackFunction
 
 
@@ -26,7 +26,7 @@ set() method"""
     def __init__(self, root=None, port=None, label=False, callback=None):
         # set root
         if root is None:
-            self.root = self.panel = Tkinter.Toplevel()
+            self.root = self.panel = tkinter.Toplevel()
         else:
             self.root = root
 
@@ -44,17 +44,17 @@ set() method"""
                            # side are created
 
         # now define the Tkinter variables needed to set/get values
-        self.rowTk = Tkinter.IntVar()
-        self.rowspanTk = Tkinter.IntVar()
-        self.columnTk = Tkinter.IntVar()
-        self.columnspanTk = Tkinter.IntVar()
-        self.stickyTk = Tkinter.StringVar()
-        self.labelNameTk = Tkinter.StringVar()
-        self.labelSideTk = Tkinter.StringVar()
-        self.padxTk =  Tkinter.IntVar()
-        self.padyTk =  Tkinter.IntVar()
-        self.ipadxTk =  Tkinter.IntVar()
-        self.ipadyTk =  Tkinter.IntVar()
+        self.rowTk = tkinter.IntVar()
+        self.rowspanTk = tkinter.IntVar()
+        self.columnTk = tkinter.IntVar()
+        self.columnspanTk = tkinter.IntVar()
+        self.stickyTk = tkinter.StringVar()
+        self.labelNameTk = tkinter.StringVar()
+        self.labelSideTk = tkinter.StringVar()
+        self.padxTk =  tkinter.IntVar()
+        self.padyTk =  tkinter.IntVar()
+        self.ipadxTk =  tkinter.IntVar()
+        self.ipadyTk =  tkinter.IntVar()
 
 
         # initialize with default values that are different from '0'
@@ -63,7 +63,7 @@ set() method"""
         self.stickyTk.set('w')
 
         # variable for checkutton:
-        self.cbVar = Tkinter.IntVar()
+        self.cbVar = tkinter.IntVar()
         self.cbVar.set(0)
 
         # and finally, create the GUI
@@ -73,89 +73,89 @@ set() method"""
     def createForm(self):
         """this method builds the GUI"""
         
-        mainFrame = Tkinter.Frame(self.root)
+        mainFrame = tkinter.Frame(self.root)
         mainFrame.pack(side='top', expand=1, fill='both')
 
-        cb = Tkinter.Checkbutton(mainFrame, text='more options',
+        cb = tkinter.Checkbutton(mainFrame, text='more options',
                                  command=self.toggleOpts_cb,
                                  var=self.cbVar)
         cb.pack()
-        gridFrame = Tkinter.Frame(mainFrame, borderwidth=2,
+        gridFrame = tkinter.Frame(mainFrame, borderwidth=2,
                                   relief='sunken', padx=5, pady=5)
         gridFrame.pack(side='top', expand=1, fill='both')
         
 
-        self.topGrid = Tkinter.Frame(gridFrame)
+        self.topGrid = tkinter.Frame(gridFrame)
         self.topGrid.grid(row=0, column=0, sticky='wens')
-        self.bottomGrid = Tkinter.Frame(gridFrame)
+        self.bottomGrid = tkinter.Frame(gridFrame)
         self.topGrid.grid(row=1, column=0, sticky='wens')
        
         row = 0
         ## Build the widgets which are visible by default (one line): topGrid
         if self.label:
-            self.l1 = Tkinter.Label(self.topGrid, text='name:')
+            self.l1 = tkinter.Label(self.topGrid, text='name:')
             self.l1.grid(row=row, column=0, sticky='w')
             self.b1 = Pmw.Balloon(self.topGrid)
             self.b1.bind(self.l1, "Change the name of the Label")
-            self.e1 = Tkinter.Entry(self.topGrid, width=10,
+            self.e1 = tkinter.Entry(self.topGrid, width=10,
                                      textvariable=self.labelNameTk)
             self.e1.grid(row=row, column=1, sticky='we')
 
-            self.l2 = Tkinter.Label(self.topGrid, text='side:')
+            self.l2 = tkinter.Label(self.topGrid, text='side:')
             self.l2.grid(row=row, column=2, sticky='w')
             self.b2 = Pmw.Balloon(self.topGrid)
             self.b2.bind(self.l2, "Change the side of the Label")
-            self.e2 = Tkinter.Entry(self.topGrid, width=5,
+            self.e2 = tkinter.Entry(self.topGrid, width=5,
                                      textvariable=self.labelSideTk)
             self.e2.grid(row=row, column=3, sticky='we')
             row += 1
 
         else:
-            self.l1 = Tkinter.Label(self.topGrid, text="row:")
+            self.l1 = tkinter.Label(self.topGrid, text="row:")
             self.l1.grid(row=row, column=0, sticky='w')
             self.b1 = Pmw.Balloon(self.topGrid)
             self.b1.bind(self.l1,
                      "Insert the widget at this row. Row numbers start with\n"+
                      "0. If omitted, defaults to the first empty row in the\n"+
                      "grid.")
-            self.e1 = Tkinter.Entry(self.topGrid, width=3,
+            self.e1 = tkinter.Entry(self.topGrid, width=3,
                                     textvariable=self.rowTk)
             self.e1.grid(row=row, column=1)
             
-            self.l2 = Tkinter.Label(self.topGrid, text="column:")
+            self.l2 = tkinter.Label(self.topGrid, text="column:")
             self.l2.grid(row=row, column=2, sticky='w')
             self.b2 = Pmw.Balloon(self.topGrid)
             self.b2.bind(self.l2,
                          "Insert the widget at this column. Column numbers\n"+
                          "start with 0. If omitted, defaults to 0.")
-            self.e2 = Tkinter.Entry(self.topGrid, width=3,
+            self.e2 = tkinter.Entry(self.topGrid, width=3,
                                     textvariable=self.columnTk)
             self.e2.grid(row=row, column=3)
 
         ## now build the widgets which are hidden by default: bottomGrid
         row += 1
-        self.l3 = Tkinter.Label(self.bottomGrid, text="rowspan:")
+        self.l3 = tkinter.Label(self.bottomGrid, text="rowspan:")
         self.l3.grid(row=row, column=0, sticky='w')
         self.b3 = Pmw.Balloon(self.bottomGrid)
         self.b3.bind(self.l3,
                      "If given, indicates that the widget cell should span\n"+
                      "more than one row.")
-        self.e3 = Tkinter.Entry(self.bottomGrid, width=3,
+        self.e3 = tkinter.Entry(self.bottomGrid, width=3,
                                 textvariable=self.rowspanTk)
         self.e3.grid(row=row, column=1)
 
-        self.l4 = Tkinter.Label(self.bottomGrid, text="columnspan:")
+        self.l4 = tkinter.Label(self.bottomGrid, text="columnspan:")
         self.l4.grid(row=row, column=2, sticky='w')
         self.b4 = Pmw.Balloon(self.bottomGrid)
         self.b4.bind(self.l4,
                      "If given, indicates that the widget cell should span\n"+
                      "more than one column.")
-        self.e4 = Tkinter.Entry(
+        self.e4 = tkinter.Entry(
             self.bottomGrid, width=3, textvariable=self.columnspanTk)
         self.e4.grid(row=row, column=3)
 
         row += 1
-        self.l5 = Tkinter.Label(self.bottomGrid, text='sticky:')
+        self.l5 = tkinter.Label(self.bottomGrid, text='sticky:')
         self.l5.grid(row=row, column=0, sticky='w')
         self.b5 = Pmw.Balloon(self.bottomGrid)
         self.b5.bind(
@@ -169,51 +169,51 @@ set() method"""
             "to fill the whole cell. W+E+N+S means that the widget\n"+
             "should be expanded in both directions. Default is to\n"+
             "center the widget in the cell.")
-        self.e5 = Tkinter.Entry(self.bottomGrid, width=3,
+        self.e5 = tkinter.Entry(self.bottomGrid, width=3,
                                 textvariable=self.stickyTk)
         self.e5.grid(row=row, column=1, sticky='w')
 
         row += 1
-        self.l6 = Tkinter.Label(self.bottomGrid, text="padx:")
+        self.l6 = tkinter.Label(self.bottomGrid, text="padx:")
         self.l6.grid(row=row, column=0, sticky='w')
         self.b6 = Pmw.Balloon(self.bottomGrid)
         self.b6.bind(self.l6,
                     "Optional padding to place around the widget in a cell.\n"+
                     "Default is 0.")
-        self.e6 = Tkinter.Entry(self.bottomGrid, width=3,
+        self.e6 = tkinter.Entry(self.bottomGrid, width=3,
                                 textvariable=self.padxTk)
         self.e6.grid(row=row, column=1)
 
-        self.l7 = Tkinter.Label(self.bottomGrid, text="pady:")
+        self.l7 = tkinter.Label(self.bottomGrid, text="pady:")
         self.l7.grid(row=row, column=2, sticky='w')
         self.b7 = Pmw.Balloon(self.bottomGrid)
         self.b7.bind(self.l7,
                     "Optional padding to place around the widget in a cell.\n"+
                     "Default is 0.")
-        self.e7 = Tkinter.Entry(self.bottomGrid, width=3,
+        self.e7 = tkinter.Entry(self.bottomGrid, width=3,
                                 textvariable=self.padyTk)
         self.e7.grid(row=row, column=3)
 
         row += 1
-        self.l8 = Tkinter.Label(self.bottomGrid, text="ipadx:")
+        self.l8 = tkinter.Label(self.bottomGrid, text="ipadx:")
         self.l8.grid(row=row, column=0, sticky='w')
         self.b8 = Pmw.Balloon(self.bottomGrid)
         self.b8.bind(self.l8,
                      "Optional internal padding. Works like padx and\n"+
                      "pady, but the padding is added inside the widget\n"+
                      "borders. Default is 0.")
-        self.e8 = Tkinter.Entry(self.bottomGrid, width=3,
+        self.e8 = tkinter.Entry(self.bottomGrid, width=3,
                                 textvariable=self.ipadxTk)
         self.e8.grid(row=row, column=1)
 
-        self.l9 = Tkinter.Label(self.bottomGrid, text="ipady:")
+        self.l9 = tkinter.Label(self.bottomGrid, text="ipady:")
         self.l9.grid(row=row, column=2, sticky='w')
         self.b9 = Pmw.Balloon(self.bottomGrid)
         self.b9.bind(self.l9,
                      "Optional internal padding. Works like padx and\n"+
                      "pady, but the padding is added inside the widget\n"+
                      "borders. Default is 0.")
-        self.e9 = Tkinter.Entry(self.bottomGrid, width=3,
+        self.e9 = tkinter.Entry(self.bottomGrid, width=3,
                                 textvariable=self.ipadyTk)
         self.e9.grid(row=row, column=3)
 
@@ -245,7 +245,7 @@ set() method"""
         else:
             keys = keysWidget
         
-        for k,v in gridcfg.items():
+        for k,v in list(gridcfg.items()):
             if k not in keys:
                 continue
 
@@ -334,7 +334,7 @@ class GridEditor:
             self.node = weakref.ref(node)   # weak reference to Vision node
         else:
             self.node = None
-        self.top = Tkinter.Toplevel()       # root/top of this GUI
+        self.top = tkinter.Toplevel()       # root/top of this GUI
         self.top.title("Widget Grid Editor")
 
         self.grids = []                     # storing all the grid objects
@@ -344,9 +344,9 @@ class GridEditor:
                              # widgets.
 
         # create two frames, one to hold all the grid GUIs, one for the buttons
-        self.gridFrame = Tkinter.Frame(self.top)
+        self.gridFrame = tkinter.Frame(self.top)
         self.gridFrame.pack(side='top', expand=1, fill='both')
-        self.buttonFrame = Tkinter.Frame(self.top)
+        self.buttonFrame = tkinter.Frame(self.top)
         self.buttonFrame.pack(side='bottom', expand=1, fill='both')
         # and now build the form
         self.buildForm()
@@ -359,10 +359,10 @@ class GridEditor:
 
         row = 0
         column = 0
-        l1 = Tkinter.Label(#group.interior(),
+        l1 = tkinter.Label(#group.interior(),
             self.gridFrame,
                            text='Label Conf')
-        l2 = Tkinter.Label(#group.interior(),
+        l2 = tkinter.Label(#group.interior(),
             self.gridFrame,
                           text='Widget Conf')
         l1.grid(row=0, column=0)
@@ -382,8 +382,8 @@ class GridEditor:
                 ' '+name)
             group.grid(row=row, column=column, columnspan=2, padx=6, pady=6,
                        sticky='wens')
-            f1 = Tkinter.Frame(group.interior())
-            f2 = Tkinter.Frame(group.interior())
+            f1 = tkinter.Frame(group.interior())
+            f2 = tkinter.Frame(group.interior())
             cb = CallBackFunction(self.ApplyToOneGrid, self.gridCounter)
             g1 = OneGrid(f1, port=port, label=True, callback=cb)
             g2 = OneGrid(f2, port=port, label=False, callback=cb)
@@ -408,12 +408,12 @@ class GridEditor:
             row = row + 1
 
         # add buttons
-        ok = Tkinter.Button(self.buttonFrame, text='Ok', command=self.OK_cb)
+        ok = tkinter.Button(self.buttonFrame, text='Ok', command=self.OK_cb)
         ok.pack(side='left', expand=1, fill='x')
-        apply = Tkinter.Button(self.buttonFrame, text='Apply',
+        apply = tkinter.Button(self.buttonFrame, text='Apply',
                                command=self.Apply_cb)
         apply.pack(side='left', expand=1, fill='x')
-        cancel = Tkinter.Button(self.buttonFrame, text='Cancel',
+        cancel = tkinter.Button(self.buttonFrame, text='Cancel',
                                 command=self.Cancel_cb)
         cancel.pack(side='left', expand=1, fill='x')
 
@@ -442,7 +442,7 @@ class GridEditor:
         applyDict = dict(labelCfg=dict(text=labName), labelGridCfg=ldescr)
         applyDict['widgetGridCfg%s'%widget.master] = wdescr
 
-        apply(widget.configure, (),applyDict)
+        widget.configure(*(), **applyDict)
 
         if autoResize:
             self.node().autoResize() 

@@ -59,32 +59,32 @@ if exemple1:
     sym=False
     coarse=True
     colors=[(1.0, 0.0, 0.0),
-		(1.0, 0.0, 0.0),
-		(1.0, 0.0, 0.0),
-		(1.0, 1.0, 0.0),
-		(0.0, 0.0, 1.0),
-		(0.0, 0.0, 1.0),
-		(0.0, 0.0, 1.0),
-		]
+                (1.0, 0.0, 0.0),
+                (1.0, 0.0, 0.0),
+                (1.0, 1.0, 0.0),
+                (0.0, 0.0, 1.0),
+                (0.0, 0.0, 1.0),
+                (0.0, 0.0, 1.0),
+                ]
     for i,c in enumerate(P.chains) :
-	if coarse :
-		print "coarseMS"
-		name='Coarse'+c.name
-		#self.computeMSMS(c, log=1, perMol=0, display=True, surfName='MSMS'+c.name)
-		g=coarseMolSurface(self,c,[32,32,32],isovalue=7.1,resolution=-0.3,name='Coarse'+c.name)
-		g.fullName = 'Coarse'+c.name
-		mol.geomContainer.geoms[name]=g
-		bl_ob,mesh=createsNmesh(name,g.getVertices(),None,g.getFaces(),smooth=True)
-		sc.link(bl_ob)
-		mol.geomContainer.masterGeom.obj.makeParent([bl_ob,])
-		g.mesh=mesh
-		g.obj=bl_ob
-		self.color(c, [cols[i]], ['Coarse'+c.name], log=1)
-	else :
-		print 'MSMS'+c.name
-		self.computeMSMS(c, log=1, perMol=0, display=True, surfName='MSMS'+c.name)
-		print i
-		self.color(c, [colors[i]], ["MSMS"+c.name], log=1)
+        if coarse :
+                print("coarseMS")
+                name='Coarse'+c.name
+                #self.computeMSMS(c, log=1, perMol=0, display=True, surfName='MSMS'+c.name)
+                g=coarseMolSurface(self,c,[32,32,32],isovalue=7.1,resolution=-0.3,name='Coarse'+c.name)
+                g.fullName = 'Coarse'+c.name
+                mol.geomContainer.geoms[name]=g
+                bl_ob,mesh=createsNmesh(name,g.getVertices(),None,g.getFaces(),smooth=True)
+                sc.link(bl_ob)
+                mol.geomContainer.masterGeom.obj.makeParent([bl_ob,])
+                g.mesh=mesh
+                g.obj=bl_ob
+                self.color(c, [cols[i]], ['Coarse'+c.name], log=1)
+        else :
+                print('MSMS'+c.name)
+                self.computeMSMS(c, log=1, perMol=0, display=True, surfName='MSMS'+c.name)
+                print(i)
+                self.color(c, [colors[i]], ["MSMS"+c.name], log=1)
 
 #exemple2
 if exemple2 :
@@ -96,14 +96,14 @@ if exemple2 :
 
 #exemple3
 if exemple3 :
-	#server/client mode
-	self.hostApp.setServer('localhost',50000)
-	self.hostApp.start()
+        #server/client mode
+        self.hostApp.setServer('localhost',50000)
+        self.hostApp.start()
 
 if exemple4:
    self.browseCommands('serverCommands', commands=None, log=0, removable=True, package='ViewerFramework')
    self.startServer()
-   print self.socketComm.port
+   print(self.socketComm.port)
    #self.socketComm.sendToClients(msgcmd)
    
 if exemple5:

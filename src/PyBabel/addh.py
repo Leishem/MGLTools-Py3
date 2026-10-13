@@ -64,8 +64,8 @@ Original code by W. Patrick Walters and Matthew T. Stahl
 
 import math
 
-from atomTypes import TypeConverter
-from util import *
+from .atomTypes import TypeConverter
+from .util import *
 
 ONE_OVER_SQRT3 = 0.577350269
 SQRT_TWO_THIRDS = 0.816496581
@@ -84,7 +84,7 @@ class AddHydrogens:
 
     def addHydrogens(self, atoms, method='noBondOrder'):
         """ """
-	Hatoms = []
+        Hatoms = []
 #        method = 'noBondOrder'
         if method=='noBondOrder':
             num_H_to_add = self.count_missing_hydrogens(atoms)
@@ -492,8 +492,8 @@ class AddHydrogens:
             temp_type = converter.convert(a.babel_type, 'zero')
 
             if temp_type == 0:
-                print "Unable to assign valence to atom %s type = %s" % \
-                      (a.full_name(), a.babel_type)
+                print("Unable to assign valence to atom %s type = %s" % \
+                      (a.full_name(), a.babel_type))
 
             type_valence = int(temp_type)
             val = len(a.bonds)
@@ -556,10 +556,10 @@ class AddHydrogens:
 
 if __name__ == '__main__':
     import pdb, sys
-    from cycle import RingFinder
-    from bo import BondOrder
-    from atomTypes import AtomHybridization
-    from aromatic import Aromatic
+    from .cycle import RingFinder
+    from .bo import BondOrder
+    from .atomTypes import AtomHybridization
+    from .aromatic import Aromatic
     
     from MolKit.pdbParser import NewPdbParser
     parser = NewPdbParser("/tsri/pdb/struct/%s.pdb"%sys.argv[1])
@@ -569,24 +569,24 @@ if __name__ == '__main__':
     allAtoms = mol.chains.residues.atoms
     bonds = allAtoms.bonds[0]
 
-    print "assigning atom types"
+    print("assigning atom types")
     babel = AtomHybridization()
     babel.assignHybridization(allAtoms)
 
-    print "looking for rings"
+    print("looking for rings")
     rings = RingFinder()
     rings.findRings(allAtoms, bonds)
 
-    print "assigning bond order"
+    print("assigning bond order")
     bo = BondOrder()
     #pdb.run("bo.assignBondOrder(allAtoms, bonds)")
     bo.assignBondOrder(allAtoms, bonds)
 
-    print "looking for aromatic rings"
+    print("looking for aromatic rings")
     arom = Aromatic(rings)
     arom.find_aromatic_atoms(allAtoms)
     
-    print "done"
+    print("done")
 ##      db = filter(lambda x:x.bondOrder==2, bonds)
 ##      for b in db:
 ##          print b

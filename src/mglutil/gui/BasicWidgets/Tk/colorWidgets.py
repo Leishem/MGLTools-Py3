@@ -11,8 +11,8 @@
 #$Id: colorWidgets.py,v 1.27.2.7 2011/04/26 20:34:41 sargis Exp $
 #
 
-import Tkinter, Pmw, os
-import numpy.oldnumeric as Numeric
+import tkinter, Pmw, os
+import mglcompat.oldnumeric as Numeric
 from types import ListType, TupleType
 from mglutil.util.callback import CallbackFunction, CallbackManager
 from mglutil.util.colorUtil import ToRGB, ToHSV, ToHEX
@@ -20,29 +20,29 @@ from mglutil.gui.InputForm.Tk.gui import InputFormDescr,InputForm,evalString
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ExtendedSliderWidget
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser
 from mglutil.gui.BasicWidgets.Tk.fileBrowsers import fileOpenAsk, fileSaveAsk
-import tkMessageBox
+import tkinter.messagebox
 import os, math
 from mglutil.util.packageFilePath import getResourceFolder
 
 class ColorWheel:        
     def __init__(self, master, title=None, callback=None, immediate=1):
         if not master:
-            master = Tkinter.Toplevel()
+            master = tkinter.Toplevel()
 
         if title is not None:
             master.title(title)
 
-        f = self.frame = Tkinter.Frame(master)
+        f = self.frame = tkinter.Frame(master)
         path = __import__('mglutil').__path__
         iconfile = os.path.join(path[0],'gui/BasicWidgets/Tk/cw.ppm')
         self.iconfile = iconfile
-        self.cwim = Tkinter.PhotoImage(file=iconfile, master=master)
+        self.cwim = tkinter.PhotoImage(file=iconfile, master=master)
         self.width = self.cwim.width()
         self.height = self.cwim.height()
-        self.cwcanvas = Tkinter.Canvas(f, width=self.width,
+        self.cwcanvas = tkinter.Canvas(f, width=self.width,
                                        height=self.height, ###relief='sunken',
                                        borderwidth=3 )
-        self.cwcanvas.create_image(3, 3, anchor=Tkinter.NW, image=self.cwim)
+        self.cwcanvas.create_image(3, 3, anchor=tkinter.NW, image=self.cwim)
         self.cwcanvas.pack()
         self.frame.pack()
 
@@ -50,7 +50,7 @@ class ColorWheel:
         self.cbManager = CallbackManager()
         if callback:
             if type(callback) in [ListType, TupleType]:
-                map(self.cbManager.AddCallback, callback)
+                list(map(self.cbManager.AddCallback, callback))
             else:
                 self.cbManager.AddCallback(callback)
         self.afterID = None
@@ -72,22 +72,22 @@ class ColorWheel:
 
 
     def _MoveCursor(self, x, y, trigger=1):
-	# find the saturation based on distance
-	s = math.sqrt(x*x + y*y) / self.radius
-	if s > 1.0:
-	    x = x / s
-	    y = y / s
-	    s = 1.0
+        # find the saturation based on distance
+        s = math.sqrt(x*x + y*y) / self.radius
+        if s > 1.0:
+            x = x / s
+            y = y / s
+            s = 1.0
 
-	# now find the hue based on the angle 
-	if x or y:
-	    angle = math.atan2(y, x)
-	    if angle < 0.0:
+        # now find the hue based on the angle 
+        if x or y:
+            angle = math.atan2(y, x)
+            if angle < 0.0:
                 angle = angle + (2.*math.pi)
-	    h = 1. - angle / (2.0 * math.pi)
-	else:
-	    h = 0
-	# check if redraw and callback are needed
+            h = 1. - angle / (2.0 * math.pi)
+        else:
+            h = 0
+        # check if redraw and callback are needed
         if self.hsvColor[0] != h or self.hsvColor[1] != s:
             if trigger==1:
                 self.hsvColor[0] = h
@@ -97,7 +97,7 @@ class ColorWheel:
             self.cwcanvas.coords( self.cursor, cx-3, cy-3, cx-3, cy+3,
                                   cx+3,cy+3, cx+3, cy-3, cx-3, cy-3 )
 
-	    if self.cbManager.callbacks:
+            if self.cbManager.callbacks:
                 self.cbManager.CallCallbacks(self.get('RGB'))
 
     def mouse1Down(self, event=None):
@@ -128,33 +128,33 @@ class ColorWheel:
 
 
     def get(self, mode='HSV'):
-	"""Get the current color"""
-	if mode == 'RGB':
-	    rgb = ToRGB(self.hsvColor)
-	    #return OneColor(rgb)
+        """Get the current color"""
+        if mode == 'RGB':
+            rgb = ToRGB(self.hsvColor)
+            #return OneColor(rgb)
             return rgb
 
-	elif mode == 'HSV':
-	    #return OneColor(self.hsvColor)
+        elif mode == 'HSV':
+            #return OneColor(self.hsvColor)
             return self.hsvColor
 
-	elif mode == 'HEX':
-	    col = Numeric.array(ToRGB(self.hsvColor[:]), 'f') * 255
-	    return ToHEX(col)
+        elif mode == 'HEX':
+            col = Numeric.array(ToRGB(self.hsvColor[:]), 'f') * 255
+            return ToHEX(col)
 
 
     def set(self, color, mode='HSV', trigger=1):
-	"""Set the current color"""
-	assert len(color)==3
-	#color = OneColor(color)
-	if mode=='RGB': color = ToHSV(color[:])
-	self.hsvColor = list(color[:])
+        """Set the current color"""
+        assert len(color)==3
+        #color = OneColor(color)
+        if mode=='RGB': color = ToHSV(color[:])
+        self.hsvColor = list(color[:])
 
         # update cursor
-	rad = self.hsvColor[1] * self.radius
-	angle = 2.0 * math.pi * (1. - self.hsvColor[0])
-	cx = self.cx + int(rad * math.cos(angle))
-	cy = self.cy + int(rad * math.sin(angle))
+        rad = self.hsvColor[1] * self.radius
+        angle = 2.0 * math.pi * (1. - self.hsvColor[0])
+        cx = self.cx + int(rad * math.cos(angle))
+        cy = self.cy + int(rad * math.sin(angle))
         self.cwcanvas.coords( self.cursor, cx-3, cy-3, cx-3, cy+3,
                               cx+3,cy+3, cx+3, cy-3, cx-3, cy-3 )
 
@@ -172,18 +172,18 @@ class ColorEditor:
         assert mode in ['RGB', 'HSV','HEX']
         self.mode = mode
         if not master:
-            self.master = Tkinter.Toplevel()
+            self.master = tkinter.Toplevel()
         else:
             self.master = master
         self.afterID = None
         self.immediate = immediate
         # The editFrame is the main Frame of the widget
-        self.editFrame = Tkinter.Frame(self.master, borderwidth=2,
+        self.editFrame = tkinter.Frame(self.master, borderwidth=2,
                                       relief='ridge')
         self.cbManager = CallbackManager()
         if commands:
             if type(commands) in [ListType, TupleType]:
-                map(self.cbManager.AddCallback, commands)
+                list(map(self.cbManager.AddCallback, commands))
             else:
                 self.cbManager.AddCallback(commands)
 
@@ -202,15 +202,15 @@ class ColorEditor:
             self.currentHSV = ToHEX(currentColor, mode='HSV')
             self.currentHEX = currentColor
         else:
-            print 'mode not recognized mode set to RGB'
+            print('mode not recognized mode set to RGB')
         self.createColorEditor()
 
 
     def createColorEditor(self):
         # The chooserFrame containinsg the colorwheel and the value scale
-        chooserFrame = Tkinter.Frame(self.editFrame)
+        chooserFrame = tkinter.Frame(self.editFrame)
         # Create a Tkinter Scale widget bound a callback : self.scale_cb
-        self.vScale = Tkinter.Scale(chooserFrame,
+        self.vScale = tkinter.Scale(chooserFrame,
                                     from_ = 1.0, to_ = 0.0,
                                     orient='vertical', resolution=0.01,)
 ##                                     command = self.scale_cb)
@@ -225,7 +225,7 @@ class ColorEditor:
         self.vScale.set(1.0)
 
         # Create the colorWheel Frame
-        wheelFrame = Tkinter.Frame(chooserFrame, relief='ridge',
+        wheelFrame = tkinter.Frame(chooserFrame, relief='ridge',
                                    borderwidth=1)
         # Pack the ColorWheel
         wheelFrame.pack(side='left',pady=5, padx=10,fill='both',
@@ -246,13 +246,13 @@ class ColorEditor:
         # Pack the chooserFrame
         chooserFrame.pack(expand=1,fill='both')
 
-        bottomFrame = Tkinter.Frame(self.editFrame)
+        bottomFrame = tkinter.Frame(self.editFrame)
         #The preview frame will contain the frame to show the choosen color
-        previewFrame = Tkinter.Frame(bottomFrame)
+        previewFrame = tkinter.Frame(bottomFrame)
         previewFrame.pack(side='left', fill='both', expand=1)
-        preview = Tkinter.Frame(previewFrame,)
+        preview = tkinter.Frame(previewFrame,)
         bg = self.currentHEX
-        self.chip = Tkinter.Frame(previewFrame, 
+        self.chip = tkinter.Frame(previewFrame, 
                                   borderwidth=3, width=50,
                                   height=30, bg=bg, relief='ridge')
         # Pack the chipFrame
@@ -260,7 +260,7 @@ class ColorEditor:
         
 
         #The entriesFrame will contain all the entryFields
-        entriesFrame = Tkinter.Frame(bottomFrame)
+        entriesFrame = tkinter.Frame(bottomFrame)
         entriesOption = {'labelpos':'w',
                          'validate':{'validator':'real',
                                      'min':0.0, 'max':1.0},
@@ -268,57 +268,57 @@ class ColorEditor:
                          }
                          
         # the hsvFrame will contain the H,S,V entryFields
-        hsvFrame = Tkinter.Frame(entriesFrame)
+        hsvFrame = tkinter.Frame(entriesFrame)
         
         entriesOption['label_text'] = 'H'
         entriesOption['value'] = "%4.2f"%self.currentHSV[0]
         entriesOption['command'] = self.hVal_cb
-        self.hVal = apply(Pmw.EntryField, (hsvFrame,), entriesOption)
+        self.hVal = Pmw.EntryField(*(hsvFrame,), **entriesOption)
         self.hVal.pack(side = 'left')
 
         entriesOption['label_text'] = 'S'
         entriesOption['value'] = "%4.2f"%self.currentHSV[1]
         entriesOption['command'] = self.sVal_cb
-        self.sVal = apply(Pmw.EntryField, (hsvFrame,), entriesOption)
+        self.sVal = Pmw.EntryField(*(hsvFrame,), **entriesOption)
         self.sVal.pack(side = 'left')
 
         entriesOption['label_text'] = 'V'
         entriesOption['value'] = "%4.2f"%self.currentHSV[2]
         entriesOption['command'] = self.vVal_cb
-        self.vVal= apply(Pmw.EntryField, (hsvFrame,), entriesOption)
+        self.vVal= Pmw.EntryField(*(hsvFrame,), **entriesOption)
         self.vVal.pack(side = 'left')
 
         hsvFrame.pack(padx=4, pady=4,fill='both',expand=1)
 
-        rgbFrame = Tkinter.Frame(entriesFrame)
+        rgbFrame = tkinter.Frame(entriesFrame)
         # RGB entries
         entriesOption['label_text'] = 'R'
         entriesOption['value'] = "%4.2f"%self.currentRGB[0]
         entriesOption['command'] = self.rVal_cb
-        self.rVal = apply(Pmw.EntryField, (rgbFrame,), entriesOption)
+        self.rVal = Pmw.EntryField(*(rgbFrame,), **entriesOption)
         self.rVal.pack(side = 'left')
 
         entriesOption['label_text'] = 'G'
         entriesOption['value'] = "%4.2f"%self.currentRGB[1]
         entriesOption['command'] = self.gVal_cb
-        self.gVal = apply(Pmw.EntryField, (rgbFrame,), entriesOption)
+        self.gVal = Pmw.EntryField(*(rgbFrame,), **entriesOption)
         self.gVal.pack(side = 'left')
 
         entriesOption['label_text'] = 'B'
         entriesOption['value'] = "%4.2f"%self.currentRGB[2]
         entriesOption['command'] = self.bVal_cb
-        self.bVal = apply(Pmw.EntryField, (rgbFrame,), entriesOption)
+        self.bVal = Pmw.EntryField(*(rgbFrame,), **entriesOption)
         self.bVal.pack(side = 'left')
         rgbFrame.pack(padx=4, pady=4,fill='both',expand=1)
 
-        hexFrame = Tkinter.Frame(entriesFrame)
+        hexFrame = tkinter.Frame(entriesFrame)
         entriesOption['label_text'] = 'Hex triplet'
         entriesOption['value'] = self.currentHEX
         entriesOption['command'] = self.hexVal_cb
         del entriesOption['validate']
         entriesOption['entry_width']=8
         #entriesOption['validate']='alphanumeric'
-        self.hexVal = apply(Pmw.EntryField, (hexFrame,), entriesOption)
+        self.hexVal = Pmw.EntryField(*(hexFrame,), **entriesOption)
         self.hexVal.pack(padx=4, pady=4,side = 'left')
         hexFrame.pack(fill='both',expand=1)
 
@@ -332,12 +332,12 @@ class ColorEditor:
     #def caluculate(self):
         
     def set(self, color, mode='RGB', trigger=1):
-	"""Set the current color"""
-	#assert len(color)==3
+        """Set the current color"""
+        #assert len(color)==3
         assert mode in ['HSV', 'RGB', 'HEX']
         self.mode = mode
         if mode == 'HSV':
-            newRGB = map(lambda x: float("%4.2f"%x), ToRGB(color))
+            newRGB = [float("%4.2f"%x) for x in ToRGB(color)]
         elif mode == 'HEX':
             newRGB = ToRGB(color, mode='HEX')
         else: newRGB = color
@@ -358,16 +358,16 @@ class ColorEditor:
             return col
 
     def pack(self,*args, **kw):
-        apply(self.editFrame.pack, args, kw)
+        self.editFrame.pack(*args, **kw)
 
     def pack_forget(self,*args, **kw):
-        apply(self.editFrame.pack_forget, args, kw)
+        self.editFrame.pack_forget(*args, **kw)
                          
     def grid(self,*args, **kw):
-        apply(self.editFrame.grid, args, kw)
+        self.editFrame.grid(*args, **kw)
 
     def grid_forget(self,*args, **kw):
-        apply(self.editFrame.grid_forget, args, kw)
+        self.editFrame.grid_forget(*args, **kw)
 
     ###############################################################
     ####               WIDGETS CALLBACK FUNCTIONS              ####
@@ -406,7 +406,7 @@ class ColorEditor:
         val = float(self.hVal.get())
         newColor = self.currentHSV
         newColor[0] = val
-        newHSV = map(lambda x: float("%4.2f"%x), newColor)
+        newHSV = [float("%4.2f"%x) for x in newColor]
         if (not (float(self.vVal.get())==0.00 or \
                 (float(self.sVal.get())==0 and float(self.vVal.get())==1.0))):
             self.updateWidgetsColor(ToRGB(newHSV), who='h')
@@ -415,7 +415,7 @@ class ColorEditor:
         val = float(self.sVal.get())
         newColor = list(ToHSV(self.currentRGB[:]))
         newColor[1] = val
-        newHSV = map(lambda x: float("%4.2f"%x), newColor)
+        newHSV = [float("%4.2f"%x) for x in newColor]
         if (not float(self.vVal.get())==0) and newHSV != self.currentHSV:
             self.updateWidgetsColor(ToRGB(newHSV), who='s')
 
@@ -423,7 +423,7 @@ class ColorEditor:
         newColor = [float(self.hVal.get()),
                     float(self.sVal.get()),
                     float(self.vVal.get())]
-        newHSV = map(lambda x: float("%4.2f"%x), newColor)
+        newHSV = [float("%4.2f"%x) for x in newColor]
         if newHSV != self.currentHSV:
             self.updateWidgetsColor(ToRGB(newHSV), who='v')
 
@@ -431,7 +431,7 @@ class ColorEditor:
         val = float(self.rVal.get())
         newColor = self.currentRGB[:]
         newColor[0] = val
-        newRGB = map(lambda x: float("%4.2f"%x), newColor)
+        newRGB = [float("%4.2f"%x) for x in newColor]
         if newRGB != self.currentRGB:
             self.updateWidgetsColor(newRGB, who='r')
 
@@ -440,7 +440,7 @@ class ColorEditor:
         val = float(self.gVal.get())
         newColor = self.currentRGB[:]
         newColor[1] = val
-        newRGB = map(lambda x: float("%4.2f"%x), newColor)
+        newRGB = [float("%4.2f"%x) for x in newColor]
         if newRGB != self.currentRGB:
             self.updateWidgetsColor(newRGB, who='g')
 
@@ -448,7 +448,7 @@ class ColorEditor:
         val = float(self.bVal.get())
         newColor = self.currentRGB[:]
         newColor[2] = val
-        newRGB = map(lambda x: float("%4.2f"%x), newColor)
+        newRGB = [float("%4.2f"%x) for x in newColor]
         if newRGB != self.currentRGB:
             self.updateWidgetsColor(newRGB, who='b')
 
@@ -466,18 +466,18 @@ class ColorEditor:
     ###############################################################
     def updateWidgetsColor(self, rgbcolor, who = 'set', trigger=1):
         oldRGB = list(self.currentRGB)
-        self.currentRGB = map(lambda x: float("%4.2f"%x), rgbcolor)
+        self.currentRGB = [float("%4.2f"%x) for x in rgbcolor]
         # If newcolor is the same than old color nothing to update.
         if oldRGB == self.currentRGB : return
         hsvcolor = ToHSV(rgbcolor[:])
-        self.currentHSV = map(lambda x: float("%4.2f"%x), hsvcolor)
+        self.currentHSV = [float("%4.2f"%x) for x in hsvcolor]
         self.currentHEX = ToHEX(self.currentRGB)
         # Update the preview chip
         self.chip.configure( bg = self.currentHEX )
 
         # ColorWidget:
         cwColor = self.cw.get(mode='RGB')
-        newRGB = map(lambda x: float("%4.2f"%x),cwColor)
+        newRGB = [float("%4.2f"%x) for x in cwColor]
         if newRGB != self.currentRGB and not who in ['v', 'scale']:
             self.cw.set(self.currentRGB, mode='RGB',trigger=0)
 
@@ -539,7 +539,7 @@ class Chooser(object):
     def __init__(self, master=None, title = 'Chooser', commands = None,
                  immediate=0, exitFunction=None):
         if master is None:
-            self.master = Tkinter.Toplevel()
+            self.master = tkinter.Toplevel()
             self.ownmaster=1
             self.master.title(title)
             #self.master.protocol('WM_DELETE_WINDOW', self.dismiss)
@@ -547,7 +547,7 @@ class Chooser(object):
             self.ownmaster=0
             self.master = master
         # The editFrame is the main Frame of the widget
-        self.masterFrame = Tkinter.Frame(self.master,
+        self.masterFrame = tkinter.Frame(self.master,
                                          borderwidth=2, relief='ridge')
         self.immediate=immediate
         # Create a cbManager
@@ -556,8 +556,8 @@ class Chooser(object):
         self.createChooser()
         if commands:
             if type(commands) in [ListType, TupleType]:
-                map(self.cbManager.AddCallback, commands)
-                map(self.ce.cbManager.AddCallback, commands)
+                list(map(self.cbManager.AddCallback, commands))
+                list(map(self.ce.cbManager.AddCallback, commands))
             else:
                 self.cbManager.AddCallback(commands)
                 self.ce.cbManager.AddCallback(commands)
@@ -570,7 +570,7 @@ class Chooser(object):
                                    hull_borderwidth = 1)
         self.menuBar.addmenu('File', 'Close this window or exit')
         
-        self.mainFrame = Tkinter.Frame(self.masterFrame,
+        self.mainFrame = tkinter.Frame(self.masterFrame,
                                        borderwidth=2, relief='ridge',
                                         width=150, height=200)
         
@@ -592,16 +592,16 @@ class Chooser(object):
         pass
 
     def pack(self, *args, **kw):
-        apply(self.masterFrame.pack, args, kw)
+        self.masterFrame.pack(*args, **kw)
 
     def pack_forget(self, *args, **kw):
-        apply(self.masterFrame.pack_forget, args, kw)
+        self.masterFrame.pack_forget(*args, **kw)
 
     def grid(self ,*args, **kw):
-        apply(self.masterFrame.grid, args, kw)
+        self.masterFrame.grid(*args, **kw)
 
     def grid_forget(self, *args, **kw):
-        apply(self.masterFrame.grid_forget, args, kw)
+        self.masterFrame.grid_forget(*args, **kw)
         
 colorChoosersDict = {} #colorChoosersDict stores previous ColorChoosers
 
@@ -624,7 +624,7 @@ class ColorChooser(Chooser):
 
         #the following code was added to avoid having multiple copies of ColorChoosers
         global colorChoosersDict
-        if  colorChoosersDict.has_key(title):
+        if  title in colorChoosersDict:
             try:
                 colorChoosersDict[title].master.destroy()
             except:
@@ -650,7 +650,7 @@ class ColorChooser(Chooser):
                 cb = exitFunction
             else:
                 cb = self.master.destroy
-            self.dismissb = Tkinter.Button(self.master, text='DISMISS',
+            self.dismissb = tkinter.Button(self.master, text='DISMISS',
                                            command=cb)
             self.dismissb.pack(side='bottom', expand=1, fill='x')
         
@@ -669,7 +669,7 @@ class ColorChooser(Chooser):
                 
             
     def createChooser(self):
-        self.ccFrame = Tkinter.Frame(self.mainFrame)
+        self.ccFrame = tkinter.Frame(self.mainFrame)
         self.menuBar.forget()
 
 ##         self.menuBar.addmenuitem('File', 'command', 'Load custom',
@@ -705,7 +705,7 @@ class ColorChooser(Chooser):
         # chips.
         # ccFrame is the left part of the widget
         self.ccFrame.pack(side='left',expand=1, fill='both')
-        self.addButton = Tkinter.Button(self.ccFrame, text='Add to custom',
+        self.addButton = tkinter.Button(self.ccFrame, text='Add to custom',
                                         command=self.addToCustom_cb)
         self.addHidden = 1
 
@@ -721,13 +721,13 @@ class ColorChooser(Chooser):
         # Create the RadioSelect empty
         self.chipsFrame = chipsSFrame.interior()
 
-        self.colorVar = colorVar = Tkinter.IntVar(0)
+        self.colorVar = colorVar = tkinter.IntVar(0)
         colors = self.colors
         for i in range(6):
             for j in range(8):
                 val = i*8+j
                 col = colors[val]
-                b = Tkinter.Radiobutton(
+                b = tkinter.Radiobutton(
                     self.chipsFrame, text="", variable=colorVar, value=val,
                     bg = col, activebackground=col,
                     fg = col, activeforeground = col,
@@ -742,7 +742,7 @@ class ColorChooser(Chooser):
             for j in range(8):
                 val = 48 + i*8+j
                 col = colors[val]
-                b = Tkinter.Radiobutton(
+                b = tkinter.Radiobutton(
                     self.customchipsFrame, text="", variable=colorVar, value=val,
                     bg=col, activebackground=col,
                     fg=col, activeforeground=col,
@@ -801,9 +801,9 @@ class ColorChooser(Chooser):
         self.cbManager.CallCallbacks(col)
         try:
             outFile = open(self.customColorsPath, 'w')
-        except Exception, inst: 
-            print inst
-            print "Can't save custom colors in ", self.customColorsPath
+        except Exception as inst: 
+            print(inst)
+            print("Can't save custom colors in ", self.customColorsPath)
             return
         outFile.write(' '.join(self.colors[48:]))
 
@@ -825,17 +825,17 @@ class ColorChooser(Chooser):
     def showChooser(self, entries):
         if self.cFlag == 1:
             self.palChooser.clear()
-            map(self.palChooser.add, entries)
+            list(map(self.palChooser.add, entries))
             self.root.deiconify()
         else:
-            self.root = Tkinter.Toplevel()
-            self.chooserFrame = Tkinter.Frame(self.root)
+            self.root = tkinter.Toplevel()
+            self.chooserFrame = tkinter.Frame(self.root)
             self.palChooser = ListChooser(self.chooserFrame, mode = 'extended',
                                          title='Customized colors groups',
                                           entries = entries,
                                           command=self.addCustomCol,)
             self.cFlag=1
-            dismissChooser = Tkinter.Button(self.chooserFrame,
+            dismissChooser = tkinter.Button(self.chooserFrame,
                                             text='Dismiss',
                                             command=self.root.withdraw)
             self.palChooser.pack()
@@ -936,7 +936,7 @@ class ColorChooser(Chooser):
         filename= self.fileEntry.get()
         groupname = self.groupEntry.get()
         if not groupname:
-            print 'ERROR'
+            print('ERROR')
         self.save(filename, groupname)
         self.root.withdraw()
         
@@ -950,8 +950,8 @@ class ColorChooser(Chooser):
             f.close()
         else:
             mod = {}
-            execfile(filename, mod)
-            colName = filter(lambda x: x[:2]!='__',dir(mod.keys()))
+            exec(compile(open(filename, "rb").read(), filename, 'exec'), mod)
+            colName = [x for x in dir(list(mod.keys())) if x[:2]!='__']
             if groupname in colName:
                 f = open(filename, 'w')
                 for name in colName:
@@ -1043,7 +1043,7 @@ class ColorChooser(Chooser):
             
     def colButton_cb(self, tag):
         #this is needed to self.colorChips._buttonList working
-        if tag in self.mapping.keys():
+        if tag in list(self.mapping.keys()):
             tag = self.mapping[tag]
         
         col = self.colDict[tag]
@@ -1099,18 +1099,18 @@ class ColorChooser(Chooser):
                             width=10,height=1, value = newKey)
         try:
             self.save(self.customFilename, self.colorsName)
-        except Exception, inst:
-            print inst
+        except Exception as inst:
+            print(inst)
 
 class BackgroundColorChooser(ColorChooser):
     def __init__(self, master=None, title = 'Chooser', commands = None,
                  immediate=0, exitFunction=None):
         ColorChooser.__init__(self, master, title, commands, immediate, exitFunction)
-        tmpFrame = Tkinter.Frame(self.master)
+        tmpFrame = tkinter.Frame(self.master)
         tmpFrame.pack(side='bottom',expand=0, fill='x')
-        button = Tkinter.Button(tmpFrame, text='Make Default',  command=self.makeDefault)
+        button = tkinter.Button(tmpFrame, text='Make Default',  command=self.makeDefault)
         button.pack(side='left', expand=1, fill='x')
-        button = Tkinter.Button(tmpFrame, text='Restore Default',  command=self.restoreDefault)
+        button = tkinter.Button(tmpFrame, text='Restore Default',  command=self.restoreDefault)
         button.pack(side='right', expand=1, fill='x')
         
         
@@ -1136,7 +1136,7 @@ class PaletteChooser():
         self.restoreDefault_cb = restoreDefault_cb
         self.apply_cb = apply_cb
         if master is None:
-            self.master = Tkinter.Toplevel()
+            self.master = tkinter.Toplevel()
             self.ownmaster=1
             self.master.title(title)
             #self.master.protocol('WM_DELETE_WINDOW', self.dismiss)
@@ -1144,15 +1144,15 @@ class PaletteChooser():
             self.ownmaster=0
             self.master = master
         self.balloon = Pmw.Balloon(self.master)
-        self.masterFrame = Tkinter.Frame(self.master,
+        self.masterFrame = tkinter.Frame(self.master,
                                          borderwidth=2, relief='ridge')
         self.masterFrame.pack()
-        self.colorVar = Tkinter.IntVar()
+        self.colorVar = tkinter.IntVar()
         self.colorVar.set(-1)
         self.buttons = []
         for index, item in enumerate(self.labels):            
             col = ToHEX(self.ramp[index])
-            b = Tkinter.Radiobutton(
+            b = tkinter.Radiobutton(
                 self.masterFrame, text=item, variable=self.colorVar, value=index,
                 bg = col, activebackground=col,
                 font=("Times",-16,'bold'), 
@@ -1165,15 +1165,15 @@ class PaletteChooser():
         if self.ownmaster:
             ## create dismiss button
             self.cb = self.master.destroy
-            okCancelFrame = Tkinter.Frame(self.master,  borderwidth=2, relief='ridge')
+            okCancelFrame = tkinter.Frame(self.master,  borderwidth=2, relief='ridge')
 
-            makeDefault = Tkinter.Button(okCancelFrame, text='Make Default',  command=self.makeDefault)
+            makeDefault = tkinter.Button(okCancelFrame, text='Make Default',  command=self.makeDefault)
             makeDefault.grid(row=0, column=0)
             self.balloon.bind(makeDefault, 'Saves this palette as a default')
-            restoreDefault = Tkinter.Button(okCancelFrame, text='Restore Default',   command=self.restoreDefault)
+            restoreDefault = tkinter.Button(okCancelFrame, text='Restore Default',   command=self.restoreDefault)
             restoreDefault.grid(row=0, column=1)
             self.balloon.bind(restoreDefault, 'Restores original palette as a default')
-            Tkinter.Button(okCancelFrame, text='   Dismiss   ',  
+            tkinter.Button(okCancelFrame, text='   Dismiss   ',  
                            command=self.cb).grid(row=1, column=0,columnspan=2)
             okCancelFrame.pack(fill='x')
         try:

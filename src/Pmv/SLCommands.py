@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # $Header: /opt/cvs/python/packages/share1.5/Pmv/SLCommands.py,v 1.33 2009/10/16 23:18:01 annao Exp $
@@ -6,7 +6,7 @@
 # $Id: SLCommands.py,v 1.33 2009/10/16 23:18:01 annao Exp $
 #
 
-import Tkinter, numpy.oldnumeric as Numeric, Pmw
+import tkinter, mglcompat.oldnumeric as Numeric, Pmw
 from DejaVu.IndexedPolygons import IndexedPolygons
 from ViewerFramework.VFCommand import CommandGUI
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
@@ -16,19 +16,19 @@ try:
     from SpatialLogic import geometrylib
     initCommand = True
 except:
-    print "WARNING: Spatial Logic module not found"
+    print("WARNING: Spatial Logic module not found")
     initCommand = False
 
 from opengltk.OpenGL import GL
 from time import time
-import thread
+import _thread
 from string import split, find ,replace
 import types
 from os import path
 from math import sqrt
 from MolKit.molecule import AtomSet, Atom
 from Pmv.displayCommands import DisplayCommand
-import string
+from mglcompat import pystring as string
 
 BHTree_CUT = 40.0
 def triangle_normal(p1, p2, p3):
@@ -84,7 +84,7 @@ class SLGeom:
                 vertices = [float(sp[1]), float(sp[2]), float(sp[3])] 
                 vstring = '%12.6f %12.6f %12.6f'%tuple(vertices)
 
-                if not vertDict.has_key(vstring):
+                if vstring not in vertDict:
                     vertDict[vstring]=(vnumber)
                     findex.append(vnumber)
                     vnumber = vnumber + 1
@@ -104,8 +104,8 @@ class SLGeom:
         #normArray = Numeric.zeros( (len(vertDict),3) ).astype('f')
 
         for i in range(len(vertDict)):
-            s = split(vertDict.keys()[i])
-            index = vertDict.values()[i]
+            s = split(list(vertDict.keys())[i])
+            index = list(vertDict.values())[i]
             vertArray[index] = ([ float(s[0]), float(s[1]), float(s[2]) ])
             #normArray[index] = vertDict.values()[i][1]
 
@@ -163,7 +163,7 @@ class SLGeom:
     def readBspt(self, filename):
         """ reads a Bspt from a file"""
         if not path.isfile(filename):
-            print "File %s does not exist." % (filename,)
+            print("File %s does not exist." % (filename,))
             return
         t1 = time()
         fid = geometrylib.New_FileID()
@@ -248,8 +248,8 @@ class SLGeom:
         
         #ops = ("union", "join", "difference", "intersect")
         if operation not in OPS:
-            print "wrong operation name: ", operation
-            print OPS
+            print("wrong operation name: ", operation)
+            print(OPS)
             return None
         copy_func = None
         if copy:
@@ -292,7 +292,7 @@ class SLGeom:
         """Converts Bsp tree set to Brep set (boundary representation)"""
         
         if set.type != geometrylib.BSPT_SET:
-            raise TypeError, "Set is not BSPT_Set type"
+            raise TypeError("Set is not BSPT_Set type")
         if duplicate:
             return geometrylib.Convert_Set(geometrylib.Duplicate_Set(set), geometrylib.BREP_SET, expense)
         else:
@@ -305,11 +305,11 @@ class SLGeom:
         """returns arrays of vertices, faces, normals """
         
         if set.type != geometrylib.BREP_SET:
-            raise TypeError, "Set is not BREP_Set type"
+            raise TypeError("Set is not BREP_Set type")
         size = geometrylib.Size_of_BrepSet(set)
         nvert = size.vertices
         nface = size.faces
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         verts = Numeric.zeros((nvert,3), 'f') #all vertices
         faces = Numeric.zeros(nface, 'i') #number of vertices per each face
         if has_vnormals:
@@ -332,7 +332,7 @@ class SLGeom:
         """returns indexed arrays of vertices, faces, normals ."""
         
         if not len(verts):
-            print "vertices array length = 0"
+            print("vertices array length = 0")
             return None, None, None, None
         vertDict = {}
         faceList = []
@@ -346,7 +346,7 @@ class SLGeom:
         count = 0
         for v in verts:
             vstring = '%12.6f %12.6f %12.6f'%tuple(v)
-            if not vertDict.has_key(vstring):
+            if vstring not in vertDict:
                 vertDict[vstring]=(vnumber)
                 findex.append(vnumber)
                 vertList.append(v)
@@ -364,7 +364,7 @@ class SLGeom:
                 findex = []
                 vcount = 0
                 fcount = fcount + 1
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         vertArray = Numeric.array(vertList)
         if len(vnormList):
             vnormArray = Numeric.array(vnormList)
@@ -380,11 +380,11 @@ class SLGeom:
         """returns indexed arrays of vertices, faces, normals ."""
         
         if not len(verts):
-            print "vertices array length = 0"
+            print("vertices array length = 0")
             return None, None, None, None
         # Not all the faces may have the same number of vertices ->
         # find the maximum number of vertices in the face array.
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         maxvertnum = Numeric.maximum.reduce(faces)
         faceArray = (Numeric.ones((len(faces), maxvertnum)) *[-1]).astype("f") 
         vertDict = {}
@@ -399,7 +399,7 @@ class SLGeom:
         for v in verts:
             #vstring = '%12.6f %12.6f %12.6f'%tuple(v)
             vstring = '%.12f#%.12f#%.12f'%tuple(v)
-            if not vertDict.has_key(vstring):
+            if vstring not in vertDict:
                 vertDict[vstring]=(vnumber)
                 faceArray[fcount][vcount] = vnumber
                 vertList.append(v)
@@ -415,7 +415,7 @@ class SLGeom:
                     fnormList.append(fnorms[fcount])
                 vcount = 0
                 fcount = fcount + 1
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         vertArray = Numeric.array(vertList)
         if len(vnormList):
             vnormArray = Numeric.array(vnormList)
@@ -445,22 +445,22 @@ class SLCommand(MVCommand):
                            #values - built Bsp trees for objects.
         self.cl_atoms = {}
         self.isDisplayed = 0
-        self.currOptn = Tkinter.StringVar()
+        self.currOptn = tkinter.StringVar()
         self.currOptn.set("union")
-        self.recomputeBSPT1 = Tkinter.IntVar()
+        self.recomputeBSPT1 = tkinter.IntVar()
         self.recomputeBSPT1.set(0)
-        self.recomputeBSPT2 = Tkinter.IntVar()
+        self.recomputeBSPT2 = tkinter.IntVar()
         self.recomputeBSPT2.set(0)
-        self.bindToMol = Tkinter.IntVar()
+        self.bindToMol = tkinter.IntVar()
         self.bindToMol.set(0)
-        self.newobj_name = Tkinter.StringVar()
+        self.newobj_name = tkinter.StringVar()
         #self.sl = None
 
     def checkDependencies(self, vf):
         try:
             from SpatialLogic import geometrylib
         except:
-            print "WARNING: Spatial Logic module not found"
+            print("WARNING: Spatial Logic module not found")
 
     def buildFormDescr(self, formName):
         if formName == "sl":
@@ -491,7 +491,7 @@ class SLCommand(MVCommand):
 ##                                     'pady': 5}
             
 ##                          })
-            idf.append({'widgetType':Tkinter.Checkbutton,
+            idf.append({'widgetType':tkinter.Checkbutton,
                         #'name': name,
                         'tooltip': "Recompute Bspt of selected object1 every\ntime a set operation takes place.",
                         'wcfg':{'text': "Recompute Bspt obj1",
@@ -501,7 +501,7 @@ class SLCommand(MVCommand):
                         'gridcfg':{'sticky': 'we', 'column': 0,
                                    'columnspan':2}
                         })
-            idf.append({'widgetType':Tkinter.Checkbutton,
+            idf.append({'widgetType':tkinter.Checkbutton,
                         #'name': name,
                         'tooltip': "Recompute Bspt of selected object2 every\ntime a set operation takes place.",
                         'wcfg':{'text': "Recompute Bspt obj2",
@@ -511,7 +511,7 @@ class SLCommand(MVCommand):
                         'gridcfg':{'sticky': 'we', 'column': 2, 'row': -1,
                                    'columnspan':2}
                         })
-            idf.append({'widgetType':Tkinter.Label,
+            idf.append({'widgetType':tkinter.Label,
                         'wcfg': {'text':'Select operation type:'},
                         'gridcfg':{'sticky':'we', 'columnspan':4,
                                    'pady': 5}
@@ -524,7 +524,7 @@ class SLCommand(MVCommand):
                     "Preserves the overlapping region only, \neliminating all the rest of both objects."]
             i = 0
             for name in OPS:
-                idf.append({'widgetType':Tkinter.Checkbutton,
+                idf.append({'widgetType':tkinter.Checkbutton,
                             'name': name,
                             'tooltip':tips[i],
                             'wcfg':{'text': name,
@@ -542,24 +542,24 @@ class SLCommand(MVCommand):
                         'gridcfg':{'sticky': 'we', 'column':0,
                                    'columnspan':4, 'pady': 5}
                         })
-            idf.append({'widgetType':Tkinter.Checkbutton,
+            idf.append({'widgetType':tkinter.Checkbutton,
                             'wcfg':{'text': "bind new object to molecule",
                                     #'width':5,
                                     'variable':self.bindToMol ,
                                     'onvalue': 1, 'offvalue': 0},
                             'gridcfg':{'sticky': 'we','columnspan':4}
                             })
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                     'wcfg': {'text': 'Operate',
-                             'relief' : Tkinter.RAISED,
+                             'relief' : tkinter.RAISED,
                              'borderwidth' : 3,
                              'command':self.operate_cb},
                     'gridcfg':{'sticky':'we', 'columnspan':2},
                     })
 
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                     'wcfg':{'text': 'Dismiss',
-                            'relief' : Tkinter.RAISED,
+                            'relief' : tkinter.RAISED,
                             'borderwidth' : 3,
                             'command':self.dismiss_cb},
                     'gridcfg':{'sticky':'we', 'row':-1, 'columnspan':2},
@@ -568,9 +568,9 @@ class SLCommand(MVCommand):
             return idf
 
     def sort_entries(self, name_dict):
-        keys = name_dict.keys()
-        vals = name_dict.values()
-        vals_sorted = map(None, vals, range(len(vals)))
+        keys = list(name_dict.keys())
+        vals = list(name_dict.values())
+        vals_sorted = map(None, vals, list(range(len(vals))))
         vals_sorted.sort()
         keys_sorted = []
         for v in vals_sorted:
@@ -616,22 +616,22 @@ class SLCommand(MVCommand):
                     allnames_dict[entry] = o.fullName
         #check if objects had been added/removed to the viewer since
         #last callback of the command:
-        allobj_names = allobj.keys()
-        slobj_names = self.obj_dict.keys()
+        allobj_names = list(allobj.keys())
+        slobj_names = list(self.obj_dict.keys())
         for name in slobj_names:
             if name in allobj_names:
                 #check if the object has changed(number of vertices and faces)
                 if allobj[name]['v_f'] != self.obj_dict[name]['v_f']:
-                    if self.obj_dict[name].has_key('copy_obj'):
+                    if 'copy_obj' in self.obj_dict[name]:
                         del(self.obj_dict[name]['copy_obj'])
                     self.obj_dict[name]['v_f'] = allobj[name]['v_f']
                     self.obj_dict[name]['obj'] = allobj[name]['obj']
-                    if name in self.setdict.keys():
+                    if name in list(self.setdict.keys()):
                         del(self.setdict[name])
                 allobj_names.remove(name)
             else:
                 del(self.obj_dict[name])
-                if name in self.setdict.keys():
+                if name in list(self.setdict.keys()):
                     del(self.setdict[name])
         for name in allobj_names:
             self.obj_dict[name] = {'v_f': allobj[name]['v_f'],
@@ -643,17 +643,17 @@ class SLCommand(MVCommand):
         name1 = self.idf.entryByName['object1']['widget'].get()
         name2 = self.idf.entryByName['object2']['widget'].get()
         if not name1 or not name2:
-            print "object(s) not selected "
+            print("object(s) not selected ")
             return
         opname = self.currOptn.get()
         if not opname:
-            print "Operation type is not selected."
+            print("Operation type is not selected.")
             return
         newobj_name = self.newobj_name.get()
         bindToMol = self.bindToMol.get()
-        apply(self.doitWrapper, (self.allnames_dict[name1],
+        self.doitWrapper(*(self.allnames_dict[name1],
                                  self.allnames_dict[name2],
-                                 opname, newobj_name, bindToMol), {})
+                                 opname, newobj_name, bindToMol), **{})
         self.dismiss_cb()
         self.vf.GUI.VIEWER.Redraw()
 
@@ -668,26 +668,26 @@ class SLCommand(MVCommand):
         """
         
         self.updateObjectDict()
-        names = self.obj_dict.keys()
+        names = list(self.obj_dict.keys())
         if name1 not in names:
-            print "%s is not a valid operand" % (name1,)
+            print("%s is not a valid operand" % (name1,))
             return
         if name2 not in names:
-            print "%s is not a valid operand" % (name2,)
+            print("%s is not a valid operand" % (name2,))
             return
         #ops = ("union", "join", "difference", "intersect")
         if operation not in OPS:
-            print "%s in not a valid operation" % operation
+            print("%s in not a valid operation" % operation)
             return
-        apply(self.doitWrapper, (name1, name2, operation, newobj_name, bindToMol), kw)
+        self.doitWrapper(*(name1, name2, operation, newobj_name, bindToMol), **kw)
         
         
     def doit(self, name1, name2, opname, res_name, bindToMol):
         if not res_name:
             res_name = split(name1,"|")[-1] + '-' + \
                        split(name2, "|")[-1] + '-' + opname
-        if res_name in self.setdict.keys():
-            print "%s object exists." % (res_name)
+        if res_name in list(self.setdict.keys()):
+            print("%s object exists." % (res_name))
             return
         global sl
         if not sl:
@@ -702,7 +702,7 @@ class SLCommand(MVCommand):
         expon = 1.0
         bspt_set1 = None
         bspt_set2 = None
-        if name1 in self.setdict.keys():
+        if name1 in list(self.setdict.keys()):
             #check if we need to recompute the Bspt for the object
             if self.recomputeBSPT1.get():
                 if hasattr(self.obj_dict[name1]['obj'], "SLnewobj"):
@@ -715,14 +715,14 @@ class SLCommand(MVCommand):
                     # self.obj_dict so that the function could use
                     # updated arrays of vertices and faces.
                     del(self.setdict[name1])
-                    if self.obj_dict[name1].has_key('copy_obj'):
+                    if 'copy_obj' in self.obj_dict[name1]:
                         del(self.obj_dict[name1]['copy_obj'])
             else:
                 bspt_set1 = self.setdict[name1]
                 if not geometrylib.Size_of_Set(bspt_set1):
                     bspt_set1 = None
         if not bspt_set1:
-            if self.obj_dict[name1].has_key('copy_obj'):
+            if 'copy_obj' in self.obj_dict[name1]:
                 object1 = self.obj_dict[name1]['copy_obj']
             else:
 ##                  if isinstance(self.obj_dict[name1]['obj'], GleObject):
@@ -742,21 +742,21 @@ class SLCommand(MVCommand):
             bspt_set1 = sl.Brep_To_Bspt(brep_set1, expense = ex,
                                         exponent = expon)
             t2 = time()
-            print "time to build bspt_set1(%s) is %.5f " % (name1, (t2-t1))
-        if name2 in self.setdict.keys():
+            print("time to build bspt_set1(%s) is %.5f " % (name1, (t2-t1)))
+        if name2 in list(self.setdict.keys()):
             if self.recomputeBSPT2.get():
                 if hasattr(self.obj_dict[name2]['obj'], "SLnewobj"):
                     bspt_set2 = self.setdict[name2]
                 else:
                     del(self.setdict[name2])
-                    if self.obj_dict[name2].has_key('copy_obj'):
+                    if 'copy_obj' in self.obj_dict[name2]:
                         del(self.obj_dict[name2]['copy_obj'])
             else:
                 bspt_set2 = self.setdict[name2]
                 if not geometrylib.Size_of_Set(bspt_set2):
                     bspt_set2 = None
         if not bspt_set2:
-            if self.obj_dict[name2].has_key('copy_obj'):
+            if 'copy_obj' in self.obj_dict[name2]:
                 object2 = self.obj_dict[name2]['copy_obj']
             else:
                 object2 = self.obj_dict[name2]['obj'].asIndexedPolygons(run=1, removeDupVerts=0)
@@ -772,7 +772,7 @@ class SLCommand(MVCommand):
             bspt_set2 = sl.Brep_To_Bspt(brep_set2, expense = ex,
                                         exponent = expon)
             t2 = time()
-            print "time to build bspt_set2(%s) is %.5f " % (name2, (t2-t1))
+            print("time to build bspt_set2(%s) is %.5f " % (name2, (t2-t1)))
         rset = sl.operateBsptSets(bspt_set1, bspt_set2, opname,
                                       expense=ex, copy = "duplicate")
         
@@ -805,8 +805,8 @@ class SLCommand(MVCommand):
                     res_fullname = mol_geom.fullName+'|'+res_name
                         
             #find if an object with the same name already  exists:
-            obj_fullnames = self.obj_dict.keys()
-            objnames = map(lambda x: split(x, '|')[-1], obj_fullnames) 
+            obj_fullnames = list(self.obj_dict.keys())
+            objnames = [split(x, '|')[-1] for x in obj_fullnames] 
             overwrite = False
             if res_name in objnames:
                 ind = objnames.index(res_name)
@@ -863,14 +863,14 @@ class SLCommand(MVCommand):
 
             self.setdict[ipg.fullName] = rset
             ipg.SLnewobj = True
-            print "size of bspt_set1:", geometrylib.Size_of_Set(bspt_set1)    
-            print "size of bspt_set2:", geometrylib.Size_of_Set(bspt_set2)
-            print "size of rset:", geometrylib.Size_of_Set(rset)
+            print("size of bspt_set1:", geometrylib.Size_of_Set(bspt_set1))    
+            print("size of bspt_set2:", geometrylib.Size_of_Set(bspt_set2))
+            print("size of rset:", geometrylib.Size_of_Set(rset))
         else:
-            print "Number of vertices of the resultant object is 0."
-        if name1 not in self.setdict.keys():
+            print("Number of vertices of the resultant object is 0.")
+        if name1 not in list(self.setdict.keys()):
             self.setdict[name1] = bspt_set1
-        if name2 not in self.setdict.keys():
+        if name2 not in list(self.setdict.keys()):
             self.setdict[name2] = bspt_set2
         #self.dismiss_cb()
 
@@ -878,7 +878,7 @@ class SLCommand(MVCommand):
         object = self.vf.GUI.VIEWER.currentObject
         name = object.fullName
         if not isinstance(object, IndexedPolygons):
-            print "object %s is not IndexedPolygons instance" % (name,)
+            print("object %s is not IndexedPolygons instance" % (name,))
             return
         v = object.vertexSet.vertices.array
         if isinstance(object, GleObject):
@@ -896,12 +896,12 @@ class SLCommand(MVCommand):
         brep_set = sl.buildBrepSet(v,f)
         #brep_set = sl.buildBrepSet0(v,f)
         t2 = time()
-        print "time to build brep_set for %s is %.2f " % (name, (t2-t1))
+        print("time to build brep_set for %s is %.2f " % (name, (t2-t1)))
         t1 = time()
         bspt_set = sl.Brep_To_Bspt(brep_set, exponent = expon)
         t2 = time()
-        print "time to build bspt_set is %.2f " % (t2-t1)
-        if name not in self.setdict.keys():
+        print("time to build bspt_set is %.2f " % (t2-t1))
+        if name not in list(self.setdict.keys()):
                 self.setdict[name] = bspt_set
 
     def rm_neg_inds(self, arr):
@@ -953,7 +953,7 @@ class SaveBsptCommand(MVCommand):
         try:
             from SpatialLogic import geometrylib
         except:
-            print "WARNING: Spatial Logic module not found"
+            print("WARNING: Spatial Logic module not found")
 
     def guiCallback(self):
         if not hasattr(self.vf, "SL"):
@@ -969,7 +969,7 @@ class SaveBsptCommand(MVCommand):
 
     def buildFormDescr(self, formName):
         if formName == "saveBspt":
-            entries = self.vf.SL.setdict.keys()
+            entries = list(self.vf.SL.setdict.keys())
             idf = self.idf = InputFormDescr(title = "Save Bspt in file")
             idf.append({'widgetType': Pmw.ScrolledListBox,
                         'name':'BsptList',
@@ -978,17 +978,17 @@ class SaveBsptCommand(MVCommand):
                                   'label_text': "Select a BSPT"},
                         'gridcfg':{'sticky':'we', 'columnspan': 2}
                          })
-            idf.append({'widgetType': Tkinter.Button,
+            idf.append({'widgetType': tkinter.Button,
                         'wcfg': {'text': 'OK',
-                                 'relief' : Tkinter.RAISED,
+                                 'relief' : tkinter.RAISED,
                                  'borderwidth' : 2,
                                  'command':self.select_cb},
                         'gridcfg':{'sticky':'we',},
                         })
             
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'wcfg':{'text': 'Cancel',
-                                'relief' : Tkinter.RAISED,
+                                'relief' : tkinter.RAISED,
                                 'borderwidth' : 3,
                                 'command':self.cancel_cb},
                         'gridcfg':{'sticky':'we', 'row':-1},
@@ -1003,7 +1003,7 @@ class SaveBsptCommand(MVCommand):
             savefile = self.vf.askFileSave(types=[('BSPT file', '*.bsp')],
                                            title = "Save as .bsp")
             if savefile :
-                apply(self.doitWrapper, (savefile, selection[0]), {})
+                self.doitWrapper(*(savefile, selection[0]), **{})
 
             self.cmdForms['saveBspt'].withdraw()
             self.isDisplayed=0
@@ -1017,7 +1017,7 @@ class SaveBsptCommand(MVCommand):
         if not sl:
             sl = SLGeom()
         status = sl.writeBspt(self.vf.SL.setdict[selection], savefile)
-        print "write status:", status
+        print("write status:", status)
         return
     
     def __call__(self, savefile, selection, **kw):
@@ -1026,17 +1026,17 @@ class SaveBsptCommand(MVCommand):
     selection - name of Bspt set """
         
         if not hasattr(self.vf, "SL"):
-            print "Warning: SLCommand is not loaded"
+            print("Warning: SLCommand is not loaded")
             return
         if not path.isfile(savefile):
-            print "Warning: file %s does not exist" % (savefile,)
+            print("Warning: file %s does not exist" % (savefile,))
             return
-        if not selection in self.vf.SL.setdict.keys():
-            print "Wrong selection: %s" % (selection,)
-            print "list of avalable Bspt(s):"
-            print self.vf.SL.setdict.keys()
+        if not selection in list(self.vf.SL.setdict.keys()):
+            print("Wrong selection: %s" % (selection,))
+            print("list of avalable Bspt(s):")
+            print(list(self.vf.SL.setdict.keys()))
             return
-        apply(self.doitWrapper, (savefile, selection), kw)
+        self.doitWrapper(*(savefile, selection), **kw)
         
 
 SaveBsptGUI = CommandGUI()
@@ -1052,7 +1052,7 @@ class RestoreBsptCommand(MVCommand):
         try:
             from SpatialLogic import geometrylib
         except:
-            print "WARNING: SpatialLogic module not found."
+            print("WARNING: SpatialLogic module not found.")
                 
         
     def __init__(self):
@@ -1066,9 +1066,9 @@ class RestoreBsptCommand(MVCommand):
         file = self.vf.askFileOpen(types=[('BSPT file', '*.bsp')],
                                    title = "Read .bsp")
         if file:
-            root = Tkinter.Toplevel()
+            root = tkinter.Toplevel()
             root.withdraw()
-            from SimpleDialog import SimpleDialog
+            from tkinter.simpledialog import SimpleDialog
             ans = SimpleDialog(root, text="Bind object to molecule?",
                                buttons=["Yes", "No", "Cancel"],
                                default=0,
@@ -1080,7 +1080,7 @@ class RestoreBsptCommand(MVCommand):
                 ans = MoleculeChooser(self.vf).go()
                 if ans:
                     mol = ans.name 
-            apply(self.doitWrapper, (file, mol), {})
+            self.doitWrapper(*(file, mol), **{})
             
     def doit(self, file, molname=None):
         global sl
@@ -1124,18 +1124,18 @@ class RestoreBsptCommand(MVCommand):
                self.vf.bindGeomToMolecularFragment.data[name]['fns']=fns 
             self.vf.SL.setdict[ipg.fullName] = bspt_set
         else:
-            print "vertices array length of converted brep set is 0"
+            print("vertices array length of converted brep set is 0")
 
     def __call__(self, file, molname=None, **kw):
         """ None <- RestoreBspt(file)
         file - a .bsp file"""
         if not hasattr(self.vf, "SL"):
-            print "SLCommand is not loaded"
+            print("SLCommand is not loaded")
             return
         if not path.isfile(file):
-            print "file %s does not exist" % (file,)
+            print("file %s does not exist" % (file,))
             return
-        apply(self.doitWrapper, (file, molname), kw)
+        self.doitWrapper(*(file, molname), **kw)
         
 RestoreBsptGUI = CommandGUI()
 RestoreBsptGUI.addMenuCommand('menuRoot', 'SL','Restore Bspt', index = 3)

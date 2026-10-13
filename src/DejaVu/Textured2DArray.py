@@ -1,6 +1,6 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 from DejaVu.colorTool import RGBARamp
 from DejaVu.Texture import Texture
@@ -27,31 +27,31 @@ class textured2DArray(IndexedPolygons):
         # 2d array
         self.array = None
 
-        if not kw.has_key('inheritMaterial'):
+        if 'inheritMaterial' not in kw:
             kw['inheritMaterial'] = 0
 
-        if not kw.has_key('culling'):
+        if 'culling' not in kw:
             kw['culling'] = 'none'
 
-        if not kw.has_key('blendFunctions'):
+        if 'blendFunctions' not in kw:
             kw['blendFunctions'] = ('GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA')
 
-        if not kw.has_key('frontPolyMode'):
+        if 'frontPolyMode' not in kw:
             kw['frontPolyMode'] = 'fill'
 
-        if not kw.has_key('backPolyMode'):
+        if 'backPolyMode' not in kw:
             kw['backPolyMode'] = 'fill'
 
-        if not kw.has_key('shading'):
+        if 'shading' not in kw:
             kw['shading'] = 'flat'
 
-        if not kw.has_key('vertices'):
+        if 'vertices' not in kw:
             kw['vertices'] = ((0.,0,0), (1,0,0), (1,1,0), (0,1,0))
 
         kw['faces'] = ((0,1,2,3),)
         #kw['faces'] = ( (0, 1, 2), (0, 2, 3) )
 
-        apply( IndexedPolygons.__init__, (self, name, check), kw)
+        IndexedPolygons.__init__(*(self, name, check), **kw)
         
 
 
@@ -61,17 +61,17 @@ check=1 : verify that all the keywords present can be handle by this func
 redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
-        redoFlags = apply( IndexedPolygons.Set, (self, check, 0), kw )
+        redoFlags = IndexedPolygons.Set(*(self, check, 0), **kw)
         redoFlags |= self._redoFlags['redoViewerDisplayListFlag']
         rebuildTexture=False
-	val = kw.get( 'array')
+        val = kw.get( 'array')
         if val is not None:
             array = Numeric.array(val)
             assert len(array.shape)==2
             self.array = val
             rebuildTexture=True
             
-	val = kw.get( 'colormap')
+        val = kw.get( 'colormap')
         if val is not None:
             assert isinstance(val, ColorMap)
             self.colormap = val
@@ -79,14 +79,14 @@ updateOwnGui=True : allow to update owngui at the end this func
             
 
         setMinMax = False
-	val = kw.get( 'max')
+        val = kw.get( 'max')
         if val:
             maxi = float(val)
             setMinMax = True
         else:
             maxi = self.colormap.maxi
             
-	val = kw.get( 'min')
+        val = kw.get( 'min')
         if val:
             mini = float(val)
             setMinMax = True

@@ -22,12 +22,12 @@ HYDROGEN_DIST = 6.0
 WATER_DIST=4.0
 
 import os
-import string
+from mglcompat import pystring as string
 
-from definitions import *
-from utilities import *
+from .definitions import *
+from .utilities import *
 from math import *
-from quatfit import *
+from .quatfit import *
 from random import *
 from time import *
 
@@ -100,7 +100,7 @@ class hydrogenRoutines:
                 text:  The text to output (string)
         """
         if self.hdebug:
-            print text
+            print(text)
 
     def getstates(self, amb):
         """
@@ -162,7 +162,7 @@ class hydrogenRoutines:
                 id    : The state id to switch to (int)
         """
         if id > len(states):
-            raise ValueError, "Invalid State ID!"
+            raise ValueError("Invalid State ID!")
         
         # First Remove all Hs
         residue = getattr(amb,"residue")
@@ -198,7 +198,7 @@ class hydrogenRoutines:
                     refcoords.append(resatom.getCoords())
                     defcoords.append(atom.getCoords())
                 else:
-                    raise ValueError, "Could not find necessary atom!"
+                    raise ValueError("Could not find necessary atom!")
         
             newcoords = findCoordinates(3, refcoords, defcoords, defatomcoords)
             boundname = conf.boundatom
@@ -231,7 +231,7 @@ class hydrogenRoutines:
         
         if type in [1,4,3,10,13]:
             if type == 4:
-                raise ValueError, "We shouldn't have a brute force HIS without the FLIP!"
+                raise ValueError("We shouldn't have a brute force HIS without the FLIP!")
             states = self.getstates(amb)
             for i in range(len(states)): 
                 self.switchstate(states, amb, i)
@@ -269,8 +269,8 @@ class hydrogenRoutines:
             if energy >= bestenergy: # switch back!
                 self.routines.setChiangle(residue, chinum, oldangle, defresidue)
         else:
-            raise ValueError, "Invalid Hydrogen type %i in %s %i!" % \
-                  (type, residue.get("name"), residue.get("resSeq"))
+            raise ValueError("Invalid Hydrogen type %i in %s %i!" % \
+                  (type, residue.get("name"), residue.get("resSeq")))
 
     def optimizeHydrogens(self):
         """
@@ -501,7 +501,7 @@ class hydrogenRoutines:
                 HE2 = residue.getAtom("HE2")
                 if HE1 != None: state = "Neutral GLU (HE1)"
                 elif HE2 != None: state = "Neutral GLU (HE2)"
-                else: raise ValueError, "GLH should always be neutral!"
+                else: raise ValueError("GLH should always be neutral!")
 
             if state != "":
                 self.routines.write("Ambiguity #: %i, chain: %s, residue: %i %s - %s\n" \
@@ -630,7 +630,7 @@ class hydrogenRoutines:
                     if donorhatom == None or acceptorhatom == None:
                         text = "Couldn't find bonded hydrogen even though "
                         text = text + "it is present in intrabonds!"
-                        raise ValueError, text
+                        raise ValueError(text)
             
                     dist = distance(donorhatom.getCoords(), acceptor.getCoords())
                     if dist > max_dha_dist and dist < max_ele_dist: # Are the Hs too far?
@@ -660,7 +660,7 @@ class hydrogenRoutines:
                 if donorhatom == None:
                     text = "Couldn't find bonded hydrogen even though "
                     text = text + "it is present in intrabonds!"
-                    raise ValueError, text
+                    raise ValueError(text)
                 
                 dist = distance(donorhatom.getCoords(), acceptor.getCoords())
                 if dist > max_dha_dist and dist < max_ele_dist: # Or too far?
@@ -1027,7 +1027,7 @@ class hydrogenRoutines:
         elif hydrogen.get("name") == "H1":
             movenames = ["H2"]
         else:
-            raise ValueError, "Got improperly mapped water hydrogen!"
+            raise ValueError("Got improperly mapped water hydrogen!")
             
         for name in movenames:
             atom = residue.getAtom(name)
@@ -1465,7 +1465,7 @@ class hydrogenRoutines:
                     defpath = testpath
                     break
         if not os.path.isfile(defpath):
-            raise ValueError, "%s not found!" % defpath
+            raise ValueError("%s not found!" % defpath)
 
        
         file = open(defpath)

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -26,16 +26,17 @@ from DejaVu.Points import CrossSet
 from DejaVu.Cylinders import Cylinders
 from Pmv.mvCommand import MVInteractiveCmdCaller
 from mglutil.util.packageFilePath import getResourceFolderWithVersion, findFilePath
-import thread
+import _thread
 from types import StringType, ListType
 import Pmw
 import os, sys
-from numpy.oldnumeric import array, fabs, maximum
+from mglcompat.oldnumeric import array, fabs, maximum
 from string import find, replace, split
 from MolKit.tree import TreeNode, TreeNodeSet
-import tkMessageBox
+import tkinter.messagebox
 from mglutil.util.callback import CallbackFunction
 from mglutil.util.packageFilePath import findFilePath
+import importlib
 ICONPATH = findFilePath('Icons', 'Pmv')
 
 from ViewerFramework.VF import VFEvent
@@ -164,16 +165,16 @@ class MolGeomContainer(GeomContainer):
 
     def getGeomColor(self, geomName):
         # build a list of colors for a geometry from the atom's colors
-        if self.atomPropToVertices.has_key(geomName):
+        if geomName in self.atomPropToVertices:
             func = self.atomPropToVertices[geomName]
             geom = self.geoms[geomName]
             atms = self.atoms[geomName]
             col = func(geom, atms, 'colors', propIndex=geomName)
 
         else:
-            if geomName in self.atoms.keys():
-                col = map(lambda x, geomName=geomName: x.colors[geomName],
-                          self.atoms[geomName])
+            if geomName in list(self.atoms.keys()):
+                col = list(map(lambda x, geomName=geomName: x.colors[geomName],
+                          self.atoms[geomName]))
             else:
                 return
 
@@ -191,7 +192,7 @@ class MolGeomContainer(GeomContainer):
         for name in geomName:
             if geomName=='master': continue
             if geomName=='selectionSpheres': continue
-            if self.atoms.has_key(name) and len(self.atoms[name])==0: continue 
+            if name in self.atoms and len(self.atoms[name])==0: continue 
             col = self.getGeomColor(name)
 
             if updateOpacity:
@@ -210,15 +211,15 @@ class MolGeomContainer(GeomContainer):
 
 
     def getGeomOpacity(self, geomName):
-        if self.atomPropToVertices.has_key(geomName):
+        if geomName in self.atomPropToVertices:
             func = self.atomPropToVertices[geomName]
             geom = self.geoms[geomName]
             atms = self.atoms[geomName]
             col = func(geom, atms, 'opacities', propIndex = geomName)
         else:
-            if geomName in self.atoms.keys():
-                col = map(lambda x, geomName=geomName: x.opacities[geomName],
-                              self.atoms[geomName])
+            if geomName in list(self.atoms.keys()):
+                col = list(map(lambda x, geomName=geomName: x.opacities[geomName],
+                              self.atoms[geomName]))
                 
             else:
                 return
@@ -246,7 +247,7 @@ class MolGeomContainer(GeomContainer):
 
 from MolKit.molecule import Molecule, MoleculeSet
 from ViewerFramework.VFCommand import Command, CommandGUI
-import Tkinter
+import tkinter
 
 from DejaVu import Viewer
 
@@ -303,7 +304,7 @@ class MoleculeViewer(ViewerFramework):
         ##
         lines = """##\n## define all sets\n##\n"""
         dashboardTreeEntries = [x.object.name for x in self.dashboard.tree.root.children]
-        for name, objs in self.sets.items():
+        for name, objs in list(self.sets.items()):
             if name in dashboardTreeEntries: # add entry to dashboard
                 lines += "self.addSelectionToDashboard('%s', '%s', topCommand=0)\n"%(name, objs.buildRepr())
             else: # regular set
@@ -346,7 +347,7 @@ class MoleculeViewer(ViewerFramework):
         ##
         ## molecular surfaces
         ##
-        for name, srfa in gc.msms.items():
+        for name, srfa in list(gc.msms.items()):
             srf = srfa[0]
             atoms = gca[name]
             if len(gca[name]): # This surface is displayed
@@ -408,14 +409,14 @@ class MoleculeViewer(ViewerFramework):
         if master:
             # code to restore mol.strandVarValue
             d = {}
-            for k,v in mol.strandVar.items():
+            for k,v in list(mol.strandVar.items()):
                 d[k] = v.get()
             lines += "mols[0].strandVarValue = %s\n"%str(d)
             lines += "self.beadedRibbons('%s', **%s)\n"%(
                 mol.name, str(mol.beadedRibbonParams))
             
         ## compute coarse molecular surfaces
-        if self.commands.has_key('coarseMolSurface'):
+        if 'coarseMolSurface' in self.commands:
             for geomName in self.coarseMolSurface.surfNameList:
                 geom = vi.FindObjectByName('root|%s|%s'%(mol.name, geomName))
                 if geom:
@@ -445,7 +446,7 @@ class MoleculeViewer(ViewerFramework):
         ##
         lines += """##\n## atom colors\n##\n"""
         for an, a in enumerate(currentAtoms):
-            for k,v in a.colors.items():
+            for k,v in list(a.colors.items()):
                 if v!=(1.0, 1.0, 1.0):
                     lines += "currentAtoms[%d].colors['%s']=(%f, %f, %f)\n"%(
                         an, k, v[0], v[1], v[2])
@@ -456,7 +457,7 @@ class MoleculeViewer(ViewerFramework):
         lines += """\n#### display geometry\n##\n"""
         gc = mol.geomContainer
         gca = gc.atoms    
-        allGeoms = gca.keys() # list of all geometries
+        allGeoms = list(gca.keys()) # list of all geometries
 
         ##
         ## Lines
@@ -504,7 +505,7 @@ class MoleculeViewer(ViewerFramework):
         ## Ribbons
         ##
         ribbonResidues = ResidueSet([], stringRepr='abc')
-        for k, v in gca.items():
+        for k, v in list(gca.items()):
             if k[:4] in ['Heli', 'Stra', 'Turn', 'Coil'] and gca[k]:
                 ribbonResidues += gca[k]
         if ribbonResidues:
@@ -537,18 +538,18 @@ class MoleculeViewer(ViewerFramework):
                 gca['ProteinLabels'].buildRepr(), str(p['font']), p['format'],
                 p['location'], str(p['textcolor']), str(p['properties']))
 
-        for name in gc.msms.keys():
+        for name in list(gc.msms.keys()):
             if gca[name]:
                 lines += """self.displayMSMS('%s', negate=False, only=False, surfName='%s', nbVert=1)\n"""%(gca[name].buildRepr(), name)
 
         ##
         ## display coarse molecular surfaces
         ##
-        if self.commands.has_key('coarseMolSurface'):        
+        if 'coarseMolSurface' in self.commands:        
             for geomName in self.coarseMolSurface.surfNameList:
                 geom = vi.FindObjectByName('root|%s|%s'%(mol.name, geomName))
                 if geom:
-                    if gca.has_key(geomName) and gca[geomName]:
+                    if geomName in gca and gca[geomName]:
                         lines += "self.DisplayBoundGeom('%s', only=True, geomNames=['root|%s|%s'], nbVert=1)\n"%(gca[geomName].buildRepr(), mol.name, geomName)
 
         # check if molecule is visible:
@@ -614,7 +615,7 @@ class MoleculeViewer(ViewerFramework):
 
         try:
             # execute session.py file inside untar'ed folder
-            execfile('./session.py')
+            exec(compile(open('./session.py', "rb").read(), './session.py', 'exec'))
             os.chdir(cwd)
             
             # delete the untar'ed folder
@@ -662,9 +663,9 @@ class MoleculeViewer(ViewerFramework):
 
         else:
             if not isinstance(parser, PdbParser):
-                print 'WARNING: no writer for molecule %s, read using %s parser'%\
-                      (mol.name, parser.__class__)
-                print '         defaulting to PDB format'
+                print('WARNING: no writer for molecule %s, read using %s parser'%\
+                      (mol.name, parser.__class__))
+                print('         defaulting to PDB format')
             writer = PdbWriter()
             records=['ATOM', 'HETATM', 'CONECT']
             if hasattr(mol, 'builder'):
@@ -728,7 +729,7 @@ class MoleculeViewer(ViewerFramework):
 
             # write vision networks
             ed = self.vision.ed
-            for name,net in ed.networks.items():
+            for name,net in list(ed.networks.items()):
                 if len(net.nodes):
                     net.saveToFile(os.path.join(sessionFolder,
                                                 net.name+'_pmvnet.py'))
@@ -737,7 +738,7 @@ class MoleculeViewer(ViewerFramework):
             # Python code for restoring all actions and the Sequence Anim. animation
             # found in AniMol.
             animcode = None
-            if self.commands.has_key('customAnimation'):
+            if 'customAnimation' in self.commands:
                 #each animation action or snapshot is written in a separate file "animation#.py" 
                 numfiles = self.customAnimation.animNB.saveAniMolSession("animation")
                 #write code to load animation script and/or snapshots
@@ -751,7 +752,7 @@ class MoleculeViewer(ViewerFramework):
 
             # add lines to session file to load vision networks
             f.write('ed = self.vision.ed\n')
-            for name,net in ed.networks.items():
+            for name,net in list(ed.networks.items()):
                 if len(net.nodes):
                     f.write("ed.loadNetwork('%s')\n"%(net.name+'_pmvnet.py'))
                     
@@ -828,11 +829,11 @@ class MoleculeViewer(ViewerFramework):
                 if etype == ImportError:
                     if hasattr(value,'message'):
                         package = value.message.split()[-1]
-                        print "Please install " +package + " to fix this problem."
+                        print("Please install " +package + " to fix this problem.")
                 elif etype == AssertionError:
                     pass
                 else:
-                    print "\nPlease include this Traceback in your bug report.\n"
+                    print("\nPlease include this Traceback in your bug report.\n")
             import traceback 
             
             traceback.print_exception = print_exception_modified
@@ -904,9 +905,9 @@ class MoleculeViewer(ViewerFramework):
         # we need the ICmdCaller even if there is no GUI because it has
         # the level variable used byu selection commands
         self.ICmdCaller = MVInteractiveCmdCaller( self )
-        from mvCommand import MVSetIcomLevel
+        from .mvCommand import MVSetIcomLevel
         self.addCommand( MVSetIcomLevel(), 'setIcomLevel', None )
-        from mvCommand import MVSetSelectionLevel, MVSetSelectionLevelGUI
+        from .mvCommand import MVSetSelectionLevel, MVSetSelectionLevelGUI
         self.addCommand( MVSetSelectionLevel(), 'setSelectionLevel',  MVSetSelectionLevelGUI)
 
         self.setSelectionLevel(Molecule, topCommand = 0) #should this be Protein?
@@ -963,7 +964,7 @@ class MoleculeViewer(ViewerFramework):
         self.sets = Sets()  # store user-defined sets in this dict
 
         # lock needs to be acquired before volume can be added
-        self.volumesLock = thread.allocate_lock()
+        self.volumesLock = _thread.allocate_lock()
 
         self.Vols = [] # list of Grid3D objects storing volumetric data
         if self.visionAPI is not None:
@@ -1108,7 +1109,7 @@ application"""
             #cmd = PmvCommander(self)
             #cmd.topFrame.pack(expand=1, fill='both')
 
-        if self.hasGui and self.commands.has_key('dashboard'):
+        if self.hasGui and 'dashboard' in self.commands:
             from Pmv.dashboard import SelectionWithButtons, \
                  LigandAtomsWithButtons, WaterWithButtons, \
                  MoleculeSetNoSelection, IonsWithButtons, \
@@ -1215,7 +1216,7 @@ application"""
             for i, w1 in enumerate(knownWidth[:-1]):
                 for w2 in knownWidth[i+1:]:
                     if width==w1+w2:
-                        if widths.has_key(2):
+                        if 2 in widths:
                             widths[2].append( (w1,w2) )
                         else:
                             widths[2] = [ (w1,w2) ]
@@ -1223,7 +1224,7 @@ application"""
             return widths, mini
 
         if self.hasGui:
-            if self.userpref.has_key('Save Perspective on Exit'):
+            if 'Save Perspective on Exit' in self.userpref:
                 if not self.restorePerspective() or \
                      self.userpref['Save Perspective on Exit']['value']=='no':
                     width = self.GUI.screenWidth
@@ -1281,9 +1282,9 @@ application"""
         """
         
         if type(name) is list :
-            mol = filter(lambda x: x.name in name, self.Mols)
+            mol = [x for x in self.Mols if x.name in name]
         else : 
-            mols = filter(lambda x: x.name == name, self.Mols)
+            mols = [x for x in self.Mols if x.name == name]
             if len(mols):
                 mol = mols[0]
             else:
@@ -1317,7 +1318,7 @@ application"""
         aborts silent"""
 
         if not os.path.exists(filename):
-            print 'Error! %s not found!'%filename
+            print('Error! %s not found!'%filename)
             return
         
         # find what name would be
@@ -1392,7 +1393,7 @@ application"""
 
         allAtomsLen = len(newmol.allAtoms)
         if allAtomsLen == 0:
-            tkMessageBox.showwarning("Empty molecule",  "No atom record found for %s\nSee Python Shell for more info." % newmol.name)            
+            tkinter.messagebox.showwarning("Empty molecule",  "No atom record found for %s\nSee Python Shell for more info." % newmol.name)            
             return None
         if self.hasGui:
             self.GUI.configureProgressBar(init=1, mode='increment',
@@ -1591,7 +1592,7 @@ example:
         elif isinstance(nodes,TreeNodeSet):
             result = nodes
         else:
-            raise ValueError, 'Could not expand nodes %s\n'%str(nodes)
+            raise ValueError('Could not expand nodes %s\n'%str(nodes))
         
         return result
 
@@ -1691,11 +1692,11 @@ of 2-tuples [(geom, instance),...].
 
         allatoms = AtomSet( [] )
         # loop over object, i.e. geometry objects
-        for obj, values in pick.hits.items():
+        for obj, values in list(pick.hits.items()):
 
             # build a list of vertices and list of instances
-            instances = map(lambda x: x[1], values)
-            vertInds = map(lambda x: x[0], values)
+            instances = [x[1] for x in values]
+            vertInds = [x[0] for x in values]
 
             # only geometry bound to molecules is packable in PMV
             if not hasattr(obj, 'mol') or len(vertInds)<1:
@@ -1709,7 +1710,7 @@ of 2-tuples [(geom, instance),...].
             g = obj.mol.geomContainer
 
             # convert vertex indices into atoms
-            if g.geomPickToAtoms.has_key(obj.name):
+            if obj.name in g.geomPickToAtoms:
                 # the geometry obj has a function to convert to atoms
                 # specified it he geomContainer[obj], e.g. MSMS surface
                 func = g.geomPickToAtoms[obj.name]
@@ -1747,7 +1748,7 @@ of 2-tuples [(geom, instance),...].
             allatoms = allatoms + AtomSet( atList )
 
             # loop over picked atoms and write the instance list into the atom
-            for atom, instances in pickedAtoms.items():
+            for atom, instances in list(pickedAtoms.items()):
                 atom.pickedInstances = instances
 
         #print allAtoms
@@ -1759,13 +1760,13 @@ of 2-tuples [(geom, instance),...].
         the picked geometry)"""
 
         allbonds = BondSet( [] )
-        for o, val in pick.hits.items(): #loop over geometries
+        for o, val in list(pick.hits.items()): #loop over geometries
             # loop over list of (vertices, instance) (e.g. (45, [0,0,2,0]))
             for instvert in val:
                 primInd = instvert[0]
                 if not hasattr(o, 'mol'): continue
                 g = o.mol.geomContainer
-                if g.geomPickToBonds.has_key(o.name):
+                if o.name in g.geomPickToBonds:
                     func = g.geomPickToBonds[o.name]
                     if func: allbonds = allbonds + func(o, primInd)
                 else:
@@ -1861,23 +1862,23 @@ def Find_pmvrc(resourceFile):
     """
     import mglutil
     try:            
-        reload(mglutil) # this is needed for updates
-    except RuntimeError, e:
-        print "# this is needed for updates: unable to reload mglutil\n", e
+        importlib.reload(mglutil) # this is needed for updates
+    except RuntimeError as e:
+        print("# this is needed for updates: unable to reload mglutil\n", e)
     lResourceFolderWithVersion = getResourceFolderWithVersion()
     if lResourceFolderWithVersion is not None:
         pmvrcFolder = lResourceFolderWithVersion + os.sep + 'Pmv'
         if not os.path.exists(pmvrcFolder):
-            print "\nWelcome to Python Molecule Viewer!"
+            print("\nWelcome to Python Molecule Viewer!")
             os.mkdir(pmvrcFolder)
-            print "Visit http://mgltools.scripps.edu/documentation to read latest documentation.\n"
+            print("Visit http://mgltools.scripps.edu/documentation to read latest documentation.\n")
         pmvrcFile = pmvrcFolder + os.sep + resourceFile
         if not os.path.exists(pmvrcFile):
             file_out = open(pmvrcFile,'w')
             import Pmv
             file_in = open(Pmv.__path__[0] + os.sep + resourceFile )
             file_out.write(file_in.read())
-        print "Resource file used to customize PMV: "+pmvrcFile
+        print("Resource file used to customize PMV: "+pmvrcFile)
         return pmvrcFile, pmvrcFolder
     else:
         lPath = os.path.dirname(__file__)

@@ -54,7 +54,7 @@ def insideTriangle(a, b, c, p):
 
 def triangulate(verts):
     tri = []
-    vertsInd = range(len(verts))
+    vertsInd = list(range(len(verts)))
     while len(vertsInd) > 2:
         triFound = False
         count = 0
@@ -75,7 +75,7 @@ def triangulate(verts):
                     triFound = True
             vertsInd.append(vertsInd.pop(0))
         if count == len(vertsInd):
-            print "ERROR Not a simple polygon"
+            print("ERROR Not a simple polygon")
             return []
     return tri
 
@@ -113,7 +113,7 @@ def ccw(poly):
 def capMesh(vertices, edges, faces, faceEdges, pp, pno, minDist=0.01):
     """
     Finds the section mesh between a mesh and a plane 
-	
+        
     vertices: mesh vertices
     edges: mesh edges as (v1,v2)
     faces: mesh faces
@@ -220,7 +220,7 @@ def capMesh(vertices, edges, faces, faceEdges, pp, pno, minDist=0.01):
 
     verts = []
     contourVerts = {}
-    for i in xrange(len(edges)):
+    for i in range(len(edges)):
         proj1 = nproj1[i]
         proj2 = nproj2[i]
         if ((proj1 == 0) or (proj2 == 0) or \
@@ -238,7 +238,7 @@ def capMesh(vertices, edges, faces, faceEdges, pp, pno, minDist=0.01):
             verts.append( (cox,coy,coz) )
             #store a mapping between the new vertices and the mesh's edges
             contourVerts[i] = len(contourVerts)
-    print '    time to compute contour1', time()-t1, len(verts)
+    print('    time to compute contour1', time()-t1, len(verts))
 
     if len(verts)==0:
         return [], []
@@ -264,7 +264,7 @@ def capMesh(vertices, edges, faces, faceEdges, pp, pno, minDist=0.01):
                 vertToEdges[v2] = [nbe]
             edgesS.append(tuple(ps))
             nbe += 1
-    print '   time to compute edge list', time()-t1
+    print('   time to compute edge list', time()-t1)
 
     # compute rotation matrix to cut plane into a Z plane
     rotMat = numpy.array( rotVectToVect(pno, (0,0,1)), 'f')
@@ -272,7 +272,7 @@ def capMesh(vertices, edges, faces, faceEdges, pp, pno, minDist=0.01):
 
     # order vertices along contour
     t0 = time()
-    edgeList = range(0,len(edgesS))
+    edgeList = list(range(0,len(edgesS)))
     allFaces = []
     allVertices = []
     while len(edgeList):
@@ -301,11 +301,11 @@ def capMesh(vertices, edges, faces, faceEdges, pp, pno, minDist=0.01):
 
         # make sure vertice are counter clockwise
         if not ccw(ov):
-            print "reversing"
+            print("reversing")
             ov.reverse()
             ovnr.reverse()
         
-        print '           time to order pacth vertices', time()-t1
+        print('           time to order pacth vertices', time()-t1)
         #print 'contour length', len(ovi), len(ov)
 
         # apply rotation to vertices
@@ -319,11 +319,11 @@ def capMesh(vertices, edges, faces, faceEdges, pp, pno, minDist=0.01):
         # triangulate
         t1 = time()
         facesS = triangulate(ov)
-        print '           time to triangulate patch', time()-t1
+        print('           time to triangulate patch', time()-t1)
 
         allFaces.append(facesS)
         allVertices.append(ovnr)
-    print '    time to triangulate all', time()-t0
+    print('    time to triangulate all', time()-t0)
         
     return allVertices, allFaces
 

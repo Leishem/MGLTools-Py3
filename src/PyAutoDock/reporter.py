@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # Last modified on Fri May 20 18:42:34 PDT 2005 by lindy
@@ -8,8 +8,8 @@
 
 
 import math
-import numpy.oldnumeric as Numeric
-import string
+import mglcompat.oldnumeric as Numeric
+from mglcompat import pystring as string
 from MolKit.protein import Chain, Residue
 from MolKit.molecule import Molecule, Atom
 
@@ -75,15 +75,15 @@ class Reporter:
         if len(errors)==0:
             return 'pass'
         else:
-            print 'indices differ:'
+            print('indices differ:')
             return errors
 
 
     def pretty_print(self):
-        print
+        print()
         sa = self.get_score_array()
         for (ent, score) in zip(self.entities, sa):
-            print "%s:\t% 8.4f" % (ent.full_name(), score)
+            print("%s:\t% 8.4f" % (ent.full_name(), score))
             
 
     def write(self, fileptr):
@@ -112,9 +112,9 @@ class PerAtomTypeReporter:
         d = {}
         for e in self.entities: 
             d[e.autodock_element] = 1
-        self.atomtypes = d.keys() 
+        self.atomtypes = list(d.keys()) 
         self.atomtypes.sort()  #sorted autodock_elements
-        print "self.atomtypes=", self.atomtypes
+        print("self.atomtypes=", self.atomtypes)
         #SETUP list to hold one result dictionary for EACH TERM:
         self.stats = []
 
@@ -166,23 +166,23 @@ class PerAtomTypeReporter:
 #Des:	 A -0.016 -0.008 -0.025  C -0.115 -0.097 -0.140  H  0.118  0.118  0.118  N  0.000  0.000  0.000  O  0.236  0.236  0.236 
 
     def pretty_print(self):
-        print
+        print()
         #stats has keys of terms in scorer
         #currently no ligand has more than 6 atom types (?)
         for lab, dict in zip(self.term_labels, self.stats):
-            print "% 3s:" % lab
+            print("% 3s:" % lab)
             ctr = 0
             for tp in self.atomtypes:
                 ll = dict[tp]
                 av = Numeric.add.reduce(ll)/len(ll)
                 mx = max(ll)
                 mn = min(ll)
-                print " % 2s % 6.3f % 6.3f % 6.3f "%(tp, av, mx, mn)
+                print(" % 2s % 6.3f % 6.3f % 6.3f "%(tp, av, mx, mn))
                 ctr += 1
                 if ctr==3:
-                    print "\n\t"
+                    print("\n\t")
                     ctr = 0
-            print "\n"
+            print("\n")
 
 
     def write(self, fileptr):
@@ -219,7 +219,7 @@ class PerAtomTypeReporter:
 
 import unittest
 from PyAutoDock.AutoDockScorer import AutoDock305Scorer
-from MolecularSystem import MolecularSystem
+from .MolecularSystem import MolecularSystem
 from MolKit import Read
 
 
@@ -232,13 +232,13 @@ class ReporterTest(unittest.TestCase):
             float2 = round(float2, digits)
         difference = abs(float2 - float1)
         if difference == 0.0:
-            self.assertEquals(float1, float2)
+            self.assertEqual(float1, float2)
         else:
             try:
                 eps = abs((float1/float2) - 1.0)
             except ZeroDivisionError:
                 eps = abs((float2/float1) - 1.0)
-            self.assertEquals((eps < self.err_epsilon), True,
+            self.assertEqual((eps < self.err_epsilon), True,
                               msg="%f != %f; eps=%f" % (float1, float2, eps))
     # 1 method, 2 names
     assertFloatEqual = assertFloatEquals
@@ -284,7 +284,7 @@ class ReporterResidueTest(Reporter_HSG1_ind_Test):
         
         # check
         # len of residue list = # of residues in subsetA
-        self.assertEquals( len(residue_list),
+        self.assertEqual( len(residue_list),
                            len(self.hsg1.chains.residues))
         
         # sum of residue list = self.ads.get_score()
@@ -309,7 +309,7 @@ class ReporterChainTest(Reporter_HSG1_ind_Test):
         
         # check
         # len of chain list = # of chains in subsetA
-        self.assertEquals( len(chain_list),
+        self.assertEqual( len(chain_list),
                            len(self.hsg1.chains))
         
         # sum of chain list = self.ads.get_score()
@@ -330,16 +330,16 @@ class PerAtomTypeReporterTest(Reporter_HSG1_ind_Test):
         stats = pATR.build_stats()
         # check
         # one dict entry for each term in scorer
-        self.assertEquals( len(stats),
+        self.assertEqual( len(stats),
                            len(self.ads.terms))
         # each dict entry has correct number of types, ctr==5 
         # each dict entry has 49 entries total in score_lists
         for dict in stats:
-            self.assertEquals( len(dict['A']),17)
-            self.assertEquals( len(dict['C']),19)
-            self.assertEquals( len(dict['H']),4)
-            self.assertEquals( len(dict['N']),5)
-            self.assertEquals( len(dict['O']),4)
+            self.assertEqual( len(dict['A']),17)
+            self.assertEqual( len(dict['C']),19)
+            self.assertEqual( len(dict['H']),4)
+            self.assertEqual( len(dict['N']),5)
+            self.assertEqual( len(dict['O']),4)
         #pATR.pretty_print()
         test_output = open('test_output', 'w')
         pATR.write(test_output)

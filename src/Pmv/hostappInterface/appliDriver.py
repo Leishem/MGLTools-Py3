@@ -1,5 +1,5 @@
 import os,sys
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 class HostPmvCommand():
     def __init__(self,soft='blender'):
@@ -159,8 +159,8 @@ class HostPmvCommand():
             mol=mol.replace("'","")
             sys.stderr.write('%s\n'%mol)
             if self.duplicatemol : #molecule already loaded,so the name is overwrite by pmv, add _ind
-                print self.duplicatedMols.keys()
-                if mol in self.duplicatedMols.keys() : self.duplicatedMols[mol]+=1
+                print(list(self.duplicatedMols.keys()))
+                if mol in list(self.duplicatedMols.keys()) : self.duplicatedMols[mol]+=1
                 else : self.duplicatedMols[mol]=1
                 mol=mol+"_"+str(self.duplicatedMols[mol])
             mol=mol.replace(".","_")
@@ -234,7 +234,7 @@ class HostPmvCommand():
                     selection=mol
                 if a.split('=')[0].replace(' ','') == 'resolution'  :
                     resolution = a.split('=')[1].replace(')','')
-                    if resolution in resolutions.keys(): resolution=str(resolutions[resolution])
+                    if resolution in list(resolutions.keys()): resolution=str(resolutions[resolution])
                 if a.split('=')[0].replace(' ','') == 'padding'  : padding = a.split('=')[1].replace(')','')
                 if a.split('=')[0].replace(' ','') == 'isovalue' : isovalue = a.split('=')[1].replace(')','')
                 if a.split('=')[0].replace(' ','') == 'gridSize' : gridSize = a.split('=')[1].replace(')','')
@@ -470,9 +470,9 @@ class HostPmvCommand():
                 if self.useEvent : return astr
                 if self.gDict[gType][0].find('MSMS') : 
                     for a in arg :
-                        print a,a.split('=')[0].replace(' ',''),a.split('=')[0].replace(' ','') == 'surfName'                   
+                        print(a,a.split('=')[0].replace(' ',''),a.split('=')[0].replace(' ','') == 'surfName')                   
                         if a.split('=')[0].replace(' ','') == 'surfName' : 
-                            print a.split('=')[1].replace(')','')
+                            print(a.split('=')[1].replace(')',''))
                             lgname = a.split('=')[1].replace(')','')
                             if lgname.find("[") != -1 :
                                 message=message.replace(' ','')
@@ -484,9 +484,9 @@ class HostPmvCommand():
                         else : lgname=self.gDict[gType][0]
                     if type(lgname) == str : lgname=[lgname]
                     if len(lgname) > 1 : lgname=[lgname]
-                    print lgname
+                    print(lgname)
                     for gname in lgname:
-                        print gname
+                        print(gname)
                         if gname == "'all'" or gname == 'all' or gname == '"all"': gname=self.gDict[gType][0]                                    
                         #astr+='print '+gname+'\n'
                         astr+='gname='+gname+'\n'
@@ -528,7 +528,7 @@ class HostPmvCommand():
                             i=i+1
             #print "parsed geoms ",geoms
             for g in geoms : 
-                print 'geoms ',g
+                print('geoms ',g)
                 if g=='"secondarystructure"' or g=='secondarystructure' or g=="'secondarystructure'" :
                     astr+='gss = mol.geomContainer.geoms["secondarystructure"]\n'
                     astr+='for name,g in mol.geomContainer.geoms.items() :\n'
@@ -828,7 +828,7 @@ class HostPmvCommand():
             X = [-3.0, -2.5, -2.0, -1.5, -1.3, -1.1, -0.9, -0.7, -0.5, -0.3, -0.1]
             Y = [0.6565, 0.8000, 1.0018, 1.3345, 1.5703, 1.8554, 2.2705, 2.9382, 4.1485, 7.1852, 26.5335]
             if x<X[0] or x>X[-1]:
-                print "WARNING: Fast approximation :blobbyness is out of range [-3.0, -0.1]"
+                print("WARNING: Fast approximation :blobbyness is out of range [-3.0, -0.1]")
                 return None
             i = 0
             while x > X[i]:

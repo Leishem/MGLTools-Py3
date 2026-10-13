@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -14,7 +14,7 @@
 # $Id: bondsCommands.py,v 1.52.2.4 2011/06/23 21:24:27 sargis Exp $
 #
 #
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from opengltk.OpenGL import GL
 
 from Pmv.moleculeViewer import EditAtomsEvent
@@ -106,14 +106,14 @@ class BuildBondsByDistance(MVCommand, MVAtomICOM):
             else:
                 # Need to build the bonds in a chain so loop over the chains.
                 for chain in mol.chains:
-                    atmInChain = AtomSet(filter(lambda x, name = chain.id:
-                                                x.parent.parent.id == name , atm))
+                    atmInChain = AtomSet(list(filter(lambda x, name = chain.id:
+                                                x.parent.parent.id == name , atm)))
                     if not len(atmInChain):
                         continue
                     residues = atmInChain.parent.uniq()
                     residues.sort()
                     residues[0].buildBondsByDistance()
-                    for ind in xrange(len(residues)-1):
+                    for ind in range(len(residues)-1):
                         res1 = residues[ind]
                         res2 = residues[ind+1]
                         res2.buildBondsByDistance()
@@ -133,13 +133,13 @@ class BuildBondsByDistance(MVCommand, MVAtomICOM):
         given set of nodes based on the covalent radius of each atoms to be
         connected.
         """
-        if not kw.has_key('redraw'):
+        if 'redraw' not in kw:
             kw['redraw']=1
         kw['display']=display
         if type(nodes) is StringType:
             self.nodeLogString = "'"+nodes+"'"
 
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
         
     def guiCallback(self, event=None):
@@ -188,13 +188,13 @@ class AddBondsGUICommand(MVCommand, MVAtomICOM):
 
        
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('setICOM'):
+        if 'setICOM' not in self.vf.commands:
             self.vf.loadCommand('interactiveCommands', 'setICOM', 'Pmv',
                                 topCommand=0) 
-        if not self.vf.commands.has_key('addBonds'):
+        if 'addBonds' not in self.vf.commands:
             self.vf.loadCommand('bondsCommands', 'addBonds', 'Pmv',
                                 topCommand=0) 
-        if not self.vf.commands.has_key('removeBondsGC'):
+        if 'removeBondsGC' not in self.vf.commands:
             self.vf.loadCommand('bondsCommands', 'removeBondsGC', 'Pmv',
                                 topCommand=0) 
         self.masterGeom = Geom('addBondsGeom',shape=(0,0), 
@@ -204,7 +204,7 @@ class AddBondsGUICommand(MVCommand, MVAtomICOM):
                                inheritMaterial=0,
                                radii=0.2, quality=15,
                                materials = ((1.,1.,0.),), protected=True) 
-        if not self.vf.commands.has_key('labelByExpression'):
+        if 'labelByExpression' not in self.vf.commands:
             self.vf.loadCommand('labelCommands', 
                                 ['labelByExpression',], 'Pmv', topCommand=0)
         if self.vf.hasGui:
@@ -220,7 +220,7 @@ class AddBondsGUICommand(MVCommand, MVAtomICOM):
             self.nodeLogString = "'"+atoms+"'"
         ats = self.vf.expandNodes(atoms)
         if not len(ats): return 'ERROR'
-        return apply(self.doitWrapper, (ats,), kw)
+        return self.doitWrapper(*(ats,), **kw)
 
 
     def doit(self, ats):
@@ -375,7 +375,7 @@ class AddBondsCommand(MVCommand):
     """
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('removeBonds'):
+        if 'removeBonds' not in self.vf.commands:
             self.vf.loadCommand('bondsCommands', 'removeBonds', 'Pmv',
                                 topCommand=0) 
 
@@ -415,7 +415,7 @@ class AddBondsCommand(MVCommand):
             return 'ERROR'
         kw['bondOrder'] = bondOrder
         kw['origin'] = origin
-        return apply(self.doitWrapper, (at1, at2), kw)
+        return self.doitWrapper(*(at1, at2), **kw)
 
 
     def doit(self, atom1, atom2, **kw):
@@ -442,7 +442,7 @@ class RemoveBondsGUICommand(MVCommand, MVBondICOM):
         if not hasattr(self.vf, 'addBondsGC'):
             self.vf.loadCommand("bondsCommands", "addBondsGC", "Pmv")
 
-        if not self.vf.commands.has_key('removeBonds'):
+        if 'removeBonds' not in self.vf.commands:
             self.vf.loadCommand('bondsCommands', 'removeBonds', 'Pmv',
                                 topCommand=0) 
 
@@ -465,10 +465,10 @@ class RemoveBondsGUICommand(MVCommand, MVBondICOM):
 
 
     def getObjects(self, pick):
-        for o, val in pick.hits.items(): #loop over geometries
-            primInd = map(lambda x: x[0], val)
+        for o, val in list(pick.hits.items()): #loop over geometries
+            primInd = [x[0] for x in val]
             g = o.mol.geomContainer
-            if g.geomPickToBonds.has_key(o.name):
+            if o.name in g.geomPickToBonds:
                 func = g.geomPickToBonds[o.name]
                 if func: return func(o, primInd)
             else:
@@ -497,7 +497,7 @@ class RemoveBondsGUICommand(MVCommand, MVBondICOM):
         kw['log'] = 0
         if not len(bonds):
             return 'ERROR'
-        apply(self.doitWrapper, (bonds,), kw)
+        self.doitWrapper(*(bonds,), **kw)
 
 
 
@@ -565,7 +565,7 @@ class RemoveBondsCommand(MVCommand):
         ats = self.vf.expandNodes(atom2)
         if not len(ats): return 'ERROR'
         at2 = ats[0]
-        return apply(self.doitWrapper, (at1, at2), kw)
+        return self.doitWrapper(*(at1, at2), **kw)
         
 
     def doit(self, atom1, atom2):

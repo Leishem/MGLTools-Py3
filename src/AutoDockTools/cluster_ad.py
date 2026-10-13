@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # Last modified on Thu Aug  9 16:32:21 PDT 2001 by lindy
@@ -6,16 +6,16 @@
 # This is the python translation of cluster_analysis.cc from
 # the AutoDock code.
 
-#import numpy.oldnumeric as N
-import numpy.oldnumeric as Numeric
+#import mglcompat.oldnumeric as N
+import mglcompat.oldnumeric as Numeric
 N = Numeric
-import UserList
+import collections
 from mglutil.math.rmsd import RMSDCalculator
 from Pmv.setangleCommands import SetRelativeTorsion, SetQuaternion
 
-class Clust(UserList.UserList):
+class Clust(collections.UserList):
     def __init__(self, mol, seed, coords):
-        UserList.UserList.__init__(self)
+        collections.UserList.__init__(self)
         self.seed = seed
         self.mol = mol
         self.seed_coords = coords 

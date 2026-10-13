@@ -1,4 +1,5 @@
-import struct, string
+import struct; from mglcompat import pystring as string
+from functools import reduce
 def readVox(filename):
     f = open(filename)
     data = f.readlines()
@@ -22,9 +23,9 @@ def readVox(filename):
             elif s[0] == "Endian":
                 endian = s[1]
     s = reduce( lambda x,y: x+y, data[i+1:] )
-    print "type:", type(s)
-    print "len(s):", len(s)
-    print "volsize:", volsize, "voxsize:", voxsize, "endian:", endian
+    print("type:", type(s))
+    print("len(s):", len(s))
+    print("volsize:", volsize, "voxsize:", voxsize, "endian:", endian)
     if voxsize == 8:
         fmt = "%s%dB"%(endian, volsize)
     elif voxsize == 16:

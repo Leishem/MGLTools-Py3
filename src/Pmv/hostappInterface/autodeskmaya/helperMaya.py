@@ -5,8 +5,8 @@
 #still some color issues / too slow!!! and dont work for sticks
 
 import numpy
-import numpy.oldnumeric as Numeric
-import sys, os, os.path, struct, math, string
+import mglcompat.oldnumeric as Numeric
+import sys, os, os.path, struct, math; from mglcompat import pystring as string
 from math import *
 
 import MolKit
@@ -52,7 +52,7 @@ RasmolAminocorrected=util.patchRasmolAminoColor()
 #executeInMainThreadWithResult
 
 def start(debug=0):
-    if VERBOSE : print "start ePMV - debug ",debug
+    if VERBOSE : print("start ePMV - debug ",debug)
     mv = MoleculeViewer(logMode = 'overwrite', customizer=None, master=None,title='pmv', withShell= 0,verbose=False, gui = False)
     mv.addCommand(BindGeomToMolecularFragment(), 'bindGeomToMolecularFragment', None)
     mv.browseCommands('trajectoryCommands',commands=['openTrajectory'],log=0,package='Pmv')
@@ -75,15 +75,15 @@ def checkName(name):
     return name    
 
 def compareSel(currentSel,molSelDic):
-    for selname in molSelDic.keys():
-        print "The compareSelection   ",currentSel,molSelDic[selname][3]
+    for selname in list(molSelDic.keys()):
+        print("The compareSelection   ",currentSel,molSelDic[selname][3])
         #if currentSel[-1] == ';' : currentSel=currentSel[0:-1]
         if currentSel == molSelDic[selname] : return selname
 
 def getObjectName(o):
     if type(o) == str : 
         name = o.replace(":","_").replace(" ","_").replace("'","")
-    elif type(o) == unicode : name = o
+    elif type(o) == str : name = o
     else : name=o[0]
     return name
 
@@ -117,9 +117,9 @@ def getObject(name,doit=False):
 def deleteObject(obj):
     sc = getCurrentScene()
     try :
-        print "del"
+        print("del")
     except:
-        print "problem deleting ", obj
+        print("problem deleting ", obj)
 
 #######Special for maya#######################
 def getNode( name ):
@@ -241,7 +241,7 @@ def addCameraToScene(name,Type,focal,center,sc):
     #cmds.camera( cameraShape, e=True, ff='overscan' )
      
 def addLampToScene(name,Type,rgb,dist,energy,soft,shadow,center,sc):
-    print Type
+    print(Type)
     light = cmds.pointLight(n=name)
     #cmds.pointLight(light,e=1,i=energy,rgb=rgb,ss=soft,drs=dist)
     cmds.pointLight(light,e=1,i=energy)
@@ -339,7 +339,7 @@ AtmRadi = {"N":"1.54","C":"1.7","A":"1.7","CA":"1.7","O":"1.52","S":"1.85","H":"
 
 ################COLOR CODE ####################################################################################################
 def blenderColor(col):
-    if max(col)<=1.0: col = map( lambda x: x*255, col)
+    if max(col)<=1.0: col = [x*255 for x in col]
     return col
 
 def color_mesh_perVertex(mesh,colors):
@@ -500,18 +500,18 @@ def splitName(name):
 def changeMaterialSchemColor(typeMat):
     mat=getMaterials()
     if typeMat == "ByAtom":
-        for atms in AtomElements.keys() : colorMaterial(atms,AtomElements[atms])
+        for atms in list(AtomElements.keys()) : colorMaterial(atms,AtomElements[atms])
     elif typeMat == "AtomsU" :
-        for atms in DavidGoodsell.keys() :colorMaterial(atms,DavidGoodsell[atms])
+        for atms in list(DavidGoodsell.keys()) :colorMaterial(atms,DavidGoodsell[atms])
               #if (atms == "P") or (atms == "A") or (atms == "CA"): colorMaterial(atms[0],AtomElements[atms])
               #else : 
               #colorMaterial(atms,DavidGoodsell[atms])
     elif typeMat == "ByResi":
-        for res in RasmolAminocorrected.keys(): colorMaterial(res,RasmolAminocorrected[res])
+        for res in list(RasmolAminocorrected.keys()): colorMaterial(res,RasmolAminocorrected[res])
     elif typeMat == "Residu":
-        for res in Shapely.keys(): colorMaterial(res,Shapely[res])
+        for res in list(Shapely.keys()): colorMaterial(res,Shapely[res])
     elif typeMat == "BySeco":
-        for ss in SecondaryStructureType.keys(): colorMaterial(ss[0:4],SecondaryStructureType[ss])
+        for ss in list(SecondaryStructureType.keys()): colorMaterial(ss[0:4],SecondaryStructureType[ss])
     else : pass
 
 def checkChangeStickMaterial(o,type,**kw):
@@ -551,8 +551,8 @@ def checkChangeMaterial(o,typeMat,atom=None,parent=None,color=None):
         rname = res.type.strip()
         if rname in ['A', 'C', 'G', 'T', 'U'] :
             rname = 'D'+rname            
-        if matname not in RasmolAminocorrected.keys() : #switch to residues materials
-            if rname not in RasmolAminocorrected.keys(): 
+        if matname not in list(RasmolAminocorrected.keys()) : #switch to residues materials
+            if rname not in list(RasmolAminocorrected.keys()): 
                 rname='hetatm'
             assignMaterial(rname,o)
     elif typeMat == "BySeco" :
@@ -603,8 +603,8 @@ def changeSticksColor(geom,colors,type=None):#1 or 2 colors
         ncolor = colors[0]#blenderColor(colors[0])
     nbV=mesh.numVertices()
     split=(nbV-2)/2
-    a=range(0,split)
-    b=range(split,(nbV-2))
+    a=list(range(0,split))
+    b=list(range(split,(nbV-2)))
     for i in range(nv) :
         if not unic : 
             if i in a or i == (nbV-2):    ncolor = colors[0]
@@ -627,7 +627,7 @@ def createBaseSphere(name="BaseMesh",quality=0,cpkRad=0.,scale=1.,radius=None,ma
         addObjectToScene(getCurrentScene(),baseparent,parent=parent)
         toggleDisplay(baseparent,False)
     if mat == None : mat=atoms_materials()
-    for atn in  AtmRadi.keys():
+    for atn in  list(AtmRadi.keys()):
         atparent=cmds.ls("Atom_"+atn)
         if len(atparent)==0:
             atparent=newEmpty(name+"_"+atn)
@@ -647,7 +647,7 @@ def updateSphereMesh(geom,quality=0.0,cpkRad=0.0,scale=1.0,radius=None):
     #compute the scale transformation matrix
     AtmRadi = {"A":1.7,"N":1.54,"C":1.7,"P":1.7,"O":1.52,"S":1.85,"H":1.2}
     #print geom.mesh
-    for name in geom.mesh.values() : 
+    for name in list(geom.mesh.values()) : 
         #print "UPDATE ",name," + ",name[-1]
         #need to get the makeNurbSphere node-> radius attributes
         factor=float(cpkRad)+float(AtmRadi[name[-1]])*float(scale)
@@ -663,7 +663,7 @@ def updateSphereMesh_test(geom,quality=0.0,cpkRad=0.0,scale=1.0,radius=None):
     for i,name in enumerate(geom.obj):
         #print "UPDATE ",name," + ",name[0][-1]
         n=str(name[0]).split("_")
-        if n[-1][0] not in AtmRadi.keys(): atN="A"
+        if n[-1][0] not in list(AtmRadi.keys()): atN="A"
         else : atN=n[-1][0]
         factor=float(cpkRad)+float(AtmRadi[atN])*float(scale)
         #have to update the nurbTosurface...not the node...        
@@ -735,11 +735,11 @@ def instancesAtomsSphere(name,x,iMe,doc,mat=None,scale=1.0,Res=32,
         if maya.pb != None  : 
             maya.cmds.progressBar(maya.pb, edit=True, maxValue=len(atoms.coords),progress=0)
         #parent=findatmParentHierarchie(atoms[0],n,hiera)    
-        for j in xrange(len(atoms.coords)):
+        for j in range(len(atoms.coords)):
             at=atoms[j]
             atN=at.name
             #print atN
-            if atN[0] not in AtmRadi.keys(): atN="A"
+            if atN[0] not in list(AtmRadi.keys()): atN="A"
             fullname = at.full_name().replace(":","_").replace(" ","_").replace("'","")
             #print fullname
             atC=at.coords#at._coords[0]
@@ -900,7 +900,7 @@ def PointCloudObject(name,**kw):
     #print "cloud", len(coords)
     coords=kw['vertices']
     nface = 0    
-    if kw.has_key("faces"):
+    if "faces" in kw:
         nface = len(kw['faces'])
     obj = createsNmesh(name+'ds',coords,None,[])
     return obj[0]
@@ -1032,7 +1032,7 @@ def omCurve(name,coords,**kw):
     #default value
     deg = 3; #Curve Degree
     ncvs = len(coords); #Number of CVs
-    if kw.has_key("deg"):
+    if "deg" in kw:
         deg = kw['deg']
     spans = ncvs - deg # Number of spans
     nknots = spans+2*deg-1 # Number of knots
@@ -1045,7 +1045,7 @@ def omCurve(name,coords,**kw):
         controlVertices.append(p)
     
     for i in range(nknots):
-    		knotSequences.append(i)
+                knotSequences.append(i)
         
     curveFn=om.MFnNurbsCurve()
     
@@ -1068,8 +1068,8 @@ def updateLines(lines, chains=None):
         parent = getObject(chains.full_name())    
         #print parent        
         bonds, atnobnd = chains.residues.atoms.bonds
-        indices = map(lambda x: (x.atom1._bndIndex_,
-                                x.atom2._bndIndex_), bonds)
+        indices = [(x.atom1._bndIndex_,
+                                x.atom2._bndIndex_) for x in bonds]
         updatePoly(lines,vertices=chains.residues.atoms.coords,faces=indices)
         
 def editLines(molecules,atomSets):
@@ -1084,8 +1084,8 @@ def editLines(molecules,atomSets):
             #print parent,lines
             if lines == None :
                 bonds, atnobnd = ch.residues.atoms.bonds
-                indices = map(lambda x: (x.atom1._bndIndex_,
-                                         x.atom2._bndIndex_), bonds)
+                indices = [(x.atom1._bndIndex_,
+                                         x.atom2._bndIndex_) for x in bonds]
 
                 lines = createsNmesh(ch.full_name()+'_line',ch.residues.atoms.coords,
                                      None,indices)
@@ -1167,7 +1167,7 @@ def createsNmesh(name,vertices,normal,faces,color=None,smooth=False,material=Non
         else :
             splitname = name.split("_")[1]  
         #print name,name[:4],splitname,splitname[:4]
-        if splitname[:4] in [x[0:4] for x in SecondaryStructureType.keys()] : 
+        if splitname[:4] in [x[0:4] for x in list(SecondaryStructureType.keys())] : 
             mats=SS_materials()
             assignMaterial(str(splitname[:4]),"mesh_"+name)
             meshFS.findPlug('displayColors').setBool(False)
@@ -1311,7 +1311,7 @@ def updateCoordFromObj(mv,sIter,debug=True):
                             #from Pmv import amberCommands
                             #amberCommands.Amber94Config = {}
                             #amberCommands.CurrentAmber94 = {}
-							#amb_ins = Amber94(atoms, prmfile=filename)
+                                                        #amb_ins = Amber94(atoms, prmfile=filename)
                             mv.setup_Amber94(mol.name+":",mv.energy.name,mol.prname,indice=mol.cconformationIndex)
                             mv.minimize_Amber94(mv.energy.name, dfpred=10.0, callback_freq='10', callback=1, drms=1e-06, maxIter=100., log=0)
                             #mv.md_Amber94(mv.energy.name, 349, callback=1, filename='0', log=0, callback_freq=10)
@@ -1351,7 +1351,7 @@ def updateMolAtomCoord(mol,index=-1):
     # this should be the actual coordinate of the ligand
     # what about the rc...
     sph = mol.geomContainer.geoms['cpk'].obj
-    vt=map(lambda x:cmds.xform(x,q=1,ws=1,t=1),sph)
+    vt=[cmds.xform(x,q=1,ws=1,t=1) for x in sph]
     if index == -1 : index = 0	
     mol.allAtoms.updateCoords(vt,ind=index)
 

@@ -8,8 +8,9 @@
 
 from mglutil.util.tree import TreeNode
 from mglutil.math.transformation import Transformation
-import string
-from molecule import AtomSet, BondSet
+from mglcompat import pystring as string
+from .molecule import AtomSet, BondSet
+from functools import cmp_to_key
 
 global debug
 debug = 0
@@ -119,7 +120,7 @@ class TorTree:
         d = {}
         for a in atomList:
             d[a] = 0
-        atList = d.keys()
+        atList = list(d.keys())
         atList.sort()
         #newNode.atomList = atomList
         if root:
@@ -148,9 +149,9 @@ class TorTree:
                 return 1
             else:
                 # now there's a problem
-                raise RuntimeError, "indistinguishable torsion TreeNodes"
+                raise RuntimeError("indistinguishable torsion TreeNodes")
                 return 0
-        allNodes.sort(__sortTorsionMap)
+        allNodes.sort(key=cmp_to_key(__sortTorsionMap))
         #don't put rootNode into TorsionMap!!!
         return allNodes[:-1]
 
@@ -165,7 +166,7 @@ class TorTree:
         self.inactiveInFile = []
         # process lines/build tree
         for lineStr in lineList:
-            if debug: print lineStr
+            if debug: print(lineStr)
             wordList = string.split(lineStr)
             if not wordList: continue # skip the loop
             #
@@ -177,11 +178,11 @@ class TorTree:
                     # The first atom after the BRANCH goes to the parent
                     nodeStack[-1].parent.atomList.append(atomIndex)
                     atomToParentNode = None # unset; set in BRANCH (below)
-                    if debug: print "add atom (parent): ", atomIndex, nodeStack[-1].parent
+                    if debug: print("add atom (parent): ", atomIndex, nodeStack[-1].parent)
                     flexRes = False
                 else:
                     nodeStack[-1].atomList.append(atomIndex)
-                    if debug: print "add atom: ", atomIndex, nodeStack[-1]
+                    if debug: print("add atom: ", atomIndex, nodeStack[-1])
                 atomIndex = atomIndex + 1
             elif (wordList[0] == 'TORS' or wordList[0] == 'BRANCH'):
                 atomToParentNode = 1 # set; unset in HETATM (above)
@@ -191,7 +192,7 @@ class TorTree:
                 newNode.atomList = []
                 tor_number = tor_number + 1;
                 nodeStack.append(newNode)
-                if debug: print "push node: ", newNode
+                if debug: print("push node: ", newNode)
             elif (wordList[0] == 'ENDTORS' or wordList[0] == 'ENDBRANCH'):
                 nodeStack.pop()
             elif wordList[0] == 'ROOT':
@@ -200,7 +201,7 @@ class TorTree:
                 rootNode.bond = (None, None)
                 rootNode.atomList = []
                 nodeStack.append(rootNode)
-                if debug: print "push root: ", rootNode
+                if debug: print("push root: ", rootNode)
             elif wordList[0] == 'ENDROOT':
                 pass
             elif wordList[0] == 'REMARK' and 'between' in wordList:
@@ -254,9 +255,9 @@ class TorTree:
                 return 1
             else:
                 # now there's a problem
-                raise RuntimeError, "indistinguishable torsion TreeNodes"
+                raise RuntimeError("indistinguishable torsion TreeNodes")
                 return 0
-        torsionMap.sort(__sortTorsionMap)
+        torsionMap.sort(key=cmp_to_key(__sortTorsionMap))
         return torsionMap
 
 
@@ -273,7 +274,7 @@ class TorTree:
 
         This method does not change atom positions"""
         if len(angList) != len(self.torsionMap):
-            raise ValueError, "invalid torsion angle list: ", angList
+            raise ValueError("invalid torsion angle list: ").with_traceback(angList)
         # @@ should use zip here
         for angle, node in map(None, angList, self.torsionMap):
             node.angle = angle
@@ -294,18 +295,18 @@ class TorTree:
 
 
     def __printNode(self, node):
-        print 'atomList:', node.atomList
-        print 'has ', len(node.children),'children\n'
+        print('atomList:', node.atomList)
+        print('has ', len(node.children),'children\n')
         for c in node.children:
-            print 'printing ', c.number, '  child of ', node.number
+            print('printing ', c.number, '  child of ', node.number)
             self.__printNode(c)
 
 
     def printTree(self):
         if not self.rootNode:
-            print 'no rootNode'
+            print('no rootNode')
             return
-        print 'printing rootNode '
+        print('printing rootNode ')
         self.__printNode(self.rootNode)
                 
 
@@ -313,7 +314,7 @@ class TorTree:
         d = {}
         for ind in indicies:
             d[atoms[ind]] = 1
-        keys = d.keys()
+        keys = list(d.keys())
         bnds = atoms.bonds[0].get(lambda x: x.atom1 in keys and x.atom2 in keys)
         assert len(bnds)==1
         return bnds[0]
@@ -381,7 +382,7 @@ class TorTree:
         for c in node.children:
             if len(c.children)==0:
                 leaves.extend(c.atomList)
-                print "added ", c.atomList
+                print("added ", c.atomList)
             else:
                 self.get_leaves(c, leaves)
         return leaves
@@ -479,7 +480,7 @@ class TorTree:
             dg = pydot.Graph(graph_name=gname, type='digraph',label=gname, size=size)
 
         rootID =  str(index)
-        if verbose: print "1: set rootID to ", rootID
+        if verbose: print("1: set rootID to ", rootID)
         #change
         atList = self.rootNode.atomList[:]
         # start with c25,c27,c26,n1
@@ -488,13 +489,13 @@ class TorTree:
             next = c.bond[1] - offset
             if next in atList:   #remove atoms connected by rotatable bonds
                 atList.remove(next)
-                if verbose: print "removed ", next, " from root"
-        if verbose: print "atList =", atList
+                if verbose: print("removed ", next, " from root")
+        if verbose: print("atList =", atList)
         #sub_ats = AtomSet()
         #for ind in atList:
         #    sub_ats.append(allAtoms[ind-1])
         sub_ats = allAtoms.get(lambda x: x.number-(1+offset) in atList)
-        if verbose: print "sub_ats=", sub_ats.full_name()
+        if verbose: print("sub_ats=", sub_ats.full_name())
 
         #sub_ats=allAtoms.get(lambda x: x.number-1 in self.rootNode.atomList)
         rootLbl = '"' 
@@ -509,13 +510,13 @@ class TorTree:
             rootNd = pydot.Node(rootID,label=rootLbl,shape="trapezium",style="bold")
             dg.add_node(rootNd)
         else:
-            if verbose: print "1: added node %s, label=%s" %(rootID, rootLbl)
-            print "would add pydot.Node(%s, label =%s)" %(rootID, rootLbl)
+            if verbose: print("1: added node %s, label=%s" %(rootID, rootLbl))
+            print("would add pydot.Node(%s, label =%s)" %(rootID, rootLbl))
             dg = None
 
         next_index = index + 1
         for c in self.rootNode.children:
-            if verbose: print c.bond, "call self.__torTree2dot(c,%d, %s, %d,dg,[])" %(next_index, rootID, len(allAtoms))
+            if verbose: print(c.bond, "call self.__torTree2dot(c,%d, %s, %d,dg,[])" %(next_index, rootID, len(allAtoms)))
             next_index = self.__torTree2dot(c, next_index, rootID, allAtoms,dg, [], verbose)
 
         dotstr = "no pydot"
@@ -526,39 +527,39 @@ class TorTree:
 
 
     def __torTree2dot(self, ttnode, next_index, parentID, allAtoms, dotGraph, atList, verbose):
-        if verbose: print "__tT2d: ttnode.bond=", ttnode.bond, ' next_index=', next_index, 'parentID=', parentID,' atList=', atList
+        if verbose: print("__tT2d: ttnode.bond=", ttnode.bond, ' next_index=', next_index, 'parentID=', parentID,' atList=', atList)
         ndID = str(next_index)
         ndIndex = ttnode.bond[1]
         ndName = allAtoms.get(lambda x: x.number==ttnode.bond[1]+1)[0].name
         ndLbl = '"%s,'%ndName
-        if verbose: print "first: ndLbl to ", ndLbl
+        if verbose: print("first: ndLbl to ", ndLbl)
         #nd = pydot.Node(ndID,label=rootLbl,shape="trapezium",style="bold")
         atmList = ttnode.atomList[:]
-        if verbose: print "before: atmList=", atmList
+        if verbose: print("before: atmList=", atmList)
         if ttnode.bond[1] in atmList:
             atmList.remove(ttnode.bond[1])
-        if verbose: print "after: atmList=", atmList
+        if verbose: print("after: atmList=", atmList)
         offset = allAtoms[0].number-1
-        if verbose: print "using offset=", offset
+        if verbose: print("using offset=", offset)
         for c in ttnode.children:
-            if verbose: print "c.bond=", c.bond
+            if verbose: print("c.bond=", c.bond)
             next = c.bond[1]
-            if verbose: print "next =", next
+            if verbose: print("next =", next)
             if next-offset in atmList:
-                if verbose: print "removing ", next+offset
+                if verbose: print("removing ", next+offset)
                 index = atmList.index(next-offset)
-                if verbose: print 'cutting atmList at ', index
+                if verbose: print('cutting atmList at ', index)
                 atmList=atmList[:index]
         #add names of atoms rigidly bonded to ndID
-        if verbose: print "finally: atmList=", atmList
+        if verbose: print("finally: atmList=", atmList)
         sub_ats=allAtoms.get(lambda x: x.number-(offset+1) in atmList)
         if len(sub_ats) and verbose:
-            print "sub_ats=", sub_ats.name, ' w/number ', sub_ats.number
+            print("sub_ats=", sub_ats.name, ' w/number ', sub_ats.number)
         for i in sub_ats:
             ndLbl += "%s,"%i.name
-        if verbose: print "after sub_ats: ndLbl = ", ndLbl 
+        if verbose: print("after sub_ats: ndLbl = ", ndLbl) 
         ndLbl = ndLbl[:-1] + '"'
-        if verbose: print "after cleanup: ndLbl = ", ndLbl
+        if verbose: print("after cleanup: ndLbl = ", ndLbl)
         found_pydot=1
         try:
             import pydot
@@ -579,8 +580,8 @@ class TorTree:
                 edge = pydot.Edge(parentID,ndID)
             dotGraph.add_edge(edge)
         else:
-            print "would add pydot.Node(", ndID, ",label=", ndLbl, ")"
-            print "would add pydot.Edge(",parentID, ',', ndID, ")"
+            print("would add pydot.Node(", ndID, ",label=", ndLbl, ")")
+            print("would add pydot.Edge(",parentID, ',', ndID, ")")
         
         currLbl = str(next_index)
         next_index += 1
@@ -590,13 +591,13 @@ class TorTree:
             next = c.bond[1]
             if next in atList:
                 if verbose: 
-                    print "removing ", next
+                    print("removing ", next)
                 atList.remove(next)
         if verbose:
-            print "END: atList=", atList
+            print("END: atList=", atList)
         for c in ttnode.children:
             if verbose:
-                print "calling __torTree2dot with c.bond=%d,%d and next_index=%d, currLbl=%s" %(c.bond[0], c.bond[1],next_index, currLbl)
+                print("calling __torTree2dot with c.bond=%d,%d and next_index=%d, currLbl=%s" %(c.bond[0], c.bond[1],next_index, currLbl))
             next_index =  self.__torTree2dot(c, next_index, currLbl, allAtoms, dotGraph, atList, verbose)
         return next_index
 
@@ -609,8 +610,8 @@ if __name__ == '__main__':
 
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'f:')
-    except getopt.GetoptError, msg:
-        print 'torTree.py: %s' % msg
+    except getopt.GetoptError as msg:
+        print('torTree.py: %s' % msg)
         sys.exit(2)
         
     filename = None

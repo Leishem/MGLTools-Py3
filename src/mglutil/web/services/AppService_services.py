@@ -6,17 +6,17 @@
 ##################################################
 
 
-from AppService_services_types import *
-from AppService_services_types import \
+from .AppService_services_types import *
+from .AppService_services_types import \
     nbcr_sdsc_edu_opal_types as ns1
-import urlparse, types
+import urllib.parse, types
 from ZSI.TCcompound import Struct
 from ZSI import client
 import ZSI
 
 class AppServiceInterface:
     def getAppServicePortType(self, portAddress=None, **kw):
-        raise NonImplementationError, "method not implemented"
+        raise NonImplementationError("method not implemented")
 
 
 class AppServiceLocator(AppServiceInterface):
@@ -31,13 +31,13 @@ class AppServiceLocator(AppServiceInterface):
 class AppServicePortSoapBindingSOAP:
 
     def __init__(self, addr, **kw):
-        netloc = (urlparse.urlparse(addr)[1]).split(":") + [80,]
-        if not kw.has_key("host"):
+        netloc = (urllib.parse.urlparse(addr)[1]).split(":") + [80,]
+        if "host" not in kw:
             kw["host"] = netloc[0]
-        if not kw.has_key("port"):
+        if "port" not in kw:
             kw["port"] = int(netloc[1])
-        if not kw.has_key("url"):
-            kw["url"] =  urlparse.urlparse(addr)[2]
+        if "url" not in kw:
+            kw["url"] =  urllib.parse.urlparse(addr)[2]
         self.binding = client.Binding(**kw)
 
 
@@ -52,15 +52,15 @@ class AppServicePortSoapBindingSOAP:
               _message: str
         """
 
-        if not isinstance(request, basestring):
-            raise TypeError, "%s incorrect request type" %(request.__class__)
+        if not isinstance(request, str):
+            raise TypeError("%s incorrect request type" %(request.__class__))
         kw = {'requestclass': destroyRequestWrapper}
         response = self.binding.Send(None, None, request, soapaction="http://nbcr.sdsc.edu/opal/destroy", **kw)
         response = self.binding.Receive(destroyResponseWrapper())
 
         if not isinstance(response, destroyResponse) and\
             not issubclass(destroyResponse, response.__class__):
-            raise TypeError, "%s incorrect response type" %(response.__class__)
+            raise TypeError("%s incorrect response type" %(response.__class__))
         return response
 
 
@@ -110,14 +110,14 @@ class AppServicePortSoapBindingSOAP:
 
         if not isinstance(request, getAppConfigRequest) and\
             not issubclass(getAppConfigRequest, request.__class__):
-            raise TypeError, "%s incorrect request type" %(request.__class__)
+            raise TypeError("%s incorrect request type" %(request.__class__))
         kw = {}
         response = self.binding.Send(None, None, request, soapaction="http://nbcr.sdsc.edu/opal/getAppConfig", **kw)
         response = self.binding.Receive(getAppConfigResponseWrapper())
 
         if not isinstance(response, getAppConfigResponse) and\
             not issubclass(getAppConfigResponse, response.__class__):
-            raise TypeError, "%s incorrect response type" %(response.__class__)
+            raise TypeError("%s incorrect response type" %(response.__class__))
         return response
 
 
@@ -163,14 +163,14 @@ class AppServicePortSoapBindingSOAP:
 
         if not isinstance(request, getAppMetadataRequest) and\
             not issubclass(getAppMetadataRequest, request.__class__):
-            raise TypeError, "%s incorrect request type" %(request.__class__)
+            raise TypeError("%s incorrect request type" %(request.__class__))
         kw = {}
         response = self.binding.Send(None, None, request, soapaction="http://nbcr.sdsc.edu/opal/getAppMetadata", **kw)
         response = self.binding.Receive(getAppMetadataResponseWrapper())
 
         if not isinstance(response, getAppMetadataResponse) and\
             not issubclass(getAppMetadataResponse, response.__class__):
-            raise TypeError, "%s incorrect response type" %(response.__class__)
+            raise TypeError("%s incorrect response type" %(response.__class__))
         return response
 
 
@@ -187,14 +187,14 @@ class AppServicePortSoapBindingSOAP:
 
         if not isinstance(request, getOutputAsBase64ByNameRequest) and\
             not issubclass(getOutputAsBase64ByNameRequest, request.__class__):
-            raise TypeError, "%s incorrect request type" %(request.__class__)
+            raise TypeError("%s incorrect request type" %(request.__class__))
         kw = {}
         response = self.binding.Send(None, None, request, soapaction="http://nbcr.sdsc.edu/opal/getOutputAsBase64ByName", **kw)
         response = self.binding.Receive(getOutputAsBase64ByNameResponseWrapper())
 
         if not isinstance(response, getOutputAsBase64ByNameResponse) and\
             not issubclass(getOutputAsBase64ByNameResponse, response.__class__):
-            raise TypeError, "%s incorrect response type" %(response.__class__)
+            raise TypeError("%s incorrect response type" %(response.__class__))
         return response
 
 
@@ -211,15 +211,15 @@ class AppServicePortSoapBindingSOAP:
               _stdOut: str, optional
         """
 
-        if not isinstance(request, basestring):
-            raise TypeError, "%s incorrect request type" %(request.__class__)
+        if not isinstance(request, str):
+            raise TypeError("%s incorrect request type" %(request.__class__))
         kw = {'requestclass': getOutputsRequestWrapper}
         response = self.binding.Send(None, None, request, soapaction="http://nbcr.sdsc.edu/opal/getOutputs", **kw)
         response = self.binding.Receive(getOutputsResponseWrapper())
 
         if not isinstance(response, getOutputsResponse) and\
             not issubclass(getOutputsResponse, response.__class__):
-            raise TypeError, "%s incorrect response type" %(response.__class__)
+            raise TypeError("%s incorrect response type" %(response.__class__))
         return response
 
 
@@ -244,14 +244,14 @@ class AppServicePortSoapBindingSOAP:
 
         if not isinstance(request, launchJobRequest) and\
             not issubclass(launchJobRequest, request.__class__):
-            raise TypeError, "%s incorrect request type" %(request.__class__)
+            raise TypeError("%s incorrect request type" %(request.__class__))
         kw = {}
         response = self.binding.Send(None, None, request, soapaction="http://nbcr.sdsc.edu/opal/launchJob", **kw)
         response = self.binding.Receive(launchJobResponseWrapper())
 
         if not isinstance(response, launchJobResponse) and\
             not issubclass(launchJobResponse, response.__class__):
-            raise TypeError, "%s incorrect response type" %(response.__class__)
+            raise TypeError("%s incorrect response type" %(response.__class__))
         return response
 
 
@@ -281,14 +281,14 @@ class AppServicePortSoapBindingSOAP:
 
         if not isinstance(request, launchJobBlockingRequest) and\
             not issubclass(launchJobBlockingRequest, request.__class__):
-            raise TypeError, "%s incorrect request type" %(request.__class__)
+            raise TypeError("%s incorrect request type" %(request.__class__))
         kw = {}
         response = self.binding.Send(None, None, request, soapaction="http://nbcr.sdsc.edu/opal/launchJobBlocking", **kw)
         response = self.binding.Receive(launchJobBlockingResponseWrapper())
 
         if not isinstance(response, launchJobBlockingResponse) and\
             not issubclass(launchJobBlockingResponse, response.__class__):
-            raise TypeError, "%s incorrect response type" %(response.__class__)
+            raise TypeError("%s incorrect response type" %(response.__class__))
         return response
 
 
@@ -303,15 +303,15 @@ class AppServicePortSoapBindingSOAP:
               _message: str
         """
 
-        if not isinstance(request, basestring):
-            raise TypeError, "%s incorrect request type" %(request.__class__)
+        if not isinstance(request, str):
+            raise TypeError("%s incorrect request type" %(request.__class__))
         kw = {'requestclass': queryStatusRequestWrapper}
         response = self.binding.Send(None, None, request, soapaction="http://nbcr.sdsc.edu/opal/queryStatus", **kw)
         response = self.binding.Receive(queryStatusResponseWrapper())
 
         if not isinstance(response, queryStatusResponse) and\
             not issubclass(queryStatusResponse, response.__class__):
-            raise TypeError, "%s incorrect response type" %(response.__class__)
+            raise TypeError("%s incorrect response type" %(response.__class__))
         return response
 
 

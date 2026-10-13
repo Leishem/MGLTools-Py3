@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #########################################################################
 #
@@ -76,11 +76,11 @@ class PmvLogEvents(NetworkNode):
     def __init__(self, name='log events', **kw):
         kw['name'] = name
 
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append(datatype='PmvInstance', name='pmv')
 
-	self.outputPortsDescr.append(datatype='string', name='log')
+        self.outputPortsDescr.append(datatype='string', name='log')
 
         code = """def doit(self, pmv):
     if pmv and not self.hasRun:
@@ -135,7 +135,7 @@ class PmvNode(NetworkNode):
     """
     def __init__(self, vf=None, name='PMV', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         #self.readOnly = 1
 
         self.vf = vf
@@ -224,12 +224,12 @@ class PmvVolume(NetworkNode):
 
     def __init__(self,  grid=None, name='volume', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         #self.readOnly = 1
 
         self.grid = grid
 
-	code = """def doit(self):
+        code = """def doit(self):
     self.outputData(grid=self.grid)
 """
         if code:
@@ -244,7 +244,7 @@ class PmvMolecule(NetworkNode):
     def __init__(self, molecule=None, name='Molecule', **kw):
         self.mol = molecule
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self):
     self.outputData(Molecule=self.mol)
@@ -308,12 +308,12 @@ Output: MolKit TreeNodeSet containing a set of either molecules, chains,
         self.set = set
         self.selString = selString
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.outputPortsDescr.append(datatype='Molecule', name='PmvSet')
         self.outputPortsDescr.append(datatype='string', name='selection')
 
-	code = """def doit(self):
+        code = """def doit(self):
     self.outputData(PmvSet=self.set, selection=self.selString)\n"""
 
         if code: self.setFunction(code)
@@ -385,7 +385,7 @@ class PmvChooseCommand(NetworkNode):
     def __init__(self, name='cmd chooser', **kw):
         kw['name'] = name
 
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['cmdName'] = {
             'class': 'NEComboBox', 'master':'node',
@@ -397,7 +397,7 @@ class PmvChooseCommand(NetworkNode):
 
         self.inputPortsDescr.append(datatype='PmvInstance', name='viewer')
         self.inputPortsDescr.append(datatype='string', required=False, name='cmdName')
-	self.outputPortsDescr.append(datatype='PmvCmd', name='cmd')
+        self.outputPortsDescr.append(datatype='PmvCmd', name='cmd')
 
         code = """def doit(self, viewer, cmdName):
     if viewer:
@@ -418,7 +418,7 @@ class PmvCommand(NetworkNode):
         self.cmd = pmvCmd
         kw['name'] = name
 
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['log'] = {
             'class':'NECheckButton',
@@ -464,30 +464,30 @@ class PmvRunCommand(RunFunction):
         lNamedArgs = {'log':True, 'redraw':True, 'topCommand':True, 'setupUndo':True}
         if len(namedArgs) > 0:
             lNamedArgs.update(lNamedArgs)
-        elif kw.has_key('namedArgs') is True:
+        elif ('namedArgs' in kw) is True:
             kw['namedArgs'].update(lNamedArgs)
         else:
             namedArgs = lNamedArgs
 
         # we do this to pass the variables into kw
-        if command is not None or kw.has_key('functionOrString') is False:
+        if command is not None or ('functionOrString' in kw) is False:
             kw['functionOrString'] = command
-        elif kw.has_key('functionOrString') is True:
+        elif ('functionOrString' in kw) is True:
             command = kw['functionOrString']
-        if len(posArgsNames)>0 or kw.has_key('posArgsNames') is False:
+        if len(posArgsNames)>0 or ('posArgsNames' in kw) is False:
             kw['posArgsNames'] = posArgsNames
-        elif kw.has_key('posArgsNames') is True:
+        elif ('posArgsNames' in kw) is True:
             posArgsNames = kw['posArgsNames']
-        if len(namedArgs)>0 or kw.has_key('namedArgs') is False:
+        if len(namedArgs)>0 or ('namedArgs' in kw) is False:
             kw['namedArgs'] = namedArgs
-        elif kw.has_key('namedArgs') is True:
+        elif ('namedArgs' in kw) is True:
             namedArgs = kw['namedArgs']
-        if name is not None or kw.has_key('name') is False:
+        if name is not None or ('name' in kw) is False:
             kw['name'] = name
-        elif kw.has_key('name') is True:
+        elif ('name' in kw) is True:
             name = kw['name']
 
-        apply( RunFunction.__init__, (self,), kw )
+        RunFunction.__init__(*(self,), **kw)
         self.widgetDescr['importString']['master'] ='ParamPanel'
 
 
@@ -516,7 +516,7 @@ Output:
 """
     def __init__(self, constrkw = {},  name='Get MSMS Geom', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['surfaceName'] = {
             'initialValue': 'MSMS-MOL', 'fixedChoices': 0,
@@ -553,7 +553,7 @@ class PmvSetCPKRadii(NetworkNode):
     def __init__(self, name='Set radius', **kw):
         kw['name'] = name
 
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append(datatype='PmvInstance',
                        balloon='Pmv instance holding the selection of atoms ',
@@ -570,7 +570,7 @@ class PmvSetCPKRadii(NetworkNode):
 
         self.setFunction(code)
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 class PmvSetInstanceMatrices(NetworkNode):
     """Apply (4x4) transformation matrices to all geometries associated with
@@ -583,7 +583,7 @@ Input:
     def __init__(self, name='Set Instances', **kw):
         kw['name'] = name
 
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append(datatype='Molecule', name='molecule')
         self.inputPortsDescr.append(datatype='instancemat(0)',
@@ -623,7 +623,7 @@ Output:
     def __init__(self, name='Pmv Selection', **kw):
         kw['name'] = name
 
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append(datatype='PmvInstance',
                       balloon='Pmv instance holding the selection of atoms',
@@ -666,7 +666,7 @@ Output:
     def __init__(self, name='Pmv Mol. Chooser', **kw):
         kw['name'] = name
 
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['molecule'] = {
             'class':'NEComboBox', 'master':'node',

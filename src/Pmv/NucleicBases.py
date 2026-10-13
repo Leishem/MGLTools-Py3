@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 # This module handles drawing of Nucleic Bases DNA and RNA
 # Author: Sargis Dallakyan (sargis at scripps.edu)
@@ -7,7 +7,7 @@
 # $Id: NucleicBases.py,v 1.14.2.2 2011/12/06 23:00:45 autin Exp $
 from DejaVu.IndexedPolygons import IndexedPolygons
 from mglutil.math import crossProduct,norm
-import numpy.oldnumeric as Numeric, math
+import mglcompat.oldnumeric as Numeric, math
 from copy import copy
 from opengltk.OpenGL import GL,GLU
 
@@ -55,7 +55,7 @@ class Pyrimidine_old(IndexedPolygons):
         kw['materials'] = (color,color,color,color,color,color,color,
                            color,color,color,color,color,color,color)
         kw['inheritMaterial'] = False
-        apply( IndexedPolygons.__init__, (self, name, 0), kw )
+        IndexedPolygons.__init__(*(self, name, 0), **kw)
 
 def make_purine(residue, height = 0.4, scale = 1.2):
     """Creates vertices and normals for purines: Adenine Guanine"""
@@ -156,7 +156,7 @@ def make_pyrimidine(residue, height = 0.4, scale = 1.2):
 
 def checkMissingAtoms(residue,liste):
     for astr in liste :
- 	result = residue.atoms.objectsFromString(astr)
+        result = residue.atoms.objectsFromString(astr)
         if not result :
            return True
     return False  
@@ -202,8 +202,8 @@ def Add_Nucleic_Bases(g, properties = None):
         #if missing atoms do not do the base
         if NA_type in ['A', 'G', 'DA', 'DG']:
             if checkMissingAtoms(residues[i],['N1.*','C2.*','N9.*','N7.*','C8.*',
-						'C4.*','C5.*','C6.*','N3.*' ]) :
-                print ("missing atoms in",residues[i])
+                                                'C4.*','C5.*','C6.*','N3.*' ]) :
+                print(("missing atoms in",residues[i]))
                 residues[i]._base_faces = []
                 residues[i]._coil_colors = len(l_c)*[color_A]
                 continue
@@ -222,8 +222,8 @@ def Add_Nucleic_Bases(g, properties = None):
             connetct_to_base =  Numeric.array(residues[i].atoms[idx].coords)
         else:
             if checkMissingAtoms(residues[i],['N1.*','C2.*','N3.*','C4.*',
-						'C5.*','C6.*']) :
-                print ("missing atoms in",residues[i])
+                                                'C5.*','C6.*']) :
+                print(("missing atoms in",residues[i]))
                 residues[i]._base_faces = []
                 residues[i]._coil_colors = len(l_c)*[color_A]
                 continue

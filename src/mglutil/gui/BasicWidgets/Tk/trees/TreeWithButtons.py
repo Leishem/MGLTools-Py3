@@ -1,5 +1,5 @@
-from tree import Tree, Node
-from Tkinter import Tk, Label, ALL, Menu, IntVar, StringVar, Toplevel, TclError
+from .tree import Tree, Node
+from tkinter import Tk, Label, ALL, Menu, IntVar, StringVar, Toplevel, TclError
 from Pmw import Balloon
 from mglutil.util.callback import CallbackFunction
 
@@ -80,7 +80,7 @@ right click set options"""
                               master=self.tree.master)
         if values=={}: return # Cancel was pressed
         val = 1
-        if values.has_key('display'):
+        if 'display' in values:
             if values['display']=='undisplay':
                 val = 0
 
@@ -103,7 +103,7 @@ right click set options"""
         defaultValues.update( kw )
         
         if  self.commandType == 'checkbutton':
-            if defaultValues.has_key('negate'):
+            if 'negate' in defaultValues:
                 defaultValues['negate'] = not val
             elif not val:
                 return
@@ -348,7 +348,7 @@ attribute describing the hierarchy."""
 
 
     def rightButtonClick(self, columnDescr, event):
-        print 'right click on', columnDescr
+        print('right click on', columnDescr)
 
         
     def deleteColumnDescriptor(self, columnDescr):

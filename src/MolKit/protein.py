@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -28,7 +28,7 @@ from MolKit.molecule import Molecule, MoleculeSet, Atom, AtomSet, Bond
 import re
 from types import NoneType, StringType, IntType, TupleType, FloatType, ListType
 from string import split, upper, find
-from numpy.oldnumeric import sum
+from mglcompat.oldnumeric import sum
 global bhtreeFlag
 try:
     import bhtree
@@ -79,7 +79,7 @@ class ResidueSet(TreeNodeSet):
                 for a in objects:
                     molDict[a.top].append(a)
 
-                for k,v in molDict.items():
+                for k,v in list(molDict.items()):
                     ## this line was causing an endless loop when we select
                     ## Chain A in protease in Dashboard and then clcik on
                     ## display line column for chain A
@@ -279,8 +279,8 @@ class Residue(ProteinMolecule):
         Function returning the coords of all the atoms of the given atom name
         or None if one is not in the atoms residues
         """
-        childNames = self.childByName.keys()
-        check = map(lambda x, cn = childNames: x in cn, atmNames)
+        childNames = list(self.childByName.keys())
+        check = list(map(lambda x, cn = childNames: x in cn, atmNames))
         # all the given names should be atoms of the residue
         if 0 in check:
             return 0, None
@@ -516,7 +516,7 @@ class ResidueSetSelector(TreeNodeSetSelector):
     #FIX THIS HACK
     r_keyD['XAA']='X' #from www.ensembl.org/Docs/Pdoc/bioperl-live/Bio/SeqUtils.html
     r_keyD['SEL']='U'
-    r_keys = r_keyD.values()
+    r_keys = list(r_keyD.values())
 
 
     def __init__(self):
@@ -574,7 +574,7 @@ class ResidueSetSelector(TreeNodeSetSelector):
         selNodes = None
         parentNodes = ChainSet(nodes.parent.uniq())
         for par in parentNodes:
-            nds = ResidueSet(filter(lambda x, par=par: x.parent==par, nodes))
+            nds = ResidueSet(list(filter(lambda x, par=par: x.parent==par, nodes)))
             if len(nds)<2: continue
             firstNodes = self.processListItem(nds, levItList[0])
             lastNodes = self.processListItem(nds, levItList[1])
@@ -590,7 +590,7 @@ class ResidueSetSelector(TreeNodeSetSelector):
     def processListItem(self, nodes, item, sets=None):
 
         # check for pre-defined filtering lists
-        if item.lower() in self.residueList.keys():
+        if item.lower() in list(self.residueList.keys()):
             item = item.lower()
 
             # lists might have been extended
@@ -606,10 +606,10 @@ class ResidueSetSelector(TreeNodeSetSelector):
 
             if item=='ligand':
                 d = self.residueList['all']
-                newNodes = [x for x in nodes if not d.has_key(x.type.strip().upper())]
+                newNodes = [x for x in nodes if x.type.strip().upper() not in d]
             else:
                 d = self.residueList[item]
-                newNodes = [x for x in nodes if d.has_key(x.type.strip().upper())]
+                newNodes = [x for x in nodes if x.type.strip().upper() in d]
 
             #names = self.residueList[item]
             #newNodes = filter(lambda x, names=names, nodes=nodes:
@@ -636,9 +636,9 @@ class ResidueSetSelector(TreeNodeSetSelector):
 
 
     def testSequence(self, item):
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         try:
-            ans = Numeric.add.reduce(map(self.testR,item))==len(item)
+            ans = Numeric.add.reduce(list(map(self.testR,item)))==len(item)
         except:
             ans = 0
         return ans
@@ -692,7 +692,7 @@ class ChainSet(TreeNodeSet):
                 for a in objects:
                     molDict[a.top].append(a)
 
-                for k,v in molDict.items():
+                for k,v in list(molDict.items()):
                     if len(v)==len(k.chains): # special case all chains
                         strr += k.name+':;'
                     else:
@@ -848,7 +848,7 @@ class Chain(ProteinMolecule):
     def buildBondsByDistance(self, cut_off=1.85):
         """Build bonds between atoms inside this chain, based on distance"""
         if self.hasBonds: return
-        for i in xrange(len(self.residues)):
+        for i in range(len(self.residues)):
             res = self.residues[i]
             length = res.buildBondsByDistance()
             if upper(res.type) in ['HOH', 'DOD']: continue
@@ -884,10 +884,10 @@ class Chain(ProteinMolecule):
         from MolKit.PDBresidueNames import Nucleotides, AAnames
 
         self.DNARes = ResidueSet([x for x in self.residues if \
-                                  Nucleotides.has_key(x.type.strip().upper())])
+                                  x.type.strip().upper() in Nucleotides])
 
         self.AARes = ResidueSet([x for x in self.residues if \
-                                 AAnames.has_key(x.type.strip().upper())])
+                                 x.type.strip().upper() in AAnames])
 
         if len(self.DNARes)==0 and len(self.AARes)==0:
             self._ribbonType = None
@@ -907,7 +907,7 @@ class Chain(ProteinMolecule):
         from MolKit.PDBresidueNames import Nucleotides
 
         dnaRes = [x for x in self.residues if \
-                  Nucleotides.has_key(x.type.strip())]
+                  x.type.strip() in Nucleotides]
 
         water = [x for x in self.residues if x.type in ['HOH', 'WAT']]
 
@@ -923,7 +923,7 @@ class Chain(ProteinMolecule):
         """ checks if the chain is proteic or not."""
         from MolKit.PDBresidueNames import AAnames
 
-        self.AARes = [x for x in self.residues if AAnames.has_key(x.type)]
+        self.AARes = [x for x in self.residues if x.type in AAnames]
 
         water = [x for x in self.residues if x.type in ['HOH', 'WAT']]
 
@@ -935,7 +935,7 @@ class Chain(ProteinMolecule):
 
     def isHetatmChain(self):
         """ checks if is whole chain of hetatms """
-        n = filter(lambda x: not x.hetatm, self.residues.atoms)
+        n = [x for x in self.residues.atoms if not x.hetatm]
         if n: return 0
         else: return 1
 
@@ -964,12 +964,12 @@ class ChainSetSelector(TreeNodeSetSelector):
         #for chain in chains:
         #    chain.ribbonType()
         if item =='proteic':
-            newNodes = filter(lambda x, nodes=nodes:
-                              x.isProteic(), nodes)
+            newNodes = list(filter(lambda x, nodes=nodes:
+                              x.isProteic(), nodes))
             return self.level(newNodes)
         elif item == 'dna':
-            newNodes = filter(lambda x, nodes=nodes:
-                              x.isDna(), nodes)
+            newNodes = list(filter(lambda x, nodes=nodes:
+                              x.isDna(), nodes))
             return self.level(newNodes)
 
         else:
@@ -1137,7 +1137,7 @@ class Protein(ProteinMolecule):
         newmol.allAtoms.append(newat)
 
     def _copy_atom_attr(self, newat, at):
-        for item in at.__dict__.items():
+        for item in list(at.__dict__.items()):
             if type(item[1]) in [NoneType,StringType,
                                  IntType,FloatType]:
                 exec('newat.%s=item[1]' %item[0])
@@ -1173,7 +1173,7 @@ class Protein(ProteinMolecule):
         for c in self.chains:
             #if c.isDna(): continue
             #if c.isHetatmChain(): continue
-            if not ssBuilder.ssDataForMol.has_key(c.id): continue
+            if c.id not in ssBuilder.ssDataForMol: continue
             else:
                 c.secondaryStructure(ssBuilder)     
 
@@ -1346,7 +1346,7 @@ class Helix(SecondaryStructure):
                          'I':{'helType':'pi',
                               'helDir':None}}
 
-        if helClass is None or not self.helDescr.has_key(helClass):
+        if helClass is None or helClass not in self.helDescr:
             self.helType = None
             self.helDir = None
         else:
@@ -1355,7 +1355,7 @@ class Helix(SecondaryStructure):
 
         # This is needed to be able to write out the Helix information
         # in a PDB file
-        if helClass in xrange(1,10): self.helClass = helClass
+        if helClass in range(1,10): self.helClass = helClass
         elif helClass == 'H': self.helClass = 1
         elif helClass == 'G': self.helClass = 5
         elif helClass == 'I': self.helClass = 3
@@ -1471,13 +1471,13 @@ class Coil(SecondaryStructure):
 def test_secondaryStructure():
     from MolKit.pdbParser import PdbParser
     from MolKit.protein import Protein
-    print 'create an object Protein crn'
+    print('create an object Protein crn')
     crn = Protein()
-    print 'read the pdb file'
+    print('read the pdb file')
     crn.read('/tsri/pdb/struct/1crn.pdb', PdbParser())
-    print 'create an object secondarystructureSet for each chain of crn'
+    print('create an object secondarystructureSet for each chain of crn')
     crn.getSS()
-    print 'create the geometries for each structures of crn'
+    print('create the geometries for each structures of crn')
     extrudestructure = []
     for c in range(len(crn.chains)):
         for i in range(len(crn.chains[c].secondarystructureset)):

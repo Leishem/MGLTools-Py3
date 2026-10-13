@@ -47,7 +47,7 @@ from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser
 from ViewerFramework.VFCommand import CommandGUI
 from opengltk.OpenGL import GL
 from types import StringType
-import Tkinter, Pmw,types
+import tkinter, Pmw,types
 
 
 
@@ -92,7 +92,7 @@ class ComputeTraceCommand(MVCommand):
 
     def onAddCmdToViewer(self):
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('computeSheet2D'):
+        if 'computeSheet2D' not in self.vf.commands:
             self.vf.loadCommand("extrusionCommands", 'computeSheet2D',
                                 "Pmv", topCommand = 0)
      
@@ -124,7 +124,7 @@ class ComputeTraceCommand(MVCommand):
     
     def dialog(self,mol):
         msg ="Use Previous Trace for %s" %(mol.name)
-        from SimpleDialog import SimpleDialog
+        from tkinter.simpledialog import SimpleDialog
         d = SimpleDialog(self.vf.GUI.ROOT, text=msg, 
                 buttons=['No','Yes'], default=1, 
                 title='Display?')
@@ -145,14 +145,14 @@ class ComputeTraceCommand(MVCommand):
         geomC = mol.geomContainer
         # Create a trace parent geometry for the molecule if doesn't
         # exist already
-        if not geomC.geoms.has_key('trace'):
+        if 'trace' not in geomC.geoms:
             p = Geom('trace',  shape=(0,0), protected=True)
             geomC.addGeom( p, parent=geomC.masterGeom,redo=0 )
         else:
             p = geomC.geoms['trace']
              
         # Then create a traceName parent geometry 
-        if not geomC.geoms.has_key(traceName) :
+        if traceName not in geomC.geoms :
             c = Geom(traceName,  shape=(0,0), protected=True)
             geomC.addGeom(c, parent=p,redo=0)
             self.managedGeometries.append(c)
@@ -167,7 +167,7 @@ class ComputeTraceCommand(MVCommand):
             for chain in mol.chains:
                 cname = traceName+chain.id
                 #if geomC.geoms.keys has cname
-                if geomC.geoms.has_key(cname):
+                if cname in geomC.geoms:
                     #if morethan one chain not to display dialogbox for each
                     #chain ,newval var is initialized to zero.If No selected in                                           #dialog box(doesn't want to use existing same trace and want to compute new one)
                     #then newvar set to 1  
@@ -191,7 +191,7 @@ class ComputeTraceCommand(MVCommand):
         # loop over the chain of the given molecule
         for chain in mol.chains:
             if not hasattr(chain, 'trace') or \
-               not chain.trace.has_key(traceName): continue
+               traceName not in chain.trace: continue
             if chain.trace[traceName] is None: continue        
             # get a handle on the trace object
             trace = chain.trace[traceName]
@@ -203,7 +203,7 @@ class ComputeTraceCommand(MVCommand):
             g = IndexedPolygons(name, visible=0, pickableVertices=1, protected=True,)
             if self.vf.userpref['Sharp Color Boundaries for MSMS']['value'] == 'blur':
                 g.Set(inheritSharpColorBoundaries=False, sharpColorBoundaries=False,)
-            if not geomC.geoms.has_key(name) or (geomC.geoms.has_key(name) and (geomC.atoms[name] == [])):
+            if name not in geomC.geoms or (name in geomC.geoms and (geomC.atoms[name] == [])):
                 geomC.addGeom(g, parent=c)
                 self.managedGeometries.append(g)
             
@@ -219,7 +219,7 @@ class ComputeTraceCommand(MVCommand):
             
             childtrace=traceName+chain.id
             if not hasattr(chain, 'trace') or \
-               not chain.trace.has_key(traceName): continue
+               traceName not in chain.trace: continue
             
     def doit(self, nodes, traceName='CATrace', ctlAtmName = 'CA',
              torsAtmName='O', nbchords = 4):
@@ -255,9 +255,8 @@ class ComputeTraceCommand(MVCommand):
         mols = self.vf.getSelection().top.uniq()
         tracesName = []
         for m in mols:
-            if not m.geomContainer.geoms.has_key('trace'): continue
-            names = map(lambda x: x.name,
-                        m.geomContainer.geoms['trace'].children)
+            if 'trace' not in m.geomContainer.geoms: continue
+            names = [x.name for x in m.geomContainer.geoms['trace'].children]
             for n in names:
                 if not n in tracesName: tracesName.append(n)
         return tracesName
@@ -317,7 +316,7 @@ residues.\n The higher the number the smoother the trace will be.',
     def guiCallback(self):
         self.traceNames = self.getAvailableTrace()
         if not self.traceNames:self.traceNames = ['CATrace',]
-        if self.cmdForms.has_key('traceForm'):
+        if 'traceForm' in self.cmdForms:
             form = self.cmdForms['traceForm']
             combo = form.descr.entryByName['traceName']['widget']
             if self.traceNames != combo.get():
@@ -330,7 +329,7 @@ residues.\n The higher the number the smoother the trace will be.',
         val['traceName'] = val['traceName'][0]
         if not val['ctlAtmName'] or not val['torsAtmName']: return
         val['redraw']=0
-        apply(self.doitWrapper, (self.vf.getSelection(), ), val)
+        self.doitWrapper(*(self.vf.getSelection(), ), **val)
 
 
     def __call__(self, nodes, traceName='CATrace', ctlAtmName='CA',
@@ -359,7 +358,7 @@ residues.\n The higher the number the smoother the trace will be.',
         kw['redraw']=0
         if type(nodes) is StringType:
             self.nodeLogString = "'" + nodes +"'"
-        apply (self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
 
 
 class ExtrudeTraceCommand(MVCommand):
@@ -392,12 +391,12 @@ class ExtrudeTraceCommand(MVCommand):
 
     def onAddCmdToViewer(self):
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('computeTrace'):
+        if 'computeTrace' not in self.vf.commands:
             self.vf.loadCommand("traceCommands", 'computeTrace',
                                 "Pmv", topCommand = 0)
             
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('displayTrace'):
+        if 'displayTrace' not in self.vf.commands:
             self.vf.loadCommand("traceCommands", 'displayTrace',
                                 'Pmv', topCommand = 0)
 
@@ -431,7 +430,7 @@ class ExtrudeTraceCommand(MVCommand):
         kw['endCap'] = endCap
         if type(nodes) is StringType:
             self.nodeLogString = "'" + nodes +"'"
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes, traceName='CATrace', shape2D=None, frontCap=True,
@@ -449,7 +448,7 @@ class ExtrudeTraceCommand(MVCommand):
                 # Cannot get the trace thing id no trace has been computed.
                 if not hasattr(chain, 'trace'):
                     continue
-                elif not chain.trace.has_key(traceName) or \
+                elif traceName not in chain.trace or \
                      chain.trace[traceName] is None:
                     continue
 
@@ -470,9 +469,8 @@ class ExtrudeTraceCommand(MVCommand):
         mols = self.vf.getSelection().top.uniq()
         tracesName = []
         for m in mols:
-            if not m.geomContainer.geoms.has_key('trace'): continue
-            names = map(lambda x: x.name,
-                        m.geomContainer.geoms['trace'].children)
+            if 'trace' not in m.geomContainer.geoms: continue
+            names = [x.name for x in m.geomContainer.geoms['trace'].children]
             for n in names:
                 if not n in tracesName: tracesName.append(n)
         return tracesName
@@ -480,7 +478,7 @@ class ExtrudeTraceCommand(MVCommand):
 
     def buildFormDescr(self, formName):
         if formName == 'geomChooser':
-            nbchordEntryVar = Tkinter.StringVar()
+            nbchordEntryVar = tkinter.StringVar()
             idf = InputFormDescr(title ="Choose a shape :")
             idf.append({'name':'traceName',
                         'widgetType':Pmw.ComboBox,
@@ -555,19 +553,19 @@ class ExtrudeTraceCommand(MVCommand):
                                }
             
             frontCapWidgetDescr = {'name':'frontcap',
-                                   'widgetType':Tkinter.Checkbutton,
+                                   'widgetType':tkinter.Checkbutton,
                                    'tooltip':'when set to 1 a cap is added \nat the front',
                                    'defaultValue':1,
                                    'wcfg':{'text':'front cap',
-                                           'variable': Tkinter.IntVar()},
+                                           'variable': tkinter.IntVar()},
                                    'gridcfg':{'sticky':'we'}}
             endCapWidgetDescr = {'name':'endcap',
-                                 'widgetType':Tkinter.Checkbutton,
+                                 'widgetType':tkinter.Checkbutton,
                                  'defaultValue':1,
                                  'tooltip':"""when set to 1 a cap is added
                                  at the end""",
                                  'wcfg':{'text':'end cap ',
-                                         'variable': Tkinter.IntVar()},
+                                         'variable': tkinter.IntVar()},
                                  'gridcfg':{'sticky':'we','row':-1}}
             
 
@@ -623,7 +621,7 @@ class ExtrudeTraceCommand(MVCommand):
         from ViewerFramework.drawShape import DrawShape
         self.traceNames = self.getAvailableTrace()
         if not self.traceNames : return
-        if self.cmdForms.has_key('geomChooser'):
+        if 'geomChooser' in self.cmdForms:
             form = self.cmdForms['geomChooser']
             combo = form.descr.entryByName['traceName']['widget']
             if self.traceNames != combo.get():
@@ -708,12 +706,12 @@ class DisplayTraceCommand(DisplayCommand):
      """
     def onAddCmdToViewer(self):
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('computeTrace'):
+        if 'computeTrace' not in self.vf.commands:
             self.vf.loadCommand("traceCommands", 'computeTrace',
                                 "Pmv", topCommand = 0)
 
         #if self.vf.hasGui and
-        if not self.vf.commands.has_key('extrudeTrace'):
+        if 'extrudeTrace' not in self.vf.commands:
             self.vf.loadCommand("traceCommands", 'extrudeTrace',
                                 "Pmv", topCommand = 0)
             
@@ -727,7 +725,7 @@ class DisplayTraceCommand(DisplayCommand):
             gc = mol.geomContainer
             for chain in mol.chains:
                 if not hasattr(chain, 'trace'): continue
-                if not chain.trace.has_key(traceName): continue
+                if traceName not in chain.trace: continue
                 if not hasattr(chain.trace[traceName], 'exElt'):
                     continue
                 name = "%s%s"%(traceName, chain.id)
@@ -750,7 +748,7 @@ class DisplayTraceCommand(DisplayCommand):
         ###############################################################
         def drawResidues(trace, traceName, res, only, negate):
             mol = trace.chain.parent
-	    name = '%s%s'%(traceName, trace.chain.id)
+            name = '%s%s'%(traceName, trace.chain.id)
             set = mol.geomContainer.atoms[name]
             if negate :
                 set =  set - res
@@ -763,8 +761,8 @@ class DisplayTraceCommand(DisplayCommand):
                     set = res.union(set)
             ##now, update the geometries:
             # draw residues' secondary strucuture
-	    if len(set)==0:
-		    mol.geomContainer.geoms[name].Set(visible=0,
+            if len(set)==0:
+                    mol.geomContainer.geoms[name].Set(visible=0,
                                                       tagModified=False)
                     mol.geomContainer.atoms[name] = set
                     return
@@ -775,7 +773,7 @@ class DisplayTraceCommand(DisplayCommand):
             
             #resfaces = catrace.getExtrudeResidues(set)
             resfaces, resfacesDict = trace.exElt.getExtrudeResidues(set)
-	    col = mol.geomContainer.getGeomColor(name)
+            col = mol.geomContainer.getGeomColor(name)
             g.Set(faces=resfaces, vnormals=trace.exElt.vnormals,
                   visible=1, materials=col, tagModified=False)
 
@@ -785,7 +783,7 @@ class DisplayTraceCommand(DisplayCommand):
         for mol,residues in map(None,molecules, residueSets):
             for chain in mol.chains:
                 if not hasattr(chain, 'trace'): continue
-                if not chain.trace.has_key(traceName):
+                if traceName not in chain.trace:
                     continue
                 if not hasattr(chain.trace[traceName], 'exElt'):
                     continue
@@ -822,7 +820,7 @@ class DisplayTraceCommand(DisplayCommand):
     def guiCallback(self):
         self.traceNames = self.vf.extrudeTrace.getAvailableTrace()
         if not self.traceNames: return
-        if self.cmdForms.has_key('displayTrace'):
+        if 'displayTrace' in self.cmdForms:
             form = self.cmdForms['displayTrace']
             combo = form.descr.entryByName['traceName']['widget']
             if self.traceNames != combo.get():
@@ -845,7 +843,7 @@ class DisplayTraceCommand(DisplayCommand):
         if not val['traceName']: return
         val['redraw']=1
 
-        apply(self.doitWrapper, (self.vf.getSelection(),), val)
+        self.doitWrapper(*(self.vf.getSelection(),), **val)
         
     def __call__(self, nodes, traceName='CATrace', only=False,
                  negate=False, **kw):
@@ -867,7 +865,7 @@ class DisplayTraceCommand(DisplayCommand):
         kw['redraw'] = True
         if type(nodes) is StringType:
             self.nodeLogString = "'" + nodes +"'"
-        apply ( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
 
 class CustomTraceCommand(MVCommand):
     """This command computes and extrudes Trace 
@@ -904,17 +902,17 @@ class CustomTraceCommand(MVCommand):
 
     def onAddCmdToViewer(self):
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('computeTrace'):
+        if 'computeTrace' not in self.vf.commands:
             self.vf.loadCommand("traceCommands",
                                 "computeTrace", "Pmv",
                                 topCommand = 0)
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('extrudeTrace'):
+        if 'extrudeTrace' not in self.vf.commands:
             self.vf.loadCommand("traceCommands",
                                 "extrudeTrace", "Pmv",
                                 topCommand = 0)
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('displayTrace'):
+        if 'displayTrace' not in self.vf.commands:
             self.vf.loadCommand("traceCommands",
                                 "displayTrace", "Pmv",topCommand = 0)
     def buildFormDescr(self, formName):                            
@@ -967,7 +965,7 @@ residues.\n The higher the number the smoother the trace will be.',
                          })
 
            
-            nbchordEntryVar = Tkinter.StringVar()
+            nbchordEntryVar = tkinter.StringVar()
             entries = ['circle','rectangle','ellipse', 'square','triangle']
 
             idf.append({'name':'shape',
@@ -1031,19 +1029,19 @@ residues.\n The higher the number the smoother the trace will be.',
                                }
             
             frontCapWidgetDescr = {'name':'frontcap',
-                                   'widgetType':Tkinter.Checkbutton,
+                                   'widgetType':tkinter.Checkbutton,
                                    'tooltip':'when set to 1 a cap is added \nat the front',
                                    'defaultValue':1,
                                    'wcfg':{'text':'front cap',
-                                           'variable': Tkinter.IntVar()},
+                                           'variable': tkinter.IntVar()},
                                    'gridcfg':{'sticky':'we'}}
             endCapWidgetDescr = {'name':'endcap',
-                                 'widgetType':Tkinter.Checkbutton,
+                                 'widgetType':tkinter.Checkbutton,
                                  'defaultValue':1,
                                  'tooltip':"""when set to 1 a cap is added
                                  at the end""",
                                  'wcfg':{'text':'end cap ',
-                                         'variable': Tkinter.IntVar()},
+                                         'variable': tkinter.IntVar()},
                                  'gridcfg':{'sticky':'we','row':-1}}
             
 
@@ -1100,7 +1098,7 @@ residues.\n The higher the number the smoother the trace will be.',
     def guiCallback(self):
         self.traceNames = self.vf.extrudeTrace.getAvailableTrace()
         if not self.traceNames:self.traceNames = ['CATrace',]
-        if self.cmdForms.has_key('CustomTraceForm'):
+        if 'CustomTraceForm' in self.cmdForms:
             form = self.cmdForms['CustomTraceForm']
             combo = form.descr.entryByName['traceName']['widget']
             if self.traceNames != combo.get():
@@ -1199,21 +1197,21 @@ residues.\n The higher the number the smoother the trace will be.',
         kw['shape2D']=shape2D
         if type(nodes) is StringType:
             self.nodeLogString = "'" + nodes +"'"
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
         
     def doit(self, nodes,**kw):     
         nkw={}
         if kw!={}:
             if kw['display']==0:
                 nkw['negate']=1
-                apply(self.vf.displayTrace,(nodes,),nkw)
+                self.vf.displayTrace(*(nodes,), **nkw)
                 return
 
             elif kw['display']==1:
-                if kw.has_key('negate'):
+                if 'negate' in kw:
                     if kw['negate']==1:
                         nkw['negate']=1
-                        apply(self.vf.displayTrace,(nodes,),nkw)
+                        self.vf.displayTrace(*(nodes,), **nkw)
                         return    
         self.vf.computeTrace(nodes,traceName=kw['traceName'],ctlAtmName=kw['ctlAtmName'],torsAtmName=kw['torsAtmName'],nbchords=kw['nbchords'])
         self.vf.extrudeTrace(nodes,traceName=kw['traceName'],shape2D=kw['shape2D'],frontCap=kw['frontCap'], endCap=kw['endCap'],display = kw['display']) 
@@ -1244,17 +1242,17 @@ class ComputeExtrudeTraceCommand(MVCommand):
 
     def onAddCmdToViewer(self):
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('computeTrace'):
+        if 'computeTrace' not in self.vf.commands:
             self.vf.loadCommand("traceCommands",
                                 "computeTrace", "Pmv",
                                 topCommand = 0)
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('extrudeTrace'):
+        if 'extrudeTrace' not in self.vf.commands:
             self.vf.loadCommand("traceCommands",
                                 "extrudeTrace", "Pmv",
                                 topCommand = 0)
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('displayTrace'):
+        if 'displayTrace' not in self.vf.commands:
             self.vf.loadCommand("traceCommands",
                                 "displayTrace", "Pmv",
                                 topCommand = 0)
@@ -1268,24 +1266,24 @@ class ComputeExtrudeTraceCommand(MVCommand):
                   will be displayed
         \nnegate ---  flag when set to 1 undisplay the current selection
         """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         
-        if not kw.has_key('redraw'): kw['redraw']=1
+        if 'redraw' not in kw: kw['redraw']=1
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return "ERROR"
         kw['only']=only
         kw['negate']=negate
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
     def doit(self, nodes, **kw):
         if kw!={}:
             if kw['negate']==1:
-                apply(self.vf.displayTrace,(nodes,), kw)
+                self.vf.displayTrace(*(nodes,), **kw)
                 return
-        apply(self.vf.computeTrace,(nodes,), {'topCommand':False})
+        self.vf.computeTrace(*(nodes,), **{'topCommand':False})
         kw['topCommand'] = 0
-        apply(self.vf.extrudeTrace,(nodes,),{})        
+        self.vf.extrudeTrace(*(nodes,), **{})        
         
 
 
@@ -1346,4 +1344,4 @@ def initModule(viewer):
     initializes these commands also. """
 
     for dict in commandList:
-	viewer.addCommand(dict['cmd'], dict['name'], dict['gui'])
+        viewer.addCommand(dict['cmd'], dict['name'], dict['gui'])

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -16,24 +16,24 @@
 #
  
 import types, numpy
-from Tkinter import *
-import Tkinter
+from tkinter import *
+import tkinter
 import Pmw
 from opengltk.OpenGL import GL
-from Slider import Slider
-from ColorChooser import ColorChooser
-import string, os
-import viewerConst
-import jitter
-import colorTool
-import PropertyEditor
-import numpy.oldnumeric as Numeric
+from .Slider import Slider
+from .ColorChooser import ColorChooser
+import os; from mglcompat import pystring as string
+from . import viewerConst
+from . import jitter
+from . import colorTool
+from . import PropertyEditor
+import mglcompat.oldnumeric as Numeric
 from mglutil.util.callback import CallBackFunction
 from mglutil.util.colorUtil import TkColor
 from mglutil.gui.BasicWidgets.Tk.fileBrowsers import FileOpenBrowser, \
      FileSaveBrowser
 from mglutil.gui.BasicWidgets.Tk.RelabelingCascadeMenu import RelabelingCascadeMenu
-import tkMessageBox
+import tkinter.messagebox
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 from DejaVu.Transformable import Transformable
 from DejaVu.IndexedGeom import IndexedGeom
@@ -322,7 +322,7 @@ class ViewerGUI:
         self.menuHelp.menu = Menu(self.menuHelp)
         self.menuHelp['menu'] = self.menuHelp.menu
 
-        self.QuickKeysFrame = Tkinter.Toplevel(width=50, height=100)
+        self.QuickKeysFrame = tkinter.Toplevel(width=50, height=100)
         self.QuickKeysFrame.withdraw()
         self.QuickKeysFrame.title('Quick Keys')
         #self.QuickKeysFrame.forget()
@@ -335,7 +335,7 @@ class ViewerGUI:
         import Pmw
         self.sf = Pmw.ScrolledFrame(self.root,horizflex='expand',vertflex='expand')
         self.sframe = self.sf.interior()
-        frame1 = Tkinter.Frame(self.sframe)
+        frame1 = tkinter.Frame(self.sframe)
 
         self.XformRadio = Pmw.Group(frame1, tag_text="Mouse transforms:")
         w = self.XformRadio.interior()
@@ -385,7 +385,7 @@ class ViewerGUI:
                                    anchor='w').grid(row=1, column=4, sticky='w')
         self.transformInfo = {}
         for lButtonIndex in (1, 2, 3):
-            self.transformInfo[lButtonIndex] = Tkinter.Label(
+            self.transformInfo[lButtonIndex] = tkinter.Label(
                                         lFrameTransformInfo, 
                                         width=10,
                                         relief='sunken',
@@ -566,7 +566,7 @@ class ViewerGUI:
 
         self.inheritVar = {}
         for prop in majorProp:
-            var = Tkinter.IntVar()
+            var = tkinter.IntVar()
             self.inheritVar[prop] = var
             f = CallBackFunction(self.setInherit_cb, prop, var)
             self.inheritMenu_b.menu.add_checkbutton(label=prop,
@@ -575,7 +575,7 @@ class ViewerGUI:
         
         self.inheritMenu_b.menu.add_separator()
         for prop in inheritProp:
-            var = Tkinter.IntVar()
+            var = tkinter.IntVar()
             self.inheritVar[prop] = var
             f = CallBackFunction(self.setInherit_cb, prop, var)
             self.inheritMenu_b.menu.add_checkbutton(label=prop,
@@ -584,13 +584,13 @@ class ViewerGUI:
             self.inheritMenu_b.indices.append(self.inheritMenu_b.menu.index(prop))
         
         for prop in inheritProp2:
-            var = Tkinter.IntVar()
+            var = tkinter.IntVar()
             self.inheritVar[prop] = var
         
         self.relabelingCascadeMenus = {}
         for prop in self.cascadeProp:
                 lCascadeMenu = RelabelingCascadeMenu(label=prop,
-                                                     variable=Tkinter.IntVar(),
+                                                     variable=tkinter.IntVar(),
                                                      master=self.inheritMenu_b.menu,
                                                      tearoff=0)
                 self.relabelingCascadeMenus[lCascadeMenu.baseLabel] = lCascadeMenu
@@ -621,7 +621,7 @@ class ViewerGUI:
 
         # shading
         lCascadeMenu = RelabelingCascadeMenu(label='shading',
-                                             variable=Tkinter.IntVar(),
+                                             variable=tkinter.IntVar(),
                                              master=self.inheritMenu_b.menu,
                                              tearoff=0)
         self.relabelingCascadeMenus[lCascadeMenu.baseLabel] = lCascadeMenu
@@ -630,7 +630,7 @@ class ViewerGUI:
         lFuncCall = CallBackFunction(self.setPropMode,
                                      lCascadeMenu.baseLabel,
                                      lCascadeMenu.cascadeVariable)
-        for lab, mode in viewerConst.SHADINGS.items():
+        for lab, mode in list(viewerConst.SHADINGS.items()):
             lCascadeMenu.add_radiobutton(label=lab,
                                          variable=lCascadeMenu.cascadeVariable,
                                          command=lFuncCall,
@@ -639,7 +639,7 @@ class ViewerGUI:
 
         # culling
         lCascadeMenu = RelabelingCascadeMenu(label='culling',
-                                             variable=Tkinter.IntVar(),
+                                             variable=tkinter.IntVar(),
                                              master=self.inheritMenu_b.menu,
                                              tearoff=0)
         self.relabelingCascadeMenus[lCascadeMenu.baseLabel] = lCascadeMenu
@@ -656,7 +656,7 @@ class ViewerGUI:
                                          )
 
         # frontPolyMode
-        self.frontPolyMode = Tkinter.IntVar()
+        self.frontPolyMode = tkinter.IntVar()
         lCascadeMenu = RelabelingCascadeMenu(label='frontPolyMode',
                                              variable=self.frontPolyMode,
                                              master=self.inheritMenu_b.menu,
@@ -676,7 +676,7 @@ class ViewerGUI:
 
         # backPolyMode
         lCascadeMenu = RelabelingCascadeMenu(label='backPolyMode',
-                                             variable=Tkinter.IntVar(),
+                                             variable=tkinter.IntVar(),
                                              master=self.inheritMenu_b.menu,
                                              tearoff=0)
         self.relabelingCascadeMenus[lCascadeMenu.baseLabel] = lCascadeMenu
@@ -694,7 +694,7 @@ class ViewerGUI:
 
         # lineWidth
         lCascadeMenu = RelabelingCascadeMenu(label='lineWidth',
-                                             variable=Tkinter.IntVar(),
+                                             variable=tkinter.IntVar(),
                                              master=self.inheritMenu_b.menu,
                                              tearoff=0)
         self.relabelingCascadeMenus[lCascadeMenu.baseLabel] = lCascadeMenu
@@ -726,7 +726,7 @@ class ViewerGUI:
 
         # pointWidth
         lCascadeMenu = RelabelingCascadeMenu(label='pointWidth',
-                                             variable=Tkinter.IntVar(),
+                                             variable=tkinter.IntVar(),
                                              master=self.inheritMenu_b.menu,
                                              tearoff=0)
         self.relabelingCascadeMenus[lCascadeMenu.baseLabel] = lCascadeMenu
@@ -757,7 +757,7 @@ class ViewerGUI:
 
         self.inheritMenu_b.menu.add_separator()
         for prop in moreProp:
-            var = Tkinter.IntVar()
+            var = tkinter.IntVar()
             self.inheritVar[prop] = var
             f = CallBackFunction(self.setInherit_cb, prop, var)
             self.inheritMenu_b.menu.add_checkbutton(label=prop,
@@ -765,7 +765,7 @@ class ViewerGUI:
                                                variable=var,)
 
         for prop in opacityProp:
-            var = Tkinter.IntVar()
+            var = tkinter.IntVar()
             self.inheritVar[prop] = var
             f = CallBackFunction(self.setInherit_cb, prop, var)
             self.inheritMenu_b.menu.add_checkbutton(label=prop,
@@ -781,7 +781,7 @@ class ViewerGUI:
         self.opacityRelabelingCascadeMenus[lCascadeMenu.baseLabel] = lCascadeMenu
         self.inheritMenu_b.menu.add_cascade(label=lCascadeMenu.baseLabel,
                                        menu=lCascadeMenu)
-        for lab, mode in viewerConst.srcBFnames.items():
+        for lab, mode in list(viewerConst.srcBFnames.items()):
             lCascadeMenu.add_radiobutton(
                              label=lab,
                              variable=lCascadeMenu.cascadeVariable,
@@ -842,8 +842,8 @@ class ViewerGUI:
         self.cInheritMenu_b.menu = Menu(self.cInheritMenu_b, tearoff=0)
         self.cInheritMenu_b['menu'] = self.cInheritMenu_b.menu
 
-        lCascade = ( Tkinter.Menu(self.cInheritMenu_b.menu, tearoff=1),
-                     Tkinter.Menu(self.cInheritMenu_b.menu, tearoff=1) )
+        lCascade = ( tkinter.Menu(self.cInheritMenu_b.menu, tearoff=1),
+                     tkinter.Menu(self.cInheritMenu_b.menu, tearoff=1) )
         self.cInheritMenu_b.menu.add_cascade(label='to direct children only',
                                              menu=lCascade[0])
         self.cInheritMenu_b.menu.add_cascade(label='to children recursively',
@@ -1127,7 +1127,7 @@ class ViewerGUI:
                                         'RGB',
                                         self.viewer.lights[i].setSpecular,
                                        )
-        lTopColorChooser = Tkinter.Toplevel() 
+        lTopColorChooser = tkinter.Toplevel() 
         self.colorChooser = ColorChooser(master=lTopColorChooser, 
                                          targetDict=lTargetDict,
                                          targetKey='background',
@@ -1171,7 +1171,7 @@ class ViewerGUI:
         Radiobutton_button.pack(fill=X, padx=5)
         # the primary pulldown
         Radiobutton_button.menu = Menu(Radiobutton_button)
-        for v,s in {0:'Perspective', 1:'Orthographic'}.items():
+        for v,s in list({0:'Perspective', 1:'Orthographic'}.items()):
             Radiobutton_button.menu.add_radiobutton(label=s,
                                 var=self.projType,
                                 value = v,
@@ -1220,11 +1220,11 @@ class ViewerGUI:
 
         #GraphToolWidget
         from mglutil.gui.BasicWidgets.Tk.graphtool import GraphApp
-        self.GraphToolpanel=Tkinter.Toplevel()
+        self.GraphToolpanel=tkinter.Toplevel()
         self.GraphToolpanel.title("GraphTool")
         self.GraphToolpanel.withdraw()
         self.GraphToolpanel.protocol('WM_DELETE_WINDOW', self.GraphToolpanel.withdraw)
-        f1 = Tkinter.Frame(self.GraphToolpanel)
+        f1 = tkinter.Frame(self.GraphToolpanel)
         f1.pack(side='top', fill='both', expand=1)
         self.curvetool=GraphApp(f1,callback=self.continuousRamp)
         self.curvetool.defaultcurve_cb() 
@@ -1500,7 +1500,7 @@ class ViewerGUI:
     
 
         self.ObjProp.pack(fill='x', ipadx=2, ipady=2, padx=2, pady=2)
-        self.propertyNoteBook.setnaturalsize(pageNames=lPropertyPage.keys())
+        self.propertyNoteBook.setnaturalsize(pageNames=list(lPropertyPage.keys()))
         self.propertyNoteBook.pack(padx=2, pady=2, ipadx=2, ipady=2, fill='x')
         self.CurrentPropPanel = self.ObjProp
             #################################
@@ -1563,7 +1563,7 @@ class ViewerGUI:
 
         if not self.outlineMeshButtonInitialized:
                 
-            frame = self.outlineMeshPanel = Tkinter.Toplevel()
+            frame = self.outlineMeshPanel = tkinter.Toplevel()
             frame.geometry("+%d+%d"%frame.winfo_pointerxy())
             frame.protocol('WM_DELETE_WINDOW', frame.withdraw)
           
@@ -1637,14 +1637,14 @@ class ViewerGUI:
         self.allRepr = 0  # repr counter used to name representations by default
         self.reprMem = {}
 
-	w = self.reprContainer = Pmw.Group(master,
-                                           tag_pyclass = Tkinter.Button,
+        w = self.reprContainer = Pmw.Group(master,
+                                           tag_pyclass = tkinter.Button,
                                            tag_text='Save representation')
         w.configure(tag_command = self.addRepr)
-	w.pack(fill = 'both', expand = 1, padx = 6, pady = 6)
+        w.pack(fill = 'both', expand = 1, padx = 6, pady = 6)
 
         self.viewsBalloon = Pmw.Balloon(self.root)
-        self.reprMenu = Tkinter.Menu(self.root, title = "Representation")
+        self.reprMenu = tkinter.Menu(self.root, title = "Representation")
         self.reprMenu.add_command(label="Rename repr")
         self.reprMenu.add_command(label="Remove repr")
         self.reprMenu.add_command(label="Dismiss")
@@ -1729,7 +1729,7 @@ class ViewerGUI:
     def restoreRepr(self, name, button = None):
         mem = self.reprMem[name]
         for g in self.viewer.rootObject.AllObjects():
-            if not mem.has_key(g.fullName):
+            if g.fullName not in mem:
                 g.visible = 0
             else:
                 #print g.fullName
@@ -1769,13 +1769,13 @@ class ViewerGUI:
 
         
     def renameRepr(self, name):
-        from tkSimpleDialog import askstring
+        from tkinter.simpledialog import askstring
         newname = askstring("Rename repr %s"%name, "Enter new name:",
                             initialvalue = name,
                             parent = self.reprContainer.interior())
         if newname != None and newname != name:
-            if self.reprMem.has_key(newname):
-                from tkMessageBox  import showwarning
+            if newname in self.reprMem:
+                from tkinter.messagebox  import showwarning
                 showwarning("Warning", "Representation name %s already exists"%newname, parent = self.root)
                 return
             #find cooresponding button, rename it and update the bindings:
@@ -1817,11 +1817,11 @@ class ViewerGUI:
         master = self.reprContainer.interior()
         if icon == True:
             photo, ims = self.getButtonIcon()
-            b = Tkinter.Button(master=master ,compound='left',
+            b = tkinter.Button(master=master ,compound='left',
                                image=photo)
             b.photo = photo
         else:
-            b = Tkinter.Button(master=master , text=name, width = 4, height = 3, wraplength=50)
+            b = tkinter.Button(master=master , text=name, width = 4, height = 3, wraplength=50)
         self.viewsBalloon.bind(b, name)
         b.name = name
         b.configure(command = CallBackFunction( self.restoreRepr, name, b))
@@ -1833,7 +1833,7 @@ class ViewerGUI:
 
     def saveReprToFile(self, file = None):
         if len(self.reprMem) == 0:
-            from tkMessageBox import showwarning
+            from tkinter.messagebox import showwarning
             showwarning("Warning", "There are no representations in Bookmarks to save", parent=self.root)
             return
         if file is None:
@@ -1844,9 +1844,9 @@ class ViewerGUI:
         if file:
             import shelve
             f = shelve.open(file)
-            if len(f.keys()):
+            if len(list(f.keys())):
                 f.clear()
-            for name in self.reprMem.keys():
+            for name in list(self.reprMem.keys()):
                 f[name] = self.reprMem[name]
             f.close()
 
@@ -1867,7 +1867,7 @@ class ViewerGUI:
                                     buttons = ('ADD', 'REPLACE', 'Cancel'),
                                     defaultbutton = 'ADD')
                 dialog.withdraw()
-                label = Tkinter.Label(dialog.interior(),
+                label = tkinter.Label(dialog.interior(),
                     text = "Would you like to ADD file representaions\n or REPLACE existing ones?", pady = 10) 
                 label.pack(expand = 1, fill = 'both', padx = 4, pady = 4)
                 action = dialog.activate(geometry = '+%d+%d' % (self.root.winfo_x()+100, self.root.winfo_y()+200))
@@ -1885,11 +1885,11 @@ class ViewerGUI:
                 # if saved representation has "custom" name,
                 # check if  that name already exists in Representations:
                 if not name.startswith("repr"):
-                    if self.reprMem.has_key(name):
+                    if name in self.reprMem:
                         # name exists -> create newname by adding an
                         # integer to the name 
                         count = 0
-                        for k in self.reprMem.keys():
+                        for k in list(self.reprMem.keys()):
                             if k.startswith(name):
                                 count = count +1
                         newname = name+"_"+str(count)
@@ -1918,9 +1918,9 @@ class ViewerGUI:
     def fillTransformInfo_cb(self, event=None):
         #print "fillTransformInfo_cb", event, dir(event)
 
-        if isinstance(event, Tkinter.Event) and (event.type == '2'):
+        if isinstance(event, tkinter.Event) and (event.type == '2'):
             lEvent = event.keysym
-        elif type(event) == types.StringType:
+        elif type(event) == bytes:
             lEvent = event
         else:
             lEvent = 'None'
@@ -1984,7 +1984,7 @@ class ViewerGUI:
 #                                     buttons=["Quit","Cancel"],
 #                                     default=0, title="Quit?")
 #        ok=d.go()
-        ok = tkMessageBox.askokcancel("Quit?","Do you Wish to Quit?")
+        ok = tkinter.messagebox.askokcancel("Quit?","Do you Wish to Quit?")
         if ok:
             self.quit_cb()
         else:
@@ -2085,7 +2085,7 @@ class ViewerGUI:
             label = "Xform %s %s"%(xform, obj.fullName)
 
         # create a button and add it to the Quick Keys panel
-        button = Tkinter.Button(self.QuickKeysFrame, text=label, command=cb)
+        button = tkinter.Button(self.QuickKeysFrame, text=label, command=cb)
         button.pack(side='top', expand=1, fill='y')
 
 
@@ -2422,7 +2422,7 @@ class ViewerGUI:
             self.tvolist.Select(node)
         
         # update the object properties panel
-        for prop, var in self.inheritVar.items():
+        for prop, var in list(self.inheritVar.items()):
             if hasattr(obj,prop):
                 if (obj is self.viewer.rootObject) \
                   and (prop.startswith('inherit')):
@@ -2521,20 +2521,20 @@ class ViewerGUI:
                 state='disabled')
 
         if obj == self.viewer.rootObject:
-            for lButton in self.objectInheritButtons.values():
+            for lButton in list(self.objectInheritButtons.values()):
                 lButton.configure(state='disabled')
             for lIndex in self.inheritMenu_b.indices:
                 self.inheritMenu_b.menu.entryconfigure(lIndex, state='disabled')
-            for lCascadeMenu in self.relabelingCascadeMenus.values():
+            for lCascadeMenu in list(self.relabelingCascadeMenus.values()):
                 lCascadeMenu.entryconfigure('inherit', state='disabled')
             for lPolyModeMenu in self.polyModeMenus:
                 lPolyModeMenu.menu.entryconfigure('inherit', state='disabled')
         else:
-            for lButton in self.objectInheritButtons.values():
+            for lButton in list(self.objectInheritButtons.values()):
                 lButton.configure(state='normal')
             for lIndex in self.inheritMenu_b.indices:
                 self.inheritMenu_b.menu.entryconfigure(lIndex, state='normal')
-            for lCascadeMenu in self.relabelingCascadeMenus.values():
+            for lCascadeMenu in list(self.relabelingCascadeMenus.values()):
                 lCascadeMenu.entryconfigure('inherit', state='normal')
             for lPolyModeMenu in self.polyModeMenus:
                 lPolyModeMenu.menu.entryconfigure('inherit', state='normal')
@@ -2543,19 +2543,19 @@ class ViewerGUI:
         
 
     def read(self):
-        print 'read'
+        print('read')
 
 
     def write(self):
-        print 'write'
+        print('write')
 
 
     def delete(self):
-        print 'delete'
+        print('delete')
 
 
     def ObjectProp(self):
-        print 'ObjProp'
+        print('ObjProp')
 
 
 ## can't get gluProject to work properly !
@@ -2604,7 +2604,7 @@ class ViewerGUI:
                                 scissorH=obj.scissorH )
         elif hasattr(obj, propname):
             propval = getattr(obj, propname)
-            apply( obj.SetForChildren, (recursive,), {propname:propval})
+            obj.SetForChildren(*(recursive,), **{propname:propval})
 
         self.viewer.deleteOpenglList()
         self.viewer.Redraw()
@@ -2617,9 +2617,9 @@ class ViewerGUI:
             inheritPropName = 'inherit' + propname[0].upper() + propname[1:]
             #print "inheritPropName", inheritPropName
             inheritPropVal = getattr(obj, inheritPropName)
-            apply( obj.SetForChildren, (recursive,), {inheritPropName:inheritPropVal})
+            obj.SetForChildren(*(recursive,), **{inheritPropName:inheritPropVal})
             propVal = getattr(obj, propname)
-            apply( obj.SetForChildren, (recursive,), {propname:propVal})
+            obj.SetForChildren(*(recursive,), **{propname:propVal})
             self.viewer.deleteOpenglList()
             self.viewer.Redraw()
 
@@ -2647,7 +2647,7 @@ class ViewerGUI:
                 obj.removeFaceNormalsGeom()
         else:
             # 4- Set the propname of the current object to the given value
-            apply(obj.Set, (), {propname:propval})
+            obj.Set(*(), **{propname:propval})
             if propname=='scissor':
                 if propval:
                     self.viewer.currentScissor=obj
@@ -2767,15 +2767,15 @@ class ViewerGUI:
 
 
     def reset(self, event):
-        print 'reset'
+        print('reset')
 
 
     def normalize(self, event):
-        print 'normalize'
+        print('normalize')
 
 
     def center(self, event):
-        print 'center'
+        print('center')
 
 
     def TObject(self):
@@ -2885,7 +2885,7 @@ class ViewerGUI:
         #should show some windowswith ssa optio...and pass the option
         #pass
         if not DejaVu.enableSSAO: return
-	camera = self.viewer.currentCamera
+        camera = self.viewer.currentCamera
         if not hasattr(self,"ssao_options_w"):
             self.ssao_options_w = Toplevel(self.root)
             self.ssao_options_w.title("SSAO")
@@ -2903,8 +2903,8 @@ class ViewerGUI:
                     self.viewer.Redraw()                
                 if k in ["do_noise","only_ssao","use_mask_depth","show_mask_depth",
                          "fog","use_fog","only_depth","mix_depth","negative","fix"]:
-                    pw = Tkinter.IntVar()
-                    w = Tkinter.Checkbutton(self.ssao_options_w, 
+                    pw = tkinter.IntVar()
+                    w = tkinter.Checkbutton(self.ssao_options_w, 
                                             var=pw,command=updateSSAO_OPTIONS_cb)
                     w.grid(row=r, column=1, columnspan=3) 	                
                     pw.set(camera.SSAO_OPTIONS[k][0])
@@ -3069,13 +3069,13 @@ class ViewerGUI:
 
 
     def LightDirectional(self):
-        print 'LightDirectional'
+        print('LightDirectional')
 
     def LightPositional(self):
-        print 'LightPositional'
+        print('LightPositional')
 
     def LightSpot(self):
-        print 'LightSpot'
+        print('LightSpot')
 
     ###################################
     #  CLIP
@@ -3277,7 +3277,7 @@ class ViewerGUI:
     def restoreState(self, event=None):
         filename = self.getLoadFileName()
         if filename:
-            execfile(filename, {'vi':self.viewer, 'mode':'both'})
+            exec(compile(open(filename, "rb").read(), filename, 'exec'), {'vi':self.viewer, 'mode':'both'})
             self.viewer.Redraw()
         
         
@@ -3285,7 +3285,7 @@ class ViewerGUI:
     def saveTransformCurrentGeom(self, event=None, askGUI=1):
         geom = self.viewer.currentObject
         if askGUI:
-            yesno = tkMessageBox.askokcancel('Saving Transformation',
+            yesno = tkinter.messagebox.askokcancel('Saving Transformation',
                       'Saving matrix for geom "%s"?'%geom.name)
             if not yesno:
                 return
@@ -3297,7 +3297,7 @@ class ViewerGUI:
     def loadTransformCurrentGeom(self, event=None, askGUI=1):
         geom = self.viewer.currentObject
         if askGUI:
-            yesno = tkMessageBox.askokcancel('Restoring Transformation',
+            yesno = tkinter.messagebox.askokcancel('Restoring Transformation',
                       'Apply matrix on geom "%s"?'%geom.name)
             if not yesno:
                 return
@@ -3325,7 +3325,7 @@ class ViewerGUI:
             self.lastDir = os.path.split(filename)[0]
             f = open(filename, 'w')
             f.writelines('# File saved by DejaVu. Do not modify!\n')
-            f.writelines('import numpy.oldnumeric as Numeric\n')
+            f.writelines('import mglcompat.oldnumeric as Numeric\n')
             f.writelines('trans = Numeric.array(%s)\n'%list(geom.translation))
             f.writelines('rot = Numeric.array(%s).astype("f")\n'%list(
                 geom.rotation))
@@ -3337,7 +3337,7 @@ class ViewerGUI:
         if filename:
             mydict = {}
             self.lastDir = os.path.split(filename)[0]
-            execfile(filename,  globals(), mydict)
+            exec(compile(open(filename, "rb").read(), filename, 'exec'),  globals(), mydict)
 
             old = 0
             if geom.viewer.redirectTransformToRoot == 1:
@@ -3358,7 +3358,7 @@ class ViewerGUI:
         currently selected geometry in the viewer."""
         geom = self.viewer.currentObject
         if askGUI:
-            yesno = tkMessageBox.askokcancel('Apply Transformation',
+            yesno = tkinter.messagebox.askokcancel('Apply Transformation',
                       'Apply current transformation on "%s"?'%geom.name)
             if not yesno:
                 return

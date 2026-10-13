@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # $Header: /opt/cvs/python/packages/share1.5/mglutil/alignmentEditor.py,v 1.7 2007/07/24 17:30:40 vareille Exp $
@@ -9,12 +9,12 @@
 
 
 import os
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from mglutil.math import rigidFit
 from MolKit import pdbWriter
-import Tkinter
-import tkFileDialog
-import string
+import tkinter
+import tkinter.filedialog
+from mglcompat import pystring as string
 import Pmw
 
 
@@ -22,7 +22,7 @@ oneLetterNames = {'ALA':'A','CYS':'C','ASP':'D','GLU':'E','PHE':'F','GLY':'G',
                   'HIS':'H','ILE':'I','LYS':'K','LEU':'L','MET':'M','ASN':'N',
                   'PRO':'P','GLN':'Q','ARG':'R','SER':'S','THR':'T','VAL':'V',
                   'TRP':'W','TYR':'Y'}
-threeLetterNames = oneLetterNames.keys()
+threeLetterNames = list(oneLetterNames.keys())
 residueColors = {'A':'black', 'C':'black', 'D':'black', 'E':'black',
                  'F':'black', 'G':'black', 'H':'black', 'I':'black',
                  'K':'black', 'L':'black', 'M':'black', 'N':'black',
@@ -57,11 +57,11 @@ class Sequence:
         self.applyNumbers(numbers)
 
     def applyNumbers(self,numbers=None):
-        gapMap = map(lambda x: x in ['-','|'],self.sequence)
+        gapMap = [x in ['-','|'] for x in self.sequence]
         ngaps = Numeric.sum(gapMap)
         nresidues = len(gapMap)-ngaps
         if numbers is None:
-            numbers = map(lambda x: str(x+1),range(nresidues))
+            numbers = [str(x+1) for x in range(nresidues)]
         if len(numbers)!=nresidues:
             raise ValueError('Numbers do not correspond to all residues')
         self.numbers = numbers
@@ -144,7 +144,7 @@ class Alignment:
     def read(self,alnFileName):
         data = open(alnFileName).readlines()
         if data[0][:7]!='CLUSTAL':
-            print 'Not a clustalformatted file'
+            print('Not a clustalformatted file')
             return None
         sequences = {}
         seqNames = []
@@ -153,7 +153,7 @@ class Alignment:
                 info = line.split()
                 seqName = info[0]
                 seqData = info[1]
-                if not sequences.has_key(seqName):
+                if seqName not in sequences:
                     sequences[seqName]=Sequence(name=seqName)
                     seqNames.append(seqName)
                 sequences[seqName] = sequences[seqName]+Sequence(sequence=seqData)
@@ -223,7 +223,7 @@ class Alignment:
         self.matrix = []
         for x in range(len(self.sequences)):
             numbers = self[x].gappednumbers
-            line = map(lambda x: x != '',numbers)
+            line = [x != '' for x in numbers]
             self.matrix.append(line)
         self.matrix = Numeric.array(self.matrix)
 
@@ -236,7 +236,7 @@ class Alignment:
         if self.sequences:
             difflen = len(sequence)-len(self)
             if difflen >0:
-                seqNames = self.sequences.keys()
+                seqNames = list(self.sequences.keys())
                 addOn = difflen*'-'
                 for seqName in seqNames:
                     self.sequences[seqName] = self.sequences[seqName]+Sequence(sequence=addOn)
@@ -257,7 +257,7 @@ class Alignment:
         idx = self.seqNames.index(sequenceName)
         junk = self.seqNames.pop(idx)
 
-class AlignmentEditor(Tkinter.Frame):
+class AlignmentEditor(tkinter.Frame):
     """ GUI for editing sequence alignments. Note to self (and anyone
     else who cares...): the top thing on the window is bottom of the
     displayList..."""
@@ -287,21 +287,21 @@ class AlignmentEditor(Tkinter.Frame):
         #if self.hasGUI:
         #    return
         if self.Master is None:
-            master = Tkinter.Tk()
+            master = tkinter.Tk()
         else:
-            master = Tkinter.Toplevel(self.Master)
+            master = tkinter.Toplevel(self.Master)
         master.title('Alignment Editor')
-        Tkinter.Frame.__init__(self,master)
-        Tkinter.Pack.config(self, expand=1, fill=Tkinter.BOTH)
+        tkinter.Frame.__init__(self,master)
+        tkinter.Pack.config(self, expand=1, fill=tkinter.BOTH)
         self.createMenus()
-        self.canvasFrame = Tkinter.Frame(self)
+        self.canvasFrame = tkinter.Frame(self)
         self.canvas = Pmw.ScrolledCanvas(self.canvasFrame,usehullsize=1,
                                          hull_width=600,hull_height=200,
                                          hscrollmode='dynamic',
                                          vscrollmode='dynamic',
                                          canvasmargin=1)
-        self.canvas.pack(side=Tkinter.LEFT,expand=1,fill=Tkinter.BOTH)
-        self.canvasFrame.pack(side=Tkinter.LEFT,expand=1,fill=Tkinter.BOTH)
+        self.canvas.pack(side=tkinter.LEFT,expand=1,fill=tkinter.BOTH)
+        self.canvasFrame.pack(side=tkinter.LEFT,expand=1,fill=tkinter.BOTH)
         self.canvas._canvas.bind("<ButtonPress-1>",self.mouseDown)
         self.canvas._canvas.bind("<Button1-Motion>",self.mouseMotion)
         self.canvas._canvas.bind("<Button1-ButtonRelease>",self.mouseUp)
@@ -574,21 +574,21 @@ class AlignmentEditor(Tkinter.Frame):
         
     def createMenus(self):
         #print 'In createMenus'
-        self.mBar = Tkinter.Frame(self, relief=Tkinter.RAISED,borderwidth=2)
-        self.mBar.pack(fill=Tkinter.X)
+        self.mBar = tkinter.Frame(self, relief=tkinter.RAISED,borderwidth=2)
+        self.mBar.pack(fill=tkinter.X)
         self.menuButtons = {}
         self.makeFileMenu()
         self.makeEditMenu()
-        apply(self.mBar.tk_menuBar, self.menuButtons.values())
-        self.title = Tkinter.Label(self.mBar, text=self.name)
-        self.title.pack(side=Tkinter.RIGHT)
+        self.mBar.tk_menuBar(*list(self.menuButtons.values()))
+        self.title = tkinter.Label(self.mBar, text=self.name)
+        self.title.pack(side=tkinter.RIGHT)
         
     def makeFileMenu(self):
         #print 'In makeFileMenu'
-        File_button = Tkinter.Menubutton(self.mBar, text='File',underline=0)
+        File_button = tkinter.Menubutton(self.mBar, text='File',underline=0)
         self.menuButtons['File'] = File_button
-        File_button.pack(side = Tkinter.LEFT, padx='1m')
-        File_button.menu = Tkinter.Menu(File_button)
+        File_button.pack(side = tkinter.LEFT, padx='1m')
+        File_button.menu = tkinter.Menu(File_button)
         File_button.menu.add_command(label='Load...', underline=0,
                                      command = self.loadFile)
         File_button.menu.add_command(label='Write...', underline=0,
@@ -601,7 +601,7 @@ class AlignmentEditor(Tkinter.Frame):
         #print 'In loadFile'
         title = 'Read CLUSTAL formatted alignment file'
         types = [('CLUSTAL files', '*.aln')]
-        file = tkFileDialog.askopenfilename( filetypes=types,
+        file = tkinter.filedialog.askopenfilename( filetypes=types,
                                              title=title)
         if file:
             self.alignment.read(file)
@@ -614,14 +614,14 @@ class AlignmentEditor(Tkinter.Frame):
         #self.redraw() # horribly expensive
         title = 'Save CLUSTAL formatted alignment file'
         types = [('CLUSTAL files', '*.aln')]
-        file = tkFileDialog.asksaveasfilename( filetypes=types,
+        file = tkinter.filedialog.asksaveasfilename( filetypes=types,
                                                title=title)
         if file and self.alignment:
             self.alignment.write(file)
 
 
     def fillCanvas(self):
-        print 'Filling Canvas'
+        print('Filling Canvas')
         yCoord = 0
         sequences = self.alignment.sequences
         seqNames = self.alignment.seqNames
@@ -654,15 +654,15 @@ class AlignmentEditor(Tkinter.Frame):
                                         tags=(resTag,seqTag,uniqtag,'movable'))
             yCoord = yCoord+self.yspace
         self.canvas.resizescrollregion()
-        print 'updating colors'
+        print('updating colors')
         self.updateColor(self.selectionTags,'yellow')
         self.updateSpecialColor()
-        print 'Done'
+        print('Done')
         
     def updateSpecialColor(self):
         if self.colors['special']=={}:
             return
-        for tag in self.colors['special'].keys():
+        for tag in list(self.colors['special'].keys()):
             item = self.canvas.find_withtag(tag)[0]
             self.canvas.itemconfig(item,fill=self.colors['special'][tag])
 
@@ -683,10 +683,10 @@ class AlignmentEditor(Tkinter.Frame):
         
     def makeEditMenu(self, event=None):
         #print 'In makeEditMenu'
-        Edit_button = Tkinter.Menubutton(self.mBar, text='Edit',underline=0)
+        Edit_button = tkinter.Menubutton(self.mBar, text='Edit',underline=0)
         self.menuButtons['Edit'] = Edit_button
-        Edit_button.pack(side = Tkinter.LEFT, padx='1m')
-        Edit_button.menu = Tkinter.Menu(Edit_button)
+        Edit_button.pack(side = tkinter.LEFT, padx='1m')
+        Edit_button.menu = tkinter.Menu(Edit_button)
         Edit_button.menu.add_command(label='Redraw', underline=0,
                                     command = self.redraw)
         Edit_button.menu.add_command(label='Clear Selection', underline=0,
@@ -732,7 +732,7 @@ class AlignmentEditor(Tkinter.Frame):
         if self.selectionTags==[]:
             return
         #get hold of a list of selected residues
-        selSeq = map(lambda x: x[1], self.selectionTags)
+        selSeq = [x[1] for x in self.selectionTags]
         #uniquify it
         uniqSelSeq = [selSeq[0]]
         for seq in selSeq[1:]:

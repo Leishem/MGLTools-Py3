@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -28,12 +28,12 @@ from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 from mglutil.util.callback import CallBackFunction
 
 from Pmv.mvCommand import MVCommand
-import types,string,Tkinter, math, os
+import types, tkinter, math, os; from mglcompat import pystring as string
 import Pmw
 
 from DejaVu import Texture
 from DejaVu.extendedSlider import ExtendedSlider
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from DejaVu.colorTool import Map, RGBRamp, array2DToImage
 from DejaVu.bitPatterns import patternList
 
@@ -61,7 +61,7 @@ class GridReader(MVCommand):
     def __call__(self, gridFile, **kw):
         """None <--- readGRID(gridFile, **kw)
         \ngridFile --- path to the grid data file"""
-        apply(self.doitWrapper, (gridFile,), kw)
+        self.doitWrapper(*(gridFile,), **kw)
 
 
     def doit(self, gridFile):
@@ -77,7 +77,7 @@ class GridReader(MVCommand):
         #    SPACING=1.0
         #    CENTER= (0.,0.,0.)
         grid.name = gridFile 
-        if self.vf.grids.has_key(gridFile):
+        if gridFile in self.vf.grids:
             msg = "grid from " + gridFile + " already present in viewer"
             self.warningMsg(msg)
             return 'ERROR'
@@ -127,7 +127,7 @@ class AutoGridReader(MVCommand):
     def __call__(self, gridFile, **kw):
         """None <- readAUTOGRID(gridFile, **kw)
         \ngridFile --- path to the autogrid data file"""
-        apply(self.doitWrapper, (gridFile,), kw)
+        self.doitWrapper(*(gridFile,), **kw)
 
 
     def doit(self, gridFile):
@@ -144,7 +144,7 @@ class AutoGridReader(MVCommand):
         #    SPACING
         #    NELEMENTS
         #    CENTER
-        if self.vf.grids.has_key(gridFile):
+        if gridFile in self.vf.grids:
             msg = "grid from " + gridFile + " already present in viewer"
             self.warningMsg(msg)
             return 'ERROR'
@@ -192,7 +192,7 @@ class DXReader(MVCommand):
     def __call__(self, gridFile, **kw):
         """None <- readAUTOGRID(gridFile, **kw)
         \ngridFile --- path to the autogrid data file"""
-        apply(self.doitWrapper, (gridFile,), kw)
+        self.doitWrapper(*(gridFile,), **kw)
 
 
     def doit(self, gridFile):
@@ -209,7 +209,7 @@ class DXReader(MVCommand):
         #    SPACING
         #    NELEMENTS
         #    CENTER
-        if self.vf.grids.has_key(gridFile):
+        if gridFile in self.vf.grids:
             msg = "grid from " + gridFile + " already present in viewer"
             self.warningMsg(msg)
             return 'ERROR'
@@ -254,11 +254,11 @@ class DeleteAutoGrid(MVCommand):
     def __call__(self, gridName, **kw):
         """None <- deleteAUTOGRID(gridName, **kw)
         \ngridName --- key for autogrid_to_delete in self.vf.grids"""
-        if not self.vf.grids.has_key(gridName):
+        if gridName not in self.vf.grids:
             msg = gridName + " not found in mv.grids "
             self.warningMsg(msg)
             return "ERROR"
-        apply(self.doitWrapper, (gridName,), kw)
+        self.doitWrapper(*(gridName,), **kw)
 
 
     def doit(self, gridName):
@@ -276,8 +276,8 @@ class DeleteAutoGrid(MVCommand):
         if hasattr(grid, 'sliceGUI'):
             #print "deleting ", gridName, ".slices"
             self.vf.getOrthoSlice.Close_cb()
-            for k,v in grid.slices.items():
-                print " in dimension: ", k
+            for k,v in list(grid.slices.items()):
+                print(" in dimension: ", k)
                 for geom in v:
                     #geom.Set(protected = False)
                     geom.protected = False
@@ -300,11 +300,11 @@ class DeleteAutoGrid(MVCommand):
     def guiCallback(self):
         """called each time the 'read ->AutoGrid' sequence is pressed"""
         objList=[]
-        if len(self.vf.grids.keys())==0:
+        if len(list(self.vf.grids.keys()))==0:
             t='no grids currently in viewer'
             self.warningMsg(t)
             return
-        for item in self.vf.grids.keys():
+        for item in list(self.vf.grids.keys()):
             if item not in objList:
                 objList.append(item)
         if len(objList)==0:
@@ -353,37 +353,37 @@ class AutoGridIsoSurface(MVCommand):
 
     def onAddCmdToViewer(self):
         self.srfs = {}
-        if not self.vf.commands.has_key('getOrthoSlice'):
+        if 'getOrthoSlice' not in self.vf.commands:
             self.vf.loadCommand('gridCommands', 'getOrthoSlice', 'Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('setIsovalue'):
+        if 'setIsovalue' not in self.vf.commands:
             self.vf.loadCommand('gridCommands', 'setIsovalue', 'Pmv',
                                 topCommand=0)
 
 
     def buildForm(self):
         ifd = self.ifd = InputFormDescr(title = 'Visualize Grids')
-        ifd.append({'widgetType': Tkinter.Label,
+        ifd.append({'widgetType': tkinter.Label,
             'text':'Display Map',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.W}})
-        ifd.append({'widgetType': Tkinter.Label,
+            'gridcfg':{'sticky':tkinter.W}})
+        ifd.append({'widgetType': tkinter.Label,
             'text':'Sampling',
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1,'column':1}})
-        ifd.append({'widgetType': Tkinter.Label,
+            'gridcfg':{'sticky':tkinter.W, 'row':-1,'column':1}})
+        ifd.append({'widgetType': tkinter.Label,
             'text':'IsoValue',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+            'gridcfg':{'sticky':tkinter.W+tkinter.E,
             'row':-1,'column':2,'columnspan':2}})
-        ifd.append({'widgetType': Tkinter.Label,
+        ifd.append({'widgetType': tkinter.Label,
             'text':'RenderMode',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.W, 'row':-1,'column':4}})
+            'gridcfg':{'sticky':tkinter.W, 'row':-1,'column':4}})
         ifd.append({'name': 'closeB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Close',
             'wcfg':{'bd':4},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'columnspan':6, 'row': 100, 'column':0},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'columnspan':6, 'row': 100, 'column':0},
             'command':self.Close_cb})
         self.form = self.vf.getUserInput(ifd, modal=0, blocking = 0)
         self.form.root.protocol('WM_DELETE_WINDOW',self.Close_cb)
@@ -391,11 +391,11 @@ class AutoGridIsoSurface(MVCommand):
 
     def guiCallback(self):
         objList=[]
-        if len(self.vf.grids.keys())==0:
+        if len(list(self.vf.grids.keys()))==0:
             t='no grids currently in viewer'
             self.warningMsg(t)
             return
-        for item in self.vf.grids.keys():
+        for item in list(self.vf.grids.keys()):
             if item not in objList and not self.vf.grids[item].srf:
                 objList.append(item)
         if not hasattr(self, 'ifd'):
@@ -427,7 +427,7 @@ class AutoGridIsoSurface(MVCommand):
         """None <- getIsosurface(grid, **kw)
            grid --- grid object
            """
-        return apply(self.doitWrapper, (grid,), kw)
+        return self.doitWrapper(*(grid,), **kw)
 
 
     def mouseUp(self, grid,  event=None):
@@ -435,9 +435,9 @@ class AutoGridIsoSurface(MVCommand):
 
     def update(self, grid, value):
         self.vf.setIsovalue(grid.name, value)
-		
+                
     def doit(self, grid):
-        if type(grid)==types.StringType:
+        if type(grid)==bytes:
             grid = self.vf.grids[grid]
         if grid.srf:
             msg= "this grid already has a surface"
@@ -456,7 +456,7 @@ class AutoGridIsoSurface(MVCommand):
             # grid.surfaceGUI.slider.AddCallback('<ButtonRelease-1>', CallBackFunction(self.mouseUp, grid))
             self.vf.GUI.VIEWER.Normalize_cb()
         else :
-            print "make the srf"		
+            print("make the srf")		
             grid.surfaceGUI.getMap()		
         #redraw = False
         #if kw.has_key("redraw") : redraw=True
@@ -492,11 +492,11 @@ class SetIsovalue(MVCommand):
         \ngrid_name --- AutoGrid.name
         \nvalue --- float value of grid.surfaceGUI.slider
         """
-        apply(self.doitWrapper, (grid_name, value), kw)
+        self.doitWrapper(*(grid_name, value), **kw)
 
 
     def doit(self, grid_name, value):
-        if self.vf.grids.has_key(grid_name):
+        if grid_name in self.vf.grids:
             grid = self.vf.grids[grid_name]
             if not hasattr(grid, 'surfaceGUI'):
                 #create it here...
@@ -533,7 +533,7 @@ class GetOrthoSlice(MVCommand):
     def __call__(self, axis, **kw):
         """None <- getOrthoSlice(axis, **kw)
         """
-        apply(self.doitWrapper, (axis,), kw)
+        self.doitWrapper(*(axis,), **kw)
 
 
     def doit(self, axis):
@@ -563,7 +563,7 @@ class GetOrthoSlice(MVCommand):
         if len(lb.curselection()):
             gridentry=lb.get(lb.curselection()[0])
             newgrid = self.vf.grids[gridentry]
-            for item in self.vf.grids.values():
+            for item in list(self.vf.grids.values()):
                 if hasattr(item, 'widgets'):
                     self.forgetWidgets(item)
             self.gridWidgets(newgrid)
@@ -585,7 +585,7 @@ class GetOrthoSlice(MVCommand):
                 Grid.AutoGridSliceGui(grid,self.vf)
             grid.sliceGUI.makeIfdEntry(axis,self.ifd,[['addX','addY','addZ'],['closeB']])
             #need this to make sure the line above finishes before the next
-            print '  '
+            print('  ')
             grid.sliceGUI.addSlice(axis)
         else:
             self.warningMsg("Please select a grid,first!")
@@ -593,11 +593,11 @@ class GetOrthoSlice(MVCommand):
 
     def guiCallback(self):
         objList=[]
-        if len(self.vf.grids.keys())==0:
+        if len(list(self.vf.grids.keys()))==0:
             t='no grids currently in viewer'
             self.warningMsg(t)
             return
-        for item in self.vf.grids.keys():
+        for item in list(self.vf.grids.keys()):
             if not self.vf.grids[item].srf:
                 continue
             if item not in objList:
@@ -607,9 +607,9 @@ class GetOrthoSlice(MVCommand):
             self.warningMsg(t)
             return
         if not hasattr(self, 'ifd'):
-            self.axisType=Tkinter.StringVar()
+            self.axisType=tkinter.StringVar()
             self.axisType.set('x')
-            self.showAll=Tkinter.IntVar()
+            self.showAll=tkinter.IntVar()
             self.showAll.set(1)
             ifd = self.ifd = InputFormDescr(title = 'Visualize OrthoSlices')
             ifd.append({'widgetType':'ListChooser',
@@ -622,41 +622,41 @@ class GetOrthoSlice(MVCommand):
                 'gridcfg':{'sticky':'w', 'columnspan': 10,'column':0,
                          'rowspan':10}})
             ifd.append({'name':'showAll',
-                'widgetType':Tkinter.Checkbutton,
+                'widgetType':tkinter.Checkbutton,
                 'text':'Show all widgets',
                 'variable':self.showAll,
                 'gridcfg':{'sticky':'we', 'row':-1,
                             'column':2, 'columnspan':2},
                 'command': self.gridAll})
-            ifd.append({'widgetType': Tkinter.Label,
+            ifd.append({'widgetType': tkinter.Label,
                 'text':'Display Slice\n(Grid_Axis#)',
                 'wcfg':{'bd':6},
                 'gridcfg':{'sticky':'w' }})
-            ifd.append({'widgetType': Tkinter.Label,
+            ifd.append({'widgetType': tkinter.Label,
                 'text':'Slice Number',
                 'wcfg':{'bd':6},
                 'gridcfg':{'sticky':'we', 'row':-1,
                             'column':2, 'columnspan':2}})
             ifd.append({'name': 'addX',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'text':'add x slice',
                 'wcfg':{'bd':4},
                 'gridcfg':{'sticky':'we', 'row': 99, 'column':0},
                 'command':CallBackFunction(self.addAxisSlice,'x')})
             ifd.append({'name': 'addY',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'text':'add y slice',
                 'wcfg':{'bd':4},
                 'gridcfg':{'sticky':'we', 'row': -1, 'column':1},
                 'command':CallBackFunction(self.addAxisSlice,'y')})
             ifd.append({'name': 'addZ',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'text':'add z slice',
                 'wcfg':{'bd':4},
                 'gridcfg':{'sticky':'we', 'row': -1, 'column':2},
                 'command':CallBackFunction(self.addAxisSlice,'z')})
             ifd.append({'name': 'closeB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'text':'Close',
                 'wcfg':{'bd':4},
                 'gridcfg':{'sticky':'we', 'columnspan':6, 'row': 100, 'column':0},
@@ -675,7 +675,7 @@ class GetOrthoSlice(MVCommand):
 
 
     def gridAll(self):
-        itemList = self.vf.grids.values()
+        itemList = list(self.vf.grids.values())
         if self.showAll.get():
             #for item in self.vf.grids.values():
             for item in itemList:

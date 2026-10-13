@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -30,7 +30,7 @@ from DejaVu.Geom import Geom
 from DejaVu.IndexedPolygons import IndexedPolygons
 from DejaVu.viewerFns import checkKeywords
 import DejaVu.datamodel, DejaVu.viewerConst
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from DejaVu.colorTool import glMaterialWithCheck, resetMaterialMemory
 
 class Triangle_strip(IndexedPolygons):
@@ -58,9 +58,9 @@ currentMat."""
         self.stripEnd = None
         self.normals = None
 
-        apply( IndexedPolygons.__init__, (self, name, 0), kw )
+        IndexedPolygons.__init__(*(self, name, 0), **kw)
 
-        for face in self.materials.keys():
+        for face in list(self.materials.keys()):
             for j in range(5):
                 self.MatBindingMode(j, face)
 
@@ -99,8 +99,8 @@ updateOwnGui=True : allow to update owngui at the end this func
                 self.stripBegin = [0, len(v)]
 
             if (se and len(self.stripBegin) != len(se)) or se is None:
-                self.stripEnd = map(lambda x,sB = self.stripBegin  :
-                                    sB[x+1], range(len(self.stripBegin[:-1])))
+                self.stripEnd = list(map(lambda x,sB = self.stripBegin  :
+                                    sB[x+1], list(range(len(self.stripBegin[:-1])))))
                 self.stripBegin = self.stripBegin[:-1]
             else:
                 self.stripEnd = se
@@ -136,27 +136,27 @@ updateOwnGui=True : allow to update owngui at the end this func
                 
                 
         kw['faces'] = faces
-	self.fnormals = kw.get( 'fnormals')
+        self.fnormals = kw.get( 'fnormals')
 
-        redoFlags = apply( IndexedPolygons.Set, (self, check, 0), kw )
+        redoFlags = IndexedPolygons.Set(*(self, check, 0), **kw)
 
         return self.redoNow(redo, updateOwnGui, redoFlags)
-	
+        
     
     def MatBindingMode(self, propNum, face=GL.GL_FRONT):
         """ For the given face and material property corresponding to propNum,
-   	the method sets the binding mode.  If there is one value, the mode is
+        the method sets the binding mode.  If there is one value, the mode is
         OVERALL; if the number of values equals the number of vertices, strips,
-	or faces(triangles), the mode is PER_VERTEX, PER_PART, or PER_FACE,
+        or faces(triangles), the mode is PER_VERTEX, PER_PART, or PER_FACE,
         respectively. Else, mode is none. """
 
         #NONE, OVERALL, PER_VERTEX, PER_PART, PER_FACE = -1, 10, 11, 12, 13
         OVERALL, PER_VERTEX, PER_PART, PER_FACE = 10, 11, 12, 13
         num = propNum
-	f = face
+        f = face
 
-	nn = self.materials[f].prop[num].shape[0]
-	self.inheritMaterial = 0
+        nn = self.materials[f].prop[num].shape[0]
+        self.inheritMaterial = 0
 
         if nn == 1:
             self.materials[f].binding[num] = OVERALL
@@ -209,8 +209,8 @@ updateOwnGui=True : allow to update owngui at the end this func
     def GetNormals(self):
         """ Gets the proper normals for smooth or flat shading.  Calls
         buildIndexedFaceSet(). Sets face normals or computes them if not given.
-	Sets object normals to the vertex normals for smooth shading or to the
-	face normals for flat shading. If shading none, normals are none."""
+        Sets object normals to the vertex normals for smooth shading or to the
+        face normals for flat shading. If shading none, normals are none."""
         if not self.stripBegin: return
         if self.shading==GL.GL_NONE:
             self.normals = None
@@ -220,10 +220,10 @@ updateOwnGui=True : allow to update owngui at the end this func
                 self.buildIndexedFaceSet()
                 self.faceSet = self.IndexedFaceSet
 
-		if self.fnormals is not None:
-		    self.faceSet.normals.SetValues(self.fnormals)
+                if self.fnormals is not None:
+                    self.faceSet.normals.SetValues(self.fnormals)
                 
-		else:
+                else:
                     self.FaceNormalFunction( self.ComputeFaceNormals )
                     self.faceSet.normals.ComputeMode( DejaVu.viewerConst.AUTO )
                 
@@ -413,7 +413,7 @@ updateOwnGui=True : allow to update owngui at the end this func
             i = 0
             for ind in range(sB[stripNum],sE[stripNum]):
                 if ind >= len(vert):
-                    print 'ERROR',ind
+                    print('ERROR',ind)
                 v = vert[ind]
                 # normals for flat or smooth shading
                 if n is not None:
@@ -484,7 +484,7 @@ updateOwnGui=True : allow to update owngui at the end this func
 
 
 if __name__=='__main__':
-    import pdb, numpy.oldnumeric as Numeric
+    import pdb, mglcompat.oldnumeric as Numeric
     from DejaVu import Viewer
     vi = Viewer()
     vert = [(0, 1, 0), (1, 0, 1), (1, 1, 0), (2, 0, -1), (2, 1, 0), (3, 0, 1),

@@ -7,7 +7,7 @@ application:
 """),
 ("ViewerFramework","customizeVFGUICommands","""
 This Module implements commands 
-	to change the appearance of the ViewerFrameworkGUI
+        to change the appearance of the ViewerFrameworkGUI
  
 """),
 ("ViewerFramework","dejaVuCommands","""

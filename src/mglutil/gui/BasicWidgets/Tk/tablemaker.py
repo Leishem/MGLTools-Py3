@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -49,8 +49,8 @@ AddISOTxt = "An ISO value can be added by pressing 'Add new isovalue'\nbutton of
 
 DescriptionText = "Widget description:\nThe function is drawn at the top of the interface\nas a series of circles (dots) connected by line segments.\nThe X location of each dot indicates the data value,\nthe Y location indicates the opacity of that data value.\n" + SelectPointTxt + SetOpacityTxt + SetColorTxt + AddDotShapeTxt + MoveShapeTxt + DeleteDotTxt + LoadLUTTxt+ SaveLUTTxt+ SaveTFTxt + SplitMenuTxt+ ResetMenuTxt + AddISOTxt
 
-import Tkinter
-import numpy.oldnumeric as Numeric
+import tkinter
+import mglcompat.oldnumeric as Numeric
 import Pmw
 import math
 
@@ -59,8 +59,8 @@ from mglutil.gui.BasicWidgets.Tk.eventHandler import CallbackFunctions
 #from DejaVu import colorTool
 from mglutil.util import colorUtil
 import os
-import tkFileDialog
-import cPickle
+import tkinter.filedialog
+import pickle
 from mglutil.util.packageFilePath import findFilePath
 from mglutil.util.colorUtil import ToRGB, ToHSV
 
@@ -88,12 +88,12 @@ class TableManager:
         balloon = Pmw.Balloon(self.master)
         #place menu buttons
 
-        menuBar = Tkinter.Frame(self.master, relief = Tkinter.RAISED,
+        menuBar = tkinter.Frame(self.master, relief = tkinter.RAISED,
                                 borderwidth=2)
-        menuBar.pack(side = Tkinter.TOP, fill=Tkinter.X)
-        fileBtn = Tkinter.Menubutton(menuBar, text="File", underline=0)
-        fileBtn.pack(side=Tkinter.LEFT, padx ="2m")
-        fileBtn.menu = Tkinter.Menu(fileBtn)
+        menuBar.pack(side = tkinter.TOP, fill=tkinter.X)
+        fileBtn = tkinter.Menubutton(menuBar, text="File", underline=0)
+        fileBtn.pack(side=tkinter.LEFT, padx ="2m")
+        fileBtn.menu = tkinter.Menu(fileBtn)
         fileBtn.menu.add_command(label="Load LUT (.lut)",
                                  command=self.ask_open_file_cb)
         fileBtn.menu.add_command(label="Save LUT (.lut)",
@@ -101,9 +101,9 @@ class TableManager:
         fileBtn.menu.add_command(label='Save TF (.clu)', command=self.saveTF)
         fileBtn['menu'] = fileBtn.menu
 
-        editBtn = Tkinter.Menubutton(menuBar, text="Edit", underline=0)
-        editBtn.pack(side=Tkinter.LEFT, padx ="2m")
-        editBtn.menu = Tkinter.Menu(editBtn)
+        editBtn = tkinter.Menubutton(menuBar, text="Edit", underline=0)
+        editBtn.pack(side=tkinter.LEFT, padx ="2m")
+        editBtn.menu = tkinter.Menu(editBtn)
         editBtn.menu.add_command(label="Reset", command=self.reset)
         editBtn.menu.add_command(label="Split function",
                                  command=self.show_splitDialog)
@@ -111,7 +111,7 @@ class TableManager:
                                  command=self.merge_function,
                                  state="disabled")
 
-        editBtn.menu.drawchoices= Tkinter.Menu(editBtn.menu)
+        editBtn.menu.drawchoices= tkinter.Menu(editBtn.menu)
         editBtn.menu.add_cascade(label="Draw function...",
                                  menu=editBtn.menu.drawchoices)
         editBtn.menu.drawchoices.add_command(label ="ramp",
@@ -120,7 +120,7 @@ class TableManager:
                       command=(lambda self=self, num=1: self.draw_ramp(num)))
         editBtn.menu.add_command(label="Flip function",
                                  command = self.flip_function_cb)
-        editBtn.menu.sizechoices= Tkinter.Menu(editBtn.menu)
+        editBtn.menu.sizechoices= tkinter.Menu(editBtn.menu)
         editBtn.menu.add_command(label="Set new opacity range",
                                  command=self.change_yaxis)
         editBtn.menu.add_command(label="Add new ISO value",
@@ -139,27 +139,27 @@ class TableManager:
         #editBtn.menu.options = Tkinter.Menu(editBtn.menu)
         #editBtn.menu.add_cascade(label="Options...",
         #                         menu=editBtn.menu.options)
-        self.continVar = Tkinter.IntVar()
+        self.continVar = tkinter.IntVar()
         self.continVar.set(1)
         editBtn.menu.add_checkbutton(label="Continuous update",
                                      var = self.continVar,
                                      command=self.set_continuous) 
         editBtn['menu'] = editBtn.menu
         self.editBtn = editBtn
-        self.applylutBtn = Tkinter.Button(menuBar, text = "Apply LUT",
+        self.applylutBtn = tkinter.Button(menuBar, text = "Apply LUT",
                                           command=self.applylut_cb,
-                                          relief=Tkinter.FLAT, borderwidth=1,
+                                          relief=tkinter.FLAT, borderwidth=1,
                                           state="disabled")
-        self.applylutBtn.pack(side=Tkinter.LEFT, padx='2m')
+        self.applylutBtn.pack(side=tkinter.LEFT, padx='2m')
         balloon.bind(self.applylutBtn, "Applies LUT (non continuous mode)")
         
-        helpBtn = Tkinter.Menubutton(menuBar, text="Help", underline=0)
-        helpBtn.pack(side=Tkinter.RIGHT, padx ="2m")
-        helpBtn.menu = Tkinter.Menu(helpBtn) 
+        helpBtn = tkinter.Menubutton(menuBar, text="Help", underline=0)
+        helpBtn.pack(side=tkinter.RIGHT, padx ="2m")
+        helpBtn.menu = tkinter.Menu(helpBtn) 
         helpBtn.menu.add_command(label="Widget description",
                                  command = (lambda self=self,
                                             st="description": self.show_help_txt(st)))
-        helpBtn.menu.choices = Tkinter.Menu(helpBtn.menu)
+        helpBtn.menu.choices = tkinter.Menu(helpBtn.menu)
         helpBtn.menu.add_cascade(label="How to ...",
                                  menu=helpBtn.menu.choices)
         helpBtn.menu.choices.add_command(label="Add dot/shape",
@@ -187,8 +187,8 @@ class TableManager:
         self.create_splitDialog()
 
         #place Lookup Table editor on the form
-        self.f1 = Tkinter.Frame(self.master)
-        self.f1.pack(side=Tkinter.TOP)
+        self.f1 = tkinter.Frame(self.master)
+        self.f1.pack(side=tkinter.TOP)
         lut = LUT(self.f1, xmaxval=self.xmaxval, xminval=xminval, grid_row=1,
                   num_of_entries = self.xmaxval+1, ymaxval=ymaxval)
         lut.canvas.bind('<Button-1>', self.selected)
@@ -199,21 +199,21 @@ class TableManager:
 
         #place entries for ISO value info
         
-        isoFrame = Tkinter.Frame(self.master)
-        isoFrame.pack(side=Tkinter.TOP)
+        isoFrame = tkinter.Frame(self.master)
+        isoFrame.pack(side=tkinter.TOP)
         self.place_ISOentries(isoFrame)
-        self.isoVal = Tkinter.StringVar()
-        self.isoA = Tkinter.StringVar()
-        self.isoR = Tkinter.StringVar()
-        self.isoG = Tkinter.StringVar()
-        self.isoB = Tkinter.StringVar()
+        self.isoVal = tkinter.StringVar()
+        self.isoA = tkinter.StringVar()
+        self.isoR = tkinter.StringVar()
+        self.isoG = tkinter.StringVar()
+        self.isoB = tkinter.StringVar()
         self.isoValDialog = None
         
         #place color editor on the form
-        f = Tkinter.Frame(self.master)
-        f.pack(side=Tkinter.TOP)
-        colormapFrame = Tkinter.Frame(f)        
-        colormapFrame.pack(side=Tkinter.LEFT,anchor=Tkinter.NW)#,padx=20)
+        f = tkinter.Frame(self.master)
+        f.pack(side=tkinter.TOP)
+        colormapFrame = tkinter.Frame(f)        
+        colormapFrame.pack(side=tkinter.LEFT,anchor=tkinter.NW)#,padx=20)
         if not iconpath:
             iconpath = 'mglutil.gui.BasicWidgets.Tk'
             
@@ -225,8 +225,8 @@ class TableManager:
         #place a group of entry fields on the form that display
         #alpha and scalar values
                            
-        entrFrame = Tkinter.Frame(f, takefocus=0)        
-        entrFrame.pack(side=Tkinter.LEFT, anchor=Tkinter.NW)#,padx=10)
+        entrFrame = tkinter.Frame(f, takefocus=0)        
+        entrFrame.pack(side=tkinter.LEFT, anchor=tkinter.NW)#,padx=10)
         self.place_TFentries(entrFrame)
         self.lutcallbacks['entries'] = self.entries_update
         self.lutcallbacks['rgbmap'] = self.colormap.show_color
@@ -247,7 +247,7 @@ class TableManager:
         except :
             pass
         if len(wid.children)==0: return
-        for item in wid.children.values():
+        for item in list(wid.children.values()):
             self.set_font(item, newfont)
 
     def create_splitDialog(self):
@@ -255,27 +255,27 @@ class TableManager:
         interval split point values from the user."""
         
         self.splitDialog = Pmw.Dialog(self.master,
-	    buttons=('OK','Cancel'), defaultbutton='OK',
-	    title='Split interval dialog', command=self.execute)
-	self.splitDialog.withdraw()
+            buttons=('OK','Cancel'), defaultbutton='OK',
+            title='Split interval dialog', command=self.execute)
+        self.splitDialog.withdraw()
 
-        Tkinter.Label(self.splitDialog.interior(),
+        tkinter.Label(self.splitDialog.interior(),
               text = 'Enter min and max values of new interval\n'
                      '(length of the resulting intervals \n'
                      'must be greater or equal to 50)',
               font=('verdana',12),
-              anchor=Tkinter.W).pack(expand = 1,
+              anchor=tkinter.W).pack(expand = 1,
                                      fill = 'both', padx = 4, pady = 4)
         
         self.entry_maxval = int(self.xmaxval)
         self.entry_minval = int(self.xminval)
         self.min_val = Pmw.EntryField(self.splitDialog.interior(),
-		labelpos = 'w',	value = '%d'%(self.xminval),
-		label_text = 'Minval-int:',
+                labelpos = 'w',	value = '%d'%(self.xminval),
+                label_text = 'Minval-int:',
                 validate = self.validate_minval,
                 modifiedcommand = self.min_val_changed)
         self.max_val = Pmw.EntryField(self.splitDialog.interior(),
-		labelpos = 'w',	value = '%d'%(self.xmaxval),
+                labelpos = 'w',	value = '%d'%(self.xmaxval),
                 label_text = 'Maxval-int:',
                 validate = self.validate_maxval)
         self.min_val.pack(fill='x', expand=1, padx=10, pady=8)
@@ -347,17 +347,17 @@ class TableManager:
             d3 = self.parent_interval[1] - entry_maxval
             if entry_minval == self.parent_interval[0] and \
                entry_maxval == self.parent_interval[1]:
-                print "interval (%d,%d) exists" % (entry_minval, entry_maxval)
+                print("interval (%d,%d) exists" % (entry_minval, entry_maxval))
                 self.splitDialog.deactivate(result)
                 return
             elif d2< 49:
-                print "Error: in 'Split dialog' (maxval-minval) must be greater or equal to 50 ; %d, %d" % (entry_maxval, entry_minval)
+                print("Error: in 'Split dialog' (maxval-minval) must be greater or equal to 50 ; %d, %d" % (entry_maxval, entry_minval))
                 return
             elif d1 != 0 and d1< 49:
-                print "Error: in 'Split dialog' length of the resulting intervals must be greater or equal to 50(%d-%d < 50)"% (entry_minval, self.parent_interval[0])
+                print("Error: in 'Split dialog' length of the resulting intervals must be greater or equal to 50(%d-%d < 50)"% (entry_minval, self.parent_interval[0]))
                 return
             elif d3 != 0 and d3 < 49:
-                print "error: in 'Split dialog' length of the resulting intervals must be greater or equal to 50(%d-%d < 50)"% (self.parent_interval[1] ,entry_maxval)
+                print("error: in 'Split dialog' length of the resulting intervals must be greater or equal to 50(%d-%d < 50)"% (self.parent_interval[1] ,entry_maxval))
                 return
             else:
                 #print "splitting"
@@ -503,7 +503,7 @@ class TableManager:
                             buttons=('OK','Cancel'), defaultbutton='OK',
                             title='New ISOval dialog', 
                             command=self.addIsoVal)
-	#dialog.withdraw()
+        #dialog.withdraw()
         ew = 7
         root =dialog.interior()
         Pmw.EntryField(root, labelpos = 'w', 
@@ -512,32 +512,32 @@ class TableManager:
                        #label_font = font, entry_font = font,
                        validate={'validator':'integer',
                                  'min':0, 'max':self.xmaxval},
-                       value = 0).pack(side=Tkinter.TOP)
+                       value = 0).pack(side=tkinter.TOP)
         Pmw.EntryField(root, labelpos = 'w', 
                        entry_width = ew, value = '0',
                        #entry_font = font, label_font = font,
                        entry_textvariable = self.isoA,
                        label_text = 'Alpha:',
                        validate={'validator':'integer',
-                         'min':0, 'max':self.ymaxval}).pack(side=Tkinter.TOP)
+                         'min':0, 'max':self.ymaxval}).pack(side=tkinter.TOP)
         Pmw.EntryField(root, labelpos = 'w', 
                        entry_width = ew, value = '1.0',
                        #entry_font = font, label_font = font,
                        entry_textvariable = self.isoR,  label_text = 'Red:',
                        validate={'validator':'real',
-                                 'min':0, 'max':1.0}).pack(side=Tkinter.TOP)
+                                 'min':0, 'max':1.0}).pack(side=tkinter.TOP)
         Pmw.EntryField(root, labelpos = 'w', 
                        entry_width = ew, value = '1.0',
                        #entry_font = font, label_font = font,
                        entry_textvariable = self.isoG,  label_text = 'Green:',
                        validate={'validator':'real',
-                                 'min':0, 'max':1.0}).pack(side=Tkinter.TOP)
+                                 'min':0, 'max':1.0}).pack(side=tkinter.TOP)
         Pmw.EntryField(root, labelpos = 'w',
                        entry_width = ew, value = '1.0',
                        #entry_font = font, label_font = font,
                        entry_textvariable = self.isoB,   label_text = 'Blue:',
                        validate={'validator':'real',
-                                 'min':0, 'max':1.0}).pack(side=Tkinter.TOP)
+                                 'min':0, 'max':1.0}).pack(side=tkinter.TOP)
         self.isoValDialog = dialog
         dialog.activate()
 
@@ -691,7 +691,7 @@ class TableManager:
         try:
             ind = self.intervals_list.index(parent_interval)
         except ValueError:
-            print 'ValueError: interval',parent_interval,'is not in self.intervals_list'
+            print('ValueError: interval',parent_interval,'is not in self.intervals_list')
             return
         if entry_minval == parent_interval[0]:
             intervals = [(entry_minval, entry_maxval),
@@ -743,7 +743,7 @@ class TableManager:
     def entries_update(self,**values):
         """Updates RGBA entries on the input form."""
         
-        for k in values.keys():
+        for k in list(values.keys()):
             if k == 'val_x1':
                 self.entry_x1.setentry(str(values[k]))
             elif k == 'val_x2':
@@ -780,9 +780,9 @@ class TableManager:
         max_val = interval[1]
         min_val = interval[0]
 ##          print 'split_function: min_val =',min_val,'max_val =', max_val 
-	#indexes of min_val and max_val in alpha and color arrays
-	min_arrind = min_val - old_lut.xminval
-	max_arrind = max_val - old_lut.xminval
+        #indexes of min_val and max_val in alpha and color arrays
+        min_arrind = min_val - old_lut.xminval
+        max_arrind = max_val - old_lut.xminval
         new_values = []
         for val in old_lut.values:
             if val >  min_val and val <  max_val:
@@ -835,7 +835,7 @@ class TableManager:
 ##          print "new_values2 =", new_values
 ##          print "min_ind=", min_ind
 ##          print "new_shapes2 =", new_shapes
-            new_shapes = map(lambda x, y=min_ind: x-y, new_shapes)
+            new_shapes = list(map(lambda x, y=min_ind: x-y, new_shapes))
 ##          print "new_shapes3 =", new_shapes
             
         else:
@@ -894,7 +894,7 @@ class TableManager:
                     new_values.pop(1)
                     new_shapes.pop(1)
                     new_shapes.pop(1)
-                    new_shapes = map(lambda x: x-2, new_shapes)
+                    new_shapes = [x-2 for x in new_shapes]
                 else:
                     new_points.insert(2,
                        (new_points[1][0]+(new_points[2][0]-new_points[1][0])/2,
@@ -933,7 +933,7 @@ class TableManager:
         
     def ask_save_file(self, filetypes, title):
         """pop up tkFileDialog"""
-        file = tkFileDialog.asksaveasfilename(filetypes=filetypes,
+        file = tkinter.filedialog.asksaveasfilename(filetypes=filetypes,
                                                       title=title)
         return file
 
@@ -945,10 +945,10 @@ class TableManager:
             file = self.ask_save_file([("LUT Files","*.lut")], 'Save LUT')
         if file:
             of = open(file, 'w')
-            cPickle.dump(self.intervals_list, of)
+            pickle.dump(self.intervals_list, of)
             for lut in self.lut_list:
                 data = [lut.points, lut.shapes, lut.color_arr]
-                cPickle.dump(data, of)
+                pickle.dump(data, of)
             of.close()
 
     def saveLUT(self, file=None):
@@ -982,13 +982,13 @@ class TableManager:
             fmt_shapes = ">%di"%len(lut.shapes)
             fmt_colors = ">%df"% (len(lut.color_arr)*3 ,)
             fmt_values = ">%di"%len(lut.values)
-            alpha_inds = map(lambda x: x-lut.xminval, lut.values)
+            alpha_inds = [x-lut.xminval for x in lut.values]
             alphas = Numeric.take(lut.alpha_arr, alpha_inds)
             #print fmt_values, fmt_shapes, fmt_colors
-            of.write(apply(struct.pack, (fmt_shapes,)+tuple(lut.shapes)))
-            of.write(apply(struct.pack, (fmt_values,)+tuple(lut.values)))
-            of.write(apply(struct.pack, (fmt_values,)+tuple(alphas)))
-            of.write( apply(struct.pack, (fmt_colors,)+tuple(lut.color_arr.ravel())) )
+            of.write(struct.pack(*(fmt_shapes,)+tuple(lut.shapes)))
+            of.write(struct.pack(*(fmt_values,)+tuple(lut.values)))
+            of.write(struct.pack(*(fmt_values,)+tuple(alphas)))
+            of.write( struct.pack(*(fmt_colors,)+tuple(lut.color_arr.ravel())) )
         of.close()
             
 
@@ -1003,11 +1003,11 @@ class TableManager:
                 if self.load_file_old(file):
                     return
                 else:
-                    print warning
+                    print(warning)
                 return
         else:
             of.close()
-            print warning
+            print(warning)
             return
         ymaxval = 0
         while(1):
@@ -1054,7 +1054,7 @@ class TableManager:
                 else:
                     self.xmaxval = xmaxval
             else:
-                print "WARNING: number of LUT entries in %s is %d, current number of LUT entries is %d." % (file, xmaxval+1, self.xmaxval+1)
+                print("WARNING: number of LUT entries in %s is %d, current number of LUT entries is %d." % (file, xmaxval+1, self.xmaxval+1))
 
         shapes = []
         values = []
@@ -1102,7 +1102,7 @@ class TableManager:
             self.canvas_list.append(lut.canvas)
             if d != 1 :
                 lut.calculate_points(values[i],
-                                     map(lambda x: x/d, alphas[i]))
+                                     [x/d for x in alphas[i]])
             else:
                 lut.calculate_points(values[i], alphas[i])
             lut.shapes = shapes[i]
@@ -1177,13 +1177,13 @@ class TableManager:
         return rgba
         
     def ask_open_file_cb(self):
-        file = tkFileDialog.askopenfilename\
+        file = tkinter.filedialog.askopenfilename\
                (filetypes=[("LUT Files", "*.lut")], title='Load LUT')
         if file:
             if os.path.splitext(file)[1] == '.lut':
                 self.load_lutfile(file)
             else:
-                print "Wrong file name", file
+                print("Wrong file name", file)
                 return
             
     def load_lutfile(self, file):
@@ -1192,9 +1192,9 @@ class TableManager:
     def load_file_old(self, file):
         of = open(file, 'r')
         try:
-            intervals = cPickle.load(of)
+            intervals = pickle.load(of)
         except:
-            print "Load LUT ERROR: could not read file: ", file
+            print("Load LUT ERROR: could not read file: ", file)
             return
         data = []
         nintervals = len(intervals)
@@ -1215,12 +1215,12 @@ class TableManager:
                     else:
                         self.xmaxval = xmaxval
             else:
-                print "WARNING: number of LUT entries in %s is %d, current number of LUT entries is %d." % (file, xmaxval+1, self.xmaxval+1)
+                print("WARNING: number of LUT entries in %s is %d, current number of LUT entries is %d." % (file, xmaxval+1, self.xmaxval+1))
         for n in range(nintervals):
             try:
-                data.append(cPickle.load(of))
+                data.append(pickle.load(of))
             except:
-                print "Load LUT Error: could not read the data."
+                print("Load LUT Error: could not read the data.")
                 of.close()
                 return 0
 ##              print 'lut No %s'%n
@@ -1365,14 +1365,14 @@ class TableManager:
                                    title=text,)# command=self.ok_dotsize)
         interior = dotsizeDialog.interior()
         
-        sizescale = Tkinter.Scale(interior,
+        sizescale = tkinter.Scale(interior,
                                   label = "Set new dot radius",
                                   orient = 'horizontal',
                                   length = 200,
                                   from_= 2., to=10., tickinterval=0,
                                   font=self.font, resolution=0.5,
                                   command=comm)
-        sizescale.pack(side=Tkinter.LEFT)
+        sizescale.pack(side=tkinter.LEFT)
         sizescale.set(self.currDotrad)
         dotsizeDialog.activate()
 
@@ -1387,7 +1387,7 @@ class TableManager:
             lut.set_dotsize(val, "isodot")
 
     def ok_dotsize(self, val):
-        print val
+        print(val)
 
     def flip_function_cb(self):
         self.with_focus.flip_function()
@@ -1423,7 +1423,7 @@ class TableManager:
                                     scrolledtext_hull_width=600,
                                     scrolledtext_hull_height=200,
                                     label_text="Widget description")
-        helpDialog.insert(Tkinter.END, opt)
+        helpDialog.insert(tkinter.END, opt)
         helpDialog.configure(text_state='disabled')
         #helpDialog.activate()
         helpDialog.show()
@@ -1552,10 +1552,10 @@ class LUT:
         assert self.num_of_entries > 0
         self.font = '-*-Helvetica-Bold-R-Normal-*-*-160-*-*-*-*-*-*'
 
-        self.canvas = Tkinter.Canvas(master,width = width, height=height,
-                             relief = Tkinter.FLAT, borderwidth = 2)
+        self.canvas = tkinter.Canvas(master,width = width, height=height,
+                             relief = tkinter.FLAT, borderwidth = 2)
         c = self.canvas
-        c.grid(row=grid_row, sticky=Tkinter.W)
+        c.grid(row=grid_row, sticky=tkinter.W)
         
         width = float(c.cget('width')) # 461.0
         height = float(c.cget('height'))#106.0
@@ -1572,10 +1572,10 @@ class LUT:
                            outline ='black', width=1,
                            fill='white', tags='box')
         c.create_text(self.right-15, self.bott+10, text=str(xmaxval),
-                      anchor=Tkinter.W, font=self.font)
-        c.create_text(10, self.bott+10, text=str(xminval), anchor=Tkinter.W,
+                      anchor=tkinter.W, font=self.font)
+        c.create_text(10, self.bott+10, text=str(xminval), anchor=tkinter.W,
                       font=self.font)
-        c.create_text(10, self.top-7, text=str(ymaxval), anchor=Tkinter.W,
+        c.create_text(10, self.top-7, text=str(ymaxval), anchor=tkinter.W,
                       font=self.font, tags = 'ytext')
         
         # scale x and y axes 
@@ -1708,7 +1708,7 @@ class LUT:
     def update_linetags(self, ind1, ind2):
         """update tags of the lines when a dot or a shape added to/
         (deleted from) the canvas"""
-        line_ind = range(ind1, self.line_count)
+        line_ind = list(range(ind1, self.line_count))
         if ind2 > 0:
             line_ind.reverse()
         for i in line_ind:
@@ -1718,7 +1718,7 @@ class LUT:
     def update_dottags(self, ind1, ind2):
         """update tags of the dots when a dot or a shape added to/
         (deleted from) the canvas"""
-        dot_ind =range(ind1, self.line_count)
+        dot_ind =list(range(ind1, self.line_count))
         if len(dot_ind) == 0: return
         r_edge = None
         if ind2 > 0:
@@ -2043,7 +2043,7 @@ class LUT:
     def update_shapes(self, point_ind, num):
         """Update list of shapes """
         if point_ind not in self.shapes:
-            print "point %d is not in self.shapes"%point_ind
+            print("point %d is not in self.shapes"%point_ind)
             return 0
         shape_ind = self.shapes.index(point_ind)
         if num > 0:
@@ -2062,7 +2062,7 @@ class LUT:
         self.last_event = 'Button-1'
         #print 'last_event =', self.last_event
         c= self.canvas
-        tag = c.gettags(Tkinter.CURRENT)[1]
+        tag = c.gettags(tkinter.CURRENT)[1]
         curr_ind = int(tag[3:])
         
         #memorize last position of the mouse-click on a point(dot)
@@ -2083,7 +2083,7 @@ class LUT:
         # change outline of the selected dot
         c.itemconfig('selected', outline=UNSELECTED_COLOR)
         c.dtag('selected')
-        c.addtag_withtag('selected', Tkinter.CURRENT)
+        c.addtag_withtag('selected', tkinter.CURRENT)
         c.itemconfig('selected', outline=SELECTED_COLOR)
 
         # get color of the selected (current) point
@@ -2309,13 +2309,13 @@ class LUT:
 
     def pickIsoVal(self, event):
         c= self.canvas
-        tag = c.gettags(Tkinter.CURRENT)[1]
+        tag = c.gettags(tkinter.CURRENT)[1]
         #print "tag:", tag
         self.iso_ind = int(tag[6:])
         #c.itemconfig('selected', outline='')
         c.itemconfig('selected', outline=UNSELECTED_COLOR)
         c.dtag('selected')
-        c.addtag_withtag('selected', Tkinter.CURRENT)
+        c.addtag_withtag('selected', tkinter.CURRENT)
         c.itemconfig('selected', outline=SELECTED_COLOR)
         rgb = self.isoVals[self.iso_ind]['rgb']
         self.callbacks['entries'](iso_val=self.isoVals[self.iso_ind]['val'],
@@ -2363,7 +2363,7 @@ class LUT:
         isoVal['alpha'] = alpha
         rgb = isoVal['rgb']
         #find values of all Iso dots
-        vals = map(lambda i: i['val'], self.isoVals)
+        vals = [i['val'] for i in self.isoVals]
         #update LUT
         if oldval < val: #dot moved to the right
             d = val-oldval
@@ -2590,7 +2590,7 @@ class LUT:
         points = self.points
         self.lastx = c.canvasx(event.x)
         self.lasty = c.canvasy(event.y)
-        tag = c.gettags(Tkinter.CURRENT)[1]
+        tag = c.gettags(tkinter.CURRENT)[1]
         curr_ind = int(tag[3:])
         shapes = self.shapes
         
@@ -2602,9 +2602,9 @@ class LUT:
         l_shape = shapes[i-1]
         r_shape = shapes[i+1]
         if (shape-l_shape) > 1:
-            select_shape = range(l_shape,shape+1)
+            select_shape = list(range(l_shape,shape+1))
         elif (r_shape-shape) >1:
-            select_shape = range(shape, r_shape+1)
+            select_shape = list(range(shape, r_shape+1))
         # find coords of adjoining points of the shapes next to selected one
         next_l = select_shape[0]-1
         next_r = select_shape[-1]+1
@@ -2644,7 +2644,7 @@ class LUT:
         ##  c.itemconfig('selected', fill=UNSELECTED_COLOR,
 ##                       outline=UNSELECTED_COLOR)
         c.dtag('selected')
-        c.addtag_withtag('selected', Tkinter.CURRENT)
+        c.addtag_withtag('selected', tkinter.CURRENT)
         c.itemconfig('selected', outline=SELECTED_COLOR)
         ##  c.itemconfig('selected', fill=SELECTED_COLOR, outline=SELECTED_COLOR)
         # get color of current poit
@@ -2806,9 +2806,9 @@ class LUT:
                     if d>0: 
                         self.values[self.select_shape[0]:
                                     self.select_shape[-1]+1] = \
-                                    map(lambda val, d=d: val-d,
+                                    list(map(lambda val, d=d: val-d,
                                         self.values[self.select_shape[0]:
-                                                    self.select_shape[-1]+1])
+                                                    self.select_shape[-1]+1]))
                 start_p = self.old_valx1-self.xminval
                 mid_p = new_valx1-self.xminval
                 stop_p = mid_p+len_list
@@ -2828,9 +2828,9 @@ class LUT:
                     if d < 0:
                         self.values[self.select_shape[0]:
                                     self.select_shape[-1]+1] = \
-                                    map(lambda val, d=d: val+d,
+                                    list(map(lambda val, d=d: val+d,
                                         self.values[self.select_shape[0]:
-                                                    self.select_shape[-1]+1])
+                                                    self.select_shape[-1]+1]))
                 start_p = new_valx1-self.xminval
                 mid_p = start_p+len_list
                 stop_p = mid_p+delta
@@ -2895,7 +2895,7 @@ class LUT:
         c= self.canvas
         x = c.canvasx(event.x)
         y = c.canvasy(event.y)
-        tag = c.gettags(Tkinter.CURRENT)[1]
+        tag = c.gettags(tkinter.CURRENT)[1]
         curr_ind = int(tag[4:])
         # if line between two dots which values differ less than 2 is
         # picked - do nothing 
@@ -3101,8 +3101,8 @@ class LUT:
 
 
     def pick(self, event):
-        current = self.canvas.gettags(Tkinter.CURRENT)
-        print 'current' , current
+        current = self.canvas.gettags(tkinter.CURRENT)
+        print('current' , current)
 
     def set_colors(self, rgb, scalar1, scalar2, scalar3):
         """find range of data values(scalars) where colors are to be changed"""
@@ -3372,7 +3372,7 @@ class LUT:
 class Colormap(CallbackFunctions):
     def __init__(self, master, file=None):
         self.callbacks = []
-        self.img = Tkinter.PhotoImage(file=file, master=master)
+        self.img = tkinter.PhotoImage(file=file, master=master)
         width = self.img.width()
         height = self.img.height()
         self.axis_len = max(width, height)/2
@@ -3382,11 +3382,11 @@ class Colormap(CallbackFunctions):
         self.lasty = self.Y0
         self.hsv =[0.0, 0.0, 0.0]
         font = '-*-Helvetica-Bold-R-Normal-*-*-160-*-*-*-*-*-*'
-        Tkinter.Label(master, text='Hue/Saturation',
+        tkinter.Label(master, text='Hue/Saturation',
               font=font,width=20).grid(row=0,column=0,sticky='NW')
-        Tkinter.Label(master, text='Value',
+        tkinter.Label(master, text='Value',
               font=font).grid(row=0,column=1,sticky='NW')
-        self.canvas = Tkinter.Canvas(master, width=width,
+        self.canvas = tkinter.Canvas(master, width=width,
                              height=height)
         self.canvas.grid(row=1, column=0, sticky='W')        
         
@@ -3397,11 +3397,11 @@ class Colormap(CallbackFunctions):
                                 activefill='gray68',
                                 tags='oval')
 
-        Tkinter.Widget.bind(self.canvas, "<Button-1>", self.mouseDown)
-        Tkinter.Widget.bind(self.canvas,'<Button1-Motion>', self.mouseMove)
-        Tkinter.Widget.bind(self.canvas,'<Button1-ButtonRelease>', self.mouseUp)
+        tkinter.Widget.bind(self.canvas, "<Button-1>", self.mouseDown)
+        tkinter.Widget.bind(self.canvas,'<Button1-Motion>', self.mouseMove)
+        tkinter.Widget.bind(self.canvas,'<Button1-ButtonRelease>', self.mouseUp)
         
-        self.scale = Tkinter.Scale(master, orient=Tkinter.VERTICAL,
+        self.scale = tkinter.Scale(master, orient=tkinter.VERTICAL,
                                    length=height-5,
                                    from_=0.0, to=1.0, tickinterval=0,
                                    font=font, resolution=0.05,
@@ -3418,8 +3418,8 @@ class Colormap(CallbackFunctions):
         self.hsv = hsv
 
     def mouseDown(self, event):
-	x = self.canvas.canvasx(event.x)
-	y = self.canvas.canvasy(event.y)
+        x = self.canvas.canvasx(event.x)
+        y = self.canvas.canvasy(event.y)
         self.canvas.delete('oval')
         rad = 4
         self.canvas.create_oval(x-rad, y-rad, x+rad, y+rad,
@@ -3451,7 +3451,7 @@ class Colormap(CallbackFunctions):
     def mouseMove(self, event):
         c = self.canvas
         x = c.canvasx(event.x)
-	y = c.canvasy(event.y)
+        y = c.canvasy(event.y)
         if y < 0: y = 0
         elif y > self.Y0*2: y=self.Y0*2
         if x < 0: x = 0
@@ -3483,14 +3483,14 @@ class Colormap(CallbackFunctions):
 
 if __name__ == '__main__':
     def MyCallback1(value):
-        print 'callback with alpha argument'
+        print('callback with alpha argument')
         #print 'alpha = ', value
 
     def MyCallback2(value):
         #print 'colors =', value
-        print 'callback with color argument'
+        print('callback with color argument')
             
-    root = Tkinter.Tk()
+    root = tkinter.Tk()
     root.title('Transfer Function')
     #t = TableManager(root,xmaxval=50)
     #t = TableManager(root,xmaxval=4095)

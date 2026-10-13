@@ -1,7 +1,7 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 from DejaVu.Polylines import Polylines
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 class NormalsViewer:
     """Object that take a DejaVu geometry and a viewer and displays the

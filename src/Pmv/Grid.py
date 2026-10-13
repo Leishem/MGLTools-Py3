@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -22,12 +22,12 @@
 #
 ######################################################################
 
-from numpy.oldnumeric import *
+from mglcompat.oldnumeric import *
 from types import *
-import string, os, math
+import os, math; from mglcompat import pystring as string
 #import isocontour
 from UTpackages.UTisocontour import isocontour
-import Tkinter
+import tkinter
 
 ##  from ViewerFramework.gui import InputFormDescr
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
@@ -43,6 +43,7 @@ from DejaVu.colorTool import Map, RGBRamp, array2DToImage
 from DejaVu import Texture
 
 from opengltk.OpenGL import GL
+from functools import cmp_to_key
 
 #isocontour.setVerboseLevel(1)
 isocontour.setVerboseLevel(0)
@@ -78,9 +79,9 @@ def uniqueSort(lst, func=None):
     res = {}
     def add__to__dict(value, d = res):
         d[value] = None
-    map(add__to__dict , lst)
-    lst2 = res.keys() 
-    if func: lst2.sort(func)
+    list(map(add__to__dict , lst))
+    lst2 = list(res.keys()) 
+    if func: lst2.sort(key=cmp_to_key(func))
     else: lst2.sort()
     return lst2
 
@@ -176,7 +177,7 @@ class Set:
 
     def filter(self, func):
         assert callable(func)
-        newlist = filter(func, self.DataObj)
+        newlist = list(filter(func, self.DataObj))
         return self._rc(newlist)
 
     def __add__(self, right):
@@ -197,8 +198,8 @@ class Set:
         data = {}
         for item in self.DataObj: data[item] = None
         for ritem in rlist:
-            if data.has_key(ritem): del data[ritem]
-        return self._rc(data.keys(),self.CompObj)
+            if ritem in data: del data[ritem]
+        return self._rc(list(data.keys()),self.CompObj)
 
     # for logical operation, the two operands are required to be sets
     # Since both sets are ordered, it would be better to perform logical
@@ -221,9 +222,9 @@ class Set:
         for item in l1: data[item] = None
         res = {}
         for item in l2:
-            if data.has_key(item): res[item] = None
+            if item in data: res[item] = None
 
-        return self._rc(res.keys(),self.CompObj)
+        return self._rc(list(res.keys()),self.CompObj)
 
     # !!! In a sense, __or__ is nearly identical to __add__.
     def __or__(self, right):
@@ -242,10 +243,10 @@ class Set:
         data = {}
         for item in l1: data[item] = None
         for item in l2:
-            if data.has_key(item): del data[item]
+            if item in data: del data[item]
             else:  data[item] = None
 
-        return self._rc(data.keys(), self.CompObj)
+        return self._rc(list(data.keys()), self.CompObj)
 
     def _rc(self,objlst,func):
         return self.__class__(objlst,func)
@@ -265,7 +266,7 @@ def tupleArrayList( arrays ):
         larray[i] = arrays[i].ravel()
 
     carray = transpose ( array (tuple(larray)) )
-    return  map(lambda x: tupleElement(x), carray.tolist())
+    return  [tupleElement(x) for x in carray.tolist()]
 
 
 # associate an list order to each element in the array
@@ -274,7 +275,7 @@ def  tupleArrayOrderList( arr ):
     orderarr = arange(size)
     newarray = array([arr.ravel(),orderarr])
     carray = transpose(newarray)
-    return  map(lambda x: tupleElement(x), carray.tolist())
+    return  [tupleElement(x) for x in carray.tolist()]
 
 # the list in extractOrderList must be in format: [(a1,r1),(a2,r2)...(an,rn)]
 def extractOrderList ( lst ):
@@ -357,8 +358,8 @@ def findOneGroup ( lst, seed = None ):
         length = len(neighbours)
         neighbours[length:] = neighbour2
     # trick again: return [(x,y,z) ...], instead of [[x,y,z] ...]
-    group = map(tuple,neighbours)
-    environment =  map(tuple, environ)
+    group = list(map(tuple,neighbours))
+    environment =  list(map(tuple, environ))
     return [group, environment]
 
 ###
@@ -419,7 +420,7 @@ class GridPointSet(Set):
                 'BLACK' : ( 0.0, 0.0, 0.0) }
         if type(color) == StringType:
             colorname = string.upper(color)
-            if colortable.has_key(colorname):
+            if colorname in colortable:
                 color = colortable[colorname]
             else:
                 raise ValueError('bad color name')
@@ -741,7 +742,7 @@ class Grid:
     def __sqrt__(self): 
         return self._rc(sqrt(self.array))
 
-    def tostring(self): return self.array.tostring()
+    def tostring(self): return self.array.tobytes()
     
     def byteswapped(self): return self._rc(self.array.byteswap())
     def astype(self,typecode): return self._rc(self.array.astype(typecode))
@@ -895,7 +896,7 @@ class Grid:
         step = ( MAX - MIN) / intervals
         varray1 = arange(intervals)* step + MIN
         varray2 = arange(1,intervals+1)* step + MIN
-        result = map( self.findGridNumbers, varray1, varray2 )
+        result = list(map( self.findGridNumbers, varray1, varray2 ))
         if tick == 0 :
             return  result
         else:
@@ -980,7 +981,7 @@ def ReadAutoGridMap(file):
     CENTER = ( float(cx),float(cy), float(cz))
 
     # read grid points
-    points = map( lambda x: float(x), f.readlines())
+    points = [float(x) for x in f.readlines()]
     TMPGRIDS = swapaxes(reshape( points,(nz,ny,nx)), 0, 2)
     GRIDS = array(TMPGRIDS)
     f.close()
@@ -1074,22 +1075,22 @@ class AutoGridSurfaceGui:
         if self.vf.hasGui:
             self.master=vf.GUI.ROOT
             #for Surface visibility:
-            self.vVar=Tkinter.IntVar(self.master)
+            self.vVar=tkinter.IntVar(self.master)
             self.vVar.set(0)
             #for isovalue
-            self.isovalueVar=Tkinter.StringVar(self.master)
+            self.isovalueVar=tkinter.StringVar(self.master)
             self.isovalueVar.set('-0.071')
             #for sampling
-            self.setVar=Tkinter.StringVar(self.master)
+            self.setVar=tkinter.StringVar(self.master)
             ne=grid.NELEMENTS
             if ne[0]==ne[1]==ne[2]: 
                 self.setVar.set(3)
             else: 
                 self.setVar.set(1)
             #for rendermode
-            self.renderModeVar=Tkinter.IntVar(self.master)
+            self.renderModeVar=tkinter.IntVar(self.master)
             #for box visibility
-            self.boxvVar=Tkinter.IntVar(self.master)
+            self.boxvVar=tkinter.IntVar(self.master)
         #for box 
         self.box=None
         self.oldVals=[]
@@ -1114,7 +1115,7 @@ class AutoGridSurfaceGui:
 
     def getColor(self):
         if not hasattr(self,'colorVars'): self.initColorVars()
-        if self.grid.atType in self.colorVars.keys():
+        if self.grid.atType in list(self.colorVars.keys()):
             return self.colorVars[self.grid.atType]
         else:
             return ((1,1,1),)
@@ -1134,10 +1135,10 @@ class AutoGridSurfaceGui:
         gridname = os.path.basename(self.grid.name)
         if visibility:
             entry={'name':'%sVisBut'%self.grid.name,
-                'widgetType':Tkinter.Checkbutton,
+                'widgetType':tkinter.Checkbutton,
                 'text':gridname,
                 'variable':self.vVar,
-                'gridcfg':{'sticky':Tkinter.W},
+                'gridcfg':{'sticky':tkinter.W},
                 'command': self.changeVisibility}
             ifd.entryByName[entry['name']]=entry
             form.addEntry(entry)
@@ -1145,10 +1146,10 @@ class AutoGridSurfaceGui:
             self.entry_widgets.append(ifd.entryByName[entry['name']]['widget'])
         if set:
             entry={'name':'%ssetEnt'%self.grid.name,
-                   'widgetType':Tkinter.Entry,
+                   'widgetType':tkinter.Entry,
                    'wcfg':{'width':5,
                        'textvariable':self.setVar},
-                   'gridcfg':{'sticky':Tkinter.W,'row':-1,
+                   'gridcfg':{'sticky':tkinter.W,'row':-1,
                       'column':1}}
 ##              entry={'name':'%ssetEnt'%self.grid.name,
 ##                  'widgetType':Tkinter.Entry,
@@ -1201,7 +1202,7 @@ class AutoGridSurfaceGui:
                     'command':self.CallBack,
                     'sliderType':'float',
                     'entrypackcfg':{'side':'right'}},
-                    'gridcfg':{'sticky':Tkinter.W, 
+                    'gridcfg':{'sticky':tkinter.W, 
                     'row':-1, 'column':2,'columnspan':2}}
             form.addEntry(entry)
             ifd.entryByName[entry['name']]=entry
@@ -1211,10 +1212,10 @@ class AutoGridSurfaceGui:
             columnctr=columnctr+2
         if rendermode:
             entry={'name':'%sRenderBut'%self.grid.name,
-                'widgetType':Tkinter.Checkbutton,
+                'widgetType':tkinter.Checkbutton,
                 'text':'LINE',
                 'variable':self.renderModeVar,
-                'gridcfg':{'sticky':Tkinter.W,'row':-1,'column':4},
+                'gridcfg':{'sticky':tkinter.W,'row':-1,'column':4},
                 'command': CallBackFunction(self.changeRenderMode,ifd)}
             ifd.entryByName[entry['name']]=entry
             form.addEntry(entry)
@@ -1227,10 +1228,10 @@ class AutoGridSurfaceGui:
             self.grid.displayBox(self.vf.GUI.VIEWER, materials=((0.,0.,1.),))
             self.boxvVar.set(1)
             entry={'name':'%sBoxBut'%self.grid.name,
-                'widgetType':Tkinter.Checkbutton,
+                'widgetType':tkinter.Checkbutton,
                 'text':'ShowBox',
                 'variable':self.boxvVar,
-                'gridcfg':{'sticky':Tkinter.W,'row':-1,'column':5},
+                'gridcfg':{'sticky':tkinter.W,'row':-1,'column':5},
                 'command': self.changeBox}
             ifd.entryByName[entry['name']]=entry
             form.addEntry(entry)
@@ -1373,7 +1374,7 @@ class AutoGridSurfaceGui:
         grid.srf.pickable=1
         #grid.srf.pickable=0
         if self.vf.hasGui: 
-		   v=var.get()
+                   v=var.get()
         else : 
            v=1				   
         if not v:
@@ -1466,7 +1467,7 @@ class AutoGridSliceGui:
         key = axis + str(snum)
         gridname = os.path.basename(self.grd.name)
         extKey=gridname+'_'+key
-        self.vVars[key]=Tkinter.IntVar(self.master)
+        self.vVars[key]=tkinter.IntVar(self.master)
         self.vVars[key].set(1)
         if not hasattr(self.grd, 'widgets'):
             self.grd.widgets=[]
@@ -1480,10 +1481,10 @@ class AutoGridSliceGui:
         if visibility:
             #this needs local key for ifd name + extKey for text
             entry={'name':'%sVisBut'%key,
-                'widgetType':Tkinter.Checkbutton,
+                'widgetType':tkinter.Checkbutton,
                 'text':extKey,
                 'variable':self.vVars[key],
-                'gridcfg':{'sticky':Tkinter.W},
+                'gridcfg':{'sticky':tkinter.W},
                 'command': CallBackFunction(self.changeSliceVisibility,extKey,form)}
             ifd.entryByName[entry['name']]=entry
             form.addEntry(entry)
@@ -1496,7 +1497,7 @@ class AutoGridSliceGui:
         minval = 0
         maxval = (self.grd.NELEMENTS[axisIndex]-1)/(self.grd.step*1.0)
         entry={'name':'%sScale'%key,
-            'widgetType':Tkinter.Scale,
+            'widgetType':tkinter.Scale,
             'wcfg':{'from':minval,'orient':'horizontal','sliderrelief':'sunken',
                 'sliderlength':'6','length':'2.5i',
                 'tickinterval':maxval/2,
@@ -1521,7 +1522,7 @@ class AutoGridSliceGui:
             #add two entries for max and min of colormap of slices here
             labStr = gridname[:-4] + '_colormap\nmin/max:'
             entry={'name':'%sLab'%gridname,
-                'widgetType':Tkinter.Label,
+                'widgetType':tkinter.Label,
                 'wcfg':{ 'text':labStr },
                 'gridcfg':{'sticky':'w'} }
             form.addEntry(entry)
@@ -1537,10 +1538,10 @@ class AutoGridSliceGui:
             else:
                 self.grd.cmapMax = self.grd.max
 
-            newMinVar = Tkinter.StringVar();
+            newMinVar = tkinter.StringVar();
             newMinVar.set(self.grd.cmapMin)
             entry={'name':'%sMinEnt'%key,
-                'widgetType':Tkinter.Entry,
+                'widgetType':tkinter.Entry,
                 'wcfg':{'textvariable':newMinVar,
                 'width':6,
                 },
@@ -1554,10 +1555,10 @@ class AutoGridSliceGui:
             self.grd.gcfgs.append(ifd.entryByName[entry['name']]['gridcfg'])
             self.entry_widgets.append(ifd.entryByName[entry['name']]['widget'])
 
-            newMaxVar = Tkinter.StringVar();
+            newMaxVar = tkinter.StringVar();
             newMaxVar.set(self.grd.cmapMax)
             entry={'name':'%sMaxEnt'%key,
-                'widgetType':Tkinter.Entry,
+                'widgetType':tkinter.Entry,
                 'wcfg':{'textvariable':newMaxVar,
                 'width':6,
                 },

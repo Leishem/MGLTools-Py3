@@ -16,7 +16,7 @@
 #
 #$Id: packageFilePath.py,v 1.54.4.1 2011/06/06 17:19:38 sargis Exp $
 
-import os, string, sys, re
+import os, sys, re; from mglcompat import pystring as string
 import warnings
 import user
 
@@ -84,7 +84,7 @@ def findResourceFile(module, resourceFile=None):
     else:
         resourceFileLocation['currentdir'] = None
 
-    if 'HOME' in os.environ.keys():
+    if 'HOME' in list(os.environ.keys()):
         home = os.environ['HOME']
         homefile = os.path.join(home, resourceFile)
         if os.path.exists(homefile):
@@ -126,10 +126,10 @@ def findAllPackages():
             if not os.path.isdir(pdir):
                 continue
             if os.path.exists( os.path.join( pdir, '__init__.py')) :
-                if not packages.has_key(f):
+                if f not in packages:
                     packages[f] = pdir
             elif os.path.exists( os.path.join( p, '.pth') ):
-                    if not packages.has_key(f):
+                    if f not in packages:
                         packages[f] = pdir
     
     return packages            
@@ -162,9 +162,9 @@ to match string at the begining of the lines is faster.
                     data = f.readlines()
                     f.close()
                     found = 0
-                    Lines =filter(lambda x:x.startswith(name[1:]),data)
+                    Lines =[x for x in data if x.startswith(name[1:])]
                     if Lines!=[]:
-                        if not candidates.has_key(root): candidates[root] = []
+                        if root not in candidates: candidates[root] = []
                         candidates[root].append(fi)    
     else:  # use re
         import re
@@ -191,7 +191,7 @@ to match string at the begining of the lines is faster.
                     for line in data:
                         match = pat.search(line)
                         if match:
-                            if not candidates.has_key(root): candidates[root] = []
+                            if root not in candidates: candidates[root] = []
                             candidates[root].append(fi)
                             break
     return candidates
@@ -214,9 +214,9 @@ def findModulesInDirectory(directory, name):
         data = f.readlines()
         f.close()
         found = 0
-        Lines =filter(lambda x:x.startswith(name),data)
+        Lines =[x for x in data if x.startswith(name)]
         if Lines!=[]:
-            if not candidates.has_key(root): candidates[root] = []
+            if root not in candidates: candidates[root] = []
             candidates[root].append(fi)    
             
     os.chdir(olddir)
@@ -244,7 +244,7 @@ def setResourceFolder(folderName):
     if os.path.isdir(resourceFolder) is False:
         try:
             os.mkdir(resourceFolder)
-        except Exception, e:
+        except Exception as e:
             txt = "Resource Folder can't be created in home directory, now using tmp directory %s %s" %(resourceFolder, e)
             warnings.warn(txt)
             from tempfile import gettempdir
@@ -292,19 +292,19 @@ returns None if it doesn't exist and can't be created
         try:
             os.mkdir(lRessourceFolder)                    
             return lRessourceFolder
-        except Exception, inst:
-            print inst
-            print "Cannot create the Resource Folder %s" %lRessourceFolder
+        except Exception as inst:
+            print(inst)
+            print("Cannot create the Resource Folder %s" %lRessourceFolder)
             import tempfile
             tmpDir = tempfile.gettempdir()
-            print "Using %s insterad" %tmpDir
+            print("Using %s insterad" %tmpDir)
             return tmpDir
         
 def which (filename):
     """Source http://mail.python.org/pipermail/python-list/2002-August/157829.html"""
     if os.access(filename, os.X_OK):
             return filename    
-    if not os.environ.has_key('PATH') or os.environ['PATH'] == '':
+    if 'PATH' not in os.environ or os.environ['PATH'] == '':
         p = os.defpath
     else:
         p = os.environ['PATH']

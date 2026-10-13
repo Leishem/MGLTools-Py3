@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # Last modified on Tue Sep  4 16:32:29 PDT 2001 by lindy
@@ -13,7 +13,7 @@ of classes which transform and generally operate on lists
 of homogeneous coordinates.
 """
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 class Ncoords:
     def __init__(self, refCoords, tolist=1):
@@ -26,7 +26,7 @@ class Ncoords:
             self.refCoords = Numeric.array(Numeric.concatenate(
                 (refCoords, Numeric.ones( (len(refCoords), 1), 'f')), 1))
         except TypeError:
-            raise ValueError, "invalid input array"
+            raise ValueError("invalid input array")
 
         self.resultCoords = self.refCoords
         self.tolist = tolist

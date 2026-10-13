@@ -1,7 +1,7 @@
 from idlelib import PyShell
 #from idlelib.PyShell import PyShell, PyShellFileList, use_subprocess
 from idlelib.EditorWindow import fixwordbreaks
-import Tkinter, sys, os
+import tkinter, sys, os
 def getShell(thread, rootTk = None, subprocess = False, debug=False,
              enable_shell=False, enable_edit=True):
     """
@@ -48,7 +48,7 @@ def getShell(thread, rootTk = None, subprocess = False, debug=False,
             sys.path.insert(0, dir)
 
     global flist, root
-    if rootTk is None: root = Tkinter.Tk()
+    if rootTk is None: root = tkinter.Tk()
     else: root = rootTk
     fixwordbreaks(root)
 

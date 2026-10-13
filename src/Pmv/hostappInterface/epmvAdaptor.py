@@ -44,7 +44,7 @@ from MolKit.molecule import Atom
 from MolKit.protein import Protein , Chain
 
 import numpy
-import numpy.oldnumeric as Numeric #backward compatibility
+import mglcompat.oldnumeric as Numeric #backward compatibility
 import math
 from Pmv.hostappInterface import comput_util as util
 from Pmv.hostappInterface.lightGridCommands import addGridCommand
@@ -124,26 +124,26 @@ class loadMoleculeInHost(MVCommand):
         chname=['Z','Y','X','W','V','U','T']
         molname=mol.name#mol.replace("'","")
         #setup some variable
-        if molname not in self.mv.molDispl.keys() :
+        if molname not in list(self.mv.molDispl.keys()) :
             #cpk,bs,ss,surf,cms
             self.mv.molDispl[molname]=[False,False,False,False,False,None,None]
-        if molname not in self.mv.MolSelection.keys() :
+        if molname not in list(self.mv.MolSelection.keys()) :
             self.mv.MolSelection[molname]={}
-        if molname not in self.mv.selections.keys() :       
+        if molname not in list(self.mv.selections.keys()) :       
             self.mv.selections[molname]={}
-        if molname not in self.mv.iMolData.keys() :       
+        if molname not in list(self.mv.iMolData.keys()) :       
             self.mv.iMolData[molname]=[]
         sc = self.epmv._getCurrentScene()
         #mol=os.path.splitext(os.path.basename(mol))[0]
         #sys.stderr.write('%s\n'%molname)
         if self.epmv.duplicatemol : #molecule already loaded,so the name is overwrite by pmv, add _ind
-            print self.epmv.duplicatedMols.keys()
-            if mol in self.epmv.duplicatedMols.keys() : self.epmv.duplicatedMols[molname]+=1
+            print(list(self.epmv.duplicatedMols.keys()))
+            if mol in list(self.epmv.duplicatedMols.keys()) : self.epmv.duplicatedMols[molname]+=1
             else : self.epmv.duplicatedMols[molname]=1
             molname=molname+"_"+str(self.epmv.duplicatedMols[molname])
         molname=molname.replace(".","_")
         #sys.stderr.write('%s\n'%mol)
-        print self.mv.Mols.name                                    
+        print(self.mv.Mols.name)                                    
         P=mol=self.mv.getMolFromName(molname)
         if mol == None : 
         #    print "WARNING RMN MODEL OR ELSE, THERE IS SERVERAL MODEL IN THE 
@@ -172,7 +172,7 @@ class loadMoleculeInHost(MVCommand):
             mol.geomContainer.masterGeom.obj = model
             return
         if self.epmv.useModeller:
-            print "ok add a conf"
+            print("ok add a conf")
             #add a conformation for modeller
             mol.allAtoms.addConformation(mol.allAtoms.coords[:])
             iConf = len(mol.allAtoms[0]._coords)-1
@@ -235,10 +235,10 @@ class loadMoleculeInHost(MVCommand):
             self.epmv._addLampToScene("sun_"+mol.name,'Sun',(1.,1.,1.),15.,0.8,1.5,False,center,sc)
 
     def onAddObjectToViewer(self, obj):
-        apply(self.doitWrapper, (obj,))
+        self.doitWrapper(*(obj,))
 
     def __call__(self, mol, **kw):
-        apply(self.doitWrapper, (mol,), kw)
+        self.doitWrapper(*(mol,), **kw)
         
 class epmvAdaptor:
     """
@@ -520,7 +520,7 @@ class epmvAdaptor:
         @return:  the name of the selection in the dictionary if retrieved.
         """    
         
-        for selname in molSelDic.keys():
+        for selname in list(molSelDic.keys()):
             if currentSel[-1] == ';' : currentSel=currentSel[0:-1]
             if currentSel == molSelDic[selname][3] : return selname
             if currentSel == molSelDic[selname] : return selname
@@ -557,7 +557,7 @@ class epmvAdaptor:
         
         if isinstance(event, DeleteAtomsEvent):
             action='delete'
-        print action
+        print(action)
         #when atom are deleted we have to redo the current representation and 
         #selection
         atom_set = event.objects
@@ -567,13 +567,13 @@ class epmvAdaptor:
             nameo = "S"+"_"+atms.full_name()
             o=self._getObject(nameo)
             if o is not None :
-                print nameo
+                print(nameo)
                 self._deleteObject(o)
             #and the ball/stick
             nameo = "B"+"_"+atms.full_name()
             o=self._getObject(nameo)
             if o is not None :
-                print nameo
+                print(nameo)
                 self._deleteObject(o)
             #and the bonds...
             
@@ -611,10 +611,10 @@ class epmvAdaptor:
         elif event.arg == 'bs' and action =='edit' and not self.useLog :
             self._editBS(mol,atms,options)
         elif event.arg == 'trace' and action =='edit' and not self.useLog :
-            print "displayTrace not supported Yet"
+            print("displayTrace not supported Yet")
             #displayTrace should use a linear spline extruded like _ribbon command
         elif event.arg[0:4] == 'msms' and action =='edit' and not self.useLog :
-			#there is 2 different msms event : compute msms_c and display msms_ds
+                        #there is 2 different msms event : compute msms_c and display msms_ds
             if event.arg == "msms_c" : #ok compute
                 self._computeMSMS(mol,atms,options)
             elif event.arg == "msms_ds" : #ok display
@@ -637,13 +637,13 @@ class epmvAdaptor:
         @type  molname: str
         @param molname: the molecule name        
         """            
-        if molname not in self.mv.molDispl.keys() :
+        if molname not in list(self.mv.molDispl.keys()) :
             self.mv.molDispl[molname]=[False,False,False,False,False,None,None]
-        if molname not in self.mv.MolSelection.keys() :
+        if molname not in list(self.mv.MolSelection.keys()) :
             self.mv.MolSelection[molname]={}
-        if molname not in self.mv.selections.keys() :       
+        if molname not in list(self.mv.selections.keys()) :       
             self.mv.selections[molname]={}
-        if molname not in self.mv.iMolData.keys() :       
+        if molname not in list(self.mv.iMolData.keys()) :       
             self.mv.iMolData[molname]=[]
         
 
@@ -748,7 +748,7 @@ class epmvAdaptor:
         needRedo = opts[8]
 #        print "redo",needRedo
         options=self.mv.displayCPK.lastUsedValues["default"]
-        if options.has_key("redraw"): needRedo = options["redraw"]
+        if "redraw" in options: needRedo = options["redraw"]
 #        print "redo",needRedo
         ##NB do we want to handle multiple mol at once?
         mol = mol[0]
@@ -810,7 +810,7 @@ class epmvAdaptor:
         display = not opts[1]
         needRedo = opts[-1]
         options=self.mv.displaySticksAndBalls.lastUsedValues["default"]
-        if options.has_key("redraw"): needRedo = options["redraw"]
+        if "redraw" in options: needRedo = options["redraw"]
         
         #NB do we want to handle multiple mol at once?
         mol = mol[0]
@@ -926,9 +926,9 @@ class epmvAdaptor:
         display = not options[1]
         i=0
         if extrude :display = options[9]
-        for name,g in mol.geomContainer.geoms.items():
+        for name,g in list(mol.geomContainer.geoms.items()):
             if name[:4] in ['Heli', 'Shee', 'Coil', 'Turn', 'Stra']:
-                print name
+                print(name)
                 #problem with name renaming of chain
                 fullname=mol.name+":"+name[-1]+":"+name[:-1]
                 if not hasattr(g,"obj") and display :#and fullname in self.mv.sets.keys():
@@ -944,7 +944,7 @@ class epmvAdaptor:
                     self._progressBar(progress, 'add SS to scene')
                     i+=1
         self.colorProxyObject = proxy
-		                    
+                                    
     def _computeMSMS(self, mol,atms,options):
         """
         Callback for computation of MSMS surface. Create and update 
@@ -1099,7 +1099,7 @@ class epmvAdaptor:
             if geom=="secondarystructure" :
                 #TOFIX the color/res not working...
                 #gss = mol.geomContainer.geoms["secondarystructure"]
-                for name,g in mol.geomContainer.geoms.items() :
+                for name,g in list(mol.geomContainer.geoms.items()) :
                     if name[:4] in ['Heli', 'Shee', 'Coil', 'Turn', 'Stra']:      
                         SS= g.SS
                         name='%s%s'%(SS.name, SS.chain.id)
@@ -1180,7 +1180,7 @@ class epmvAdaptor:
         else :
             name = options[0]
             g = grid.geomContainer['IsoSurf'][name]
-            print name, g
+            print(name, g)
         root = None
         if hasattr(self.mv,'cmol') and self.mv.cmol != None:
             mol = self.mv.cmol 
@@ -1230,7 +1230,7 @@ class epmvAdaptor:
         radii = atoms.vdwRadius
         #self.assignAtomsRadii("1xi4g", united=1, log=0, overwrite=0)
         from UTpackages.UTblur import blur
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         volarr, origin, span = blur.generateBlurmap(coords, radii, XYZd,resolution, padding = 0.0)
         volarr.shape = (XYZd[0],XYZd[1],XYZd[2])
         volarr = Numeric.ascontiguousarray(Numeric.transpose(volarr), 'f')
@@ -1348,7 +1348,7 @@ class epmvAdaptor:
             model = mol
         model.allAtoms.setConformation(conf)
         coord = {}
-        print pose.n_residue(),len(model.chains.residues)
+        print(pose.n_residue(),len(model.chains.residues))
         for resi in range(1, pose.n_residue()+1):
             res = pose.residue(resi)
             resn = pose.pdb_info().number(resi)
@@ -1361,17 +1361,17 @@ class epmvAdaptor:
                     pmv_name=a.name
                     k = k + 1		 
                     if name != pmv_name : 
-            	        if name[1:] != pmv_name[:-1]:
-            	            print name,pmv_name
-            	        else : 
-            	            coord[(resn, pmv_name)] = res.atom(atomi).xyz()
-            	            cood=res.atom(atomi).xyz()
-            	            a._coords[conf]=[cood.x,cood.y,cood.z]
-            					
+                        if name[1:] != pmv_name[:-1]:
+                            print(name,pmv_name)
+                        else : 
+                            coord[(resn, pmv_name)] = res.atom(atomi).xyz()
+                            cood=res.atom(atomi).xyz()
+                            a._coords[conf]=[cood.x,cood.y,cood.z]
+                                                
                     else : 
-            	         coord[(resn, name)] = res.atom(atomi).xyz()
-            	         cood=res.atom(atomi).xyz()
-            	         a._coords[conf]=[cood.x,cood.y,cood.z]  #return coord
+                         coord[(resn, name)] = res.atom(atomi).xyz()
+                         cood=res.atom(atomi).xyz()
+                         a._coords[conf]=[cood.x,cood.y,cood.z]  #return coord
         model.allAtoms.setConformation(conf)
         event = EditAtomsEvent('coords', model.allAtoms)
         self.dispatchEvent(event)
@@ -1638,7 +1638,7 @@ class epmvAdaptor:
         """         
         
         values = []
-        import numpy.oldnumeric as N
+        import mglcompat.oldnumeric as N
         from Volume.Operators.trilinterp import trilinterp
         
         origin = N.array(grid.origin, Numeric.Float32)
@@ -1675,8 +1675,8 @@ class epmvAdaptor:
         import types
         if colormap is None:
             pass#colormap = RGBARamp
-        elif type(colormap) is types.StringType \
-          and self.mv.colorMaps.has_key(colormap):
+        elif type(colormap) is bytes \
+          and colormap in self.mv.colorMaps:
             colormap = self.mv.colorMaps[colormap]
         if not isinstance(colormap, ColorMap):
             return 'ERROR'
@@ -1703,10 +1703,10 @@ class epmvAdaptor:
         #epmv.setEnvPyRosetta(path)
         os.environ["PYROSETTA"]=extensionPath
         os.environ["PYROSETTA_DATABASE"]=extensionPath+os.sep+"minirosetta_database"
-        if not os.environ.has_key("DYLD_LIBRARY_PATH"):
+        if "DYLD_LIBRARY_PATH" not in os.environ:
             os.environ["DYLD_LIBRARY_PATH"]=""
         os.environ["DYLD_LIBRARY_PATH"]=extensionPath+":"+extensionPath+"/rosetta:"+os.environ["DYLD_LIBRARY_PATH"]
-        if not os.environ.has_key("LD_LIBRARY_PATH"):
+        if "LD_LIBRARY_PATH" not in os.environ:
             os.environ["LD_LIBRARY_PATH"]=""
         os.environ["LD_LIBRARY_PATH"]=extensionPath+"/rosetta:"+os.environ["LD_LIBRARY_PATH"]
         #this is not working! how can I do it

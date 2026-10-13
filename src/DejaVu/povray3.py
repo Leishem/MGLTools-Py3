@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -25,7 +25,7 @@ from opengltk.OpenGL import GL
 #from opengltk.extent.utillib import glTriangleNormals
 from geomutils.geomalgorithms import  TriangleNormals
 from DejaVu import viewerConst
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 class PovRay:
     """Driver for Povray v3.x
@@ -153,13 +153,13 @@ class PovRay:
         col is used as pigment is pimgment is not in textures
         """
         str = '  texture {\n'
-        if not 'pigment' in texture.keys():
+        if not 'pigment' in list(texture.keys()):
             str = str + '      pigment { color rgb %s }\n' %self.vec3( col )
         elif texture['pigment']=='':
             str = str + '      pigment { color rgb %s }\n' %self.vec3( col )
         else:
             str = str + '      pigment { %s }\n' % texture['pigment']
-        for k,v in texture.items():
+        for k,v in list(texture.items()):
             if k=='pigment': continue
             if v is None:
                 str = str + '      %s\n' % (k,)
@@ -211,7 +211,7 @@ class PovRay:
             self.entries.append('// Object %s\n//\n' % geom.name)
             self.addCylinders(geom, texture)
         else:
-            print 'WARNING: %s the geometry is not yet supported'%geom.__class__
+            print('WARNING: %s the geometry is not yet supported'%geom.__class__)
 
     def addIndexedPolylines(self, geom, texture, bondRad):
         """void <- addIndexedPolylines(geom, texture)
@@ -221,7 +221,7 @@ class PovRay:
         c = geom.materials[GL.GL_FRONT].prop[1]
         lines = geom.faceSet.faces.array
 
-        for i in xrange(len(v)):
+        for i in range(len(v)):
             if len(c)==len(v): col = c[i]
             else: col = c[0]
             self.entries.append('sphere{%s,%f\n' % (self.coord3(v[i]),
@@ -229,7 +229,7 @@ class PovRay:
             self.addTexture( texture, col )
             self.endShape()
 
-        for j in xrange(len(lines)):
+        for j in range(len(lines)):
             l = lines[j]
             if len(c) == len(v):
                 col1 = c[l[0]]
@@ -291,7 +291,7 @@ class PovRay:
         elif len(colors)==len(faces):
             colBinding = 'Per Face'
 
-        print len(colors), len(faces), len(vt), colBinding
+        print(len(colors), len(faces), len(vt), colBinding)
         if colBinding!='Overall':
             lines.append("\ttexture_list {\n\t\t%d,\n"%len(colors))
             for c in colors:

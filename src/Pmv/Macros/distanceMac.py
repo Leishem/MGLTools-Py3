@@ -1,6 +1,6 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 def ClosestAtom():
     """ask for 2 molecules, compute for each atom

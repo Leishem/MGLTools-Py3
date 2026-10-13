@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
 #
@@ -13,8 +13,8 @@
 #
 
 from MolKit.molecule import AtomSet, Atom
-from MolecularSystemAdapter import Adapters
-import numpy.oldnumeric as Numeric
+from .MolecularSystemAdapter import Adapters
+import mglcompat.oldnumeric as Numeric
 from math import sqrt
 import types
 
@@ -126,21 +126,19 @@ the attributes in the attribute_list.
             return
 
         # check each attribute
-        typeList = [types.ListType, types.DictType]#, types.InstanceType]
+        typeList = [list, dict]#, types.InstanceType]
         from mglutil.util.misc import isInstance
         for attr in attribute_list:
             # get returns the subset of entities
             # for which the expression is true
             ents = entities.get( lambda x: hasattr(x, attr))
             if ents==None or len(ents)!=len(entities):
-                raise AttributeError, \
-                      "All Entities do not have required Entity attribute (%s) " % attr
+                raise AttributeError("All Entities do not have required Entity attribute (%s) " % attr)
             ent0 = entities[0]
             if type(getattr(ent0, attr)) in typeList \
               or isInstance(getattr(ent0, attr)) is True:
                 if len(getattr(ent0, attr))==0:
-                    raise ValueError, \
-                          "Required Entity attribute (%s) has zero length" % attr
+                    raise ValueError("Required Entity attribute (%s) has zero length" % attr)
 
 
     def _compute_distance_matrix(self, ix, jx):
@@ -192,7 +190,7 @@ the cutoff. If distance are all above the cutoff, None is returned.
             #if the whole dist matrix is ok, save it
             self._dist_mats[ix][jx] = mat
         else:
-            mini = min( map( min, mat))
+            mini = min( list(map( min, mat)))
             if mini < cutoff:
                 result = mini
         return result
@@ -209,9 +207,9 @@ the cutoff. If distance are all above the cutoff, None is returned.
                 # we just transpose
                 #mat = Numeric.swapaxes(Numeric.array(tmat), 0, 1).tolist()
                 mat = [] #eg: 3x4->4x3
-                for j in xrange(len(tmat[0])):
+                for j in range(len(tmat[0])):
                     mat.append([])
-                    for i in xrange(len(tmat)):
+                    for i in range(len(tmat)):
                         mat[j].append(tmat[i][j])
             else:
                 # we must compute
@@ -225,11 +223,11 @@ the cutoff. If distance are all above the cutoff, None is returned.
         """
         
         # first clear all the pairs where entity_set is the first key
-        for set in self._dist_mats[ix].keys():
+        for set in list(self._dist_mats[ix].keys()):
             self._dist_mats[ix][set] = None
 
         # now clear all matrices where entity_set is the second key
-        for set in self._dist_mats.keys():
+        for set in list(self._dist_mats.keys()):
             self._dist_mats[set][ix] = None
 
 
@@ -343,4 +341,4 @@ to update coordinate with the coords_set_func you supply.
 # MolecularSystem
 
 if __name__ == '__main__':
-    print "unittests in Tests/test_MolecularSystem.py"
+    print("unittests in Tests/test_MolecularSystem.py")

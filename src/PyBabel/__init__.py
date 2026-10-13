@@ -273,9 +273,9 @@ VII - identifying aromatic rings
   
         1. atoms must have been assigned a type (see I)
 
-	2. rings must have been identified (see V)
+        2. rings must have been identified (see V)
 
-	3. bond orders must have been defined (see VI)
+        3. bond orders must have been defined (see VI)
 
   example:
     
@@ -318,7 +318,7 @@ VII - identifying aromatic rings
   is 'aromatic'. 
 
   The aromatic rings has a new key called 'aromatic' set to 1 or 0
-	
+        
 
 
 

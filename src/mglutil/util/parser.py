@@ -1,9 +1,9 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # Author Daniel Stoffler  (Dec 2001)          Copyright D. Stoffler, TSRI
 
-import numpy.oldnumeric as Numeric, string
+import mglcompat.oldnumeric as Numeric; from mglcompat import pystring as string
 
 class VRML2IndexedFaceSetToCoords:
     """ VRML2 IndexedFaceSet -> coords & indices.

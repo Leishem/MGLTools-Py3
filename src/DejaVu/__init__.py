@@ -72,10 +72,10 @@ import warnings
 try:
   from opengltk import OpenGL
 except ImportError:
-    print 'FATAL ERROR: opengltk.OpenGL Package not found'
+    print('FATAL ERROR: opengltk.OpenGL Package not found')
     raise RuntimeError('FATAL ERROR: opengltk.OpenGL Package not found')
 
-from Tkinter import _default_root, Tk
+from tkinter import _default_root, Tk
 
 def loadTogl(master):
     # simulate the setting of TCLLIPATH
@@ -178,7 +178,7 @@ def ensureDejaVuResourceFile():
     if os.path.isfile(rcFile) is False:
         try:
             f = open(rcFile, "w")
-            map( lambda x, f=f: f.write(x), dejavurcText )
+            list(map( lambda x, f=f: f.write(x), dejavurcText ))
             f.close()
         except:
             txt = "can not create _dejavurc"
@@ -195,10 +195,10 @@ rcFile = ensureDejaVuResourceFile()
 if rcFile is None:
     exec( dejavurcText )
 else:
-    execfile( rcFile )
+    exec(compile(open( rcFile, "rb" ).read(), rcFile, 'exec'))
 
-from Viewer import Viewer
-from viewerConst import *
+from .Viewer import Viewer
+from .viewerConst import *
 
 CRITICAL_DEPENDENCIES = ['opengltk', 'numpy', 'mglutil','geomutils']
 NONCRITICAL_DEPENDENCIES = ['PIL', 'numarray', 'Pmw', 'gle', 'UTpackages', 'NetworkEditor', 'symserv', 'Vision', 'Volume', 'QSlimLib', 'bhtree','pyglf', 'pymedia','Scenario2', 'SimPy', 'mslib', 'pytz', 'Pmv', 'bpy', 'BPyMesh', 'MolKit']

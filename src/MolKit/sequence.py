@@ -19,7 +19,7 @@ from MolKit import pdbWriter
 
 from MolKit.PDBresidueNames import AAnames
 oneLetterNames = AAnames
-threeLetterNames = oneLetterNames.keys()
+threeLetterNames = list(oneLetterNames.keys())
 
 
 class Sequence:
@@ -48,11 +48,11 @@ class Sequence:
 
 
     def applyNumbers(self, numbers=None):
-        gapMap = map(lambda x: x in ['-','|'],self.sequence)
+        gapMap = [x in ['-','|'] for x in self.sequence]
         ngaps = numpy.sum(gapMap)
         nresidues = len(gapMap)-ngaps
         if numbers is None:
-            numbers = map(lambda x: str(x+1),range(nresidues))
+            numbers = [str(x+1) for x in range(nresidues)]
         if len(numbers)!=nresidues:
             raise ValueError('Numbers do not correspond to all residues')
         self.numbers = numbers
@@ -137,7 +137,7 @@ class Alignment:
     def read(self,alnFileName):
         data = open(alnFileName).readlines()
         if data[0][:7]!='CLUSTAL':
-            print 'Not a clustalformatted file'
+            print('Not a clustalformatted file')
             return None
         sequences = {}
         seqNames = []
@@ -146,7 +146,7 @@ class Alignment:
                 info = line.split()
                 seqName = info[0]
                 seqData = info[1]
-                if not sequences.has_key(seqName):
+                if seqName not in sequences:
                     sequences[seqName]=Sequence(name=seqName)
                     seqNames.append(seqName)
                 sequences[seqName] = sequences[seqName]+Sequence(sequence=seqData)
@@ -216,7 +216,7 @@ class Alignment:
         self.matrix = []
         for x in range(len(self.sequences)):
             numbers = self[x].gappednumbers
-            line = map(lambda x: x != '',numbers)
+            line = [x != '' for x in numbers]
             self.matrix.append(line)
         self.matrix = numpy.array(self.matrix)
 
@@ -229,7 +229,7 @@ class Alignment:
         if self.sequences:
             difflen = len(sequence)-len(self)
             if difflen >0:
-                seqNames = self.sequences.keys()
+                seqNames = list(self.sequences.keys())
                 addOn = difflen*'-'
                 for seqName in seqNames:
                     self.sequences[seqName] = self.sequences[seqName]+Sequence(sequence=addOn)

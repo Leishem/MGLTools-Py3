@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -19,7 +19,7 @@ from opengltk.OpenGL.GLU import gluProject
 from opengltk.extent.utillib import glCleanRotMat
 from opengltk.extent import _gllib as gllib
 
-import numpy.oldnumeric as Numeric, math
+import mglcompat.oldnumeric as Numeric, math
 
 import DejaVu
 from mglutil.events import Event
@@ -48,11 +48,11 @@ class Transformable:
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
         """Reset the tranformations (Rotation, translation, pivot, scale)"""
-	self.rotation = Numeric.identity(4).astype('f')
-	self.rotation.shape = (16, )
-	self.translation = Numeric.zeros( (3,), 'f')
-	self.pivot = Numeric.zeros( (3,), 'f')
-	self.scale = Numeric.ones( (3,), 'f')
+        self.rotation = Numeric.identity(4).astype('f')
+        self.rotation.shape = (16, )
+        self.translation = Numeric.zeros( (3,), 'f')
+        self.pivot = Numeric.zeros( (3,), 'f')
+        self.scale = Numeric.ones( (3,), 'f')
         if self.viewer:
             if self.viewer.currentObject != self.viewer.rootObject \
                and redo:
@@ -62,14 +62,14 @@ class Transformable:
     def __init__(self, viewer=None):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Constructor"""
+        """Constructor"""
 
         self.inheritXform = 1                    # set to 0 not to inherit
-	self.redirectXform = None                # object to which transf.
-	                                         # should be redirected
-	self.propagateRedirection = 1
+        self.redirectXform = None                # object to which transf.
+                                                 # should be redirected
+        self.propagateRedirection = 1
 
-	self.copyXform = []                      # list of objects to be
+        self.copyXform = []                      # list of objects to be
                                                  # transf. along with me
 
                                                  # Object's original transf.
@@ -82,16 +82,16 @@ class Transformable:
         self.MatrixTransl = Numeric.zeros( (3,), 'f')
         self.viewer = viewer
         
-	self.ResetTransformation(redo=0)               # init object's transf.
+        self.ResetTransformation(redo=0)               # init object's transf.
 
-	self.R = Numeric.identity(4).astype('f') # Object's frame rotation
-	self.R.shape = (16, )
+        self.R = Numeric.identity(4).astype('f') # Object's frame rotation
+        self.R.shape = (16, )
 
-	self.Ri = Numeric.identity(4) .astype('f') # Inverse of R
-	self.Ri.shape = (16, )
+        self.Ri = Numeric.identity(4) .astype('f') # Inverse of R
+        self.Ri.shape = (16, )
 
-	self.Si = Numeric.ones( (3, ) ).astype('f') # Inverse of frame's scale
-	self.isScalable = 1
+        self.Si = Numeric.ones( (3, ) ).astype('f') # Inverse of frame's scale
+        self.isScalable = 1
 
         self.immediateRendering = False
         #self.hasChildWithImmediateRendering = False # set to True if a child is not using dpyList
@@ -180,34 +180,34 @@ scale should be 3-vector of positive number larger than 0.0
     def RedirectTransformTo(self, object=None, propagate=1):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Apply transformations to object rather than to myself"""
-	
-	children = []
-	if object:
-	    assert isinstance(object, Transformable)
+        """Apply transformations to object rather than to myself"""
+        
+        children = []
+        if object:
+            assert isinstance(object, Transformable)
 
-	if object:
-	    if hasattr(self, 'AllObjects'):
-		children = self.AllObjects()
-	    else:
-		if object in children:
-		    raise AttributeError("%s is a child of %s, therefore it \
+        if object:
+            if hasattr(self, 'AllObjects'):
+                children = self.AllObjects()
+            else:
+                if object in children:
+                    raise AttributeError("%s is a child of %s, therefore it \
 already inherits the transformation" % (self.name, object.name) )
 
-	self.propagateRedirection = propagate
+        self.propagateRedirection = propagate
 
-	while object and object.redirectXform and object.propagateRedirection:
-	    object = object.redirectXform
-	self.redirectXform = object
-	for o in children:
-	    if o.redirectXform: o.redirectXform=object
+        while object and object.redirectXform and object.propagateRedirection:
+            object = object.redirectXform
+        self.redirectXform = object
+        for o in children:
+            if o.redirectXform: o.redirectXform=object
 
 
     def MoveWith(self, object=None):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Add myself to the list of objects inheriting transf. from object"""
-	
+        """Add myself to the list of objects inheriting transf. from object"""
+        
         if object:
             assert isinstance(object, Transformable)
         
@@ -240,7 +240,7 @@ inherits the transformation" % (self.name, object.name) )
     def SetPivot(self, new_pivot):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Set the center of rotation.
+        """Set the center of rotation.
         the pivot point should be expressed in the coordinate system defined
         by all the transformations above this node including this node's
         transformation"""
@@ -254,7 +254,7 @@ inherits the transformation" % (self.name, object.name) )
         newPivotTrans = Numeric.dot(MatrixRotInv[:3,:3], scalTrans)
         for j in (0,1,2):
             self.translation[j] = self.translation[j] + \
-				  pivotTrans[j]
+                                  pivotTrans[j]
             for i in (0,1,2):
                 self.translation[j] = self.translation[j] + \
                      scal[i] * (newPivotTrans[i]) * self.rotation[i*4+j]
@@ -297,7 +297,7 @@ inherits the transformation" % (self.name, object.name) )
     def MakeMat(self, scale=True):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Build the matrix for this object in his parent's frame"""
+        """Build the matrix for this object in his parent's frame"""
         gllib.glTranslatef(float(self.translation[0]),
                            float(self.translation[1]),
                            float(self.translation[2]))
@@ -327,7 +327,7 @@ inherits the transformation" % (self.name, object.name) )
     def BuildMat(self, obj, root, scale, instance):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Build the matrix by which this object is transformed
+        """Build the matrix by which this object is transformed
 instance is a list of integer providing instance indices for all parents
 """
 
@@ -364,7 +364,7 @@ instance is a list of integer providing instance indices for all parents
     def GetMatrix(self, root=None, instance=None, scale=True, transpose=True):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Returns the matrix by which this object is transformed
+        """Returns the matrix by which this object is transformed
 scale = False: returns the rotation and translation. no scaling info included
                Used to save the transformed geom --> coords --> new pdb file
 instance is a list of integer instance indices for all parents
@@ -398,7 +398,7 @@ instance is a list of integer instance indices for all parents
     def GetMatrixInverse(self, root=None, instance=None):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Returns the inverse of the matrix used to transform this object"""
+        """Returns the inverse of the matrix used to transform this object"""
 
         if root is None:
             root = self.viewer.rootObject
@@ -420,12 +420,12 @@ instance is a list of integer instance indices for all parents
     def FrameTransform(self, camera=None):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Build the R an RI, the object's frame transformation and inverse"""
+        """Build the R an RI, the object's frame transformation and inverse"""
 
-	GL.glPushMatrix()
-	self.Si = Numeric.ones( (3, ) )
-	GL.glLoadIdentity()
-	if hasattr(self, 'parent'):
+        GL.glPushMatrix()
+        self.Si = Numeric.ones( (3, ) )
+        GL.glLoadIdentity()
+        if hasattr(self, 'parent'):
             if self.inheritXform:
                 parent = self.parent
                 while (parent):
@@ -443,27 +443,27 @@ instance is a list of integer instance indices for all parents
                     parent = parent.parent
 
 
-	if camera:
-	    m = Numeric.reshape( camera.rotation, (4,4) )
-	    upd = Numeric.reshape( Numeric.transpose(m), (16, ) )
-	    GL.glMultMatrixf(upd)
+        if camera:
+            m = Numeric.reshape( camera.rotation, (4,4) )
+            upd = Numeric.reshape( Numeric.transpose(m), (16, ) )
+            GL.glMultMatrixf(upd)
             self.Si = self.Si / camera.scale
 
-	self.Ri = Numeric.array(GL.glGetDoublev(GL.GL_MODELVIEW_MATRIX)).astype('f')
-	GL.glPopMatrix()
-	self.Ri = glCleanRotMat(self.Ri).astype('f')
+        self.Ri = Numeric.array(GL.glGetDoublev(GL.GL_MODELVIEW_MATRIX)).astype('f')
+        GL.glPopMatrix()
+        self.Ri = glCleanRotMat(self.Ri).astype('f')
         self.Ri.shape = (4,4)
-	self.R = Numeric.reshape( Numeric.transpose(self.Ri), (16, ) ).astype('f')
-	self.Ri.shape = (16, )
+        self.R = Numeric.reshape( Numeric.transpose(self.Ri), (16, ) ).astype('f')
+        self.Ri.shape = (16, )
 
-	if self.redirectXform: self.redirectXform.FrameTransform(camera)
-	for o in self.copyXform: o.FrameTransform(camera)
+        if self.redirectXform: self.redirectXform.FrameTransform(camera)
+        for o in self.copyXform: o.FrameTransform(camera)
 
 
     def SetTransformation(self, matrix, transpose=False, redo=True):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Set the transformation matrix, if transpose is False the rotation
+        """Set the transformation matrix, if transpose is False the rotation
 should be in FORTRAN style
 """
         if transpose:
@@ -484,12 +484,12 @@ should be in FORTRAN style
     def SetRotation(self, matrix, redo=1):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Set the rotation matrix to the object [matrix.shape==(16,)]"""
-	assert matrix.shape == (16,)
+        """Set the rotation matrix to the object [matrix.shape==(16,)]"""
+        assert matrix.shape == (16,)
         self._modified = True
 ##  	if self.redirectXform: obj = self.redirectXform
 ##  	else: obj = self
-	self.rotation = matrix
+        self.rotation = matrix
 ##  	for o in self.copyXform: o.SetRotation(camera)
         if redo and self.viewer and self != self.viewer.rootObject and \
            not self.immediateRendering:
@@ -506,8 +506,8 @@ should be in FORTRAN style
         """
         self._modified = True
         obj = self
-	GL.glPushMatrix()
-	GL.glLoadIdentity()
+        GL.glPushMatrix()
+        GL.glLoadIdentity()
 ##         GL.glMultMatrixf(obj.rotation)
         GL.glMultMatrixf(matrix)
         GL.glMultMatrixf(obj.rotation)
@@ -520,22 +520,22 @@ should be in FORTRAN style
     def ConcatRotation(self, matrix, redo=1):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Apply the rotation matrix to the object [matrix.shape==(16,)]"""
-	
-	if self.redirectXform: obj = self.redirectXform
-	else: obj = self
+        """Apply the rotation matrix to the object [matrix.shape==(16,)]"""
+        
+        if self.redirectXform: obj = self.redirectXform
+        else: obj = self
         obj._modified = True
-	GL.glPushMatrix()
-	GL.glLoadIdentity()
-	GL.glMultMatrixf(obj.Ri)#.astype('f'))
-	GL.glMultMatrixf(matrix)
-	GL.glMultMatrixf(obj.R)#.astype('f'))
-	GL.glMultMatrixf(obj.rotation)
+        GL.glPushMatrix()
+        GL.glLoadIdentity()
+        GL.glMultMatrixf(obj.Ri)#.astype('f'))
+        GL.glMultMatrixf(matrix)
+        GL.glMultMatrixf(obj.R)#.astype('f'))
+        GL.glMultMatrixf(obj.rotation)
 
-	m = Numeric.array(GL.glGetDoublev(GL.GL_MODELVIEW_MATRIX)).astype('f')
+        m = Numeric.array(GL.glGetDoublev(GL.GL_MODELVIEW_MATRIX)).astype('f')
         obj.rotation = glCleanRotMat(m).astype('f')
-	obj.rotation.shape = (16, )
-	GL.glPopMatrix()
+        obj.rotation.shape = (16, )
+        GL.glPopMatrix()
         for o in self.copyXform: o.ConcatRotation(matrix)
 
         ## This code made rotation very slow because it would rebuild the
@@ -551,17 +551,17 @@ should be in FORTRAN style
            vi.redirectTransformToRoot) and redo and \
            not self.immediateRendering:
             vi.deleteOpenglList()
-	
+        
 
     def SetTranslation(self, trans, redo=1):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Set the translation trans to the object"""
-	assert trans.shape == (3,)
+        """Set the translation trans to the object"""
+        assert trans.shape == (3,)
         self._modified = True
 ##  	if self.redirectXform: obj = self.redirectXform
 ##  	else: obj = self
-	self.translation = trans
+        self.translation = trans
 ##  	for o in self.copyXform: o.SetTranslation(camera)
         if self.viewer and self != self.viewer.rootObject and redo and \
            not self.immediateRendering:
@@ -615,28 +615,28 @@ should be in FORTRAN style
     def SetScale(self, scale, redo=1):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Set the scaling factor of the object"""
+        """Set the scaling factor of the object"""
         #print "SetScale", redo
 ##  	if self.redirectXform: obj = self.redirectXform
 ##  	else: obj = self
         self._modified = True
         scale = Numeric.array(scale)
-	if self.isScalable:
-	    assert scale.shape == (3,)
-	    if scale[0] > 0.00 and scale[1] > 0.00 and scale[2] > 0.00:
-		self.scale = scale
+        if self.isScalable:
+            assert scale.shape == (3,)
+            if scale[0] > 0.00 and scale[1] > 0.00 and scale[2] > 0.00:
+                self.scale = scale
 ##  	for o in self.copyXform: o.SetScale(camera)
         if self.viewer and (self != self.viewer.rootObject or \
            self.viewer.activeClippingPlanes > 0) and redo and \
            not self.immediateRendering:
             self.viewer.deleteOpenglList()
-	#self.viewer.Redraw()
+        #self.viewer.Redraw()
         
 
     def ConcatScale(self, scale, redo=1):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Multiply the object's scale by scale"""
+        """Multiply the object's scale by scale"""
 
         if self.redirectXform: obj = self.redirectXform
         else: obj = self
@@ -677,7 +677,7 @@ should be in FORTRAN style
         mat = self.GetMatrix()
         rot, trans, scale = self.Decompose4x4(Numeric.transpose(mat).ravel())
         src = []
-        src.append("from numpy.oldnumeric import array\n")
+        src.append("from mglcompat.oldnumeric import array\n")
         src.append("rot = " + repr(rot) + ".astype('f')\n")
         src.append("trans = " + repr(trans) + "\n")
         src.append("scale = " + repr(scale) + "\n")

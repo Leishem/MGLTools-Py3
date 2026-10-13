@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
 #
@@ -13,7 +13,7 @@
 # $Id: amberCommands.py,v 1.45 2009/11/09 23:43:29 annao Exp $
 #
 
-import Tkinter, numpy.oldnumeric as Numeric
+import tkinter, mglcompat.oldnumeric as Numeric
 import Pmw
 import glob
 from math import pi, sqrt, ceil
@@ -81,11 +81,11 @@ class SetupAmber94(MVCommand):
 
     def onAddCmdToViewer(self):
         if self.vf.hasGui:
-            self.useFile = Tkinter.IntVar()
+            self.useFile = tkinter.IntVar()
             self.useFile.set(0)
-            self.specData = Tkinter.IntVar()
+            self.specData = tkinter.IntVar()
             self.specData.set(0)
-            self.keyStr = Tkinter.StringVar()
+            self.keyStr = tkinter.StringVar()
         else:
             from mglutil.util.misc import IntVar, StringVar
             self.useFile = IntVar(0)
@@ -106,7 +106,7 @@ class SetupAmber94(MVCommand):
         chains = chains.findType(Chain)
         kw['dataDict'] = dataDict
         kw['filename'] = filename
-        return apply(self.doitWrapper, (chains, key), kw)
+        return self.doitWrapper(*(chains, key), **kw)
 
 
     def doit(self, chains, key, **kw):
@@ -114,19 +114,19 @@ class SetupAmber94(MVCommand):
         filename = kw['filename']
         if filename is not None:
             if not exists(filename):
-                print filename, " does not exist"
+                print(filename, " does not exist")
                 return "ERROR"
             amb_ins = Amber94(atoms, prmfile=filename)
             #this doesn't work!!!
             #parmtop.loadFromFile(filename)
         else:
             dataDict = kw.get('dataDict', {})
-            print 'calling Amber94 init with dataDict=', dataDict
+            print('calling Amber94 init with dataDict=', dataDict)
             amb_ins = Amber94(atoms, dataDict = dataDict)
         amb_ins.key = key
         Amber94Config[key] = [amb_ins]
         self.CurrentAmber94 = amb_ins
-        print 'set CurrentAmber94 to', self.CurrentAmber94
+        print('set CurrentAmber94 to', self.CurrentAmber94)
         #Amber94Config values will be a list where instance is list[0] and 
         #sets of parms used for minimizations the rest....
         
@@ -151,7 +151,7 @@ class SetupAmber94(MVCommand):
         chains = nodes.findType(Chain).uniq()
         ifd = self.ifd = InputFormDescr(title = " Set Up Amber94 instance:")
         ifd.append({'name':'fileRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Read from file',
                 'variable': self.useFile,
                 'command': self.getFile,
@@ -159,21 +159,21 @@ class SetupAmber94(MVCommand):
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'fileRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Build from atoms',
                 'variable': self.useFile,
                 'value':0,
                 },
             'gridcfg':{'sticky':'w', 'row':-1, 'column':1}})
         ifd.append({'name':'parmDCB',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Specify parm data',
                 'variable': self.specData,
                 'command': self.setData,
                 },
             'gridcfg':{'sticky':'w', 'row':-1, 'column':2}})
         ifd.append({'name': 'nameStr',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{ 
                     'label': 'Enter identifier',
                     'textvariable': self.keyStr, 
@@ -190,7 +190,7 @@ class SetupAmber94(MVCommand):
             if hasattr(self, 'dataDict'):
                 kw['dataDict'] = self.dataDict
             kw['filename'] = file
-            return apply(self.doitWrapper, (chains, key), kw)
+            return self.doitWrapper(*(chains, key), **kw)
         else:
             return 'ERROR'
 
@@ -306,19 +306,19 @@ a separate class in order to create a clear log.
         None<-setminimOpts_Amber94(key, **kw)
 
         """
-        return apply(self.doitWrapper, (key,), kw)
+        return self.doitWrapper(*(key,), **kw)
 
 
     def doit(self, key, **kw):
-        if key not in Amber94Config.keys():
-            print 'key: ', key, " is not in current Amber94Config "
+        if key not in list(Amber94Config.keys()):
+            print('key: ', key, " is not in current Amber94Config ")
             return 'ERROR'
         amber94instance = Amber94Config[key][0] 
         amb_ins = self.CurrentAmber94 = amber94instance
-        for k in kw.keys():
+        for k in list(kw.keys()):
             assert k in ['cut', 'nsnb', 'ntpr', 'scnb','scee',
                             'mme_init_first', 'dield', 'verbosemm']
-        apply(amb_ins.setMinimizeOptions, (), kw)
+        amb_ins.setMinimizeOptions(*(), **kw)
 
 
     def Close_cb(self, ifd, event=None):
@@ -328,12 +328,12 @@ a separate class in order to create a clear log.
 
     def buildForm(self):
         ifd = self.ifd = InputFormDescr(title = "Set parameters for amber94 minimization:")
-        self.verbose = Tkinter.StringVar()
+        self.verbose = tkinter.StringVar()
         self.verbose.set('print summary')
         self.verbose_list = ['no print out', 'print summary', 'print summary w/energies']
-        self.dield = Tkinter.IntVar()
+        self.dield = tkinter.IntVar()
         self.dield.set(1)
-        self.id = Tkinter.StringVar()
+        self.id = tkinter.StringVar()
         self.id.set(self.CurrentAmber94.key)
         #self.id.set(Amber94Config.keys()[0])
         ifd.append({'widgetType':Pmw.ComboBox,
@@ -342,7 +342,7 @@ a separate class in order to create a clear log.
                     'entryfield_value':self.id.get(),
                     'labelpos':'w',
                     'listheight':'80',
-                    'scrolledlist_items': Amber94Config.keys(),
+                    'scrolledlist_items': list(Amber94Config.keys()),
                     'selectioncommand': self.update,
                     },
             'gridcfg':{'sticky':'w'}})
@@ -356,7 +356,7 @@ a separate class in order to create a clear log.
                     },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'dield_cb',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'dield -constant dielectric function',
                 'variable': self.dield,
                 },
@@ -409,12 +409,12 @@ a separate class in order to create a clear log.
                     'value':50,
                     'oneTurn':50.,},
              'gridcfg':{'columnspan':2,'sticky':'e'}})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Accept',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we'},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we', 'column':1,'row':-1},
@@ -442,7 +442,7 @@ a separate class in order to create a clear log.
         else:
             minOptD['verbosemm'] = self.verbose_list.index(w)
         minOptD['dield'] = self.dield.get()
-        apply(self.doitWrapper, (key,), minOptD )
+        self.doitWrapper(*(key,), **minOptD)
         #apply(amb_ins.setMinimizeOptions,(),minOptD)
 
 
@@ -457,12 +457,12 @@ a separate class in order to create a clear log.
 
 
     def guiCallback(self):
-        if not len(Amber94Config.keys()):
+        if not len(list(Amber94Config.keys())):
             self.warningMsg('no Amber94 objects present: SetupAmber94 first')
             return 'ERROR'
 
         if self.CurrentAmber94=={}:
-            self.CurrentAmber94 = Amber94Config.values()[0][0]
+            self.CurrentAmber94 = list(Amber94Config.values())[0][0]
 
         #ALLOW USER TO SET parameters here
         if not hasattr(self, 'ifd'):
@@ -471,7 +471,7 @@ a separate class in order to create a clear log.
             lb =  self.ifd.entryByName['amberIds']['widget']._list
             #make sure to update the listbox:
             lb.delete(0, 'end')
-            for k in Amber94Config.keys():
+            for k in list(Amber94Config.keys()):
                 lb.insert('end', k)
             self.form.deiconify()
 
@@ -531,12 +531,12 @@ key is key into Amber94Config dictionary\n
                     callback\n
                     callback_freq\n
         """
-        return apply(self.doitWrapper, (key,), kw)
+        return self.doitWrapper(*(key,), **kw)
 
 
     def doit(self, key, **kw):
-        if key not in Amber94Config.keys():
-            print 'key: ', key, " is not in current Amber94Config "
+        if key not in list(Amber94Config.keys()):
+            print('key: ', key, " is not in current Amber94Config ")
             return 'ERROR' 
         amber94instance = Amber94Config[key][0] 
         amb = self.CurrentAmber94 = amber94instance
@@ -547,7 +547,7 @@ key is key into Amber94Config dictionary\n
         callback = kw.get('callback')
 
         for k in ['callback_freq', 'callback']:
-            if kw.has_key(k):
+            if k in kw:
                 del kw[k]
         #if kw.has_key('callback'):
             #del kw['callback']
@@ -561,8 +561,8 @@ key is key into Amber94Config dictionary\n
             #print 'setting callback to updateCoords'
             amb.setCallback(self.updateCoords, freq)
 
-        return_code = apply(amber94instance.minimize,(), kw)
-        print 'return_code=', return_code
+        return_code = amber94instance.minimize(*(), **kw)
+        print('return_code=', return_code)
         return  return_code
         
 
@@ -590,20 +590,20 @@ key is key into Amber94Config dictionary\n
 
     def buildForm(self):
         ifd = self.ifd = InputFormDescr(title = "Minimize amber94:")
-        self.verbose = Tkinter.StringVar()
+        self.verbose = tkinter.StringVar()
         self.verbose.set('print summary')
-        self.dield = Tkinter.IntVar()
+        self.dield = tkinter.IntVar()
         self.dield.set(1)
-        self.callback = Tkinter.IntVar()
-        self.callbackFreq = Tkinter.StringVar()
+        self.callback = tkinter.IntVar()
+        self.callbackFreq = tkinter.StringVar()
         self.callbackFreq.set('10')
-        self.id = Tkinter.StringVar()
+        self.id = tkinter.StringVar()
         #self.id.set(Amber94Config.keys()[0])
         self.id.set(self.CurrentAmber94.key)
         frozNum = Numeric.add.reduce(self.CurrentAmber94.frozen)
-        self.frozenLab = Tkinter.StringVar()
+        self.frozenLab = tkinter.StringVar()
         fstr = 'Currently ' + str(frozNum) + ' frozen atoms'
-        self.constrLab = Tkinter.StringVar()
+        self.constrLab = tkinter.StringVar()
         constrNum = Numeric.add.reduce(self.CurrentAmber94.constrained)
         cstr = 'Currently ' + str(constrNum) + ' constrained atoms'
         self.constrLab.set(cstr)
@@ -613,35 +613,35 @@ key is key into Amber94Config dictionary\n
                     'entryfield_value':self.id.get(),
                     'labelpos':'w',
                     'listheight':'80',
-                    'scrolledlist_items': Amber94Config.keys(),
+                    'scrolledlist_items': list(Amber94Config.keys()),
                     'selectioncommand': self.update,
                     },
             'gridcfg':{'sticky':'w'}})
             #'gridcfg':{'sticky':'nesw','row':-1, 'column':1}}),
         ifd.append({'name':'setminopts_cb',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'set minimization options',
                 'command': self.setMinOpts,
                 },
             'gridcfg':{'sticky':'w', 'row':-1,'column':1}})
         ifd.append({'name':'frozen_lab',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'textvariable':self.frozenLab,
             'wcfg':{'font':(ensureFontCase('helvetica'),12,'bold') },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'const_lab',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'textvariable':self.constrLab,
             'wcfg':{'font':(ensureFontCase('helvetica'),12,'bold') },
             'gridcfg':{'sticky':'w','row':-1,'column':1}})
         ifd.append({'name':'setfroz_cb',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'set frozen atoms',
                 'command': self.setFrozenAtoms,
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'setcons_cb',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'set constrained atoms',
                 'command': self.setConstrainedAtoms,
                 },
@@ -699,14 +699,14 @@ key is key into Amber94Config dictionary\n
                     'oneTurn':1.,},
              'gridcfg':{'columnspan':2,'sticky':'e'}})
         ifd.append({'name':'callback_cb',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'update geometries',
                 'variable': self.callback,
                 'command': self.disableCallbackFreq,
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name': 'callback_ent',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{ 
                     'label': 'update frequency',
                     #'label': 'callback frequency',
@@ -719,12 +719,12 @@ key is key into Amber94Config dictionary\n
                     },
             'gridcfg':{'sticky':'we', 'row':-1, 'column':1}})
         
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Minimize',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we'},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we', 'column':1,'row':-1},
@@ -769,7 +769,7 @@ key is key into Amber94Config dictionary\n
             d[s] =  val
         d['callback'] = self.callback.get()
         d['callback_freq'] = self.callbackFreq.get()
-        return apply(self.doitWrapper, (key,),  d)
+        return self.doitWrapper(*(key,), **d)
 
 
     def setMinOpts(self, event=None):
@@ -807,12 +807,12 @@ key is key into Amber94Config dictionary\n
 
 
     def guiCallback(self):
-        if not len(Amber94Config.keys()):
+        if not len(list(Amber94Config.keys())):
             self.warningMsg('no Amber94 objects present: SetupAmber94 first')
             return 'ERROR'
 
         if self.CurrentAmber94=={}:
-            self.CurrentAmber94 = Amber94Config.values()[0][0]
+            self.CurrentAmber94 = list(Amber94Config.values())[0][0]
 
         #ALLOW USER TO SET parameters here
         if not hasattr(self, 'ifd'):
@@ -821,7 +821,7 @@ key is key into Amber94Config dictionary\n
             lb =  self.ifd.entryByName['amberIds']['widget']._list
             #make sure to update the listbox:
             lb.delete(0, 'end')
-            for k in Amber94Config.keys():
+            for k in list(Amber94Config.keys()):
                 lb.insert('end', k)
             self.form.deiconify()
 
@@ -853,8 +853,8 @@ class FreezeAtomsAmber94(MVCommand):
         len(frozenAtoms)<-freezeAtoms_amber94(key, atsToFreeze)
         """
         
-        if key not in Amber94Config.keys():
-            print 'key: ', key, " is not in current Amber94Config "
+        if key not in list(Amber94Config.keys()):
+            print('key: ', key, " is not in current Amber94Config ")
             return 'ERROR'
 
         atsToFreeze = self.vf.expandNodes(atsToFreeze)
@@ -862,7 +862,7 @@ class FreezeAtomsAmber94(MVCommand):
             return 'ERROR'
 
         atsToFreeze = atsToFreeze.findType(Atom)
-        return apply(self.doitWrapper, (key, atsToFreeze), kw)
+        return self.doitWrapper(*(key, atsToFreeze), **kw)
 
 
     def doit(self, key,  atsToFreeze, **kw):
@@ -875,18 +875,18 @@ class FreezeAtomsAmber94(MVCommand):
             chain_ids[id(c)] = 0
 
         for c in atsToFreeze.parent.uniq().parent.uniq():
-            assert chain_ids.has_key(id(c)), 'atoms to freeze not in Amber94 instance.atoms'
+            assert id(c) in chain_ids, 'atoms to freeze not in Amber94 instance.atoms'
 
         atsToFreezeIDS = {}
         for at in atsToFreeze:
             atsToFreezeIDS[id(at)] = 0
-        atomIndices = map(lambda x, d=atsToFreezeIDS: d.has_key(id(x)), amb_ins.atoms)
+        atomIndices = list(map(lambda x, d=atsToFreezeIDS: id(x) in d, amb_ins.atoms))
         #FIX THIS: it has to be put into the correct c-structure
         #print 'setting ', key, ' frozen to ', atomIndices
         #amb_ins.frozen = atomIndices
-        apply(amb_ins.freezeAtoms, (atomIndices,), {})
+        amb_ins.freezeAtoms(*(atomIndices,), **{})
         numFrozen = Numeric.add.reduce(Numeric.array(amb_ins.frozen))
-        print 'numFrozen=', numFrozen
+        print('numFrozen=', numFrozen)
         return numFrozen
         
 
@@ -897,12 +897,12 @@ class FreezeAtomsAmber94(MVCommand):
 
     def buildForm(self, tstr, mols, amb_ins):
         ifd = self.ifd = InputFormDescr(title = tstr)
-        self.id = Tkinter.StringVar()
+        self.id = tkinter.StringVar()
         #self.id.set(self.CurrentAmber94.key)
         self.id.set(amb_ins.key)
 
         frozNum = Numeric.add.reduce(amb_ins.frozen)
-        self.frozenLab = Tkinter.StringVar()
+        self.frozenLab = tkinter.StringVar()
         fstr = 'Currently ' + str(frozNum) + ' frozen atoms'
         self.frozenLab.set(fstr)
         ##self.frozenLab.set('Currently 0 frozen atoms')
@@ -916,18 +916,18 @@ class FreezeAtomsAmber94(MVCommand):
                     'entryfield_value':self.id.get(),
                     'labelpos':'w',
                     'listheight':'80',
-                    'scrolledlist_items': Amber94Config.keys(),
+                    'scrolledlist_items': list(Amber94Config.keys()),
                     'selectioncommand': self.update,
                     },
             'gridcfg':{'sticky':'w','columnspan':2}})
         ifd.append({'name':'frozen_lab',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'textvariable':self.frozenLab,
             'wcfg':{'font':(ensureFontCase('helvetica'),12,'bold') },
             'gridcfg':{'sticky':'w'}})
         #one string selector:
         ifd.append({'name':'frozAtsLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text':'Specify Frozen Atoms:\n',
             'gridcfg':{'sticky':'w'}})
         ifd.append({ 'widgetType':StringSelectorGUI,
@@ -938,17 +938,17 @@ class FreezeAtomsAmber94(MVCommand):
                       'crColor':(0.4,.8,1.),
                       },
              'gridcfg':{'sticky':'we','columnspan':3 }})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Freeze',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we'},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Unfreeze all',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we','row':-1,'column':1},
             'command':self.Unfreeze_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we', 'column':2,'row':-1},
@@ -987,7 +987,7 @@ class FreezeAtomsAmber94(MVCommand):
         l = []
         for i in range(len(amb_ins.atoms)):
             l.append(0)
-        apply(amb_ins.freezeAtoms, (l,), {})
+        amb_ins.freezeAtoms(*(l,), **{})
         numFrozen = Numeric.add.reduce(Numeric.array(amb_ins.frozen))
         self.updateLabels(numFrozen)
 
@@ -996,7 +996,7 @@ class FreezeAtomsAmber94(MVCommand):
         key = self.ifd.entryByName['amberIds']['widget'].get()
         amb_ins= Amber94Config[key]
         self.CurrentAmber94 = amb_ins
-        print 'set CurrentAmber94 to', self.CurrentAmber94
+        print('set CurrentAmber94 to', self.CurrentAmber94)
         #THIS SHOULD ADJUST THE DISPLAYED PARAMETERS....
         #for w in []:
             #FIX THIS!!!
@@ -1004,7 +1004,7 @@ class FreezeAtomsAmber94(MVCommand):
 
 
     def guiCallback(self):
-        if not len(Amber94Config.keys()):
+        if not len(list(Amber94Config.keys())):
             self.warningMsg('no Amber94 objects present: SetupAmber94 first')
             return 'ERROR'
         #if not self.CurrentAmber94:
@@ -1014,7 +1014,7 @@ class FreezeAtomsAmber94(MVCommand):
         #    self.CurrentAmber94 = Amber94Config.keys()[0][0]
 
         if self.CurrentAmber94=={}:
-            self.CurrentAmber94 = Amber94Config.values()[0][0]
+            self.CurrentAmber94 = list(Amber94Config.values())[0][0]
 
         #amb_ins = Amber94Config.values()[0][0]
         amb_ins = self.CurrentAmber94
@@ -1028,7 +1028,7 @@ class FreezeAtomsAmber94(MVCommand):
             lb =  self.ifd.entryByName['amberIds']['widget']._list
             #make sure to update the listbox:
             lb.delete(0, 'end')
-            for k in Amber94Config.keys():
+            for k in list(Amber94Config.keys()):
                 lb.insert('end', k)
             self.ifd.entryByName['frozAts']['widget'].molSet = mols
             self.ifd.title = tstr
@@ -1093,12 +1093,12 @@ class ConstrainAtomsAmber94(MVCommand):
         atsToConstrain = self.vf.expandNodes(atsToConstrain)
         if not len(atsToConstrain):
             return 'ERROR'
-        if key not in Amber94Config.keys():
-            print 'key: ', key, " is not in current Amber94Config "
+        if key not in list(Amber94Config.keys()):
+            print('key: ', key, " is not in current Amber94Config ")
             return 'ERROR' 
         #assert key in Amber94Config.keys()
             
-        return apply(self.doitWrapper, (key, atsToConstrain, anchorPts), kw)
+        return self.doitWrapper(*(key, atsToConstrain, anchorPts), **kw)
 
 
     def doit(self, key,  atsToConstrain, anchorPts,**kw):
@@ -1111,15 +1111,15 @@ class ConstrainAtomsAmber94(MVCommand):
             chain_ids[id(c)] = 0
 
         for c in atsToConstrain.parent.uniq().parent.uniq():
-            assert chain_ids.has_key(id(c)), 'atoms to constrain not in Amber94 instance.atoms'
+            assert id(c) in chain_ids, 'atoms to constrain not in Amber94 instance.atoms'
 
         atsToConstrainIDS = {}
         for at in atsToConstrain:
             atsToConstrainIDS[id(at)] = 0
-        atomIndices = map(lambda x, d=atsToConstrainIDS: d.has_key(id(x)), amb_ins.atoms)
+        atomIndices = list(map(lambda x, d=atsToConstrainIDS: id(x) in d, amb_ins.atoms))
 
         if len(kw):
-            apply(amb_ins.setMinimizeOptions,(), kw)
+            amb_ins.setMinimizeOptions(*(), **kw)
 
         #warn if wcons is 0:
         #if getattr(prmlib.cvar, 'wcons')==0:
@@ -1137,9 +1137,9 @@ class ConstrainAtomsAmber94(MVCommand):
             else:
                 clist.append(junkCoords[i])
         anchors = Numeric.array(clist).ravel()
-        apply(amb_ins.constrainAtoms, (atomIndices, anchors), {})
+        amb_ins.constrainAtoms(*(atomIndices, anchors), **{})
         numConstr = Numeric.add.reduce(Numeric.array(amb_ins.constrained))
-        print 'returning numConstr=', numConstr
+        print('returning numConstr=', numConstr)
         return numConstr
         
 
@@ -1150,16 +1150,16 @@ class ConstrainAtomsAmber94(MVCommand):
 
     def buildForm(self, tstr, mols):
         ifd = self.ifd = InputFormDescr(title = tstr)
-        self.id = Tkinter.StringVar()
+        self.id = tkinter.StringVar()
         #self.id.set(self.CurrentAmber94.key)
         #self.id.set(Amber94Config.keys()[0])
         self.id.set(self.CurrentAmber94.key)
-        self.constrLab = Tkinter.StringVar()
+        self.constrLab = tkinter.StringVar()
         cnum = Numeric.add.reduce(self.CurrentAmber94.constrained)
         cstr = 'Currently ' + str(cnum) + ' constrained atoms'
         self.constrLab.set(cstr)
-        self.adjustAnchor = Tkinter.StringVar()
-        self.adjAnchors = Tkinter.IntVar()
+        self.adjustAnchor = tkinter.StringVar()
+        self.adjAnchors = tkinter.IntVar()
         #self.constrLab.set('Currently 0 constrained atoms')
         ifd.append({'widgetType':Pmw.ComboBox,
             'name':'amberIds',
@@ -1167,18 +1167,18 @@ class ConstrainAtomsAmber94(MVCommand):
                     'entryfield_value':self.id.get(),
                     'labelpos':'w',
                     'listheight':'80',
-                    'scrolledlist_items': Amber94Config.keys(),
+                    'scrolledlist_items': list(Amber94Config.keys()),
                     'selectioncommand': self.update,
                     },
             'gridcfg':{'sticky':'w','columnspan':3}})
         #one string selector:
         ifd.append({'name':'constr_lab',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'textvariable':self.constrLab,
             'wcfg':{'font':(ensureFontCase('helvetica'),12,'bold') },
             'gridcfg':{'sticky':'w','columnspan':3}})
         ifd.append({'name':'constrAtsLab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text':'Specify Constrained Atoms:\n',
             'gridcfg':{'sticky':'w','columnspan':3}})
         ifd.append({ 'widgetType':StringSelectorGUI,
@@ -1190,7 +1190,7 @@ class ConstrainAtomsAmber94(MVCommand):
                       },
              'gridcfg':{'sticky':'we' ,'columnspan':3}})
         ifd.append({'name':'anchorCB',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Adjust anchorPts ',
                 'variable': self.adjAnchors,
                 'command': self.setAnchors,
@@ -1214,17 +1214,17 @@ class ConstrainAtomsAmber94(MVCommand):
                     'height':20,
                     'oneTurn':.5,},
              'gridcfg':{'columnspan':2,'sticky':'w','row':-1,'column':1}})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Ok',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we'},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Unconstrain all',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we','row':-1, 'column':1},
             'command':self.Unconstrain_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we', 'column':2,'row':-1},
@@ -1246,9 +1246,9 @@ class ConstrainAtomsAmber94(MVCommand):
     def Unconstrain_cb(self, event=None):
         amb_ins = self.CurrentAmber94
         ats = amb_ins.atoms
-        atInd = map(lambda x:x==2, ats)
+        atInd = [x==2 for x in ats]
         anchors = Numeric.array(ats.coords).ravel()
-        apply(amb_ins.constrainAtoms, (atInd, anchors,), {})
+        amb_ins.constrainAtoms(*(atInd, anchors,), **{})
         numConstr = Numeric.add.reduce(amb_ins.constrained)
         self.updateLabels(numConstr)
 
@@ -1256,7 +1256,7 @@ class ConstrainAtomsAmber94(MVCommand):
     def updateLabels(self, numConstr):
         #print 'in updateLabels'
         if numConstr==None:
-            print 'skipping update to None'
+            print('skipping update to None')
             raise 'abc'
             return
         cstr = 'Currently ' + str(numConstr) + ' constrained Atoms'
@@ -1289,7 +1289,7 @@ class ConstrainAtomsAmber94(MVCommand):
         else:
             anchorPts = constrAts.coords[:]
         #numConst = self.doitWrapper(key, constrAts, anchorPts)
-        numConstr = apply(self.doitWrapper,(key, constrAts, anchorPts,), kw)
+        numConstr = self.doitWrapper(*(key, constrAts, anchorPts,), **kw)
         #print 'updating labels with ', numConstr
         if numConstr!=None:
             self.updateLabels(numConstr)
@@ -1319,7 +1319,7 @@ class ConstrainAtomsAmber94(MVCommand):
             #check that every at is in current geomDict
             ok = 1
             for a in ats:
-                if not self.geomDict.has_key(id(a)):
+                if id(a) not in self.geomDict:
                     ok = 0
                     break
             for g in [self.spheres, self.lines]:
@@ -1397,15 +1397,15 @@ class ConstrainAtomsAmber94(MVCommand):
     #######################################################################
     def buildForm2(self):
         tstr = 'Adjust Anchor Positions'
-        self.currentAt = Tkinter.IntVar()
-        self.curAtLab = Tkinter.StringVar()
+        self.currentAt = tkinter.IntVar()
+        self.curAtLab = tkinter.StringVar()
         self.cur_at = self.ss.get().findType(Atom)[0]
         lstr= 'current atom: '+ self.cur_at.full_name()
         self.curAtLab.set(lstr)
         coords = self.cur_at.coords[:]
         ifd2 = self.ifd2 = InputFormDescr(title = tstr)
         ifd2.append({'name':'curAtlab',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'textvariable':self.curAtLab,
             'wcfg':{'font':(ensureFontCase('helvetica'),12,'bold') },
             'gridcfg':{'sticky':'w','columnspan':2}})
@@ -1441,14 +1441,14 @@ class ConstrainAtomsAmber94(MVCommand):
              'gridcfg':{'sticky':'w', 'row':-1, 'column':2}})
         ifd2.append({
             'name':'resetbut',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Reset All',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we','columnspan':2},
             'command':self.Reset_cb})
         ifd2.append({
             'name':'cancelbut',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Close',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we', 'row':-1, 'column':2},
@@ -1480,7 +1480,7 @@ class ConstrainAtomsAmber94(MVCommand):
         for b in bButtons:
             self.ifd2.entryByName[b]['widget'].grid_forget()
         #next remove former rb_* buttons:
-        for k,v in self.ifd2.entryByName.items():
+        for k,v in list(self.ifd2.entryByName.items()):
             if k[:3]=='rb_':
                 v['widget'].grid_forget()
                 del self.ifd2.entryByName[k]
@@ -1491,7 +1491,7 @@ class ConstrainAtomsAmber94(MVCommand):
         atCtr = 0
         for at in ats:
             entry = {'name':'rb_%s'%id(at),
-                'widgetType':Tkinter.Radiobutton,
+                'widgetType':tkinter.Radiobutton,
                 'text':at.full_name(),
                 'variable': self.currentAt,
                 'value':atCtr,
@@ -1595,14 +1595,14 @@ class ConstrainAtomsAmber94(MVCommand):
 
 
     def guiCallback(self):
-        if not len(Amber94Config.keys()):
+        if not len(list(Amber94Config.keys())):
             self.warningMsg('no Amber94 objects present: SetupAmber94 first')
             return 'ERROR'
         #amb_ins = Amber94Config.values()[0][0]
         #key = amb_ins.key
         #mols = amb_ins.atoms.top.uniq()
         if self.CurrentAmber94=={}:
-            self.CurrentAmber94 = Amber94Config.values()[0][0]
+            self.CurrentAmber94 = list(Amber94Config.values())[0][0]
         key = self.CurrentAmber94.key
         mols = self.CurrentAmber94.atoms.top.uniq()
         tstr = "Set atoms to be constrained for  " + key + ":"
@@ -1612,7 +1612,7 @@ class ConstrainAtomsAmber94(MVCommand):
             lb =  self.ifd.entryByName['amberIds']['widget']._list
             #make sure to update the listbox:
             lb.delete(0, 'end')
-            for k in Amber94Config.keys():
+            for k in list(Amber94Config.keys()):
                 lb.insert('end', k)
             self.ifd.entryByName['constrAts']['widget'].molSet = mols
             self.ifd.title = tstr
@@ -1645,20 +1645,20 @@ class SetMDOptsAmber94(MVCommand):
         """None<-setmdOpts_Amber94(key, **kw)
         \nkey --- identifier to be key for this Amber94 instance in Amber94Config dictionary\n
         """
-        return apply(self.doitWrapper, (key,), kw)
+        return self.doitWrapper(*(key,), **kw)
 
 
     def doit(self, key, **kw):
-        if key not in Amber94Config.keys():
-            print 'key: ', key, " is not in current Amber94Config "
+        if key not in list(Amber94Config.keys()):
+            print('key: ', key, " is not in current Amber94Config ")
             return 'ERROR'
         amber94instance = Amber94Config[key][0] 
         amb_ins = self.CurrentAmber94 = amber94instance
-        for k in kw.keys():
+        for k in list(kw.keys()):
             assert k in ['t','dt','tautp','temp0','verbosemd','ntwx',
                          'vlimit', 'ntpr_md', 
                          'zerov', 'tempi', 'idum']
-        apply(amb_ins.setMdOptions, (), kw)
+        amb_ins.setMdOptions(*(), **kw)
 
 
     def Close_cb(self, ifd, event=None):
@@ -1668,11 +1668,11 @@ class SetMDOptsAmber94(MVCommand):
 
     def buildForm(self):
         ifd = self.ifd = InputFormDescr(title = "Set parameters for amber94 molecular dynamics:")
-        self.verbose = Tkinter.StringVar()
+        self.verbose = tkinter.StringVar()
         self.verbose.set('print summary')
         self.verbose_list = ['no print out', 'print summary', 'print summary w/energies']
-        self.zerov = Tkinter.IntVar()
-        self.id = Tkinter.StringVar()
+        self.zerov = tkinter.IntVar()
+        self.id = tkinter.StringVar()
         self.id.set(self.CurrentAmber94.key)
 
         ifd.append({'widgetType':Pmw.ComboBox,
@@ -1681,7 +1681,7 @@ class SetMDOptsAmber94(MVCommand):
                     'entryfield_value':self.id.get(),
                     'labelpos':'w',
                     'listheight':'80',
-                    'scrolledlist_items': Amber94Config.keys(),
+                    'scrolledlist_items': list(Amber94Config.keys()),
                     'selectioncommand': self.update,
                     },
             'gridcfg':{'sticky':'w'}})
@@ -1696,7 +1696,7 @@ class SetMDOptsAmber94(MVCommand):
             'gridcfg':{'sticky':'w'}})
 
         ifd.append({'name':'zerov_cb',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'zerov - use zero initial velocities',
                 'variable': self.zerov,
                 },
@@ -1847,12 +1847,12 @@ class SetMDOptsAmber94(MVCommand):
                     'value':-1,
                     'oneTurn':1,},
              'gridcfg':{'columnspan':2,'sticky':'e'}})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Accept',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we'},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we', 'column':1,'row':-1},
@@ -1883,7 +1883,7 @@ class SetMDOptsAmber94(MVCommand):
             mdOptD['verbosemd'] = self.verbose_list.index(w)
         mdOptD['zerov'] = self.zerov.get()
         #apply(amb_ins.setMdOptions, (), mdOptD)
-        apply(self.doitWrapper, (key,), mdOptD)
+        self.doitWrapper(*(key,), **mdOptD)
 
 
     def update(self, event=None):
@@ -1898,12 +1898,12 @@ class SetMDOptsAmber94(MVCommand):
 
 
     def guiCallback(self):
-        if not len(Amber94Config.keys()):
+        if not len(list(Amber94Config.keys())):
             self.warningMsg('no Amber94 objects present: SetupAmber94 first')
             return 'ERROR'
 
         if self.CurrentAmber94=={}:
-            self.CurrentAmber94 = Amber94Config.values()[0][0]
+            self.CurrentAmber94 = list(Amber94Config.values())[0][0]
 
         #ALLOW USER TO SET parameters here
         if not hasattr(self, 'ifd'):
@@ -1912,7 +1912,7 @@ class SetMDOptsAmber94(MVCommand):
             lb =  self.ifd.entryByName['amberIds']['widget']._list
             #make sure to update the listbox:
             lb.delete(0, 'end')
-            for k in Amber94Config.keys():
+            for k in list(Amber94Config.keys()):
                 lb.insert('end', k)
             self.form.deiconify()
 
@@ -1956,12 +1956,12 @@ key is key into Amber94Config dictionary\n
         """
         #FIX THESE!
 
-        return apply(self.doitWrapper, (key, maxStep,), kw)
+        return self.doitWrapper(*(key, maxStep,), **kw)
 
 
     def doit(self, key, maxStep, **kw):
-        if key not in Amber94Config.keys():
-            print 'key: ', key, " is not in current Amber94Config "
+        if key not in list(Amber94Config.keys()):
+            print('key: ', key, " is not in current Amber94Config ")
             return 'ERROR'
         amb_ins = Amber94Config[key][0] 
         self.CurrentAmber94 = amb_ins
@@ -1989,7 +1989,7 @@ key is key into Amber94Config dictionary\n
             if numConst:
                 mdopt={}
                 mdopt['wcons'] = wcons
-                apply(amb_ins.setMinimizeOptions, (), mdopt)
+                amb_ins.setMinimizeOptions(*(), **mdopt)
 
         if callback:
             #add the coords here
@@ -2000,8 +2000,8 @@ key is key into Amber94Config dictionary\n
             #print 'setting callback to updateCoords'
             amb_ins.setCallback(self.updateCoords, freq)
 
-        return_code = apply(amb_ins.md,(maxStep,), kw)
-        print 'return_code=', return_code
+        return_code = amb_ins.md(*(maxStep,), **kw)
+        print('return_code=', return_code)
         return  return_code
 
 
@@ -2026,22 +2026,22 @@ key is key into Amber94Config dictionary\n
 
     def buildForm(self):
         ifd = self.ifd = InputFormDescr(title = "Set parameters for amber94 md:")
-        self.verbose = Tkinter.IntVar()
+        self.verbose = tkinter.IntVar()
         self.verbose.set('print summary')
-        self.dield = Tkinter.IntVar()
+        self.dield = tkinter.IntVar()
         self.dield.set(1)
-        self.callback = Tkinter.IntVar()
-        self.callbackFreq = Tkinter.StringVar()
+        self.callback = tkinter.IntVar()
+        self.callbackFreq = tkinter.StringVar()
         self.callbackFreq.set('10')
-        self.TrjFilename = Tkinter.StringVar()
+        self.TrjFilename = tkinter.StringVar()
         self.TrjFilename.set('')
-        self.id = Tkinter.StringVar()
+        self.id = tkinter.StringVar()
         #self.id.set(Amber94Config.keys()[0])
         self.id.set(self.CurrentAmber94.key)
         frozNum = Numeric.add.reduce(self.CurrentAmber94.frozen)
-        self.frozenLab = Tkinter.StringVar()
+        self.frozenLab = tkinter.StringVar()
         fstr = 'Currently ' + str(frozNum) + ' frozen atoms'
-        self.constrLab = Tkinter.StringVar()
+        self.constrLab = tkinter.StringVar()
         constrNum = Numeric.add.reduce(self.CurrentAmber94.constrained)
         cstr = 'Currently ' + str(constrNum) + ' constrained atoms'
         self.constrLab.set(cstr)
@@ -2051,35 +2051,35 @@ key is key into Amber94Config dictionary\n
                     'entryfield_value':self.id.get(),
                     'labelpos':'w',
                     'listheight':'80',
-                    'scrolledlist_items': Amber94Config.keys(),
+                    'scrolledlist_items': list(Amber94Config.keys()),
                     'selectioncommand': self.update,
                     },
             'gridcfg':{'sticky':'w'}})
             #'gridcfg':{'sticky':'nesw','row':-1, 'column':1}}),
         ifd.append({'name':'setmdopts_cb',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'set molecular dynamics options',
                 'command': self.setMdOpts,
                 },
             'gridcfg':{'sticky':'w', 'row':-1,'column':1}})
         ifd.append({'name':'frozen_lab',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'textvariable':self.frozenLab,
             'wcfg':{'font':(ensureFontCase('helvetica'),12,'bold') },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'const_lab',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'textvariable':self.constrLab,
             'wcfg':{'font':(ensureFontCase('helvetica'),12,'bold') },
             'gridcfg':{'sticky':'w','row':-1,'column':1}})
         ifd.append({'name':'setfroz_cb',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'set frozen atoms',
                 'command': self.setFrozenAtoms,
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'setcons_cb',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'set constrained atoms',
                 'command': self.setConstrainedAtoms,
                 },
@@ -2121,21 +2121,21 @@ key is key into Amber94Config dictionary\n
              'gridcfg':{'columnspan':2,'sticky':'e'}})
              #'gridcfg':{'columnspan':2,'sticky':'w','row':-1,'column':1}})
         ifd.append({'name':'trjCB',
-            'widgetType': Tkinter.Checkbutton,
+            'widgetType': tkinter.Checkbutton,
             'wcfg':{'text':'Specify trajectory filename',
                 'variable': self.TrjFilename,
                 'command': self.set_filename,
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'callback_cb',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'update geometries',
                 'variable': self.callback,
                 'command': self.disableCallbackFreq,
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name': 'callback_ent',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{ 
                     'label': 'update frequency',
                     #'label': 'callback frequency',
@@ -2148,12 +2148,12 @@ key is key into Amber94Config dictionary\n
                     },
             'gridcfg':{'sticky':'we', 'row':-1, 'column':1}})
         
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Run MD',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we'},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we', 'column':1,'row':-1},
@@ -2217,7 +2217,7 @@ key is key into Amber94Config dictionary\n
             filename = self.TrjFilename.get()
             if len(filename):
                 d['filename'] = filename
-        return apply(self.doitWrapper, (key, maxStep,),  d)
+        return self.doitWrapper(*(key, maxStep,), **d)
 
 
     def setMdOpts(self, event=None):
@@ -2255,12 +2255,12 @@ key is key into Amber94Config dictionary\n
 
 
     def guiCallback(self):
-        if not len(Amber94Config.keys()):
+        if not len(list(Amber94Config.keys())):
             self.warningMsg('no Amber94 objects present: SetupAmber94 first')
             return 'ERROR'
 
         if self.CurrentAmber94=={}:
-            self.CurrentAmber94 = Amber94Config.values()[0][0]
+            self.CurrentAmber94 = list(Amber94Config.values())[0][0]
 
         #ALLOW USER TO SET parameters here
         if not hasattr(self, 'ifd'):
@@ -2269,7 +2269,7 @@ key is key into Amber94Config dictionary\n
             lb =  self.ifd.entryByName['amberIds']['widget']._list
             #make sure to update the listbox:
             lb.delete(0, 'end')
-            for k in Amber94Config.keys():
+            for k in list(Amber94Config.keys()):
                 lb.insert('end', k)
             self.form.deiconify()
 
@@ -2305,15 +2305,15 @@ a molecular dynamics trajectory file and play the trajectory.
         \nkey --- is key into Amber94Config dictionary
         \nfilename --- is name of file containing md trajectory binary data
         """
-        return apply(self.doitWrapper, (key, filename,), kw)
+        return self.doitWrapper(*(key, filename,), **kw)
 
 
     def doit(self, key, filename, **kw):
-        if key not in Amber94Config.keys():
-            print 'key: ', key, " is not in current Amber94Config "
+        if key not in list(Amber94Config.keys()):
+            print('key: ', key, " is not in current Amber94Config ")
             return 'ERROR'
         if not exists(filename):
-            print filename, " does not exist"
+            print(filename, " does not exist")
             return 'ERROR' 
         amb_ins = Amber94Config[key][0] 
         self.CurrentAmber94 = amb_ins
@@ -2362,9 +2362,9 @@ a molecular dynamics trajectory file and play the trajectory.
 
     def buildForm(self):
         ifd = self.ifd = InputFormDescr(title = "Play amber94 md trajectory file:")
-        self.filename = Tkinter.StringVar()
+        self.filename = tkinter.StringVar()
         self.filename.set('')
-        self.id = Tkinter.StringVar()
+        self.id = tkinter.StringVar()
         #self.id.set(Amber94Config.keys()[0])
         self.id.set(self.CurrentAmber94.key)
         ifd.append({'widgetType':Pmw.ComboBox,
@@ -2373,28 +2373,28 @@ a molecular dynamics trajectory file and play the trajectory.
                     'entryfield_value':self.id.get(),
                     'labelpos':'n',
                     'listheight':'80',
-                    'scrolledlist_items': Amber94Config.keys(),
+                    'scrolledlist_items': list(Amber94Config.keys()),
                     'selectioncommand': self.update,
                     },
             'gridcfg':{'sticky':'w','columnspan':2}})
         ifd.append({'name':'trjCB',
-            'widgetType': Tkinter.Checkbutton,
+            'widgetType': tkinter.Checkbutton,
             'wcfg':{'text':'Select filename',
                 'variable': self.filename,
                 'command': self.getFile,
                 },
             'gridcfg':{'sticky':'w','columnspan':2}})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Play',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we'},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Stop',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we','row':-1,'column':1},
             'command':self.Stop_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Close',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we', 'columnspan':2},
@@ -2419,17 +2419,17 @@ a molecular dynamics trajectory file and play the trajectory.
         if not len(filename):
             self.warningMsg('no trajectory file selected!')
             return 'ERROR'
-        return apply(self.doitWrapper, (key, filename,),  d)
+        return self.doitWrapper(*(key, filename,), **d)
 
 
 
     def guiCallback(self):
-        if not len(Amber94Config.keys()):
+        if not len(list(Amber94Config.keys())):
             self.warningMsg('no Amber94 objects present: SetupAmber94 first')
             return 'ERROR'
 
         if self.CurrentAmber94=={}:
-            self.CurrentAmber94 = Amber94Config.values()[0][0]
+            self.CurrentAmber94 = list(Amber94Config.values())[0][0]
 
         #ALLOW USER TO SET parameters here
         if not hasattr(self, 'ifd'):
@@ -2438,7 +2438,7 @@ a molecular dynamics trajectory file and play the trajectory.
             lb =  self.ifd.entryByName['amberIds']['widget']._list
             #make sure to update the listbox:
             lb.delete(0, 'end')
-            for k in Amber94Config.keys():
+            for k in list(Amber94Config.keys()):
                 lb.insert('end', k)
             self.form.deiconify()
 
@@ -2560,7 +2560,7 @@ class FixAmberHAtomNamesCommand(MVCommand):
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes):
             return 'ERROR'
-        apply ( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
    
 
 
@@ -2598,7 +2598,7 @@ This class provides Graphical User Interface to FixAmberHAtomsNameCommand which 
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes):
             return 'ERROR'
-        apply( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def guiCallback(self):
@@ -2750,9 +2750,9 @@ class FixAmberResNamesAndOrderAtomsCommand(MVCommand):
         if 'H1' in atList and 'H1' not in resNames: 
             atList.remove('H1')
         if rlen!= len(atList):
-            print "atoms missing in residue", res
-            print "expected:", atList
-            print "got     :", res.atoms.name
+            print("atoms missing in residue", res)
+            print("expected:", atList)
+            print("got     :", res.atoms.name)
         for i in range(len(atList)):
             a = atList[i]
             for j in range(rlen):
@@ -2789,23 +2789,23 @@ class FixAmberResNamesAndOrderAtomsCommand(MVCommand):
             amberResType = res.type
             
             if amberResType=='CYS':
-                print 'in CYS with ', res.name,
+                print('in CYS with ', res.name, end=' ')
                 sAt = res.atoms.get(lambda x: x.element=='S')[0]
                 isDisulfide = len(sAt.bonds)==2
-                print 'isDisulfide=', isDisulfide,
+                print('isDisulfide=', isDisulfide, end=' ')
                 if 'HG' in chNames or 'HSG' in chNames:
                     amberResType ='CYS'
-                    print ' has HG',
+                    print(' has HG', end=' ')
 
                 elif 'HN' in chNames:
-                    print ' has HN',
+                    print(' has HN', end=' ')
                     amberResType ='CYM'
-                    print 'using CYM'
+                    print('using CYM')
                 # require that disulfide bridge is built
                 elif isDisulfide:
                     amberResType = 'CYX'
-                    print ' is CYX',
-                print '\n'
+                    print(' is CYX', end=' ')
+                print('\n')
             elif amberResType=='LYS':
                 if 'HZ1' not in chNames:
                     amberResType = 'LYN'
@@ -2832,7 +2832,7 @@ class FixAmberResNamesAndOrderAtomsCommand(MVCommand):
                 elif (not hasHD1) and (hasHE1 and hasHD2 and hasHE2):
                     amberResType = 'HIE'
                 else:
-                    print 'unknown HISTIDINE config'
+                    print('unknown HISTIDINE config')
                     raise ValueError
 
             res.amber_type = amberResType

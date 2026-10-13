@@ -11,7 +11,7 @@
 # 
 # $Id: pickingToolsCommands.py,v 1.28.2.7 2012/03/14 19:41:39 sanner Exp $
 #
-import Pmw, ImageTk, Tkinter, os
+import Pmw, ImageTk, tkinter, os
 
 from Pmv.mvCommand import MVCommand, MVCommandGUI, MVAtomICOM
 from Pmv.moleculeViewer import ICONPATH
@@ -65,7 +65,7 @@ class PickingToolsCommand(MVCommand):
             self.vf.registerListener(RaiseToolPageEvent, self.updatePage)
 
             # add comment about picking
-            lab = Tkinter.Label(p, text='Use Shift-Left Click for picking',
+            lab = tkinter.Label(p, text='Use Shift-Left Click for picking',
                                 font=('Arial', 12, 'bold'))
             lab.pack(side='top', anchor='nw')
 
@@ -166,14 +166,14 @@ class MeasureToolsCommand(PickingToolsCommand, MVAtomICOM):
             self.buttons = []
             bnum = 0
             row = col = 0
-            v = self.cmdVar = Tkinter.StringVar()
+            v = self.cmdVar = tkinter.StringVar()
 
             for cmdDict in self.tools:
                 photo = ImageTk.PhotoImage(
                     file=os.path.join(ICONPATH, cmdDict['icon']))
 
                 cb = CallbackFunction(self.setCmd_cb, cmdDict['cmd'], bnum)
-                b = Tkinter.Radiobutton(
+                b = tkinter.Radiobutton(
                     parent, compound='left', image=photo, variable=v,
                     command=cb, indicatoron=0, value=cmdDict['name'])
                 b.photo = photo
@@ -214,7 +214,7 @@ class CameraToolsCommand(MVCommand):
             row = col = 0
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'colorChooser24.png'))
-            b = Tkinter.Button(parent, command=self.setCamColor, image=photo)
+            b = tkinter.Button(parent, command=self.setCamColor, image=photo)
             b.photo = photo
             b.grid(row=row, column=col, sticky='ne')
             self.balloon.bind(b, 'Set camera background color')
@@ -235,9 +235,9 @@ class CameraToolsCommand(MVCommand):
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'linkClosedV.png'))
             self.photoClosedV = photo
-            self.chainVar = Tkinter.IntVar()
+            self.chainVar = tkinter.IntVar()
             self.chainVar.set(1)
-            b = Tkinter.Checkbutton(parent, command=self.linkCamFogColor,
+            b = tkinter.Checkbutton(parent, command=self.linkCamFogColor,
                                     image=self.photoClosed, indicatoron=0,
                                     var=self.chainVar)
             b.grid(row=row, column=col, sticky='nesw')
@@ -250,7 +250,7 @@ class CameraToolsCommand(MVCommand):
             col += 1
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'colorChooser24.png'))
-            b = Tkinter.Button(parent, command=self.setFogColor, image=photo,
+            b = tkinter.Button(parent, command=self.setFogColor, image=photo,
                                state='disable')
             b.photo = photo
             b.grid(row=row, column=col, sticky='ne')
@@ -301,9 +301,9 @@ class CameraToolsCommand(MVCommand):
             ##
             #row += 1
             col = 7
-            self.fogChainVar = Tkinter.IntVar()
+            self.fogChainVar = tkinter.IntVar()
             #self.fogChainVar.set(1)
-            b = Tkinter.Checkbutton(parent, command=self.linkFogNearFar,
+            b = tkinter.Checkbutton(parent, command=self.linkFogNearFar,
                                     image=self.photoOpenedV, indicatoron=0,
                                     var=self.fogChainVar)
             b.grid(row=row, column=col, rowspan=2, sticky='ns')
@@ -487,14 +487,14 @@ class GeomToolsCommand(PickingToolsCommand):
         """Expand all parents of the node"""
         p = object.parent
         tree = self.geomTree
-        if not tree.objectToNode.has_key(p):
+        if p not in tree.objectToNode:
             self.expandParents(p)
             
         tree.objectToNode[p].expand()
 
 
     def handlePickEvent(self, event):
-        geoms = event.arg.hits.keys()
+        geoms = list(event.arg.hits.keys())
         tree = self.geomTree
         tree.clearSelection()
 
@@ -631,7 +631,7 @@ class GeomToolsCommand(PickingToolsCommand):
 
         
     def geomAddedToViewer(self, event):
-        if self.geomTree.objectToNode.has_key(event.object.parent):
+        if event.object.parent in self.geomTree.objectToNode:
             node = self.geomTree.objectToNode[event.object.parent]
             if node.isExpanded:
                 node.collapse()
@@ -756,9 +756,9 @@ class AppearanceToolsCommand(GeomToolsCommand):
 
             ##
             ## add check button to show/hide FRONT polygons
-            var = self.frontPolv = Tkinter.IntVar()
+            var = self.frontPolv = tkinter.IntVar()
             var.set(1)
-            b = Tkinter.Checkbutton(
+            b = tkinter.Checkbutton(
                 parent, compound='left', text='F', variable=var,
                 command=self.cull_cb, indicatoron=0,
                 state='disable')
@@ -772,7 +772,7 @@ class AppearanceToolsCommand(GeomToolsCommand):
                     file=os.path.join(ICONPATH, cmdDict['icon']))
 
                 cmd = CallbackFunction(self.doit, cmdDict['name'])
-                b = Tkinter.Button(
+                b = tkinter.Button(
                     parent, compound='left', image=photo,
                     command=cmd, state='disable')
                 b.photo = photo
@@ -801,7 +801,7 @@ class AppearanceToolsCommand(GeomToolsCommand):
             ##
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'colorChooser24.png'))
-            b = Tkinter.Button(parent, command=self.setColor, image=photo,
+            b = tkinter.Button(parent, command=self.setColor, image=photo,
                                state='disable')
             b.photo = photo
             b.grid(row=row, column=col, sticky='ne')
@@ -812,9 +812,9 @@ class AppearanceToolsCommand(GeomToolsCommand):
             ## add check button to show/hide BACK polygons
             row += 1
             col = 0
-            var = self.backPolv = Tkinter.IntVar()
+            var = self.backPolv = tkinter.IntVar()
             var.set(0)
-            b = Tkinter.Checkbutton(
+            b = tkinter.Checkbutton(
                 parent, compound='left', text='B', variable=var,
                 command=self.cull_cb, indicatoron=0,
                 state='disable')
@@ -828,7 +828,7 @@ class AppearanceToolsCommand(GeomToolsCommand):
                     file=os.path.join(ICONPATH, cmdDict['icon']))
 
                 cmd = CallbackFunction(self.doit, cmdDict['name'], 'back')
-                b = Tkinter.Button(
+                b = tkinter.Button(
                     parent, compound='left', image=photo, 
                     command=cmd, state='disable')
                 b.photo = photo
@@ -853,7 +853,7 @@ class AppearanceToolsCommand(GeomToolsCommand):
             ##
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'colorChooser24.png'))
-            b = Tkinter.Button(parent, command=self.setColorB, image=photo,
+            b = tkinter.Button(parent, command=self.setColorB, image=photo,
                                state='disable')
             b.photo = photo
             b.grid(row=row, column=col, sticky='ne')
@@ -918,7 +918,7 @@ class AppearanceToolsCommand(GeomToolsCommand):
     ## Line width popup
     ##
     def postLWCounter(self, event):
-        self._tmproot = root = Tkinter.Toplevel()
+        self._tmproot = root = tkinter.Toplevel()
         vi = self.vf.GUI.VIEWER
         #pick = vi.lastPick
         #if pick is None: return
@@ -943,12 +943,12 @@ class AppearanceToolsCommand(GeomToolsCommand):
         self._counter = c
 
         im = ImageTk.PhotoImage(file=os.path.join(ICONPATH,'ok20.png'))
-        b = Tkinter.Button(root, image=im, command=self.returnCB)
+        b = tkinter.Button(root, image=im, command=self.returnCB)
         b.im = im
         b.grid(row=0, column=1)
 
         im = ImageTk.PhotoImage(file=os.path.join(ICONPATH,'cancel20.png'))
-        b = Tkinter.Button(root, image=im, command=self.cancelCB)
+        b = tkinter.Button(root, image=im, command=self.cancelCB)
         b.im = im
         b.grid(row=0, column=2)
 
@@ -990,7 +990,7 @@ class AppearanceToolsCommand(GeomToolsCommand):
     ## Point width popup
     ##
     def postPWCounter(self, event):
-        self._tmproot = root = Tkinter.Toplevel()
+        self._tmproot = root = tkinter.Toplevel()
         vi = self.vf.GUI.VIEWER
 
         geom = self.vf.loadGeomTools.geomTree.selectedNodes[0].object
@@ -1011,12 +1011,12 @@ class AppearanceToolsCommand(GeomToolsCommand):
         self._counter = c
 
         im = ImageTk.PhotoImage(file=os.path.join(ICONPATH,'ok20.png'))
-        b = Tkinter.Button(root, image=im, command=self.returnCB1)
+        b = tkinter.Button(root, image=im, command=self.returnCB1)
         b.im = im
         b.grid(row=0, column=1)
 
         im = ImageTk.PhotoImage(file=os.path.join(ICONPATH,'cancel20.png'))
-        b = Tkinter.Button(root, image=im, command=self.cancelCB1)
+        b = tkinter.Button(root, image=im, command=self.cancelCB1)
         b.im = im
         b.grid(row=0, column=2)
 
@@ -1159,7 +1159,7 @@ class ClipPToolsCommand(GeomToolsCommand):
             ##
             ## transform clipping plane radio buttons
             ##
-            var = self.cclip = Tkinter.IntVar()
+            var = self.cclip = tkinter.IntVar()
             var.set(-1)
             for cpnum, cmdDict in enumerate(self.cliptools):
                 #photo = ImageTk.PhotoImage(
@@ -1168,7 +1168,7 @@ class ClipPToolsCommand(GeomToolsCommand):
                 #b = Tkinter.Radiobutton(
                 #    parent, compound='left', image=photo,
                 #    command=cb, indicatoron=0, variable=var, value=cpnum+1)
-                b = Tkinter.Radiobutton(
+                b = tkinter.Radiobutton(
                     parent, compound='left', text='T%d'%cpnum, state='disable',
                     command=cb, indicatoron=0, variable=var, value=cpnum+1)
                 #b.photo = photo
@@ -1183,7 +1183,7 @@ class ClipPToolsCommand(GeomToolsCommand):
                 file=os.path.join(ICONPATH, 'cancel24.png'))
 
             cb = CallbackFunction(self.setCurrent, 0)
-            b = Tkinter.Radiobutton(
+            b = tkinter.Radiobutton(
                 parent, compound='left', image=photo, 
                 command=cb, indicatoron=0, variable=var, value=0)
             b.photo = photo
@@ -1227,7 +1227,7 @@ class ClipPToolsCommand(GeomToolsCommand):
 
                 cb = CallbackFunction(self.clipChildren, cpnum)
                 var = self.vf.GUI.VIEWER.GUI.clipvar[cpnum][2]
-                b = Tkinter.Checkbutton(
+                b = tkinter.Checkbutton(
                     parent, compound='left', image=photo,
                     command=cb, indicatoron=0, variable=var)
                 b.photo = photo
@@ -1250,7 +1250,7 @@ class ClipPToolsCommand(GeomToolsCommand):
 
                 cb = CallbackFunction(self.capOnOff, cpnum)
                 var = self.vf.GUI.VIEWER.GUI.clipvar[cpnum][5]
-                b = Tkinter.Checkbutton(
+                b = tkinter.Checkbutton(
                     parent, compound='left', text='Cap', state='disable',
                     command=cb, indicatoron=0, variable=var)
                 #b = Tkinter.Checkbutton(
@@ -1474,7 +1474,7 @@ class DisplayToolsCommand(PickingToolsCommand):
                         file=os.path.join(ICONPATH, cmdDict['icon']))
 
                     cb = CallbackFunction(self.startTool, cmdDict['cmd'], bnum)
-                    b = Tkinter.Checkbutton(parent, compound='left',
+                    b = tkinter.Checkbutton(parent, compound='left',
                                             image=photo,
                                             command=cb, indicatoron=0)
                     b.photo = photo

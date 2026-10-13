@@ -4,7 +4,7 @@
 #
 # $Header: /opt/cvs/python/packages/share1.5/AutoDockTools/Utilities24/write_rigid_ligand.py,v 1.1 2008/05/28 16:48:41 rhuey Exp $
 #
-import os, string
+import os; from mglcompat import pystring as string
 from MolKit import Read
 
 
@@ -16,18 +16,18 @@ if __name__ == '__main__':
 
 
     def usage():
-        print "Usage: write_rigid_ligand.py "
-        print "     This writes a rigid ligandfile with no rotatable bonds"
-        print "        -l ligand_filename"
-        print "    Optional parameters:"
-        print "        [-o pdbqt_filename] (default ligandstem_rigid.pdbqt)"
-        print "        [-v]    verbose output"
+        print("Usage: write_rigid_ligand.py ")
+        print("     This writes a rigid ligandfile with no rotatable bonds")
+        print("        -l ligand_filename")
+        print("    Optional parameters:")
+        print("        [-o pdbqt_filename] (default ligandstem_rigid.pdbqt)")
+        print("        [-v]    verbose output")
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'l:o:vh')
-    except getopt.GetoptError, msg:
-        print 'write_rigid_ligand.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('write_rigid_ligand.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -43,18 +43,18 @@ if __name__ == '__main__':
     for o, a in opt_list:
         if o in ('-l', '--l'):
             ligandfilename = a
-            if verbose: print 'set ligandfilename to ', a
+            if verbose: print('set ligandfilename to ', a)
         if o in ('-o', '--o'):
             outputfilename = a
-            if verbose: print 'set outputfilename to ', a
+            if verbose: print('set outputfilename to ', a)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
     if not ligandfilename:
-        print "write_rigid_ligand.py: ligandfilename must be specified."
+        print("write_rigid_ligand.py: ligandfilename must be specified.")
         usage()
         sys.exit()
 
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     ext = os.path.splitext(ligandfilename)[1]
     if outputfilename is None:
         outputfilename = lig.name + "_rigid" + ext
-    if verbose: print 'set outputfilename to ', outputfilename
+    if verbose: print('set outputfilename to ', outputfilename)
     parser = lig.parser
     optr = open(outputfilename, 'w')
     #have to add newline character to lines read from dlg
@@ -82,7 +82,7 @@ if __name__ == '__main__':
         elif l.find("BRANCH")==-1 and l.find("ENDBRANCH")==-1 and l.find("ENDROOT")==-1:
             optr.write(l)
     if verbose:
-        print 'wrote %s' %outputfilename
+        print('wrote %s' %outputfilename)
 
 
 # To execute this command type:

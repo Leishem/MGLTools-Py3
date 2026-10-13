@@ -38,11 +38,11 @@ class WaterBuilder:
 
 
     def atom_coord(self, atom):
-        return map(float, atom[28:56].split())
+        return list(map(float, atom[28:56].split()))
 
 
     def dist(self, firstline, secondline, precision=4):  
-        coord1, coord2 = map(self.atom_coord, [firstline, secondline])
+        coord1, coord2 = list(map(self.atom_coord, [firstline, secondline]))
         return round(sqrt((coord1[0]-coord2[0])**2+(coord1[1]-coord2[1])**2+(coord1[2]-coord2[2])**2), precision)
 
 
@@ -150,7 +150,7 @@ class WaterBuilder:
         x =(coord2[0])
         y =(coord2[1])
         z =(coord2[2])
-        if self.verbose: print x, y, z
+        if self.verbose: print(x, y, z)
         #atype = "W"
         #residue="WAT"
         # residue 17:20
@@ -181,9 +181,9 @@ class WaterBuilder:
         avg = self.mean_pdb(middle, atom3)
         last = self.hydro(avg, atom2, spacing=self.space)
         if self.verbose:
-            print "middle=", middle
-            print "avg=", avg
-            print "last=", last
+            print("middle=", middle)
+            print("avg=", avg)
+            print("last=", last)
 
 
     def vector(self, p1, p2=None):
@@ -192,7 +192,7 @@ class WaterBuilder:
         #if p1 == 0:
         #    coord1 = [ 0.0, 0.0, 0.0 ]
         #else:
-        if self.verbose: print "received ", p1, p2
+        if self.verbose: print("received ", p1, p2)
         if type(p1) == type(str()):
             p1 = self.atom_coord(p1)
         x1,y1,z1 = p1
@@ -205,10 +205,10 @@ class WaterBuilder:
             vec_z = z2-z1
             # it must be an array
             vec = array([vec_x, vec_y, vec_z], 'f')
-            if self.verbose: print "REAL VECTOR", vec
+            if self.verbose: print("REAL VECTOR", vec)
         else:
             vec = array([p1[0], p1[1], p1[2] ], 'f' )
-            if self.verbose: print "ATOM VECTOR", vec
+            if self.verbose: print("ATOM VECTOR", vec)
         return vec
 
 
@@ -231,7 +231,7 @@ class WaterBuilder:
         bond_dist = self.bond_dist
         if atom.split()[-1] == "HD":
             bond_dist = 1.15 # previous bond self.dist of 1.1 wouldn't be big enough for -S-H
-            if self.verbose: print "HD mode"
+            if self.verbose: print("HD mode")
         for candidate in structure:
             if candidate==atom or candidate==exclude:
                 pass
@@ -249,9 +249,9 @@ class WaterBuilder:
         if len(bound_list) > 0:
             return bound_list
         else:
-            print "ERROR: this atom seems to be disconnected:"
-            print atom
-            print "exit 3"
+            print("ERROR: this atom seems to be disconnected:")
+            print(atom)
+            print("exit 3")
             exit(1)
 
 
@@ -265,22 +265,22 @@ class WaterBuilder:
         chain = atom1[21]
         #plane = plane/(sqrt(sum(plane*plane)))
         if self.verbose:
-            print atom1
-            print atom2
-            print atom3
-            print "PLANE FREE> coords: ", plane
-            print "PLANE FREE> type: ", type(plane)
-            print "PLANE FREE> atoms:"
+            print(atom1)
+            print(atom2)
+            print(atom3)
+            print("PLANE FREE> coords: ", plane)
+            print("PLANE FREE> type: ", type(plane))
+            print("PLANE FREE> atoms:")
             self.keyw, index, self.ATYPE, residue, chain, self.pcharge = "ATOM  ", 1, "C", residue, chain, 0.0000
             #self.keyw, index, self.ATYPE, self.residue, self.chain, self.pcharge = "ATOM  ", 1, "C", "RES", 1, 0.0000
-            print "%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s" % (self.keyw, index, self.ATYPE, residue, chain, index, plane[0], plane[1], plane[2], self.pcharge, self.ATYPE)
+            print("%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s" % (self.keyw, index, self.ATYPE, residue, chain, index, plane[0], plane[1], plane[2], self.pcharge, self.ATYPE))
             #print "%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s" % (self.keyw, index, self.ATYPE, self.residue, self.chain, index, plane[0], plane[1], plane[2], self.pcharge, self.ATYPE)
-            print "%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s\n" % (self.keyw, index, "X" , residue, chain, index, 0,0,0 , self.pcharge, "X")
+            print("%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s\n" % (self.keyw, index, "X" , residue, chain, index, 0,0,0 , self.pcharge, "X"))
 
             centroid = self.mean3(atom1, atom2, atom3)
             arrow = self.vector(atom1, centroid)+ plane
             #arrow = vec_sum(self.vector(atom1, centroid), plane)
-            print "%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s\n" % ("ATOM  ", 1, "A", 1, 1, 1, arrow[0], arrow[1], arrow[2], 0.000, "A")
+            print("%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s\n" % ("ATOM  ", 1, "A", 1, 1, 1, arrow[0], arrow[1], arrow[2], 0.000, "A"))
         return plane
 
 
@@ -295,8 +295,8 @@ class WaterBuilder:
         for atom in structure:
             position = self.vector(reference, atom)
             if self.verbose:
-                print "POSITION", position
-                print self.atom_coord(atom)
+                print("POSITION", position)
+                print(self.atom_coord(atom))
             if dot(plane, position) <= tolerance:
                 coplane_list.append(atom)
         return coplane_list
@@ -321,7 +321,7 @@ class WaterBuilder:
                     if self.dist(atom, item)<max:
                         the_ring.append(item)
                         if self.verbose:
-                            print "APPEND"
+                            print("APPEND")
                     #else:
                         #print "failed self.distance"
                         #print item
@@ -329,10 +329,10 @@ class WaterBuilder:
         #print the_ring
         #print len(the_ring)
         if len(the_ring)==5:
-            print " - possible furan/oxazole found..."
+            print(" - possible furan/oxazole found...")
             return True
         if len(the_ring)>6:
-            print "WARNING: multiple atoms match the furan/oxazole check..."
+            print("WARNING: multiple atoms match the furan/oxazole check...")
             return True
         else:
             return False
@@ -357,7 +357,7 @@ class WaterBuilder:
             wet = "%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s\n"%(self.keyw, 1, self.ATYPE, residue, chain, 1, water[0], water[1], water[2], self.pcharge, self.ATYPE)
             #wet = "%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s\n"%(self.keyw, 1, self.ATYPE, residue, chain, 1, water[0], water[1], water[2], self.pcharge, self.ATYPE)
             waters.append(wet)
-        if self.verbose: print "osp2 returning %d waters"%(len(waters)) 
+        if self.verbose: print("osp2 returning %d waters"%(len(waters))) 
         return waters
 
 
@@ -365,7 +365,7 @@ class WaterBuilder:
         waters = []
         # self.hydroxyl/ether mode
         #angles = [120, -120]
-        angles = range(0, 360, 10)
+        angles = list(range(0, 360, 10))
         oxyvector = self.vector(oxygen, atom1)
         oxyvector = self.vector(atom1, atom2)
         oxyvector = self.normalize(oxyvector)
@@ -382,7 +382,7 @@ class WaterBuilder:
             # change to self.residue? replacing 99 by WAT??
             wet = "%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s\n"%(self.keyw, 1, self.ATYPE, residue, chain, 1, water[0], water[1], water[2], self.pcharge, self.ATYPE)
             waters.append(wet)
-        if self.verbose: print "Osp2_NEW returning %d waters"%(len(waters)) 
+        if self.verbose: print("Osp2_NEW returning %d waters"%(len(waters))) 
         return waters
 
 
@@ -393,7 +393,7 @@ class WaterBuilder:
         the box described in the GPF"""
         if not self.GPF:
             return True
-        if self.verbose: print 'gpf=', gpf    
+        if self.verbose: print('gpf=', gpf)    
         file = open(gpf, 'r')
         lines = file.readlines()
         file.close()
@@ -401,12 +401,12 @@ class WaterBuilder:
             tmp=line.split()
             #print tmp
             if tmp[0] == "gridcenter":
-                center_x, center_y, center_z = map(float, tmp[1:4])
+                center_x, center_y, center_z = list(map(float, tmp[1:4]))
             if tmp[0] == "npts":
-                pts_x, pts_y, pts_z = map(int, tmp[1:4])
+                pts_x, pts_y, pts_z = list(map(int, tmp[1:4]))
             if tmp[0] == "spacing":
                 res = float(tmp[1])
-                if self.verbose: print "spacing: ", res
+                if self.verbose: print("spacing: ", res)
         step_x = pts_x/2 * res
         step_y = pts_y/2 * res
         step_z = pts_z/2 * res
@@ -416,7 +416,7 @@ class WaterBuilder:
         y_max = center_y + step_y
         z_min = center_z - step_z
         z_max = center_z + step_z
-        print " - using the GPF box filter [ %s ]"% gpf
+        print(" - using the GPF box filter [ %s ]"% gpf)
         return [x_min, y_min, z_min], [x_max, y_max, z_max]
 
 
@@ -442,21 +442,21 @@ class WaterBuilder:
         self.FORCE = force
         self.EXTENDED_ATOMS = extended_atoms
         if not os.path.exists(pdbqt):
-            print "\n\n\t# ERROR #\n\t Input file not found!"
+            print("\n\n\t# ERROR #\n\t Input file not found!")
         #Initialize name here:
         name = os.path.splitext(os.path.basename(pdbqt))[0]
         if gpf is not None:
             self.MIN, self.MAX = self.gpfminmax(gpf)
         else:
             if self.GPF:
-                print "gpf file must be specified"
+                print("gpf file must be specified")
                 return 
         if output is not None:
             if os.path.isdir(output):
-                if self.verbose: print " - saving the file in the path => %s" % output
+                if self.verbose: print(" - saving the file in the path => %s" % output)
                 name = output+os.path.sep+name+"_HYDRO.pdbqt"
             else:
-                if self.verbose: print " - saving the file => %s" % output
+                if self.verbose: print(" - saving the file => %s" % output)
                 name = output
 
         input = open(pdbqt, 'r').readlines()
@@ -477,71 +477,71 @@ class WaterBuilder:
             if self.GPF:
                 hydrate_list = self.in_the_box(hydrate_list, MIN, MAX)
             if self.verbose:
-                print "=========="
-                print " - hydratable atoms : %d / %d " % (len(hydrate_list), len(atoms_list))
-                print "=========="
+                print("==========")
+                print(" - hydratable atoms : %d / %d " % (len(hydrate_list), len(atoms_list)))
+                print("==========")
                 for i in hydrate_list:
-                    print i[:-1]
-                print "=========="
+                    print(i[:-1])
+                print("==========")
         else:
             if not FORCE:
-                print " [ No atoms to hydrate ]"
+                print(" [ No atoms to hydrate ]")
                 #exit(0)
             else:
-                print " [ No atoms to hydrate... FORCING TO SAVE OUTPUT...  ]"
+                print(" [ No atoms to hydrate... FORCING TO SAVE OUTPUT...  ]")
             return
 
         # Scan the list to add waters
         for atom in hydrate_list:
             atype = atom.split()[-1]
             if self.verbose:
-                print "PROCESSING ATOM :", atom
-                print "atype = ", atype
+                print("PROCESSING ATOM :", atom)
+                print("atype = ", atype)
             HYDROXYL = False
             # ordinal position in the original file
             position = int(atom.split()[1])
             # add the atom to be hydrated to the buffer list
             waters_generated = [atom]  #@@reinitialize waters_generated here
             if self.verbose:
-                print "processing ", atom
-                print "0: water_mates=", water_mates
-                print "1: len(waters_generated)=", len(waters_generated)
-                print "2:  len(water_mates=", len(water_mates)
+                print("processing ", atom)
+                print("0: water_mates=", water_mates)
+                print("1: len(waters_generated)=", len(waters_generated))
+                print("2:  len(water_mates=", len(water_mates))
             # find the master atom(s)
             master = self.bound(atom, atoms_list)
             if len(master) == 0:
-                print "\n\nERROR: this atom is disconnected:\n", atom
+                print("\n\nERROR: this atom is disconnected:\n", atom)
                 #??return() instead??@@
-                print "exit 0"
+                print("exit 0")
                 exit(1)
             # HYDROGENS #####################################################################################
             #print "before HD , len(master)=", len(master), " atype=", atype
             if atype == "HD":
                 # check for errors
                 if len(master) > 1:
-                    print "\n\nERROR (HD) : there is a proximity error and the following hydrogen is in close contact with more than one atom"
-                    print atom
-                    print "Bound mates:"
+                    print("\n\nERROR (HD) : there is a proximity error and the following hydrogen is in close contact with more than one atom")
+                    print(atom)
+                    print("Bound mates:")
                     for m in master:
-                        print m[:-1]," ==>", self.dist(m,atom)
+                        print(m[:-1]," ==>", self.dist(m,atom))
                     #??return() instead??@@
-                    print "exit 1"
+                    print("exit 1")
                     exit(1)
                 else:
                     # calculate the Water vector
                     wet = self.hydro(master[0], atom) #@@REPAIR THIS apparent duplicate!!!
                     if self.verbose: 
-                        print "after call to hydro, wet=",wet
+                        print("after call to hydro, wet=",wet)
                     waters_generated.append(wet)
                     if self.verbose:
-                        print "HD: added wet: now %d waters_generated:" %len(waters_generated)
-                        for ind in waters_generated: print ind
-                        print "HD: added w_g to w_m: previously %d water_mates:" %len(water_mates)
-                        for ind in water_mates: print ind
-                        print "HD: 2: %d waters_generated:" %len(waters_generated)
-                        for ind in waters_generated: print ind
+                        print("HD: added wet: now %d waters_generated:" %len(waters_generated))
+                        for ind in waters_generated: print(ind)
+                        print("HD: added w_g to w_m: previously %d water_mates:" %len(water_mates))
+                        for ind in water_mates: print(ind)
+                        print("HD: 2: %d waters_generated:" %len(waters_generated))
+                        for ind in waters_generated: print(ind)
                 water_mates.append(waters_generated)
-                if self.verbose: print "HD: 2: NOW %d water_mates:" %len(water_mates)
+                if self.verbose: print("HD: 2: NOW %d water_mates:" %len(water_mates))
                 #numbering_stuff has an entry for for each entry in water_mates
                 numbering_stuff.append([position, (len(waters_generated)-1)] )
 
@@ -595,31 +595,31 @@ class WaterBuilder:
                         wet = "%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s\n" % (self.keyw, 1, self.ATYPE, residue, chain, 1, wat[0], wat[1], wat[2], self.pcharge, self.ATYPE)
                         #wet = "%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s\n" % (self.keyw, 1, self.ATYPE, self.residue, self.chain, 1, wat[0], wat[1], wat[2], self.pcharge, self.ATYPE)
                         if self.verbose:
-                            print "O1: wet:" 
-                            print wet
+                            print("O1: wet:") 
+                            print(wet)
                         waters_generated.append(wet)
                         if self.verbose:
-                            print "waters_generated:"
-                            print waters_generated
-                            print "O1: waters_generated=", 
-                            for ind in waters_generated: print ind
+                            print("waters_generated:")
+                            print(waters_generated)
+                            print("O1: waters_generated=", end=' ') 
+                            for ind in waters_generated: print(ind)
             
                         # O-lone pair 2
                         roto = [ plane0, plane1, plane2, radians(-50) ]
-                        if self.verbose: print "calling rotatePoint with self.atom_coord(", atom, "), roto=",roto
+                        if self.verbose: print("calling rotatePoint with self.atom_coord(", atom, "), roto=",roto)
                         wat = self.rotatePoint(self.normalize(-v12)*self.space, self.atom_coord(atom), roto)
-                        if self.verbose: print "wat =", wat
+                        if self.verbose: print("wat =", wat)
                         wet = "%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s\n" % (self.keyw, 1, self.ATYPE, residue, chain, 1, wat[0], wat[1], wat[2], self.pcharge, self.ATYPE)
                         #wet = "%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s\n" % (self.keyw, 1, self.ATYPE, self.residue, self.chain, 1, wat[0], wat[1], wat[2], self.pcharge, self.ATYPE)
                         waters_generated.append(wet)
                         if self.verbose:
-                            print "O2: %d wet: %s" %(len(wet), wet)
-                            print "O2: %d waters_generated="%(len(waters_generated)), 
-                            for ind in waters_generated: print ind
+                            print("O2: %d wet: %s" %(len(wet), wet))
+                            print("O2: %d waters_generated="%(len(waters_generated)), end=' ') 
+                            for ind in waters_generated: print(ind)
                         water_mates.append(waters_generated)
                         if self.verbose:
-                            print "O2: %d water_mates="%(len(water_mates)), 
-                            for ind in water_mates: print ind
+                            print("O2: %d water_mates="%(len(water_mates)), end=' ') 
+                            for ind in water_mates: print(ind)
                         numbering_stuff.append([int(position), len(waters_generated)-1])
                         #print waters_generated
                     else:
@@ -648,21 +648,21 @@ class WaterBuilder:
                                 wet = "%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s\n" % (self.keyw, 1, self.ATYPE, residue, chain, 1, lpair[0], lpair[1], lpair[2], self.pcharge, self.ATYPE)
                                 #wet = "%s%5d %2s   %3s %1s%4d    %8.3f%8.3f%8.3f  1.00 10.00     %1.3f %1s\n" % (self.keyw, 1, self.ATYPE, self.residue, self.chain, 1, lpair[0], lpair[1], lpair[2], self.pcharge, self.ATYPE)
                                 if self.verbose:
-                                    print "EA: wet=", 
-                                    for ind in wet: print ind
+                                    print("EA: wet=", end=' ') 
+                                    for ind in wet: print(ind)
                                 #position_q = normalize(position_q)
                                 #ACTUAL = normalize(-vector(atom, position_q))*space
                                 waters_generated.append(wet)
                                 if self.verbose:
-                                    print "EA: waters_generated=", 
-                                    for ind in waters_generated: print ind
+                                    print("EA: waters_generated=", end=' ') 
+                                    for ind in waters_generated: print(ind)
                                 #if self.verbose: print "EXT ATOMS: waters_generated=", waters_generated
                             water_mates.append(waters_generated)
                             if self.verbose: 
-                                print "661:EA: %d water_mates:"%(len(water_mates)), 
+                                print("661:EA: %d water_mates:"%(len(water_mates)), end=' ') 
                                 for ind in water_mates: 
                                     for j in ind:
-                                        print j
+                                        print(j)
                             #if self.verbose: print "         : water_mates=", water_mates
                             numbering_stuff.append([int(position), len(waters_generated)-1])
                             #print "\n\n  ############## TESTING FACILITY #########"
@@ -684,47 +684,47 @@ class WaterBuilder:
                         if len(coplanar_mates) >=4 and self.furanbolic(atom, coplanar_mates):    
                             wet = self.hydro(master[0], atom, master[1]) #2: @@REPAIR THIS apparent duplicate!!!
                             if self.verbose:
-                                print "notHYDROXYL: wet=", 
-                                for ind in wet: print ind
+                                print("notHYDROXYL: wet=", end=' ') 
+                                for ind in wet: print(ind)
                             waters_generated.append(wet)
                             if self.verbose:
-                                print "notHYDROXYL: waters_generated=", 
-                                for ind in waters_generated: print ind
+                                print("notHYDROXYL: waters_generated=", end=' ') 
+                                for ind in waters_generated: print(ind)
                             #if self.verbose:
                             #    print "NOT_HYDROXYL: waters_generated=", waters_generated
                             #print "FURAN MODE"
                         else:
-                            if self.verbose: print "FURAN MODE FAILED"
+                            if self.verbose: print("FURAN MODE FAILED")
                             lp_waters = self.Osp2(atom, master[0], master[1])
                             if self.verbose:
-                                print "lp_waters:",
-                                for ind in lp_waters: print ind
+                                print("lp_waters:", end=' ')
+                                for ind in lp_waters: print(ind)
                             for w in lp_waters:
                                 waters_generated.append(w)
                             if self.verbose:
-                                print "else in not HYDROXYL: waters_generated=", 
-                                for ind in waters_generated: print ind
-                                print "NOT_COPLANAR ELSE 1: waters_generated=", waters_generated
+                                print("else in not HYDROXYL: waters_generated=", end=' ') 
+                                for ind in waters_generated: print(ind)
+                                print("NOT_COPLANAR ELSE 1: waters_generated=", waters_generated)
                     else:
                         #print "HYDROXYL/ETHER MODE"
                         lp_waters = self.Osp2(atom, master[0], master[1])
-                        if self.verbose: print "lp_waters:"
+                        if self.verbose: print("lp_waters:")
                         for w in lp_waters:
-                            if self.verbose:print w
+                            if self.verbose:print(w)
                             waters_generated.append(w)
                         if self.verbose:
-                            print "ELSE: waters_generated=", 
-                            for ind in waters_generated: print ind
-                            print "before adding else of not HYDROXYL, water_mates=",
-                            for ind in water_mates: print ind
+                            print("ELSE: waters_generated=", end=' ') 
+                            for ind in waters_generated: print(ind)
+                            print("before adding else of not HYDROXYL, water_mates=", end=' ')
+                            for ind in water_mates: print(ind)
                     water_mates.append(waters_generated)
                     if self.verbose:
-                        print "LAST 1: waters_generated=", 
-                        for ind in waters_generated: print ind
-                        print "LAST 1: water_mates =", 
-                        for wm in water_mates : print wm
-                        print "LAST 1: waters_generated=", waters_generated
-                        print "LAST 1: water_mates =", water_mates 
+                        print("LAST 1: waters_generated=", end=' ') 
+                        for ind in waters_generated: print(ind)
+                        print("LAST 1: water_mates =", end=' ') 
+                        for wm in water_mates : print(wm)
+                        print("LAST 1: waters_generated=", waters_generated)
+                        print("LAST 1: water_mates =", water_mates) 
                     numbering_stuff.append([int(position), len(waters_generated)-1])
 
             # NITROGEN #####################################################################################
@@ -735,34 +735,34 @@ class WaterBuilder:
                     waters_generated.append(wet)
                     water_mates.append(waters_generated)
                     if self.verbose:
-                        print "NA 1: wet=", 
-                        for ind in wet: print ind
-                        print "NA 1: waters_generated=", 
-                        for ind in waters_generated: print ind
-                        print "NA 1: water_mates=", 
-                        for ind in water_mates: print ind
+                        print("NA 1: wet=", end=' ') 
+                        for ind in wet: print(ind)
+                        print("NA 1: waters_generated=", end=' ') 
+                        for ind in waters_generated: print(ind)
+                        print("NA 1: water_mates=", end=' ') 
+                        for ind in water_mates: print(ind)
                     numbering_stuff.append([int(position), len(waters_generated)-1])
 
                 # nitrile mode
                 if len(master) == 2:
                     wet = self.hydro(master[0], atom, master[1]) #4: @@REPAIR THIS APPARENT DUPLICATE4??
-                    if self.verbose: print "nitrile mode: wet:", wet
+                    if self.verbose: print("nitrile mode: wet:", wet)
                     #for ind in wet: print ind
                     waters_generated.append(wet)
                     if self.verbose: 
-                        print "N: waters_generated:",
-                        for ind in waters_generated: print ind
+                        print("N: waters_generated:", end=' ')
+                        for ind in waters_generated: print(ind)
                     water_mates.append(waters_generated)
                     if self.verbose: 
-                        print "N: water_mates:",
-                        for ind in water_mates: print ind
-                        print "NA 2: wet=", wet
-                        print "NA 2: waters_generated=", waters_generated
-                        print "NA 2: water_mates=", water_mates
+                        print("N: water_mates:", end=' ')
+                        for ind in water_mates: print(ind)
+                        print("NA 2: wet=", wet)
+                        print("NA 2: waters_generated=", waters_generated)
+                        print("NA 2: water_mates=", water_mates)
                     numbering_stuff.append([int(position), len(waters_generated)-1])
                     if self.verbose:
-                        print "nitrile numbering_stuff:",
-                        for ind in numbering_stuff: print ind
+                        print("nitrile numbering_stuff:", end=' ')
+                        for ind in numbering_stuff: print(ind)
 
                 # tertiary amine HB receptor
                 if len(master) == 3: 
@@ -770,48 +770,48 @@ class WaterBuilder:
                     master_center = self.mean3(master[0], master[1], master[2])
                     wet = self.hydro(master_center, atom) #5: @@REPAIR THIS APPARENT DUPLICATE5??
                     if self.verbose: 
-                        print "tertiary amine: wet=",
-                        for ind in wet: print ind
+                        print("tertiary amine: wet=", end=' ')
+                        for ind in wet: print(ind)
                     waters_generated.append(wet)
                     if self.verbose: 
-                        print "tertiary amine: waters_generated=",
-                        for ind in waters_generated: print ind
+                        print("tertiary amine: waters_generated=", end=' ')
+                        for ind in waters_generated: print(ind)
                     water_mates.append(waters_generated)
                     if self.verbose: 
-                        print "tertiary amine: water_mates=",
-                        for ind in water_mates: print ind
-                        print "NA 3: wet=", wet
-                        print "NA 3: waters_generated=", waters_generated
-                        print "NA 3: water_mates=", water_mates
+                        print("tertiary amine: water_mates=", end=' ')
+                        for ind in water_mates: print(ind)
+                        print("NA 3: wet=", wet)
+                        print("NA 3: waters_generated=", waters_generated)
+                        print("NA 3: water_mates=", water_mates)
                     numbering_stuff.append([int(position), len(waters_generated)-1])
-                    if self.verbose: print numbering_stuff[-1], ' added to numbering_stuff'
+                    if self.verbose: print(numbering_stuff[-1], ' added to numbering_stuff')
 
         ctr = 0
         for mates in water_mates:
             index = input.index(mates[0])
             if self.verbose: 
-                print "mates=", mates
-                print "mates[0]=", mates[0]
+                print("mates=", mates)
+                print("mates[0]=", mates[0])
             line = ""
             for atom in mates:
                 line += atom
-            if self.verbose: print "@@ %d input line was = %s"%(index,  input[index])
+            if self.verbose: print("@@ %d input line was = %s"%(index,  input[index]))
             input[index] = line
             if self.verbose:
-                print "now %d input line set to %s"%(index,  line)
-                print "~~~numbering_stuff[%d]=%s"%(ctr, numbering_stuff[ctr])
+                print("now %d input line set to %s"%(index,  line))
+                print("~~~numbering_stuff[%d]=%s"%(ctr, numbering_stuff[ctr]))
             ctr+=1
             #if index==20: raise 'abc'
         count = 1
         # nicely split and format the lines that need to be splitted from
         # the previous addition of water molecules
         final = []
-        if self.verbose: print "len(input)=", len(input), ' len(final)=', len(final)
+        if self.verbose: print("len(input)=", len(input), ' len(final)=', len(final))
         for line in input:
             line = line.split("\n")
             if self.verbose:
-                print "ZZZZ: line=", 
-                for  YYYY in line: print YYYY
+                print("ZZZZ: line=", end=' ') 
+                for  YYYY in line: print(YYYY)
             if len(line)==3 and line[-1]!='': 
                 raise 'THREE!'
                 line = line.remove(line[1])
@@ -821,19 +821,19 @@ class WaterBuilder:
                 if not item == "" and item.find("WAT")<0 and item.find("W    99 1")<0:
                     final.append(item)
                     if len(item)>13 and item[13]=='W':
-                        if self.verbose: print "after adding W ", item," len(final)=", len(final)
+                        if self.verbose: print("after adding W ", item," len(final)=", len(final))
                     ct += 1
-        if self.verbose: print "len(input)=", len(input), ' len(final)=', len(final)
+        if self.verbose: print("len(input)=", len(input), ' len(final)=', len(final))
 
         # renumbering the PDBQT atoms
         for line in final:
-            if self.verbose: print "at top line=", line, " contains WAT ", line.find("WAT")>0
+            if self.verbose: print("at top line=", line, " contains WAT ", line.find("WAT")>0)
             if line.find("WAT")<0 and (line[0:4] == "ATOM" or line[0:6] == "HETATM"):
                 value = "%4s" % count
                 idx = final.index(line)
                 final[idx] = line[0:7]+value+line[11:]
                 count += 1
-                if self.verbose: print "in loop line=", line
+                if self.verbose: print("in loop line=", line)
 
         # process the BRANCH numbers
         for line in final:
@@ -866,7 +866,7 @@ class WaterBuilder:
         try:
             hyd_ligand = open(name, 'w')
         except:
-            print "# Error in saving the file %s #", name
+            print("# Error in saving the file %s #", name)
             exit(1)
 
         count_waters = 0
@@ -876,8 +876,8 @@ class WaterBuilder:
             if line.split()[-1] == "W":
                 count_waters += 1
                 waters[line] = 1
-            print >> hyd_ligand, line
-        print " - %d waters added" % count_waters
+            print(line, file=hyd_ligand)
+        print(" - %d waters added" % count_waters)
         #exit()    
                     
                 

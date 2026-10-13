@@ -278,10 +278,10 @@ def write(dict, outfile='test_dat.py',dname='all_amino94_dat'):
     outstr = dname + ' = {\n'
     fptr.write(outstr)
     #NB each v is also a dictionary
-    for k, v in dict.items():
+    for k, v in list(dict.items()):
         if type(v)==type(dict):
             fptr.write('\"'+k+'\"' + ': {')
-            for key, val in v.items():
+            for key, val in list(v.items()):
                 outstr = '\t'+ '\"'+ key +'\"' + ':' + repr(val) + ',\n'
                 fptr.write(outstr)
             fptr.write('},\n')

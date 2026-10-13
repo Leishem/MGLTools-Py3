@@ -23,13 +23,13 @@
 import re
 import sys
 import os
-import string
-import Pmw, Tkinter
+from mglcompat import pystring as string
+import Pmw, tkinter
 import webbrowser
 import warnings
 import types
 
-from tkSimpleDialog import askstring
+from tkinter.simpledialog import askstring
 
 from NetworkEditor.simpleNE import NetworkBuilder,NoGuiNetworkBuilder 
 from NetworkEditor.items import NetworkNode
@@ -44,13 +44,15 @@ from mglutil.util.packageFilePath import getObjectFromFile
 from Vision.nodeLibraries import LoadLibraryPanel, BrowseLibraryPanel, CreateLibraryPanel, AddNodeToUserLibraryPanel
 from Vision.Forms import AboutDialog, AcknowlDialog, RefDialog, ChangeFonts,\
      SearchNodesDialog,BugReport
-import tkMessageBox
+import tkinter.messagebox
 from NetworkEditor.Glyph import Glyph
 
 
 from NetworkEditor.datatypes import TypeManager
 from NetworkEditor.widgets import widgetsTable, PortWidget
 from NetworkEditor.macros import MacroNetwork
+from functools import cmp_to_key
+import importlib
 
 class NoGuiVPE:
     """Class used to replace the VPE when running without a GUI.
@@ -76,16 +78,16 @@ for multiple networks such as the ones created by macros.
 
 
     def printEvent(self, event):
-        print event
+        print(event)
 
         
     def addLibraryInstance(self, lib, modName, varName, force=False):
 
         if force is False:
-            for l in self.libraries.values():
+            for l in list(self.libraries.values()):
                 if l.name == lib.name:
                     return # already loaded
-            if lib in self.libraries.values():
+            if lib in list(self.libraries.values()):
                 return # already loaded
 
         assert isinstance(lib, NodeLibrary)
@@ -94,12 +96,12 @@ for multiple networks such as the ones created by macros.
         lNodeDict = {}
         for lNode in lib.nodes:
             lNodeDict[lNode.__name__] = lNode
-        lib.nodes = lNodeDict.values()
-        for key in lib.libraryDescr.keys():
+        lib.nodes = list(lNodeDict.values())
+        for key in list(lib.libraryDescr.keys()):
             lNodeDict = {}
             for lNode in lib.libraryDescr[key]['nodes']:
                 lNodeDict[lNode.name] = lNode
-            lib.libraryDescr[key]['nodes'] = lNodeDict.values()
+            lib.libraryDescr[key]['nodes'] = list(lNodeDict.values())
             lib.libraryDescr[key]['lastPosy'] = 15
 
         lib.varName = varName # will be used below (e.g. 'stdlib')
@@ -133,7 +135,7 @@ for multiple networks such as the ones created by macros.
             # w has to be instance of Port widgets
             assert issubclass(w, PortWidget)
             # w.__name__ must be different from predefined widgets 
-            if w.__name__ not in widgetsTable.keys():
+            if w.__name__ not in list(widgetsTable.keys()):
                 widgetsTable[w.__name__] = w
 
 
@@ -233,7 +235,7 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
         self.modSearch = kbComboBox( self.buttonBar, labelpos='w',
             entryfield_entry_width=12, selectioncommand=self.searchModules,
             scrolledlist_items = [])
-        self.modSearch.pack(side='left', anchor=Tkinter.NW)
+        self.modSearch.pack(side='left', anchor=tkinter.NW)
            
         # FIXME for some reason this works from the shell but the icon is not
         # visible when done from here ????? Workaround: added icon as last
@@ -245,7 +247,7 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
         self.lastMatchIndices = [0,0,0] # library index and category index
                                         # of last found node
 
-        apply( NetworkBuilder.__init__, (self, name, ed, font, withShell), kw )
+        NetworkBuilder.__init__(*(self, name, ed, font, withShell), **kw)
         
 ##         if __debug__:
 ##             from NetworkEditor.widgets import WidgetValueChange
@@ -337,26 +339,26 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
             self.glyphbuttonBarFunc = {} # key:buttonName, value:function
             self.addButtonsToglyphButtonBar(self.master)# add buttons to glyphbuttonBar
             #Font
-            lab_font  = Tkinter.Label(self.glyphbuttonBar,text="Font")
+            lab_font  = tkinter.Label(self.glyphbuttonBar,text="Font")
             lab_font.pack(side='left')
             self.font_style_listbox = kbComboBox(self.glyphbuttonBar,labelpos='w',entryfield_entry_width=7,scrolledlist_items =["courier","Helvetica","Comic Sans MS", "Fixedsys", "Times New Roman", "Verdana"],selectioncommand=self.fontStyle)
-            self.font_style_listbox.pack( side='left', anchor=Tkinter.NW)
+            self.font_style_listbox.pack( side='left', anchor=tkinter.NW)
             self.font_style_listbox.selectitem("courier")
             #Font size
-            self.font_size_listbox = kbComboBox(self.glyphbuttonBar,labelpos='w',entryfield_entry_width=3,scrolledlist_items =range(100),selectioncommand=self.fontSize)
-            self.font_size_listbox.pack( side='left', anchor=Tkinter.NW)
+            self.font_size_listbox = kbComboBox(self.glyphbuttonBar,labelpos='w',entryfield_entry_width=3,scrolledlist_items =list(range(100)),selectioncommand=self.fontSize)
+            self.font_size_listbox.pack( side='left', anchor=tkinter.NW)
             self.font_size_listbox.selectitem(6)
             #Fill
-            lab_fill  = Tkinter.Label(self.glyphbuttonBar,text="Fill")
+            lab_fill  = tkinter.Label(self.glyphbuttonBar,text="Fill")
             lab_fill.pack(side='left')
             self.fill_style_listbox = kbComboBox(self.glyphbuttonBar,labelpos='w',entryfield_entry_width=5,scrolledlist_items =['','black','white','red','blue','green','yellow'],selectioncommand=self.fillStyle)
-            self.fill_style_listbox.pack( side='left', anchor=Tkinter.NW)
+            self.fill_style_listbox.pack( side='left', anchor=tkinter.NW)
             self.fill_style_listbox.selectitem("")
             #Outline
-            lab_outline  = Tkinter.Label(self.glyphbuttonBar,text="Outline")
+            lab_outline  = tkinter.Label(self.glyphbuttonBar,text="Outline")
             lab_outline.pack(side='left')
             self.outline_style_listbox = kbComboBox(self.glyphbuttonBar,labelpos='w',entryfield_entry_width=5,scrolledlist_items =['black','white','red','blue','green','yellow'],selectioncommand=self.outlineStyle)
-            self.outline_style_listbox.pack( side='left', anchor=Tkinter.NW)
+            self.outline_style_listbox.pack( side='left', anchor=tkinter.NW)
             self.outline_style_listbox.selectitem("black")
 
 
@@ -382,24 +384,24 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
     def showAddNodeToLibraryForm_cb(self, event=None):
         # check if we have 1 selected node
         if len(self.currentNetwork.selectedNodes) == 0:
-            tkMessageBox.showwarning(
+            tkinter.messagebox.showwarning(
                 "Add Node To Library",
                 "No node is currently selected!\n\nPlease select one node in the current network to be added to a user library!")
             return
 
         elif len(self.currentNetwork.selectedNodes) > 1:
-            tkMessageBox.showwarning(
+            tkinter.messagebox.showwarning(
                 "Add Node To Library",
                 "Multiple nodes are currently selected!\n\nPlease select only one node in the current network to be added to a user library!")
             return
 
         # check if we have user libraries loaded
         libs = []
-        for libname, lib in self.libraries.items():
+        for libname, lib in list(self.libraries.items()):
             if lib.mode == 'readWrite':
                 libs.append(libname)
         if not len(libs):
-            tkMessageBox.showwarning(
+            tkinter.messagebox.showwarning(
                 "Add Node To Library",
                 "Currently, no user-defined library is loaded!\n\nPlease load a user-defined library, since nodes can only be added to user libraries. For further questions please consult the FAQ located in the main menu 'Help'.")
             return
@@ -451,7 +453,7 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
 
         # save source in library
         f = open(filename, 'a')
-        map( f.write, src)
+        list(map( f.write, src))
         f.write("%s.addNode(%s, '%s', '%s')\n"%(lib.varName, className,
                                                 className, cat))
         f.close()
@@ -460,9 +462,9 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
         # to reload the module for the new node to be known
         import sys
         try:            
-            reload(sys.modules[lib.modName])
-        except RuntimeError, e:
-            print "addNodeToUserLibrary: unable to reload library %s\n" % lib.modName, e
+            importlib.reload(sys.modules[lib.modName])
+        except RuntimeError as e:
+            print("addNodeToUserLibrary: unable to reload library %s\n" % lib.modName, e)
 
         # it appears we do not need to do the following:
 ##         # reload creates new objects for all things in the module
@@ -492,7 +494,7 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
             self.width = event.width
             # resize all libraries, only if window got larger
             if curwidth < event.width:
-                for lib in self.libraries.values():
+                for lib in list(self.libraries.values()):
                     if lib.ed is not None:
                         lib.resizeCategories()
             
@@ -500,7 +502,7 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
     def selectLibrary(self, name):
         # recolor the vertical scrollbar which is displayed when the main
         # window size is shrunk
-        if not self.libraries.has_key(name):
+        if name not in self.libraries:
             name = name.replace(' ', '_')
         color = self.libraries[name].color
         self.modulePagesF.configure(horizscrollbar_activebackground=color)
@@ -532,21 +534,21 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
         bl = self.buttonBar.toolbarButtonDict
         if lexecstatus == 'pause':
             bl['run'].disable()
-            if bl.has_key('softrun'):
+            if 'softrun' in bl:
                 bl['softrun'].disable()
             bl['pause'].enable()
             bl['pause'].config(relief='sunken')
             bl['stop'].disable()
         elif lexecstatus == 'running':
             bl['run'].disable()
-            if bl.has_key('softrun'):
+            if 'softrun' in bl:
                 bl['softrun'].disable()
             bl['pause'].enable()
             bl['pause'].config(relief='flat')
             bl['stop'].enable()
         elif lexecstatus == 'waiting' or lexecstatus == 'stop':
             bl['run'].enable()
-            if bl.has_key('softrun'):
+            if 'softrun' in bl:
                 bl['softrun'].enable()
             bl['pause'].disable()
             bl['pause'].config(relief='flat')
@@ -555,21 +557,21 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
 
         # set the withoutGUI run and stop buttons
         if hasattr(net, 'processWithoutGui'):
-            if bl.has_key('runWithoutGui'):
+            if 'runWithoutGui' in bl:
                 bl['runWithoutGui'].disable()
-            if bl.has_key('stopWithoutGui'):
+            if 'stopWithoutGui' in bl:
                 bl['stopWithoutGui'].enable()
         else:
-            if bl.has_key('runWithoutGui'):
+            if 'runWithoutGui' in bl:
                 bl['runWithoutGui'].enable()
-            if bl.has_key('stopWithoutGui'):
+            if 'stopWithoutGui' in bl:
                 bl['stopWithoutGui'].disable()
 
         if isinstance(net, MacroNetwork):
             bl['run'].disable()
-            if bl.has_key('softrun'):
+            if 'softrun' in bl:
                 bl['softrun'].disable()
-            if bl.has_key('runWithoutGui'):
+            if 'runWithoutGui' in bl:
                 bl['runWithoutGui'].disable()
 
 
@@ -590,7 +592,7 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
 
     def updateFastLibs(self):
         from Vision.nodeLibraries import libraries
-        for key, value in libraries.items():
+        for key, value in list(libraries.items()):
             try:
                 if hasattr(self,'fastLibsMenu'):
                     self.fastLibsMenu.index(key)
@@ -615,13 +617,13 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
 
 
     def makeLibrariesMenu(self):
-        Lib_button = Tkinter.Menubutton(self.mBar, text='Libraries',
+        Lib_button = tkinter.Menubutton(self.mBar, text='Libraries',
                                          underline=0)
         self.menuButtons['Libraries'] = Lib_button
-        Lib_button.pack(side=Tkinter.LEFT, padx="1m")
+        Lib_button.pack(side=tkinter.LEFT, padx="1m")
 
-		# got rid of useless tearoff
-        Lib_button.menu = Tkinter.Menu(Lib_button, tearoff=False)
+                # got rid of useless tearoff
+        Lib_button.menu = tkinter.Menu(Lib_button, tearoff=False)
 
         Lib_button.menu.add_command(label="Hide libraries",
                                      command=self.showHideLibraries_cb,
@@ -630,7 +632,7 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
         Lib_button.menu.add_separator()
 
         # Cascade menu for user-defined node libraries
-        self.fastLibsMenu = Tkinter.Menu(Lib_button.menu, tearoff=0)
+        self.fastLibsMenu = tkinter.Menu(Lib_button.menu, tearoff=0)
         self.fastLibsMenu.configure(font=self.font['Menus'])
         Lib_button.menu.add_cascade(label="Load library",
                                     menu=self.fastLibsMenu,
@@ -650,7 +652,7 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
         Lib_button.menu.add_separator()
 
         # Cascade menu for user-defined node libraries
-        usermenu = Tkinter.Menu(Lib_button.menu, tearoff=0)
+        usermenu = tkinter.Menu(Lib_button.menu, tearoff=0)
         usermenu.configure(font=self.font['Menus'])
 
 #        Lib_button.menu.add_cascade(label="User Libraries", menu=usermenu)
@@ -662,8 +664,8 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
 #                             )
 
         def defaultUserLibMessage_cb():
-            import tkMessageBox
-            tkMessageBox.showinfo("User libraries",
+            import tkinter.messagebox
+            tkinter.messagebox.showinfo("User libraries",
                                   """To save a modified node or a macro in MyDefaultLib:\n
 right click on the node, choose "Save source code..."\n
 ( the save dialog box opens inside the MyDefaultLib directory
@@ -693,11 +695,11 @@ To load this new library in Vision, use the menu:
     def makeHelpMenu(self):
         # remove title in menu bar
         self.title.forget()
-        Help_button = Tkinter.Menubutton(self.mBar, text='Help',
+        Help_button = tkinter.Menubutton(self.mBar, text='Help',
                                          underline=0)
         self.menuButtons['Help'] = Help_button
-        Help_button.menu = Tkinter.Menu(Help_button)
-        Help_button.pack(side=Tkinter.LEFT, padx="1m")
+        Help_button.menu = tkinter.Menu(Help_button)
+        Help_button.pack(side=tkinter.LEFT, padx="1m")
         Help_button.menu.add_command(label="About...",
                                      command=self.showAbout)
         Help_button.menu.add_command(label="Acknowledgements...",
@@ -742,8 +744,8 @@ To load this new library in Vision, use the menu:
 
 
     def showTutorials(self):
-        import tkMessageBox
-        tkMessageBox.showinfo("Tutorials and examples",
+        import tkinter.messagebox
+        tkinter.messagebox.showinfo("Tutorials and examples",
 """Tutorials and examples must be downloaded separately from the section "Supplementary Material" at http://mgltools.scripps.edu/downloads
 
 In the archive file, you will find a beginner's tutorial: doc/Tutorial/tutorial.rtf
@@ -753,8 +755,8 @@ and Jose Unpingco has prepared some nice video tutorials http://www.osc.edu/blog
 
 
     def showInstallVision(self):
-        import tkMessageBox
-        tkMessageBox.showinfo("Install Vision in a different Python interpreter",
+        import tkinter.messagebox
+        tkinter.messagebox.showinfo("Install Vision in a different Python interpreter",
 """
 Python versions 2.4, 2.5 and 2.6.1 are supported.
 
@@ -817,13 +819,13 @@ If PIL or matplotlib are installed, the corresponding Vision libraries are then 
             return
 
         # loop over libraries
-        libraries = self.libraries.items()
+        libraries = list(self.libraries.items())
         lastInd = self.lastMatchIndices
         for libInd in range(lastInd[0], len(libraries)):        
             libName, lib = libraries[libInd]
             #print 'LIB', libName
             self.lastMatchIndices[0] = libInd
-            categories = lib.libraryDescr.values()
+            categories = list(lib.libraryDescr.values())
             # loop over categories
             for catInd in range(lastInd[1], len(lib.libraryDescr)):
                 cat = categories[catInd]
@@ -888,10 +890,10 @@ Legal itemnames: 'All'
         # call base class method first
         newargs = [self]
         newargs.extend(list(args))
-        apply(NetworkBuilder.setFont, tuple(newargs), {})
+        NetworkBuilder.setFont(*tuple(newargs), **{})
 
         if args is None or args == () or len(args) != 2:
-            print msg
+            print(msg)
             return
 
         else:
@@ -916,22 +918,22 @@ Legal itemnames: 'All'
 
         if tag == 'Categories' or tag == 'All':
             self.font['Categories'] = font
-            for lib in self.libraries.keys():
-                for category in self.libraries[lib].libraryDescr.keys():
+            for lib in list(self.libraries.keys()):
+                for category in list(self.libraries[lib].libraryDescr.keys()):
                     canv = self.libraries[lib].libraryDescr[category]['canvas']
                     if canv is not None:
                         try:
                             canv.component('label').configure(font=font)
                         except:
-                            print "TclError"
+                            print("TclError")
 
         if tag == 'LibNodes' or tag == 'All':
             self.font['LibNodes'] = font
-            for lib in self.libraries.values():
+            for lib in list(self.libraries.values()):
                 # set balloon font.
                 lib.balloons.component('label').configure(font=font)
                 # set node proxy font
-                for catName in lib.libraryDescr.keys():
+                for catName in list(lib.libraryDescr.keys()):
                     cat = lib.libraryDescr[catName]
                     proxy = cat['nodes'][0] # we have to mark only the first
                     proxy.dummyNode.iconMaster.itemconfigure(
@@ -973,11 +975,11 @@ Legal itemnames: 'All'
                 return
             if not len(catName): # <Enter> without typing anything
                 continue
-            if not currLib.libraryDescr.has_key(catName):
+            if catName not in currLib.libraryDescr:
                 break
 
         if currLib.mode != 'readWrite':
-            tkMessageBox.showwarning(
+            tkinter.messagebox.showwarning(
                 "Vision Node Library",
                 "Error! Node library '%s' cannot be modified!\nOnly User Libraries can be modified."%currLib.name)
             return
@@ -996,11 +998,11 @@ Legal itemnames: 'All'
                 return
             if not len(catName): # <Enter> without typing anything
                 continue
-            if currLib.libraryDescr.has_key(catName):
+            if catName in currLib.libraryDescr:
                 break
 
         if currLib.mode != 'readWrite':
-            tkMessageBox.showwarning(
+            tkinter.messagebox.showwarning(
                 "Vision Node Library",
                 "Error! Node library '%s' cannot be modified!\nOnly User Libraries can be modified."%currLib.name)
             return
@@ -1138,7 +1140,7 @@ Legal itemnames: 'All'
         from mglutil.util.packageFilePath import findFilePath
         ICONPATH = findFilePath('Icons', 'Vision')
         for item in glyphbuttonList:
-            name=item.keys()[0]
+            name=list(item.keys())[0]
             icon1 = item[name]['icon1']
             icon2 = item[name]['icon2']
             state = item[name]['state']
@@ -1256,12 +1258,12 @@ Legal itemnames: 'All'
 
         self.buttonIcons = {} #otherwise the icon is lost and not displayed (tk bug)
         for item in buttonList:
-            name=item.keys()[0]
+            name=list(item.keys())[0]
             icon1 = item[name]['icon1']
             func  = item[name]['func']
             balloon = item[name]['balloon']
             self.buttonBarFunc[name] = func
-            if item[name].has_key('type') is False:
+            if ('type' in item[name]) is False:
                 icon2 = item[name]['icon2']
                 state = item[name]['state']
                 # Note: we pass balloonmaster=None to class ToolBarButton
@@ -1276,7 +1278,7 @@ Legal itemnames: 'All'
                 head, ext = os.path.splitext(icon1)
                 ICONPATH1 = os.path.join(ICONPATH, icon1)
                 if ext == '.gif':
-                    Icon = Tkinter.PhotoImage(file=ICONPATH1, master=master)#, master=self.ROOT)
+                    Icon = tkinter.PhotoImage(file=ICONPATH1, master=master)#, master=self.ROOT)
                 else:
                     import Image
                     import ImageTk
@@ -1284,21 +1286,21 @@ Legal itemnames: 'All'
                     Icon = ImageTk.PhotoImage(image=image, master=master)
                 if item[name]['type'] == 'menubutton':
                     self.buttonIcons[name] = Icon
-                    lButton = Tkinter.Menubutton(self.buttonBar, 
+                    lButton = tkinter.Menubutton(self.buttonBar, 
                                                      text = 'load library',
                                                      image=Icon
                                                      )
-                    self.fastLibsMenu2 = Tkinter.Menu(lButton, tearoff=0)
+                    self.fastLibsMenu2 = tkinter.Menu(lButton, tearoff=0)
                     self.updateFastLibs()
                     lButton.menu = self.fastLibsMenu2
                     lButton['menu'] = lButton.menu
                 elif item[name]['type'] == 'checkbutton':
                     if hasattr(self, 'buttonVariables') is False:
                         self.buttonVariables = {}
-                    if self.buttonVariables.has_key(name) is False:
-                        self.buttonVariables[name] = Tkinter.IntVar()
+                    if (name in self.buttonVariables) is False:
+                        self.buttonVariables[name] = tkinter.IntVar()
                     self.buttonIcons[name] = [Icon,]   
-                    lButton = Tkinter.Checkbutton(self.buttonBar,
+                    lButton = tkinter.Checkbutton(self.buttonBar,
                                                image=Icon,
                                                indicatoron=0,
                                                variable=self.buttonVariables[name],
@@ -1307,12 +1309,12 @@ Legal itemnames: 'All'
                                                background='white',
                                                )
 
-                    if item[name].has_key('icon2'):
+                    if 'icon2' in item[name]:
                         icon2 = item[name]['icon2']
                         head2, ext2 = os.path.splitext(icon2)
                         ICONPATH2 = os.path.join(ICONPATH, icon2)
                         if ext2 == '.gif':
-                            Icon2 = Tkinter.PhotoImage(file=ICONPATH2, master=master)#, master=self.ROOT)
+                            Icon2 = tkinter.PhotoImage(file=ICONPATH2, master=master)#, master=self.ROOT)
                         else:
                             image2 = Image.open(ICONPATH2)
                             Icon2 = ImageTk.PhotoImage(image=image2, master=master)
@@ -1324,7 +1326,7 @@ Legal itemnames: 'All'
                     self.buttonBar.balloons = Pmw.Balloon(self.buttonBar, yoffset=0)
                 self.buttonBar.balloons.bind(lButton, balloon, balloon)
                 
-                lButton.pack(side=Tkinter.LEFT, padx="1m")
+                lButton.pack(side=tkinter.LEFT, padx="1m")
                 # add the button to the list stored in the master
                 self.buttonBar.toolbarButtonDict[name] = lButton
 
@@ -1341,7 +1343,7 @@ Legal itemnames: 'All'
         """VPE wrapper of runCurrentNet_cb. toggle button bar buttons"""
         bl = self.buttonBar.toolbarButtonDict
         bl['run'].disable()
-        if bl.has_key('softrun'):
+        if 'softrun' in bl:
             bl['softrun'].disable()
         #if self.withThreads is True:
         #    bl['pause'].enable()
@@ -1378,7 +1380,7 @@ Legal itemnames: 'All'
         """VPE wrapper of softrunCurrentNet_cb. toggle button bar buttons"""
         bl = self.buttonBar.toolbarButtonDict
         bl['run'].disable()
-        if bl.has_key('softrun'):
+        if 'softrun' in bl:
             bl['softrun'].disable()
         #if self.withThreads is True:
         #    bl['pause'].enable()
@@ -1399,12 +1401,12 @@ Legal itemnames: 'All'
             warnings.warn('no Network to run without GUI')
             return
         else:
-            print "running current network without GUI"
+            print("running current network without GUI")
 
         bl = self.buttonBar.toolbarButtonDict
-        if bl.has_key('runWithoutGui'):
+        if 'runWithoutGui' in bl:
             bl['runWithoutGui'].disable()        
-        if bl.has_key('stopWithoutGui'):
+        if 'stopWithoutGui' in bl:
             bl['stopWithoutGui'].enable()
         net = self.currentNetwork
         net.canvas.update_idletasks()
@@ -1491,10 +1493,10 @@ Legal itemnames: 'All'
 ##                 break
 ##             net.socket = s
 
-        except Exception, e:
+        except Exception as e:
             warnings.warn("""can't save or run temporary file to run without GUI,
 on unix make sure ksh is installed as /bin/ksh""")
-            print e
+            print(e)
 
 
     def killRunWithoutGui(self):
@@ -1531,7 +1533,7 @@ on unix make sure ksh is installed as /bin/ksh""")
         bl = self.buttonBar.toolbarButtonDict
         if isinstance(self.currentNetwork, MacroNetwork) is False:
             bl['run'].enable()
-            if bl.has_key('softrun'):
+            if 'softrun' in bl:
                 bl['softrun'].enable()
         #bl['runWithoutGui'].enable()
         bl['pause'].disable()
@@ -1545,9 +1547,9 @@ on unix make sure ksh is installed as /bin/ksh""")
 """
         bl = self.buttonBar.toolbarButtonDict
         if isinstance(self.currentNetwork, MacroNetwork) is False:
-            if bl.has_key('runWithoutGui'):
+            if 'runWithoutGui' in bl:
                 bl['runWithoutGui'].enable()
-        if bl.has_key('stopWithoutGui'):
+        if 'stopWithoutGui' in bl:
             bl['stopWithoutGui'].disable()
         self.currentNetwork.onStoppingExecution()
         self.killRunWithoutGui()
@@ -1582,7 +1584,7 @@ toggle button bar buttons"""
 """
         bl = self.buttonBar.toolbarButtonDict
         bl['run'].enable()
-        if bl.has_key('softrun'):
+        if 'softrun' in bl:
             bl['softrun'].enable()
         bl['pause'].disable()
         bl['stop'].disable()
@@ -1595,18 +1597,18 @@ toggle button bar buttons"""
         # note: this method is no longer called, since we have now a
         # toolbar with icons
         self.stdButtonsPage = self.ButtonsPages.add('Std')
-        Tkinter.Button(self.stdButtonsPage, text='Load Network',
+        tkinter.Button(self.stdButtonsPage, text='Load Network',
                        command=self.loadNetwork_cb).pack(expand=1, fill='x')
         
-        Tkinter.Button(self.stdButtonsPage, text='Save Network',
+        tkinter.Button(self.stdButtonsPage, text='Save Network',
                        command=self.saveNetwork_cb).pack(expand=1, fill='x')
-        Tkinter.Button(self.stdButtonsPage, text='Run Network',
+        tkinter.Button(self.stdButtonsPage, text='Run Network',
                        command=self.runNetwork).pack(expand=1, fill='x')
 ##          self.flowbt = Tkinter.Button(self.stdButtonsPage, text='Disable Flow',
 ##                                       command=self.flowButton_cb)
 ##          self.flowbt.pack(expand=1, fill='x')
         self.libButtonsPage = self.ButtonsPages.add('Libraries')
-        Tkinter.Button(self.libButtonsPage, text='Load Library',
+        tkinter.Button(self.libButtonsPage, text='Load Library',
                        command=self.showLoadLibraryForm_cb).pack(expand=1, fill='x')
 
 
@@ -1649,8 +1651,8 @@ toggle button bar buttons"""
 
     def showCreateLibraryForm_cb(self, event=None):
         # check if we have a user-created node library directory
-        if len(self.userLibsDirs.keys()) == 0:
-            tkMessageBox.showwarning(
+        if len(list(self.userLibsDirs.keys())) == 0:
+            tkinter.messagebox.showwarning(
                 "Create Library",
                 "ERROR! No directory available.\n\nPlease, create a directory as described in the FAQ!\nConsult menu 'Help'->'FAQ'")
             return
@@ -1704,29 +1706,29 @@ Vision.StandarNodes) and is called varName in this module (e.g. stdlib),
 
     def loadLibModule(self, module, dependents={}):
 
-        if type(dependents) == types.DictType:
-            for dep, depversion in dependents.items():
+        if type(dependents) == dict:
+            for dep, depversion in list(dependents.items()):
                 try:
                     __import__(dep) # make sure all dependent packages are loadable
-                except Exception, e:
+                except Exception as e:
                     warnings.warn("""
 In order to use the vision library %s,
 you need to install: %s %s\n""" %(module,dep,depversion))
                     import traceback
                     traceback.print_stack()
-                    print e
+                    print(e)
                     return
         else:
             for dep in dependents:
                 try:
                     __import__(dep) # make sure all dependent packages are loadable
-                except Exception, e:
+                except Exception as e:
                     warnings.warn("""
 In order to use the vision library %s,
 you need to install: %s \n""" %(module,dep))
                     import traceback
                     traceback.print_stack()
-                    print e
+                    print(e)
                     return
 
         from Vision.UserLibBuild import addDirToSysPath
@@ -1736,11 +1738,11 @@ you need to install: %s \n""" %(module,dep))
         try:
             mod = __import__(module,globals(),locals(),[moduleName])
             try:
-                reload(mod)
-            except RuntimeError, e:
+                importlib.reload(mod)
+            except RuntimeError as e:
                 import traceback
                 traceback.print_stack()
-                print e
+                print(e)
                 #print "loadLibModule: unable to reload library %s\n" % module, e
                 pass # this is just to hide a potential problem in reloading (matplotlib has this issue) 
 
@@ -1749,11 +1751,11 @@ you need to install: %s \n""" %(module,dep))
                 from Vision.VPE import NodeLibrary
                 if isinstance(modItem, NodeLibrary):
                     self.addLibraryInstance(modItem, module, modItemName, force=True)
-        except Exception, e:
+        except Exception as e:
             import traceback
             traceback.print_stack()
             traceback.print_exc()
-            print e
+            print(e)
 
             
     def addLibraryFromName(self, libname, pathstr=None, dependents=[]):
@@ -1769,7 +1771,7 @@ you need to install: %s \n""" %(module,dep))
         from Vision.nodeLibraries import libraries
 
         if pathstr is None:
-            if libname not in libraries.keys():
+            if libname not in list(libraries.keys()):
                 raise RuntimeError('Library %s not registered!'%libname)
             else:
                 pathstr = libraries[libname][0]
@@ -1808,7 +1810,7 @@ you need to install: %s \n""" %(module,dep))
 
 
         # sort categories by name, sort nodenames by name
-        catList = lib.libraryDescr.keys()
+        catList = list(lib.libraryDescr.keys())
         catList.sort()
 
         font = lib.ed.font['LibNodes']
@@ -1826,8 +1828,8 @@ you need to install: %s \n""" %(module,dep))
             posy = 0
             
             # sort nodeList by node name, ignoring upper- or lower case
-            nodeList.sort(lambda x, y: cmp(string.lower(x.name),
-                                           string.lower(y.name)))
+            nodeList.sort(key=cmp_to_key(lambda x, y: cmp(string.lower(x.name),
+                                           string.lower(y.name))))
 
             # now add dummy nodes to category frame
             for node in nodeList:
@@ -1880,7 +1882,7 @@ you need to install: %s \n""" %(module,dep))
 notebook tab, delete Tkinter attributes balloons, page, ed, top. Finally,
 reset modified attributes such as lastPosy and delete lib from ed.libraries"""
         
-        if name not in self.libraries.keys():
+        if name not in list(self.libraries.keys()):
             return
 
         lib = self.libraries[name]
@@ -1897,7 +1899,7 @@ reset modified attributes such as lastPosy and delete lib from ed.libraries"""
         lib.page = None
         lib.ed = None
         lib.top = None
-        for cat in lib.libraryDescr.values():
+        for cat in list(lib.libraryDescr.values()):
             cat['lastPosy'] = 15
 
         # 4) delete lib in self.libraries
@@ -1974,7 +1976,7 @@ reset modified attributes such as lastPosy and delete lib from ed.libraries"""
         nodes = self.idToNodes[sc_canvas]
         self.nodeToCreate = None
         for i in items:
-            if i in nodes.keys():
+            if i in list(nodes.keys()):
                 self.nodeToCreate = nodes[i][1]
                 n1 = nodes[i][0]
                 bb = sc_canvas.component('canvas').bbox(n1.outerBox)
@@ -2061,7 +2063,7 @@ reset modified attributes such as lastPosy and delete lib from ed.libraries"""
             lib = kw['library']
             self.addLibraryInstance(lib, lib.modName, lib.varName)
 
-            node = apply( self.nodeToCreate.nodeClass, args, kw )
+            node = self.nodeToCreate.nodeClass(*args, **kw)
             
             ## FIXME ... is this still used ???
             if self.nodeToCreate.functionSourceCode:
@@ -2123,9 +2125,9 @@ reset modified attributes such as lastPosy and delete lib from ed.libraries"""
         self.buttonBar.toolbarButtonDict['save'].enable()
         self.buttonBar.toolbarButtonDict['print'].enable()
         self.buttonBar.toolbarButtonDict['run'].enable()
-        if self.buttonBar.toolbarButtonDict.has_key('softrun'):
+        if 'softrun' in self.buttonBar.toolbarButtonDict:
             self.buttonBar.toolbarButtonDict['softrun'].enable()
-        if self.buttonBar.toolbarButtonDict.has_key('runWithoutGui'):
+        if 'runWithoutGui' in self.buttonBar.toolbarButtonDict:
             self.buttonBar.toolbarButtonDict['runWithoutGui'].enable()
 
 
@@ -2138,16 +2140,16 @@ reset modified attributes such as lastPosy and delete lib from ed.libraries"""
             self.buttonBar.toolbarButtonDict['save'].disable()
             self.buttonBar.toolbarButtonDict['print'].disable()
             self.buttonBar.toolbarButtonDict['run'].disable()
-            if self.buttonBar.toolbarButtonDict.has_key('softrun'):
+            if 'softrun' in self.buttonBar.toolbarButtonDict:
                 self.buttonBar.toolbarButtonDict['softrun'].disable()
-            if self.buttonBar.toolbarButtonDict.has_key('runWithoutGui'):
+            if 'runWithoutGui' in self.buttonBar.toolbarButtonDict:
                 self.buttonBar.toolbarButtonDict['runWithoutGui'].disable()
 
 
     def exit_cb(self, event=None):
         # we add attributes to node libraries. Upon exit, we clear these
         # attributes:
-        for lib in self.libraries.values():
+        for lib in list(self.libraries.values()):
             libname = lib.name.replace('_', ' ')
             self.deleteLibrary(libname)
         NetworkBuilder.exit_cb(self, event)
@@ -2240,10 +2242,10 @@ editor's list of widgets offered in the Port editor when the library is laoded. 
         if kw is None:
             kw = {}
 
-        if not kw.has_key('library'):
+        if 'library' not in kw:
             kw['library'] = self
 
-        if self.libraryDescr.has_key(category):
+        if category in self.libraryDescr:
             nodeList = self.libraryDescr[category]['nodes']
             nodeList.append(
                 NodeProxy( nodeClass, name, args=args, kw=kw,
@@ -2306,7 +2308,7 @@ editor's list of widgets offered in the Port editor when the library is laoded. 
 In this frame, dummy nodes can be added which can be dragged and dropped
 onto the network editor canvas."""
 
-        if not self.libraryDescr.has_key(cat):
+        if cat not in self.libraryDescr:
             self.libraryDescr[cat] = {'canvas':None, 'nodes':[], 'lastPosy':15}
         dict = self.libraryDescr[cat]
         pane = self.top.add(cat, size=100) #will be resized below
@@ -2341,7 +2343,7 @@ onto the network editor canvas."""
         # if main window is shrunk
         self.ed.ModulePages.configure(hull_width=self.ed.width-6)
 
-        if len(self.libraryDescr.keys())==0:
+        if len(list(self.libraryDescr.keys()))==0:
             return # no categories
         # compute how much width the individual panes get
         if self.ed.top.winfo_width() == 1: # first time of instanciation
@@ -2356,8 +2358,8 @@ onto the network editor canvas."""
 
         # find width of vertical scrollbar on the categories
         d = self.libraryDescr
-        if d[d.keys()[0]]['canvas'] is not None:
-            scwidth = int(d[d.keys()[0]]['canvas'].cget('vertscrollbar_width'))
+        if d[list(d.keys())[0]]['canvas'] is not None:
+            scwidth = int(d[list(d.keys())[0]]['canvas'].cget('vertscrollbar_width'))
             # compute size of 1 category 
             libSize = int(visWidth/float(lenLibs))-scwidth
             for p in panes:
@@ -2382,7 +2384,7 @@ onto the network editor canvas."""
         #build a dummy node
         # so we can call its buldNodeIcon method
 
-        if cat not in self.libraryDescr.keys():
+        if cat not in list(self.libraryDescr.keys()):
             self.addCategoryFrame(cat)
             
         dict = self.libraryDescr[cat]
@@ -2402,7 +2404,7 @@ onto the network editor canvas."""
             nodeConstruct = {'typeManager':vpe.typeManager}
             nodeConstruct.update(node.kw)
             # n2 i sbuilt to lookup the input and output ports
-            n2 = apply(node.nodeClass, (), nodeConstruct)
+            n2 = node.nodeClass(*(), **nodeConstruct)
             if len(n2.inputPortsDescr) > len(n2.widgetDescr):
                posy += 2
             n1.buildIcons(sc_canvas, 10, posy, small=True)
@@ -2420,7 +2422,7 @@ onto the network editor canvas."""
                 lPortName = lKw['name']
                 lKw.pop('name')
                 try:
-                    ip = apply( InputPort, (lPortName, n2), lKw)
+                    ip = InputPort(*(lPortName, n2), **lKw)
                     visible = (n2.widgetDescr.get(ip.name, None) is None)
                     if visible is True: # port is not bind widget
                         if ip.datatypeObject['shape'] == 'diamond':
@@ -2431,11 +2433,11 @@ onto the network editor canvas."""
                         ip.halfPortHeight = ip.datatypeObject['height']/2
                         ip.createIcon(pcx=14+12*i, pcy=pcy)
                         i += 1
-                except Exception, e:
+                except Exception as e:
                     warnings.warn("echec input %s" % n2.name)
                     import traceback
-                    print traceback.print_stack()
-                    print e
+                    print(traceback.print_stack())
+                    print(e)
             j = 0
             bb = canvas.bbox(n1.id)
             pcy = n1.posy + bb[3] - bb[1] + 2
@@ -2444,7 +2446,7 @@ onto the network editor canvas."""
                 lPortName = lKw['name']
                 lKw.pop('name')
                 try:
-                    op = apply( OutputPort, (lPortName, n2), lKw)
+                    op = OutputPort(*(lPortName, n2), **lKw)
                     if op.datatypeObject['shape'] == 'diamond':
                         n2.scaleSum = .6
                     else:
@@ -2453,13 +2455,13 @@ onto the network editor canvas."""
                     op.halfPortHeight = op.datatypeObject['height']/2
                     op.createIcon(pcx=14+12*j, pcy=pcy)
                     j += 1
-                except Exception, e:
+                except Exception as e:
                     warnings.warn("echec ouput %s" % n2.name)
                     import traceback
-                    print traceback.print_stack()
-                    print e
+                    print(traceback.print_stack())
+                    print(e)
 
-    		# resize node length
+                # resize node length
             neededWidth = 4 + 12 * max(i, j)
             neededWidth = n1.getWidthForLabel(neededWidth)
             bb = canvas.bbox(n1.innerBox)
@@ -2468,7 +2470,7 @@ onto the network editor canvas."""
             if len(n2.outputPortsDescr) <= 0:
                posy -= 2 
             del n2
-    		# here ends the additions to draw the ports ********************
+                # here ends the additions to draw the ports ********************
 
         node.dummyNode = n1
         node.bbox = sc_canvas.bbox(n1.iconTag)
@@ -2486,7 +2488,7 @@ onto the network editor canvas."""
         """Delete a node from a category frame. We need the name of the
         category and the class of the node"""
         # Delete a proxy node from a category frame
-        if cat not in self.libraryDescr.keys():
+        if cat not in list(self.libraryDescr.keys()):
             return
 
         # find proxy node
@@ -2518,7 +2520,7 @@ onto the network editor canvas."""
     def rebuildNodesInCategoryFrame(self, cat):
         # delete and rebuild the nodes in a category frame
                 
-        if cat not in self.libraryDescr.keys():
+        if cat not in list(self.libraryDescr.keys()):
             return
 
         sc_canvas = self.libraryDescr[cat]['canvas']
@@ -2580,13 +2582,13 @@ onto the network editor canvas."""
                                                          self.color))
 
         # save source code of all nodes
-        for catName, cat in self.libraryDescr.items():
+        for catName, cat in list(self.libraryDescr.items()):
             for node in cat['nodes']:
                 # create an instance of the node so we ask it for source code
                 kw = node.kw
                 args = node.args
                 className = self.name+'_'+node.nodeClass.__name__
-                n = apply( node.nodeClass, args, kw )
+                n = node.nodeClass(*args, **kw)
                 n.modified = {'sourceCode':1, 'inputPorts':1, 'outputPorts':1,
                              'widgets':1 }
                 src = n.getNodeSourceCode(className)
@@ -2603,7 +2605,7 @@ onto the network editor canvas."""
         f = open(filename, 'w')
         if f:
             lines = self.getSourceCode(libObjName)
-            map( f.write, lines)
+            list(map( f.write, lines))
             f.close()
             
         

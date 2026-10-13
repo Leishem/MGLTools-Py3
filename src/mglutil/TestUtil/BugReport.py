@@ -9,11 +9,11 @@
 ##
 ##$Id: BugReport.py,v 1.16.2.1 2011/06/06 21:06:18 sargis Exp $
 
-import Tkinter, Pmw
+import tkinter, Pmw
 from string import join
 import webbrowser,os,sys
 from types import StringType
-from Tkinter import *
+from tkinter import *
 import warnings
 #from htmlDoc import *
 
@@ -28,7 +28,7 @@ class BugReportCommand:
         if self.component==None:
             return
        
-        import urllib
+        import urllib.request, urllib.parse, urllib.error
         idnum = None
         ###################
         #find date and time
@@ -45,7 +45,7 @@ class BugReportCommand:
             import pickle
             try:
                 desccont += "\n UserID: " + pickle.load(open(registration))['UserID'].strip()
-            except Exception, inst:
+            except Exception as inst:
                 warnings.warn(inst)
                 desccont += "\n Unregistered User"
         else:
@@ -53,7 +53,7 @@ class BugReportCommand:
         ###############################################
         ##Feeding post_bug.cgi form with required input
         ###############################################
-        params = urllib.urlencode({"Bugzilla_login":"anonymous_bugzilla@yahoo.com",
+        params = urllib.parse.urlencode({"Bugzilla_login":"anonymous_bugzilla@yahoo.com",
                                    "Bugzilla_password":"mgltools","version":version,
                                    "rep_platform":"All","priority":"P2",
                                    "op_sys":"All","bug_severity":"normal",
@@ -65,7 +65,7 @@ class BugReportCommand:
                                    "comment":"%s" %desccont,
                                    "bug_file_loc":" ","cc":email_ent} )
         #post
-        fptr = urllib.urlopen("http://mgldev.scripps.edu/bugs/post_bug.cgi",params)
+        fptr = urllib.request.urlopen("http://mgldev.scripps.edu/bugs/post_bug.cgi",params)
         data =fptr.readlines()
         for d in data:
             if d.endswith("</title>\n"):
@@ -77,7 +77,7 @@ class BugReportCommand:
         try: #this part is needed for debugging
             int(idnum)
         except:
-            print data
+            print(data)
         #for attaching files
         if len(atcont)>0:
             filelist=list(atcont)
@@ -89,13 +89,13 @@ class BugReportCommand:
                     ###################
                     #HTTP + MULTIPART 
                     ########################
-                    import urllib2
-                    import MultipartPostHandler
-                    opener = urllib2.build_opener(MultipartPostHandler.MultipartPostHandler)
-                    urllib2.install_opener(opener)
-                    req = urllib2.Request("http://mgldev.scripps.edu/bugs/attachment.cgi",params1)
+                    import urllib.request, urllib.error, urllib.parse
+                    from . import MultipartPostHandler
+                    opener = urllib.request.build_opener(MultipartPostHandler.MultipartPostHandler)
+                    urllib.request.install_opener(opener)
+                    req = urllib.request.Request("http://mgldev.scripps.edu/bugs/attachment.cgi",params1)
                     req.add_header('Content-Type', 'text/plain')
-                    response = urllib2.urlopen(req).read().strip()
+                    response = urllib.request.urlopen(req).read().strip()
          
         return idnum       
               

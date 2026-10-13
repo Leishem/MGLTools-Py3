@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #########################################################################
 #
@@ -29,11 +29,11 @@ or a programer
 """
 
 import types
-import numpy.oldnumeric as Numeric
-import Tkinter, Pmw
+import mglcompat.oldnumeric as Numeric
+import tkinter, Pmw
 import weakref, warnings
 
-from UserList import UserList
+from collections import UserList
 from inspect import getargspec
 
 from NetworkEditor.itemBase import NetworkItems
@@ -41,6 +41,7 @@ from NetworkEditor.widgets import PortWidget, widgetsTable
 from NetworkEditor.datatypes import AnyType, AnyArrayType
 from mglutil.gui.BasicWidgets.Tk.TreeWidget.objectBrowser import ObjectBrowser
 from mglutil.util.callback import CallBackFunction
+from functools import reduce
 
 
 class NGWidget:
@@ -66,11 +67,11 @@ class NGWidget:
         kw.pop('min', None)
         kw.pop('max', None)
         if len(kw) != 0:
-            print 'WARNING running without GUI: NGWidget.configure() not implemented', kw
+            print('WARNING running without GUI: NGWidget.configure() not implemented', kw)
 
 
     def setlist(self, *args, **kw):
-        print 'WARNING running without GUI: NGWidget.setlist() not implemented'
+        print('WARNING running without GUI: NGWidget.setlist() not implemented')
 
 
 
@@ -90,8 +91,8 @@ class PortsDescr(list):
             elif len(args)>1:
                 raise ValueError('bad argument for PortsDescr', args)
         
-        assert kw.has_key('name')
-        if not kw.has_key('datatype'):
+        assert 'name' in kw
+        if 'datatype' not in kw:
             kw['datatype'] = 'None'
 
         if self.checkUniqueName(kw['name']):
@@ -201,7 +202,7 @@ class Port(NetworkItems):
         ed = self.getEditor()
         tm = ed.typeManager
 
-        if type(datatype) is types.StringType:
+        if type(datatype) is bytes:
             return tm.getType(datatype)
         elif isinstance(datatype, AnyType) or \
                  isinstance(datatype, AnyArrayType):
@@ -284,7 +285,7 @@ class Port(NetworkItems):
         ed = self.getEditor()
 
         # got rid of useless tearoff
-        self.menu = Tkinter.Menu(ed, title=self.name, tearoff=False)
+        self.menu = tkinter.Menu(ed, title=self.name, tearoff=False)
         self.menu.add_separator()
 
         self.menu.add_command(label='Show Data', command=self.showData)
@@ -298,9 +299,9 @@ class Port(NetworkItems):
             # constructor create a boolean value which gets overwritten
             # by a Tkinter.BooleanVar here. When we come from refreshNet_cb
             # it is already a Tkinter.BooleanVar
-            if isinstance(lCast, Tkinter.BooleanVar):
+            if isinstance(lCast, tkinter.BooleanVar):
                 lCast = lCast.get()
-            self._cast = Tkinter.BooleanVar()
+            self._cast = tkinter.BooleanVar()
             self._cast.set(lCast)
             lFuncCall = CallBackFunction(self._setModified, True)
             self.menu.add_checkbutton(label='Cast Data', 
@@ -314,12 +315,12 @@ class Port(NetworkItems):
                 
                 self.menu.add_separator()
     
-                self.cascadeMenu = Tkinter.Menu(self.menu, tearoff=0)
+                self.cascadeMenu = tkinter.Menu(self.menu, tearoff=0)
                             
                 self.menu.add_cascade(label='Parenting applies to',
                                       menu=self.cascadeMenu)
                             
-                self.cascadeMenuVariable = Tkinter.StringVar()
+                self.cascadeMenuVariable = tkinter.StringVar()
                 self.cascadeMenuVariable.set('current')
                 
                 self.cascadeMenu.add_radiobutton(
@@ -347,7 +348,7 @@ class Port(NetworkItems):
                                          value='all', 
                                          underline=0)     
 
-                self.retainPosition = Tkinter.BooleanVar()
+                self.retainPosition = tkinter.BooleanVar()
                 self.retainPosition.set(False)
                 self.menu.add_checkbutton(label='retain position while parenting', 
                                           variable=self.retainPosition,
@@ -474,12 +475,12 @@ class Port(NetworkItems):
         if self.objEditor:
             self.objEditor.top.master.lift()
             return
-        from Editor import PortEditor
+        from .Editor import PortEditor
         self.objEditor = PortEditor(self)
 
 
     def typeName(self, t):
-        if type(t)==types.ClassType or type(t)==types.BuiltinFunctionType:
+        if type(t)==type or type(t)==types.BuiltinFunctionType:
             return t.__name__
         else:
             return type(t).__name__
@@ -505,7 +506,7 @@ class Port(NetworkItems):
             
 
     def datatypeStr(self):
-        if type(self.datatype)==types.StringType:
+        if type(self.datatype)==bytes:
             return self.datatype
         # obsolete since all datatypes are now string !?
         tstr = self.typeName(self.datatype)
@@ -736,7 +737,7 @@ datatype  : datatype (string or data type object)
 """
         changeIcon = 0
         handledOps = {}
-        for k,v in kw.items():
+        for k,v in list(kw.items()):
             if k == 'width':
                 handledOps[k] = v
                 if v/2 != self.halfPortWidth:
@@ -753,7 +754,7 @@ datatype  : datatype (string or data type object)
                 if v != self.name:
                     if self.node:
                         wdescr = self.node.widgetDescr
-                        if wdescr.has_key(self.name):
+                        if self.name in wdescr:
                             wdescr[v] = wdescr[self.name]
                             del wdescr[self.name]
 
@@ -792,7 +793,7 @@ datatype  : datatype (string or data type object)
                 handledOps[k] = v
                 self.setCallback(v, k)
                 
-        if len(handledOps.keys()):
+        if len(list(handledOps.keys())):
                 self._setModified(True)
 
         if redo:
@@ -902,17 +903,15 @@ datatype  : datatype (string or data type object)
         node2 = self.secondNodePort.node
         portNum2 = self.secondNodePort.number
         
-        apply( self.createConnection,  ( self, self.secondNodePort ), kw)
+        self.createConnection(*( self, self.secondNodePort ), **kw)
 
 
     def createConnection(self, port1, port2, **kw):
         ed = self.node.network
         if isinstance(self, SpecialOutputPort):
-            conn = apply( ed.specialConnectNodes,
-                     (port1.node, port2.node, port1.number, port2.number), kw )
+            conn = ed.specialConnectNodes(*(port1.node, port2.node, port1.number, port2.number), **kw)
         else:
-            conn = apply( ed.connectNodes,
-                     (port1.node, port2.node, port1.number, port2.number), kw )
+            conn = ed.connectNodes(*(port1.node, port2.node, port1.number, port2.number), **kw)
 
 
     def compareToOrigPortDescr(self):
@@ -924,7 +923,7 @@ network node base class and return a dictionary with the differences
         id = self._id
         lConstrkw = {'masternet': self.node.network}
         lConstrkw.update(self.node.constrkw)
-        dummy = apply(self.node.__class__,(),lConstrkw) # we need the base class node
+        dummy = self.node.__class__(*(), **lConstrkw) # we need the base class node
 
         if isinstance(self, InputPort):
             origDescr = dummy.inputPortsDescr[id]
@@ -936,8 +935,8 @@ network node base class and return a dictionary with the differences
         #print "ownDescr", ownDescr
 
         descr = {}
-        for k,v in ownDescr.items():
-            if k in origDescr.keys():
+        for k,v in list(ownDescr.items()):
+            if k in list(origDescr.keys()):
                 if v != origDescr[k]:
                     descr[k] = v
                 ownDescr.pop(k)
@@ -1027,13 +1026,13 @@ class InputPort(Port):
           or len(self.connections) != 0:
             return
         if hasattr(self, 'topEntry') is False:
-            self.topEntry = Tkinter.Toplevel()
-            self.defaultValueVar = Tkinter.StringVar()
-            if type(self.defaultValue) == types.StringType: 
+            self.topEntry = tkinter.Toplevel()
+            self.defaultValueVar = tkinter.StringVar()
+            if type(self.defaultValue) == bytes: 
                 self.defaultValueVar.set('\''+self.defaultValue +'\'')
             else:
                 self.defaultValueVar.set(self.defaultValue)
-            self.typedValueTK = Tkinter.Entry(
+            self.typedValueTK = tkinter.Entry(
                                master=self.topEntry,
                                textvariable=self.defaultValueVar,
                                relief='sunken', bg='yellow')
@@ -1128,7 +1127,7 @@ class InputPort(Port):
         elif hasattr(self.data, '__len__'):
             try:
                 length = len(self.data)
-            except TypeError, e:
+            except TypeError as e:
                 length = len(str(self.data))
 
         if length > 1000:
@@ -1181,8 +1180,8 @@ cast      : data will be casted into desired type only if cast is True
 parenting : type of parenting (if self.name is 'parent')  
 
 """
-        changeIcon, handledOps = apply( Port.configure, (self, 0), kw )
-        for k,v in kw.items():
+        changeIcon, handledOps = Port.configure(*(self, 0), **kw)
+        for k,v in list(kw.items()):
             if k == 'parenting':
                 assert self.name == 'parent'
                 assert v in ('none','current','siblings','all'), v
@@ -1190,17 +1189,17 @@ parenting : type of parenting (if self.name is 'parent')
                 if v != self.cascadeMenuVariable.get():
                     self.cascadeMenuVariable.set(v)
             elif k=='retainPosition':
-                assert type(v) is types.BooleanType
+                assert type(v) is bool
                 handledOps[k] = v
                 if v != self.retainPosition.get():
                     self.retainPosition.set(v)
             elif k == 'cast':
-                assert (type(v) is types.BooleanType) or (type(v) is types.IntType and v in (0,1) )
+                assert (type(v) is bool) or (type(v) is int and v in (0,1) )
                 handledOps[k] = v
                 if v != self._cast.get():
                     self._cast.set(v)
             elif k == 'required':
-                assert type(v) is types.BooleanType
+                assert type(v) is bool
                 handledOps[k] = v
                 if v != self.required:
                     self.required = v
@@ -1219,7 +1218,7 @@ parenting : type of parenting (if self.name is 'parent')
                 self.menu.add_command(label='Rebind Widget', underline=0, 
                                        command=self.rebindWidget)
 
-        if len(handledOps.keys()):
+        if len(list(handledOps.keys())):
             self._setModified(True)
 
         # update the port's description
@@ -1263,11 +1262,11 @@ parenting : type of parenting (if self.name is 'parent')
 
         # get a copy of the widget's constructor only options
         widgetClass = descr.pop('class')
-        if type(widgetClass) is types.StringType:
+        if type(widgetClass) is bytes:
             widgetClass = widgetsTable[widgetClass]
         
         # instanciate the widget
-        w = apply( widgetClass, (self, ), descr)
+        w = widgetClass(*(self, ), **descr)
 
         # new widget, thus set _modifed and _original attribute accordingly
         w._setModified(modif)
@@ -1389,12 +1388,12 @@ the port icon, return the decription of the deleted widget
         if isinstance(self.widget, NGWidget) is False:
           self.widget.destroy()
 
-          if wasExpanded and len(self.node.widgetDescr.keys()):# repack node
+          if wasExpanded and len(list(self.node.widgetDescr.keys())):# repack node
             self.node.showInNodeWidgets()                    #before destroying
           else:
             resize=True
-            for v in self.node.widgetDescr.values():
-                if v.has_key('master') and v['master'] in ['node', 'Node']:
+            for v in list(self.node.widgetDescr.values()):
+                if 'master' in v and v['master'] in ['node', 'Node']:
                     resize = False
                     break
             if resize is True and isinstance(self.widget, NGWidget) is False: # only resize, if we have no node widget left
@@ -1452,7 +1451,7 @@ cases, status of port's data remains 'unchecked'.
         else: # we didn't break
             assert False # we should have found the connection
         if    theConnection.blocking is True \
-          and (type(data) == types.StringType) \
+          and (type(data) == bytes) \
           and (data == 'no data yet'):
             return False, data #None
 
@@ -1664,7 +1663,7 @@ the data is fetched from the parent port.
                 self.inputDataBallon()
                 return 'Stop'
 
-        if type(allData)==types.StringType and allData == 'no data yet':
+        if type(allData)==bytes and allData == 'no data yet':
             if self.required:
                 if ed.hasGUI and ed.verbose:
                     s='Data missing on required port %s in node %s in network %s'%(
@@ -1765,7 +1764,7 @@ class OutputPort(Port):
     
     def configure(self, **kw):
         redo = 0
-        redo, handledOps = apply( Port.configure, (self, 0), kw )
+        redo, handledOps = Port.configure(*(self, 0), **kw)
 
         if redo and self.iconTag:
             self.deleteIcon()

@@ -31,7 +31,7 @@ from Pmv.colorPalette import ColorPalette
 class EditColorPaletteByAtomType(MVCommand):
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('colorByAtomType'):
+        if 'colorByAtomType' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'colorByAtomType', 'Pmv', topCommand = 0)
         self.vf.colorByAtomType.palette.read(os.path.join(self.vf.rcFolder,"colorByAtom_map.py"))
 
@@ -75,7 +75,7 @@ EditColorPaletteByAtomTypeGUI.addMenuCommand('menuRoot',
 class EditColorPaletteByResidueType(MVCommand):
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('colorByResidueType'):
+        if 'colorByResidueType' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'colorByResidueType', 'Pmv', topCommand = 0)
         self.vf.colorByResidueType.palette.read(os.path.join(self.vf.rcFolder,"colorByResidueType_map.py"))
 
@@ -122,7 +122,7 @@ EditColorPaletteByResidueTypeGUI.addMenuCommand('menuRoot',
 class EditColorPaletteByChain(MVCommand):
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('colorByChains'):
+        if 'colorByChains' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'colorByChains', 'Pmv', topCommand = 0)
         self.vf.colorByChains.palette.read(os.path.join(self.vf.rcFolder,"colorByChain_map.py"))
 
@@ -168,7 +168,7 @@ EditColorPaletteByChainGUI.addMenuCommand('menuRoot',
 class EditColorPaletteByMolecule(MVCommand):
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('colorByMolecules'):
+        if 'colorByMolecules' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'colorByMolecules', 'Pmv', topCommand = 0)
         self.vf.colorByAtomType.palette.read(os.path.join(self.vf.rcFolder,"colorByAMolecule_map.py"))
 
@@ -177,7 +177,7 @@ class EditColorPaletteByMolecule(MVCommand):
 None <- editPaletteByMolecule(self, colorDict, **kw)
 """
         #print "__call__"
-        apply(self.doitWrapper, (ramp, labels), kw)
+        self.doitWrapper(*(ramp, labels), **kw)
 
 
     def guiCallback(self):

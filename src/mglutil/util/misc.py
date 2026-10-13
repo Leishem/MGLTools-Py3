@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -16,7 +16,7 @@
 
 import types
 import sys
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 import os
 
 _proc_status = '/proc/%d/status' % os.getpid()
@@ -63,8 +63,8 @@ def stacksize(since=0.0):
 
 
 def issequence(a):
-    return type(a) is types.TupleType or \
-           type(a) is types.ListType or \
+    return type(a) is tuple or \
+           type(a) is list or \
            isinstance(a, Numeric.ArrayType)
 
 def isnumericstring(a):
@@ -80,7 +80,7 @@ def uniq(objectSequence):
     l = []
     d = {}
     for o in objectSequence:
-        if not d.has_key(o):
+        if o not in d:
             d[o] = None
             l.append(o)
     return l
@@ -88,7 +88,7 @@ def uniq(objectSequence):
 
 def deepCopySeq(sequence):
     """ returns the deep copy of the given sequence """
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     from types import TupleType, ListType
     assert type(sequence) in (TupleType, ListType, type(Numeric.array([1,2,3])))
     if hasattr(sequence, 'copy'):
@@ -124,7 +124,7 @@ def isInstance(lObject):
             elif inspect.isclass(lObject) is False \
               and isinstance(lObject, ltype) is True:
                 from abc import ABCMeta
-                if ltype == types.ClassType is True:
+                if ltype == type is True:
                     return True
                 elif type(ltype) == ABCMeta:
                     return True
@@ -146,7 +146,7 @@ def importMainOrIPythonMain():
 def suppressMultipleQuotes(aString):
     lStringToSimplify = aString
     lSimplifiedString = lStringToSimplify
-    while type(lStringToSimplify) == types.StringType:
+    while type(lStringToSimplify) == bytes:
         lSimplifiedString = lStringToSimplify
         try:
            lStringToSimplify = eval(lSimplifiedString)

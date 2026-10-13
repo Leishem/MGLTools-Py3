@@ -1,4 +1,4 @@
-import Pmw, Tkinter
+import Pmw, tkinter
 # Pmw_0_8_5
 
 class VFRadioSelect(Pmw.RadioSelect):
@@ -136,18 +136,17 @@ class VFNoteBook(Pmw.NoteBook):
     """ The VFNoteBookR class is a wrapper for the Pmw.NoteBookR class."""
     def __init__(self, parent, listLevel, pagesDescr= {}, **kw):
         #self.listLevel = listLevel
-        apply(Pmw.NoteBook.__init__, (self,parent), kw)
-        print pagesDescr
+        Pmw.NoteBook.__init__(*(self,parent), **kw)
+        print(pagesDescr)
         # Creates the pages
         self.pages = {}
         for level in listLevel:
             self.pages[level] = self.add(level)
-            if not pagesDescr.has_key(level):
+            if level not in pagesDescr:
                 continue
             descr = pagesDescr[level]
-            widget = apply(descr['widgetType'], (self.pages[level],),
-                          descr['wcfg'])
-            apply(widget.grid, (), descr['gridcfg'])
+            widget = descr['widgetType'](*(self.pages[level],), **descr['wcfg'])
+            widget.grid(*(), **descr['gridcfg'])
         #print self.pages
 
         

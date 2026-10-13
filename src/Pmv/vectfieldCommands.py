@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -22,11 +22,11 @@ from mglutil.gui.InputForm.Tk.gui import InputFormDescr,InputForm
 from  mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser, ExtendedSliderWidget
 from mglutil.util.callback import CallBackFunction
-import Tkinter,Pmw
-import os,sys,types,string,time,math
+import tkinter,Pmw
+import os, sys, types, time, math; from mglcompat import pystring as string
 from DejaVu.Spheres import Spheres
 from opengltk.OpenGL import GL
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from DejaVu.colorTool import RedWhiteBlueRamp, Map
 from DejaVu.Arrows import Arrows
 
@@ -65,7 +65,7 @@ class loadVect(MVCommand):
         
         if not name: return
         if not folderPath: return
-        apply(self.doitWrapper, (name,folderPath), kw)
+        self.doitWrapper(*(name,folderPath), **kw)
 
     def onAddObjectToViewer(self, obj):
         # private flag to specify whether or not the geometries for the SS
@@ -82,7 +82,7 @@ class loadVect(MVCommand):
     def buildFormDescr(self,formName):
         if formName == "enterName":
             ifd  =InputFormDescr(title = "Pick Vect Name")
-            vectNames = self.vf.vectfield.keys()
+            vectNames = list(self.vf.vectfield.keys())
             ifd.append({'widgetType':Pmw.ComboBox,
                         'name':'vectName',
                         'required':1,
@@ -116,7 +116,7 @@ class loadVect(MVCommand):
             ## get all the *.vu file from folderPath,
             ## create filelist
             folderPath =str(folderPath)
-            apply(self.doitWrapper, (vectName,folderPath),kw)
+            self.doitWrapper(*(vectName,folderPath), **kw)
 
 ##             from glob import glob
 ##             filelist = glob(str(folderPath)+'/*.vu')  
@@ -154,7 +154,7 @@ class loadVUFile(MVCommand):
         
         
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('loadVect'):
+        if 'loadVect' not in self.vf.commands:
             self.vf.loadCommand('vectfieldCommands', 'loadVect', 'Pmv',
                                 topCommand = 0)
             
@@ -162,7 +162,7 @@ class loadVUFile(MVCommand):
         if formName == "Vectfield":
            ifd  =InputFormDescr(title = "Choose Vect Field")
            vectList = []
-           for key in self.vf.vectfield.keys():
+           for key in list(self.vf.vectfield.keys()):
                vectList.append((key,None))
            ifd.append({'widgetType':ListChooser,
                        'name':'vectObj',
@@ -177,7 +177,7 @@ class loadVUFile(MVCommand):
 
     def guiCallback(self,event=None, *args, **kw):
 
-        if len(self.vf.vectfield.keys())==0:
+        if len(list(self.vf.vectfield.keys()))==0:
             t='no vectfield currently loaded'
             self.warningMsg(t)
             return
@@ -250,7 +250,7 @@ class loadVUFile(MVCommand):
                          materials=materials,inheritMaterial=0,
                          inheritLineWidth=0, lineWidth=3)
             
-            if self.vf.vectfield.has_key(vectName):
+            if vectName in self.vf.vectfield:
                 vect = self.vf.vectfield[vectName]
             else:
                 t = 'No vector field of Name,%s found'%vectName
@@ -270,7 +270,7 @@ class loadVUFile(MVCommand):
         """
         if not vectName: return
         if not filelist: return
-        apply(self.doitWrapper, (vectName,filelist), kw)
+        self.doitWrapper(*(vectName,filelist), **kw)
         
 loadVUFileGUI = CommandGUI()
 loadVUFileGUI.addMenuCommand('menuRoot', 'VectField', 'loadVU')

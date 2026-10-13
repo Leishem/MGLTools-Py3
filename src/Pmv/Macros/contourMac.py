@@ -1,10 +1,10 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 import Image
 import ImageFilter
 from opengltk.OpenGL import GL
 import math
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 class Outline:
 
@@ -39,7 +39,7 @@ class Outline:
         zmax = max(zval)
         zmin = min(zval)
         zval1 = 255 * ((zval-zmin) / (zmax-zmin))
-        ds = zval1.astype('c').tostring()
+        ds = zval1.astype('c').tobytes()
         self.depthImage = Image.fromstring('P', (self.w,self.h), ds)
 
         # detect edges in depth image
@@ -105,13 +105,13 @@ class Outline:
 #                                     (self.fstD,self.sndD) )
 
         self.fstDim = Image.fromstring('P', (self.w,self.h),
-                                       self.fstD.tostring())
+                                       self.fstD.tobytes())
 
         self.sndDim = Image.fromstring('P', (self.w,self.h),
-                                       self.sndD.tostring())
+                                       self.sndD.tobytes())
         
         self.derivim = Image.fromstring('P', (self.w,self.h),
-                                        self.deriv.tostring() )
+                                        self.deriv.tobytes() )
 
     def fill(self, cutOff):
         self.dsqs = Numeric.array(self.deriv)
@@ -153,14 +153,14 @@ class Outline:
 
 
 from PIL import ImageTk
-import Tkinter
+import tkinter
 class imageViewer:
     def __init__(self, master=None, title='Image Viewer'):
         self.master = master
         if not master:
-            self.master = Tkinter.Toplevel()
+            self.master = tkinter.Toplevel()
         #self.image = ImageTk.PhotoImage(image)
-        self.lab = Tkinter.Label(self.master, bg="black", bd=0)
+        self.lab = tkinter.Label(self.master, bg="black", bd=0)
         self.lab.pack()
 
     def show(self, image):

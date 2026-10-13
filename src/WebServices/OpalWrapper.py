@@ -1,11 +1,11 @@
 import copy
 import os
-import OpalUtil
+from . import OpalUtil
 
 from mglutil.web.services import AppService_client
 from mglutil.web.services.AppService_types import ns0
-from urlparse import urlparse
-from OpalCache import OpalCache
+from urllib.parse import urlparse
+from .OpalCache import OpalCache
 from mglutil.util.packageFilePath import getResourceFolderWithVersion
 
 tab = "  "
@@ -26,7 +26,7 @@ class OpalWrapper(object):
     if conn == True:
       self.metadata = self.getAppMetadata(url)
     else:
-      print "[INFO]: Generating Opal Wrapper for " + url + " from cache"
+      print("[INFO]: Generating Opal Wrapper for " + url + " from cache")
 
     self.url = url
 
@@ -228,7 +228,7 @@ class OpalWrapper(object):
     taglist = []
     untaglist = []
 
-    for k, v in params.iteritems():
+    for k, v in params.items():
       if v['config_type'] == 'FLAG':
         flaglist.append(k)
       elif v['config_type'] == 'TAGGED':
@@ -236,7 +236,7 @@ class OpalWrapper(object):
       elif v['config_type'] == 'UNTAGGED':
         untaglist.append(k)
       else:
-        print "ERROR: Invalid config_type"
+        print("ERROR: Invalid config_type")
  
     if flaglist:
       myret.append(tab+'self.flags='+str(flaglist))
@@ -276,7 +276,7 @@ class OpalWrapper(object):
     myparams.extend(flaglist)
     myparams.extend(taglist)
     myparams.extend(untaglist)
-    myparams=map(lambda x: (x[0].replace('-','_'),x[1]),myparams)
+    myparams=[(x[0].replace('-','_'),x[1]) for x in myparams]
     # add call function start to return array
     myret.append('def __call__(self,'+','.join('='.join((i[0],str(i[1]))) for i in myparams)+',localRun=False, execPath=' + repr(self.executable) + '):')
     # add variable assignment lines
@@ -310,7 +310,7 @@ class OpalWrapper(object):
     taglist = []
     untaglist = []
 
-    for k, v in params.iteritems():
+    for k, v in params.items():
       if v['config_type'] == 'FLAG':
         if v['default'] == 'True':
           flaglist.append((k, True))
@@ -324,13 +324,13 @@ class OpalWrapper(object):
       elif v['config_type'] == 'UNTAGGED':
         untaglist.append((k, "''"))
       else:
-        print "ERROR: Invalid config_type"
+        print("ERROR: Invalid config_type")
 
     myparams = []
     myparams.extend(flaglist)
     myparams.extend(taglist)
     myparams.extend(untaglist)
-    myparams=map(lambda x: (x[0].replace('-','_'),x[1]),myparams)
+    myparams=[(x[0].replace('-','_'),x[1]) for x in myparams]
     # add call function start to return array
     myret.append('def __call__(self,'+','.join('='.join((i[0],str(i[1]))) for i in myparams)+',localRun=False, execPath=' + repr(self.executable) + '):')
     # add variable assignment lines
@@ -411,7 +411,7 @@ class OpalWrapper(object):
         which definition: given an executable if found on the current path it return the full path to the executable
                         otherwise it returns ""
     """
-    if not os.environ.has_key('PATH') or os.environ['PATH'] == '':
+    if 'PATH' not in os.environ or os.environ['PATH'] == '':
       p = os.defpath
     else:
       p = os.environ['PATH']

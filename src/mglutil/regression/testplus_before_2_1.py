@@ -29,7 +29,9 @@
 #
 
 import re, sys, os, operator
-import string, types
+import types; from mglcompat import pystring as string
+from functools import cmp_to_key
+from functools import reduce
 
 def chdir(directory=None):
     if directory is None:
@@ -81,7 +83,7 @@ class TestHarness:
 
     def __call__( self, fun):
         try:
-            if type(fun)==types.TupleType:
+            if type(fun)==tuple:
                 func = fun[0]
                 args = fun[1]
                 kw = fun[2]
@@ -89,7 +91,7 @@ class TestHarness:
                 func = fun
                 args = ()
                 kw = {}
-            apply( func, args, kw)
+            func(*args, **kw)
         except:
             return fun, sys.exc_info()
         else:
@@ -98,7 +100,7 @@ class TestHarness:
 
     def __getattr__( self, attr):
         if attr == 'failures':
-            result = filter( None, self.dependents)
+            result = [_f for _f in self.dependents if _f]
             if not result:
                 fail = self( self.connect )
                 if fail:
@@ -108,15 +110,15 @@ class TestHarness:
                         self.count = self.count + 1
                         testname = 'TEST%4i %s.%s ' % (self.count,
                                                        self.name,
-                                                       fun.func_name)
+                                                       fun.__name__)
                         if len(testname) < 70:
                             testname = testname + ' '*(65-len(testname))
-                        print testname,
+                        print(testname, end=' ')
                         prevstdout = sys.stdout
                         #prevstderr = sys.stderr
                         sys.stdout = logfile() # sys.stderr = logfile()
                         try:
-                            print testname
+                            print(testname)
                             sys.stdout.flush()
                             res = self( fun)
                             result.append( res )
@@ -125,11 +127,11 @@ class TestHarness:
                             sys.stdout = prevstdout
                             #sys.stderr = prevstderr
                             if res is None:
-                                print 'PASSED'
+                                print('PASSED')
                             else:
-                                print 'FAILED'
+                                print('FAILED')
                     result.append( self( self.disconnect))
-                    result = filter( None, result)
+                    result = [_f for _f in result if _f]
                     
         else:
             raise AttributeError( attr)
@@ -138,11 +140,9 @@ class TestHarness:
 
         
     def __len__( self):
-        l1 = len( filter(lambda x: not isinstance( x, TestHarness),
-                         self.failures) )
+        l1 = len( [x for x in self.failures if not isinstance( x, TestHarness)] )
         l2 = reduce(operator.add,
-                    map( len, filter( lambda x: isinstance( x, TestHarness),
-                                      self.failures ) ),
+                    list(map( len, [x for x in self.failures if isinstance( x, TestHarness)] )),
                     0)
         val = l1+l2
         return val
@@ -159,14 +159,15 @@ class TestHarness:
                              % (self.name, len( self) or 'SUCCESS - no',
                                 1 < len( self) and 's' or '',
                                 self.totalcount())]
-                           + map(lambda x, self=self: re.sub( '\n', '\n    ',
+                           + list(map(lambda x, self=self: re.sub( '\n', '\n    ',
                                    isinstance( x, TestHarness)
-                                   and str( x) or apply( self.error2str, x)),
-                                 self.failures)
+                                   and str( x) or self.error2str(*x)),
+                                 self.failures))
                            + [''])
 
 
-    def error2str( self, fun, (exctype, excvalue, tb)):
+    def error2str( self, fun, xxx_todo_changeme):
+        (exctype, excvalue, tb) = xxx_todo_changeme
         import traceback
         return '\n%s:\n  <%s>\n' % (exctype, excvalue) + \
                string.join([''] + traceback.format_tb( tb.tb_next))
@@ -174,27 +175,27 @@ class TestHarness:
 
     def totalcount( self):
         return reduce( operator.add,
-                       map(lambda x: x.totalcount(), self.dependents),
+                       [x.totalcount() for x in self.dependents],
                        self.count)
 
 
 def getfile(x):
-    return x.func_code.co_filename
+    return x.__code__.co_filename
 
 
 def getsourcelines(x):
-    return [x.func_code.co_firstlineno]
+    return [x.__code__.co_firstlineno]
 
     
 def testcollect( globs,
                  matchfun = lambda x: re.match( 'test', x)):
 
     result = []
-    for x in globs.items():
+    for x in list(globs.items()):
         if callable( x[ 1]) and matchfun( x[ 0]):
             result.append(x[1])
-            result.sort( lambda x, y: cmp( (getfile( x), getsourcelines( x)[ -1]),
-                                           (getfile( y), getsourcelines( y)[ -1])))
+            result.sort( key=cmp_to_key(lambda x, y: cmp( (getfile( x), getsourcelines( x)[ -1]),
+                                           (getfile( y), getsourcelines( y)[ -1]))))
     return result
 
 
@@ -204,7 +205,7 @@ def prun( args = sys.argv[ 1:]):
     globs = {}
     try:
         for cmd in args:
-            exec cmd in globs
+            exec(cmd, globs)
     except SystemExit:
         raise
     except:

@@ -22,27 +22,27 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: prepare_flexreceptor4.py -r receptor_filename -s list_of_names_of_residues_to_move"
-        print "    Description of command..."
-        print "         -r     receptor_filename (.pdbqt)"
-        print "         -s     specification for flex residues" 
-        print "                Use underscores to separate residue names:"
-        print "                  ARG8_ILE84  "
-        print "                Use commas to separate 'full names' which uniquely identify residues:"
-        print "                  hsg1:A:ARG8_ILE84,hsg1:B:THR4 "
-        print "                [syntax is molname:chainid:resname]"
-        print "    Optional parameters:"
-        print "        [-v]    verbose output"
-        print "        [-N]    type(s) of bonds to disallow: "
-        print "        [-P]    pairs of atom names bonds between which to disallow: "
-        print "        [-g pdbqt_filename] (rigid output filename)"
-        print "        [-x pdbqt_filename] (flexible output filename)"
+        print("Usage: prepare_flexreceptor4.py -r receptor_filename -s list_of_names_of_residues_to_move")
+        print("    Description of command...")
+        print("         -r     receptor_filename (.pdbqt)")
+        print("         -s     specification for flex residues") 
+        print("                Use underscores to separate residue names:")
+        print("                  ARG8_ILE84  ")
+        print("                Use commas to separate 'full names' which uniquely identify residues:")
+        print("                  hsg1:A:ARG8_ILE84,hsg1:B:THR4 ")
+        print("                [syntax is molname:chainid:resname]")
+        print("    Optional parameters:")
+        print("        [-v]    verbose output")
+        print("        [-N]    type(s) of bonds to disallow: ")
+        print("        [-P]    pairs of atom names bonds between which to disallow: ")
+        print("        [-g pdbqt_filename] (rigid output filename)")
+        print("        [-x pdbqt_filename] (flexible output filename)")
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'r:vs:N:P:g:x:h')
-    except getopt.GetoptError, msg:
-        print 'prepare_flexreceptor4.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('prepare_flexreceptor4.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -67,76 +67,76 @@ if __name__ == '__main__':
         #print "o=", o, " a=", a
         if o in ('-r', '--r'):
             receptor_filename = a
-            if verbose: print 'set receptor_filename to ', a
+            if verbose: print('set receptor_filename to ', a)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to', True
+            if verbose: print('set verbose to', True)
         if o in ('-s', '--s'):
             residues_to_move = a
-            if verbose: print 'set residues_to_move to ', a
+            if verbose: print('set residues_to_move to ', a)
         if o in ('-N', '--N'):
             disallow = a
-            if verbose: print 'set disallow to ', a
+            if verbose: print('set disallow to ', a)
         if o in ('-P', '--P'):
             disallowed_pairs = a
-            if verbose: print 'set disallowed_pairs to ', a
+            if verbose: print('set disallowed_pairs to ', a)
         if o in ('-g', '--g'):
             rigid_filename = a
-            if verbose: print 'set rigid_filename to ', a
+            if verbose: print('set rigid_filename to ', a)
         if o in ('-x', '--'):
             flexres_filename = a
-            if verbose: print 'set flexres_filename to ', a
+            if verbose: print('set flexres_filename to ', a)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
 
     if not  receptor_filename:
-        print 'prepare_flexreceptor4: receptor filename must be specified!\n'
+        print('prepare_flexreceptor4: receptor filename must be specified!\n')
         usage()
         sys.exit()
 
     if not  residues_to_move:
-        print 'prepare_flexreceptor4: residues to move must be specified!\n'
+        print('prepare_flexreceptor4: residues to move must be specified!\n')
         usage()
         sys.exit()
 
     extension = os.path.splitext(receptor_filename)[1]
     if extension!=".pdbqt":
-        print 'prepare_flexreceptor4: receptor file must be in .pdbqt format\n'
+        print('prepare_flexreceptor4: receptor file must be in .pdbqt format\n')
         usage()
         sys.exit()
 
     r = Read(receptor_filename)[0]
     r.buildBondsByDistance()
-    if verbose: print 'read ', receptor_filename
+    if verbose: print('read ', receptor_filename)
 
     all_res = ResidueSet()
     # hsg1:A:ARG8_ILE82;hsg1:B:THR4 
     # ARG8_ILE84 
     names_by_chain = residues_to_move.split(',')
     if verbose: 
-        print "Specified flexres selection strings are:"
+        print("Specified flexres selection strings are:")
         for strN in names_by_chain: 
-            print "   %s" %strN
+            print("   %s" %strN)
     #1. ['hsg1:A:ARG8_ILE82','hsg1:B:THR4'] 
     # OR 
     #2. ARG8_ILE84
     for res_names_by_chain in names_by_chain:
         #check for ':'
-        if verbose: print "selecting ", res_names_by_chain
+        if verbose: print("selecting ", res_names_by_chain)
         if res_names_by_chain.find(':')==-1:
             # no ':' in selection string = simple case eg: ARG8_ILE84 
             res_names = res_names_by_chain.split('_')
-            if verbose: print "res_names=", res_names
+            if verbose: print("res_names=", res_names)
             for n in res_names:
-                if verbose: print "looking for  ",n
+                if verbose: print("looking for  ",n)
                 res = r.chains.residues.get(lambda x: x.name==n)
                 if len(res):
                     all_res += res
-                    if verbose: print " added ", res.name, " to ", all_res
+                    if verbose: print(" added ", res.name, " to ", all_res)
                 else:
-                    print "WARNING: no residue named " + n 
+                    print("WARNING: no residue named " + n) 
         else:
             # 'hsg1:A:ARG8_ILE82'
             # '1JFF_protein:A:THR179_GLU183,1JFF_protein:B:TRP21_ARG64_LEU275'
@@ -154,17 +154,17 @@ if __name__ == '__main__':
             if len(res):
                 all_res += res
             else:
-                print "no residue found using string ", selStr
+                print("no residue found using string ", selStr)
     #if verbose: print "built all_res=", all_res.full_name()
     #check for duplicates
     d = {}
     for res in all_res: d[res] = 1
-    all_res = d.keys()
+    all_res = list(d.keys())
     all_res = ResidueSet(all_res).uniq()
     all_res.sort()
     if verbose: 
-        print "located ", len(all_res),  " residues to format:"
-        for z in all_res: print "   %s" %z.full_name()
+        print("located ", len(all_res),  " residues to format:")
+        for z in all_res: print("   %s" %z.full_name())
 
     #inactivate specified bonds
     #disallowed_Pairs "CA_CB:CB_CG:C_CA"
@@ -179,12 +179,12 @@ if __name__ == '__main__':
             if len(bnds):
                 all_bnds += bnds
    
-    if verbose:  print "beginning formatting ..."
+    if verbose:  print("beginning formatting ...")
     fdp = AD4FlexibleReceptorPreparation(r, residues=all_res, rigid_filename=rigid_filename, 
                                             flexres_filename=flexres_filename,
                                             non_rotatable_bonds=all_bnds)
 
-    if verbose:  print "finished!"
+    if verbose:  print("finished!")
 
 # To execute this command type:
 # prepare_flexreceptor4.py -l filename -r receptor_filename -s list_of_names_of_residues_to_move"

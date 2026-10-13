@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 #
@@ -6,19 +6,19 @@
 #
 #
 
-import numpy.oldnumeric as Numeric, os, string
+import mglcompat.oldnumeric as Numeric, os; from mglcompat import pystring as string
 
 from MolKit.molecule import Atom, AtomSet
 from MolKit import Read
 
-from MolecularSystem import MolecularSystem
+from .MolecularSystem import MolecularSystem
 
-from AutoDockScorer import AutoGrid305Scorer, AutoDockTermWeights305
-from AutoDockScorer import AutoGrid4Scorer, AutoDockTermWeights4
-from AutoDockScorer import AutoDockVinaScorer, AutoDockVinaTermWeights
-from scorer import WeightedMultiTerm
-from electrostatics import Electrostatics
-from desolvation import NewDesolvationDesolvMap
+from .AutoDockScorer import AutoGrid305Scorer, AutoDockTermWeights305
+from .AutoDockScorer import AutoGrid4Scorer, AutoDockTermWeights4
+from .AutoDockScorer import AutoDockVinaScorer, AutoDockVinaTermWeights
+from .scorer import WeightedMultiTerm
+from .electrostatics import Electrostatics
+from .desolvation import NewDesolvationDesolvMap
 
 
 class GridMap:
@@ -38,9 +38,9 @@ class GridMap:
         ent = self.entity
 
         
-        for z in xrange(-(npts[2]/2), npts[2]/2 + 1):
-            for y in xrange(-(npts[1]/2), npts[1]/2 + 1):
-                for x in xrange(-(npts[0]/2), npts[0]/2 + 1):
+        for z in range(-(npts[2]/2), npts[2]/2 + 1):
+            for y in range(-(npts[1]/2), npts[1]/2 + 1):
+                for x in range(-(npts[0]/2), npts[0]/2 + 1):
                     ent._coords[ent.conformation] = [x*sp+cen[0],
                                                      y*sp+cen[1],
                                                      z*sp+cen[2]]
@@ -529,4 +529,4 @@ class AutoGridVina(AutoGrid4):
 
 
 if __name__ == '__main__':
-    print "Test are in Tests/test_AutoGrid.py"
+    print("Test are in Tests/test_AutoGrid.py")

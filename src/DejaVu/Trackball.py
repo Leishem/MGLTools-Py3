@@ -19,7 +19,7 @@
 # $Id: Trackball.py,v 1.59 2010/09/28 15:47:38 sanner Exp $
 #
 
-import Tkinter
+import tkinter
 import Pmw
 import math
 from time import time
@@ -121,7 +121,7 @@ class Trackball:
 
 
     def ResetBindings(self):
-	"""binds default callbacks to events"""
+        """binds default callbacks to events"""
 
         cam = self.camera()
         evm = cam.eventManager
@@ -136,7 +136,7 @@ class Trackball:
             evm.AddCallback('<'+mod+'ButtonPress-1>', self.RecordMouse)
             evm.AddCallback('<'+mod+'ButtonPress-2>', self.RecordMouse)
             evm.AddCallback('<'+mod+'ButtonPress-3>', self.RecordMouse)
-	                        
+                                
             evm.AddCallback('<'+mod+'ButtonPress-1>', self.MouseButtonDown)
             evm.AddCallback('<'+mod+'ButtonPress-2>', self.MouseButtonDown)
             evm.AddCallback('<'+mod+'ButtonPress-3>', self.MouseButtonDown)
@@ -212,80 +212,80 @@ class Trackball:
 
 
     def ShiftB2motion_cb(self, event):
-	"""Default callback for rotation, computes rotation matrix"""
+        """Default callback for rotation, computes rotation matrix"""
         self.computeTransformation(event)
-	self.ShiftB2motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
-	self.RecordMouse(event)
+        self.ShiftB2motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
+        self.RecordMouse(event)
 
 
     def ShiftB3motion_cb(self, event):
-	"""Default callback for rotation, computes rotation matrix"""
+        """Default callback for rotation, computes rotation matrix"""
         self.computeTransformation(event)
-	self.ShiftB3motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
-	self.RecordMouse(event)
+        self.ShiftB3motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
+        self.RecordMouse(event)
 
 
     def ControlB1motion_cb(self, event):
-	"""Default callback for rotation, computes rotation matrix"""
+        """Default callback for rotation, computes rotation matrix"""
         self.computeTransformation(event)
-	self.ControlB1motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
-	self.RecordMouse(event)
+        self.ControlB1motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
+        self.RecordMouse(event)
 
 
     def ControlB2motion_cb(self, event):
-	"""Default callback for rotation, computes rotation matrix"""
+        """Default callback for rotation, computes rotation matrix"""
         self.computeTransformation(event)
-	self.ControlB2motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
-	self.RecordMouse(event)
+        self.ControlB2motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
+        self.RecordMouse(event)
 
 
     def ControlB3motion_cb(self, event):
-	"""Default callback for rotation, computes rotation matrix"""
+        """Default callback for rotation, computes rotation matrix"""
         self.computeTransformation(event)
-	self.ControlB3motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
-	self.RecordMouse(event)
+        self.ControlB3motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
+        self.RecordMouse(event)
 
 
     def AltB1motion_cb(self, event):
-	"""Default callback for rotation, computes rotation matrix"""
+        """Default callback for rotation, computes rotation matrix"""
         self.computeTransformation(event)
-	self.AltB1motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
-	self.RecordMouse(event)
+        self.AltB1motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
+        self.RecordMouse(event)
 
 
     def AltB2motion_cb(self, event):
-	"""Default callback for rotation, computes rotation matrix"""
+        """Default callback for rotation, computes rotation matrix"""
         self.computeTransformation(event)
-	self.AltB2motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
-	self.RecordMouse(event)
+        self.AltB2motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
+        self.RecordMouse(event)
 
 
     def AltB3motion_cb(self, event):
-	"""Default callback for rotation, computes rotation matrix"""
+        """Default callback for rotation, computes rotation matrix"""
         self.computeTransformation(event)
         self.AltB3motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
-	self.RecordMouse(event)
+        self.RecordMouse(event)
 
 
     def MetaB1motion_cb(self, event):
-	"""Default callback for rotation, computes rotation matrix"""
+        """Default callback for rotation, computes rotation matrix"""
         self.computeTransformation(event)
-	self.MetaB1motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
-	self.RecordMouse(event)
+        self.MetaB1motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
+        self.RecordMouse(event)
 
 
     def MetaB2motion_cb(self, event):
-	"""Default callback for rotation, computes rotation matrix"""
+        """Default callback for rotation, computes rotation matrix"""
         self.computeTransformation(event)
-	self.MetaB2motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
-	self.RecordMouse(event)
+        self.MetaB2motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
+        self.RecordMouse(event)
 
 
     def MetaB3motion_cb(self, event):
-	"""Default callback for rotation, computes rotation matrix"""
+        """Default callback for rotation, computes rotation matrix"""
         self.computeTransformation(event)
         self.MetaB3motion(event, self.tb.mat, self.vectorXY, self.vectorZ)
-	self.RecordMouse(event)
+        self.RecordMouse(event)
 
 
     def computeTransformation(self, event):
@@ -299,34 +299,34 @@ and the Z translation corresponding to the latest mouse motion
 
         self.trackMotion_cb(event)
 
-	self.tb.update(self.xmouse, self.ymouse, event.x, event.y,
-			    self.camera().width, self.camera().height, 1 )
+        self.tb.update(self.xmouse, self.ymouse, event.x, event.y,
+                            self.camera().width, self.camera().height, 1 )
         # now self.tb.mat has the rotation matrix
-	self.vectorXY[0] = dx = event.x - self.xmouse
-	self.vectorXY[1] = dy = self.ymouse - event.y
+        self.vectorXY[0] = dx = event.x - self.xmouse
+        self.vectorXY[1] = dy = self.ymouse - event.y
         
-	if abs(dx) > abs(dy): delta = dx
-	else: delta = dy
-	self.vectorZ = delta
+        if abs(dx) > abs(dy): delta = dx
+        else: delta = dy
+        self.vectorZ = delta
         # new self.vector[:2] has the (X,Y) translation vector
         # and self.vector[2] has the Z translation
 
 
     def NoFunc(self, event, matrix, transXY, transZ):
-	pass
+        pass
 
 
     def cursorPosition(self):
-	"""get new mouse position
+        """get new mouse position
 """
-	c = self.camera()
-	x = c.tk.getint(c.tk.call('winfo', 'pointerx', c._w))
-	y = c.tk.getint(c.tk.call('winfo', 'pointery', c._w))
-	return x,y
+        c = self.camera()
+        x = c.tk.getint(c.tk.call('winfo', 'pointerx', c._w))
+        y = c.tk.getint(c.tk.call('winfo', 'pointery', c._w))
+        return x,y
 
 
     def MouseButtonDown(self, event):
-	"""Do all we have to do every time a mouse button goes down
+        """Do all we have to do every time a mouse button goes down
 """
         #print "MouseButtonDown", event.num
         #print "Focus on MouseButtonDown", self.camera().focus_get()
@@ -360,7 +360,7 @@ and the Z translation corresponding to the latest mouse motion
 
 
     def MouseButtonUp(self, event):
-	"""Do all we have to do every time a mouse button is released
+        """Do all we have to do every time a mouse button is released
 """
         self.camera().configure(cursor=cursorsDict['default'])
         #print "Trackball.MouseButtonUp", event.num, event, time()
@@ -368,7 +368,7 @@ and the Z translation corresponding to the latest mouse motion
             v = self.camera().viewer
             v.timeButtonUp = time()
             if self.reportFrameRate:
-                print v.numberOfRedraws / (v.timeButtonUp - v.timeButtonDown)
+                print(v.numberOfRedraws / (v.timeButtonUp - v.timeButtonDown))
             for c in v.cameras:
                 for func in c.onButtonUpCBlist:
                     #print "MouseButtonUp func", func
@@ -383,7 +383,7 @@ and the Z translation corresponding to the latest mouse motion
 
 
     def RecordMouse(self, event):
-	"""Record the current mouse position
+        """Record the current mouse position
 """
         #print "RecordMouse"
         #v = self.camera().viewer
@@ -591,18 +591,18 @@ and the Z translation corresponding to the latest mouse motion
     def createSpinGui(self):
         #print "createSpinGui"
         
-        self.spinGui = Tkinter.Toplevel()
+        self.spinGui = tkinter.Toplevel()
         self.spinGui.title('Spin Settings')
         self.spinGui.protocol('WM_DELETE_WINDOW', self.spinGui.withdraw )
 
-        mainFrame = Tkinter.Frame(self.spinGui, relief='ridge', borderwidth=3)
+        mainFrame = tkinter.Frame(self.spinGui, relief='ridge', borderwidth=3)
 
-        lLabelSpinBold = Tkinter.Label(mainFrame,
+        lLabelSpinBold = tkinter.Label(mainFrame,
                       text="Spinning only occurs in \"Object\" transform mode",
                       font=(ensureFontCase('helvetica'),10,'bold'))
         lLabelSpinBold.pack(side='top')
 
-        lLabelSpin = Tkinter.Label(mainFrame,
+        lLabelSpin = tkinter.Label(mainFrame,
                       font=(ensureFontCase('helvetica'),'9'),
                       justify='left',
                       text="""start: release the middle button while the mouse is still moving
@@ -611,11 +611,11 @@ stop: left click
                      )
         lLabelSpin.pack(side='top')
 
-        anglesFrame = Tkinter.Frame(mainFrame, relief='ridge', borderwidth=3)
+        anglesFrame = tkinter.Frame(mainFrame, relief='ridge', borderwidth=3)
         # off/spin/rock radio buttons
-        radioFrame = Tkinter.Frame(anglesFrame)#, relief='ridge', borderwidth=3)
+        radioFrame = tkinter.Frame(anglesFrame)#, relief='ridge', borderwidth=3)
 
-        radioOff = Tkinter.Radiobutton(
+        radioOff = tkinter.Radiobutton(
             radioFrame,
             text='Off',
             value=0,
@@ -625,7 +625,7 @@ stop: left click
             command=self.resetSpinValues,
             )
         radioOff.grid(row=0, column=0, sticky='we')
-        radioSpin = Tkinter.Radiobutton(
+        radioSpin = tkinter.Radiobutton(
             radioFrame,
             text='Spin',
             value=1,
@@ -635,7 +635,7 @@ stop: left click
             command=self.toggleCycle,
             )
         radioSpin.grid(row=0, column=1, sticky='we')
-        radioBounce = Tkinter.Radiobutton(
+        radioBounce = tkinter.Radiobutton(
             radioFrame,
             text='Bounce',
             value=2,
@@ -645,7 +645,7 @@ stop: left click
             command=self.toggleCycle,
             )
         radioBounce.grid(row=0, column=2, sticky='we')
-        radioOscillate = Tkinter.Radiobutton(
+        radioOscillate = tkinter.Radiobutton(
             radioFrame,
             text='Oscillate',
             value=3,

@@ -9,10 +9,10 @@ from Pmv.mvCommand import MVCommand
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 from ViewerFramework.VFCommand import CommandGUI
 from mglutil.util.callback import CallBackFunction
-import Tkinter, Pmw
+import tkinter, Pmw
 from opengltk.OpenGL import GL
 import math
-import types, numpy.oldnumeric as Numeric
+import types, mglcompat.oldnumeric as Numeric
 import warnings
 
 
@@ -40,7 +40,7 @@ class ViewsCommand(MVCommand):
     def onAddCmdToViewer(self):
         if self.vf.GUI:
             root = self.vf.GUI.ROOT
-            self.viewMenu = Tkinter.Menu(root, title = "View")
+            self.viewMenu = tkinter.Menu(root, title = "View")
             self.viewMenu.add_command(label="Edit")
             self.viewMenu.add_command(label="Rename")
             self.viewMenu.add_command(label="Remove")
@@ -61,7 +61,7 @@ class ViewsCommand(MVCommand):
                                 #'tag_command': self.saveView
                                 },
                         'gridcfg':{'sticky':'we', 'columnspan':1}})
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                     'wcfg':{'text':"Save View", #'Close',
                             "width": 40,
                             'command': self.saveView  #self.dismissForm
@@ -123,11 +123,11 @@ class ViewsCommand(MVCommand):
         if icon == True:
             self.form.master.lift()
             photo = self.vf.GUI.VIEWER.GUI.getButtonIcon()
-            b = Tkinter.Button(master=viewsContainer.interior() ,compound='left', image=photo,
+            b = tkinter.Button(master=viewsContainer.interior() ,compound='left', image=photo,
                                command=CallBackFunction( self.activateView, name))
             b.photo = photo
         else:
-             b = Tkinter.Button(master=viewsContainer.interior() , text=name,
+             b = tkinter.Button(master=viewsContainer.interior() , text=name,
                                 width = 4, height = 3, wraplength=50)
              b.configure(command = CallBackFunction(self.activateView, name, b))
         self.viewsBalloon.bind(b, name)
@@ -188,7 +188,7 @@ class ViewsCommand(MVCommand):
         repr = self.representations[name]
         vi = self.vf.GUI.VIEWER
         for g in vi.rootObject.AllObjects():
-            if not repr.has_key(g.fullName):
+            if g.fullName not in repr:
                 g.visible = 0
             else:
                 #print g.fullName
@@ -236,13 +236,13 @@ class ViewsCommand(MVCommand):
             
     def renameView(self, name):
         """Give a new name to the selected view. """
-        from tkSimpleDialog import askstring
+        from tkinter.simpledialog import askstring
         viewsContainer = self.idf.entryByName['viewsContainer']['widget'].interior()
         newname = askstring("Rename %s"%name, "Enter new name:", initialvalue = name,
                             parent = viewsContainer)
         if newname != None and newname != name:
-            if self.views.has_key(newname):
-                from tkMessageBox import showwarning
+            if newname in self.views:
+                from tkinter.messagebox import showwarning
                 showwarning("Warning", "View name %s already exists"%newname,
                             parent = viewsContainer)
                 return
@@ -315,7 +315,7 @@ class ViewsCommand(MVCommand):
             b.destroy()
         self.views = {}
         self.allViews = 0
-        for d in self.viewsDirectors.values():
+        for d in list(self.viewsDirectors.values()):
             if d.gui:
                 d.gui.root.destroy()
                 d.gui = None
@@ -339,7 +339,7 @@ class SaveViewsToFile(MVCommand):
 
     def buildFormDescr(self, formName):
         if formName=='saveViewsToFile':
-            if self.vf.commands.has_key("viewsPanel"):
+            if "viewsPanel" in self.vf.commands:
                 if len(self.vf.viewsPanel.views) == 0:
                     return
             else:
@@ -355,7 +355,7 @@ class SaveViewsToFile(MVCommand):
 
             idf.append({'widgetType':SaveButton,
                         'name':'filebrowse',
-                        'wcfg':{'buttonType':Tkinter.Button,
+                        'wcfg':{'buttonType':tkinter.Button,
                                 'title':'Save In File ...',
                                 'types':[('Views orientation','*_orient.py'),
                                          ('Views representation', '*_repr.db'),
@@ -371,10 +371,10 @@ class SaveViewsToFile(MVCommand):
         val = self.showForm('saveViewsToFile', force=1, modal=1)
         if not val: return
 
-        if val.has_key('filename'):
+        if 'filename' in val:
             filename = val['filename']
             if file is not None:
-                apply(self.doitWrapper, (filename,), {})
+                self.doitWrapper(*(filename,), **{})
 
 
     def doit(self, filename, **kw):
@@ -384,10 +384,10 @@ class SaveViewsToFile(MVCommand):
         f.write("from numpy import array\n")
         # write the orients dictionary to the file:
         lines = "orients = {\n"
-        for pname, pos in self.vf.viewsPanel.views.items():
+        for pname, pos in list(self.vf.viewsPanel.views.items()):
             lines = lines + "'%s': {\n" % pname
             indent = "        "
-            for prop, val in pos.items():
+            for prop, val in list(pos.items()):
                 if type(val) == Numeric.ndarray:
                     # create a string for numeric array:
                     valstr = "array(" + Numeric.array2string(val, precision =3, separator =",") + ", '%s')"%val.dtype.char
@@ -402,15 +402,15 @@ class SaveViewsToFile(MVCommand):
         # save representations
         import shelve
         f = shelve.open(filename + "_repr.db")
-        if len(f.keys()):
+        if len(list(f.keys())):
             f.clear()
-        for name, val in self.vf.viewsPanel.representations.items():
+        for name, val in list(self.vf.viewsPanel.representations.items()):
             f[name] = val
         f.close()
        
        
     def __call__(self, filename, **kw):
-        if self.vf.commands.has_key("viewsPanel"):
+        if "viewsPanel" in self.vf.commands:
             if len(self.vf.viewsPanel.views) == 0:
                 return
         else:
@@ -420,7 +420,7 @@ class SaveViewsToFile(MVCommand):
             name = name.split("_repr")[0]
         elif name.count("_orient") > 0:
             name = name.split("_orient")[0]
-        apply(self.doitWrapper, (name,), {})
+        self.doitWrapper(*(name,), **{})
 
 
     def setEntry_cb(self, filename):
@@ -462,7 +462,7 @@ class ReadViews(MVCommand):
 
             idf.append({'widgetType':LoadButton,
                         'name':'browseOrient',
-                        'wcfg':{'buttonType':Tkinter.Button,
+                        'wcfg':{'buttonType':tkinter.Button,
                                 'title':'Open views orientation file',
                                 'types':[('Views orient','*_orient.py')],
                                 'callback':self.setOrientEntry_cb,
@@ -479,7 +479,7 @@ class ReadViews(MVCommand):
 
             idf.append({'widgetType':LoadButton,
                         'name':'browseRepr',
-                        'wcfg':{'buttonType':Tkinter.Button,
+                        'wcfg':{'buttonType':tkinter.Button,
                                 'title': 'Open views representation file',
                                 'types':[('Views orient','*_repr.db')],
                                 'callback':self.setReprEntry_cb,
@@ -515,7 +515,7 @@ class ReadViews(MVCommand):
         if not val: return
         orientFilename = val['orientfile']
         reprFilename = val['reprfile']
-        apply(self.doitWrapper, (orientFilename, reprFilename), {})
+        self.doitWrapper(*(orientFilename, reprFilename), **{})
 
 
     def doit(self, orientFilename, reprFilename, **kw):
@@ -533,15 +533,15 @@ class ReadViews(MVCommand):
                 return
         #load orientations
         mydict = {}
-        execfile(orientFilename,  globals(), mydict)
-        if mydict.has_key("orients"):
+        exec(compile(open(orientFilename, "rb").read(), orientFilename, 'exec'),  globals(), mydict)
+        if "orients" in mydict:
             neworients = mydict['orients']
         else:
             warnings.warn("Warning: unknown file format (%s)"% orientFilename)
             return
         import shelve
         newrepr = shelve.open(reprFilename)
-        if not self.vf.commands.has_key("viewsPanel"):
+        if "viewsPanel" not in self.vf.commands:
             self.browseCommands("viewsCommands", package="Pmv")
         cmd = self.vf.commands["viewsPanel"]
         if not cmd:
@@ -553,7 +553,7 @@ class ReadViews(MVCommand):
                                 buttons = ('ADD', 'REPLACE', 'Cancel'),
                                 defaultbutton = 'ADD')
             dialog.withdraw()
-            label = Tkinter.Label(dialog.interior(),
+            label = tkinter.Label(dialog.interior(),
                                   text = "Would you like to ADD new views\nor REPLACE existing ones?", pady = 10) 
             label.pack(expand = 1, fill = 'both', padx = 4, pady = 4)
             action = dialog.activate(geometry = '+%d+%d' % (self.vf.master.winfo_x()+200, self.vf.master.winfo_y()+200))
@@ -564,17 +564,17 @@ class ReadViews(MVCommand):
         self.vf.GUI.VIEWER.master.master.lift()
         #add new viewes
         for i, name in enumerate(neworients.keys()):
-            if not newrepr.has_key(name):
+            if name not in newrepr:
                 continue
             newname = name
             # if saved view  has "custom" name,
             # check if a orient with that name already exists in Bookmarks:
             if not name.startswith("view"):
-                if cmd.views.has_key(name):
+                if name in cmd.views:
                     # name exists -> create newname by adding an
                     # integer to the name 
                     count = 0
-                    for k in cmd.views.keys():
+                    for k in list(cmd.views.keys()):
                         if k.startswith(name):
                             count = count +1
                     newname = name+"_"+str(count)
@@ -591,7 +591,7 @@ class ReadViews(MVCommand):
     def __call__(self, orientFilename, reprFilename, **kw):
         """None--->mv.readViews(orientFilename, reprFilename)
         """
-        apply(self.doitWrapper, (orientFilename, reprFilename), kw)
+        self.doitWrapper(*(orientFilename, reprFilename), **kw)
 
 
 ReadViewsCommandGUI = CommandGUI()

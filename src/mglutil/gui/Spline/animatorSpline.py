@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 #
@@ -6,8 +6,8 @@
 #$Id: animatorSpline.py,v 1.5 2007/07/24 17:30:40 vareille Exp $
 
 
-from splineGUI import splineGUI
-from spline import Spline
+from .splineGUI import splineGUI
+from .spline import Spline
 from mglutil.util.callback import CallbackFunction
 from types import IntType,FloatType
 
@@ -20,7 +20,7 @@ class AnimatorSpline(splineGUI):
     def doit(self,startvalue,endvalue,range_begin,range_end,slopes):
         self.configure(startvalue = startvalue,endvalue = endvalue,range_begin = range_begin,range_end = range_end,slopes = slopes)
         if self.startvalue<self.range_begin or self.endvalue>self.range_end:
-            print "invalid input,startvalue should be >= range_begin and endvalue<=range_end"
+            print("invalid input,startvalue should be >= range_begin and endvalue<=range_end")
             return
         p1 = (self.viewport[0],self.getCoordsForVal(self.startvalue))
         p2 = (self.viewport[1],self.getCoordsForVal(self.endvalue))
@@ -171,9 +171,9 @@ class AnimatorSpline(splineGUI):
 
 if __name__ == "__main__":
     ###########
-    import Tkinter
+    import tkinter
     sp = Spline([(0.0,0.0),(1.0,1.0)],[ (None, (1,-1)), ((1,1), None) ] )
-    canvas  =  Tkinter.Canvas(width = 700, height = 700)
+    canvas  =  tkinter.Canvas(width = 700, height = 700)
     canvas.pack()
     #canvas.configure(cursor="cross")
     canvas.create_rectangle([100,600,600,100])

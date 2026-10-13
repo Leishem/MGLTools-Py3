@@ -27,9 +27,9 @@ indices of triangular faces
     zeronorms = []
     for i, n in enumerate(norm):
         #if n == [0., 0., 0.] or n == (0., 0., 0.):
-	if n[0] == 0 and n[1] == 0 and n[2] == 0:
-	    #print "normal %d is zero!" % i, n
-	    zeronorms.append(i)
+        if n[0] == 0 and n[1] == 0 and n[2] == 0:
+            #print "normal %d is zero!" % i, n
+            zeronorms.append(i)
     #print "in meshVolume, zeronorms length: ", len(zeronorms), "normals length:", len(norm)
     # Initialize
     volSum = 0.0
@@ -41,10 +41,10 @@ indices of triangular faces
         n1 = norm[t[0]]
         n2 = norm[t[1]]
         n3 = norm[t[2]]
-	tn = [ (n1[0]+n2[0]+n3[0])*oneThird,
+        tn = [ (n1[0]+n2[0]+n3[0])*oneThird,
                (n1[1]+n2[1]+n3[1])*oneThird,
                (n1[2]+n2[2]+n3[2])*oneThird ]
-	trinorm.append(tn)
+        trinorm.append(tn)
     # print trinorm	# TEST
 
     # Compute volume
@@ -54,7 +54,7 @@ indices of triangular faces
         s3 = verts[t[2]]
         area = triangleArea(s1,s2,s3)
 
-	g = [ (s1[0]+s2[0]+s3[0])*oneThird,
+        g = [ (s1[0]+s2[0]+s3[0])*oneThird,
               (s1[1]+s2[1]+s3[1])*oneThird,
               (s1[2]+s2[2]+s3[2])*oneThird ]
         volSum += (g[0]*tn[0] + g[1]*tn[1] + g[2]*tn[2])*area
@@ -62,11 +62,11 @@ indices of triangular faces
 
 
 def findComponents(verts, faces, normals=None, returnOption=0):
-    	"""find the components of a geometry.
+        """find the components of a geometry.
 normals are normals of verts not faces.
 returnOptiont: 	component return option
-	= 0:		return all components
-	= 1:		return all outside surfaces (volume > 0; normals must be given)
+        = 0:		return all components
+        = 1:		return all outside surfaces (volume > 0; normals must be given)
 The code is based on the Vision node ConnectedComponents.
 """
         fdict = {} 
@@ -75,22 +75,22 @@ The code is based on the Vision node ConnectedComponents.
 
         flag1 = True; flag2 = True
         newfaces = [] 
-	newverts = []
-	if normals is not None:
-	    newnorms = []
+        newverts = []
+        if normals is not None:
+            newnorms = []
         while flag2:
             for i, fs in enumerate(faces):
                 for v in fs:
-                    if not vdict.has_key(v):
+                    if v not in vdict:
                         vdict[v] = [i]
                     else:
                         vdict[v].append(i)
                 fdict[i] = fs
             Vco = faces[0][:]
             newfaces1 = []
-	    newverts1 = []
-	    if normals is not None:
-	        newnorms1 = []
+            newverts1 = []
+            if normals is not None:
+                newnorms1 = []
             vertinds = {} # keys - vertex indices from the input verts list
                           # values - new vertex indices of current surface
             vcount = 0
@@ -102,7 +102,7 @@ The code is based on the Vision node ConnectedComponents.
                 for vert in Vco:
                     vfs = vdict[vert]
                     for i in vfs:
-                        if fdict.has_key(i):
+                        if i in fdict:
                             flag1 = True
                             fs = fdict.pop(i)
 
@@ -111,11 +111,11 @@ The code is based on the Vision node ConnectedComponents.
                                 if v not in Vco: 
                                     if v not in _Vco:
                                         _Vco.append(v)
-                                if not  vertinds.has_key(v):
+                                if v not in vertinds:
                                     vertinds[v] = vcount
                                     newverts1.append(verts[v])
-				    if normals is not None:
-				        newnorms1.append(normals[v])
+                                    if normals is not None:
+                                        newnorms1.append(normals[v])
                                     fsnew.append(vcount) 
                                     vcount = vcount + 1
                                 else:
@@ -125,40 +125,40 @@ The code is based on the Vision node ConnectedComponents.
                 Vco  = _Vco
             newfaces.append( newfaces1 )
             newverts.append( newverts1 )
-	    if normals is not None:
-	        newnorms.append( newnorms1 )
-		
+            if normals is not None:
+                newnorms.append( newnorms1 )
+                
             if  len(fdict):
-                faces = fdict.values()
+                faces = list(fdict.values())
                 fdict = {}
                 vdict = {}
                 flag1 = True
             else: flag2 = False
 
 
-	# return all surfaces
-	if returnOption == 0:
-	    if normals is not None:
-	        return newverts, newfaces, newnorms
-	    else:
-	        return newverts, newfaces
-	    
-	# return only outside surfaces
-	outverts = []
-	outfaces = []
-	outnorms = []
+        # return all surfaces
+        if returnOption == 0:
+            if normals is not None:
+                return newverts, newfaces, newnorms
+            else:
+                return newverts, newfaces
+            
+        # return only outside surfaces
+        outverts = []
+        outfaces = []
+        outnorms = []
         for i in range( len(newfaces) ):
-	    Nvert = len(outverts)
-	    volume = meshVolume(newverts[i], newnorms[i], newfaces[i])
-	    print i, len(newverts[i]), len(newfaces[i]), volume	# TEST
-	    if volume > 0:
-	        outverts += newverts[i]
-		outnorms += newnorms[i]
-		# update face vertex indices to reflect lengthened vertices
-		newfaces_i_mod = []
-		for v1, v2, v3 in newfaces[i]:
-		    newfaces_i_mod.append( [v1+Nvert, v2+Nvert, v3+Nvert] )
-		outfaces += newfaces_i_mod
+            Nvert = len(outverts)
+            volume = meshVolume(newverts[i], newnorms[i], newfaces[i])
+            print(i, len(newverts[i]), len(newfaces[i]), volume)	# TEST
+            if volume > 0:
+                outverts += newverts[i]
+                outnorms += newnorms[i]
+                # update face vertex indices to reflect lengthened vertices
+                newfaces_i_mod = []
+                for v1, v2, v3 in newfaces[i]:
+                    newfaces_i_mod.append( [v1+Nvert, v2+Nvert, v3+Nvert] )
+                outfaces += newfaces_i_mod
 
-	return outverts, outfaces, outnorms
+        return outverts, outfaces, outnorms
 

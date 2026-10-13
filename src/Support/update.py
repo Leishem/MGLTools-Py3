@@ -2,10 +2,10 @@
 # Author: Sargis Dallakyan (sargis at scripps.edu)
 # $Header: /opt/cvs/Support/update.py,v 1.37.4.1 2011/05/24 22:57:20 annao Exp $
 # $Id: update.py,v 1.37.4.1 2011/05/24 22:57:20 annao Exp $
-import os, sys, platform, urllib, tarfile, unzip, Tkinter, Pmw
-from tkFileDialog import *
-from tkMessageBox import *
-import pickle, httplib, urllib
+import os, sys, platform, urllib.request, urllib.parse, urllib.error, tarfile, unzip, tkinter, Pmw
+from tkinter.filedialog import *
+from tkinter.messagebox import *
+import pickle, http.client, urllib.request, urllib.parse, urllib.error
 import webbrowser
 base_url = 'http://mgltools.scripps.edu/downloads/tars/releases/nightly'
 import mglutil
@@ -52,7 +52,7 @@ class Update:
     """
     def __init__(self):
         if sys.platform == 'linux2':
-            if sys.maxint> 2147483647: #os.popen('uname -m').read() == 'x86_64\n':
+            if sys.maxsize> 2147483647: #os.popen('uname -m').read() == 'x86_64\n':
                 self.sys_prefix = 'x86_64Linux2'
             else:
                 self.sys_prefix = 'i86Linux2'
@@ -72,8 +72,8 @@ class Update:
                 self.sys_prefix = "ppcDarwin"+name            
             self.update_file = self.sys_prefix+'.tar.gz'
         else:
-            print "Sorry no nightly builds is available for your platform."
-            print sys.platform
+            print("Sorry no nightly builds is available for your platform.")
+            print(sys.platform)
         from user import home
         from Support.version import __version__
         self.rc = home + os.sep + ".mgltools" + os.sep + __version__
@@ -121,14 +121,14 @@ class Update:
         if not os.path.isdir(self.updates_dir):
             try:
                 os.mkdir(self.updates_dir)
-            except Exception, inst:
-                print inst    
+            except Exception as inst:
+                print(inst)    
                 if self.master:
                     showinfo("Could not create "+self.updates_dir,
                              "Please select directory for downloading updates.")                
                     self.browseUpdatesDir()
                 else:
-                    self.updates_dir = raw_input("Could not create " +
+                    self.updates_dir = input("Could not create " +
                                              self.updates_dir +
                          "\nPlease enter directory path for saving updates\n")
                 if not self.updates_dir:
@@ -138,14 +138,14 @@ class Update:
         try:
             open(self.updates_dir + os.sep + 'mgltools.tar.gz','w')
             os.remove(self.updates_dir + os.sep + 'mgltools.tar.gz')
-        except Exception, inst:
+        except Exception as inst:
             if self.master:
                 showinfo("Could not create " + self.updates_dir + os.sep + 
                          'mgltools.tar.gz', 
                          "Please select directory for downloading updates.")                
                 self.browseUpdatesDir()
             else:
-                self.updates_dir = raw_input("Could not create "+
+                self.updates_dir = input("Could not create "+
                                              self.updates_dir + os.sep + 
                                              "mgltools.tar.gz\n"
                              "Please enter directory path for saving updates\n")
@@ -159,11 +159,11 @@ class Update:
         "Downloads and unpacks updates"
         self.setUpdatesDir()
         if not self.testWritable():
-            print "Updates are not installed!"
+            print("Updates are not installed!")
             return
 
         if not self.checkRegistration():
-            print "Updates are not installed!"
+            print("Updates are not installed!")
             self.cancel()
             return            
         
@@ -222,7 +222,7 @@ class Update:
         tar_file = self.update_file
         download_file = open(tar_file,'wb')
 
-        url_file =  urllib.FancyURLopener().open(update_url)
+        url_file =  urllib.request.FancyURLopener().open(update_url)
         if self.master:
             upload_size = url_file.headers['content-length']
             per_size = int(upload_size)/99
@@ -244,7 +244,7 @@ class Update:
                                                text=" Please wait...")
             self.master.update()
         else:
-            print "Downloading updates from\n" + update_url +"\nPlease wait..."
+            print("Downloading updates from\n" + update_url +"\nPlease wait...")
             download_file.write(url_file.read())
             download_file.close()
 
@@ -269,8 +269,8 @@ class Update:
             update_dict['date'] = date_tested
         else:
             update_dict['date'] = date_latest
-        params = urllib.urlencode(update_dict)
-        conn = httplib.HTTPConnection("www.scripps.edu:80")
+        params = urllib.parse.urlencode(update_dict)
+        conn = http.client.HTTPConnection("www.scripps.edu:80")
         conn.request("POST", "/cgi-bin/sanner/update_mgltools_user.py", 
                      params, headers)
         response = conn.getresponse()
@@ -280,13 +280,13 @@ class Update:
             
     def gui(self):
         "GUI for MGLTools updates"
-        import Tkinter
-        self.master = Tkinter.Tk()
+        import tkinter
+        self.master = tkinter.Tk()
         self.master.lift()
         self.master.title("Update MGLTools")
         self.master.option_add('*font',"Times 12 bold")
         text = "Update Manager"
-        Tkinter.Label(self.master, text=text, bg='white', font=(ensureFontCase('helvetica'), 16)
+        tkinter.Label(self.master, text=text, bg='white', font=(ensureFontCase('helvetica'), 16)
                       ).grid(column=0, row=0, columnspan=3, sticky='snew')
                        
         tested_rc = self.updates_rc_dir + os.sep + "tested"
@@ -316,43 +316,43 @@ class Update:
         elif tested_dir:
             text += " with tested update from " + tested_dir.split()[1]
 
-        Tkinter.Label(self.master, text=text, bg='white', justify='left'
+        tkinter.Label(self.master, text=text, bg='white', justify='left'
                       ).grid(row=1, column=0, columnspan=3, sticky='snew')
 
         self.notebook = Pmw.NoteBook(self.master)
         self.notebook.grid(row=2, column=0, columnspan=3, sticky='snew')
         webPage = self.notebook.add('Online')
         self.webPage = webPage
-        self.updateCheckbutton = Tkinter.Checkbutton(webPage,
+        self.updateCheckbutton = tkinter.Checkbutton(webPage,
                                                      text="Check for Updates", 
                                                      command=self.checkUpdates)
         self.updateCheckbutton.grid(row=0, column=0, columnspan=3,sticky='nw')
         
-        self.tk_latest = Tkinter.IntVar()
+        self.tk_latest = tkinter.IntVar()
 
         from mglutil.gui.BasicWidgets.Tk.progressBar import ProgressBar
-        self.frame = Tkinter.Frame(self.master, relief='groove')
+        self.frame = tkinter.Frame(self.master, relief='groove')
         self.frame.grid(row=4, column=0, columnspan=3, sticky='ew')
         self.progressBar = ProgressBar(master=self.frame, labelside=None, 
                                        width=200, height=20, mode='percent')
         self.progressBar.setLabelText('Progress...')
         self.frame.grid_forget()
-        self.waitTk = Tkinter.IntVar()
+        self.waitTk = tkinter.IntVar()
         if tested_dir or nightly_dir:
-            Tkinter.Button(self.master, text="Revert to "+self.Version,
+            tkinter.Button(self.master, text="Revert to "+self.Version,
                        command=self.clearUpdatesGUI).grid(row=5, column=0)
         if nightly_dir:
             if len(nightly_dir) > 1:
-                Tkinter.Button(self.master, text="Rollback to nightly " + \
+                tkinter.Button(self.master, text="Rollback to nightly " + \
                                nightly_dir[1].split('\t')[1],
                                command=self.rollback).grid(row=5, column=1)
             elif tested_dir:
-                Tkinter.Button(self.master, text="Rollback to tested " + \
+                tkinter.Button(self.master, text="Rollback to tested " + \
                                tested_dir.split('\t')[1],
                                command=self.rollback).grid(row=5, column=1)
                 
                        
-        Tkinter.Button(self.master, text="Cancel", command=self.cancel).\
+        tkinter.Button(self.master, text="Cancel", command=self.cancel).\
                                                            grid(row=5, column=2)
 
         self.tested_dir = tested_dir
@@ -360,10 +360,10 @@ class Update:
 
         
         filePage = self.notebook.add('File')
-        self.localLabel = Tkinter.Label(filePage, text="Update from Local File", 
+        self.localLabel = tkinter.Label(filePage, text="Update from Local File", 
                                         justify='left', fg='gray45')
         self.localLabel.grid()        
-        self.localButton = Tkinter.Button(filePage, text="Browse...", 
+        self.localButton = tkinter.Button(filePage, text="Browse...", 
                                      command=self.updateLocal)
         self.localButton.grid()
         self.notebook.setnaturalsize()
@@ -374,13 +374,13 @@ class Update:
         self.updateCheckbutton.configure(state='disabled')
         
         #check to see if self.Version is the latest
-        version = urllib.urlopen(base_url+'/version').read().strip()
+        version = urllib.request.urlopen(base_url+'/version').read().strip()
         if self.Version < version:
             txt = "New version (" + version + ") is available for download."
-            Tkinter.Label(self.webPage, text=txt).\
+            tkinter.Label(self.webPage, text=txt).\
                               grid(row=1, column=0, sticky='ew')
             
-            l = Tkinter.Label(self.webPage, fg='Blue', cursor='hand1',
+            l = tkinter.Label(self.webPage, fg='Blue', cursor='hand1',
                           text='http://mgltools.scripps.edu/downloads')
             l.grid(row=2, column=0, sticky='ew')
             def openurl(evt=None):
@@ -393,7 +393,7 @@ class Update:
         date_tested = self.date_tested
         date_latest = self.date_latest
 
-        updatesLabel = Tkinter.Label(self.webPage,  
+        updatesLabel = tkinter.Label(self.webPage,  
                                      text='Available updates:',
                                      justify='left')
         updatesLabel.grid(row=3, column=0, sticky='w')
@@ -409,30 +409,30 @@ class Update:
             
         if self.tested_dir and date_tested:
             if date_tested > self.tested_dir.split()[1]:
-                testedGroup = Tkinter.LabelFrame(self.webPage, padx=5, pady=5,
+                testedGroup = tkinter.LabelFrame(self.webPage, padx=5, pady=5,
                                                  text = "Updates - Tested Builds")
                 testedGroup.grid(row=4, column=0, columnspan=3, sticky='ew')
-                Tkinter.Label(testedGroup, text=date_tested +'   ',
+                tkinter.Label(testedGroup, text=date_tested +'   ',
                               justify='left').\
                               grid(row=0, column=0, sticky='w')
-                self.testedButton = Tkinter.Button(testedGroup, 
+                self.testedButton = tkinter.Button(testedGroup, 
                                 text='  Install  ', command=self.updateTested)
                 self.testedButton.grid(row=0, column=1, sticky='ew')
-                self.downloadTested = Tkinter.Button(testedGroup, 
+                self.downloadTested = tkinter.Button(testedGroup, 
                                                      text='  Save to File  ',
                                                      command=getTested)
                 self.downloadTested.grid(row=0, column=2, sticky='ew')
                                
         elif date_tested:
-            testedGroup = Tkinter.LabelFrame(self.webPage, padx=5, pady=5,
+            testedGroup = tkinter.LabelFrame(self.webPage, padx=5, pady=5,
                                              text = "Updates - Tested Builds")
             testedGroup.grid(row=4, column=0, columnspan=3, sticky='ew')
-            Tkinter.Label(testedGroup, text=date_tested+'   ',justify='left').\
+            tkinter.Label(testedGroup, text=date_tested+'   ',justify='left').\
                           grid(row=0, column=0, sticky='w')
-            self.testedButton = Tkinter.Button(testedGroup, 
+            self.testedButton = tkinter.Button(testedGroup, 
                             text='  Install  ', command=self.updateTested)
             self.testedButton.grid(row=0, column=1, sticky='ew')
-            self.downloadTested = Tkinter.Button(testedGroup, 
+            self.downloadTested = tkinter.Button(testedGroup, 
                                                  text='  Save to File  ',
                                                  command=getTested)
             self.downloadTested.grid(row=0, column=2, sticky='ew')
@@ -440,32 +440,32 @@ class Update:
                           
         if self.nightly_dir and date_latest:
             if date_latest > self.nightly_dir[0].split()[1]:
-                nightlyGroup = Tkinter.LabelFrame(self.webPage, padx=5, pady=5,
+                nightlyGroup = tkinter.LabelFrame(self.webPage, padx=5, pady=5,
                                              text = "Updates - Nightly Builds")
                 nightlyGroup.grid(row=5, column=0, columnspan=3, sticky='ew')
 
-                Tkinter.Label(nightlyGroup, text=date_latest,justify='left').\
+                tkinter.Label(nightlyGroup, text=date_latest,justify='left').\
                               grid(row=0, column=0, sticky='w')
-                self.nightlyButton = Tkinter.Button(nightlyGroup, 
+                self.nightlyButton = tkinter.Button(nightlyGroup, 
                              text='Install', command=self.updateNightly)
                 self.nightlyButton.grid(row=0, column=1, sticky='ew')
-                self.downloadNightly = Tkinter.Button(nightlyGroup, 
+                self.downloadNightly = tkinter.Button(nightlyGroup, 
                                                       text='Save to File', 
                                                       command=getNightly)
                 self.downloadNightly.grid(row=0, column=2, sticky='ew')
 
         elif date_latest:
             if date_latest > date_tested:
-                nightlyGroup = Tkinter.LabelFrame(self.webPage, padx=5, pady=5,
+                nightlyGroup = tkinter.LabelFrame(self.webPage, padx=5, pady=5,
                                              text = "Updates - Nightly Builds")
                 nightlyGroup.grid(row=5, column=0, columnspan=3, sticky='ew')
     
-                Tkinter.Label(nightlyGroup, text=date_latest,justify='left').\
+                tkinter.Label(nightlyGroup, text=date_latest,justify='left').\
                               grid(row=0, column=0, sticky='w')
-                self.nightlyButton = Tkinter.Button(nightlyGroup, 
+                self.nightlyButton = tkinter.Button(nightlyGroup, 
                              text='Install', command=self.updateNightly)
                 self.nightlyButton.grid(row=0, column=1, sticky='ew')
-                self.downloadNightly = Tkinter.Button(nightlyGroup, 
+                self.downloadNightly = tkinter.Button(nightlyGroup, 
                                                       text='Save to File', 
                                                       command=getNightly)
                 self.downloadNightly.grid(row=0, column=2, sticky='ew')
@@ -491,11 +491,11 @@ class Update:
                 #print "self.summary_file:", self.summary_file
                 if date_summary == date_latest:
                     # add a button to show the report summary    
-                    Tkinter.Label(nightlyGroup,  text='Click to see test summary:',
+                    tkinter.Label(nightlyGroup,  text='Click to see test summary:',
                         justify='left', fg='gray45').grid(row=1, column=0, 
                                                           columnspan=2, 
                                                           sticky='w' )
-                    self.summaryButton = Tkinter.Button(nightlyGroup,
+                    self.summaryButton = tkinter.Button(nightlyGroup,
                                                         text="Test Summary",
                                                         command=self.showTestSummary )
                     self.summaryButton.grid(row=1, column = 2, sticky='ew')
@@ -527,7 +527,7 @@ class Update:
         
         self.setUpdatesDir()
         if not self.testWritable():
-            print "Updates are not installed!"
+            print("Updates are not installed!")
             return
         
         self.localButton.configure(state='disabled')
@@ -630,8 +630,8 @@ class Update:
                 if update_dir:
                     update_dir = update_dir.split('\t')[0]
                     if update_dir.find('tested') == -1 and update_dir.find('nightly') == -1:
-                        print "Refusing to delete " + update_dir
-                        print "Please delete " +update_dir +" to clear updates"
+                        print("Refusing to delete " + update_dir)
+                        print("Please delete " +update_dir +" to clear updates")
                         return
                     if os.path.isdir(update_dir):
                         mgl_dirs = os.listdir(update_dir)
@@ -649,7 +649,7 @@ class Update:
     def getInfo(self):
         "Gets info about nighly and tested builds"
         nightly_url = self.baseURL + '/latest/'
-        f = urllib.urlopen(nightly_url)
+        f = urllib.request.urlopen(nightly_url)
         html = f.read()
         start = html.find(self.update_file)
         if start > 0:
@@ -659,7 +659,7 @@ class Update:
         f.close()
 
         nightly_url = self.baseURL + '/latest-tested/'
-        f = urllib.urlopen(nightly_url)
+        f = urllib.request.urlopen(nightly_url)
         html = f.read()
         start = html.find(self.update_file)
         if start > 0:
@@ -670,7 +670,7 @@ class Update:
 
     def getDate(self, nightly_url, update_url):
         "This function is used to extract date from remote directory listing"
-        f = urllib.urlopen(nightly_url)
+        f = urllib.request.urlopen(nightly_url)
         html = f.read()
         start = html.find(update_url)
         if start < 0:
@@ -692,4 +692,4 @@ if __name__ == "__main__":
     u = Update()
     u.gui()
     u.master.mainloop()
-    print u.updates_dir
+    print(u.updates_dir)

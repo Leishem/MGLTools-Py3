@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -16,13 +16,13 @@
 # class to draw a arrow in DejaVu
 ##
 from opengltk.OpenGL import GL
-import numpy.oldnumeric as Numeric
-from numpy.oldnumeric import array
-from IndexedGeom import IndexedGeom
-import datamodel, viewerConst
-from viewerFns import checkKeywords
-from Materials import Materials
-from colorTool import glMaterialWithCheck, resetMaterialMemory
+import mglcompat.oldnumeric as Numeric
+from mglcompat.oldnumeric import array
+from .IndexedGeom import IndexedGeom
+from . import datamodel, viewerConst
+from .viewerFns import checkKeywords
+from .Materials import Materials
+from .colorTool import glMaterialWithCheck, resetMaterialMemory
 
 class Arrows(IndexedGeom):
     """Class for sets of arrows"""
@@ -35,21 +35,21 @@ class Arrows(IndexedGeom):
 
         if __debug__:
             if check:
-                apply( checkKeywords, (name,self.keywords), kw)
+                checkKeywords(*(name,self.keywords), **kw)
 
-	if not kw.get('shape'):
-	    kw['shape'] = (0,3)    # default shape for sphere set
+        if not kw.get('shape'):
+            kw['shape'] = (0,3)    # default shape for sphere set
 
-        apply( IndexedGeom.__init__, (self, name, 0), kw)
+        IndexedGeom.__init__(*(self, name, 0), **kw)
         
         self.culling = GL.GL_BACK
         self.inheritCulling = 0
         
-	assert len(self.vertexSet.vertices.ashape)==2
+        assert len(self.vertexSet.vertices.ashape)==2
 
         self.frontPolyMode = GL.GL_FILL
-	self.inheritFrontPolyMode = viewerConst.NO
-	self.lighting = viewerConst.YES
+        self.inheritFrontPolyMode = viewerConst.NO
+        self.lighting = viewerConst.YES
         self.realFMat = Materials() # used in RedoDisplayList to build 
         self.realBMat = Materials() # used in RedoDisplayList to build 
                                     # material taking getFrom into account
@@ -68,7 +68,7 @@ check=1 : verify that all the keywords present can be handle by this func
 redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
-        redoFlags = apply( IndexedGeom.Set, (self, check, 0), kw )
+        redoFlags = IndexedGeom.Set(*(self, check, 0), **kw)
 
         v=kw.get('vertices')
         if v:
@@ -121,8 +121,8 @@ updateOwnGui=True : allow to update owngui at the end this func
             #radii = self.vertexSet.radii.array
 
         pickName = 0
-        for i in xrange(len(self.faceSet.faces.array)):
-            for j in xrange(len(self.faceSet.faces.array[i])-1):
+        for i in range(len(self.faceSet.faces.array)):
+            for j in range(len(self.faceSet.faces.array[i])-1):
                 vi1 = self.faceSet.faces.array[i][j]
                 vi2 = self.faceSet.faces.array[i][j+1]
                 #print vi1,vi2
@@ -168,7 +168,7 @@ updateOwnGui=True : allow to update owngui at the end this func
     def _arrowTemplate(self, npoly):    
 
         assert (npoly >1)
-        import numpy.oldnumeric as Numeric, math
+        import mglcompat.oldnumeric as Numeric, math
 
         self.npoly = npoly
         self.v = Numeric.zeros( ((npoly+2),3), 'f')
@@ -260,7 +260,7 @@ updateOwnGui=True : allow to update owngui at the end this func
 from DejaVu.Cylinders import Cylinders
 #from opengltk.OpenGL import GL
 from math import sqrt
-#import numpy.oldnumeric as Numeric
+#import mglcompat.oldnumeric as Numeric
 from warnings import warn
 from mglutil.util.defaultPalettes import ChooseColor
 import types
@@ -282,7 +282,7 @@ class Axis(Cylinders):
         
         if both definitions are specified  2) will overwrite 1) """
         
-        apply(Cylinders.__init__, (self, name), {})
+        Cylinders.__init__(*(self, name), **{})
         self.length = None
         self.point1 = None
         self.point2 = None
@@ -295,7 +295,7 @@ class Axis(Cylinders):
             kw['inheritMaterial'] = 0
         if kw.get('culling') == None:
             kw['culling'] = GL.GL_NONE
-        apply(self.Set, (check,), kw)
+        self.Set(*(check,), **kw)
 
 
     def Set(self, check=1, redo=1, **kw):
@@ -352,7 +352,7 @@ class Axis(Cylinders):
             kw.pop('color')
         cylkw.update(kw)
         
-        return apply(Cylinders.Set , (self, check, redo), cylkw)
+        return Cylinders.Set(*(self, check, redo), **cylkw)
 
 
     def getColor(self, color):
@@ -360,10 +360,10 @@ class Axis(Cylinders):
         tuple (e.g.  (1., 0., 0.)  )
         The default color is white (1,1,1)
         """
-        if type(color) == types.TupleType and len(color)==3:
+        if type(color) == tuple and len(color)==3:
             return color
-        if type(color) == types.StringType:
-            if color in ChooseColor.keys():
+        if type(color) == bytes:
+            if color in list(ChooseColor.keys()):
                 return ChooseColor[color]
 
         return ChooseColor['white']
@@ -460,10 +460,10 @@ if both definitions are specified  2) will overwrite 1)
 tuple (e.g.  (1., 0., 0.)  )
 The default color is white (1,1,1)
 """
-        if type(color) == types.TupleType and len(color)==3:
+        if type(color) == tuple and len(color)==3:
             return color
-        if type(color) == types.StringType:
-            if color in ChooseColor.keys():
+        if type(color) == bytes:
+            if color in list(ChooseColor.keys()):
                 return ChooseColor[color]
 
         return ChooseColor['white']

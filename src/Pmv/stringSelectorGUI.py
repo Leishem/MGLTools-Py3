@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -8,18 +8,18 @@
 #
 #############################################################################
 
-import numpy.oldnumeric as Numeric, Tkinter, types, string
+import mglcompat.oldnumeric as Numeric, tkinter, types; from mglcompat import pystring as string
 from DejaVu.viewerFns import checkKeywords
 from MolKit.molecule import MoleculeSet, Atom, AtomSetSelector
 from MolKit.protein import Protein, ProteinSetSelector, Residue, \
                 ResidueSetSelector, Chain, ChainSetSelector
-import tkMessageBox, tkSimpleDialog
+import tkinter.messagebox, tkinter.simpledialog
 
 from MolKit.stringSelector import StringSelector
 
 
 
-class StringSelectorGUI(Tkinter.Frame):
+class StringSelectorGUI(tkinter.Frame):
     """ molEntry, chainEntry, resEntry, atomEntry
         molMB, chainMB, resSetMB, atomSetMB, #setsMB
         showBut,
@@ -68,15 +68,15 @@ class StringSelectorGUI(Tkinter.Frame):
 
         self.sets = sets
         #all is a shortcut to use all of default values
-        if 'all' in kw.keys():
+        if 'all' in list(kw.keys()):
             all = 1
         elif __debug__:
             if check:
-                apply( checkKeywords, ('stringSelector', self.entryKeywords), kw)
+                checkKeywords(*('stringSelector', self.entryKeywords), **kw)
 
-        Tkinter.Frame.__init__(self, master)
+        tkinter.Frame.__init__(self, master)
         ##????
-        Tkinter.Pack.config(self, side='left', anchor='w')
+        tkinter.Pack.config(self, side='left', anchor='w')
 
         
         #to make a stringSelector need vf, moleculeSet, selString
@@ -152,113 +152,113 @@ class StringSelectorGUI(Tkinter.Frame):
         #this dictionary has default values for each widget
         self.ifdDict = {}
         self.ifdDict['topFrame'] = {'name': 'topFrame',
-            'widgetType':Tkinter.Frame,
+            'widgetType':tkinter.Frame,
             'wcfg':{'relief': 'flat', 'bd':2}, 
             'packCfg':{'side':'top', 'fill':'x'}
             }
         self.ifdDict['buttonFrame'] = {'name': 'buttonFrame',
-            'widgetType':Tkinter.Frame,
+            'widgetType':tkinter.Frame,
             'wcfg':{'relief': 'flat', 'bd':2}, 
             'packCfg':{'side':'top', 'fill':'x'}
             }
         self.ifdDict['entryFrame'] = {'name': 'entryFrame',
-            'widgetType':Tkinter.Frame,
+            'widgetType':tkinter.Frame,
             'wcfg':{'relief': 'flat', 'bd':2}, 
             'packCfg':{'side':'left'}
             }
         self.ifdDict['menuFrame'] = {'name': 'menuFrame',
-            'widgetType':Tkinter.Frame,
+            'widgetType':tkinter.Frame,
             'wcfg':{'relief': 'flat', 'bd':2}, 
             'packCfg':{'side':'left', 'fill':'x'}
             }
         self.ifdDict['molWids'] = {'name': 'molWids',
-            'widgetType': Tkinter.Frame,
+            'widgetType': tkinter.Frame,
             'wcfg':{'relief': 'flat'},
             'children': ['molLabel', 'molEntry'],
             'packCfg':{'side':'top'}
             } 
         self.ifdDict['molLabel'] = {'name': 'molLabel',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{'text': 'Molecule'}, 
             'packCfg':{'side':'left', 'anchor': 'w', 'fill':'x'}
             }
         self.ifdDict['molEntry'] = {'name': 'molEntry',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{'bd': 3}, 
             'packCfg':{'side':'left', 'anchor':'e', 'fill':'x'}
             }
         self.ifdDict['chainWids'] = {'name': 'chainWids',
-            'widgetType': Tkinter.Frame,
+            'widgetType': tkinter.Frame,
             'wcfg':{'relief': 'flat', 'bd':3},
             'children': ['chainLabel', 'chainEntry'],
             'packCfg':{'side':'top'}
             } 
         self.ifdDict['chainLabel'] = {'name': 'chainLabel',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{'text': 'Chain    '}, 
             'packCfg':{'anchor': 'w', 'side':'left'}
             }
         self.ifdDict['chainEntry'] = {'name': 'chainEntry',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{'bd': 3}, 
             'packCfg':{'side':'left', 'anchor':'e', 'fill':'x'}
             }
         self.ifdDict['resWids'] = {'name': 'resWids',
-            'widgetType': Tkinter.Frame,
+            'widgetType': tkinter.Frame,
             'wcfg':{'relief': 'flat'},
             'children': ['resLabel', 'resEntry'],
             'packCfg':{'side':'top'}
             } 
         self.ifdDict['resLabel'] = {'name': 'resLabel',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{'text': 'Residue'}, 
             'packCfg':{'anchor': 'w', 'side':'left'}
             }
         self.ifdDict['resEntry'] = {'name': 'resEntry',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{'bd': 3}, 
             'packCfg':{'side':'left', 'anchor':'e', 'fill':'x'}
             }
         self.ifdDict['atomWids'] = {'name': 'atomWids',
-            'widgetType': Tkinter.Frame,
+            'widgetType': tkinter.Frame,
             'wcfg':{'relief': 'flat'},
             'children': ['atomLabel', 'atomEntry'],
             'packCfg':{'side':'top'}
             } 
         self.ifdDict['atomLabel'] = {'name': 'atomLabel',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{'text': 'Atom    '}, 
             'packCfg':{'anchor': 'w', 'side':'left'}
             }
         self.ifdDict['atomEntry'] = {'name': 'atomEntry',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{'bd': 3}, 
             'packCfg':{'side':'left', 'anchor':'e', 'fill':'x'}
             }
         #next the menus
         self.ifdDict['molMB'] = {'name': 'molMB',
-            'widgetType':Tkinter.Menubutton,
+            'widgetType':tkinter.Menubutton,
             'buildMenuCmd': self.buildMolMenu,
             'wcfg':{
                     'text': 'Molecule List',
                     'relief': 'ridge'},
             'packCfg':{'side':'top', 'anchor':'w', 'fill':'x'}}
         self.ifdDict['chainMB'] = {'name': 'chainMB',
-            'widgetType':Tkinter.Menubutton,
+            'widgetType':tkinter.Menubutton,
             'buildMenuCmd': self.buildChainMenu,
             'wcfg':{
                     'text': 'Chain List',
                     'relief': 'ridge'},
             'packCfg':{'side':'top', 'anchor':'w', 'fill':'x'}}
         self.ifdDict['resSetMB'] = {'name': 'resSetMB',
-            'widgetType':Tkinter.Menubutton,
+            'widgetType':tkinter.Menubutton,
             'buildMenuCmd': self.buildResMenus,
             'wcfg':{
                     'text': 'ResidueSet List',
                     'relief': 'ridge'},
             'packCfg':{'side':'top', 'anchor':'w', 'fill':'x'}}
         self.ifdDict['atomSetMB'] = {'name': 'atomSetMB',
-            'widgetType':Tkinter.Menubutton,
+            'widgetType':tkinter.Menubutton,
             'buildMenuCmd': self.buildAtomMenus,
             'wcfg':{
                     'text': 'AtomSet List',
@@ -266,7 +266,7 @@ class StringSelectorGUI(Tkinter.Frame):
             'packCfg':{'side':'top', 'anchor':'w', 'fill':'x'}}
         #some way to toggle visual aide
         self.ifdDict['showBut'] = {'name': 'showBut',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{
                     'command': self.Show_cb,
                     'variable': self.showCurrent,
@@ -278,7 +278,7 @@ class StringSelectorGUI(Tkinter.Frame):
             'packCfg':{'side':'left', 'anchor':'w', 'fill':'x'}}
         #last the buttons
         self.ifdDict['clearBut'] = {'name': 'clearBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg':{
                     'command': self.Clear_cb,
                     'text':'Clear Form',
@@ -286,7 +286,7 @@ class StringSelectorGUI(Tkinter.Frame):
                     'bd': '1'},
             'packCfg':{'side':'left', 'anchor':'w', 'fill':'x'}}
         self.ifdDict['acceptBut'] = {'name': 'acceptBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg':{
                     'command': self.get,
                     'text':'Accept',
@@ -294,7 +294,7 @@ class StringSelectorGUI(Tkinter.Frame):
                     'bd': '1'},
             'packCfg':{'side':'left', 'anchor':'w', 'fill':'x'}}
         self.ifdDict['closeBut'] = {'name': 'closeBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg':{
                     'command': self.Close_cb,
                     'text':'Close ',
@@ -304,7 +304,7 @@ class StringSelectorGUI(Tkinter.Frame):
 
 
     def buildTkVars(self):
-        self.showCurrent = Tkinter.IntVar()
+        self.showCurrent = tkinter.IntVar()
         self.showCurrent.set(0)
         #for n in ['showCurrent']:
         #    exec('self.'+ n + '= Tkinter.IntVar()')
@@ -337,14 +337,14 @@ class StringSelectorGUI(Tkinter.Frame):
     def buildMenu(self, mB, nameList, varDict, oldvarDict, cmd):
         if nameList:
             #prune non-valid entries
-            for i in varDict.keys():
+            for i in list(varDict.keys()):
                 if i not in nameList:
                     del varDict[i]
                     del oldvarDict[i]
             #add anything new
             for i in nameList:
-                if i not in varDict.keys():
-                    varDict[i]=Tkinter.IntVar()
+                if i not in list(varDict.keys()):
+                    varDict[i]=tkinter.IntVar()
                     oldvarDict[i]=0
         else:
             varDict={}
@@ -354,10 +354,10 @@ class StringSelectorGUI(Tkinter.Frame):
         if hasattr(mB, 'menu'):
             mB.menu.delete(1,'end')
         else:
-            mB.menu = Tkinter.Menu(mB)
+            mB.menu = tkinter.Menu(mB)
             mB['menu']=mB.menu
         #PACK all the entries
-        for i in varDict.keys():
+        for i in list(varDict.keys()):
             mB.menu.add_checkbutton(label=i, var=varDict[i], command=cmd)
 
 
@@ -373,7 +373,7 @@ class StringSelectorGUI(Tkinter.Frame):
         if not hasattr(self,'oldchainVar'): self.oldchainVar={}
         chMols = MoleculeSet([])
         if len(self.molSet):
-            chMols=MoleculeSet(filter(lambda x: Chain in x.levels, self.molSet))
+            chMols=MoleculeSet([x for x in self.molSet if Chain in x.levels])
         chainIDList = []
         if len(chMols):
             chains=chMols.findType(Chain)
@@ -386,7 +386,7 @@ class StringSelectorGUI(Tkinter.Frame):
     def buildResMenus(self,event=None):
         if not hasattr(self,'ResSetsVar'): self.ResSetsVar={}
         if not hasattr(self,'oldResSetsVar'): self.oldResSetsVar={}
-        ResSetsList = self.residueSelector.residueList.keys()
+        ResSetsList = list(self.residueSelector.residueList.keys())
         self.residueList = self.residueSelector.residueList
         #ResSetsList = residueList_.keys()
         #self.residueList = residueList_
@@ -396,7 +396,7 @@ class StringSelectorGUI(Tkinter.Frame):
     def buildAtomMenus(self,event=None):
         if not hasattr(self,'AtomSetsVar'): self.AtomSetsVar={}
         if not hasattr(self,'oldAtomSetsVar'): self.oldAtomSetsVar={}
-        AtomSetsList = self.atomSelector.atomList.keys()
+        AtomSetsList = list(self.atomSelector.atomList.keys())
         self.atomList = self.atomSelector.atomList
         #AtomSetsList = atomList_.keys()
         #self.atomList = atomList_
@@ -404,14 +404,14 @@ class StringSelectorGUI(Tkinter.Frame):
 
     
     def increaseCts(self,dict, newStr):
-        if dict.has_key(newStr):
+        if newStr in dict:
             dict[newStr]=dict[newStr]+1
         else:
             dict[newStr]=1
 
 
     def decreaseCts(self,dict,newStr):
-        if dict.has_key(newStr):
+        if newStr in dict:
             currentVal=dict[newStr]
             if currentVal<=1: currentVal=1
             dict[newStr]=currentVal-1
@@ -419,7 +419,7 @@ class StringSelectorGUI(Tkinter.Frame):
 
     def getMolVal(self, event=None):
         molWidget = self.molEntry
-        for molStr in self.molVar.keys():
+        for molStr in list(self.molVar.keys()):
             #figure out which check button was just changed
             newVal=self.molVar[molStr].get()
             if newVal==self.oldmolVar[molStr]: continue
@@ -445,7 +445,7 @@ class StringSelectorGUI(Tkinter.Frame):
                     # chain menu may not have been built yet:
                     if not hasattr(self, 'chainVar'):
                         self.buildChainMenu()
-                    for ch in self.chainVar.keys():
+                    for ch in list(self.chainVar.keys()):
                         chKeyList = string.split(ch,':')
                         thisMolStr=chKeyList[0]
                         thisChainStr=chKeyList[1]
@@ -465,7 +465,7 @@ class StringSelectorGUI(Tkinter.Frame):
         chains = self.molSet.findType(Chain)
         molWidget = self.molEntry
         chainWidget = self.chainEntry
-        for item in self.chainVar.keys():
+        for item in list(self.chainVar.keys()):
             molStr,chainStr = string.split(item,':')
             newVal=self.chainVar[item].get()
             if newVal ==self.oldchainVar[item]:
@@ -488,15 +488,15 @@ class StringSelectorGUI(Tkinter.Frame):
                         chainWidget.insert('end',chainStr)
                     else:
                         chainWidget.insert('end',','+chainStr)
-                if hasattr(self, 'molVar') and self.molVar.has_key(molStr):
+                if hasattr(self, 'molVar') and molStr in self.molVar:
                     self.molVar[molStr].set(1)
                 else: 
                     self.buildMolMenu()
                     self.molVar[molStr].set(1)
                 self.oldmolVar[molStr]=1
             else:
-                if not self.molCts.has_key(molStr): continue
-                if not self.chainCts.has_key(chainStr): continue
+                if molStr not in self.molCts: continue
+                if chainStr not in self.chainCts: continue
                 self.decreaseCts(self.molCts,molStr)
                 self.decreaseCts(self.chainCts,chainStr)
                 chainList=string.split(chainWidget.get(),',')
@@ -505,7 +505,7 @@ class StringSelectorGUI(Tkinter.Frame):
                     if chainStr in chainList and self.chainCts[chainStr]==0:
                         chainList.remove(chainStr)
                     if self.molCts[molStr]==0:
-                        if hasattr(self, 'molVar') and self.molVar.has_key(molStr):
+                        if hasattr(self, 'molVar') and molStr in self.molVar:
                             self.molVar[molStr].set(0)
                             self.oldmolVar[molStr]=0
                         #also remove it from Molecule entry
@@ -522,7 +522,7 @@ class StringSelectorGUI(Tkinter.Frame):
     def getResSetsVal(self, event=None):
         w = self.resEntry
         ssList = string.split(w.get(),',')
-        for newStr in self.ResSetsVar.keys():
+        for newStr in list(self.ResSetsVar.keys()):
             if self.ResSetsVar[newStr].get()==1:
                 if newStr not in ssList:
                     if w.index('end')==0:
@@ -541,7 +541,7 @@ class StringSelectorGUI(Tkinter.Frame):
     def getAtomSetsVal(self, event=None):
         w = self.atomEntry
         ssList = string.split(w.get(),',')
-        for newStr in self.AtomSetsVar.keys():
+        for newStr in list(self.AtomSetsVar.keys()):
             if self.AtomSetsVar[newStr].get()==1:
                 if newStr not in ssList:
                     if w.index('end')==0:
@@ -559,8 +559,8 @@ class StringSelectorGUI(Tkinter.Frame):
 
     def getSetsVal(self, event=None):
         if len(self.sets):
-            sets = self.sets.keys()
-        for newStr in self.setsVar.keys():
+            sets = list(self.sets.keys())
+        for newStr in list(self.setsVar.keys()):
             node0 = self.sets[newStr][0]
             ##this would work only w/ 4 levels(/)
             nodeLevel = node0.isBelow(Protein)
@@ -644,7 +644,7 @@ class StringSelectorGUI(Tkinter.Frame):
             #if stringSelector starts returning msgs fix here
             #current, msgStr = self.get()
             if not self.vf:
-                print 'nowhere to show'
+                print('nowhere to show')
                 return
             if not current:
                 msg = 'nothing to show'
@@ -676,7 +676,7 @@ class StringSelectorGUI(Tkinter.Frame):
         #dTkList = [self.molVar, self.chainVar, self.ResSetsVar, \
                     #self.AtomSetsVar]
         for d in dTkList:
-            for k in d.keys():
+            for k in list(d.keys()):
                 d[k].set(0)
         ss2 = ['oldmolVar', 'oldchainVar', 'oldResSetsVar',\
                     'oldAtomSetsVar']
@@ -688,7 +688,7 @@ class StringSelectorGUI(Tkinter.Frame):
         #dintList = [self.oldmolVar, self.oldchainVar, self.oldResSetsVar,\
                     #self.oldAtomSetsVar]
         for d in dintList:
-            for k in d.keys():
+            for k in list(d.keys()):
                 d[k]=0
         if self.showCurrent.get():
             self.showCurrent.set(0)
@@ -725,18 +725,18 @@ class StringSelectorGUI(Tkinter.Frame):
 
     def buildCmdDict(self):
         self.cmdDict = {}
-        for key, value in self.optsDict.items():
+        for key, value in list(self.optsDict.items()):
             if value: 
-                if type(value) == types.DictionaryType and \
-                        value.has_key('command'):
+                if type(value) == dict and \
+                        'command' in value:
                     self.cmdDict[key] = value['command']
-                elif key in self.ifdDict.keys() and self.ifdDict[key].has_key('command'):
+                elif key in list(self.ifdDict.keys()) and 'command' in self.ifdDict[key]:
                     self.cmdDict[key] = self.ifdDict[key]['command']
 
 
     def updateChildren(self):
         d = self.optsDict
-        for key, chList in self.flexChildren.items():
+        for key, chList in list(self.flexChildren.items()):
             val = d[key]
             if val: 
                 #set alternate children list
@@ -750,9 +750,9 @@ class StringSelectorGUI(Tkinter.Frame):
         if parent==None:
             parent = self
         widDict = self.ifdDict[widName]
-        newWid = apply(Tkinter.Frame, (parent,), widDict['wcfg'])
+        newWid = tkinter.Frame(*(parent,), **widDict['wcfg'])
         exec('self.'+widName+'=newWid')
-        apply(newWid.pack, (), widDict['packCfg'])
+        newWid.pack(*(), **widDict['packCfg'])
         
 
     def buildGUI(self):
@@ -768,14 +768,14 @@ class StringSelectorGUI(Tkinter.Frame):
             wid = widStrings[num]
             widDict = self.ifdDict[wid]
             if self.optsDict.get(wid):
-                for k, v in self.optsDict.get(wid).items():
-                    if type(v) == types.DictionaryType:
-                        for subk, subv in v.items():
+                for k, v in list(self.optsDict.get(wid).items()):
+                    if type(v) == dict:
+                        for subk, subv in list(v.items()):
                             widDict[k][subk] = subv
                     else: widDict[k] = v
-            newWid = apply(Tkinter.Frame, (self.topFrame,), widDict['wcfg'])
+            newWid = tkinter.Frame(*(self.topFrame,), **widDict['wcfg'])
             exec('self.'+wid+'=newWid')
-            apply(newWid.pack, (), widDict['packCfg'])
+            newWid.pack(*(), **widDict['packCfg'])
             #if num==1: self.updateChildren()
             self.buildWidgets(keyList[num], newWid)
         self.buildWidgets(self.buttonKeywords, self.buttonFrame)
@@ -794,9 +794,9 @@ class StringSelectorGUI(Tkinter.Frame):
                 widDict = self.ifdDict[key]
                 if value!=1:
                     #check whether it's a dictionary
-                    for k, v in value.items():
-                        if type(v) == types.DictionaryType:
-                            for subk, subv in v.items():
+                    for k, v in list(value.items()):
+                        if type(v) == dict:
+                            for subk, subv in list(v.items()):
                                 widDict[k][subk] = subv
                         else: widDict[k] = v
                 #make the widget here
@@ -816,21 +816,21 @@ class StringSelectorGUI(Tkinter.Frame):
 
                 #if w==Tkinter.Menubutton: master = self.MBFrame
                 #else: master = self.WidFrame
-                newW = apply(w, (master,), widDict['wcfg'])
+                newW = w(*(master,), **widDict['wcfg'])
 
                 if buildMenuCmd:
                     newW.bind('<ButtonPress>', buildMenuCmd, add='+')
 
                 #frames have children to build and pack
-                if widDict.has_key('children'):
+                if 'children' in widDict:
                     for ch in widDict['children']:
                         if not self.optsDict.get(ch): continue
                         else:
                             #first grab any passed info
                             wD =self.ifdDict[ch]
                             opD = self.optsDict[ch]
-                            if type(opD)==types.DictionaryType:
-                                for k, v in opD.items():
+                            if type(opD)==dict:
+                                for k, v in list(opD.items()):
                                     wD[k] = v
                             # mark this ch as done
                             self.optsDict[ch] = 0
@@ -841,7 +841,7 @@ class StringSelectorGUI(Tkinter.Frame):
                         childPackCfg = wD.get('packCfg')
                         if childPackCfg: del wD['packCfg']
                         else: childPackCfg = self.packCfg
-                        newChild = apply(ch_w, (newW,), wD['wcfg'])
+                        newChild = ch_w(*(newW,), **wD['wcfg'])
                         newChild.pack(childPackCfg)
                         exec('self.'+ch+'= newChild')
                         if childCallback: 
@@ -859,9 +859,9 @@ class StringSelectorGUI(Tkinter.Frame):
                 exec('self.'+key+'= newW')
 
                 #check for a command to bind to newW
-                if key in self.cmdDict.keys(): 
+                if key in list(self.cmdDict.keys()): 
                     ##binding depends on type of widget
-                    if newW.__class__==Tkinter.Scale:
+                    if newW.__class__==tkinter.Scale:
                         newW.bind('<ButtonRelease>', widDict['command'])
 
                 if widCallback:
@@ -869,7 +869,7 @@ class StringSelectorGUI(Tkinter.Frame):
 
 
     def bindCallback(self, wid, cmdDict):
-        if type(cmdDict)!=types.DictionaryType:
+        if type(cmdDict)!=dict:
             #this is a cheap way to set up defaults
             cmdDict = {}
         event = cmdDict.get('event')
@@ -884,7 +884,7 @@ class StringSelectorGUI(Tkinter.Frame):
     def returnEntries(self):
         #build list of requested options to return
         returnList=[]
-        for item in self.dict.keys():
+        for item in list(self.dict.keys()):
             if self.dict[item]:
                 returnList.append(self.ifdDict['item'])
         return returnList
@@ -893,12 +893,12 @@ class StringSelectorGUI(Tkinter.Frame):
 
 if __name__=='__main__':
     #code to test it here
-    print 'testing stringSelector'
+    print('testing stringSelector')
     import pdb
     
-    root = Tkinter.Tk()
+    root = tkinter.Tk()
     root.withdraw()
-    top = Tkinter.Toplevel()
+    top = tkinter.Toplevel()
     top.title = 'StringSelectorGUI'
 
     strSel = StringSelectorGUI(top, all = 1, crColor=(1.,0.,0.))

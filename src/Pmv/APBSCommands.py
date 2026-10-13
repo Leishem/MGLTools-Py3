@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 # An Adaptive Poisson-Boltzmann Solver Graphic User Interface for the Python 
 # Molecule Viewer: (APBS GUI for PMV)
@@ -39,9 +39,9 @@ How to set up an APBS run:
 8. (Calculation tab) Run APBS!
 """ 
 
-import string, os, pickle, sys, threading, select, time, shutil
-import numpy.oldnumeric as Numeric
-import Tkinter, Pmw
+import os, pickle, sys, threading, select, time, shutil; from mglcompat import pystring as string
+import mglcompat.oldnumeric as Numeric
+import tkinter, Pmw
 
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr, InputForm, \
 CallBackFunction
@@ -58,7 +58,7 @@ from MolKit.pdbParser import PQRParser
 from MolKit.molecule import Atom, MoleculeSet
 
 import MolKit
-import tkMessageBox
+import tkinter.messagebox
 
 global APBS_ssl 
 APBS_ssl = False # Flags whether to run Secured APBS Web Services 
@@ -85,7 +85,7 @@ PROFILES = ('Default',)
 from MolKit.APBSParameters import *
 
 try:
-    import sys, webbrowser, urllib, httplib
+    import sys, webbrowser, urllib.request, urllib.parse, urllib.error, http.client
 
     APBSservicesFound = True
     from mglutil.web.services.AppService_client import AppServiceLocator, launchJobRequest, \
@@ -148,14 +148,14 @@ try:
         def run(self, portAddress):
             """Runs APBS through Web Services"""
             # retrieve a reference to the remote port
-            import httplib
+            import http.client
             self.appLocator = AppServiceLocator()
             global APBS_ssl
             if APBS_ssl:
                 self.appServicePort = self.appLocator.getAppServicePortType(
                                   portAddress, 
                                   ssl = 1, cert_file = APBS_proxy,  
-                                  key_file = APBS_proxy, transport=httplib.HTTPSConnection)
+                                  key_file = APBS_proxy, transport=http.client.HTTPSConnection)
             else:
                 self.appServicePort = self.appLocator.getAppServicePort(
                                   portAddress)
@@ -218,8 +218,8 @@ Solver (APBS)\n
         self.cmp_APBSParams = APBSParams()
         self.flag_grid_changed = False
         try:
-            self.RememberLogin_var = Tkinter.BooleanVar()
-            self.salt_var =Tkinter.BooleanVar()
+            self.RememberLogin_var = tkinter.BooleanVar()
+            self.salt_var =tkinter.BooleanVar()
             self.salt_var.set(1)
         except:
             self.RememberLogin_var = False
@@ -236,7 +236,7 @@ Solver (APBS)\n
 
     def onAddObjectToViewer(self, object):
         """Called when object is added to viewer"""
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             try:
                 ebn = self.cmdForms['moleculeSelect'].descr.entryByName
                 w = ebn['moleculeListSelect']['widget']
@@ -262,7 +262,7 @@ Solver (APBS)\n
         
     def onRemoveObjectFromViewer(self, object):
         """Called when object is removed from viewer"""
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             try:
                 ebn = self.cmdForms['moleculeSelect'].descr.entryByName
                 w = ebn['moleculeListSelect']['widget']
@@ -326,10 +326,10 @@ Solver (APBS)\n
         if mainform:
 #            self.paramUpdateAll()
             tmp_dict = {}
-            for key, value in self.params.__dict__.items():
+            for key, value in list(self.params.__dict__.items()):
                 if  self.params.__dict__[key] != \
                 self.cmp_APBSParams.__dict__[key]:
-                    if type(value) is types.TupleType:
+                    if type(value) is tuple:
                         value = value[0] 
                     if key == 'ions':
                         for ion in value:
@@ -437,18 +437,14 @@ append(Pmv.APBSCommands.Ion("+ion.toString()+"))")
     # Callbacks
     def refreshCalculationPage(self):
         """Refreshes calculation page"""
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             descr = self.cmdForms['default'].descr
 
             if(self.params.calculationType=='Binding energy'):
-                apply(descr.entryByName['molecule2Select']['widget'].grid,
-                            (), descr.entryByName['molecule2Select']['gridcfg'])
-                apply(descr.entryByName['molecule2']['widget'].grid, (),
-                                      descr.entryByName['molecule2']['gridcfg'])
-                apply(descr.entryByName['complexSelect']['widget'].grid, (), 
-                                  descr.entryByName['complexSelect']['gridcfg'])
-                apply(descr.entryByName['complex']['widget'].grid, (), 
-                                        descr.entryByName['complex']['gridcfg'])
+                descr.entryByName['molecule2Select']['widget'].grid(*(), **descr.entryByName['molecule2Select']['gridcfg'])
+                descr.entryByName['molecule2']['widget'].grid(*(), **descr.entryByName['molecule2']['gridcfg'])
+                descr.entryByName['complexSelect']['widget'].grid(*(), **descr.entryByName['complexSelect']['gridcfg'])
+                descr.entryByName['complex']['widget'].grid(*(), **descr.entryByName['complex']['gridcfg'])
                 #self.params.energyOutput = 'Total'
             elif(self.params.calculationType=='Solvation energy'):
                 descr.entryByName['molecule2Select']['widget'].grid_forget()
@@ -478,18 +474,14 @@ append(Pmv.APBSCommands.Ion("+ion.toString()+"))")
     
             if self.params.surfaceCalculation == 'Cubic B-spline' or \
                        self.params.surfaceCalculation == '7th Order Polynomial':
-                apply(descr.entryByName['splineWindowLabel']['widget'].grid, 
-                          (), descr.entryByName['splineWindowLabel']['gridcfg'])
-                apply(descr.entryByName['splineWindow']['widget'].grid, (), 
-                                   descr.entryByName['splineWindow']['gridcfg'])
+                descr.entryByName['splineWindowLabel']['widget'].grid(*(), **descr.entryByName['splineWindowLabel']['gridcfg'])
+                descr.entryByName['splineWindow']['widget'].grid(*(), **descr.entryByName['splineWindow']['gridcfg'])
                 descr.entryByName['sdensLabel']['widget'].grid_forget()
                 descr.entryByName['sdens']['widget'].grid_forget()
 
             else:
-                apply(descr.entryByName['sdensLabel']['widget'].grid, 
-                          (), descr.entryByName['sdensLabel']['gridcfg'])
-                apply(descr.entryByName['sdens']['widget'].grid, (), 
-                                   descr.entryByName['sdens']['gridcfg'])
+                descr.entryByName['sdensLabel']['widget'].grid(*(), **descr.entryByName['sdensLabel']['gridcfg'])
+                descr.entryByName['sdens']['widget'].grid(*(), **descr.entryByName['sdens']['gridcfg'])
                 descr.entryByName['splineWindowLabel']['widget'].grid_forget()
                 descr.entryByName['splineWindow']['widget'].grid_forget()
     
@@ -511,7 +503,7 @@ append(Pmv.APBSCommands.Ion("+ion.toString()+"))")
               
     def testCalculationWidgets(self):
         """Tests calculation widgets"""
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             descr = self.cmdForms['default'].descr
 
             if(descr.entryByName['splineWindow']['widget'].get() == ''):
@@ -522,7 +514,7 @@ append(Pmv.APBSCommands.Ion("+ion.toString()+"))")
 
     def calculationParamUpdate(self, selectItem=0):
         """Updates calculation parameters"""
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             if selectItem == 'Binding energy':
                 self.params.calculationType = 'Binding energy'
                 self.refreshCalculationPage()
@@ -564,7 +556,7 @@ append(Pmv.APBSCommands.Ion("+ion.toString()+"))")
 
     def refreshGridPage(self):
         """Refreshes grid page"""
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             descr = self.cmdForms['default'].descr
             descr.entryByName['gridPointsX']['widget'].set(closestMatch(self.
                        params.gridPointsX, self.params.GRID_VALUES), update = 0)
@@ -629,7 +621,7 @@ append(Pmv.APBSCommands.Ion("+ion.toString()+"))")
 
     def testGridWidgets(self):
         """Tests grid widget"""
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             descr = self.cmdForms['default'].descr
             #Boundary check: make sure coarse grid encloses fine grid
             ccx = descr.entryByName['coarseCenterX']['widget'].value
@@ -674,7 +666,7 @@ append(Pmv.APBSCommands.Ion("+ion.toString()+"))")
     def gridParamUpdate(self, selectItem=0):
         """Updates grid parameters. Returns "ERROR" is failed"""
         if self.testGridWidgets() == 0:
-            if self.cmdForms.has_key('default'):
+            if 'default' in self.cmdForms:
                 descr = self.cmdForms['default'].descr
     
                 self.params.gridPointsX = closestMatch(descr.entryByName
@@ -715,7 +707,7 @@ append(Pmv.APBSCommands.Ion("+ion.toString()+"))")
 
     def refreshPhysicsPage(self):
         """Refreshes physics page"""
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             descr = self.cmdForms['default'].descr
     
             descr.entryByName['proteinDielectric']['widget'].\
@@ -737,7 +729,7 @@ append(Pmv.APBSCommands.Ion("+ion.toString()+"))")
 
     def testPhysicsWidgets(self):
         """Tests physics widget"""
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             descr = self.cmdForms['default'].descr
     
             if(descr.entryByName['proteinDielectric']['widget'].get() == ''):
@@ -768,7 +760,7 @@ append(Pmv.APBSCommands.Ion("+ion.toString()+"))")
     def physicsParamUpdate(self):
         """Updates physics parameter. Returns "ERROR" is failed"""
         if self.testPhysicsWidgets() != 1:              
-            if self.cmdForms.has_key('default'):
+            if 'default' in self.cmdForms:
                 descr = self.cmdForms['default'].descr
         
                 self.params.proteinDielectric =  float(descr.entryByName\
@@ -936,15 +928,15 @@ append(Pmv.APBSCommands.Ion("+ion.toString()+"))")
                               break
         descr.entryByName['ionsList']['widget'].delete(i)
         self.params.ions.pop(i)
-        self.vf.message("self.APBSSetup.params.ions.pop("+`i`+")")
-        self.vf.log("self.APBSSetup.params.ions.pop("+`i`+")")
+        self.vf.message("self.APBSSetup.params.ions.pop("+repr(i)+")")
+        self.vf.log("self.APBSSetup.params.ions.pop("+repr(i)+")")
         
     def moleculeListSelect(self, molName):
         """None <--- moleculeListSelect(molName)\n
            Selects molecule with molName.\n
            If the molecule was not read as pqr file moleculeListSelect\n
         """
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             self.cmdForms['default'].root.config(cursor='watch') 
         self.vf.GUI.ROOT.config(cursor='watch')
         self.vf.GUI.VIEWER.master.config(cursor='watch')    
@@ -965,7 +957,7 @@ append(Pmv.APBSCommands.Ion("+ion.toString()+"))")
             flag_overwrite = True
             if not os.path.exists(filename) or \
                                          self.vf.APBSPreferences.overwrite_pqr: 
-                if not self.vf.commands.has_key('writePDB'):
+                if 'writePDB' not in self.vf.commands:
                     self.vf.browseCommands("fileCommands", 
                                                          commands=['writePDB',])
                 from user import home
@@ -993,17 +985,17 @@ append(Pmv.APBSCommands.Ion("+ion.toString()+"))")
                         return ''
                     msg = "Could not convert " + mol.name +""" to pqr! 
 Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
-                    if self.cmdForms.has_key('default') and \
+                    if 'default' in self.cmdForms and \
                        self.cmdForms['default'].f.winfo_toplevel().wm_state()==\
                                                                        'normal':
-                        tkMessageBox.showerror("ERROR: ", msg,
+                        tkinter.messagebox.showerror("ERROR: ", msg,
                                          parent = self.cmdForms['default'].root)
                     else:
-                        tkMessageBox.showerror("ERROR: ", msg)       
+                        tkinter.messagebox.showerror("ERROR: ", msg)       
             
                     self.vf.GUI.ROOT.config(cursor='')
                     self.vf.GUI.VIEWER.master.config(cursor='')   
-                    if self.cmdForms.has_key('default'):
+                    if 'default' in self.cmdForms:
                             self.cmdForms['default'].root.config(cursor='')                    
                     return ''
                 try:
@@ -1011,7 +1003,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                 except:
                     pass
                     
-                if self.cmdForms.has_key('default'):
+                if 'default' in self.cmdForms:
                         self.cmdForms['default'].root.config(cursor='')
                 self.vf.GUI.ROOT.config(cursor='')
                 self.vf.GUI.VIEWER.master.config(cursor='')    
@@ -1026,12 +1018,12 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
         if self.vf.hasGui:
             change_Menu_state(self.vf.APBSSaveProfile, 'normal')
         
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             self.cmdForms['default'].root.config(cursor='')
         self.vf.GUI.ROOT.config(cursor='')
         self.vf.GUI.VIEWER.master.config(cursor='')    
 #        self.vf.GUI.MESSAGE_BOX.tx.component('text').config(cursor='xterm')   
-        if  self.cmdForms.has_key('default'):
+        if  'default' in self.cmdForms:
             form_descr = self.cmdForms['default'].descr
             #form_descr.entryByName['Profiles']['widget'].setentry('Default')
             form_descr.entryByName['Profiles_Add']['widget'].config(state = 
@@ -1051,7 +1043,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
             global state_GUI 
             state_GUI = 'normal'
         mol = self.vf.getMolFromName(molName.replace('-','_'))
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
              APBSParamName = self.cmdForms['default'].descr.\
                                          entryByName['Profiles']['widget'].get()            
              mol.APBSParams[APBSParamName] = self.params
@@ -1135,9 +1127,9 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                 exec_cmd = Popen4(cmdstring)
                 status = exec_cmd.wait()
                 if status==0:
-                    print exec_cmd.fromchild.read()
+                    print(exec_cmd.fromchild.read())
                 else:
-                    print exec_cmd.childerr.read()
+                    print(exec_cmd.childerr.read())
 
             self.SaveResults(self.params.name, )
             os.chdir(self.cwd)
@@ -1145,7 +1137,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
         else:
             file_name, ext = os.path.splitext(self.params.molecule1Path)
             molecule1 = os.path.split(file_name)[-1]
-            if self.cmdForms.has_key('default'):
+            if 'default' in self.cmdForms:
                 APBSParamName = self.cmdForms['default'].descr.\
                                         entryByName['Profiles']['widget'].get()
             else:
@@ -1158,9 +1150,9 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
             try:                                    
                 self.doitWrapper(self.params.__dict__)                
                 self.vf.APBSRun(molecule1, molecule2, _complex, APBSParamName=APBSParamName)
-            except Exception, inst:
-                print inst
-                tkMessageBox.showerror("Error Running APBS", "Please make sure that Molecule(s) have corrent path.\n\n"+
+            except Exception as inst:
+                print(inst)
+                tkinter.messagebox.showerror("Error Running APBS", "Please make sure that Molecule(s) have corrent path.\n\n"+
                                        "Use Select botton to ensure your molecules(s) exists.",
                                        parent=self.vf.APBSSetup.cmdForms['default'].root)
     
@@ -1198,7 +1190,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
         file_name, ext = os.path.splitext(self.params.molecule1Path)
         tmp_mol_name = os.path.split(file_name)[-1]
         molecule1 = self.vf.getMolFromName(tmp_mol_name.replace('-','_'))
-        if molecule1.APBSParams.has_key(profile_name):
+        if profile_name in molecule1.APBSParams:
             self.params = molecule1.APBSParams[profile_name]
             self.refreshAll()
         else:
@@ -1207,7 +1199,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
 
     def add_profile(self):
         """Adds profile"""
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             ComboBox = self.cmdForms['default'].descr.entryByName['Profiles']\
                                                                           ['widget']
             profile_name = ComboBox._entryfield.get()
@@ -1241,7 +1233,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
         file_name, ext = os.path.splitext(self.params.molecule1Path)
         tmp_mol_name = os.path.split(file_name)[-1]
         molecule1 = self.vf.getMolFromName(tmp_mol_name.replace('-','_'))
-        if molecule1 and molecule1.APBSParams.has_key(profile_name):
+        if molecule1 and profile_name in molecule1.APBSParams:
             del molecule1.APBSParams[profile_name]
         
     def saveProfile(self, Profilename="Default", fileFlag=False, flagCommand=False):
@@ -1249,7 +1241,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
         fileFlag is used to decide if Profilename is a file: False means that we need  to aks for a file first
         flagCommand is isued to check if this functionm is called from APBSSave_Profile Command """
         if fileFlag:
-            if not flagCommand and self.cmdForms.has_key('default'):
+            if not flagCommand and 'default' in self.cmdForms:
                 Profilename = self.cmdForms['default'].descr.\
                         entryByName['Profiles']['widget'].get()          
 
@@ -1339,7 +1331,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                                                       self.params.complexPath)
                     self.vf.readPQR(complexPath, topCommand=0)           
             # the following part updates Profiles ComboBox
-            if self.cmdForms.has_key('default'):
+            if 'default' in self.cmdForms:
                 ComboBox = self.cmdForms['default'].descr.entryByName\
                                                           ['Profiles']['widget']
                 list_items = ComboBox._list.get()
@@ -1350,7 +1342,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
             else:
                 global PROFILES
                 PROFILES += (profile_name,)
-            if  self.cmdForms.has_key('default'):
+            if  'default' in self.cmdForms:
                 form_descr = self.cmdForms['default'].descr
                 form_descr.entryByName['Profiles_Add']['widget'].config(state = 
                                                                        "normal")
@@ -1405,8 +1397,8 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
         global APBS_ssl
         if address.find('https://') != 0:
             #first check to see if APBS Web Services is up and running
-            import urllib
-            opener = urllib.FancyURLopener({})
+            import urllib.request, urllib.parse, urllib.error
+            opener = urllib.request.FancyURLopener({})
             try:
                 servlet = opener.open(address)
             except IOError:
@@ -1422,7 +1414,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                                           SecuritymyproxyloginImplServiceLocator
             gamaLoginLocator = SecuritymyproxyloginImplServiceLocator()
             gamaLoginService = gamaLoginLocator.getSecuritymyproxyloginImpl(
-                                        ssl=1,transport=httplib.HTTPSConnection)
+                                        ssl=1,transport=http.client.HTTPSConnection)
             req = loginUserMyProxyRequestWrapper()
             username =  self.cmdForms['default'].descr.\
                                    entryByName['UserName_Entry']['widget'].get()
@@ -1443,7 +1435,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                                               ['Password_Entry']['widget'].get()
                 file.write("User:%s\nPassword:%s\n"%(user,passwd))
         self.params.projectFolder=os.path.join(os.getcwd(),"apbs-"+mol.name)    
-        from thread import start_new_thread
+        from _thread import start_new_thread
         if self.params.calculationType == 'Binding energy':
             file_name, ext = os.path.splitext(self.params.molecule2Path)
             tmp_mol_name = os.path.split(file_name)[-1]
@@ -1463,7 +1455,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
         
     def runWS(self, address, params, mol1, mol2 = None, _complex = None):
         """Runs APBS Web Services"""
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             self.apbsWS = APBSCmdToWebService(params, mol1,mol2, _complex)
             self.Parallel_flag = False
         else:
@@ -1492,7 +1484,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
 #            f.descr.entryByName['APBSservicesLabel1']['widget'].\
 #                           configure(text = 'Remote APBS calculation is done')
             self.rml = mol1.name
-        except Exception, inst:
+        except Exception as inst:
             f.descr.entryByName['APBSservicesLabel3']['widget'].\
                        configure(text = "")                
             from ZSI import FaultException
@@ -1500,13 +1492,13 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                 tmp_str = inst.fault.AsSOAP()
                 tmp_str = tmp_str.split('<message>')
                 tmp_str = tmp_str[1].split('</message>')
-                if self.cmdForms.has_key('default') and \
+                if 'default' in self.cmdForms and \
                      self.cmdForms['default'].f.winfo_toplevel().wm_state() == \
                                                                        'normal':
-                    tkMessageBox.showerror("ERROR: ",tmp_str[0],parent = 
+                    tkinter.messagebox.showerror("ERROR: ",tmp_str[0],parent = 
                                                   self.cmdForms['default'].root)
                 else:
-                    tkMessageBox.showerror("ERROR: ",tmp_str[0])            
+                    tkinter.messagebox.showerror("ERROR: ",tmp_str[0])            
             else:
                 import traceback
                 traceback.print_stack()
@@ -1534,7 +1526,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
             f.descr.entryByName['APBSservicesLabel3']['widget'].\
                                   bind(sequence="<Button-1>",func = openurl)
             # read the potential back
-            opener = urllib.FancyURLopener(cert_file = APBS_proxy, key_file = APBS_proxy)
+            opener = urllib.request.FancyURLopener(cert_file = APBS_proxy, key_file = APBS_proxy)
             if self.Parallel_flag:
                 if self.npx*self.npy*self.npz == 1:
                     f.descr.entryByName['APBSservicesLabel4']['widget'].\
@@ -1661,14 +1653,14 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
             data = file.readlines()
             file.close()
             array = Numeric.zeros( (nx,ny,nz), Numeric.Float32)
-            values = map(split, data[0:-5])
+            values = list(map(split, data[0:-5]))
             ind=0
             size = nx*ny*nz
             for line in values:
                 if ind>=size:
                     break
                 l = len(line)
-                array.flat[ind:ind+l] = map(float, line)
+                array.flat[ind:ind+l] = list(map(float, line))
                 ind = ind + l                            
             arrays.append(array)
         self.progressBar.configure(labeltext='Merging ... ')
@@ -1718,18 +1710,18 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
         """Builds 'error','ionForm','outputFilesForm','moleculeSelect' and
         'default' forms'"""
         if formName == 'error':
-            if self.cmdForms.has_key('default') and \
+            if 'default' in self.cmdForms and \
                 self.cmdForms['default'].f.winfo_toplevel().wm_state() == \
                                                                        'normal':
-                    tkMessageBox.showerror("ERROR: ", self.errorMsg,parent = 
+                    tkinter.messagebox.showerror("ERROR: ", self.errorMsg,parent = 
                                                   self.cmdForms['default'].root)
             else:
-                tkMessageBox.showerror("ERROR: ", self.errorMsg)       
+                tkinter.messagebox.showerror("ERROR: ", self.errorMsg)       
             return
         if formName == 'ionForm':
             ifd = InputFormDescr(title = "Add Ion")
             ifd.append({'name':'ionChargeLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Charge (e):'},
                     'gridcfg':{'row':0, 'column':0, 'sticky':'wens'}
                     })
@@ -1741,7 +1733,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     })
 
             ifd.append({'name':'ionConcentrationLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Concentration (M):'},
                     'gridcfg':{'row':1, 'column':0, 'sticky':'wens'}
                     })
@@ -1761,7 +1753,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'row':1, 'column':1, 'sticky':'wens'}
                     })
             ifd.append({'name':'ionRadiusLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Radius (Angstroms):'},
                     'gridcfg':{'row':2, 'column':0, 'sticky':'wens'}
                     })
@@ -1775,17 +1767,17 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
             ifd = InputFormDescr(title = "Select output files")
 
             ifd.append({'name':'fileTypeLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'File Type'},
                     'gridcfg':{'sticky':'e', 'row':1, 'column':0}
                     })
             ifd.append({'name':'fileFormatLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'File format'},
                     'gridcfg':{'sticky':'e', 'row':1, 'column':1}
                     })
             ifd.append({'name':'chargeDistributionFileLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Charge distribution file: '},
                     'gridcfg':{'sticky':'e', 'row':2, 'column':0}
                     })
@@ -1797,7 +1789,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wens', 'row':2, 'column':1}
                     })
             ifd.append({'name':'potentialFileLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Potential file: '},
                     'gridcfg':{'sticky':'e', 'row':3, 'column':0}
                     })
@@ -1809,7 +1801,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wens', 'row':3, 'column':1}
                     })
             ifd.append({'name':'solventAccessibilityFileLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Solvent accessibility file: '},
                     'gridcfg':{'sticky':'e', 'row':4, 'column':0}
                     })
@@ -1821,7 +1813,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wens', 'row':4, 'column':1}
                     })
             ifd.append({'name':'splineBasedAccessibilityFileLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Spline-based accessibility file: '},
                     'gridcfg':{'sticky':'e', 'row':5, 'column':0}
                     })
@@ -1833,7 +1825,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wens', 'row':5, 'column':1}
                     })
             ifd.append({'name':'VDWAccessibilityFileLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'VDW accessibility file: '},
                     'gridcfg':{'sticky':'e', 'row':6, 'column':0}
                     })
@@ -1845,7 +1837,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wens', 'row':6, 'column':1}
                     })
             ifd.append({'name':'ionAccessibilityFileLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Ion accessibility file: '},
                     'gridcfg':{'sticky':'e', 'row':7, 'column':0}
                     })
@@ -1857,7 +1849,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wens', 'row':7, 'column':1}
                     })
             ifd.append({'name':'laplacianOfPotentialFileLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Laplacian of potential file: '},
                     'gridcfg':{'sticky':'e', 'row':8, 'column':0}
                     })
@@ -1869,7 +1861,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wens', 'row':8, 'column':1}
                     })
             ifd.append({'name':'energyDensityFileLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Energy density file: '},
                     'gridcfg':{'sticky':'e', 'row':9, 'column':0}
                     })
@@ -1881,7 +1873,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wens', 'row':9, 'column':1}
                     })
             ifd.append({'name':'ionNumberFileLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Ion number file: '},
                     'gridcfg':{'sticky':'e', 'row':10, 'column':0}
                     })
@@ -1893,7 +1885,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wens', 'row':10, 'column':1}
                     })
             ifd.append({'name':'ionChargeDensityFileLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Ion charge density file: '},
                     'gridcfg':{'sticky':'e', 'row':11, 'column':0}
                     })
@@ -1905,7 +1897,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wens', 'row':11, 'column':1}
                     })
             ifd.append({'name':'xShiftedDielectricFileLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'X-shifted dielectric file: '},
                     'gridcfg':{'sticky':'e', 'row':12, 'column':0}
                     })
@@ -1917,7 +1909,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wens', 'row':12, 'column':1}
                     })
             ifd.append({'name':'yShiftedDielectricFileLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Y-shifted dielectric file: '},
                     'gridcfg':{'sticky':'e', 'row':13, 'column':0}
                     })
@@ -1929,7 +1921,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wens', 'row':13, 'column':1}
                     })
             ifd.append({'name':'zShiftedDielectricFileLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Z-shifted dielectric file: '},
                     'gridcfg':{'sticky':'e', 'row':14, 'column':0}
                     })
@@ -1941,7 +1933,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wens', 'row':14, 'column':1}
                     })
             ifd.append({'name':'kappaFunctionFileLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Kappa function file: '},
                     'gridcfg':{'sticky':'e', 'row':15, 'column':0}
                     })
@@ -1999,7 +1991,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wne'}
                     })
             ifd.append({'name':'calculationTypeLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                                         'parent':'mathGroup',
                     'wcfg':{'text':'Calculation type:'},
                     'gridcfg':{'row':0, 'column':0, 'sticky':'e'}
@@ -2015,7 +2007,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'we', 'row':0, 'column':1}
                     })
             ifd.append({'name':'pbeTypeLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'mathGroup',
                     'wcfg':{'text':'Poisson-Boltzmann equation type:'},
                     'gridcfg':{'row':1, 'column':0, 'sticky':'e'}
@@ -2029,7 +2021,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'we', 'row':1, 'column':1}
                     })
             ifd.append({'name':'boundaryConditionsLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'mathGroup',
                     'wcfg':{'text':'Boundary conditions:'},
                     'gridcfg':{'row':2, 'column':0, 'sticky':'e'}
@@ -2043,7 +2035,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'we', 'row':2, 'column':1}
                     })
             ifd.append({'name':'chargeDiscretizationLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'mathGroup',
                     'wcfg':{'text':'Charge discretization:'},
                     'gridcfg':{'sticky':'e', 'row':3, 'column':0}
@@ -2058,7 +2050,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'we', 'row':3, 'column':1}
                     })
             ifd.append({'name':'surfaceCalculationLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'mathGroup',
                     'wcfg':{'text':'Surface smoothing method:'},
                     'gridcfg':{'sticky':'e', 'row':4, 'column':0}
@@ -2073,7 +2065,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'we', 'row':4, 'column':1}
                     })
             ifd.append({'name':'sdensLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'mathGroup',
                     'wcfg':{'text':'Sphere density:'},
                     'gridcfg':{'row':5, 'column':0, 'sticky':'e'}
@@ -2087,7 +2079,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'nsew', 'row':5, 'column':1}
                     })  
             ifd.append({'name':'splineWindowLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'mathGroup',
                     'wcfg':{'text':'Spline window (Angstroms):'},
                     'gridcfg':{'row':6, 'column':0, 'sticky':'e'}
@@ -2108,7 +2100,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'wcfg':{'tag_text':'Molecules'},
                     'gridcfg':{'sticky':'nswe'}
                     })
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                     'name':'molecule1Select',
                     'parent':'moleculesGroup',
                     'wcfg':{'text':'Select Molecule 1 ...',
@@ -2125,7 +2117,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                             'value':self.params.molecule1Path},
                     'gridcfg':{'sticky':'ew', 'row':0, 'column':1}
                     })
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                     'name':'molecule2Select',
                     'parent':'moleculesGroup',
                     'wcfg':{'text':'Select Molecule 2 ...',
@@ -2141,7 +2133,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                             'value':self.params.molecule2Path},
                     'gridcfg':{'sticky':'ew', 'row':1, 'column':1}
                     })
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                     'name':'complexSelect',
                     'parent':'moleculesGroup',
                     'wcfg':{'text':'Select Complex ...',
@@ -2166,7 +2158,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                                     'gridcfg':{'sticky':'nwe'}
                                     })
             ifd.append({'name':'energyTypesLabel',
-                                    'widgetType':Tkinter.Label,
+                                    'widgetType':tkinter.Label,
                                     'parent':'fileGroup',
                                     'wcfg':{'text':'Energy: '},
                                     'gridcfg':{'sticky':'e','row':0, 'column':0}
@@ -2181,7 +2173,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                          'gridcfg':{'sticky':'we', 'row':0, 'column':1}
                                     })
             ifd.append({'name':'forceTypesLabel',
-                                    'widgetType':Tkinter.Label,
+                                    'widgetType':tkinter.Label,
                                     'parent':'fileGroup',
                                     'wcfg':{'text':'Force: '},
                                     'gridcfg':{'sticky':'e', 'row':1,'column':0}
@@ -2195,7 +2187,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                                 'selectioncommand':self.calculationParamUpdate},
                          'gridcfg':{'sticky':'we','row':1,'column':1}
                                     })
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                                     'name':'outputFilesSelect',
                                     'parent':'fileGroup',
                                     'wcfg':{'text':'More output options ...',
@@ -2219,7 +2211,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                       },
                       'gridcfg':{'sticky':'we', 'row':0, 'column':0}
                       })
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                     'name':'Profiles_Add',
                     'parent':'ProfilesGroup',
                     'wcfg':{'text':'Add',
@@ -2227,7 +2219,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                              'state':state_GUI},
                     'gridcfg':{'sticky':'ew', 'row':0, 'column':1}
                     })
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                     'name':'Profiles_Remove',
                     'parent':'ProfilesGroup',
                     'wcfg':{'text':'Remove',
@@ -2235,7 +2227,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                             'command':self.remove_profile},
                     'gridcfg':{'sticky':'ew', 'row':0, 'column':2}
                     })
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                     'name':'Profiles_Run',
                     'parent':'ProfilesGroup',
                     'wcfg':{'text':'Run',
@@ -2243,14 +2235,14 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                             'command':self.apbsOutput},
                     'gridcfg':{'sticky':'we', 'row':1, 'column':0}
                     })
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                     'name':'Profiles_Load',
                     'parent':'ProfilesGroup',
                     'wcfg':{'text':'Load',
                             'command':self.loadProfile},
                     'gridcfg':{'sticky':'we', 'row':1, 'column':1}
                     })
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                     'name':'Profiles_Save',
                     'parent':'ProfilesGroup',
                     'wcfg':{'text':'Save',
@@ -2267,25 +2259,25 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wnse'}
                     })
             ifd.append({'name':'generalXLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'generalGridGroup',
                     'wcfg':{'text':'X','fg':'red','font':(ensureFontCase('times'), 15, 'bold')},
                      'gridcfg':{'row':0, 'column':1}
                     })
             ifd.append({'name':'generalYLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'generalGridGroup',
                     'wcfg':{'text':'Y','fg':'green','font':(ensureFontCase('times'),15,'bold')},
                      'gridcfg':{'row':0, 'column':2}
                     })
             ifd.append({'name':'generalZLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'generalGridGroup',
                     'wcfg':{'text':'Z','fg':'blue','font':(ensureFontCase('times'),15,' bold')},
                      'gridcfg':{'row':0, 'column':3}
                     })
             ifd.append({'name':'gridPointsLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'generalGridGroup',
                     'wcfg':{'text':'Grid Points:'},
                      'gridcfg':{'row':1, 'column':0}
@@ -2334,34 +2326,34 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wnse'}
                     })
             ifd.append({'name':'coarseXLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'coarseGridGroup',
                     'wcfg':{'text':'X','fg':'red','font':(ensureFontCase('times'), 15, 'bold')},
                      'gridcfg':{'row':1, 'column':1}
                     })
             ifd.append({'name':'coarseYLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'coarseGridGroup',
                     'wcfg':{'text':'Y','fg':'green','font':(ensureFontCase('times'),15,'bold')},
                      'gridcfg':{'row':1, 'column':2}
                     })
             ifd.append({'name':'coarseZLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'coarseGridGroup',
                     'wcfg':{'text':'Z','fg':'blue','font':(ensureFontCase('times'),15, 'bold')},
                      'gridcfg':{'row':1, 'column':3}
                     })
-            ifd.append({'widgetType':Tkinter.Checkbutton,
+            ifd.append({'widgetType':tkinter.Checkbutton,
                     'name':'showCoarseGrid',
                     'parent':'coarseGridGroup',
                     'defaultValue':0,
                     'wcfg':{'text':'Show Coarse Grid',
                     'command':self.gridParamUpdate,
-                    'variable':Tkinter.BooleanVar()},
+                    'variable':tkinter.BooleanVar()},
                     'gridcfg':{'sticky':'w','row':5, 'column':0}
                     })
             ifd.append({'name':'coarseLengthLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'coarseGridGroup',
                     'wcfg':{'text':'Length:'},
                      'gridcfg':{'row':2, 'column':0}
@@ -2433,7 +2425,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                         'wheelPad':1, 'width':100,'height':15}
                     })
             ifd.append({'name':'coarseCenterLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'coarseGridGroup',
                     'wcfg':{'text':'Center:'},
                      'gridcfg':{'row':3, 'column':0}
@@ -2505,37 +2497,37 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                         'wheelPad':1, 'width':100,'height':15}
                     })
             ifd.append({'name':'coarseResolutionLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'coarseGridGroup',
                     'wcfg':{'text':'Resolution:'},
                      'gridcfg':{'row':4, 'column':0}
                     })
             ifd.append({'name':'coarseResolutionX',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'coarseGridGroup',
                     'wcfg':{'text':"%5.3f"%self.coarseResolutionX()},
                      'gridcfg':{'row':4, 'column':1}
                     })
             ifd.append({'name':'coarseResolutionY',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'coarseGridGroup',
                     'wcfg':{'text':"%5.3f"%self.coarseResolutionY()},
                      'gridcfg':{'row':4, 'column':2}
                     })
             ifd.append({'name':'coarseResolutionZ',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'coarseGridGroup',
                     'wcfg':{'text':"%5.3f"%self.coarseResolutionZ()},
                      'gridcfg':{'row':4, 'column':3}
                     })
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                     'name':'autocenterCoarseGrid',
                     'parent':'coarseGridGroup',
                     'wcfg':{'text':'Autocenter',
                             'command':self.autocenterCoarseGrid},
                     'gridcfg':{'sticky':'ew', 'row':5, 'column':1}
                     })
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                     'name':'autosizeCoarseGrid',
                     'parent':'coarseGridGroup',
                     'wcfg':{'text':'Autosize',
@@ -2550,34 +2542,34 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wnse'}
                     })
             ifd.append({'name':'fineXLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'fineGridGroup',
                     'wcfg':{'text':'X','fg':'red','font':(ensureFontCase('times'), 15, 'bold')},
                      'gridcfg':{'row':1, 'column':1}
                     })
             ifd.append({'name':'fineYLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'fineGridGroup',
                     'wcfg':{'text':'Y','fg':'green','font':(ensureFontCase('times'),15,'bold')},
                      'gridcfg':{'row':1, 'column':2}
                     })
             ifd.append({'name':'fineZLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'fineGridGroup',
                     'wcfg':{'text':'Z','fg':'blue','font':(ensureFontCase('times'),15, 'bold')},
                      'gridcfg':{'row':1, 'column':3}
                     })
-            ifd.append({'widgetType':Tkinter.Checkbutton,
+            ifd.append({'widgetType':tkinter.Checkbutton,
                     'name':'showFineGrid',
                     'parent':'fineGridGroup',
                     'defaultValue':0,
                     'wcfg':{'text':'Show Fine Grid',
                     'command':self.gridParamUpdate,
-                    'variable':Tkinter.BooleanVar()},
+                    'variable':tkinter.BooleanVar()},
                     'gridcfg':{'sticky':'w','row':5, 'column':0}
                     })
             ifd.append({'name':'fineLengthLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'fineGridGroup',
                     'wcfg':{'text':'Length:'},
                      'gridcfg':{'row':2, 'column':0}
@@ -2649,7 +2641,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                         'wheelPad':1, 'width':100,'height':15}
                     })
             ifd.append({'name':'fineCenterLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'fineGridGroup',
                     'wcfg':{'text':'Center:'},
                      'gridcfg':{'row':3, 'column':0}
@@ -2721,38 +2713,38 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                         'wheelPad':1, 'width':100,'height':15}
                     })
             ifd.append({'name':'fineResolutionLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'fineGridGroup',
                     'wcfg':{'text':'Resolution:'},
                      'gridcfg':{'row':4, 'column':0}
                     })
 
             ifd.append({'name':'fineResolutionX',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'fineGridGroup',
                     'wcfg':{'text':"%5.3f"%self.fineResolutionX()},
                      'gridcfg':{'row':4, 'column':1}
                     })
             ifd.append({'name':'fineResolutionY',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'fineGridGroup',
                     'wcfg':{'text':"%5.3f"%self.fineResolutionY()},
                      'gridcfg':{'row':4, 'column':2}
                     })
             ifd.append({'name':'fineResolutionZ',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'fineGridGroup',
                     'wcfg':{'text':"%5.3f"%self.fineResolutionZ()},
                      'gridcfg':{'row':4, 'column':3}
                     })
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                     'name':'autocenterFineGrid',
                     'parent':'fineGridGroup',
                     'wcfg':{'text':'Autocenter',
                             'command':self.autocenterFineGrid},
                     'gridcfg':{'sticky':'ew', 'row':5, 'column':1}
                     })
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                     'name':'autosizeFineGrid',
                     'parent':'fineGridGroup',
                     'wcfg':{'text':'Autosize',
@@ -2767,25 +2759,25 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'wnse'}
                     })
             ifd.append({'name':'gridPointsLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'systemResourcesGroup',
                     'wcfg':{'text':'Total grid points: '},
                      'gridcfg':{'row':0, 'column':0, 'sticky':'e'}
                     })
             ifd.append({'name':'gridPointsNumberLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'systemResourcesGroup',
                     'wcfg':{'text':"%d"%self.totalGridPoints()},
                      'gridcfg':{'row':0, 'column':1, 'sticky':'w'}
                     })
             ifd.append({'name':'mallocLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'systemResourcesGroup',
                     'wcfg':{'text':'Memory to be allocated (MB): '},
                      'gridcfg':{'row':1, 'column':0, 'sticky':'e'}
                     })
             ifd.append({'name':'mallocSizeLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'systemResourcesGroup',
                     'wcfg':{'text':"%5.3f"%self.memoryToBeAllocated()},
                      'gridcfg':{'row':1, 'column':1, 'sticky':'w'}
@@ -2799,7 +2791,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'snwe'}
                     })
             ifd.append({'name':'proteinDielectricLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'parametersGroup',
                     'wcfg':{'text':'Protein dielectric:'},
                     'gridcfg':{'row':0, 'column':0, 'sticky':'e'}
@@ -2813,7 +2805,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'ew', 'row':0, 'column':1}
                     })
             ifd.append({'name':'solventDielectricLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'parametersGroup',
                     'wcfg':{'text':'Solvent dielectric:'},
                     'gridcfg':{'row':1, 'column':0, 'sticky':'e'}
@@ -2827,7 +2819,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'nsew', 'row':1, 'column':1}
                     })
             ifd.append({'name':'solventRadiusLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'parametersGroup',
                     'wcfg':{'text':'Solvent radius (Angstroms):'},
                     'gridcfg':{'row':2, 'column':0, 'sticky':'e'}
@@ -2841,7 +2833,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'gridcfg':{'sticky':'nsew', 'row':2, 'column':1}
                     })
             ifd.append({'name':'systemTemperatureLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'parametersGroup',
                     'wcfg':{'text':'System temperature (Kelvin):'},
                     'gridcfg':{'row':3, 'column':0, 'sticky':'e'}
@@ -2866,7 +2858,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                 'container':{'SaltGroup':'w.interior()'},
                 'parent':'ionsGroup',
                 'wcfg':{
-                'tag_pyclass':Tkinter.Checkbutton,
+                'tag_pyclass':tkinter.Checkbutton,
                 'tag_text':'Salt',
                 'tag_command':self.SaltUpdate,
                 'tag_variable': self.salt_var,
@@ -2882,7 +2874,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
 #                    })
             
             ifd.append({'name':'ionConcentrationLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Concentration (M):'},
                     'parent':'SaltGroup',
                     'gridcfg':{'row':1, 'column':0, 'sticky':'e'}
@@ -2913,7 +2905,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                         {'name':'Remove', 'cfg':{'command':self.removeIon}}]
                     })
             ifd.append({'name':'ionsListLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'ionsGroup',
                     'wcfg':{'text':'Charge, Concentration, Radius'}
                     })
@@ -2931,7 +2923,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     'wcfg':{'tag_text':'APBS Web Services'},
                     'gridcfg':{'sticky':'wen'}
                     })
-                ifd.append({'widgetType':Tkinter.Button,
+                ifd.append({'widgetType':tkinter.Button,
                                         'name':'WS_Run',
                                         'parent':'APBSservicesGroup',
                                         'wcfg':{'text':'Run APBS Remote',
@@ -2949,37 +2941,37 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                                     'dropdown':1, 'history':1, 'autoclear':1},
                              'gridcfg':{'sticky':'ew', 'row':0, 'column':1}
                                         })
-                ifd.append({'widgetType':Tkinter.Label,
+                ifd.append({'widgetType':tkinter.Label,
                                         'name':'UserName_Label',
                                         'parent':'APBSservicesGroup',
                                         'wcfg':{'text':'User Name'},
                                   'gridcfg':{'sticky':'e', 'row':1, 'column':0}
                                         })
-                ifd.append({'widgetType':Tkinter.Entry,
+                ifd.append({'widgetType':tkinter.Entry,
                                         'name':'UserName_Entry',
                                         'parent':'APBSservicesGroup',
                                         'wcfg':{},
                                   'gridcfg':{'sticky':'ew', 'row':1, 'column':1}
                                         })
-                ifd.append({'widgetType':Tkinter.Label,
+                ifd.append({'widgetType':tkinter.Label,
                                         'name':'Password_Label',
                                         'parent':'APBSservicesGroup',
                                         'wcfg':{'text':'Password'},
                                   'gridcfg':{'sticky':'e', 'row':2, 'column':0}
                                         })
-                ifd.append({'widgetType':Tkinter.Entry,
+                ifd.append({'widgetType':tkinter.Entry,
                                         'name':'Password_Entry',
                                         'parent':'APBSservicesGroup',
                                         'wcfg':{'show':'*'},
                                   'gridcfg':{'sticky':'ew', 'row':2, 'column':1}
                                         })
-                ifd.append({'widgetType':Tkinter.Label,
+                ifd.append({'widgetType':tkinter.Label,
                                         'name':'Remember_Label',
                                         'parent':'APBSservicesGroup',
                                         'wcfg':{'text':'Remember User Name and Password'},
                                   'gridcfg':{'sticky':'e', 'row':3, 'column':0}
                                         })
-                ifd.append({'widgetType':Tkinter.Checkbutton,
+                ifd.append({'widgetType':tkinter.Checkbutton,
                                         'name':'Remember_Checkbutton',
                                         'parent':'APBSservicesGroup',
                                         'variable':self.RememberLogin_var,
@@ -3045,42 +3037,42 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
 #                    'gridcfg':{'row':3, 'column':0}
 #                    })
                 ifd.append({'name':'APBSservicesLabel1',
-                                    'widgetType':Tkinter.Label,
+                                    'widgetType':tkinter.Label,
                                     'parent':'APBSservicesGroup',
                                     'wcfg':{'text':''},
                                  'gridcfg':{'sticky':'ensw', 'row':5,'column':0,
                                                 'columnspan':2}
                                     })
                 ifd.append({'name':'APBSservicesLabel2',
-                                    'widgetType':Tkinter.Label,
+                                    'widgetType':tkinter.Label,
                                     'parent':'APBSservicesGroup',
                                     'wcfg':{'text':''},
                                  'gridcfg':{'sticky':'ensw', 'row':6,'column':0,
                                                 'columnspan':2}
                                     })
                 ifd.append({'name':'APBSservicesLabel3',
-                                    'widgetType':Tkinter.Label,
+                                    'widgetType':tkinter.Label,
                                     'parent':'APBSservicesGroup',
                                     'wcfg':{'text':''},
                                  'gridcfg':{'sticky':'ensw', 'row':7,'column':0,
                                                 'columnspan':2}
                                     })                  
                 ifd.append({'name':'APBSservicesLabel4',
-                                    'widgetType':Tkinter.Label,
+                                    'widgetType':tkinter.Label,
                                     'parent':'APBSservicesGroup',
                                     'wcfg':{'text':''},
                                  'gridcfg':{'sticky':'ensw', 'row':8,'column':0,
                                                 'columnspan':2}
                                     })
                 ifd.append({'name':'WS_ProgressBar',
-                                    'widgetType':Tkinter.Frame,
+                                    'widgetType':tkinter.Frame,
                                     'parent':'APBSservicesGroup',
                                     'wcfg':{'height':30},
                                  'gridcfg':{'sticky':'ew', 'row':9,'column':0,
                                             'columnspan':2}
                                     })
                 ifd.append({'name':'APBS_WS_DX_Label',
-                                    'widgetType':Tkinter.Label,
+                                    'widgetType':tkinter.Label,
                                     'parent':'APBSservicesGroup',
                                     'wcfg':{'text':''},
                                  'gridcfg':{'sticky':'ensw', 'row':10,'column':0,
@@ -3089,18 +3081,18 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
             else:
                 ifd.append({'name':'WS_Not_Found',
                             'parent':'Web Service',
-                                'widgetType':Tkinter.Label,
+                                'widgetType':tkinter.Label,
                                 'wcfg':{'text':'Error importing APBS Web Services.',
                                          'bg':'Red'},
                                 })
                 ifd.append({'name':'WS_install',
                             'parent':'Web Service',
-                                'widgetType':Tkinter.Label,
+                                'widgetType':tkinter.Label,
                                 'wcfg':{'text':'Please make sure that ZSI and PyZML packages are properly installed.'},
                                 })                               
                 ifd.append({'name':'WS_http',
                             'parent':'Web Service',
-                                'widgetType':Tkinter.Label,
+                                'widgetType':tkinter.Label,
                                 'wcfg':{'text':'http://nbcr.sdsc.edu/services/apbs/apbs-py.html',
                                          'fg':'Blue','cursor':'hand1'},
                                 })
@@ -3143,18 +3135,12 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
             descr.entryByName['Remember_Label']['widget'].grid_forget()
             descr.entryByName['Remember_Checkbutton']['widget'].grid_forget()
         else:
-            apply(descr.entryByName['UserName_Label']['widget'].grid, () , 
-                                 descr.entryByName['UserName_Label']['gridcfg'])
-            apply(descr.entryByName['UserName_Entry']['widget'].grid, () , 
-                                 descr.entryByName['UserName_Entry']['gridcfg'])
-            apply(descr.entryByName['Password_Label']['widget'].grid, () , 
-                                 descr.entryByName['Password_Label']['gridcfg'])
-            apply(descr.entryByName['Password_Entry']['widget'].grid, () , 
-                                 descr.entryByName['Password_Entry']['gridcfg'])
-            apply(descr.entryByName['Remember_Label']['widget'].grid, () , 
-                                 descr.entryByName['Remember_Label']['gridcfg'])
-            apply(descr.entryByName['Remember_Checkbutton']['widget'].grid, () , 
-                           descr.entryByName['Remember_Checkbutton']['gridcfg'])
+            descr.entryByName['UserName_Label']['widget'].grid(*(), **descr.entryByName['UserName_Label']['gridcfg'])
+            descr.entryByName['UserName_Entry']['widget'].grid(*(), **descr.entryByName['UserName_Entry']['gridcfg'])
+            descr.entryByName['Password_Label']['widget'].grid(*(), **descr.entryByName['Password_Label']['gridcfg'])
+            descr.entryByName['Password_Entry']['widget'].grid(*(), **descr.entryByName['Password_Entry']['gridcfg'])
+            descr.entryByName['Remember_Label']['widget'].grid(*(), **descr.entryByName['Remember_Label']['gridcfg'])
+            descr.entryByName['Remember_Checkbutton']['widget'].grid(*(), **descr.entryByName['Remember_Checkbutton']['gridcfg'])
 
 cascadeName = "Electrostatics"
 APBSSetupGUI = CommandGUI()
@@ -3210,7 +3196,7 @@ class APBSRun(MVCommand):
         if not molecule1 and len(self.vf.Mols) == 1:
             molecule1 = self.vf.Mols[0].name
         if not molecule1:
-            tkMessageBox.showinfo("No Molecule Selected", "Please use Compute -> Electrostatics ->  Setup and select a molecule.")
+            tkinter.messagebox.showinfo("No Molecule Selected", "Please use Compute -> Electrostatics ->  Setup and select a molecule.")
             return 'ERROR'            
         mol1 = self.vf.expandNodes(molecule1)
         assert isinstance(mol1, MoleculeSet)
@@ -3312,7 +3298,7 @@ class APBSRun(MVCommand):
                 self.vf.APBSPreferences.overwrite_pqr = False
                 params.molecule1Path = molecule1+".pqr"
             params.molecule1Path = os.path.split(params.molecule1Path)[-1]
-            if self.vf.APBSSetup.cmdForms.has_key('default'):
+            if 'default' in self.vf.APBSSetup.cmdForms:
                 self.vf.APBSSetup.cmdForms['default'].descr.entryByName\
                                                        ['molecule1']['widget'].\
                                 setentry(params.molecule1Path)
@@ -3357,15 +3343,15 @@ class APBSRun(MVCommand):
                                     break             
                 if flag_run == True:
                     answer = False
-                    if self.vf.APBSSetup.cmdForms.has_key('default') and \
+                    if 'default' in self.vf.APBSSetup.cmdForms and \
                       self.vf.APBSSetup.cmdForms['default'].f.winfo_toplevel().\
                                                          wm_state() == 'normal':
-                           answer = tkMessageBox.askyesno("WARNING",\
+                           answer = tkinter.messagebox.askyesno("WARNING",\
                           "APBS with the same parameters has been already run."+
            "\n\nWould you like to continue?",
                               parent=self.vf.APBSSetup.cmdForms['default'].root)
                     else:
-                        answer = tkMessageBox.askyesno("WARNING",\
+                        answer = tkinter.messagebox.askyesno("WARNING",\
                           "APBS with the same parameters has been already run."+
            "\n\nWould you like to continue?")
                     if answer != True:
@@ -3469,7 +3455,7 @@ class APBSMap_Potential_to_MSMS(MVCommand):
             self.vf.computeMSMS(mol, density = 6.0, log = False)
         else:
             self.vf.computeMSMS(mol, density = self.custom_quality, log = False)
-        if not self.vf.commands.has_key('vision'):
+        if 'vision' not in self.vf.commands:
             self.vf.browseCommands('visionCommands',log=False) 
         g = mol.geomContainer.geoms['MSMS-MOL']
         g.Set(inheritSharpColorBoundaries = False, sharpColorBoundaries =False)
@@ -3499,7 +3485,7 @@ class APBSMap_Potential_to_MSMS(MVCommand):
         self.vf.GUI.MESSAGE_BOX.tx.component('text').config(cursor='watch')          
         file_DX = self.APBS_MSMS_Net.getNodeByName('Pmv Grids')[0]
         potentialName = os.path.basename(potential)
-        if not self.vf.grids3D.has_key(potentialName):
+        if potentialName not in self.vf.grids3D:
             self.vf.Grid3DReadAny(potential, show=False, normalize=False)
             self.vf.grids3D[potentialName].geomContainer['Box'].Set(visible=0)
         file_DX.inputPorts[0].widget.set(potentialName)
@@ -3519,7 +3505,7 @@ class APBSMap_Potential_to_MSMS(MVCommand):
 
     def guiCallback(self):
         """GUI callback for APBSMap_Potential_to_MSMS"""
-        if not self.vf.commands.has_key('computeMSMS'):
+        if 'computeMSMS' not in self.vf.commands:
             self.vf.browseCommands("msmsCommands",log=False)       
         file_name,ext = os.path.splitext(self.vf.APBSSetup.params.molecule1Path)
         mol_name = os.path.split(file_name)[-1]
@@ -3627,18 +3613,18 @@ surface density of 1, 3, and 6 points respectively"""    ,
         else:
             kw['potential'] = potential
 
-        if kw.has_key('mol') and kw.has_key('potential'):
-            if kw.has_key('quality'):
+        if 'mol' in kw and 'potential' in kw:
+            if 'quality' in kw:
                 self.quality = kw['quality']
             else:
                 self.quality = 'medium' #default
-            if kw.has_key('distance'):
+            if 'distance' in kw:
                 self.distance = kw['ditance']
             else:
                 self.distance = 1.0 #default
             self.doitWrapper(mol=kw['mol'],potential=kw['potential'])
         else:
-            print >>sys.stderr, "mol and/or potential is missing"
+            print("mol and/or potential is missing", file=sys.stderr)
             return
 
 
@@ -3721,7 +3707,7 @@ class APBSDisplay_Isocontours(MVCommand):
         self.vf.GUI.ROOT.config(cursor='watch')
         self.vf.GUI.VIEWER.master.config(cursor='watch')    
         self.vf.GUI.MESSAGE_BOX.tx.component('text').config(cursor='watch')
-        if not self.vf.commands.has_key('vision'):
+        if 'vision' not in self.vf.commands:
             self.vf.browseCommands('visionCommands',log=False)        
         if self.vf.vision.ed is None:
             self.vf.vision(log=False)    
@@ -3738,7 +3724,7 @@ class APBSDisplay_Isocontours(MVCommand):
             self.APBS_Iso_Net = self.APBS_Iso_Net[0]
         file_DX = self.APBS_Iso_Net.getNodeByName('Pmv Grids')[0]
         potentialName = os.path.basename(potential)
-        if not self.vf.grids3D.has_key(potentialName):
+        if potentialName not in self.vf.grids3D:
             grid = self.vf.Grid3DReadAny(potential, show=False, normalize=False)
             if grid:
                 self.vf.grids3D[potentialName].geomContainer['Box'].Set(visible=0)
@@ -3820,10 +3806,10 @@ class APBSDisplay_Isocontours(MVCommand):
         VisionInterface/APBSIsoContour_net.py\n
         Required Arguments:\n  
             potential = location of the potential.dx file\n"""
-        if kw.has_key('potential'):
+        if 'potential' in kw:
             self.doitWrapper(potential =  kw['potential'])
         else:
-            print >>sys.stderr, "potential is missing"
+            print("potential is missing", file=sys.stderr)
             return
 
     def buildForm(self):
@@ -3872,7 +3858,7 @@ the list of available molecules""" ,
                         'callback':self.Update,
                         },
                     })                           
-        ifd.append({'widgetType':Tkinter.Checkbutton,
+        ifd.append({'widgetType':tkinter.Checkbutton,
                     'tooltip':"""(De)select this checkbutton to 
 (un)display blue isocontour""",
                     'name':'+visible',
@@ -3880,10 +3866,10 @@ the list of available molecules""" ,
                     'wcfg':{'text':'Blue isocontour',
                     'command':self.Left_Visible,
                     'bg':'Blue','fg':'White',
-                    'variable':Tkinter.BooleanVar()},
+                    'variable':tkinter.BooleanVar()},
                     'gridcfg':{'sticky':'e','row':1, 'column':1}
                     })
-        ifd.append({'widgetType':Tkinter.Checkbutton,
+        ifd.append({'widgetType':tkinter.Checkbutton,
                     'tooltip':"""(De)select this checkbutton to 
 (un)display red isocontour""",
                     'name':'-visible',
@@ -3891,17 +3877,17 @@ the list of available molecules""" ,
                     'wcfg':{'text':'Red isocontour',
                     'command':self.Right_Visible,
                     'bg':'Red','fg':'White',
-                    'variable':Tkinter.BooleanVar()},
+                    'variable':tkinter.BooleanVar()},
                     'gridcfg':{'sticky':'e','row':2, 'column':1}
                     })
         ifd.append({'name':'dismiss',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Cancel',
                             'command':self.dismiss},
                     'gridcfg':{'sticky':'wens','row':3, 'column':0}
                     })
         ifd.append({'name':'run',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Animate',
                             'command':self.run},
                     'gridcfg':{'sticky':'wens','row':3, 'column':1}
@@ -4094,7 +4080,7 @@ APBSVolumeRender_GUI = CommandGUI()
 APBSVolumeRender_GUI.addMenuCommand('menuRoot', 'Compute', \
                               'Volume Renderer', cascadeName=cascadeName) 
 
-from tkFileDialog import *
+from tkinter.filedialog import *
 
 class APBSLoad_Profile(MVCommand):
     """APBSLoadProfile loads APBS parameters\n
@@ -4121,10 +4107,10 @@ class APBSLoad_Profile(MVCommand):
     def __call__(self, **kw):
         """None <--- APBSSave_Profile()\n
         Calls APBSSetup.loadProfile\n"""
-        if kw.has_key('filename'):
+        if 'filename' in kw:
             self.doitWrapper(filename=kw['filename'])
         else:
-            if self.vf.APBSSetup.cmdForms.has_key('default') and \
+            if 'default' in self.vf.APBSSetup.cmdForms and \
                 self.vf.APBSSetup.cmdForms['default'].f.winfo_toplevel().\
                                                          wm_state() == 'normal':
                     filename=askopenfilename(filetypes=\
@@ -4177,10 +4163,10 @@ class APBSSave_Profile(MVCommand):
     def __call__(self, **kw):
         """None <--- APBSSave_Profile(filename = None)\n
         Calls APBSSetup.saveProfile\n"""
-        if kw.has_key('Profilename'):
+        if 'Profilename' in kw:
             self.doitWrapper(Profilename=kw['Profilename'])
         else:
-            if self.vf.APBSSetup.cmdForms.has_key('default') and \
+            if 'default' in self.vf.APBSSetup.cmdForms and \
                 self.vf.APBSSetup.cmdForms['default'].f.winfo_toplevel().\
                                                          wm_state() == 'normal':
                     filename = asksaveasfilename(filetypes=[('APBS Profile',
@@ -4220,7 +4206,7 @@ class APBSWrite_APBS_Parameter_File(MVCommand):
         """
         filename=asksaveasfilename(filetypes=[('APBS Paramter File','*.apbs')],
                                                title="Save APBS Parameters As ")       
-        apply ( self.doitWrapper, (filename,), kw)
+        self.doitWrapper(*(filename,), **kw)
 
 APBSWrite_Parameter_File_GUI = CommandGUI()
 APBSWrite_Parameter_File_GUI.addMenuCommand('menuRoot', 'Compute', \
@@ -4275,14 +4261,14 @@ debump = None, hopt = None, hdebump = None, watopt = None)
             
     def __init__(self):
         MVCommand.__init__(self)
-	try:
-	        self.nodebump = Tkinter.BooleanVar()
-	        self.nodebump.set(False)
-	        self.nohopt = Tkinter.BooleanVar()
-	        self.nohopt.set(False)
-	except:
-		self.nodebump = False
-		self.nohopt = False
+        try:
+                self.nodebump = tkinter.BooleanVar()
+                self.nodebump.set(False)
+                self.nohopt = tkinter.BooleanVar()
+                self.nohopt.set(False)
+        except:
+                self.nodebump = False
+                self.nohopt = False
 
         self.nodebump_past = False
         self.nohopt_past = False
@@ -4292,7 +4278,7 @@ debump = None, hopt = None, hdebump = None, watopt = None)
         """GUI Callback for APBSPreferences"""
         self.APBS_Path = self.vf.APBSSetup.params.APBS_Path
         self.pdb2pqr_Path = self.vf.APBSSetup.params.pdb2pqr_Path
-        self.ff_arg = Tkinter.StringVar()
+        self.ff_arg = tkinter.StringVar()
         self.ff_arg.set(self.vf.APBSSetup.params.pdb2pqr_ForceField)
         self.ifd = ifd = InputFormDescr(title="APBS Preferences")
         ## APBS PATH GROUP
@@ -4302,7 +4288,7 @@ debump = None, hopt = None, hdebump = None, watopt = None)
                     'wcfg':{'tag_text':"Path to APBS executable"},
                     'gridcfg':{'sticky':'nswe','columnspan':5}
                     })
-        ifd.append({'widgetType':Tkinter.Button,
+        ifd.append({'widgetType':tkinter.Button,
                     'name':'APBS_Browse',
                     'parent':'APBS_Path',
                     'wcfg':{'text':'Browse ...',
@@ -4316,7 +4302,7 @@ debump = None, hopt = None, hdebump = None, watopt = None)
                     'gridcfg':{'sticky':'ew', 'row':1, 'column':1}
                     })                    
         ifd.append({'name':'APBSLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'APBS_Path',
                     'wcfg':{'text':"""\nAdaptive Poisson-Boltzmann Solver \
 (APBS) should be installed\n before it can be run locally. \n Source code \
@@ -4332,7 +4318,7 @@ http://mccammon.ucsd.edu/pmv_apbs\n"""},
                     'wcfg':{'tag_text':"Path to pdb2pqr.py"},
                     'gridcfg':{'sticky':'nswe','columnspan':5}
                     })
-        ifd.append({'widgetType':Tkinter.Button,
+        ifd.append({'widgetType':tkinter.Button,
                     'name':'pdb2pqr_Browse',
                     'parent':'pdb2pqr_Path',
                     'wcfg':{'text':'Browse ...',
@@ -4346,7 +4332,7 @@ http://mccammon.ucsd.edu/pmv_apbs\n"""},
                     'gridcfg':{'sticky':'ew', 'row':1, 'column':1}
                     })                    
         ifd.append({'name':'pdb2pqrLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'pdb2pqr_Path',
                     'wcfg':{'text':"""\npdb2pqr.py is needed to create PQR \
 files used by APBS. \n One can also use PDB2PQR Server to convert PDB files \
@@ -4362,38 +4348,38 @@ and read that PQR file instead\n"""},
                     'gridcfg':{'sticky':'nswe','columnspan':5}
                     })        
         ifd.append({'name':"Radiobutton_AMBER",
-                    'widgetType':Tkinter.Radiobutton,
+                    'widgetType':tkinter.Radiobutton,
                     'parent':'pdb2pqr_ForceField',                    
                     'wcfg':{'value':'amber',
                     'variable':self.ff_arg},
                     'gridcfg':{'sticky':'w','row':0, 'column':0}
                     })                   
         ifd.append({'name':'Label_AMBER',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'pdb2pqr_ForceField',
                     'wcfg':{'text':'AMBER            '},
                     'gridcfg':{'sticky':'w', 'row':0, 'column':1} })
         ifd.append({'name':"Radiobutton_CHARMM",
-                    'widgetType':Tkinter.Radiobutton,
+                    'widgetType':tkinter.Radiobutton,
                     'parent':'pdb2pqr_ForceField',                    
                     'wcfg':{'value':'charmm',
                     'variable':self.ff_arg},
                     'gridcfg':{'sticky':'w','row':0, 'column':2}
                     })
         ifd.append({'name':'Label_CHARMM',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'pdb2pqr_ForceField',
                     'wcfg':{'text':'CHARMM            '},
                     'gridcfg':{'sticky':'w', 'row':0, 'column':3} })
         ifd.append({'name':"Radiobutton_PARSE",
-                    'widgetType':Tkinter.Radiobutton,
+                    'widgetType':tkinter.Radiobutton,
                     'parent':'pdb2pqr_ForceField',                    
                     'wcfg':{'value':'parse',
                     'variable':self.ff_arg},
                     'gridcfg':{'sticky':'w','row':0, 'column':4}
                     })
         ifd.append({'name':'Label_PARSE',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'pdb2pqr_ForceField',
                     'wcfg':{'text':'PARSE            '},
                     'gridcfg':{'sticky':'w', 'row':0, 'column':5} })
@@ -4405,26 +4391,26 @@ and read that PQR file instead\n"""},
                     'gridcfg':{'sticky':'nswe','columnspan':5}
                     })
         ifd.append({'name':"pdb2pqr_debump_Checkbutton",
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'parent':'pdb2pqr_Options',                    
                     'wcfg':{
                     'variable':self.nodebump},
                     'gridcfg':{'sticky':'w','row':0, 'column':0}
                     })
         ifd.append({'name':'pdb2pqr_debump_Label',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'pdb2pqr_Options',                    
                     'wcfg':{'text':'Do not perform the debumping operation'},
                     'gridcfg':{'sticky':'w', 'row':0, 'column':1} })
         ifd.append({'name':"pdb2pqr_nohopt_Checkbutton",
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'parent':'pdb2pqr_Options',                 
                     'wcfg':{
                     'variable':self.nohopt},
                     'gridcfg':{'sticky':'w','row':1, 'column':0}
                     })
         ifd.append({'name':'pdb2pqr_nohopt_Label',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':'pdb2pqr_Options',
                     'wcfg':{'text':'Do not perform hydrogen optimization'},
                     'gridcfg':{'sticky':'w', 'row':1, 'column':1} })

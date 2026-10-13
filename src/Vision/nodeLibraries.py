@@ -15,9 +15,9 @@
 
 import os, sys
 import re
-import string
+from mglcompat import pystring as string
 import types
-import Tkinter, Pmw
+import tkinter, Pmw
 from mglutil.gui.BasicWidgets.Tk.fileBrowsers import FileOpenBrowser
 from mglutil.util.packageFilePath import findAllPackages, \
      findModulesInPackage, findModulesInDirectory
@@ -52,13 +52,13 @@ Vision editor, which has to be passed to the constructor."""
             return
         
         from Vision.nodeLibraries import libraries
-        libKeys = libraries.keys()
-	libKeys.sort()    
+        libKeys = list(libraries.keys())
+        libKeys.sort()    
         
-        root = self.panel = Tkinter.Toplevel()
+        root = self.panel = tkinter.Toplevel()
         root.title('Load Libraries')
         root.protocol("WM_DELETE_WINDOW", self.hide)
-        frame = Tkinter.Frame(root)
+        frame = tkinter.Frame(root)
         frame.grid(columnspan=2)
 
         # Scrolled widget
@@ -69,17 +69,17 @@ Vision editor, which has to be passed to the constructor."""
             label_text = 'Select Library to be loaded',
             dblclickcommand=self.loadLibs_cb)
         w.grid(row=2, columnspan=2, padx=10, pady=10)
-        w.component('listbox').configure(selectmode=Tkinter.EXTENDED,
+        w.component('listbox').configure(selectmode=tkinter.EXTENDED,
                                          exportselection=0)
         # widget balloon
         balloon3 = Pmw.Balloon(frame)
         balloon3.bind(w,
               'Double-click entry, or choose multiple\nand hit OK')
 
-        b1 = Tkinter.Button(frame, text='OK',command=self.loadLibs_cb)
+        b1 = tkinter.Button(frame, text='OK',command=self.loadLibs_cb)
         b1.grid(row=3,column=0,sticky='we')
 
-        b2 = Tkinter.Button(frame, text='Dismiss', command=self.hide)
+        b2 = tkinter.Button(frame, text='Dismiss', command=self.hide)
         b2.grid(row=3,column=1,sticky='we')
         # bring to front
         self.show()
@@ -121,10 +121,10 @@ class BrowseLibraryPanel:
             self.show()
             return
         
-        root = self.panel = Tkinter.Toplevel()
+        root = self.panel = tkinter.Toplevel()
         root.title('Browse Vision Node Libraries')
         root.protocol("WM_DELETE_WINDOW", self.hide)
-        frame = Tkinter.Frame(root)
+        frame = tkinter.Frame(root)
         frame.grid(columnspan=3)
 
         #self.packages = findAllPackages()
@@ -132,7 +132,7 @@ class BrowseLibraryPanel:
         #packNames.sort()
 
         self.findDefaultPackages()
-        packNames = self.packages.keys()
+        packNames = list(self.packages.keys())
         packNames.sort()
         
         rownum = 0
@@ -193,18 +193,18 @@ class BrowseLibraryPanel:
 ##                                  command=self.reloadPackages_cb)
 ##          reload.grid(row=rownum, column=0, sticky='we')
 
-        load = Tkinter.Button(frame, text='Load Library',
+        load = tkinter.Button(frame, text='Load Library',
                                 command=self.loadLib_cb)
         load.grid(row=rownum, column=2, sticky='we')
         
 ##          rownum+=1
         
-        self.modeButton = Tkinter.Button(frame, text='Show All',
+        self.modeButton = tkinter.Button(frame, text='Show All',
                                          command=self.switchButton_cb)
         self.modeButton.grid(row=rownum, column=0, sticky='we')
 
         rownum+=1
-        dismiss = Tkinter.Button(frame, text='Dismiss', command=self.hide)
+        dismiss = tkinter.Button(frame, text='Dismiss', command=self.hide)
         dismiss.grid(row=rownum, columnspan=3, sticky='we')
 
 
@@ -283,7 +283,7 @@ class BrowseLibraryPanel:
                         obj.modName = name
                         libs[obj.name] = obj
                 
-        libNames = libs.keys()
+        libNames = list(libs.keys())
         libNames.sort()
         self.libraryGUI.setlist(libNames)
         return libs
@@ -293,15 +293,15 @@ class BrowseLibraryPanel:
         self.modules = findModulesInPackage(package, 'NodeLibrary')
         packName = self.packageGUI.getcurselection()[0]
         modNames = []
-        for key, value in self.modules.items():
+        for key, value in list(self.modules.items()):
             pathPack = key.split(os.path.sep)
             if pathPack[-1] == packName:
-                newModName = map(lambda x: x[:-3], value)
+                newModName = [x[:-3] for x in value]
                 modNames = modNames + newModName
             else:
                 pIndex = pathPack.index(packName)
                 prefix = string.join(pathPack[pIndex+1:], '.')
-                newModName = map(lambda x: "%s.%s"%(prefix, x[:-3]), value)
+                newModName = ["%s.%s"%(prefix, x[:-3]) for x in value]
                 modNames = modNames + newModName
         modNames.sort()
         self.moduleGUI.setlist(modNames)
@@ -352,7 +352,7 @@ class BrowseLibraryPanel:
 
     def reloadPackages_cb(self, event=None):
         self.packages = findAllPackages()
-        packNames = self.packages.keys()
+        packNames = list(self.packages.keys())
         packNames.sort()
         self.packageGUI.setlist(packNames)
         self.moduleGUI.clear()
@@ -361,7 +361,7 @@ class BrowseLibraryPanel:
 
     def showDefaultPackages_cb(self, event=None):
         self.findDefaultPackages()
-        packNames = self.packages.keys()
+        packNames = list(self.packages.keys())
         packNames.sort()
         self.packageGUI.setlist(packNames)
         self.moduleGUI.clear()
@@ -392,7 +392,7 @@ class BrowseLibraryPanel:
         # do these default values exist?
         tmp = []
         for k in default:
-            if k in packages.keys():
+            if k in list(packages.keys()):
                 tmp.append(k)
         default = tmp
 
@@ -403,14 +403,14 @@ class BrowseLibraryPanel:
             userLibsDir = userResourceFolder + os.sep + 'Vision' + os.sep + 'UserLibs'
             from Vision import __path__
             lVisionLibrariesPath = __path__[0]+'Libraries'
-            for k,v in packages.items():
+            for k,v in list(packages.items()):
                 if v.startswith(userLibsDir):
                     default.append(k)
                 elif v.startswith(lVisionLibrariesPath):
                     default.append(k)
 
         # now build the default list
-        for k in packages.keys():
+        for k in list(packages.keys()):
             if k not in default:
                 del packages[k]
         self.packages = packages
@@ -430,37 +430,37 @@ class CreateLibraryPanel:
             self.show()
             return
         
-        root = self.panel = Tkinter.Toplevel()
+        root = self.panel = tkinter.Toplevel()
         root.title('Create Node Library')
         root.protocol("WM_DELETE_WINDOW", self.hide)
-        frame = Tkinter.Frame(root)
+        frame = tkinter.Frame(root)
         frame.pack(expand=1, fill='both')
 
         rownum=0
-        self.libclassnametkvar = Tkinter.StringVar()
-        Tkinter.Label(frame, text='Library class name:').grid(
+        self.libclassnametkvar = tkinter.StringVar()
+        tkinter.Label(frame, text='Library class name:').grid(
             row=rownum, column=0,sticky='e')
-        self.libclassnametk = Tkinter.Entry(
+        self.libclassnametk = tkinter.Entry(
             frame, textvariable=self.libclassnametkvar)
         self.libclassnametk.grid(row=rownum, column=1, sticky='w')
         rownum += 1
 
-        self.libnametkvar = Tkinter.StringVar()
-        Tkinter.Label(frame, text='Library name:').grid(row=rownum, column=0,
+        self.libnametkvar = tkinter.StringVar()
+        tkinter.Label(frame, text='Library name:').grid(row=rownum, column=0,
                                                     sticky='e')
-        self.libnametk = Tkinter.Entry(frame, textvariable=self.libnametkvar)
+        self.libnametk = tkinter.Entry(frame, textvariable=self.libnametkvar)
         self.libnametk.grid(row=rownum, column=1, sticky='w')
         rownum += 1
 
-        self.libfiletkvar = Tkinter.StringVar()
-        Tkinter.Label(frame, text='Library file:').grid(row=rownum, column=0,
+        self.libfiletkvar = tkinter.StringVar()
+        tkinter.Label(frame, text='Library file:').grid(row=rownum, column=0,
                                                         sticky='e')
-        self.libfiletk = Tkinter.Entry(frame, textvariable=self.libfiletkvar)
+        self.libfiletk = tkinter.Entry(frame, textvariable=self.libfiletkvar)
         self.libfiletk.grid(row=rownum, column=1, sticky='w')
         rownum += 1
 
         libDirs = []
-        for directory in self.editor.userLibsDirs.keys():
+        for directory in list(self.editor.userLibsDirs.keys()):
             libDirs.append(directory)
 
         self.libsGUI = Pmw.ScrolledListBox(frame, items=libDirs,
@@ -471,21 +471,21 @@ class CreateLibraryPanel:
 
         rownum += 1
 
-        self.colorButton = Tkinter.Button(frame, text='Library Color ...',
+        self.colorButton = tkinter.Button(frame, text='Library Color ...',
                                           command=self.chooseColor)
         self.colorButton.grid(row=rownum, column=0, columnspan=2, sticky='ew')
         rownum += 1
 
-        createButton = Tkinter.Button(frame, text='Create',
+        createButton = tkinter.Button(frame, text='Create',
                                 command=self.createLib_cb)
         createButton.grid(row=rownum, column=0, sticky='we')
 
-        dismiss = Tkinter.Button(frame, text='Dismiss', command=self.hide)
+        dismiss = tkinter.Button(frame, text='Dismiss', command=self.hide)
         dismiss.grid(row=rownum, column=1, sticky='we')
 
 
     def chooseColor(self, event=None):
-        top = Tkinter.Toplevel()
+        top = tkinter.Toplevel()
         colorChooser = ColorChooser(top, title='library color', immediate=1,
                                     commands=[self.setColor])
         colorChooser.pack()
@@ -518,7 +518,7 @@ class CreateLibraryPanel:
             return
 
         # libsGUI might return the data packed in a tuple
-        if type(directory) == types.TupleType:
+        if type(directory) == tuple:
             directory = directory[0]
 
         # build path by joining the directory with the parent path
@@ -528,7 +528,7 @@ class CreateLibraryPanel:
         file = os.path.join(path, libfilename)
             
         if os.path.exists(file):
-            from Dialog import Dialog
+            from tkinter.dialog import Dialog
             d = Dialog(None, {'title': 'File exisits',
                               'text':
                               'File "%s" already exists.'
@@ -547,7 +547,7 @@ class CreateLibraryPanel:
 
         # write the library header
         f = open(file, 'w')
-        map( f.write, newlib.getHeader())
+        list(map( f.write, newlib.getHeader()))
         f.write("%s = NodeLibrary('%s', '%s', mode='readWrite')\n"%(
             newlib.varName, name, col))
 
@@ -594,34 +594,34 @@ class AddNodeToUserLibraryPanel:
             self.show()
             return
         
-        root = self.panel = Tkinter.Toplevel()
+        root = self.panel = tkinter.Toplevel()
         root.title('Add Node To User Library')
-        self.frame = Tkinter.Frame(root)
+        self.frame = tkinter.Frame(root)
 
         # find all readWrite libraries
         libs = []
-        for libname, lib in self.editor.libraries.items():
+        for libname, lib in list(self.editor.libraries.items()):
             if lib.mode == 'readWrite':
                 libs.append(libname)
         libs.sort()
 
         row = 0
 
-        self.label1 = Tkinter.Label(self.frame, text='Node class name: ')
+        self.label1 = tkinter.Label(self.frame, text='Node class name: ')
         self.label1.grid(row=row, column=0, sticky='w')
 
-        self.classNameTk = Tkinter.StringVar()
-        self.classNameEntry = Tkinter.Entry(self.frame,
+        self.classNameTk = tkinter.StringVar()
+        self.classNameEntry = tkinter.Entry(self.frame,
                                             textvariable= self.classNameTk)
         self.classNameEntry.grid(row=row, column=1, sticky='ew')
 
         row += 1
 
-        self.label2 = Tkinter.Label(self.frame, text='Library Category: ')
+        self.label2 = tkinter.Label(self.frame, text='Library Category: ')
         self.label2.grid(row=row, column=0, sticky='w')
 
-        self.categoryNameTk = Tkinter.StringVar()
-        self.categoryNameEntry = Tkinter.Entry(self.frame,
+        self.categoryNameTk = tkinter.StringVar()
+        self.categoryNameEntry = tkinter.Entry(self.frame,
                                             textvariable= self.categoryNameTk)
         self.categoryNameEntry.grid(row=row, column=1, sticky='ew')
 
@@ -636,11 +636,11 @@ class AddNodeToUserLibraryPanel:
 
         row += 1
 
-        self.save = Tkinter.Button(self.frame, text='Add Node...',
+        self.save = tkinter.Button(self.frame, text='Add Node...',
                                    command=self.addNode_cb)
         self.save.grid(row=row, column=0, sticky='we')
 
-        self.cancel = Tkinter.Button(self.frame, text='Dismiss',
+        self.cancel = tkinter.Button(self.frame, text='Dismiss',
                                      command=self.hide)
         self.cancel.grid(row=row, column=1, sticky='we')
         self.frame.grid(columnspan=3, sticky='ew')
@@ -674,7 +674,7 @@ class AddNodeToUserLibraryPanel:
 
         # find all readWrite libraries
         libs = []
-        for libname, lib in self.editor.libraries.items():
+        for libname, lib in list(self.editor.libraries.items()):
             if lib.mode == 'readWrite':
                 libs.append(libname)
         libs.sort()

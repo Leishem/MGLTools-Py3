@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -40,7 +40,7 @@ try:
     VolumeStats_1 = VolumeStats(constrkw = {}, name='VolumeStats', library=vollib)
     masterNet.addNode(VolumeStats_1,271,173)
 except:
-    print "WARNING: failed to restore VolumeStats named VolumeStats in network masterNet"
+    print("WARNING: failed to restore VolumeStats named VolumeStats in network masterNet")
     print_exc()
     VolumeStats_1=None
 
@@ -49,10 +49,10 @@ try:
     from Vision.StandardNodes import Generic
     GenSurf_2 = Generic(constrkw = {}, name='GenSurf', library=stdlib)
     masterNet.addNode(GenSurf_2,411,235)
-    apply(GenSurf_2.addInputPort, (), {'name': 'value', 'cast': True, 'datatype': 'float', 'height': 12, 'width': 12, 'shape': 'circle', 'color': 'green'})
-    apply(GenSurf_2.addInputPort, (), {'name': 'geom1', 'cast': True, 'datatype': 'geom', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'red'})
-    apply(GenSurf_2.addOutputPort, (), {'name': 'out0', 'datatype': 'geom', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'red'})
-    apply(GenSurf_2.addOutputPort, (), {'name': 'out1', 'datatype': 'geom', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'red'})
+    GenSurf_2.addInputPort(*(), **{'name': 'value', 'cast': True, 'datatype': 'float', 'height': 12, 'width': 12, 'shape': 'circle', 'color': 'green'})
+    GenSurf_2.addInputPort(*(), **{'name': 'geom1', 'cast': True, 'datatype': 'geom', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'red'})
+    GenSurf_2.addOutputPort(*(), **{'name': 'out0', 'datatype': 'geom', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'red'})
+    GenSurf_2.addOutputPort(*(), **{'name': 'out1', 'datatype': 'geom', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'red'})
     code = """def doit(self, value, geom1):
      geom1.inheritMaterial = False
      geom1.inheritFrontPolyMode = False
@@ -98,7 +98,7 @@ try:
 """
     GenSurf_2.configure(function=code)
 except:
-    print "WARNING: failed to restore Generic named GenSurf in network masterNet"
+    print("WARNING: failed to restore Generic named GenSurf in network masterNet")
     print_exc()
     GenSurf_2=None
 
@@ -107,10 +107,10 @@ try:
     from Vision.StandardNodes import Generic
     GenSurf_3 = Generic(constrkw = {}, name='GenSurf', library=stdlib)
     masterNet.addNode(GenSurf_3,67,243)
-    apply(GenSurf_3.addInputPort, (), {'name': 'value', 'cast': True, 'datatype': 'float', 'height': 12, 'width': 12, 'shape': 'circle', 'color': 'green'})
-    apply(GenSurf_3.addInputPort, (), {'name': 'geom1', 'cast': True, 'datatype': 'geom', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'red'})
-    apply(GenSurf_3.addOutputPort, (), {'name': 'out0', 'datatype': 'geom', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'red'})
-    apply(GenSurf_3.addOutputPort, (), {'name': 'out1', 'datatype': 'geom', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'red'})
+    GenSurf_3.addInputPort(*(), **{'name': 'value', 'cast': True, 'datatype': 'float', 'height': 12, 'width': 12, 'shape': 'circle', 'color': 'green'})
+    GenSurf_3.addInputPort(*(), **{'name': 'geom1', 'cast': True, 'datatype': 'geom', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'red'})
+    GenSurf_3.addOutputPort(*(), **{'name': 'out0', 'datatype': 'geom', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'red'})
+    GenSurf_3.addOutputPort(*(), **{'name': 'out1', 'datatype': 'geom', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'red'})
     code = """def doit(self, value, geom1):
      geom1.inheritMaterial = False
      geom1.inheritFrontPolyMode = False
@@ -158,7 +158,7 @@ try:
 """
     GenSurf_3.configure(function=code)
 except:
-    print "WARNING: failed to restore Generic named GenSurf in network masterNet"
+    print("WARNING: failed to restore Generic named GenSurf in network masterNet")
     print_exc()
     GenSurf_3=None
 
@@ -169,7 +169,7 @@ try:
     masterNet.addNode(_polygons_4,15,105)
     _polygons_4.inputPortByName['name'].widget.set("", run=False)
 except:
-    print "WARNING: failed to restore IndexedPolygonsNE named -polygons in network masterNet"
+    print("WARNING: failed to restore IndexedPolygonsNE named -polygons in network masterNet")
     print_exc()
     _polygons_4=None
 
@@ -180,7 +180,7 @@ try:
     masterNet.addNode(_polygons_5,403,124)
     _polygons_5.inputPortByName['name'].widget.set("", run=False)
 except:
-    print "WARNING: failed to restore IndexedPolygonsNE named +polygons in network masterNet"
+    print("WARNING: failed to restore IndexedPolygonsNE named +polygons in network masterNet")
     print_exc()
     _polygons_5=None
 
@@ -190,10 +190,10 @@ try:
     Pmv_Viewer_6 = PmvViewer(viewer=masterNet.editor.vf.GUI.VIEWER, constrkw = {'viewer': 'masterNet.editor.vf.GUI.VIEWER'}, name='Pmv Viewer', library=pmvlib)
     masterNet.addNode(Pmv_Viewer_6,256,312)
     state = {'localViewer': False, 'twoSide': 0, 'ambient': (0.20000000000000001, 0.20000000000000001, 0.20000000000000001, 1.0)}
-    apply(Pmv_Viewer_6.vi.lightModel.Set, (), state)
+    Pmv_Viewer_6.vi.lightModel.Set(*(), **state)
 
 except:
-    print "WARNING: failed to restore PmvViewer named Pmv Viewer in network masterNet"
+    print("WARNING: failed to restore PmvViewer named Pmv Viewer in network masterNet")
     print_exc()
     Pmv_Viewer_6=None
 
@@ -202,8 +202,8 @@ try:
     from Volume.VisionInterface.VolumeNodes import Isocontour
     Left_Isocontour_7 = Isocontour(constrkw = {}, name='Left_Isocontour', library=vollib)
     masterNet.addNode(Left_Isocontour_7,35,38)
-    apply(Left_Isocontour_7.addOutputPort, (), {'name': 'isovalue', 'datatype': 'float', 'height': 12, 'width': 12, 'shape': 'circle', 'color': 'green'})
-    apply(Left_Isocontour_7.inputPortByName['isovalue'].widget.configure, (), {'max': 401.27560424804688, 'min': -556.299072265625})
+    Left_Isocontour_7.addOutputPort(*(), **{'name': 'isovalue', 'datatype': 'float', 'height': 12, 'width': 12, 'shape': 'circle', 'color': 'green'})
+    Left_Isocontour_7.inputPortByName['isovalue'].widget.configure(*(), **{'max': 401.27560424804688, 'min': -556.299072265625})
     Left_Isocontour_7.inputPortByName['isovalue'].widget.set(-1.0, run=False)
     Left_Isocontour_7.inputPortByName['calculatesignatures'].widget.set(1, run=False)
     code = """def doit(self, grid3D, isovalue, calculatesignatures, verbosity):
@@ -261,7 +261,7 @@ try:
 """
     Left_Isocontour_7.configure(function=code)
 except:
-    print "WARNING: failed to restore Isocontour named Left_Isocontour in network masterNet"
+    print("WARNING: failed to restore Isocontour named Left_Isocontour in network masterNet")
     print_exc()
     Left_Isocontour_7=None
 
@@ -270,8 +270,8 @@ try:
     from Volume.VisionInterface.VolumeNodes import Isocontour
     Right_Isocontour_8 = Isocontour(constrkw = {}, name='Right_Isocontour', library=vollib)
     masterNet.addNode(Right_Isocontour_8,517,34)
-    apply(Right_Isocontour_8.addOutputPort, (), {'name': 'isovalue', 'datatype': 'float', 'height': 12, 'width': 12, 'shape': 'circle', 'color': 'green'})
-    apply(Right_Isocontour_8.inputPortByName['isovalue'].widget.configure, (), {'max': 401.27560424804688, 'min': -556.299072265625})
+    Right_Isocontour_8.addOutputPort(*(), **{'name': 'isovalue', 'datatype': 'float', 'height': 12, 'width': 12, 'shape': 'circle', 'color': 'green'})
+    Right_Isocontour_8.inputPortByName['isovalue'].widget.configure(*(), **{'max': 401.27560424804688, 'min': -556.299072265625})
     Right_Isocontour_8.inputPortByName['isovalue'].widget.set(1.0, run=False)
     Right_Isocontour_8.inputPortByName['calculatesignatures'].widget.set(1, run=False)
     code = """def doit(self, grid3D, isovalue, 
@@ -335,7 +335,7 @@ calculatesignatures=None, verbosity=None):
 """
     Right_Isocontour_8.configure(function=code)
 except:
-    print "WARNING: failed to restore Isocontour named Right_Isocontour in network masterNet"
+    print("WARNING: failed to restore Isocontour named Right_Isocontour in network masterNet")
     print_exc()
     Right_Isocontour_8=None
 
@@ -344,9 +344,9 @@ try:
     from Volume.VisionInterface.VolumeNodes import PmvGridChooser
     Pmv_Grids_9 = PmvGridChooser(constrkw = {}, name='Pmv Grids', library=vollib)
     masterNet.addNode(Pmv_Grids_9,200,9)
-    apply(Pmv_Grids_9.configure, (), {'expanded': True})
+    Pmv_Grids_9.configure(*(), **{'expanded': True})
 except:
-    print "WARNING: failed to restore PmvGridChooser named Pmv Grids in network masterNet"
+    print("WARNING: failed to restore PmvGridChooser named Pmv Grids in network masterNet")
     print_exc()
     Pmv_Grids_9=None
 
@@ -358,103 +358,103 @@ if GenSurf_2 is not None and Pmv_Viewer_6 is not None:
         masterNet.connectNodes(
             GenSurf_2, Pmv_Viewer_6, "out0", "geometries", blocking=True)
     except:
-        print "WARNING: failed to restore connection between GenSurf_2 and Pmv_Viewer_6 in network masterNet"
+        print("WARNING: failed to restore connection between GenSurf_2 and Pmv_Viewer_6 in network masterNet")
 if GenSurf_2 is not None and Pmv_Viewer_6 is not None:
     try:
         masterNet.connectNodes(
             GenSurf_2, Pmv_Viewer_6, "out1", "geometries", blocking=True)
     except:
-        print "WARNING: failed to restore connection between GenSurf_2 and Pmv_Viewer_6 in network masterNet"
+        print("WARNING: failed to restore connection between GenSurf_2 and Pmv_Viewer_6 in network masterNet")
 if Left_Isocontour_7 is not None and _polygons_4 is not None:
     try:
         masterNet.connectNodes(
             Left_Isocontour_7, _polygons_4, "coords", "coords", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Left_Isocontour_7 and _polygons_4 in network masterNet"
+        print("WARNING: failed to restore connection between Left_Isocontour_7 and _polygons_4 in network masterNet")
 if Left_Isocontour_7 is not None and _polygons_4 is not None:
     try:
         masterNet.connectNodes(
             Left_Isocontour_7, _polygons_4, "indices", "indices", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Left_Isocontour_7 and _polygons_4 in network masterNet"
+        print("WARNING: failed to restore connection between Left_Isocontour_7 and _polygons_4 in network masterNet")
 if Left_Isocontour_7 is not None and _polygons_4 is not None:
     try:
         masterNet.connectNodes(
             Left_Isocontour_7, _polygons_4, "normals", "vnormals", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Left_Isocontour_7 and _polygons_4 in network masterNet"
+        print("WARNING: failed to restore connection between Left_Isocontour_7 and _polygons_4 in network masterNet")
 if GenSurf_3 is not None and Pmv_Viewer_6 is not None:
     try:
         masterNet.connectNodes(
             GenSurf_3, Pmv_Viewer_6, "out0", "geometries", blocking=True)
     except:
-        print "WARNING: failed to restore connection between GenSurf_3 and Pmv_Viewer_6 in network masterNet"
+        print("WARNING: failed to restore connection between GenSurf_3 and Pmv_Viewer_6 in network masterNet")
 if GenSurf_3 is not None and Pmv_Viewer_6 is not None:
     try:
         masterNet.connectNodes(
             GenSurf_3, Pmv_Viewer_6, "out1", "geometries", blocking=True)
     except:
-        print "WARNING: failed to restore connection between GenSurf_3 and Pmv_Viewer_6 in network masterNet"
+        print("WARNING: failed to restore connection between GenSurf_3 and Pmv_Viewer_6 in network masterNet")
 if Right_Isocontour_8 is not None and _polygons_5 is not None:
     try:
         masterNet.connectNodes(
             Right_Isocontour_8, _polygons_5, "coords", "coords", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Right_Isocontour_8 and _polygons_5 in network masterNet"
+        print("WARNING: failed to restore connection between Right_Isocontour_8 and _polygons_5 in network masterNet")
 if Right_Isocontour_8 is not None and _polygons_5 is not None:
     try:
         masterNet.connectNodes(
             Right_Isocontour_8, _polygons_5, "indices", "indices", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Right_Isocontour_8 and _polygons_5 in network masterNet"
+        print("WARNING: failed to restore connection between Right_Isocontour_8 and _polygons_5 in network masterNet")
 if Right_Isocontour_8 is not None and _polygons_5 is not None:
     try:
         masterNet.connectNodes(
             Right_Isocontour_8, _polygons_5, "normals", "vnormals", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Right_Isocontour_8 and _polygons_5 in network masterNet"
+        print("WARNING: failed to restore connection between Right_Isocontour_8 and _polygons_5 in network masterNet")
 if _polygons_4 is not None and GenSurf_3 is not None:
     try:
         masterNet.connectNodes(
             _polygons_4, GenSurf_3, "indexedPolygons", "geom1", blocking=True)
     except:
-        print "WARNING: failed to restore connection between _polygons_4 and GenSurf_3 in network masterNet"
+        print("WARNING: failed to restore connection between _polygons_4 and GenSurf_3 in network masterNet")
 if Left_Isocontour_7 is not None and GenSurf_3 is not None:
     try:
         masterNet.connectNodes(
             Left_Isocontour_7, GenSurf_3, "isovalue", "value", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Left_Isocontour_7 and GenSurf_3 in network masterNet"
+        print("WARNING: failed to restore connection between Left_Isocontour_7 and GenSurf_3 in network masterNet")
 if _polygons_5 is not None and GenSurf_2 is not None:
     try:
         masterNet.connectNodes(
             _polygons_5, GenSurf_2, "indexedPolygons", "geom1", blocking=True)
     except:
-        print "WARNING: failed to restore connection between _polygons_5 and GenSurf_2 in network masterNet"
+        print("WARNING: failed to restore connection between _polygons_5 and GenSurf_2 in network masterNet")
 if Right_Isocontour_8 is not None and GenSurf_2 is not None:
     try:
         masterNet.connectNodes(
             Right_Isocontour_8, GenSurf_2, "isovalue", "value", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Right_Isocontour_8 and GenSurf_2 in network masterNet"
+        print("WARNING: failed to restore connection between Right_Isocontour_8 and GenSurf_2 in network masterNet")
 if Pmv_Grids_9 is not None and Left_Isocontour_7 is not None:
     try:
         masterNet.connectNodes(
             Pmv_Grids_9, Left_Isocontour_7, "grid", "grid3D", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Pmv_Grids_9 and Left_Isocontour_7 in network masterNet"
+        print("WARNING: failed to restore connection between Pmv_Grids_9 and Left_Isocontour_7 in network masterNet")
 if Pmv_Grids_9 is not None and Right_Isocontour_8 is not None:
     try:
         masterNet.connectNodes(
             Pmv_Grids_9, Right_Isocontour_8, "grid", "grid3D", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Pmv_Grids_9 and Right_Isocontour_8 in network masterNet"
+        print("WARNING: failed to restore connection between Pmv_Grids_9 and Right_Isocontour_8 in network masterNet")
 if Pmv_Grids_9 is not None and VolumeStats_1 is not None:
     try:
         masterNet.connectNodes(
             Pmv_Grids_9, VolumeStats_1, "grid", "grid", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Pmv_Grids_9 and VolumeStats_1 in network masterNet"
+        print("WARNING: failed to restore connection between Pmv_Grids_9 and VolumeStats_1 in network masterNet")
 masterNet.unfreeze()
 #masterNet.run()
 

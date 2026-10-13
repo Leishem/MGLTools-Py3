@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # Last modified on Tue Apr 23 09:20:22 PDT 2002 by lindy
@@ -15,7 +15,7 @@ space. The Kinematics class handles those transformations that
 apply to the internal nodes to the torTree (ie. torsions) changing
 the coordinates in the molecules local coordinate system.
 """
-import numpy.oldnumeric as Numeric, math
+import mglcompat.oldnumeric as Numeric, math
 from mglutil.math.transformation import Transformation
 from mglutil.math.kinematics import Kinematics
 
@@ -46,7 +46,7 @@ class StateToCoords(Kinematics):
                 coords.append((c[0]-o[0], c[1]-o[1], c[2]-o[2], 1.0))
             node.atomSet = atomSet
             node.coords = coords
-            node.atomRange = range(len(atomSet))
+            node.atomRange = list(range(len(atomSet)))
             if node.bond[0] != None: # skip the root node
                 node.a = allAtoms[node.bond[0]]
                 node.b = allAtoms[node.bond[1]]

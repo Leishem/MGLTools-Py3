@@ -74,7 +74,7 @@ def ensureMglutilResourceFile():
         try:
             f = open(rcFile, "w")
             global mglutilrcText
-            map( lambda x, f=f: f.write(x), mglutilrcText )
+            list(map( lambda x, f=f: f.write(x), mglutilrcText ))
             f.close()
         except:
             txt = "can not create _mglutilrc"
@@ -90,7 +90,7 @@ rcFile = ensureMglutilResourceFile()
 if rcFile is None:
     exec( mglutilrcText )
 else:
-    execfile( rcFile )
+    exec(compile(open( rcFile, "rb" ).read(), rcFile, 'exec'))
 
     if os.name != 'nt': #sys.platform != 'win32':
         # we create a symbolic link to the shell script that launch python

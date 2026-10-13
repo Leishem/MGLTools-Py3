@@ -59,12 +59,12 @@ Original code by W. Patrick Walters and Matthew T. Stahl
 
 
 
-import string, math
+import math; from mglcompat import pystring as string
 
-from babelAtomTypes import babel_types
-from babelElements import babel_elements
-from util import *
-from atomTypes import TypeConverter
+from .babelAtomTypes import babel_types
+from .babelElements import babel_elements
+from .util import *
+from .atomTypes import TypeConverter
 
 
 SINGLE_DOUBLE_CUTOFF = 0.95
@@ -109,8 +109,8 @@ class BondOrder:
                 b.bondOrder = 2
 
             if b.bondOrder < 1 or b.bondOrder > 3:
-                print "Bond %s is wierd - Bond order is %d\n" % \
-                      (b, b.bondOrder)
+                print("Bond %s is wierd - Bond order is %d\n" % \
+                      (b, b.bondOrder))
 
         self.check_for_conjugation(atoms)
 
@@ -492,8 +492,8 @@ class BondOrder:
 
 if __name__ == '__main__':
     import pdb, sys
-    from atomTypes import AtomHybridization
-    from cycle import RingFinder
+    from .atomTypes import AtomHybridization
+    from .cycle import RingFinder
     
     from MolKit.pdbParser import NewPdbParser
     parser = NewPdbParser("/tsri/pdb/struct/%s.pdb"%sys.argv[1])
@@ -503,15 +503,15 @@ if __name__ == '__main__':
     allAtoms = mol.chains.residues.atoms
     bonds = allAtoms.bonds[0]
 
-    print "assigning atom types"
+    print("assigning atom types")
     babel = AtomHybridization()
     babel.assignHybridization(allAtoms)
 
-    print "looking for rings"
+    print("looking for rings")
     rings = RingFinder()
     rings.findRings(allAtoms, bonds)
 
-    print "assigning bond order"
+    print("assigning bond order")
     bo = BondOrder()
     #pdb.run("bo.assignBondOrder(allAtoms, bonds)")
     bo.assignBondOrder(allAtoms, bonds)
@@ -520,5 +520,5 @@ if __name__ == '__main__':
         if b.bondOrder > 1:
             a1 = b.atom1
             a2 = b.atom2
-            print '%-20s %-20s %d'% ( a1.full_name(), a2.full_name(),
-                                      b.bondOrder )
+            print('%-20s %-20s %d'% ( a1.full_name(), a2.full_name(),
+                                      b.bondOrder ))

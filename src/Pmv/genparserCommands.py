@@ -20,11 +20,12 @@ from MolKit.protein import Protein
 from MolKit.genPdbParser import GenPdbParser, IndexSpecs, ColumnSpecs
 from MolKit.molecule import Atom
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import SaveButton, LoadButton
-import types, os, string
-import Pmw, Tkinter
+import types, os; from mglcompat import pystring as string
+import Pmw, tkinter
 
 
 from Pmv.fileCommands import PDBReader
+from functools import cmp_to_key
 
 class GenPDBReader(PDBReader):
     """ Command to load PDB files using parser with user defined
@@ -62,9 +63,9 @@ class GenPDBReader(PDBReader):
             return mols
         else:
             import traceback,sys
-            print "ERROR IN READING SPECIFICATIONS:%s"%specfile
+            print("ERROR IN READING SPECIFICATIONS:%s"%specfile)
             traceback.print_exc()
-            print "---------- End of error message ----------"
+            print("---------- End of error message ----------")
             if self.vf.hasGui and self.vf.guiVisible \
                and self.vf.withShell:
                 self.vf.GUI.pyshell.top.deiconify()
@@ -76,15 +77,15 @@ class GenPDBReader(PDBReader):
            filename: path name of the PDB file
            specfile: a specification file name
            """
-        return apply ( self.doitWrapper, (filename, specfile), kw )
+        return self.doitWrapper(*(filename, specfile), **kw)
 
     def guiCallback(self, event=None, *args, **kw):
-	cmdmenuEntry = self.GUI.menu[4]['label']
+        cmdmenuEntry = self.GUI.menu[4]['label']
         file = self.vf.askFileOpen(types=self.fileTypes,
                                    idir = self.lastDir,
                                    title=self.fileBrowserTitle)
-	mol = None
-	if file != None:
+        mol = None
+        if file != None:
             self.lastDir = os.path.split(file)[0]
             #args = (file,)
             self.vf.GUI.configMenuEntry(self.GUI.menuButton, cmdmenuEntry,
@@ -102,9 +103,9 @@ class GenPDBReader(PDBReader):
                                         cmdmenuEntry,state = 'normal')
                 except:
                     import traceback,sys
-                    print "ERROR IN LOADING FILE:%s"%file
+                    print("ERROR IN LOADING FILE:%s"%file)
                     traceback.print_exc()
-                    print "---------- End of error message ----------"
+                    print("---------- End of error message ----------")
                     if self.vf.hasGui and self.vf.guiVisible \
                        and self.vf.withShell:
                         self.vf.GUI.pyshell.top.deiconify()
@@ -118,7 +119,7 @@ class GenPDBReader(PDBReader):
 ##                          self.warningMsg(msg)
             self.vf.GUI.configMenuEntry(self.GUI.menuButton,
                                         cmdmenuEntry,state = 'normal')
-	return mol
+        return mol
 
     def extractSpecs(self, file):
         """ takes a specification file in proper format and creates a specs
@@ -152,9 +153,9 @@ class GenPDBReader(PDBReader):
                                  }
                     Specs.define_field(specEntry)
         else: return None
-        if not (Specs.DefFieldsDict.has_key('x') and
-                Specs.DefFieldsDict.has_key('y') and
-                Specs.DefFieldsDict.has_key('z')):
+        if not ('x' in Specs.DefFieldsDict and
+                'y' in Specs.DefFieldsDict and
+                'z' in Specs.DefFieldsDict):
             msg = "specs for atom coordinates (x,y,z) are missing"
             self.warningMsg(msg)
             return None
@@ -243,11 +244,11 @@ class DefinePdbSpecifications(MVCommand):
         entriesString = ''
         if self.Specs.specType=='c':
             entrylist = []
-            for entryname in (self.Specs.DefFieldsDict.keys() +
-                              self.Specs.UserFieldsDict.keys()):
+            for entryname in (list(self.Specs.DefFieldsDict.keys()) +
+                              list(self.Specs.UserFieldsDict.keys())):
                 e = self.Specs.DefFieldsDict[entryname]
                 entrylist.append(e)
-            entrylist.sort(self.compareFrom)
+            entrylist.sort(key=cmp_to_key(self.compareFrom))
             for entry in entrylist:
                 entryname = entry['field_name']
                 e = self.Specs.DefFieldsDict[entryname]
@@ -263,11 +264,11 @@ class DefinePdbSpecifications(MVCommand):
                 entriesString = entriesString + entrystring
         elif self.Specs.specType=='i':
             entrylist = []
-            for entryname in (self.Specs.DefFieldsDict.keys() +
-                              self.Specs.UserFieldsDict.keys()):
+            for entryname in (list(self.Specs.DefFieldsDict.keys()) +
+                              list(self.Specs.UserFieldsDict.keys())):
                 e = self.Specs.DefFieldsDict[entryname]
                 entrylist.append(e)
-            entrylist.sort(self.compareIndex)
+            entrylist.sort(key=cmp_to_key(self.compareIndex))
             for entry in entrylist:
                 entryname = entry['field_name']
                 e = self.Specs.DefFieldsDict[entryname]
@@ -325,9 +326,9 @@ class DefinePdbSpecifications(MVCommand):
 
     def saveSpecs_cb(self, filename, event = None):
         """ callback function to save pdb specs to filename """
-        if not (self.Specs.DefFieldsDict.has_key('x') and
-                self.Specs.DefFieldsDict.has_key('y') and
-                self.Specs.DefFieldsDict.has_key('z')):
+        if not ('x' in self.Specs.DefFieldsDict and
+                'y' in self.Specs.DefFieldsDict and
+                'z' in self.Specs.DefFieldsDict):
             msg = "specs for atom coordinates (x,y,z) are required to parse a pdb file"
             self.warningMsg(msg)
             return
@@ -382,7 +383,7 @@ class DefinePdbSpecifications(MVCommand):
         """ callback function to add button.  Adds the specs in the entry
         fields to the self.Specs object. """
         fieldspec = {}
-        for wName in self.smallidf.entryByName.keys():
+        for wName in list(self.smallidf.entryByName.keys()):
             if wName in specEntries:
                 # check that there is an entry
                 widget = self.smallidf.entryByName[wName]['widget']
@@ -405,8 +406,8 @@ class DefinePdbSpecifications(MVCommand):
         """ callback to put current values of fieldname into the entryfield of
         the gui """
         ebn = self.smallidf.entryByName
-        if self.Specs.DefFieldsDict.has_key(fieldname) or \
-           self.Specs.UserFieldsDict.has_key(fieldname):
+        if fieldname in self.Specs.DefFieldsDict or \
+           fieldname in self.Specs.UserFieldsDict:
             ebn['from']['widget'].setentry(self.Specs.get(fieldname, 'from'))
             ebn['to']['widget'].setentry(self.Specs.get(fieldname, 'to'))
             ebn['var_type']['widget'].component('entryfield').setentry(self.Specs.get(fieldname, 'var_type'))
@@ -418,8 +419,8 @@ class DefinePdbSpecifications(MVCommand):
         """ callback to put current values of fieldname into the entryfield of
         the gui """
         ebn = self.smallidf.entryByName
-        if self.Specs.DefFieldsDict.has_key(fieldname) or \
-           self.Specs.UserFieldsDict.has_key(fieldname):
+        if fieldname in self.Specs.DefFieldsDict or \
+           fieldname in self.Specs.UserFieldsDict:
             ebn['index']['widget'].setentry(self.Specs.get(fieldname, 'index'))
             ebn['var_type']['widget'].component('entryfield').setentry(self.Specs.get(fieldname, 'var_type'))
         else:
@@ -477,19 +478,19 @@ class DefinePdbSpecifications(MVCommand):
                              'gridcfg':{'row':3, 'column':0, 'sticky':'w',
                                         'columnspan':3}
                              })
-            smallidf.append({'widgetType':Tkinter.Button,
+            smallidf.append({'widgetType':tkinter.Button,
                              'name':'Add',
                              'wcfg':{'text':'Add',
                                      'command':self.addToSpecs_cb},
                              'gridcfg':{'row':4, 'column':0, 'sticky':'ew'}
                              })
-            smallidf.append({'widgetType':Tkinter.Button,
+            smallidf.append({'widgetType':tkinter.Button,
                              'name':'Remove',
                              'wcfg':{'text':'Remove',
                                      'command':self.removeFromSpecs_cb},
                              'gridcfg':{'row':4, 'column':1, 'sticky':'ew'}
                              })
-            smallidf.append({'widgetType':Tkinter.Button,
+            smallidf.append({'widgetType':tkinter.Button,
                              'name':'dismiss',
                              'wcfg':{'text':'dismiss',
                                      'command':self.dismiss_smallform_cb},
@@ -540,19 +541,19 @@ class DefinePdbSpecifications(MVCommand):
                              'gridcfg':{'row':2, 'column':0, 'sticky':'w',
                                         'columnspan':3}
                              })
-            smallidf.append({'widgetType':Tkinter.Button,
+            smallidf.append({'widgetType':tkinter.Button,
                              'name':'Add',
                              'wcfg':{'text':'Add',
                                      'command':self.addToSpecs_cb},
                              'gridcfg':{'row':3, 'column':0, 'sticky':'ew'}
                              })
-            smallidf.append({'widgetType':Tkinter.Button,
+            smallidf.append({'widgetType':tkinter.Button,
                              'name':'Remove',
                              'wcfg':{'text':'Remove',
                                      'command':self.removeFromSpecs_cb},
                              'gridcfg':{'row':3, 'column':1, 'sticky':'ew'}
                              })
-            smallidf.append({'widgetType':Tkinter.Button,
+            smallidf.append({'widgetType':tkinter.Button,
                              'name':'dismiss',
                              'wcfg':{'text':'dismiss',
                                      'command':self.dismiss_smallform_cb},
@@ -565,7 +566,7 @@ class DefinePdbSpecifications(MVCommand):
         """ hides widgets of grouptype (either 'i' or 'c').  called by either
         column_cb or index_cb """
         idfentries = self.idf.entryByName
-        for name in idfentries.keys():
+        for name in list(idfentries.keys()):
             if name[:2]==(grouptype+'_'):
                 idfentries[name]['widget'].grid_forget()
         if hasattr(self, 'smallform'):
@@ -578,9 +579,9 @@ class DefinePdbSpecifications(MVCommand):
         either column_cb or index_cb
         """
         idfentries = self.idf.entryByName
-        for name in idfentries.keys():
+        for name in list(idfentries.keys()):
             if name[:2]==(grouptype+'_'):
-                apply(idfentries[name]['widget'].grid,(),idfentries[name]['gridcfg'])
+                idfentries[name]['widget'].grid(*(), **idfentries[name]['gridcfg'])
         self.iFormStatus['%swidgetsshow'%grouptype] = 1
         if grouptype=='c':
             self.Specs = self.columnSpecs
@@ -594,7 +595,7 @@ class DefinePdbSpecifications(MVCommand):
         """ adds widgets to self.idf and self.form useful for column
         specification format.  called bycolumn_cb """
         entries = []
-        entries.append({'widgetType':Tkinter.Button, 'name':'c_define_modify_specs',
+        entries.append({'widgetType':tkinter.Button, 'name':'c_define_modify_specs',
                        'wcfg':{'text':'Define/Modify...',
                                'command':self.defineColSpecs_cb,
                                'width':12},
@@ -624,7 +625,7 @@ class DefinePdbSpecifications(MVCommand):
 
         entries.append({'widgetType':SaveButton,
                         'name':'c_save',
-                        'wcfg':{'buttonType':Tkinter.Button,
+                        'wcfg':{'buttonType':tkinter.Button,
                                 'title':'Save Specifications in File...',
                                 'types':[('All Files','*')],
                                 'idir':fparts[0],
@@ -634,7 +635,7 @@ class DefinePdbSpecifications(MVCommand):
                                               'width':12}},   
                         'gridcfg':{'row':6, 'column':0, 'columnspan':2},#, 'sticky':'w'},
                         })
-        entries.append({'widgetType':Tkinter.Button, 'name':'c_clear',
+        entries.append({'widgetType':tkinter.Button, 'name':'c_clear',
                         'wcfg':{'text':'Clear',
                                 'command':self.clearSpecs_cb,
                                 'width':12},
@@ -653,7 +654,7 @@ class DefinePdbSpecifications(MVCommand):
         """ adds widgets to self.idf and self.form useful to specify in index
         format.  called by index_cb """
         entries = []
-        entries.append({'widgetType':Tkinter.Button, 'name':'i_define_modify_specs',
+        entries.append({'widgetType':tkinter.Button, 'name':'i_define_modify_specs',
                        'wcfg':{'text':'Define/Modify...',
                                'command':self.defineIndSpecs_cb,
                                'width':12},
@@ -680,7 +681,7 @@ class DefinePdbSpecifications(MVCommand):
 ##                          })
         entries.append({'widgetType':SaveButton,
                         'name':'i_save',
-                        'wcfg':{'buttonType':Tkinter.Button,
+                        'wcfg':{'buttonType':tkinter.Button,
                                 'title':'Save Specifications in File...',
                                 'types':[('All Files','*')],
                                 'idir':fparts[0],
@@ -691,7 +692,7 @@ class DefinePdbSpecifications(MVCommand):
                         'gridcfg':{'row':6, 'column':0, 'columnspan':2},
                         })
 
-        entries.append({'widgetType':Tkinter.Button, 'name':'i_clear',
+        entries.append({'widgetType':tkinter.Button, 'name':'i_clear',
                         'wcfg':{'text':'Clear',
                                 'command':self.clearSpecs_cb,
                                 'width':12},
@@ -747,7 +748,7 @@ class DefinePdbSpecifications(MVCommand):
 ##                      })
         idf.append({'widgetType':LoadButton,
                     'name':'readFile',
-                    'wcfg':{'buttonType':Tkinter.Button,
+                    'wcfg':{'buttonType':tkinter.Button,
                             'title':'Load PDB File.',
                             'types':[('pdb files', '*.pdb'), ('all', '*')],
                             'callback':self.fileinScrolledText_cb,
@@ -755,7 +756,7 @@ class DefinePdbSpecifications(MVCommand):
                     'gridcfg':{'row':0, 'column':0, 'sticky':'w', 'pady':5}
                     })
 
-        idf.append({'widgetType':Tkinter.Label, 'name':'FileName',
+        idf.append({'widgetType':tkinter.Label, 'name':'FileName',
                     'gridcfg':{'row':0, 'column':0, 'columnspan':4}
                     })
         idf.append({'widgetType':Pmw.ScrolledText, 'name':'fileView',
@@ -768,20 +769,20 @@ class DefinePdbSpecifications(MVCommand):
                     'gridcfg':{'row':1, 'column':0, 'columnspan':4}#,
                                #'pady':5}
                     })
-        idf.append({'widgetType':Tkinter.Label, 'name':'index_label',
+        idf.append({'widgetType':tkinter.Label, 'name':'index_label',
                     'wcfg':{'font':('Courier New', 10)},
                     'gridcfg':{'row':2, 'column':0, 'columnspan':4,
                                'sticky':'w', 'pady':5}
                     })
-        spectype = Tkinter.StringVar()
-        idf.append({'widgetType':Tkinter.Radiobutton, 'name':'byColumn',
+        spectype = tkinter.StringVar()
+        idf.append({'widgetType':tkinter.Radiobutton, 'name':'byColumn',
                     'wcfg':{'text':'Specify by column',
                             'variable':spectype,
                             'value':'c',
                             'command':self.column_cb},
                     'gridcfg':{'row':3, 'column':0}#, 'columnspan':2}
                     })
-        idf.append({'widgetType':Tkinter.Radiobutton, 'name':'byIndex',
+        idf.append({'widgetType':tkinter.Radiobutton, 'name':'byIndex',
                     'wcfg':{'text':'Specify by index',
                             'variable':spectype,
                             'value':'i',
@@ -799,7 +800,7 @@ class DefinePdbSpecifications(MVCommand):
 ##                      })
         idf.append({'widgetType':LoadButton,
                     'name':'load',
-                    'wcfg':{'buttonType':Tkinter.Button,
+                    'wcfg':{'buttonType':tkinter.Button,
                             'title':'Load Specification File ',
                             'idir':'.',
                             'types':[('all', '*')],
@@ -808,12 +809,12 @@ class DefinePdbSpecifications(MVCommand):
                     'gridcfg':{'row':3, 'column':2, 'sticky':'ew'}
                     })
 
-        idf.append({'widgetType':Tkinter.Label, 'name':'SpecFileName',
+        idf.append({'widgetType':tkinter.Label, 'name':'SpecFileName',
                     'gridcfg':{'row':4, 'column':0, 'columnspan':4,
                                'pady':5}
                     })
         idf.append({'name':'dismiss',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Dismiss',
                             'command': self.dismiss_cb},
                     'gridcfg':{'row':3, 'column':3, 'sticky':'ew'}#,

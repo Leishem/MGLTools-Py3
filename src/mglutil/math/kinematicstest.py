@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # Last modified on Thu Jan 24 16:14:31 PST 2002 by lindy
@@ -40,8 +40,8 @@ Requirements for kinematics.py:
 from mglutil.math.kinematics import Kinematics
 from mglutil.math.transformation import Transformation
 import unittest, math
-import numpy.oldnumeric as Numeric, numpy.oldnumeric.random_array as RandomArray
-from UserList import UserList
+import mglcompat.oldnumeric as Numeric, mglcompat.oldnumeric.random_array as RandomArray
+from collections import UserList
 
 
 
@@ -103,7 +103,7 @@ class KinematicsTest(unittest.TestCase):
         else:
             d = self.decimals
 
-        for point in xrange(len(a1)):
+        for point in range(len(a1)):
             for axis in [0, 1, 2]:
                 self.assertEqual(round(a1[point][axis],d),
                                  round(a2[point][axis],d))

@@ -8,13 +8,13 @@
 #
 ##########################################################################
 
-import Tkinter
+import tkinter
 import Pmw
-import string, time, os
+import time, os; from mglcompat import pystring as string
 
 # class ToolBarButton modified from 'Python and Tkinter Programming'
 # handbook by John E. Grayson
-class ToolBarButton(Tkinter.Label):
+class ToolBarButton(tkinter.Label):
     """
     This class implements a toolbar button.
     - balloonmaster is the master the balloon help is bound to
@@ -53,7 +53,7 @@ names need to be different.
         if not hasattr(master, 'toolbarButtonDict'):
             master.toolbarButtonDict = {}
         # assert the button name doesn't exist already
-        assert not master.toolbarButtonDict.has_key(name), name
+        assert name not in master.toolbarButtonDict, name
 
         self.activebackground = activebackground
         self.name = name
@@ -62,7 +62,7 @@ names need to be different.
         self.buttonPressed = 0  # 0 if button not pressed, 1 if pressed
         self.buttonFocus = 0    # 0 if cursor not over button, 1 if over button
         
-        Tkinter.Label.__init__(self, master, height=height, width=width,
+        tkinter.Label.__init__(self, master, height=height, width=width,
                        relief='flat', bd=bd, bg=bg)
 
         if iconpath is None:
@@ -73,18 +73,18 @@ names need to be different.
         if icon1 is not None:
             ICONPATH1 = os.path.join(iconpath, icon1)
             if string.splitfields(icon1, '.')[1] == 'bmp':
-                self.icon1 = Tkinter.BitmapImage(file=ICONPATH1, master=master)
+                self.icon1 = tkinter.BitmapImage(file=ICONPATH1, master=master)
             else:
-                self.icon1 = Tkinter.PhotoImage(file=ICONPATH1, master=master)
+                self.icon1 = tkinter.PhotoImage(file=ICONPATH1, master=master)
         else:
             self.icon1 = None
 
         if icon2 is not None:
             ICONPATH2 = os.path.join(iconpath, icon2)
             if string.splitfields(icon2, '.')[1] == 'bmp':
-                self.icon2 = Tkinter.BitmapImage(file=ICONPATH2, master=master)
+                self.icon2 = tkinter.BitmapImage(file=ICONPATH2, master=master)
             else:
-                self.icon2 = Tkinter.PhotoImage(file=ICONPATH2, master=master)
+                self.icon2 = tkinter.PhotoImage(file=ICONPATH2, master=master)
         else:
             self.icon2 = self.icon1
 
@@ -107,7 +107,7 @@ names need to be different.
         self.bind("<Leave>",           self.buttonLeave, '+')
         self.bind("<ButtonPress-1>",   self.buttonDown)
         self.bind("<ButtonRelease-1>", self.buttonUp)
-        self.pack(side='left', anchor=Tkinter.NW, padx=padx, pady=pady)
+        self.pack(side='left', anchor=tkinter.NW, padx=padx, pady=pady)
         self.state = state    
 
         # add the button to the list stored in the master
@@ -164,13 +164,13 @@ names need to be different.
 
 if __name__ == '__main__':
     
-    tbframe = Tkinter.Frame()
+    tbframe = tkinter.Frame()
     tbframe.balloons = Pmw.Balloon(tbframe)
 
     buttonFuncs = {}
 
     def foo():
-        print 'You pressed a button.'
+        print('You pressed a button.')
 
     def selectFunc(name):
         curFunc = buttonFuncs[name]

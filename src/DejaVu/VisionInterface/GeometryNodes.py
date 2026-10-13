@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -25,8 +25,8 @@ import os
 import sys
 from warnings import warn
 from weakref import ref 
-from numpy.oldnumeric import array, identity
-from Tkinter import Menu
+from mglcompat.oldnumeric import array, identity
+from tkinter import Menu
 from os.path import splitext
 
 # TSRI packages
@@ -95,7 +95,7 @@ the appendGeometry of GeomsFromFile
     def __init__(self, geomOutputPortName, **kw):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.geometriesOwner = True # tell if the node has created the geometries
                                     # or is just displaying geometries
@@ -257,7 +257,7 @@ the appendGeometry of GeomsFromFile
                 lOpts['instanceMatrices'] = mat
             #lOpts['redo'] = 0
             lOpts['tagModified'] = False
-            apply( self.geom().Set, (), lOpts )
+            self.geom().Set(*(), **lOpts)
 
 #        if lgeomState is not None and self.selectedGeomIndex is not None:
 #            for key in lOpts.keys():
@@ -765,7 +765,7 @@ and draws the connections if they are selected in their own node
                     while lParentNode.network != lMacroNode.network:
                         lMacroNode = lMacroNode.network.macroNode
                     lPortNameInMacro = self.name + '_parent'
-                    if lMacroNode.inputPortByName.has_key(lPortNameInMacro) is False:
+                    if (lPortNameInMacro in lMacroNode.inputPortByName) is False:
                         for p in lMacroNode.inputPorts:
                              if p.name.endswith('_parent'):
                                  lPortNameInMacro = p.name
@@ -784,7 +784,7 @@ and draws the connections if they are selected in their own node
                     while self.network != lMacroNode.network:
                         lMacroNode = lMacroNode.network.macroNode
                     lPortNameInMacro = lParentNode.name + '_' + lParentNodeOutputPort.name
-                    if lMacroNode.outputPortByName.has_key(lPortNameInMacro) is False:
+                    if (lPortNameInMacro in lMacroNode.outputPortByName) is False:
                         for p in lMacroNode.outputPorts:
                              if p.name.endswith('_' + lParentNodeOutputPort.name):
                                  lPortNameInMacro = p.name
@@ -846,7 +846,7 @@ and draws the connections if they are selected in their own node
                     lMacroNode = lMacroNetwork.macroNode
                     lMacroNetwork = lMacroNode.network
                 lPortNameInMacro = self.name + '_parent'
-                if lMacroNode.inputPortByName.has_key(lPortNameInMacro) is False:
+                if (lPortNameInMacro in lMacroNode.inputPortByName) is False:
                     for p in lMacroNode.inputPorts:
                          if p.name.endswith('_parent'):
                              lPortNameInMacro = p.name
@@ -1148,7 +1148,7 @@ Specific Input Ports:
     def __init__(self, name='indexedPolygons', **kw):
         
         kw['name'] = name
-        apply( GeometryNode.__init__, (self, 'indexedPolygons'), kw )        
+        GeometryNode.__init__(*(self, 'indexedPolygons'), **kw)        
         
         ip = self.inputPortsDescr
         ip.append(datatype='coord3(0)', name='coords')
@@ -1250,7 +1250,7 @@ Specific Input Ports:
     def __init__(self, name='indexedPolylines', **kw):
         
         kw['name'] = name
-        apply( GeometryNode.__init__, (self,'indexedPolylines'), kw )        
+        GeometryNode.__init__(*(self,'indexedPolylines'), **kw)        
         
         ip = self.inputPortsDescr
         ip.append(datatype='coord3(0)', name='coords')
@@ -1349,7 +1349,7 @@ Specific Input Ports:
     def __init__(self, name='cylinders', **kw):
         
         kw['name'] = name
-        apply( GeometryNode.__init__, (self,'cylinders'), kw )        
+        GeometryNode.__init__(*(self,'cylinders'), **kw)        
         
         ip = self.inputPortsDescr
         ip.append(datatype='coord3(0)', name='coords', required=False, defaultValue=((0,0,0),(10,0,0)) )
@@ -1459,7 +1459,7 @@ Specific Input Ports:
     def __init__(self, name='axis', **kw):
         
         kw['name'] = name
-        apply( GeometryNode.__init__, (self,'axis'), kw )        
+        GeometryNode.__init__(*(self,'axis'), **kw)        
         
         ip = self.inputPortsDescr
         ip.append(datatype='coord3(0)', name='coords', required=False, defaultValue=((0,0,0),(10,0,0)) )
@@ -1582,7 +1582,7 @@ Input Ports:
     def __init__(self, name='spheres', **kw):
         
         kw['name'] = name
-        apply( GeometryNode.__init__, (self,'spheres'), kw )        
+        GeometryNode.__init__(*(self,'spheres'), **kw)        
         
         ip = self.inputPortsDescr
         ip.append(datatype='coord3(0)', name='coords', required=False, defaultValue=((0,0,0),))
@@ -1693,7 +1693,7 @@ Input Ports:
     def __init__(self, name='points', **kw):
         
         kw['name'] = name
-        apply( GeometryNode.__init__, (self,'points'), kw )        
+        GeometryNode.__init__(*(self,'points'), **kw)        
         
         ip = self.inputPortsDescr
         ip.append(datatype='coord3(0)', name='coords', required=False, defaultValue=((0,0,0),))
@@ -1788,7 +1788,7 @@ Input Ports:
     def __init__(self, name='crossSet', **kw):
         
         kw['name'] = name
-        apply( GeometryNode.__init__, (self,'crossSet'), kw )        
+        GeometryNode.__init__(*(self,'crossSet'), **kw)        
         
         ip = self.inputPortsDescr
         ip.append(datatype='coord3(0)', name='coords', required=False, defaultValue=((0,0,0),))
@@ -1880,7 +1880,7 @@ Specific Input Ports:
     def __init__(self, name='geomContainer', **kw):
         
         kw['name'] = name
-        apply( GeometryNode.__init__, (self,'geomContainer'), kw )        
+        GeometryNode.__init__(*(self,'geomContainer'), **kw)        
         
         #ip = self.inputPortsDescr
         
@@ -1960,7 +1960,7 @@ Specific Input Ports:
     def __init__(self, name='ellipsoids', **kw):
         
         kw['name'] = name
-        apply( GeometryNode.__init__, (self,'ellipsoids'), kw )        
+        GeometryNode.__init__(*(self,'ellipsoids'), **kw)        
         
         ip = self.inputPortsDescr
         ip.append(datatype='list', name='ellipsoids')
@@ -2062,7 +2062,7 @@ Specific Input Ports:
     def __init__(self, name='heightField', **kw):
 
         kw['name'] = name
-        apply( GeometryNode.__init__, (self,'heightField'), kw)
+        GeometryNode.__init__(*(self,'heightField'), **kw)
 
         ip = self.inputPortsDescr
         ip.append({'name': 'data', 'datatype': '2Darray'})
@@ -2166,7 +2166,7 @@ Specific Input Ports:
 """
     def __init__(self, name='geomsFromFile', **kw):
         kw['name'] = name
-        apply( GeometryNode.__init__, (self,'geomsFromFile'), kw )
+        GeometryNode.__init__(*(self,'geomsFromFile'), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='string', name='filename')
@@ -2270,7 +2270,7 @@ name, geoms, instanceMatrices, geomOptions, parent):
             from mslib.msmsParser import MSMSParser
             faceFilename = os.path.splitext(filename)[0] + '.face'
             vertFilename = filename
-            print "faceFilename", faceFilename
+            print("faceFilename", faceFilename)
             from mslib.msmsParser import MSMSParser
             lMsmsParser = MSMSParser()
             from DejaVu.IndexedPolygons import IndexedPolygons
@@ -2279,8 +2279,8 @@ name, geoms, instanceMatrices, geomOptions, parent):
             moreGeoms = [ singleGeom ]
             self.nameGeoms(moreGeoms, filename)
             return moreGeoms
-	except:
-	    return None
+        except:
+            return None
 
 
     def readFileIndexedPolygons(self, filename):
@@ -2471,7 +2471,7 @@ Specific Input Ports:
     def __init__(self, name='glflabels', **kw):
         
         kw['name'] = name
-        apply( GeometryNode.__init__, (self, 'glflabels'), kw )        
+        GeometryNode.__init__(*(self, 'glflabels'), **kw)        
         
         ip = self.inputPortsDescr
         ip.append(datatype='coord3(0)', name='coords', required=False, defaultValue=((0,0,0),) )
@@ -2806,7 +2806,7 @@ Specific Input Ports:
 
     def __init__(self, name='box', **kw):
         kw['name'] = name
-        apply( GeometryNode.__init__, (self, 'box'), kw )        
+        GeometryNode.__init__(*(self, 'box'), **kw)        
 
         ip = self.inputPortsDescr
         ip.append(datatype='float', required=False, name='centerx')
@@ -2981,7 +2981,7 @@ Specific Input Ports:
 
     def __init__(self, name='stickerText', **kw):
         kw['name'] = name
-        apply( GeometryNode.__init__, (self, 'stickerText'), kw )
+        GeometryNode.__init__(*(self, 'stickerText'), **kw)
 
         self.widgetDescr['label'] = {
             'class':'NEEntry',
@@ -3077,7 +3077,7 @@ Specific Input Ports:
 
     def __init__(self, name='stickerImage', **kw):
         kw['name'] = name
-        apply( GeometryNode.__init__, (self, 'stickerImage'), kw )
+        GeometryNode.__init__(*(self, 'stickerImage'), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='image', required=True, name='image')
@@ -3157,7 +3157,7 @@ Specific Input Ports:
 
     def __init__(self, name='oneTexturedQuad', **kw):
         kw['name'] = name
-        apply( GeometryNode.__init__, (self, 'oneTexturedQuad'), kw )
+        GeometryNode.__init__(*(self, 'oneTexturedQuad'), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='image', required=False, name='image')
@@ -3254,7 +3254,7 @@ Specific Input Ports:
 
     def __init__(self, name = "decimateGeom", **kw):
         kw['name'] = name
-        apply( GeometryNode.__init__, (self,"decimateGeom"), kw )
+        GeometryNode.__init__(*(self,"decimateGeom"), **kw)
         self.widgetDescr['name']['initialValue'] = ""
         self.widgetDescr['percent'] = {
             'class':'NEDial', 'master':'ParamPanel', 'size':50,
@@ -3467,7 +3467,7 @@ Specific Input Ports:
     def __init__(self, name='ConnectedComponents', **kw):
         
         kw['name'] = name
-        apply( GeometryNode.__init__, (self, 'ConnectedComponents'), kw )
+        GeometryNode.__init__(*(self, 'ConnectedComponents'), **kw)
         self.geometry = None
         self.outgeoms = []
         
@@ -3562,7 +3562,7 @@ name, geoms, instanceMatrices, geomOptions, parent):
         while flag2:
             for i, fs in enumerate(faces):
                 for v in fs:
-                    if not vdict.has_key(v):
+                    if v not in vdict:
                         vdict[v] = [i]
                     else:
                         vdict[v].append(i)
@@ -3580,7 +3580,7 @@ name, geoms, instanceMatrices, geomOptions, parent):
                 for vert in Vco:
                     vfs = vdict[vert]
                     for i in vfs:
-                        if fdict.has_key(i):
+                        if i in fdict:
                             flag1 = True
                             fs = fdict.pop(i)
 
@@ -3589,7 +3589,7 @@ name, geoms, instanceMatrices, geomOptions, parent):
                                 if v not in Vco: 
                                     if v not in _Vco:
                                         _Vco.append(v)
-                                if not  vertinds.has_key(v):
+                                if v not in vertinds:
                                     vertinds[v] = vcount
                                     newverts1.append(verts[v])
                                     fsnew.append(vcount) 
@@ -3602,7 +3602,7 @@ name, geoms, instanceMatrices, geomOptions, parent):
             newfaces.append(newfaces1)
             newverts.append(newverts1)
             if  len(fdict):
-                faces = fdict.values()
+                faces = list(fdict.values())
                 fdict = {}
                 vdict = {}
                 flag1 = True

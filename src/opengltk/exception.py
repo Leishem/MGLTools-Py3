@@ -8,13 +8,13 @@
 __all__ = ()
 
 
-from extent import _gllib
-from extent._glulib import gluErrorString
+from .extent import _gllib
+from .extent._glulib import gluErrorString
 
-class GLerror( StandardError):
+class GLerror( Exception):
     def __init__( self, *errs):
         self.errs = errs
-        apply( StandardError.__init__, [self] + map( gluErrorString, errs))
+        Exception.__init__(*[self] + list(map( gluErrorString, errs)))
 
 
 ##errmap = {
@@ -38,10 +38,10 @@ def processglerror( errcode):
         errs.append( othererr)
         if opengltk_exception_maxerrs < len( errs):
             raise SystemError( 'opengltk_exception_maxerrs reached',
-                               map( gluErrorString, errs))
+                               list(map( gluErrorString, errs)))
         othererr = _gllib.glGetError()
 
-    raise apply( GLerror, errs)
+    raise GLerror(*errs)
 
 
 class GLwarning( RuntimeWarning):
@@ -59,7 +59,7 @@ class Glxerror( RuntimeError):
         self.code = code
         RuntimeError.__init__( self, code)
     def __repr__( self):
-        return `self.code`
+        return repr(self.code)
     def __str__( self):
         from opengltk.extent import glxlib
         return {

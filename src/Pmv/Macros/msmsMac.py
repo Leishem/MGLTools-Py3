@@ -11,7 +11,7 @@ def computeSesArea():
     #
     for m in selection:
         if hasattr(m.geomContainer, 'msms'):
-            for ms, num in m.geomContainer.msms.values():
+            for ms, num in list(m.geomContainer.msms.values()):
                 # loop over components of that MSMS surface
                 for i in range(ms.rsr.nb):
                     ms.compute_ses_area()
@@ -30,7 +30,7 @@ def assignAtomicSurfaceArea():
             for a in atomSet:
                 a.ses_area = {}
                 a.sas_area = {}
-            for name, (ms, msn) in m.geomContainer.msms.items():
+            for name, (ms, msn) in list(m.geomContainer.msms.items()):
                 indName = '__surfIndex%d__'%msn
                 for a in atomSet:
                     n = getattr(a, indName)
@@ -91,7 +91,7 @@ def avgPercentageOfExposedSurface():
         if nbSES>0:
             m.avgPercentSES = sumSES/nbSES
             m.avgPercentSAS = sumSAS/nbSAS
-            print "average percentage of exposed surface for %s: SES %f SAS %f"%(m.name,m.avgPercentSES,m.avgPercentSAS)
+            print("average percentage of exposed surface for %s: SES %f SAS %f"%(m.name,m.avgPercentSES,m.avgPercentSAS))
 
 def cavityVolume():
     """Report the numerical volume of the MSMS surface compute for molecule
@@ -106,9 +106,9 @@ def cavityVolume():
         if hasattr( m.geomContainer, 'msms'):
             m.geomContainer.msms.compute_numeric_area_vol()
             vol = m.geomContainer.msms.sesr.fst.n_ses_volume
-            print "molecule", m.name, 'Volume: ', vol
+            print("molecule", m.name, 'Volume: ', vol)
         else:
-            print 'no surface found for', m.name
+            print('no surface found for', m.name)
 
 def numericalVolume():
     """Compute the numerical volume of an msmsSel surface for the current
@@ -117,11 +117,11 @@ def numericalVolume():
     mol = sel.top.uniq()
     assert len(mol)==1
     mol = mol[0]
-    num = len(mol.geomContainer.msms.keys())
+    num = len(list(mol.geomContainer.msms.keys()))
     self.computeMSMS(self.getSelection(), 1.5, 3.0, "mysurf%d"%num)
     msmssrfhandle= mol.geomContainer.msms["mysurf%d"%num][0]
     msmssrfhandle.compute_numeric_area_vol()
     vol = msmssrfhandle.sesr.fst.n_ses_volume
     name = "mysurf%d_NVolume"%num
-    print name, vol
+    print(name, vol)
     setattr(self, "mysurf%d_NVolume"%num, vol)

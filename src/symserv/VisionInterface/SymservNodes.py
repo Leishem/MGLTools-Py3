@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #########################################################################
 #
@@ -16,7 +16,7 @@
 #########################################################################
 
 import warnings
-import numpy.oldnumeric as Numeric, math, types
+import mglcompat.oldnumeric as Numeric, math, types
 from mglutil.math.rotax import rotax	
 
 from NetworkEditor.items import NetworkNode
@@ -40,7 +40,7 @@ input ports of the nodes in thei file are NOT singleConnection by default.
         return None
 
     # if the port is singleConnection we do not have an additional list
-    if len(matricesList) and type(matricesList[0])!=types.ListType:
+    if len(matricesList) and type(matricesList[0])!=list:
         return matricesList
     
     mats = []
@@ -83,18 +83,18 @@ class SaveToFile(NetworkNode):
     def __init__(self, name='Save', **kw):
         kw['name']=name
 
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {
             'class':'NEEntryWithFileSaver', 'master':'node', 'width':16,
             'initialValue':'', 'labelCfg':{'text':'Filename: '}
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='string', name='filename')
         ip.append(datatype='instancemat(0)', name='matrices')
 
-	code = """def doit(self, filename, matrices):
+        code = """def doit(self, filename, matrices):
     from symserv.utils import saveInstancesMatsToFile
     if filename:
         saveInstancesMatsToFile(filename, matrices)
@@ -116,20 +116,20 @@ class ReadFromFile(NetworkNode):
     def __init__(self, name='Save', **kw):
         kw['name']=name
 
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {
             'class':'NEEntryWithFileBrowser', 'master':'node', 'width':16,
             'initialValue':'', 'labelCfg':{'text':'Filename: '}
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='string', name='filename')
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='matrices')
 
-	code = """def doit(self, filename):
+        code = """def doit(self, filename):
     from symserv.utils import readInstancesMatsFromFile
     if filename:
         mats = readInstancesMatsFromFile(filename)
@@ -146,7 +146,7 @@ class Identity(NetworkNode):
     def __init__(self, name='Identity', symmetry=1, **kw):
         kw['name']=name
         kw['symmetry'] = symmetry
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['copies'] = {
             'class':'NEThumbWheel', 'width':100, 'height':26, 'wheelPad':4,
@@ -161,10 +161,10 @@ class Identity(NetworkNode):
         ip = self.inputPortsDescr
         ip.append(datatype='int', name='copies')
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
 
-	code = """def doit(self, copies):
+        code = """def doit(self, copies):
     result = []
     for i in xrange(copies):
         result.append(Numeric.identity(4, 'f'))
@@ -181,16 +181,16 @@ class AlignVectToVect(NetworkNode):
     def __init__(self, name='Vect2Vect', symmetry=1, **kw):
         kw['name']=name
         kw['symmetry'] = symmetry
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='None', name='vect1')
         ip.append(datatype='None', name='vect2')
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
 
-	code = """def doit(self, vect1, vect2):
+        code = """def doit(self, vect1, vect2):
     from math import sqrt
     try:
         vect1[0][0]
@@ -246,7 +246,7 @@ Output:
 """
     def __init__(self, name='PerurbVector', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.vector = None
         ip = self.inputPortsDescr
@@ -254,7 +254,7 @@ Output:
         ip.append(datatype='float', name='sigma', defaultValue=.3)
         ip.append(datatype='bool', name='normalize', defaultValue=1)
 
-	self.widgetDescr['vector'] = {
+        self.widgetDescr['vector'] = {
             'class':'NEVectorGUI',
             'size':100, 'continuous':1,'mode':'XY',
             'labelGridCfg':{'columnspan':2},
@@ -270,7 +270,7 @@ Output:
             'labelCfg':{'text':'sigma:'},
             }
 
-	self.widgetDescr['normalize'] = {
+        self.widgetDescr['normalize'] = {
             'class':'NECheckButton', 'master':'node', 'initialValue':1,
             'labelCfg':{'text':'normalize'},
             }
@@ -301,11 +301,11 @@ class SymNFoldNode(NetworkNode):
     def __init__(self, name='Prototype', symmetry=1, **kw):
         kw['name']=name
         kw['symmetry'] = symmetry
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = SymNFold( (1,0,0), (0,0,0), symmetry, 1 )
 
-	code = """def doit(self, matrices, vector, point, identity):  
+        code = """def doit(self, matrices, vector, point, identity):  
     matrices = ToList(matrices)
     self.operator.set(vector=vector, point=point, symmetry=%d,
                       identity=identity)
@@ -313,8 +313,8 @@ class SymNFoldNode(NetworkNode):
     self.outputData(outMatrices=result)\n"""%symmetry
 
         if code: self.setFunction(code)
-	
-	self.widgetDescr['vector'] = {
+        
+        self.widgetDescr['vector'] = {
             'class':'NEVectorGUI',
             'size':100, 'continuous':1,'mode':'XY',
             'labelGridCfg':{'columnspan':2},
@@ -338,14 +338,14 @@ class SymNFoldNode(NetworkNode):
             'labelCfg':{'text':'Identity'},
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='instancemat(0)', required=False,
                   singleConnection=False, name='matrices')
-	ip.append(datatype='None', required=False, name='vector')
-	ip.append(datatype='None', required=False, name='point')
-	ip.append(datatype='int', required=False, name='identity')
+        ip.append(datatype='None', required=False, name='vector')
+        ip.append(datatype='None', required=False, name='point')
+        ip.append(datatype='int', required=False, name='identity')
         
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
 
 
@@ -361,7 +361,7 @@ is added or not. """
     def __init__(self, name='Sym2Fold', **kw):
         kw['name']=name
         kw['symmetry'] = 2
-        apply( SymNFoldNode.__init__, (self,), kw)
+        SymNFoldNode.__init__(*(self,), **kw)
 
 
 
@@ -374,11 +374,11 @@ panel. Additionally, a center of origin can be specified as well as the number
 of symmetries. The identity checkbutton controls whether the identity matrix
 is added or not. """ 
 
-	
+        
     def __init__(self, name='Sym3Fold', **kw):
         kw['name']=name
         kw['symmetry'] = 3
-        apply( SymNFoldNode.__init__, (self,), kw)
+        SymNFoldNode.__init__(*(self,), **kw)
 
 
 class Sym4FoldNE(SymNFoldNode):
@@ -393,7 +393,7 @@ is added or not. """
     def __init__(self, name='Sym4Fold', **kw):
         kw['name']=name
         kw['symmetry'] = 4
-        apply( SymNFoldNode.__init__, (self,), kw)
+        SymNFoldNode.__init__(*(self,), **kw)
 
 
 class Sym5FoldNE(SymNFoldNode):
@@ -408,7 +408,7 @@ is added or not. """
     def __init__(self, name='Sym5Fold', **kw):
         kw['name']=name
         kw['symmetry'] = 5
-        apply( SymNFoldNode.__init__, (self,), kw)
+        SymNFoldNode.__init__(*(self,), **kw)
 
 
 class Sym6FoldNE(SymNFoldNode):
@@ -423,8 +423,8 @@ is added or not. """
     def __init__(self, name='Sym6Fold', **kw):
         kw['name']=name
         kw['symmetry'] = 6
-        apply( SymNFoldNode.__init__, (self,), kw)
-	
+        SymNFoldNode.__init__(*(self,), **kw)
+        
 
 
 class SymNFoldNE(NetworkNode):
@@ -438,11 +438,11 @@ is added or not. """
 
     def __init__(self, name='SymNFold', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = SymNFold( (1,0,0), (0,0,0), 1, 1 )
 
-	code = """def doit(self, matrices, vector, point, symmetry, identity):
+        code = """def doit(self, matrices, vector, point, symmetry, identity):
 
     matrices = ToList(matrices)
     self.operator.set(vector=vector, point=point, symmetry=symmetry,
@@ -451,8 +451,8 @@ is added or not. """
     self.outputData(outMatrices=result)\n"""
 
         if code: self.setFunction(code)
-	
-	self.widgetDescr['vector'] = {
+        
+        self.widgetDescr['vector'] = {
             'class':'NEVectorGUI',
             'size':100, 'continuous':1,'mode':'XY',
             'labelGridCfg':{'columnspan':2},
@@ -485,17 +485,17 @@ is added or not. """
             'labelCfg':{'text':'Identity'},
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='instancemat(0)', required=False,
                   singleConnection=False, name='matrices')
-	ip.append(datatype='None', required=False, name='vector')
-	ip.append(datatype='None', required=False, name='point')
-	ip.append(datatype='int', required=False, name='symmetry')
-	ip.append(datatype='int', required=False, name='identity')
+        ip.append(datatype='None', required=False, name='vector')
+        ip.append(datatype='None', required=False, name='point')
+        ip.append(datatype='int', required=False, name='symmetry')
+        ip.append(datatype='int', required=False, name='identity')
         
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
-	
+        
 
 class SymTransNE(NetworkNode):
     """Apply a translation to an incomming stream of 4x4 matrices.
@@ -506,11 +506,11 @@ The identity checkbutton controls whether the identity matrix is added or not.
 """ 
     def __init__(self, name='SymTranslation', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = SymTrans( (1.0,0.0,0.0), 0.0, 0 )
 
-	code = """def doit(self, matrices, vector, length, identity):
+        code = """def doit(self, matrices, vector, length, identity):
     matrices = ToList(matrices)
     self.operator.set(vector=vector, identity=identity,length=length)
     result = self.operator(matrices)
@@ -518,8 +518,8 @@ The identity checkbutton controls whether the identity matrix is added or not.
 """
 
         if code: self.setFunction(code)
-	
-	self.widgetDescr['vector'] = {
+        
+        self.widgetDescr['vector'] = {
             'class':'NEVectorGUI', 'size':100,
             'labelGridCfg':{'columnspan':2},
             'widgetGridCfg':{'columnspan':2,'labelSide':'top'},
@@ -535,23 +535,23 @@ The identity checkbutton controls whether the identity matrix is added or not.
             'labelCfg':{'text':'vector length:'},
             }
         
-	self.widgetDescr['identity'] = {
+        self.widgetDescr['identity'] = {
             'class':'NECheckButton',
             'initialValue':0,
             'labelCfg':{'text':'Identity'},
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='instancemat(0)', required=False,
                   singleConnection=False, name='matrices')
-	ip.append(datatype='None', required=False, name='vector')
-	ip.append(datatype='None', required=False, name='length')
-	ip.append(datatype='int', required=False, name='identity')
+        ip.append(datatype='None', required=False, name='vector')
+        ip.append(datatype='None', required=False, name='length')
+        ip.append(datatype='int', required=False, name='identity')
         
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
 
-		
+                
 class SymTransXYZNE(NetworkNode):
     """Apply a translation to an incomming stream of 4x4 matrices.
 The node then outputs a list of 4x4 matrices, concatenated with any incoming
@@ -561,18 +561,18 @@ The identity checkbutton controls whether the identity matrix is added or not.
 """ 
     def __init__(self, name='SymTranslationXYZ', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = SymTransXYZ( (0,0,0, (0,0,0),(0,0,0),(0,0,0)),0 )
 
-	code = """def doit(self, matrices, vector, identity):
+        code = """def doit(self, matrices, vector, identity):
     matrices = ToList(matrices)
     self.operator.set(data=vector, identity=identity)
     result = self.operator(matrices)
     self.outputData(outMatrices=result)\n"""
 
         if code: self.setFunction(code)
-	
+        
         self.widgetDescr['vector'] = {
             'class':'NEXYZVectGUI',
             'vectX':'1 0 0','vectY':'0 1 0','vectZ':'0 0 1',
@@ -581,19 +581,19 @@ The identity checkbutton controls whether the identity matrix is added or not.
             'labelCfg':{'text':''},
             }
 
-	self.widgetDescr['identity'] = {
+        self.widgetDescr['identity'] = {
             'class':'NECheckButton',
             'initialValue':0,
             'labelCfg':{'text':'Identity'},
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='instancemat(0)', required=False,
                   singleConnection=False, name='matrices')
-	ip.append(datatype='None', required=False, name='vector')
-	ip.append(datatype='int', required=False, name='identity')
+        ip.append(datatype='None', required=False, name='vector')
+        ip.append(datatype='int', required=False, name='identity')
         
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
 
 
@@ -607,11 +607,11 @@ matrix is added or not. """
 
     def __init__(self, name='SymRotation', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = SymRot( (1,0,0), (0,0,0), 0, 0 )
 
-	code = """def doit(self, matrices, vector, point, angle, identity):
+        code = """def doit(self, matrices, vector, point, angle, identity):
     matrices = ToList(matrices)
     self.operator.set(vector=vector, point=point, angle=angle,
                       identity=identity)
@@ -619,8 +619,8 @@ matrix is added or not. """
     self.outputData(outMatrices=result)\n"""
 
         if code: self.setFunction(code)
-	
-	self.widgetDescr['vector'] = {
+        
+        self.widgetDescr['vector'] = {
             'class':'NEVectorGUI', 'size':100,
             'labelGridCfg':{'columnspan':2},
             'widgetGridCfg':{'columnspan':2, 'labelSide':'top'},
@@ -644,24 +644,24 @@ matrix is added or not. """
             'labelCfg':{'text':'angle'},
             }
         
-	self.widgetDescr['identity'] = {
+        self.widgetDescr['identity'] = {
             'class':'NECheckButton',
             'initialValue':0,
             'labelCfg':{'text':'Identity'},
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='instancemat(0)', required=False,
                   singleConnection=False, name='matrices')
-	ip.append(datatype='None', required=False, name='vector')
-	ip.append(datatype='None', required=False, name='point')
-	ip.append(datatype='float', required=False, name='angle')
-	ip.append(datatype='int', required=False, name='identity')
+        ip.append(datatype='None', required=False, name='vector')
+        ip.append(datatype='None', required=False, name='point')
+        ip.append(datatype='float', required=False, name='angle')
+        ip.append(datatype='int', required=False, name='identity')
         
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
 
-	
+        
 class SymHelixNE(NetworkNode):
     """Generates a helix.
 Helix parameters are controlled by a VectorGUI widget located in the
@@ -679,11 +679,11 @@ Input:
     def __init__(self, name='SymHelix', **kw):
 
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = SymHelix( (0.,1.,0.), (0.,0.,0.), 0., 0., 1 )
 
-	code = """def doit(self, matrices, vector, point, angle, hrise, copies):
+        code = """def doit(self, matrices, vector, point, angle, hrise, copies):
 
     matrices = ToList(matrices)
     self.operator.set(vector=vector, point=point, angle=angle, hrise=hrise,
@@ -734,19 +734,19 @@ Input:
             'labelCfg':{'text':'# copies'},
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='instancemat(0)', required=False,
                   singleConnection=False, name='matrices')
-	ip.append(datatype='None', required=False, name='vector')
-	ip.append(datatype='None', required=False, name='point')
-	ip.append(datatype='float', required=False, name='angle')
-	ip.append(datatype='float', required=False, name='hrise')
-	ip.append(datatype='int', required=False, name='copies')
+        ip.append(datatype='None', required=False, name='vector')
+        ip.append(datatype='None', required=False, name='point')
+        ip.append(datatype='float', required=False, name='angle')
+        ip.append(datatype='float', required=False, name='hrise')
+        ip.append(datatype='int', required=False, name='copies')
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
 
-	
+        
 class SymSuperHelixNE(NetworkNode):
     """Generates a super helix. This is a helical arrangement (local helix)
     that follows a helical path (overall helix)
@@ -770,13 +770,13 @@ Input:
     def __init__(self, name='SymSuperHelix', **kw):
 
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = SymSuperHelix(
             (0.,1.,0.), (0.,0.,0.), 0., 0.,
             (0.,0.,1.), (0.,0.,0.), 0., 0., 1 )
 
-	code = """def doit(self, matrices, vector1, point1, angle1, hrise1, vector2, point2, angle2, hrise2, copies):
+        code = """def doit(self, matrices, vector1, point1, angle1, hrise1, vector2, point2, angle2, hrise2, copies):
 
     matrices = ToList(matrices)
     self.operator.set(
@@ -859,20 +859,20 @@ Input:
             'labelCfg':{'text':'# copies'},
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='instancemat(0)', required=False,
                   singleConnection=False, name='matrices')
-	ip.append(datatype='None', required=False, name='vector1')
-	ip.append(datatype='None', required=False, name='point1')
-	ip.append(datatype='float', required=False, name='angle1')
-	ip.append(datatype='float', required=False, name='hrise1')
-	ip.append(datatype='None', required=False, name='vector2')
-	ip.append(datatype='None', required=False, name='point2')
-	ip.append(datatype='float', required=False, name='angle2')
-	ip.append(datatype='float', required=False, name='hrise2')
-	ip.append(datatype='int', required=False, name='copies')
+        ip.append(datatype='None', required=False, name='vector1')
+        ip.append(datatype='None', required=False, name='point1')
+        ip.append(datatype='float', required=False, name='angle1')
+        ip.append(datatype='float', required=False, name='hrise1')
+        ip.append(datatype='None', required=False, name='vector2')
+        ip.append(datatype='None', required=False, name='point2')
+        ip.append(datatype='float', required=False, name='angle2')
+        ip.append(datatype='float', required=False, name='hrise2')
+        ip.append(datatype='int', required=False, name='copies')
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
 
 
@@ -881,11 +881,11 @@ class SymMergeNE(NetworkNode):
 
     def __init__(self, name='SymMerge', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = SymMerge()
                           
-	code = """def doit(self, matrices):
+        code = """def doit(self, matrices):
     matrices = ToList(matrices)
     result = self.operator(matrices)
     self.outputData(outMatrices=result)\n"""
@@ -896,7 +896,7 @@ class SymMergeNE(NetworkNode):
         ip.append(datatype='instancemat(0)', required=False,
                   singleConnection=False, name='matrices')
        
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
 
 
@@ -911,11 +911,11 @@ class SymMultiplyNE(NetworkNode):
 
     def __init__(self, name='SymMultiply', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = SymMultiply()
         
-	code = """def doit(self, stream1, stream2):
+        code = """def doit(self, stream1, stream2):
     if stream1 or stream2:
         if stream1:
             stream1 = stream1[0]
@@ -925,14 +925,14 @@ class SymMultiplyNE(NetworkNode):
         self.outputData(outMatrices=result)\n"""
 
         if code: self.setFunction(code)
-	
+        
         ip = self.inputPortsDescr
         ip.append(datatype='instancemat(0)', required=False,
                   singleConnection=False, name='stream1')
-	ip.append(datatype='instancemat(0)', required=False,
+        ip.append(datatype='instancemat(0)', required=False,
                   singleConnection=False, name='stream2')
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
 
 
@@ -941,23 +941,23 @@ class SymTransposeNE(NetworkNode):
 
     def __init__(self, name='Transpose', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         m=Numeric.identity(4).astype('f')
         self.operator = SymTranspose()
         
-	code = """def doit(self, matrices):
+        code = """def doit(self, matrices):
     matrices = ToList(matrices)
     result = self.operator(matrices)
     self.outputData(outMatrices=result)\n"""
 
         if code: self.setFunction(code)
-	
+        
         ip = self.inputPortsDescr
         ip.append(datatype='instancemat(0)', singleConnection=False,
                   name='inMatrices')
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
         
 class SymInverseNE(NetworkNode):
@@ -965,23 +965,23 @@ class SymInverseNE(NetworkNode):
 
     def __init__(self, name='Inverse', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         m=Numeric.identity(4).astype('f')
         self.operator = SymInverse()
         
-	code = """def doit(self, matrices):
+        code = """def doit(self, matrices):
     matrices = ToList(matrices)
     result = self.operator(matrices)
     self.outputData(outMatrices=result)\n"""
 
         if code: self.setFunction(code)
-	
+        
         ip = self.inputPortsDescr
         ip.append(datatype='instancemat(0)', singleConnection=False,
                   name='inMatrices')
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
 
 class SymSplitNE(NetworkNode):
@@ -995,7 +995,7 @@ additional ports are created by using the ';' character.
 
     def __init__(self, name='SymSplit', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         m=Numeric.identity(4).astype('f')
         self.operator = SymSplit(m, "")
@@ -1006,15 +1006,15 @@ additional ports are created by using the ';' character.
             'labelCfg':{'text':'selector:'},
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='instancemat(0)', required=True,
                   singleConnection=False, name='matrices')
-	ip.append(datatype='string', required=False, name='entry')
+        ip.append(datatype='string', required=False, name='entry')
         
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices0')
 
-	code = """def doit(self, matrices, entry):
+        code = """def doit(self, matrices, entry):
     matrices = ToList(matrices)
     self.operator.set(matrices=matrices, chars=entry)
     self.result=self.operator(matrices,entry)
@@ -1039,18 +1039,18 @@ additional ports are created by using the ';' character.
         else:
             for p in self.outputPorts:
                 p._modified = False
-	
+        
 
     def addRemovePorts(self, nb):
         dynamicOPortsDescr=[]
         if nb > len(self.outputPorts): # we add ports
             loop=nb-len(self.outputPorts)
             for i in range(loop):
-                name="outMatrices"+`len(self.outputPorts)+i`
+                name="outMatrices"+repr(len(self.outputPorts)+i)
                 dynamicOPortsDescr.append({
                   'name': name, 'datatype':'instancemat'})
             for kw in dynamicOPortsDescr:
-                ip = apply( self.addOutputPort, (), kw )
+                ip = self.addOutputPort(*(), **kw)
             self.outputPortsDescr = self.outputPortsDescr + dynamicOPortsDescr
 
         elif nb < len(self.outputPorts): # we remove ports
@@ -1066,11 +1066,11 @@ class CoMassNE(NetworkNode):
     
     def __init__(self, name='Center of Mass', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = CenterOfMass(None)
 
-	code = """def doit(self, coords):
+        code = """def doit(self, coords):
     if coords and len(coords):
         self.operator.set(coords=coords)
         result=self.operator()
@@ -1078,10 +1078,10 @@ class CoMassNE(NetworkNode):
 
         if code: self.setFunction(code)
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='coordinates3D', name='coords')
         
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='list', name='centerOfMass')
 
 
@@ -1101,11 +1101,11 @@ parameter panel"""
 
     def __init__(self, name='SymOrient', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = SymOrient( [1,0,0], 0, [0,0,0], 0 )
 
-	code = """def doit(self, matrices, centerOfMass, vector, angle, identity):
+        code = """def doit(self, matrices, centerOfMass, vector, angle, identity):
     matrices = ToList(matrices)
     if centerOfMass and len(centerOfMass):
         self.operator.set(vector=vector, angle=angle,
@@ -1114,8 +1114,8 @@ parameter panel"""
         self.outputData(outMatrices=result)\n"""
 
         if code: self.setFunction(code)
-	
-	self.widgetDescr['vector'] = {
+        
+        self.widgetDescr['vector'] = {
             'class':'NEVectorGUI', 'size':100,
             'continuous':1,
             'initialValue':[1.,0,0],
@@ -1133,21 +1133,21 @@ parameter panel"""
             'labelCfg':{'text':'angle'},
             } 
         
-	self.widgetDescr['identity'] = {
+        self.widgetDescr['identity'] = {
             'class':'NECheckButton',
             'initialValue':0,
             'labelCfg':{'text':'Identity'},
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='instancemat(0)', required=False,
                   singleConnection=False, name='matrices')
-	ip.append(datatype='list', required=False, name='centerOfMass')
-	ip.append(datatype='None', required=False, name='vector')
-	ip.append(datatype='float', required=False, name='angle')
-	ip.append(datatype='int', required=False, name='identity')
+        ip.append(datatype='list', required=False, name='centerOfMass')
+        ip.append(datatype='None', required=False, name='vector')
+        ip.append(datatype='float', required=False, name='angle')
+        ip.append(datatype='int', required=False, name='identity')
         
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
 
 
@@ -1158,11 +1158,11 @@ class ApplyTransfToCoordsNE(NetworkNode):
     
     def __init__(self, name='Apply Transf to Coords', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = ApplyTransfToCoords([0.,0,0],None)
         
-	code = """def doit(self, coords, matrices):
+        code = """def doit(self, coords, matrices):
     if coords and len(coords) and matrices and len(matrices):
         matrices = ToList(matrices)
         self.operator.set(coords=coords, matrices=matrices)
@@ -1171,12 +1171,12 @@ class ApplyTransfToCoordsNE(NetworkNode):
  
         if code: self.setFunction(code)
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='coordinates3D', name='coords')
-	ip.append(datatype='instancemat(0)', required=False,
+        ip.append(datatype='instancemat(0)', required=False,
                   singleConnection=False, name='matrices')
         
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='coordinates3D', name='coords')
 
 
@@ -1192,7 +1192,7 @@ class DistanceToPoint(NetworkNode):
     
     def __init__(self, name='DistanceToPoint', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         
         code = """def doit(self, coords, point):
         if len(coords) and len(coords):
@@ -1213,7 +1213,7 @@ class DistanceToPoint(NetworkNode):
     def beforeAddingToNetwork(self, net):
         # import vizlib
         importVizLib(net)
-	
+        
 
 class SymScaleNE(NetworkNode):
     """Apply a scale factor to  inputs matrices (not required).
@@ -1224,11 +1224,11 @@ widgets bound to the node."""
     
     def __init__(self, name='Scale', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = SymScale()
 
-	code = """def doit(self, matrices, scaleFactor, scaleX, scaleY, scaleZ):
+        code = """def doit(self, matrices, scaleFactor, scaleX, scaleY, scaleZ):
     if scaleFactor is None:
         return
     if not matrices:
@@ -1243,29 +1243,29 @@ widgets bound to the node."""
 
         ip = self.inputPortsDescr
         ip.append(datatype='instancemat(0)', required=False, name='matrices')
-	ip.append(datatype='float', required=False, name='scaleFactor')
+        ip.append(datatype='float', required=False, name='scaleFactor')
         ip.append(datatype='int', name='scaleX', defaultValue=1)
         ip.append(datatype='int', name='scaleY', defaultValue=1)
         ip.append(datatype='int', name='scaleZ', defaultValue=1)
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='outMatrices')
 
-	self.widgetDescr['scaleX'] = {
+        self.widgetDescr['scaleX'] = {
             'class':'NECheckButton', 'master':'node',
             'labelGridCfg':{'sticky':'w', 'columnspan':2},
             'widgetGridCfg':{'sticky':'w'},
             'labelCfg':{'text':'Scale X'},
             'initialValue':1,
             }
-	self.widgetDescr['scaleY'] = {
+        self.widgetDescr['scaleY'] = {
             'class':'NECheckButton', 'master':'node',
             'labelGridCfg':{'sticky':'w', 'columnspan':2},
             'widgetGridCfg':{'sticky':'w'},
             'labelCfg':{'text':'Scale Y'},
             'initialValue':1,
             }
-	self.widgetDescr['scaleZ'] = {
+        self.widgetDescr['scaleZ'] = {
             'class':'NECheckButton', 'master':'node',
             'labelGridCfg':{'sticky':'w', 'columnspan':2},
             'widgetGridCfg':{'sticky':'w'},
@@ -1278,7 +1278,7 @@ class Dist2Points(NetworkNode):
     
     def __init__(self, name='Dist2Points', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = DistanceBetweenTwoPoints()
 
@@ -1286,10 +1286,10 @@ class Dist2Points(NetworkNode):
         ip.append(datatype='list', name='point1')
         ip.append(datatype='list', name='point2')
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='float', name='distance')
         
-	code = """def doit(self, point1, point2):
+        code = """def doit(self, point1, point2):
     if point1 and point2:
         result = self.operator(point1, point2)
         self.outputData(distance=result)\n"""
@@ -1306,11 +1306,11 @@ class PDBToMatrix(NetworkNode):
 
     def __init__(self, name='PDBtoMatrix', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operator = PDBtoMatrix()
         
-	code = """def doit(self, mol, keyword):
+        code = """def doit(self, mol, keyword):
     if mol:
         if keyword is None or keyword == '' or keyword == []:
             keyword = 'MTRIX'
@@ -1320,11 +1320,11 @@ class PDBToMatrix(NetworkNode):
 
         if code: self.setFunction(code)
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='MoleculeSet', name='molecule')
-	ip.append(datatype='string', required=False, name='keyword')
+        ip.append(datatype='string', required=False, name='keyword')
         
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='instancemat(0)', name='matrices')
 
 
@@ -1339,7 +1339,7 @@ class Icos1(MacroNode):
 
     def __init__(self, constrkw={}, name='Icosahedral1', **kw):
         kw['name'] = name
-        apply( MacroNode.__init__, (self,), kw)
+        MacroNode.__init__(*(self,), **kw)
 
     def beforeAddingToNetwork(self, net):
         MacroNode.beforeAddingToNetwork(self, net)
@@ -1435,7 +1435,7 @@ class IcosCage(MacroNode):
 
     def __init__(self, constrkw={}, name='IcosCage', **kw):
         kw['name'] = name
-        apply( MacroNode.__init__, (self,), kw)
+        MacroNode.__init__(*(self,), **kw)
 
     def beforeAddingToNetwork(self, net):
         MacroNode.beforeAddingToNetwork(self, net)
@@ -1498,21 +1498,20 @@ class IcosCage(MacroNode):
         from Vision.StandardNodes import Operator2
         node10 = Operator2(constrkw = {}, name='mul', library=stdlib)
         node0.macroNetwork.addNode(node10,103,113)
-        apply(node10.inputPorts[1].configure, (), {'datatype': 'float'})
-        apply(node10.outputPorts[0].configure, (), {'datatype': 'list'})
+        node10.inputPorts[1].configure(*(), **{'datatype': 'float'})
+        node10.outputPorts[0].configure(*(), **{'datatype': 'list'})
         node10.inputPorts[2].widget.set("mul",0)
         node10.inputPorts[3].widget.set(1,0)
         from Vision.StandardNodes import Eval
         node11 = Eval(constrkw = {}, name='[in1]', library=stdlib)
         node0.macroNetwork.addNode(node11,103,174)
-        apply(node11.inputPorts[1].configure, (), {'datatype': 'list'})
+        node11.inputPorts[1].configure(*(), **{'datatype': 'list'})
         node11.inputPorts[0].widget.set("[in1]",0)
         from NetworkEditor.items import NetworkNode
         from Vision.StandardNodes import Generic
         node12 = Generic(constrkw = {}, name='faces', library=stdlib)
         node0.macroNetwork.addNode(node12,431,185)
-        apply(node12.addOutputPort, (),
-              {'datatype': 'faceIndices', 'name': 'indices'})
+        node12.addOutputPort(*(), **{'datatype': 'faceIndices', 'name': 'indices'})
         code = """def doit(self):
     self.outputData(indices=[
                      [10, 3, 8], [10, 8, 7], [10, 7, 11], [10, 11,9], [10, 9, 3],
@@ -1524,8 +1523,7 @@ class IcosCage(MacroNode):
         node12.configure(function=code)
         node13 = Generic(constrkw = {}, name='edges', library=stdlib)
         node0.macroNetwork.addNode(node13,506,214)
-        apply(node13.addOutputPort, (),
-              {'datatype': 'indice2(0)', 'name': 'indices'})
+        node13.addOutputPort(*(), **{'datatype': 'indice2(0)', 'name': 'indices'})
         code = """def doit(self):
     self.outputData(indices=[ 
                      [0, 1], [1, 2], [0, 2], [0, 6], [6, 1], [0, 7], [7, 6],
@@ -1633,5 +1631,5 @@ symlib.addWidget(NEXYZVectGUI)
 
 try:
     UserLibBuild.addTypes(symlib, 'MolKit.VisionInterface.MolKitTypes')
-except Exception, e:
-    print "unable to addTypes from MolKit %s\n" % e
+except Exception as e:
+    print("unable to addTypes from MolKit %s\n" % e)

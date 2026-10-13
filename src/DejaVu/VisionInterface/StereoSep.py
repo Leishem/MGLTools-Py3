@@ -23,7 +23,7 @@ class StereoSep(MacroNode):
 
     def __init__(self, constrkw={}, name='StereoSep', **kw):
         kw['name'] = name
-        apply( MacroNode.__init__, (self,), kw)
+        MacroNode.__init__(*(self,), **kw)
 
     def beforeAddingToNetwork(self, net):
         MacroNode.beforeAddingToNetwork(self, net)
@@ -58,7 +58,7 @@ class StereoSep(MacroNode):
             input_Ports_1 = self.macroNetwork.ipNode
             input_Ports_1.move(176, 6)
         except:
-            print "WARNING: failed to restore MacroInputNode named input Ports in network self.macroNetwork"
+            print("WARNING: failed to restore MacroInputNode named input Ports in network self.macroNetwork")
             print_exc()
             input_Ports_1=None
         try:
@@ -67,7 +67,7 @@ class StereoSep(MacroNode):
             output_Ports_2 = self.macroNetwork.opNode
             output_Ports_2.move(194, 314)
         except:
-            print "WARNING: failed to restore MacroOutputNode named output Ports in network self.macroNetwork"
+            print("WARNING: failed to restore MacroOutputNode named output Ports in network self.macroNetwork")
             print_exc()
             output_Ports_2=None
         try:
@@ -76,11 +76,11 @@ class StereoSep(MacroNode):
             from Vision.StandardNodes import GetAttr
             Get_cameras_3 = GetAttr(constrkw = {}, name='Get cameras', library=stdlib)
             self.macroNetwork.addNode(Get_cameras_3,275,67)
-            apply(Get_cameras_3.getInputPortByName('objects').configure, (), {'datatype': 'viewer'})
-            apply(Get_cameras_3.getInputPortByName('attr').widget.configure, (), {'choices': ('cameras',)})
+            Get_cameras_3.getInputPortByName('objects').configure(*(), **{'datatype': 'viewer'})
+            Get_cameras_3.getInputPortByName('attr').widget.configure(*(), **{'choices': ('cameras',)})
             Get_cameras_3.getInputPortByName("attr").widget.set("cameras")
         except:
-            print "WARNING: failed to restore GetAttr named Get cameras in network self.macroNetwork"
+            print("WARNING: failed to restore GetAttr named Get cameras in network self.macroNetwork")
             print_exc()
             Get_cameras_3=None
         try:
@@ -89,10 +89,10 @@ class StereoSep(MacroNode):
             from Vision.StandardNodes import SliceData
             Slice_Data_4 = SliceData(constrkw = {}, name='Slice Data', library=stdlib)
             self.macroNetwork.addNode(Slice_Data_4,301,167)
-            apply(Slice_Data_4.getInputPortByName('data').configure, (), {'datatype': 'list'})
+            Slice_Data_4.getInputPortByName('data').configure(*(), **{'datatype': 'list'})
             Slice_Data_4.getInputPortByName("_slice").widget.set("[0]")
         except:
-            print "WARNING: failed to restore SliceData named Slice Data in network self.macroNetwork"
+            print("WARNING: failed to restore SliceData named Slice Data in network self.macroNetwork")
             print_exc()
             Slice_Data_4=None
         try:
@@ -103,7 +103,7 @@ class StereoSep(MacroNode):
             self.macroNetwork.addNode(Dial_5,497,16)
             Dial_5.getInputPortByName("dial").widget.set(0.159390991469)
         except:
-            print "WARNING: failed to restore DialNE named Dial in network self.macroNetwork"
+            print("WARNING: failed to restore DialNE named Dial in network self.macroNetwork")
             print_exc()
             Dial_5=None
         try:
@@ -113,7 +113,7 @@ class StereoSep(MacroNode):
             Redraw_6 = Redraw(constrkw = {}, name='Redraw', library=vizlib)
             self.macroNetwork.addNode(Redraw_6,199,232)
         except:
-            print "WARNING: failed to restore Redraw named Redraw in network self.macroNetwork"
+            print("WARNING: failed to restore Redraw named Redraw in network self.macroNetwork")
             print_exc()
             Redraw_6=None
         try:
@@ -122,10 +122,10 @@ class StereoSep(MacroNode):
             from Vision.StandardNodes import CallMethod
             call_method_7 = CallMethod(constrkw = {}, name='call method', library=stdlib)
             self.macroNetwork.addNode(call_method_7,353,228)
-            apply(call_method_7.addInputPort, (), {'datatype': 'float', 'width': 12, 'required': False, 'name': 'sideBySideTranslation', 'height': 12})
+            call_method_7.addInputPort(*(), **{'datatype': 'float', 'width': 12, 'required': False, 'name': 'sideBySideTranslation', 'height': 12})
             call_method_7.getInputPortByName("signature").widget.set("Set sideBySideTranslation")
         except:
-            print "WARNING: failed to restore CallMethod named call method in network self.macroNetwork"
+            print("WARNING: failed to restore CallMethod named call method in network self.macroNetwork")
             print_exc()
             call_method_7=None
         self.macroNetwork.freeze()

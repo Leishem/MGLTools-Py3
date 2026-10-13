@@ -24,21 +24,21 @@ from Pmv.mvCommand import MVCommand
 class WriteSTL(MVCommand):
     
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('msmsMol'):
+        if 'msmsMol' not in self.vf.commands:
             self.vf.loadCommand('msmsCommands', 'msmsMol', 'Pmv',
                                 topCommand=0) 
 
     def writeSTLCATrace(self, mol, filename):
         """Write ca trace of the selected molecules in the STL format"""
 
-	if not hasattr(mol.geomContainer, 'catrace'): #ca trace not computed
-	    self.vf.buildCATrace.guiCallback()
+        if not hasattr(mol.geomContainer, 'catrace'): #ca trace not computed
+            self.vf.buildCATrace.guiCallback()
 
         # get the extrude catrace object for that molecule
         caExtrude = mol.geomContainer.geoms['catrace'].extrusion
 
-	# get the vertices and faces
-	vertices = caExtrude.vertices
+        # get the vertices and faces
+        vertices = caExtrude.vertices
         faces = caExtrude.faces
         f = Numeric.concatenate((faces[:,-2:], faces[:,:1]), 1)
         F = Numeric.concatenate((faces[:,:3], f), 0)
@@ -46,60 +46,60 @@ class WriteSTL(MVCommand):
         n = TriangleNormals(vertices, F, 'PER_VERTEX')
 
 
-	# compute the face normals
+        # compute the face normals
         
         fn = caExtrude.glQuadNormals(self,vertices, faces)
-	#fn = GL.glTriangleNormals(vf[:,:3], fa[:,:3])
+        #fn = GL.glTriangleNormals(vf[:,:3], fa[:,:3])
 
-	f = open(filename, 'w')
-	f.write("solid NoName\n")
-	for i in range(len(F)):
-	    face = F[i]
-	    f.write(" facet normal %f %f %f\n" % tuple(fn[i]))
-	    f.write("  outer loop\n")
+        f = open(filename, 'w')
+        f.write("solid NoName\n")
+        for i in range(len(F)):
+            face = F[i]
+            f.write(" facet normal %f %f %f\n" % tuple(fn[i]))
+            f.write("  outer loop\n")
             for f in face:
                 f.write("   vertex %f %f %f\n" % tuple(vf[f][:3]))
             f.write("  endloop\n")
-	    f.write(" endfacet\n")
-	f.write("end solid\n")
-	f.close()
+            f.write(" endfacet\n")
+        f.write("end solid\n")
+        f.close()
 
     def writeSTLsurface(self, mol, filename):
         """Write the MSMS surface corresponding to all selected molecules
-	in the STL format"""
+        in the STL format"""
 
-	if not hasattr(mol.geomContainer, 'msms'): #surface not computed
-	    self.vf.msmsMol.guiCallback()
+        if not hasattr(mol.geomContainer, 'msms'): #surface not computed
+            self.vf.msmsMol.guiCallback()
 
         # get the msms surface object for that molecule
         srf = mol.geomContainer.msms
 
-	# get the vertices and faces
-	vf, vi, fa = srf.getTriangles()
+        # get the vertices and faces
+        vf, vi, fa = srf.getTriangles()
 
-	# compute the face normals
-	#fn = GL.glTriangleNormals(vf[:,:3], fa[:,:3])
+        # compute the face normals
+        #fn = GL.glTriangleNormals(vf[:,:3], fa[:,:3])
         fn = TriangleNormals(vf[:,:3], fa[:,:3])
-	f = open(filename, 'w')
-	f.write("solid NoName\n")
-	for i in range(len(fa)):
-	    face = fa[i]
-	    f.write(" facet normal %f %f %f\n" % tuple(fn[i]))
-	    f.write("  outer loop\n")
-	    f.write("   vertex %f %f %f\n" % tuple(vf[face[0]][:3]))
-	    f.write("   vertex %f %f %f\n" % tuple(vf[face[1]][:3]))
-	    f.write("   vertex %f %f %f\n" % tuple(vf[face[2]][:3]))
-	    f.write("  endloop\n")
-	    f.write(" endfacet\n")
-	f.write("end solid\n")
-	f.close()
+        f = open(filename, 'w')
+        f.write("solid NoName\n")
+        for i in range(len(fa)):
+            face = fa[i]
+            f.write(" facet normal %f %f %f\n" % tuple(fn[i]))
+            f.write("  outer loop\n")
+            f.write("   vertex %f %f %f\n" % tuple(vf[face[0]][:3]))
+            f.write("   vertex %f %f %f\n" % tuple(vf[face[1]][:3]))
+            f.write("   vertex %f %f %f\n" % tuple(vf[face[2]][:3]))
+            f.write("  endloop\n")
+            f.write(" endfacet\n")
+        f.write("end solid\n")
+        f.close()
 
 
     def doit(self, nodes, filename):
         self.log(nodes, filename)
 #        oldcursor = self.vf.GUI.setCursor('watch')
 
-        if type(nodes)==types.StringType:
+        if type(nodes)==bytes:
             nodes = self.vf.Mols.NodesFromName(nodes)
         
         assert isinstance(nodes,TreeNode) or isinstance(nodes,TreeNodeSet)
@@ -111,20 +111,20 @@ class WriteSTL(MVCommand):
         molecules = atoms.top.uniq()
 
         for mol in molecules:
-	    self.writeSTLsurface(mol, '%s.%s.stl'%(filename, mol.name))
+            self.writeSTLsurface(mol, '%s.%s.stl'%(filename, mol.name))
 
 #        self.vf.GUI.setCursor(oldcursor)
 
 
     def __call__(self, atoms, filename):
-	"""Write STL file ( molecules, filename )"""
+        """Write STL file ( molecules, filename )"""
         self.doit(atoms, filename)
 
 
     def guiCallback(self):
         newfile = self.vf.askFileSave(types = [('STL files', '*.stl'),],
                                  title = 'Select STL files:')
-        print 'filename: ', newfile
+        print('filename: ', newfile)
         if newfile != None:
             self.doit(self.vf.getSelection(), newfile)
 
@@ -138,41 +138,41 @@ WriteSTLGUI.addMenuCommand('menuRoot', 'File', 'Write STL')
 class WriteColoredM(MVCommand):
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('msmsMol'):
+        if 'msmsMol' not in self.vf.commands:
             self.vf.loadCommand('msmsCommands', 'msmsMol', 'Pmv',
                                 topCommand = 0) 
 
     def writeCMsurface(self, mol, filename):
         """Write the MSMS surface corresponding to all selected molecules
-	in the .m format with rbg color for each vertex"""
+        in the .m format with rbg color for each vertex"""
 
-	if not hasattr(mol.geomContainer, 'msms'): #surface not computed
-	    self.vf.msmsMol.guiCallback()
+        if not hasattr(mol.geomContainer, 'msms'): #surface not computed
+            self.vf.msmsMol.guiCallback()
 
         # get the msms surface object for that molecule
         srf = mol.geomContainer.msms
 
-	# get the vertices and faces
-	vf, vi, fa = srf.getTriangles()
+        # get the vertices and faces
+        vf, vi, fa = srf.getTriangles()
 
         # get the colors
         col = mol.geomContainer.geoms['msms'].materials[1028].prop[0]
         assert len(col) == len(vf)
 
-	f = open(filename, 'w')
-	for i in xrange(len(vf)):
+        f = open(filename, 'w')
+        for i in range(len(vf)):
             f.write("vertex %d %f %f %f %f %f %f\n" % (i+1, vf[i][0],vf[i][1],vf[i][2],col[i][0],col[i][1],col[i][2]) )
 
-	for i in xrange(len(fa)):
-	    face = fa[i]
-	    f.write("face %d %d %d %d\n" % (i+1, fa[i][0]+1, fa[i][1]+1, fa[i][2]+1))
-	f.close()
+        for i in range(len(fa)):
+            face = fa[i]
+            f.write("face %d %d %d %d\n" % (i+1, fa[i][0]+1, fa[i][1]+1, fa[i][2]+1))
+        f.close()
 
 
     def doit(self, nodes, filename):
         self.log(nodes, filename)
 
-        if type(nodes)==types.StringType:
+        if type(nodes)==bytes:
             nodes = self.vf.Mols.NodesFromName(nodes)
         
         assert isinstance(nodes,TreeNode) or isinstance(nodes,TreeNodeSet)
@@ -184,22 +184,22 @@ class WriteColoredM(MVCommand):
         molecules = atoms.top.uniq()
 
         for mol in molecules:
-	    self.writeCMsurface(mol, '%s.%s.m'%(filename, mol.name))
+            self.writeCMsurface(mol, '%s.%s.m'%(filename, mol.name))
 
 
     def __call__(self, nodes, filename, **kw):
-	"""None <- writeCM(self, nodes, filename, **kw)
+        """None <- writeCM(self, nodes, filename, **kw)
         Write colored .m files
         nodes   : current selection, or string representing nodes
         filename: filename
         """
-        apply(self.doitWrapper, (nodes, filename), kw)
+        self.doitWrapper(*(nodes, filename), **kw)
 
     def guiCallback(self):
         newfile = self.vf.askFileSave(types = [('.m Files', '*.m'),],
                                       title = "Select .m file:")
         if newfile != None:
-            apply(self.doitWrapper, (self.vf.getSelection(), newfile), {})
+            self.doitWrapper(*(self.vf.getSelection(), newfile), **{})
 
 writeColoredMGuiDescr  = {'widgetType':'Menu', 'menuBarName':'menuRoot',
                           'menuButtonName':'File',

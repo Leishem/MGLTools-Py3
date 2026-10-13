@@ -18,7 +18,7 @@ ViewerFramework base class
 #
 
 
-import Tkinter, thread, string, Pmw, types
+import tkinter, _thread, Pmw, types; from mglcompat import pystring as string
 from PIL import Image, ImageTk
 try:
     from TkinterDnD2 import COPY
@@ -29,10 +29,10 @@ except ImportError:
 try:
     from DejaVu.Viewer import Viewer
 except ValueError:
-    print "Can't find a suitable Viewer\n"
+    print("Can't find a suitable Viewer\n")
     
 
-import tkFileDialog
+import tkinter.filedialog
 
 from mglutil.util.misc import ensureFontCase
 from mglutil.util.callback import CallbackFunction
@@ -42,18 +42,18 @@ from mglutil.gui.BasicWidgets.Tk.progressBar import ProgressBar, \
 from mglutil.util.packageFilePath import getResourceFolderWithVersion
 import ViewerFramework, os
 
-from VFCommand import CommandGUI, ICONSIZES, ICONPATH
-from VF import VFEvent
+from .VFCommand import CommandGUI, ICONSIZES, ICONPATH
+from .VF import VFEvent
 
 
 class RaiseToolPageEvent(VFEvent):
     pass
 
 
-class msg_box(Tkinter.Frame):
+class msg_box(tkinter.Frame):
     """ message box with scrollable text """
     def __init__(self, master=None, txt='', w=80, h=8):
-        Tkinter.Frame.__init__(self, master)
+        tkinter.Frame.__init__(self, master)
 
         self.tx = Pmw.ScrolledText(self, usehullsize=1, hull_height=300)
         self.tx.pack(expand=1, fill='both', anchor='s')
@@ -110,8 +110,8 @@ class ViewerFrameworkGUI:
 #                                     buttons=["Quit","Cancel"],
 #                                     default=0, title="Quit?")
 #        ok=d.go()
-        import tkMessageBox
-        ok = tkMessageBox.askokcancel("Quit?","Do you Wish to Quit?")
+        import tkinter.messagebox
+        ok = tkinter.messagebox.askokcancel("Quit?","Do you Wish to Quit?")
         if ok:
             self.quit_cb()
         else:
@@ -148,7 +148,7 @@ class ViewerFrameworkGUI:
 
         # set .GUI.registered to false for each command to force the GUI
         # to be created again if another ViewerFramework is created
-        for cmd in self.vf.commands.items():
+        for cmd in list(self.vf.commands.items()):
             if cmd[1].GUI:
                 cmd[1].GUI.registered=False
 
@@ -185,7 +185,7 @@ class ViewerFrameworkGUI:
         if hasattr(self.vf, 'logSelectFile'):
             self.vf.logSelectFile.close()
 
-        if self.vf.userpref.has_key('Save Perspective on Exit'):
+        if 'Save Perspective on Exit' in self.vf.userpref:
             logPerspective = self.vf.userpref['Save Perspective on Exit']['value']
             if logPerspective == 'yes':
                 self.vf.Exit.savePerspective()
@@ -235,26 +235,26 @@ class ViewerFrameworkGUI:
                     from TkinterDnD2 import TkinterDnD
                     self.ROOT = TkinterDnD.Tk()
                 except ImportError:
-                    self.ROOT = Tkinter.Tk()
+                    self.ROOT = tkinter.Tk()
             else:
-                self.ROOT = Tkinter.Tk()
+                self.ROOT = tkinter.Tk()
             
             if sys.platform=='darwin': 
                 self.ROOT.geometry("600x200+20+20")
             else:
                 self.ROOT.geometry("+20+20")
         else:
-            assert isinstance(root, Tkinter.Tk) or \
-                   isinstance(root, Tkinter.Toplevel) or \
-                   isinstance(root, Tkinter.Frame) or \
-                   isinstance(root, Tkinter.Canvas) 
+            assert isinstance(root, tkinter.Tk) or \
+                   isinstance(root, tkinter.Toplevel) or \
+                   isinstance(root, tkinter.Frame) or \
+                   isinstance(root, tkinter.Canvas) 
             self.ROOT = root
 
         #self.ROOT.bind('<Enter>', self.Enter_cb)
         #self.ROOT.bind('<Leave>', self.Leave_cb)
         self.ROOT.minsize(width = 200, height = 200)
-        if isinstance(self.ROOT, Tkinter.Tk) or \
-           isinstance(self.ROOT, Tkinter.Toplevel):
+        if isinstance(self.ROOT, tkinter.Tk) or \
+           isinstance(self.ROOT, tkinter.Toplevel):
             # bind to the close box
             self.ROOT.protocol("WM_DELETE_WINDOW", self.dialog)
             # give a title
@@ -292,7 +292,7 @@ class ViewerFrameworkGUI:
 
         self.menuBars={}       # dictionary of menubars and buttonbars
             # create frame to hold menubars and buttonbars
-        self.mBarFrame = Tkinter.Frame(self.ROOT, borderwidth=2,
+        self.mBarFrame = tkinter.Frame(self.ROOT, borderwidth=2,
                                        relief='raised')
         self.mBarFrame.pack(side='top', expand=0, fill='x')
 
@@ -331,7 +331,7 @@ class ViewerFrameworkGUI:
         self.collapsePhoto = ImageTk.PhotoImage(file=filename)
         filename = os.path.join(ICONPATH, 'rightarrow1.png')
         self.expandPhoto = ImageTk.PhotoImage(file=filename)
-        self.collapseToolsW = Tkinter.Button(
+        self.collapseToolsW = tkinter.Button(
             self.toolsNoteBookMaster, image=self.collapsePhoto,
              command=self.collapseTools)
         self.collapseToolsW.pack(side='top', anchor='e')
@@ -342,19 +342,19 @@ class ViewerFrameworkGUI:
         self.toolsNoteBook.pack(fill='both', expand=1, padx=1, pady=1)
 
         # create a frame for the docked camera
-        self.vwrCanvasDocked = Tkinter.Frame(dockCamMaster,
+        self.vwrCanvasDocked = tkinter.Frame(dockCamMaster,
                                              width=500, height=200)
         self.vwrCanvasDocked.pack(side='left', anchor='nw', expand=1,
                                   fill='both')
         self.vwrCanvasDocked.forget()
         
-        self.vwrCanvasFloating = Tkinter.Toplevel(width=600, height=600)
+        self.vwrCanvasFloating = tkinter.Toplevel(width=600, height=600)
         self.vwrCanvasFloating.withdraw()
         self.vwrCanvasFloating.update_idletasks()
         self.vwrCanvasFloating.transient(self.ROOT)
 
     # build a 3D window
-        VIEWER_root = Tkinter.Toplevel()
+        VIEWER_root = tkinter.Toplevel()
         VIEWER_root.withdraw()
         self.VIEWER = viewerClass( self.vwrCanvasFloating, 1, autoRedraw=True,
                                    verbose=verbose,guiMaster=VIEWER_root,)
@@ -373,26 +373,26 @@ class ViewerFrameworkGUI:
         self.miscGeom = miscGeom
         
         # used to make sure only main thread handles expose events
-        import thread
-        self.mainThread = thread.get_ident()
+        import _thread
+        self.mainThread = _thread.get_ident()
 
         # add the InfoBar
-        self.infoBar = Tkinter.Frame(self.ROOT,relief = 'sunken', bd = 1)
+        self.infoBar = tkinter.Frame(self.ROOT,relief = 'sunken', bd = 1)
         self.infoBar.pack(side='bottom', fill='x')
-        Tkinter.Label(self.infoBar, text="Mod.:").pack(side='left')
+        tkinter.Label(self.infoBar, text="Mod.:").pack(side='left')
 
-        self.icomLabelMod=Tkinter.Label(self.infoBar, text="None", width=8,
+        self.icomLabelMod=tkinter.Label(self.infoBar, text="None", width=8,
                                         relief='sunken', borderwidth=1,
                                         anchor='w')
         self.icomLabelMod.pack(side='left')
 
-        Tkinter.Label(self.infoBar, text="Time:").pack(side='left')
-        self.lastCmdTime=Tkinter.Label(self.infoBar, text="0.0",
+        tkinter.Label(self.infoBar, text="Time:").pack(side='left')
+        self.lastCmdTime=tkinter.Label(self.infoBar, text="0.0",
                                        width=6, relief='sunken',
                                        borderwidth=1, anchor='w')
         self.lastCmdTime.pack(side='left')
-        Tkinter.Label(self.infoBar, text="Selected:").pack(side='left')
-        self.pickLabel=Tkinter.Label(self.infoBar, text="None", width=15,
+        tkinter.Label(self.infoBar, text="Selected:").pack(side='left')
+        self.pickLabel=tkinter.Label(self.infoBar, text="None", width=15,
                                      relief='sunken', borderwidth=1,
                                      anchor='w', cursor='hand2')
         self.pickLabel.pack(side='left')
@@ -406,7 +406,7 @@ class ViewerFrameworkGUI:
         toolbarDict['balloonhelp'] = 'DejaVu GUI'
         toolbarDict['index'] = 4
         toolbarDict['cmdcb'] = self.showHideDejaVuGUI
-        self.DejaVuGUIVariable = Tkinter.IntVar()
+        self.DejaVuGUIVariable = tkinter.IntVar()
         toolbarDict['variable'] = self.DejaVuGUIVariable
         self.toolbarList.append(toolbarDict) 
         self.VIEWER.GUI.top.master.title('DejaVu GUI')
@@ -420,7 +420,7 @@ class ViewerFrameworkGUI:
         toolbarDict['balloonhelp'] = 'Float Camera'
         toolbarDict['index'] = 3
         toolbarDict['cmdcb'] = self.floatCamera_cb
-        self.floatCamVariable = Tkinter.IntVar()
+        self.floatCamVariable = tkinter.IntVar()
         self.floatCamVariable.set(1)
         toolbarDict['variable'] = self.floatCamVariable
         self.toolbarList.append(toolbarDict) 
@@ -429,7 +429,7 @@ class ViewerFrameworkGUI:
         self.currentState = self.previousState = 'idle' # can be 'busy' or 'redraw' or 'idle'
         # flag when turn on the idle light cannot be changed
         self.suspendLight = False
-        self.busyLight=Tkinter.Frame(self.infoBar, relief=Tkinter.SUNKEN,
+        self.busyLight=tkinter.Frame(self.infoBar, relief=tkinter.SUNKEN,
                                      borderwidth=1)
 
         self.suspendLight = False
@@ -437,20 +437,20 @@ class ViewerFrameworkGUI:
         self.idleImage = os.path.join(self.ICONDIR,'idle.gif')
         self.redrawImage = os.path.join(self.ICONDIR,'redraw.gif')
         self.busyImage = os.path.join(self.ICONDIR,'busy.gif')
-        self.busyIcon = Tkinter.PhotoImage(file=self.idleImage, master=self.ROOT)
-        self.busyCanvas = Tkinter.Canvas(self.busyLight,
+        self.busyIcon = tkinter.PhotoImage(file=self.idleImage, master=self.ROOT)
+        self.busyCanvas = tkinter.Canvas(self.busyLight,
                                          width=self.busyIcon.width(),
                                          height=self.busyIcon.height() - 4 )
-        self.busyCanvas.create_image(0, 0, anchor = Tkinter.NW,
+        self.busyCanvas.create_image(0, 0, anchor = tkinter.NW,
                                      image=self.busyIcon)
         self.busyCanvas.pack()
         self.busyLight.pack(side='right')
         
         # add the frameRate indicator
-        self.frameRateTk=Tkinter.Label(self.infoBar, relief=Tkinter.SUNKEN,
+        self.frameRateTk=tkinter.Label(self.infoBar, relief=tkinter.SUNKEN,
                                        borderwidth=1, width=5, text="00.0")
         self.frameRateTk.pack(side='right')
-        Tkinter.Label(self.infoBar, text="FR:").pack(side='right')
+        tkinter.Label(self.infoBar, text="FR:").pack(side='right')
 
 
         # spinOptionMenu
@@ -504,7 +504,7 @@ class ViewerFrameworkGUI:
         else:
             self.pyshell = None
 
-        Tkinter._default_root = self.ROOT
+        tkinter._default_root = self.ROOT
 
         #FIXME this won't work when we have multiple cameras
     #self.ehm = self.VIEWER.cameras[0].eventManager
@@ -586,7 +586,7 @@ class ViewerFrameworkGUI:
     def drop_cb(self, files):
         # to be overriden
         for f in files:
-            print f
+            print(f)
 
 
     def drop(self, event):
@@ -718,11 +718,11 @@ class ViewerFrameworkGUI:
 
         # Restore the state of the camera
         lNewCamState = cam.getState()
-        for key, value in lNewCamState.items():
-            if camState.has_key(key) and value == camState[key]:
+        for key, value in list(lNewCamState.items()):
+            if key in camState and value == camState[key]:
                 camState.pop(key)
-        apply(cam.Set,(1, 0), camState )
-        apply(cam.fog.Set,(), fogState)
+        cam.Set(*(1, 0), **camState)
+        cam.fog.Set(*(), **fogState)
         vi.startAutoRedraw()
 
         cam.Expose()  #to update projection
@@ -808,11 +808,11 @@ class ViewerFrameworkGUI:
 
         # Restore the state of the floating camera
         lNewCamState = cam.getState()
-        for key, value in lNewCamState.items():
-            if camState.has_key(key) and value == camState[key]:
+        for key, value in list(lNewCamState.items()):
+            if key in camState and value == camState[key]:
                 camState.pop(key)
-        apply(cam.Set,(1, 0),camState )
-        apply(cam.fog.Set,(), fogState)
+        cam.Set(*(1, 0), **camState)
+        cam.fog.Set(*(), **fogState)
         vi.startAutoRedraw()
 ## MS no longer needed as camera is in its  own pane
 ##         # See if infobar then need to pack it before infobar.
@@ -866,8 +866,8 @@ class ViewerFrameworkGUI:
         
 
     def camdialog(self):
-        import tkMessageBox
-        ok = tkMessageBox.askokcancel("Quit camdialog?","Do you Wish to Quit?")
+        import tkinter.messagebox
+        ok = tkinter.messagebox.askokcancel("Quit camdialog?","Do you Wish to Quit?")
         if ok:
             self.quit_cb()
         else:
@@ -929,11 +929,11 @@ class ViewerFrameworkGUI:
 
         # Restore the state of the docking camera
         lNewCamState = cam.getState()
-        for key, value in lNewCamState.items():
-            if camState.has_key(key) and value == camState[key]:
+        for key, value in list(lNewCamState.items()):
+            if key in camState and value == camState[key]:
                 camState.pop(key)
-        apply(cam.Set,(1, 0),camState )
-        apply(cam.fog.Set,(), fogState)
+        cam.Set(*(1, 0), **camState)
+        cam.fog.Set(*(), **fogState)
         vi.startAutoRedraw()
         vwrCanvasFloating.deiconify()
         cam.Expose()  # for to update projection
@@ -992,7 +992,7 @@ the xoffset and yoffset specify the upper left corner of the GUI
 
         # get dimensions of top window
         master = cam.frame.master.master
-        dims = map(int, ((master.geometry()).split('+')[0]).split('x'))
+        dims = list(map(int, ((master.geometry()).split('+')[0]).split('x')))
 
         # first we set the width because it migh change the height of menus
         # we add 6 for the 2x3 camera border pixels
@@ -1173,7 +1173,7 @@ move the menu window under the Camera
 
     def configureProgressBar(self, **kw):
         # configure progress bar such as mode and max, size etc 
-        apply(self.progressBar.configure, (), kw)
+        self.progressBar.configure(*(), **kw)
         
 
     def updateProgressBar(self, progress=None):
@@ -1296,7 +1296,7 @@ move the menu window under the Camera
                 self.pendingLog = ["rotation","light",light.name, log]
 
         elif mode == 'Texture':
-            print 'log rotation Texture'
+            print('log rotation Texture')
         self.vf.log(self.pendingLog[-1])
 
         
@@ -1337,7 +1337,7 @@ move the menu window under the Camera
             self.pendingLog = ["translation","camera",cam.name,log]
 
         elif mode == 'Texture':
-            print 'log translationtion Texture'
+            print('log translationtion Texture')
 
         self.vf.log(self.pendingLog[-1])
 
@@ -1379,7 +1379,7 @@ move the menu window under the Camera
             self.pendingLog = ["scale","camera",camera.name,log]
             
         elif mode == 'Texture':
-            print 'log scale Texture'
+            print('log scale Texture')
 
         self.vf.log(self.pendingLog[-1])
 
@@ -1433,25 +1433,25 @@ move the menu window under the Camera
     def configMenuEntry(self, menuButton, menuEntry, **kw):
         """Method to modify the Tkinter properties of a menu entry"""
         index = menuButton.menu.index(menuEntry)
-        apply( menuButton.menu.entryconfig, (index,), kw )
+        menuButton.menu.entryconfig(*(index,), **kw)
 
         
     def message(self, str, NL=1):
         """ write into the message box """
-        if thread.get_ident()==self.mainThread:
+        if _thread.get_ident()==self.mainThread:
             if NL: str = str+'\n'
             self.MESSAGE_BOX.append(str)
         else:
-            print str
+            print(str)
     
 
     def addMenuBar(self, name, kw={}, kw2={}):
         """add a menu bar to a viewer"""
         # Description of the frame
-        mbar = apply(Pmw.ScrolledFrame, (self.mBarFrame,), kw)
+        mbar = Pmw.ScrolledFrame(*(self.mBarFrame,), **kw)
         self.mbar = mbar
     #mbar = apply( Tkinter.Frame, (self.mBarFrame,) , kw)
-        apply( mbar.pack, (), kw2)
+        mbar.pack(*(), **kw2)
         # this line is needed, else root menu hase huge padding
         mbar.component('frame').pack()
         self.menuBars[name] = mbar
@@ -1469,12 +1469,12 @@ move the menu window under the Camera
         #kw['font'] = (ensureFontCase('helvetica'), 14)
         import Pmw
         if isinstance(mbar, Pmw.ScrolledFrame):
-            menuB = apply( Tkinter.Menubutton, (mbar.interior(),), kw )
+            menuB = tkinter.Menubutton(*(mbar.interior(),), **kw)
         else:
-            menuB = apply( Tkinter.Menubutton, (mbar,), kw )
-        apply( menuB.pack, (), kw2)
+            menuB = tkinter.Menubutton(*(mbar,), **kw)
+        menuB.pack(*(), **kw2)
         #create pull down
-        menuB.menu = Tkinter.Menu(menuB)
+        menuB.menu = tkinter.Menu(menuB)
         mbar.menubuttons[name] = menuB
         # attach pull down menu to button
         menuB['menu'] = menuB.menu
@@ -1525,9 +1525,9 @@ move the menu window under the Camera
             kw['image'] = image1
 
         if index==-1:
-            apply( menu.add_command, (), kw)
+            menu.add_command(*(), **kw)
         else:
-            apply( menu.insert_command, (index,), kw )
+            menu.insert_command(*(index,), **kw)
 
 
     def addCheckbutton(self, bar, name, cb, var, kw={}, kw2={}):
@@ -1536,10 +1536,10 @@ move the menu window under the Camera
         kw['command'] = cb
         kw['var'] = var
         if isinstance(bar, Pmw.ScrolledFrame):
-            button = apply( Tkinter.Checkbutton, (bar.interior(),), kw)
+            button = tkinter.Checkbutton(*(bar.interior(),), **kw)
         else:
-            button = apply( Tkinter.Checkbutton, (bar,), kw)
-        apply( button.pack, (), kw2)
+            button = tkinter.Checkbutton(*(bar,), **kw)
+        button.pack(*(), **kw2)
         bar.checkbuttons[name] = button
 
         
@@ -1549,10 +1549,10 @@ move the menu window under the Camera
         kw['command'] = cb
         kw['var'] = var
         if isinstance(bar, Pmw.ScrolledFrame):
-            button = apply( Tkinter.Radiobutton, (bar.interior(),), kw)
+            button = tkinter.Radiobutton(*(bar.interior(),), **kw)
         else:
-            button = apply( Tkinter.Radiobutton, (bar,), kw)
-        apply( button.pack, (), kw2)
+            button = tkinter.Radiobutton(*(bar,), **kw)
+        button.pack(*(), **kw2)
         bar.radiobuttons[name] = button
         
     def addButton(self, bar, name, cb,  kw={}, kw2={}):
@@ -1560,10 +1560,10 @@ move the menu window under the Camera
         kw['text'] = name
         kw['command'] = cb
         if isinstance(bar, Pmw.ScrolledFrame):
-            button = apply( Tkinter.Button, (bar.interior(),), kw)
+            button = tkinter.Button(*(bar.interior(),), **kw)
         else:
-            button = apply( Tkinter.Button, (bar,), kw)
-        apply( button.pack, (), kw2)
+            button = tkinter.Button(*(bar,), **kw)
+        button.pack(*(), **kw2)
         bar.buttons[name] = button
     
 
@@ -1579,23 +1579,23 @@ move the menu window under the Camera
         # get the menu bar, create it if necessary
         barname = gui[5]['menuBarName']
         if barname != None:
-            if barname in self.menuBars.keys():
+            if barname in list(self.menuBars.keys()):
                 bar = self.menuBars[gui[5]['menuBarName']]
             else:
                 bar = self.addMenuBar(barname, gui[0], gui[1])
         else:
-            bar = self.menuBars[self.menuBars.keys()[0]]
+            bar = self.menuBars[list(self.menuBars.keys())[0]]
         cmdGUI.menuBar=bar
         
         # get the menuButton, create if if necessary
         menuname = gui[5]['menuButtonName']
         if menuname != None:
-            if menuname in bar.menubuttons.keys():
+            if menuname in list(bar.menubuttons.keys()):
                 but = bar.menubuttons[gui[5]['menuButtonName']]
             else:
                 but = self.addMenuButton(bar, menuname, gui[2], gui[3])
         else:
-            but = bar.menubuttons[bar.buttons.keys()[0]]
+            but = bar.menubuttons[list(bar.buttons.keys())[0]]
         cmdGUI.menuButton=but
 
         # check wether this entry should go into a cascade
@@ -1624,10 +1624,10 @@ move the menu window under the Camera
                 #print '    separatore above cascade',
                 but.menu.add_separator()
 
-            if but.menu.children.has_key(cname):
+            if cname in but.menu.children:
                 menu = but.menu.children[cname]
             else:
-                menu = Tkinter.Menu(but.menu)
+                menu = tkinter.Menu(but.menu)
                 #print 'ADDING cascade %s at %d'%(cname, index)
                 if index==-1:
                     but.menu.add_cascade( label=cname, menu=menu )
@@ -1655,7 +1655,7 @@ move the menu window under the Camera
                 gui[5]['after'], gui[5]['before'], gui[5]['image'], gui[4] )
 
         elif gui[5]['menuEntryType']=='checkbutton':
-            cmdGUI.menuCheckbuttonVar = Tkinter.IntVar()
+            cmdGUI.menuCheckbuttonVar = tkinter.IntVar()
             cmdGUI.menuCheckbuttonVar.set(0)
             gui[4]['label'] = gui[5]['menuEntryLabel']
             gui[4]['command'] = cb
@@ -1677,18 +1677,18 @@ move the menu window under the Camera
         """add the menus for a Command to the current set of menus"""
         assert isinstance(cmdGUI, CommandGUI)
         gui = cmdGUI.checkbutton
-        cmdGUI.checkbuttonVar = Tkinter.IntVar()
+        cmdGUI.checkbuttonVar = tkinter.IntVar()
         cmdGUI.checkbuttonVar.set(0)
         
         # get the menu bar, create it if necessary
         barname = gui[4]['barName']
         if barname != None:
-            if barname in self.menuBars.keys():
+            if barname in list(self.menuBars.keys()):
                 bar = self.menuBars[gui[4]['barName']]
             else:
                 bar = self.addMenuBar(barname, gui[0], gui[1])
         else:
-            bar = self.menuBars[self.menuBars.keys()[0]]
+            bar = self.menuBars[list(self.menuBars.keys())[0]]
         cmdGUI.menuBar=bar
 
         # find out the call back function we need to call
@@ -1705,18 +1705,18 @@ move the menu window under the Camera
         """add the menus for a Radiobutton to the current set of menus"""
         assert isinstance(cmdGUI, CommandGUI)
         gui = cmdGUI.radiobutton
-        cmdGUI.radiobuttonVar = Tkinter.IntVar()
+        cmdGUI.radiobuttonVar = tkinter.IntVar()
         cmdGUI.radiobuttonVar.set(0)
         
         # get the menu bar, create it if necessary
         barname = gui[4]['barName']
         if barname != None:
-            if barname in self.menuBars.keys():
+            if barname in list(self.menuBars.keys()):
                 bar = self.menuBars[gui[4]['barName']]
             else:
                 bar = self.addMenuBar(barname, gui[0], gui[1])
         else:
-            bar = self.menuBars[self.menuBars.keys()[0]]
+            bar = self.menuBars[list(self.menuBars.keys())[0]]
         cmdGUI.menuBar=bar
 
         # find out the call back function we need to call
@@ -1737,12 +1737,12 @@ move the menu window under the Camera
         # get the menu bar, create it if necessary
         barname = gui[4]['barName']
         if barname != None:
-            if barname in self.menuBars.keys():
+            if barname in list(self.menuBars.keys()):
                 bar = self.menuBars[gui[4]['barName']]
             else:
                 bar = self.addMenuBar(barname, gui[0], gui[1])
         else:
-            bar = self.menuBars[self.menuBars.keys()[0]]
+            bar = self.menuBars[list(self.menuBars.keys())[0]]
         cmdGUI.menuBar=bar
 
         # find out the call back function we need to call
@@ -1782,12 +1782,12 @@ either small (22x22) or large (32x32)
         """
         
         from mglutil.gui.BasicWidgets.Tk.toolbarbutton import ToolBarButton
-        if self.menuBars.has_key('Toolbar'):
+        if 'Toolbar' in self.menuBars:
             self.menuBars['Toolbar']._frame.toolbarButtonDict = {}
             slaves = self.menuBars['Toolbar']._frame.slaves()
             self.menuBars['Toolbar']._frame.spare = []
             for slave in slaves:
-                if isinstance( slave, (ToolBarButton,Tkinter.Checkbutton) ):
+                if isinstance( slave, (ToolBarButton,tkinter.Checkbutton) ):
                     slave.destroy()
                 else:
                     self.menuBars['Toolbar']._frame.spare.append(slave)
@@ -1843,7 +1843,7 @@ either small (22x22) or large (32x32)
             iconfile = os.path.join(item['icon_dir'] + os.sep + iconsizedir,item['icon1'])
             head, ext = os.path.splitext(iconfile)
             if ext == '.gif':
-                Icon = Tkinter.PhotoImage(file=iconfile, master=self.ROOT)
+                Icon = tkinter.PhotoImage(file=iconfile, master=self.ROOT)
             else:
                 image = Image.open(iconfile)
                 Icon = ImageTk.PhotoImage(image=image, master=self.ROOT)
@@ -1852,9 +1852,9 @@ either small (22x22) or large (32x32)
                 if item['variable']:
                     Variable = item['variable']
                 else:
-                    Variable = Tkinter.IntVar()
+                    Variable = tkinter.IntVar()
                 tmpDict['Variable'] = Variable
-                Checkbutton = Tkinter.Checkbutton(bar.interior(),
+                Checkbutton = tkinter.Checkbutton(bar.interior(),
                                            image=Icon,
                                            indicatoron=0,
                                            variable=Variable,
@@ -1864,15 +1864,15 @@ either small (22x22) or large (32x32)
                 if item['variable']:
                     Variable = item['variable']
                 else:
-                    Variable = Tkinter.StringVar()
+                    Variable = tkinter.StringVar()
                 tmpDict['Variable'] = Variable
-                Checkbutton = Tkinter.Menubutton(
+                Checkbutton = tkinter.Menubutton(
                                            bar.interior(),
                                            image=Icon,
                                            indicatoron=0,
                                            #relief='raised'
                                            )
-                self.radioMenu = Tkinter.Menu(Checkbutton, tearoff=0)
+                self.radioMenu = tkinter.Menu(Checkbutton, tearoff=0)
                 for i in range( len(item['radioLabels'])):
                     self.radioMenu.add_radiobutton(
                                           label=item['radioLabels'][i], 
@@ -1913,12 +1913,12 @@ def fileOpenAsk(master, idir=None, ifile=None, types=None,
                 title='Open', multiple=False):
     if types is None: types = [ ('All files', '*') ]
     if multiple:
-        result = tkFileDialog.askopenfilenames(
+        result = tkinter.filedialog.askopenfilenames(
             parent = master, filetypes=types, initialdir=idir,
             initialfile=ifile, title=title)
         return result
     else: 
-        result = tkFileDialog.askopenfilename(
+        result = tkinter.filedialog.askopenfilename(
             parent = master, filetypes=types, initialdir=idir,
             initialfile=ifile, title=title)
         if isinstance(result, tuple): # "Cancel" was pressed
@@ -1930,7 +1930,7 @@ def fileOpenAsk(master, idir=None, ifile=None, types=None,
 def fileSaveAsk(master, idir=None, ifile=None, types = None,
                 title='Save', defaultextension=None):
     if types is None: types = [ ('All files', '*') ]
-    file = tkFileDialog.asksaveasfilename( parent = master,
+    file = tkinter.filedialog.asksaveasfilename( parent = master,
                                            filetypes=types,
                                            initialdir=idir,
                                            initialfile=ifile,

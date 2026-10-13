@@ -1,4 +1,4 @@
-# Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+# Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -21,14 +21,14 @@
 
 import warnings
 import re
-import Tkinter, Pmw, tkFileDialog
+import tkinter, Pmw, tkinter.filedialog
 import sys
 import math
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 import types
 import weakref
 import traceback
-import string
+from mglcompat import pystring as string
 import threading
 import os
 import datetime
@@ -37,7 +37,7 @@ import inspect
 import copy
 import random
 
-from tkSimpleDialog import askstring
+from tkinter.simpledialog import askstring
 from mglutil.util.packageFilePath import getResourceFolderWithVersion
 from NetworkEditor.ports import InputPort, OutputPort, RunNodeInputPort, \
      TriggerOutputPort, SpecialOutputPort
@@ -52,7 +52,7 @@ from NetworkEditor.ports import InputPortsDescr, OutputPortsDescr
 # namespace note: node's compute function get compiled using their origin
 # module's __dict__ as global name space
 
-from itemBase import NetworkItems
+from .itemBase import NetworkItems
 
 class NetworkNodeBase(NetworkItems):
     """Base class for a network editor Node
@@ -195,7 +195,7 @@ paramPanelImmediate: True or False. This sets the node's paramPanel immediate
 
         ed = self.getEditor()
         
-        for k,v in kw.items():
+        for k,v in list(kw.items()):
             if k == 'function':
                 #solves some \n issues when loading saved networks
                 v = v.replace('\'\'\'', '\'')
@@ -606,7 +606,7 @@ to the network."""
         # add line with constructor keywords if needed
         ##################################################################
         constrkw = ''
-        for name, value in self.constrkw.items():
+        for name, value in list(self.constrkw.items()):
             constrkw = constrkw + name+'='+str(value)+', '
 
         # this line seems redondant, 
@@ -650,7 +650,7 @@ configure unchanged ports"""
             if issubclass(self.__class__, FunctionNode):
                 lKw = {'masternet':self.network}
                 lKw.update(self.constrkw)
-                dummyNode = apply(self.__class__,(), lKw)
+                dummyNode = self.__class__(*(), **lKw)
             else:
                 dummyNode = self.__class__()
         
@@ -811,7 +811,7 @@ configure unchanged widgets."""
             if issubclass(self.__class__, FunctionNode):
                 lKw = {'masternet':self.network}
                 lKw.update(self.constrkw)
-                dummyNode = apply(self.__class__,(), lKw)
+                dummyNode = self.__class__(*(), **lKw)
             else:
                 dummyNode = self.__class__()
 
@@ -923,7 +923,7 @@ configure unchanged widgets."""
                                 lines = self.checkIfNodeForSavingIsDefined(
                                                    lines, networkName, indent)
 
-                            if changes.has_key('command'):
+                            if 'command' in changes:
                                 # extract and build the correct CB function name
                                 lCommand = changes['command']
                                 lCommandStr = str(lCommand)
@@ -993,7 +993,7 @@ configure unchanged widgets."""
         if issubclass(self.__class__, FunctionNode):
             lKw = {'masternet':self.network}
             lKw.update(self.constrkw)
-            dummyNode = apply(self.__class__,(), lKw)
+            dummyNode = self.__class__(*(), **lKw)
         else:
             dummyNode = self.__class__()
         
@@ -1070,7 +1070,7 @@ configure unchanged widgets."""
                        nodeName, self.inputPortsDescr[portIndex]['name'])
             lines.append(indent+datatxt)
 
-        if type(val)==types.StringType:
+        if type(val)==bytes:
             if returnPattern.search(val): #multi - line data
                 datatxt = \
                     '%s.inputPortByName[\'%s\'].widget.set(r"""%s""", run=False)\n'%( 
@@ -1105,15 +1105,15 @@ the node definition in a node library. Note:
         else:
             changes = self.compareToOrigNodeDescr()
 
-        if changes.has_key('name'):
+        if 'name' in changes:
             changes.pop('name') # name is passed to constructor
-        if changes.has_key('position'):
+        if 'position' in changes:
             changes.pop('position') # position is set in addNode
 
         if nodeName is None:
             nodeName = self.getUniqueNodeName()
 
-        if changes.has_key('function'):
+        if 'function' in changes:
             changes.pop('function') 
             # function has to be set separately:
             code, i = self.getNodeSourceCodeForDoit(
@@ -1170,7 +1170,7 @@ differences."""
                                   # we dont need to add the self generated port
                                   # as we only look here for the node modifications
 
-        for k,v in ownDescr.items():
+        for k,v in list(ownDescr.items()):
             if k == 'name':
                 if v == dummy.name:
                     ownDescr.pop(k)
@@ -1213,17 +1213,17 @@ to the node. Thus, we need to create this additional line to get a handle
         ed = self.getEditor()
         nodeName = self.getUniqueNodeName()
 
-        if ed._tmpListOfSavedNodes.has_key(nodeName) is False:
+        if (nodeName in ed._tmpListOfSavedNodes) is False:
 
             # This part is a bit complicated: we need to define the various
             # macro nodes if we have nested macros and they are not explicitly
             # created (e.g. a macro from a node library)
-            from macros import MacroNetwork
+            from .macros import MacroNetwork
             if isinstance(self.network, MacroNetwork):
                 roots = self.network.macroNode.getRootMacro()
                 for macro in roots[1:]: # skip root, because this is always defined!?
                     nn = macro.getUniqueNodeName() # was nn = 'node%d'%macro._id
-                    if ed._tmpListOfSavedNodes.has_key(nn) is False:
+                    if (nn in ed._tmpListOfSavedNodes) is False:
                         txt = "%s = %s.macroNetwork.nodes[%d]\n"%(
                             nn, macro.network.macroNode.getUniqueNodeName(),
                             macro.network.nodeIdToNumber(macro._id))
@@ -1261,7 +1261,7 @@ to the node. Thus, we need to create this additional line to get a handle
         userLibsDir = userVisionDir + 'UserLibs' + os.sep
         defaultLibDir = userLibsDir + 'MyDefaultLib'
 
-        file = tkFileDialog.asksaveasfilename(
+        file = tkinter.filedialog.asksaveasfilename(
                     initialdir = defaultLibDir , 
                     filetypes=[('python source', '*.py'), ('all', '*')],
                     title='Save source code in a category folder',
@@ -1279,10 +1279,10 @@ to the node. Thus, we need to create this additional line to get a handle
 
     def saveSource(self, filename, classname, dependencies=False):
         f = open(filename, "w")
-        map( lambda x, f=f: f.write(x), 
+        list(map( lambda x, f=f: f.write(x), 
              self.getNodeSourceCode(classname, 
                                     networkName='self.masterNetwork',
-                                    dependencies=dependencies) )
+                                    dependencies=dependencies) ))
         f.close()
 
 
@@ -1305,7 +1305,7 @@ dependencies: True/False
 
         indent0 = indent
 
-        txt, indent  = apply(self.getHeaderBlock, (className, indent), kw)
+        txt, indent  = self.getHeaderBlock(*(className, indent), **kw)
         lines.extend(txt)
 
         # this make sure the port types will be avalaible when saved code will run
@@ -1314,14 +1314,14 @@ dependencies: True/False
         lPorts = self.inputPorts + self.outputPorts
         for p in lPorts:
             lName = p.datatypeObject.__class__.__name__
-            if (lTypes.has_key(lName) is False) and \
+            if ((lName in lTypes) is False) and \
                (p.datatypeObject.__module__ != 'NetworkEditor.datatypes'):
                 lTypes[lName] = p.datatypeObject.__module__
             lName = p.datatypeObject['name']
-            if lSynonyms.has_key(lName) is False:
+            if (lName in lSynonyms) is False:
                 lSplitName = lName.split('(')
                 lBaseName = lSplitName[0]
-                if (len(lSplitName) == 2) and (lSynonyms.has_key(lBaseName) is False):
+                if (len(lSplitName) == 2) and ((lBaseName in lSynonyms) is False):
                     lDict = self.network.getTypeManager().getSynonymDict(lBaseName)
                     if lDict is not None:
                         lSynonyms[lBaseName] = lDict
@@ -1331,7 +1331,7 @@ dependencies: True/False
 
         kw['types'] = lTypes
         kw['synonyms'] = lSynonyms
-        txt, indent = apply(self.getInitBlock, (className, indent), kw)
+        txt, indent = self.getInitBlock(*(className, indent), **kw)
         kw.pop('types')
         kw.pop('synonyms')
         lines.extend(txt)
@@ -1349,7 +1349,7 @@ dependencies: True/False
             constrkw = {}
             constrkw.update( self.constrkw )
             constrkw['name'] = className
-            dummyNode = apply( self.originalClass,(),constrkw)
+            dummyNode = self.originalClass(*(), **constrkw)
             indent, txt = self.getNodeSourceCodeForPorts(self.network, indent=indent,
                                            ignoreOriginal=False, full=0,
                                            dummyNode=dummyNode, nodeName=nodeName)
@@ -1363,11 +1363,9 @@ dependencies: True/False
             txt = self.getComputeFunctionSourceCode(indent=indent)
             lines.extend(txt)
 
-            txt, indent = apply(self.getPortsCreationSourceCode,
-                                (self.inputPorts, 'input', indent), kw)
+            txt, indent = self.getPortsCreationSourceCode(*(self.inputPorts, 'input', indent), **kw)
             lines.extend(txt)
-            txt, indent = apply(self.getPortsCreationSourceCode,
-                                (self.outputPorts, 'output', indent), kw)
+            txt, indent = self.getPortsCreationSourceCode(*(self.outputPorts, 'output', indent), **kw)
             lines.extend(txt)
 
             txt, indent = self.getWidgetsCreationSourceCode(indent)
@@ -1381,7 +1379,7 @@ dependencies: True/False
                      "def beforeAddingToNetwork(self, net):\n")
 
         # this make sure the host web service is loaded
-        if self.constrkw.has_key('host'):
+        if 'host' in self.constrkw:
 
             lines.extend( indent + "try:\n" )
 
@@ -1502,19 +1500,19 @@ dependencies: True/False
 
         indent1 = indent + 4*" "
         indent2 = indent1 + 4*" "
-        if kw.has_key('types'):
+        if 'types' in kw:
             lines.append(indent1 + "mRequiredTypes = " + kw['types'].__str__() + '\n')
 
-        if kw.has_key('synonyms'):
+        if 'synonyms' in kw:
             lines.append(indent1 + "mRequiredSynonyms = [\n")
-            for lkey, lSynonym in kw['synonyms'].items():
+            for lkey, lSynonym in list(kw['synonyms'].items()):
                 lines.extend(indent2 + lSynonym.__str__() + ',\n')
             lines.append(indent1 + ']\n')
 
         # build constructor keyword from original class
         # constrkw is not used by the original class but only by NetworkNode
         constrkw = ''
-        for name, value in self.constrkw.items():
+        for name, value in list(self.constrkw.items()):
             constrkw = constrkw + name+'='+str(value)+', '
         constrkw = constrkw + "constrkw = " + str(self.constrkw)+', '
 
@@ -1598,7 +1596,7 @@ dependencies: True/False
 
     def outputData(self, **kw):
         for p in self.outputPorts:
-            if kw.has_key(p.name):
+            if p.name in kw:
                 data = kw[p.name]
                 kw.pop(p.name)
                 p.outputData(data)
@@ -1610,7 +1608,7 @@ dependencies: True/False
                         p.id, 
                         p.balloonBase)
         if len(kw):
-            for k in kw.keys():
+            for k in list(kw.keys()):
                 warnings.warn( "WARNING: port %s not found in node %s"%(k, self.name) )
 
 
@@ -1645,7 +1643,7 @@ dependencies: True/False
         else:
             children = []
             for p in portList:
-                children.extend(map (lambda x: x.node, p.children) )
+                children.extend([x.node for x in p.children] )
             for n in children:
                 n.forceExecution = 1
             # since a node can be a child through multiple ports we have to
@@ -1672,7 +1670,7 @@ dependencies: True/False
         if ed.hasGUI:
             if hasattr(ed, 'buttonBar'):
                 bl = ed.buttonBar.toolbarButtonDict
-                if bl.has_key('softrun'):
+                if 'softrun' in bl:
                     bl['softrun'].disable()
                 bl['run'].disable()
                 #bl['runWithoutGui'].disable()
@@ -1704,7 +1702,7 @@ dependencies: True/False
             # this make sure the text entries are used even if the user hasn't pressed return
             if ed.hasGUI and port.widget is not None:
                 w = port.widget.widget
-                if   isinstance(w, Tkinter.Entry) \
+                if   isinstance(w, tkinter.Entry) \
                   or isinstance(w, Pmw.ComboBox):
                     before = port.widget.lastUsedValue    
                     after = port.widget.widget.get()
@@ -1714,7 +1712,7 @@ dependencies: True/False
             if port.hasNewData():
                 newData = 1
             data = port.getData() # returns 'Stop' if bad or missing data
-            if type(data) is types.StringType:
+            if type(data) is bytes:
                 if data.lower()=='stop':
                     # turn node outline to missing data color
                     if ed.hasGUI and ed.flashNodesWhenRun:
@@ -1758,7 +1756,7 @@ dependencies: True/False
                 #if os.path.exists(lNetworkDir):
                     os.chdir(lNetworkDir)
             try:
-                stat = apply( self.dynamicComputeFunction, tuple(lArgs) )
+                stat = self.dynamicComputeFunction(*tuple(lArgs))
             finally:
                 os.chdir(lCurrentDir)
             if stat is None:
@@ -1790,7 +1788,7 @@ dependencies: True/False
         for i in range(0,len(coords),2):
             if coords[i]>xmid:
                 coords[i]=coords[i]+dx
-        apply( self.iconMaster.coords, (id,)+tuple(coords) )
+        self.iconMaster.coords(*(id,)+tuple(coords))
 
 
     def growDown(self, id, dy):
@@ -1805,7 +1803,7 @@ dependencies: True/False
         for i in range(1,len(coords),2):
             if coords[i]>ymid:
                 coords[i]=coords[i]+dy
-        apply( self.iconMaster.coords, (id,)+tuple(coords) )
+        self.iconMaster.coords(*(id,)+tuple(coords))
 
     
     def updateCode(self, port='ip', action=None, tagModified=True, **kw):
@@ -2069,7 +2067,7 @@ We re-write the first line with all port names as arguments.
         key is an instance of the port, value is an instance of the widget"""
         
         widgets = {}
-        for k, v in self.widgetDescr.items():
+        for k, v in list(self.widgetDescr.items()):
             master = v.get('master', 'ParamPanel')
             if master.lower()==masterName.lower():
                 # find corresponding widget to this port
@@ -2087,7 +2085,7 @@ We re-write the first line with all port names as arguments.
         NetworkItems.buildIcons(self, canvas)
         network = self.network
 
-        self.paramPanelTk = Tkinter.IntVar()  # to toggle Param. Panel
+        self.paramPanelTk = tkinter.IntVar()  # to toggle Param. Panel
         self.paramPanelTk.set(0)
 
         # build node's Icon
@@ -2166,11 +2164,11 @@ We re-write the first line with all port names as arguments.
             if self.__class__ is FunctionNode and hasattr(self.function, 'serviceName'):
                 def buildhostCascadeMenu():
                     self.menu.cascadeMenu.delete(0, 'end')
-                    for lKey in self.library.libraryDescr.keys():
+                    for lKey in list(self.library.libraryDescr.keys()):
                         if lKey.startswith('http://') and lKey != suppressMultipleQuotes(self.constrkw['host']):
                             cb = CallBackFunction( self.replaceWithHost, host=lKey)
                             self.menu.cascadeMenu.add_command(label=lKey, command=cb)
-                self.menu.cascadeMenu = Tkinter.Menu(self.menu, tearoff=0, postcommand=buildhostCascadeMenu)
+                self.menu.cascadeMenu = tkinter.Menu(self.menu, tearoff=0, postcommand=buildhostCascadeMenu)
                 self.menu.add_cascade(label='Replace with node from', menu=self.menu.cascadeMenu)
 
             if self.specialPortsVisible:
@@ -2330,9 +2328,8 @@ class NetworkNode(NetworkNodeBase):
     def __init__(self, name='NoName', sourceCode=None, originalClass=None,
                  constrkw=None, library=None, progbar=0, **kw):
 
-        apply( NetworkNodeBase.__init__,
-               (self, name, sourceCode, originalClass, constrkw, library,
-                progbar), kw)
+        NetworkNodeBase.__init__(*(self, name, sourceCode, originalClass, constrkw, library,
+                progbar), **kw)
         
         self.highlightOptions = {'highlightbackground':'red'}
         self.unhighlightOptions = {'highlightbackground':'gray50'}
@@ -2373,7 +2370,7 @@ the connected ports must have the same name in the new node and in the original 
             #         self.function.serviceOriginalName.lower() + '_' + serverName
             
             # to pick any better version
-            if self.library.libraryDescr.has_key(host):
+            if host in self.library.libraryDescr:
                 lversion = 0 # replace with the highest version available on the host
                 #lversion = self.function.version # replace only if version is at least equal to current
                 # to eval we need to bring the main scope into this local scope
@@ -2390,8 +2387,8 @@ the connected ports must have the same name in the new node and in the original 
                             constrkw['functionOrString'] = lFunction.serviceOriginalName + '_' + serverName
                     except:
                         pass
-        if constrkw.has_key('functionOrString'):
-            return apply(self.replaceWith, (), constrkw)
+        if 'functionOrString' in constrkw:
+            return self.replaceWith(*(), **constrkw)
         else:
             return False
 
@@ -2402,13 +2399,13 @@ the connected ports must have the same name in the new node and in the original 
 """
         if len(kw) == 0:
             kw = copy.deepcopy(self.constrkw)
-        if kw.has_key('library') is False:
+        if ('library' in kw) is False:
             kw['library'] = self.library
         if klass is None:
             klass = self.__class__
 
         try:
-            lNewNode = apply(klass,(),kw)
+            lNewNode = klass(*(), **kw)
             lNewNode.inNodeWidgetsVisibleByDefault = self.expandedIcon #by default we want the new node to be in the same state as the curren one
             self.network.addNode(lNewNode, posx=self.posx, posy=self.posy)
             if self.specialPortsVisible is True:
@@ -2452,7 +2449,7 @@ the connected ports must have the same name in the new node and in the original 
                             except:
                                 lFailure = True
                 # input ports downstream are set back to what they were
-                for lNode, portNameSingleConnection in lDownstreamNodeInputPortSingleConnection.items():
+                for lNode, portNameSingleConnection in list(lDownstreamNodeInputPortSingleConnection.items()):
                     lNode.inputPortByName[portNameSingleConnection[0]].singleConnection = portNameSingleConnection[1]
 
             if lFailure is False:
@@ -2462,8 +2459,8 @@ the connected ports must have the same name in the new node and in the original 
             else:
                 self.network.deleteNodes([lNewNode])
 
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
             #warnings.warn( str(e) )
 
         return False
@@ -2504,13 +2501,13 @@ the connected ports must have the same name in the new node and in the original 
         ## FOR unknown reasons c.tk.call((c._w, 'itemcget', self.innerBox, '-fill') can return 'None' sometimes on SGI when using threads
         c = self.iconMaster
         if c is None:
-            print 'Canvas is None'
+            print('Canvas is None')
             return 
         oldCol = c.tk.call((c._w, 'itemcget', self.innerBox, '-fill') )
         while oldCol=='None':
-            print "//////////////////////////", oldCol,self.innerBox, c 
+            print("//////////////////////////", oldCol,self.innerBox, c) 
             oldCol = c.tk.call((c._w, 'itemcget', self.innerBox, '-fill') )
-            print "\\\\\\\\\\\\\\\\\\\\\\",oldCol,self.innerBox, c 
+            print("\\\\\\\\\\\\\\\\\\\\\\",oldCol,self.innerBox, c) 
         #oldCol = c.itemconfigure(self.innerBox)['fill'][-1]
         c.tk.call((c._w, 'itemconfigure', self.innerBox, '-fill', color))
         #c.itemconfigure(self.innerBox, fill=color)
@@ -2548,15 +2545,13 @@ the connected ports must have the same name in the new node and in the original 
     def select(self):
         NetworkItems.select(self)
         if self.iconMaster is None: return
-        apply( self.iconMaster.itemconfigure, (self.innerBox,),
-               self.selectOptions )
+        self.iconMaster.itemconfigure(*(self.innerBox,), **self.selectOptions)
     
 
     def deselect(self):
         NetworkItems.deselect(self)
         if self.iconMaster is None: return
-        apply( self.iconMaster.itemconfigure, (self.innerBox,),
-               self.deselectOptions )
+        self.iconMaster.itemconfigure(*(self.innerBox,), **self.deselectOptions)
 
 
     def resizeIcon(self, dx=0, dy=0):
@@ -2808,7 +2803,7 @@ within a given node)."""
         font = tuple(font)
     
         self.textId = canvas.create_text(
-            posx, posy, text=self.name, justify=Tkinter.CENTER,
+            posx, posy, text=self.name, justify=tkinter.CENTER,
             anchor='w', tags='node', font=font)
             
         self.iconTag = 'node'+str(self.textId)
@@ -2869,7 +2864,7 @@ within a given node)."""
     def buildNodeIcon(self, canvas, posx, posy, small=False):
         # build a frame that will hold all widgets in node
         if hasattr(self.iconMaster,'tk'):
-            self.nodeWidgetMaster = Tkinter.Frame(
+            self.nodeWidgetMaster = tkinter.Frame(
                 self.iconMaster, borderwidth=3, relief='sunken' , bg='#c3d0a6')
 
         ed = self.getEditor()
@@ -2884,7 +2879,7 @@ within a given node)."""
             lOuter = 8
 
         self.textId = canvas.create_text(
-            posx, posy, text=self.name, justify=Tkinter.CENTER,
+            posx, posy, text=self.name, justify=tkinter.CENTER,
             anchor='w', tags='node', font=font)
         canvas.tag_bind(self.textId, "<Control-ButtonRelease-1>",
                         self.setLabel_cb)
@@ -2982,11 +2977,11 @@ within a given node)."""
 
 
     def setLabel_cb(self, event):
-        self._tmproot = root = Tkinter.Toplevel()
+        self._tmproot = root = tkinter.Toplevel()
         root.transient()
         root.geometry("+%d+%d"%root.winfo_pointerxy())
         root.overrideredirect(True)
-        self._tmpEntry = Tkinter.Entry(root)
+        self._tmpEntry = tkinter.Entry(root)
         self._tmpEntry.pack()
         self._tmpEntry.bind("<Return>", self.setNewLabel_cb)
 
@@ -3072,11 +3067,11 @@ class NetworkConnection(NetworkItems):
 
         if port1.node.getEditor().hasGUI:
             col = port1.datatypeObject['color']
-            if not kw.has_key('arrow'): kw['arrow']='last'
-            if not kw.has_key('fill'): kw['fill']=col
-            if not kw.has_key('width'): kw['width']=w
-            if not kw.has_key('width'): kw['width']=w
-            if not kw.has_key('activefill'): kw['activefill']='pink'
+            if 'arrow' not in kw: kw['arrow']='last'
+            if 'fill' not in kw: kw['fill']=col
+            if 'width' not in kw: kw['width']=w
+            if 'width' not in kw: kw['width']=w
+            if 'activefill' not in kw: kw['activefill']='pink'
             kw['smooth'] = self.smooth
 
             self.lineOptions = kw
@@ -3097,7 +3092,7 @@ class NetworkConnection(NetworkItems):
             
             self.parentMenu = None
 
-            self.isBlockingTk = Tkinter.IntVar()
+            self.isBlockingTk = tkinter.IntVar()
             self.isBlockingTk.set(self.blocking)
 
 
@@ -3155,7 +3150,7 @@ class NetworkConnection(NetworkItems):
 
         self.calculateNewSplitratio(coords)
 
-        apply( c.coords, (self.iconTag,)+tuple(coords) )
+        c.coords(*(self.iconTag,)+tuple(coords))
 
 
     def calculateNewSplitratio(self, coords):
@@ -3258,7 +3253,7 @@ class NetworkConnection(NetworkItems):
         if self.port1 is None or self.port2 is None:            
             import traceback
             traceback.print_stack()
-            print 'IT HAPPENED AGAIN: a conection is missing ports'
+            print('IT HAPPENED AGAIN: a conection is missing ports')
             return 
                 
         if self.port1.id is None or self.port2.id is None:
@@ -3267,7 +3262,7 @@ class NetworkConnection(NetworkItems):
 
         coords = self.getLineCoords()
         if self.hidden is False:
-            apply( c.coords, (self.id,)+tuple(coords) )
+            c.coords(*(self.id,)+tuple(coords))
         else:
             if isinstance(self.port1, SpecialOutputPort):
                 lcoords1 = (coords[0],coords[1],coords[0]+20,coords[1])
@@ -3275,26 +3270,26 @@ class NetworkConnection(NetworkItems):
             else:
                 lcoords1 = (coords[0],coords[1],coords[0],coords[1]+20)
                 lcoords2 = (coords[-2],coords[-1]-16,coords[-2],coords[-1])
-            apply( c.coords, (self.id,)+tuple(lcoords1) )
-            apply( c.coords, (self.id2,)+tuple(lcoords2) )
+            c.coords(*(self.id,)+tuple(lcoords1))
+            c.coords(*(self.id2,)+tuple(lcoords2))
 
 
     def highlight(self, event=None):
         if self.iconMaster is None: return
         c = self.iconMaster
-        apply( c.itemconfigure, (self.iconTag,), self.highlightOptions )
+        c.itemconfigure(*(self.iconTag,), **self.highlightOptions)
 
         
     def unhighlight(self, event=None):
         if self.iconMaster is None: return
         c = self.iconMaster
-        apply( c.itemconfigure, (self.iconTag,), self.unhighlightOptions)
+        c.itemconfigure(*(self.iconTag,), **self.unhighlightOptions)
         
 
     def setColor(self, color):
         if self.iconMaster is None: return
         c = self.iconMaster
-        apply( c.itemconfigure, (self.iconTag,), {'fill':color} )
+        c.itemconfigure(*(self.iconTag,), **{'fill':color})
         self.unhighlightOptions['fill'] = color
         self.deselectOptions['fill'] = color
 
@@ -3309,8 +3304,7 @@ class NetworkConnection(NetworkItems):
         sum = self.port1.node.selected + self.port2.node.selected
         if sum==2:
             self.iconMaster.addtag('selected', 'withtag', self.iconTag)
-        apply( self.iconMaster.itemconfigure, (self.iconTag,),
-               self.selectOptions['connection%d'%sum] )
+        self.iconMaster.itemconfigure(*(self.iconTag,), **self.selectOptions['connection%d'%sum])
 
 
     def deselect(self):
@@ -3323,7 +3317,7 @@ class NetworkConnection(NetworkItems):
             opt = self.deselectOptions
         else:
             opt = self.selectOptions['connection%d'%sum]
-        apply( self.iconMaster.itemconfigure, (self.iconTag,), opt )
+        self.iconMaster.itemconfigure(*(self.iconTag,), **opt)
 
 
     def shadowColors(self, colorTk):
@@ -3377,7 +3371,7 @@ class NetworkConnection(NetworkItems):
         kw['tags'] = ('connection', arcTag)
         coords = self.getLineCoords()
         if self.hidden is False:
-            g = apply( canvas.create_line, tuple(coords), kw )
+            g = canvas.create_line(*tuple(coords), **kw)
         else:
             #print "coords", coords
             if isinstance(self.port1, SpecialOutputPort):
@@ -3386,8 +3380,8 @@ class NetworkConnection(NetworkItems):
             else:
                 lcoords1 = (coords[0],coords[1],coords[0],coords[1]+20)
                 lcoords2 = (coords[-2],coords[-1]-16,coords[-2],coords[-1])
-            g = apply( canvas.create_line, tuple(lcoords1), kw )
-            g2 = apply( canvas.create_line, tuple(lcoords2), kw )
+            g = canvas.create_line(*tuple(lcoords1), **kw)
+            g2 = canvas.create_line(*tuple(lcoords2), **kw)
             self.iconTag2 = 'conn'+str(g2)
             self.id2 = g2
 
@@ -3459,7 +3453,7 @@ class NetworkConnection(NetworkItems):
         port1Name = conn.port1.name
         port2Name = conn.port2.name
 
-        from macros import MacroInputNode, MacroOutputNode
+        from .macros import MacroInputNode, MacroOutputNode
         # treat connections to MacroInputNode separately
         if isinstance(conn.port1.node, MacroInputNode):
             if len(conn.port1.connections) > 1:
@@ -3563,24 +3557,24 @@ class FunctionNode(NetworkNode):
     def __init__(self, functionOrString=None, importString=None,
                  posArgsNames=[], namedArgs={}, **kw):
 
-        if functionOrString is not None or kw.has_key('functionOrString') is False:
+        if functionOrString is not None or ('functionOrString' in kw) is False:
             kw['functionOrString'] = functionOrString
-        elif kw.has_key('functionOrString') is True:
+        elif ('functionOrString' in kw) is True:
             functionOrString = kw['functionOrString']
-        if importString is not None or kw.has_key('importString') is False:
+        if importString is not None or ('importString' in kw) is False:
             kw['importString'] = importString
-        elif kw.has_key('importString') is True:
+        elif ('importString' in kw) is True:
             importString = kw['importString']
-        if len(posArgsNames)>0 or kw.has_key('posArgsNames') is False:
+        if len(posArgsNames)>0 or ('posArgsNames' in kw) is False:
             kw['posArgsNames'] = posArgsNames
-        elif kw.has_key('posArgsNames') is True:
+        elif ('posArgsNames' in kw) is True:
             posArgsNames = kw['posArgsNames']
-        if len(namedArgs)>0 or kw.has_key('namedArgs') is False:
+        if len(namedArgs)>0 or ('namedArgs' in kw) is False:
             kw['namedArgs'] = namedArgs
-        elif kw.has_key('namedArgs') is True:
+        elif ('namedArgs' in kw) is True:
             namedArgs = kw['namedArgs']
 
-        if type(functionOrString) == types.StringType:
+        if type(functionOrString) == bytes:
             # we add __main__ to the scope of the local function
             # the folowing code is similar to: "from __main__ import *"
             # but it doesn't raise any warning, and its probably more local
@@ -3593,15 +3587,15 @@ class FunctionNode(NetworkNode):
             if importString is not None:
                 try:
                     lImport = eval(importString)
-                    if lImport == types.StringType:
+                    if lImport == bytes:
                         importString = lImport
                 except:
                     pass
                 exec(importString)
-            if kw.has_key('masternet') is True:
+            if ('masternet' in kw) is True:
                 masterNet = kw['masternet']
             lfunctionOrString = functionOrString
-            while type(lfunctionOrString) == types.StringType:
+            while type(lfunctionOrString) == bytes:
                 try:
                     function = eval(lfunctionOrString)
                 except NameError:
@@ -3610,12 +3604,12 @@ class FunctionNode(NetworkNode):
         else:
             function = functionOrString
 
-        if function is not None and kw.has_key('library'):
+        if function is not None and 'library' in kw:
             # so we know where to find the current editor
             function._vpe = kw['library'].ed
             function._node = self # so we can find the vision node
 
-        if hasattr(function, 'params') and type(function.params) == types.DictType:
+        if hasattr(function, 'params') and type(function.params) == dict:
             argsDescription = function.params
         else:
             argsDescription = {}
@@ -3640,7 +3634,7 @@ class FunctionNode(NetworkNode):
             name = function.__class__.__name__
 
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.function = function # function or command to be called
         
@@ -3654,7 +3648,7 @@ class FunctionNode(NetworkNode):
         # get arguments description
         from inspect import getargspec
         if hasattr(function, '__call__') and hasattr(function.__call__, 'im_func'): 
-            args = getargspec(function.__call__.im_func)
+            args = getargspec(function.__call__.__func__)
         else:
             args = getargspec(function)
 
@@ -3685,7 +3679,7 @@ class FunctionNode(NetworkNode):
         # create the constructor arguments such that when the node is restored
         # from file it will have all the info it needs
         if functionOrString is not None \
-          and type(functionOrString) == types.StringType:
+          and type(functionOrString) == bytes:
             self.constrkw['functionOrString'] = "\'"+suppressMultipleQuotes(functionOrString)+"\'"
             if importString is not None:
                 self.constrkw['importString'] = "\'"+suppressMultipleQuotes(importString)+"\'"
@@ -3699,19 +3693,19 @@ class FunctionNode(NetworkNode):
             # a function is not savable, so we are trying to save something
             self.constrkw['functionOrString'] = "\'"+function.__class__.__name__+"\'"
         if (importString is None or importString == '') \
-          and self.constrkw.has_key('importString') is True:
+          and ('importString' in self.constrkw) is True:
             del self.constrkw['importString']
         if len(self.posArgsNames) > 0:
             self.constrkw['posArgsNames'] = self.posArgsNames
-        elif self.constrkw.has_key('posArgsNames') is True:
+        elif ('posArgsNames' in self.constrkw) is True:
             del self.constrkw['posArgsNames']
         if len(self.namedArgs) > 0:
             self.constrkw['namedArgs'] = self.namedArgs
-        elif self.constrkw.has_key('namedArgs') is True:
+        elif ('namedArgs' in self.constrkw) is True:
             del self.constrkw['namedArgs']
-        if kw.has_key('host') is True:
+        if ('host' in kw) is True:
             self.constrkw['host'] = '\"'+suppressMultipleQuotes(kw['host'])+'\"'
-        elif self.constrkw.has_key('host') is True:
+        elif ('host' in self.constrkw) is True:
             del self.constrkw['host']
 
         code = """def doit(self, *args):
@@ -3743,7 +3737,7 @@ class FunctionNode(NetworkNode):
     def buildPortsForPositionalAndNamedArgs(self, args, namedArgs, argsDescription={},
                                             createPortNow=False):
 
-        lAllPortNames = args + namedArgs.keys()
+        lAllPortNames = args + list(namedArgs.keys())
         for name in lAllPortNames:
             if name in args:
                 ipdescr = {'name':name, 'required':True}
@@ -3779,7 +3773,7 @@ class FunctionNode(NetworkNode):
                         'labelGridCfg':{'sticky':'w'},
                         'labelCfg':{'text':name},
                         }
-                elif type(val) is types.BooleanType:
+                elif type(val) is bool:
                     dtype = 'boolean'
                     self.widgetDescr[name] = {
                         'class': 'NECheckButton',
@@ -3787,7 +3781,7 @@ class FunctionNode(NetworkNode):
                         'labelGridCfg':{'sticky':'w'},
                         'labelCfg':{'text':name},
                         }
-                elif type(val) in [ types.IntType, types.LongType]:
+                elif type(val) in [ int, int]:
                     dtype = 'int'
                     self.widgetDescr[name] = {
                         'class': 'NEDial', 'size':50,
@@ -3796,7 +3790,7 @@ class FunctionNode(NetworkNode):
                         'labelGridCfg':{'sticky':'w'},
                         'labelCfg':{'text':name},
                         }
-                elif type(val) in [types.FloatType, types.FloatType]:
+                elif type(val) in [float, float]:
                     dtype = 'float'
                     self.widgetDescr[name] = {
                         'class': 'NEDial', 'size':50,
@@ -3805,7 +3799,7 @@ class FunctionNode(NetworkNode):
                         'labelGridCfg':{'sticky':'w'},
                         'labelCfg':{'text':name},
                         }
-                elif type(val) is types.StringType:
+                elif type(val) is bytes:
                     dtype = 'string'
                     self.widgetDescr[name] = {
                         'class': 'NEEntry', 'width':10,
@@ -3825,7 +3819,7 @@ class FunctionNode(NetworkNode):
 
             if createPortNow is True:
                 # create port
-                ip = apply( self.addInputPort, (), ipdescr )
+                ip = self.addInputPort(*(), **ipdescr)
                 # create widget if necessary
                 if dtype != 'None':
                     ip.createWidget(descr=self.widgetDescr[name])

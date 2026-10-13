@@ -1,7 +1,7 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import Tkinter, os
-import numpy.oldnumeric as Numeric
+import tkinter, os
+import mglcompat.oldnumeric as Numeric
 import Image
 from opengltk.OpenGL import GL
 from opengltk.extent import _gllib
@@ -26,15 +26,15 @@ class ImageViewer(OGLWidget):
     def __init__(self, master=None, image=None, name='ImageViewer',
                  cnf = {}, **kw):
 
-        if not kw.has_key('double'):
+        if 'double' not in kw:
             kw['double'] = 1
-	if not kw.has_key('depth'):
+        if 'depth' not in kw:
             kw['depth'] = 0
-	if not kw.has_key('accum'):
+        if 'accum' not in kw:
             kw['accum'] = 0
 
         if master is None:
-            master = Tkinter.Toplevel()
+            master = tkinter.Toplevel()
             master.title(name)
 
         self.width = 100
@@ -43,7 +43,7 @@ class ImageViewer(OGLWidget):
 ##         self.scale= 1.0
 ##         self.bias = 0.0
         
-        apply( OGLWidget.__init__, (self, master, cnf), kw)
+        OGLWidget.__init__(*(self, master, cnf), **kw)
 
         self.initGL()
 
@@ -59,8 +59,8 @@ class ImageViewer(OGLWidget):
         #print 'Configure 0'
         if self.imarray is None:
             return
-        if isinstance(self.master, Tkinter.Tk) or \
-           isinstance(self.master, Tkinter.Toplevel):
+        if isinstance(self.master, tkinter.Tk) or \
+           isinstance(self.master, tkinter.Toplevel):
                geom = '%dx%d' % (self.width, self.height)
                self.master.geometry(geom)
         self.unbind('<Configure>')
@@ -90,7 +90,7 @@ class ImageViewer(OGLWidget):
             self.width = image.size[0]
             self.height = image.size[1]
             im = image.transpose(Image.FLIP_TOP_BOTTOM)
-            self.imarray = Numeric.fromstring(im.tostring(), 'B')
+            self.imarray = Numeric.fromstring(im.tobytes(), 'B')
             self.mode = image.mode
         elif isinstance(image,Numeric.ArrayType):
             if mode == 'RGB':
@@ -110,11 +110,11 @@ class ImageViewer(OGLWidget):
                 self.numimarray = numarray.array(self.imarray)
                 self.imarray = Numeric.reshape( image, (-1,))
             else:
-                raise RuntimeError, "bad shape for image array"
+                raise RuntimeError("bad shape for image array")
             assert len(self.imarray)==self.width*self.height*lenmode
             self.mode = mode
         else:
-            print 'Not surported yet'
+            print('Not surported yet')
         
         self.Configure()
         self.tkRedraw()
@@ -170,7 +170,7 @@ class ImageViewer(OGLWidget):
     def smooth(self):
         average = (Numeric.ones( (3,3) , 'f')/9.).astype('f')
 #        average[1][1] = .0
-        print average
+        print(average)
         self.redraw(filter=average)
         image = (self.imageAsArray()).astype('B')
         return image

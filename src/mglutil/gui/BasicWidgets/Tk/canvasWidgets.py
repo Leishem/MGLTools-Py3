@@ -7,7 +7,7 @@
 #############################################################################
 
 import types
-import Tkinter, Pmw, os
+import tkinter, Pmw, os
 from mglutil.util.callback import CallBackFunction, CallbackManager
 
 
@@ -23,12 +23,12 @@ class PatternCanvas:
         # border = border size
         # 
         if not master:
-            master = Tkinter.Toplevel()
+            master = tkinter.Toplevel()
 
         if title is not None:
             master.title(title)
         
-        f = self.frame = Tkinter.Frame(master)
+        f = self.frame = tkinter.Frame(master)
 
         
         if tkCol:
@@ -38,7 +38,7 @@ class PatternCanvas:
             self.border = border
             self.width =(self.Xelemt*self.size+2*self.border)
             self.height =(self.Yelemt*self.size+2*self.border)
-            self.cwcanvas = Tkinter.Canvas(f,width=self.width,
+            self.cwcanvas = tkinter.Canvas(f,width=self.width,
                                            height=self.height, 
                                            borderwidth=3 )
                                            
@@ -59,8 +59,8 @@ class PatternCanvas:
         # CallBack Manager
         self.cbManager = CallbackManager()
         if callback:
-            if type(callback) in [types.ListType, types.TupleType]:
-                map(self.cbManager.AddCallback, callback)
+            if type(callback) in [list, tuple]:
+                list(map(self.cbManager.AddCallback, callback))
             else:
                 self.cbManager.AddCallback(callback)
 
@@ -72,19 +72,19 @@ class PatternCanvas:
         pass
     
     def pack(self,*args, **kw):
-        apply(self.frame.pack, args, kw)
+        self.frame.pack(*args, **kw)
         
     def pack_forget(self,*args, **kw):
-        apply(self.frame.pack_forget, args, kw)
+        self.frame.pack_forget(*args, **kw)
                          
     def grid(self,*args, **kw):
-        apply(self.frame.grid, args, kw)
+        self.frame.grid(*args, **kw)
 
     def grid_forget(self,*args, **kw):
-        apply(self.frame.grid_forget, args, kw)
+        self.frame.grid_forget(*args, **kw)
 
     def destroy(self,*args, **kw):
-        apply(self.frame.destroy, args, kw)
+        self.frame.destroy(*args, **kw)
 
 class CoefCanvas:
     
@@ -96,12 +96,12 @@ class CoefCanvas:
         # border = border size
         # 
         if not master:
-            master = Tkinter.Toplevel()
+            master = tkinter.Toplevel()
 
         if title is not None:
             master.title(title)
         
-        f = self.frame = Tkinter.Frame(master)
+        f = self.frame = tkinter.Frame(master)
 
         
         self.coeff = 0.0
@@ -109,7 +109,7 @@ class CoefCanvas:
         self.width = width
         self.height = height
         
-        self.cwcanvas = Tkinter.Canvas(f,width=self.width,
+        self.cwcanvas = tkinter.Canvas(f,width=self.width,
                                        height=self.height)
         self.wrect = self.cwcanvas.create_rectangle(0,0,100,10,
                                                     outline='black',
@@ -125,8 +125,8 @@ class CoefCanvas:
         # CallBack Manager
         self.cbManager = CallbackManager()
         if callback:
-            if type(callback) in [types.ListType, types.TupleType]:
-                map(self.cbManager.AddCallback, callback)
+            if type(callback) in [list, tuple]:
+                list(map(self.cbManager.AddCallback, callback))
             else:
                 self.cbManager.AddCallback(callback)
 
@@ -141,16 +141,16 @@ class CoefCanvas:
         self.cwcanvas.itemconfigure(self.labelvalue,text="%.1f"%coeff+'%')
     
     def pack(self,*args, **kw):
-        apply(self.frame.pack, args, kw)
+        self.frame.pack(*args, **kw)
         
     def pack_forget(self,*args, **kw):
-        apply(self.frame.pack_forget, args, kw)
+        self.frame.pack_forget(*args, **kw)
                          
     def grid(self,*args, **kw):
-        apply(self.frame.grid, args, kw)
+        self.frame.grid(*args, **kw)
 
     def grid_forget(self,*args, **kw):
-        apply(self.frame.grid_forget, args, kw)
+        self.frame.grid_forget(*args, **kw)
 
     def destroy(self,*args, **kw):
-        apply(self.frame.destroy, args, kw)
+        self.frame.destroy(*args, **kw)

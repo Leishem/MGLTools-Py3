@@ -10,10 +10,10 @@ import numpy
 import struct
 from mglutil.util.packageFilePath import getBinary, which
 import types, os
-import Tkinter, Pmw
+import tkinter, Pmw
 from math import sqrt
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from MolKit.tree import TreeNode, TreeNodeSet
 from MolKit.molecule import Molecule, Atom, AtomSet
 from MolKit.protein import Residue
@@ -45,7 +45,7 @@ if not msmsBinary: #msms not found in binaries
     msmsBinary = which('msms')
 
 if not msmsBinary:
-    print "Could not find msms binaries. Please set the path to msms executable in ",__file__
+    print("Could not find msms binaries. Please set the path to msms executable in ",__file__)
 
 class MSMSClient:    
     def __init__(self, coords=None, radii=None, **kw):
@@ -75,7 +75,7 @@ class MSMSClient:
      
     def compute(self, probe_radius, density, **kw):
         soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print  probe_radius, density, kw
+        print(probe_radius, density, kw)
         connected = False
         for i in range(1000):#this is done to make sure msms is ready to accept a client.     
             try:
@@ -83,10 +83,10 @@ class MSMSClient:
                 connected = True
                 #print "msms client connected on port "+str(self.port)
                 break;
-            except Exception, inst:
+            except Exception as inst:
                 pass
                 #print inst
-        print connected
+        print(connected)
         if not connected: 
             raise RuntimeError("Unable to connect to msms on port "+str(self.port))
         soc.settimeout(None) 
@@ -102,7 +102,7 @@ class MSMSClient:
             if d[0]=='\n':
                 break
             msg += d
-        print msg
+        print(msg)
         # e.g. "tahiti: MSMS SERVICE started on tahiti"
         cmd = ''
         while 1:
@@ -115,7 +115,7 @@ class MSMSClient:
         #          successfuly and the data was sent back
         # MSMS RS  This string indicates that next the reduced surface will be sent
         # MSMS RCF This string indicates that nexttbhe triangulated surface will be sent
-        print cmd        
+        print(cmd)        
         isize = struct.calcsize('i')
         fsize = struct.calcsize('f')
         
@@ -163,7 +163,7 @@ class MSMSClient:
             
     def getTriangles(self, atomindices, **kw):
         firstTime = True
-        indices = range(len(self.faces))
+        indices = list(range(len(self.faces)))
         faces = self.faces.copy()
         for index, item in enumerate(self.indices):
             if item in atomindices: continue
@@ -217,7 +217,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
 
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('assignAtomsRadii'):
+        if 'assignAtomsRadii' not in self.vf.commands:
             self.vf.loadCommand('editCommands', ['assignAtomsRadii',],
                                 topCommand=0)
 
@@ -367,7 +367,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
         kw['hdensity'] = hdensity
         if type(nodes) is StringType:
             self.nodeLogString = "'" + nodes +"'"
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
             
 
     def fixValues(self, val):
@@ -383,11 +383,11 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
 
     
     def guiCallback(self):
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             self.updateCBB()
         val = self.showForm('default')
         if not val: return
-        if type(val['surfName']) is types.TupleType:
+        if type(val['surfName']) is tuple:
             surfName = val['surfName'][0]
         else:
             surfName = val['surfName']
@@ -395,7 +395,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
 
         del val['surfName']
         
-        apply(self.doitWrapper, (self.vf.getSelection(), surfName), val)
+        self.doitWrapper(*(self.vf.getSelection(), surfName), **val)
 
 
     def doit(self, nodes, surfName='MSMS-MOL', pRadius=1.5, density=1.0,
@@ -421,15 +421,15 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
         if nodes is None or not nodes:
             return
         # Check the validity of the input
-        if not type(density) in [types.IntType, types.FloatType] or \
+        if not type(density) in [int, float] or \
            density < 0: return 'ERROR'
-        if not type(pRadius) in [types.IntType, types.FloatType] or \
+        if not type(pRadius) in [int, float] or \
            pRadius <0: return 'ERROR'
 
         if hdset=='None':
             hdset=None
         if hdset:
-            if self.vf.sets.has_key(hdset[0]):
+            if hdset[0] in self.vf.sets:
                 hdset = self.vf.sets[hdset[0]].findType(Atom)
             else:
                 self.warningMsg("set %s not found"%hdset)
@@ -440,7 +440,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
         # current selection
         if perMol:
             molecules = nodes.top.uniq()
-            atmSets = map(lambda x: x.allAtoms, molecules)
+            atmSets = [x.allAtoms for x in molecules]
         else:
             molecules, atmSets = self.vf.getNodesByMolecule(nodes, Atom)
 
@@ -449,7 +449,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
                 surfName = mol.name + '-MSMS'
             geomC = mol.geomContainer
 
-            if not geomC.msms.has_key(surfName):
+            if surfName not in geomC.msms:
                 # Create a new geometry
                 # be stored.
                 g = IndexedPolygons(surfName, pickableVertices=1, protected=True,)
@@ -471,7 +471,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
                     a.colors[surfName] = (1.,1.,1.)
                     a.opacities[surfName] = 1.0
                 # Created a new geometry needs to update the form if exists.
-                if self.cmdForms.has_key('default'):
+                if 'default' in self.cmdForms:
                     self.updateForm(surfName)
 
             # update the existing geometry
@@ -515,7 +515,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
                 del a.highDensity
 
         if display:
-            if not self.vf.commands.has_key('displayMSMS'):
+            if 'displayMSMS' not in self.vf.commands:
                 self.vf.loadCommand("msmsCommands", ['displayMSMS',],
                                     topCommand=0)
             if nodes.stringRepr is not None:
@@ -535,7 +535,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
             mols = self.vf.getSelection().top.uniq()
             sNames = []
             for mol in mols:
-                sNames += mol.geomContainer.msms.keys()
+                sNames += list(mol.geomContainer.msms.keys())
 
             defaultValues = self.getLastUsedValues()
 
@@ -567,7 +567,7 @@ one from the list below\n '_' are not accepted.",
                                 },
                         'gridcfg':{'sticky':'we'}})
             
-            names = ['None']+self.vf.sets.keys()
+            names = ['None']+list(self.vf.sets.keys())
             names.sort()
 #            idf.append({'widgetType':Pmw.ComboBox,
 #                        'name':'hdset',
@@ -676,8 +676,8 @@ Right click on the widget to type a value manually""",
     def updateTexCoords(self, mol):
         lookup = mol.geomContainer.texCoordsLookup["msms"]
         g = mol.geomContainer.geoms['msms']
-        tx = map(lambda v, l=lookup: l[str(v[0])+str(v[1])+str(v[2])],
-                 g.vertexSet.vertices.array)
+        tx = list(map(lambda v, l=lookup: l[str(v[0])+str(v[1])+str(v[2])],
+                 g.vertexSet.vertices.array))
         tx = Numeric.array(tx)
         tx.shape = (-1,1)
         g.Set( textureCoords=tx, tagModified=False )
@@ -716,14 +716,14 @@ Right click on the widget to type a value manually""",
         sNames = []
         mols = self.vf.getSelection().top.uniq()
         for mol in mols:
-            sNames += mol.geomContainer.msms.keys()
+            sNames += list(mol.geomContainer.msms.keys())
         if not typein in sNames:
             return 
         else:
             cbb.setlist(sNames)
             cbb.selectitem(typein)
 
-        names = ['None']+self.vf.sets.keys()
+        names = ['None']+list(self.vf.sets.keys())
         names.sort()
         cbb = ebn['hdset']['widget']
         cbb.setlist(names)
@@ -731,7 +731,7 @@ Right click on the widget to type a value manually""",
             cbb.selectitem(str(defaultValues['hdset'][0])) #str(None)->"None"
 
     def perMol_cb(self, event=None):
-        if not self.cmdForms.has_key('default'):
+        if 'default' not in self.cmdForms:
             return
         ebn = self.cmdForms['default'].descr.entryByName
         perMol = ebn['perMol']['wcfg']['variable'].get()

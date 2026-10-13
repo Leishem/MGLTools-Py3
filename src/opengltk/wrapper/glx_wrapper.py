@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 30, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 30, 2007 by 
 
 #
 # copyright_notice
@@ -7,7 +7,7 @@
 """glx wrappers
 """
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from opengltk.extent import _glxlib
 
 

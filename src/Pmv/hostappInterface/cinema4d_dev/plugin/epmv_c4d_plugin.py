@@ -63,7 +63,7 @@ else :
     f=open(mgldirfile,'w')
     f.write(MGL_ROOT)
     f.close()
-print MGL_ROOT
+print(MGL_ROOT)
 #is MGLTools Pacthed ie windows
 if sys.platform == 'win32':
     #need to patch MGLTools first
@@ -72,15 +72,15 @@ if sys.platform == 'win32':
     mgltoolsDir = MGL_ROOT+os.sep+"MGLToolsPckgs"
     patch=os.path.isfile(mgltoolsDir+os.sep+"patched")
     if not patch :
-        import urllib
+        import urllib.request, urllib.parse, urllib.error
         import tarfile 
         c4d.gui.MessageDialog("Patching MGLToolsPckgs with python2.6 system dependant modules\nclick ok to Continue\nand be patient")
-        print mgltoolsDir+os.sep
+        print(mgltoolsDir+os.sep)
         patchpath = mgltoolsDir+os.sep
         URI="http://mgldev.scripps.edu/projects/ePMV/patchs/depdtPckgs.tar"
         tmpFileName = mgltoolsDir+os.sep+"depdtPckgs.tar"
         if not os.path.isfile(tmpFileName):
-            urllib.urlretrieve(URI, tmpFileName)
+            urllib.request.urlretrieve(URI, tmpFileName)
             #geturl(URI, tmpFileName)
         TF=tarfile.TarFile(tmpFileName)
         TF.extractall(patchpath)
@@ -98,11 +98,11 @@ epmvinstall = Installer(gui=False)
 
 #is C4dpatched
 if sys.platform == "darwin" :
-	patchpath = c4d.storage.GeGetC4DPath(4)+os.sep+"python"+os.sep+"packages"+os.sep+"osx"+os.sep
+        patchpath = c4d.storage.GeGetC4DPath(4)+os.sep+"python"+os.sep+"packages"+os.sep+"osx"+os.sep
 elif sys.platform == "win32":
-	patchpath = c4d.storage.GeGetC4DPath(2)+os.sep+"modules"+os.sep+"python"+os.sep+"res"+os.sep
+        patchpath = c4d.storage.GeGetC4DPath(2)+os.sep+"modules"+os.sep+"python"+os.sep+"res"+os.sep
 epmvinstall.softdir[2] = softdir
-print epmvinstall.softdir[2]
+print(epmvinstall.softdir[2])
 patched=os.path.isfile(patchpath+"patched")
 if not patched :
     c4d.gui.MessageDialog("Cinema4D python library is going to be pacthed\nclick ok to Continue\nand be patient\n")
@@ -331,9 +331,9 @@ class ParameterARViewer(gui.SubDialog):
         self.epmv.mv.art.patternMgr.mirror = self.GetBool(self.CHECKBOXS["flipV"]["id"])
     
     def startTracking(self):
-        import thread
-        self.thread=thread.start_new_thread(self.epmv.helper.AR,(self.epmv.mv,))
-        print "thread ",self.thread
+        import _thread
+        self.thread=_thread.start_new_thread(self.epmv.helper.AR,(self.epmv.mv,))
+        print("thread ",self.thread)
 
     def setUpPatterns(self):
         patt5='patt17'#left
@@ -342,10 +342,10 @@ class ParameterARViewer(gui.SubDialog):
         patt8='patt39'#back   
         #why loadDevice didnt set the transfo_position correctly
         self.epmv.mv.art.patternMgr.loadDevice(name='head',type='cube4',width=40.,
-        								trans=[0.,0.,-30.])
+                                                                        trans=[0.,0.,-30.])
         self.epmv.mv.art.patternMgr.loadDevice(name='bott',type='cube4',
-        							listPatt=[patt6,patt7,patt8,patt5],width=40.,
-        							trans=[0.,0.,-30.])
+                                                                listPatt=[patt6,patt7,patt8,patt5],width=40.,
+                                                                trans=[0.,0.,-30.])
         #offset ?
         self.epmv.mv.art.patternMgr.groups['head'].offset = [60.,0.,0.]
         self.epmv.mv.art.patternMgr.groups['bott'].offset = [60.,0.,0.]
@@ -360,15 +360,15 @@ class ParameterARViewer(gui.SubDialog):
 #######EVENT COMMAND######################################################
     def Command(self, id, msg):
         c4d.gui.SetMousePointer(c4d.MOUSE_BUSY)
-        for butn in self.BTN.keys():
+        for butn in list(self.BTN.keys()):
             if id == self.BTN[butn]["id"]:
                 self.BTN[butn]["action"]()
-        for butn in self.CHECKBOXS.keys():
+        for butn in list(self.CHECKBOXS.keys()):
             if id == self.CHECKBOXS[butn]["id"]:
                 action = self.CHECKBOXS[butn]["action"]
                 if action is not None :
                     action()
-        for butn in self.SLIDERS.keys():
+        for butn in list(self.SLIDERS.keys()):
             if id == self.SLIDERS[butn]["id"]:
                 action = self.SLIDERS[butn]["action"]
                 if action is not None :
@@ -471,7 +471,7 @@ class ParameterScoring(gui.SubDialog):
         self.SetString(ID,"Scorer")        
         ID = ID +1
         self._scorertype=self.AddComboBox(id=self.COMB_BOX["score"]["id"],flags=c4d.BFH_SCALEFIT,initw=60)
-        map(lambda x,box=self._scorertype:self.AddChild(box,x[0],x[1]),enumerate(self.scorertype))
+        list(map(lambda x,box=self._scorertype:self.AddChild(box,x[0],x[1]),enumerate(self.scorertype)))
                                 
         self.GroupEnd()
         self.GroupBegin(id=ID,flags=c4d.BFH_SCALEFIT | c4d.BFV_MASK,
@@ -488,8 +488,8 @@ class ParameterScoring(gui.SubDialog):
         #should display here a menu of available scorer...
         self._currentscorer=self.AddComboBox(id=self.COMB_BOX["scorer"]["id"],
                                              flags=c4d.BFH_SCALEFIT,initw=60)
-        map(lambda x,box=self._currentscorer:self.AddChild(box,x[0],x[1]),enumerate(self.scoreravailable))
-        for butk in self.CHECKBOXS.keys():
+        list(map(lambda x,box=self._currentscorer:self.AddChild(box,x[0],x[1]),enumerate(self.scoreravailable)))
+        for butk in list(self.CHECKBOXS.keys()):
             self.AddCheckbox(id=self.CHECKBOXS[butk]["id"],flags=c4d.BFH_SCALEFIT,
                                 name=self.CHECKBOXS[butk]["name"],
                                 initw=self.CHECKBOXS[butk]["width"],
@@ -547,7 +547,7 @@ class ParameterScoring(gui.SubDialog):
     def getScorerAvailable(self):
         self.scoreravailable = []
         if hasattr(self.epmv.mv,'energy'):
-            self.scoreravailable = self.epmv.mv.energy.data.keys()
+            self.scoreravailable = list(self.epmv.mv.energy.data.keys())
 
     def setCurrentScorer(self):
         self.getScorerAvailable()
@@ -561,9 +561,9 @@ class ParameterScoring(gui.SubDialog):
         #get Rec
         rname = self.GetString(self.TXT['rec']['id'])
         #get Lig
-        print rname
+        print(rname)
         lname = self.GetString(self.TXT['lig']['id'])
-        print lname
+        print(lname)
         #is this can be selection ? yep
         #recSet=self.mv.select(rname,negate=False, only=True, xor=False, 
         #                           log=0, intersect=False)
@@ -644,13 +644,13 @@ class ParameterScoring(gui.SubDialog):
 #######EVENT COMMAND######################################################
     def Command(self, id, msg):
         c4d.gui.SetMousePointer(c4d.MOUSE_BUSY)
-        for butn in self.BTN.keys():
+        for butn in list(self.BTN.keys()):
             if id == self.BTN[butn]["id"]:
                 self.BTN[butn]["action"]()
-        for butn in self.COMB_BOX.keys():
+        for butn in list(self.COMB_BOX.keys()):
             if id == self.COMB_BOX[butn]["id"]:
                 self.COMB_BOX[butn]["action"]()
-        for butn in self.CHECKBOXS.keys():
+        for butn in list(self.CHECKBOXS.keys()):
             if id == self.CHECKBOXS[butn]["id"]:
                 if self.CHECKBOXS[butn]["action"] is not None :
                     self.CHECKBOXS[butn]["action"]()
@@ -788,19 +788,19 @@ class ParameterModeller(gui.SubDialog,epmvGui.ParameterModeller):
 #######EVENT COMMAND######################################################
     def Command(self, id, msg):
         c4d.gui.SetMousePointer(c4d.MOUSE_BUSY)
-        for butn in self.BTN.keys():
+        for butn in list(self.BTN.keys()):
             if id == self.BTN[butn]["id"]:
                 if self.BTN[butn]["action"] is not None :
                     self.BTN[butn]["action"]()
-        for butn in self.NUMBERS.keys():
+        for butn in list(self.NUMBERS.keys()):
             if id == self.NUMBERS[butn]["id"]:
                 if self.NUMBERS[butn]["action"] is not None :
                     self.NUMBERS[butn]["action"]()
-        for butn in self.CHECKBOXS.keys():
+        for butn in list(self.CHECKBOXS.keys()):
             if id == self.CHECKBOXS[butn]["id"]:
                 if self.CHECKBOXS[butn]["action"] is not None :
                     self.CHECKBOXS[butn]["action"]()                    
-        for butn in self.COMB_BOX.keys():
+        for butn in list(self.COMB_BOX.keys()):
             if id == self.COMB_BOX[butn]["id"]:
                 if self.COMB_BOX[butn]["action"] is not None :
                     self.COMB_BOX[butn]["action"]()                    
@@ -852,7 +852,7 @@ class Parameter_ePMV(gui.SubDialog):
         self.GroupBorderSpace(10, 10, 5, 10)
         ID = ID +1
         #store?
-        for k in self.OPTIONS.keys():
+        for k in list(self.OPTIONS.keys()):
             self.AddCheckbox(id=self.OPTIONS[k]["id"],flags=c4d.BFH_SCALEFIT,
                                 name=self.OPTIONS[k]["name"],
                                 initw=self.OPTIONS[k]["width"],
@@ -935,7 +935,7 @@ class Parameter_ePMV(gui.SubDialog):
 #######EVENT COMMAND######################################################
     def Command(self, id, msg):
         c4d.gui.SetMousePointer(c4d.MOUSE_BUSY)
-        for butn in self.BTN.keys():
+        for butn in list(self.BTN.keys()):
             if id == self.BTN[butn]["id"]:
                 self.BTN[butn]["action"]()
         c4d.gui.SetMousePointer(c4d.MOUSE_NORMAL)
@@ -965,7 +965,7 @@ class epmv_c4d(gui.GeDialog):
         from Pmv.hostappInterface.cinema4d_dev.c4dAdaptor import c4dAdaptor
         doc = c4d.documents.GetActiveDocument()
         dname=doc.GetDocumentName()
-        if dname not in c4d.mv.keys() :
+        if dname not in list(c4d.mv.keys()) :
             epmv = c4dAdaptor(debug=0)
             c4d.mv[dname]=epmv#self.epmv.helper.start(debug=1)
             #create the empty epmv object and add the epmv_synchro Tag
@@ -979,7 +979,7 @@ class epmv_c4d(gui.GeDialog):
         self.epmv.gui = self.mv.GUI = self
         self.mv.GUI.VIEWER = self
         def t(val):
-            print val
+            print(val)
         self.TransformRootOnly = t
         
         self.funcColor = [self.mv.colorByAtomType,self.mv.colorAtomsUsingDG,
@@ -992,7 +992,7 @@ class epmv_c4d(gui.GeDialog):
         
     def initWidgetId(self):
 
-        if VERBOSE : print "__init__ values"
+        if VERBOSE : print("__init__ values")
         id = 1005
         self.MENU_ID = {"File":
                       [{"id": id, "name":"Recent Files","action":None},
@@ -1095,7 +1095,7 @@ class epmv_c4d(gui.GeDialog):
                          '  RibbonProtein+CPKligand','  xray','  Custom',
                          '  Save Custom As...']
         self.keyword = ['keywords:','  backbone','  sidechain','  chain','  picked']
-        kw=map(lambda x:"  "+x,ResidueSetSelector.residueList.keys())
+        kw=["  "+x for x in list(ResidueSetSelector.residueList.keys())]
         self.keyword.extend(kw)
         
         self.scriptliste = ['Open:',
@@ -1203,19 +1203,19 @@ class epmv_c4d(gui.GeDialog):
                 self._modeller = True
                 #self._useModeller = True
             except:
-                print "noModeller"
+                print("noModeller")
         if not self._AF:
             try :
                 import AutoFill
                 self._AF = True
             except:
-                print "noModeller"
+                print("noModeller")
         if not self._AR:
             try :
                 import ARViewer
                 self._AR = True
             except:
-                print "noModeller"
+                print("noModeller")
             
 
     def CreateLayout(self):       
@@ -1235,7 +1235,7 @@ class epmv_c4d(gui.GeDialog):
             for item in self.MENU_ID[menu]:
                 if item["name"] == "Recent Files":
                     self.MenuSubBegin(item["name"])
-                    if self.mv.recentFiles.categories.has_key("Documents"):
+                    if "Documents" in self.mv.recentFiles.categories:
                         for i,r in enumerate(self.mv.recentFiles.categories["Documents"]):
                             if r[1] == "readMolecule" :
                                 self.MenuAddString(item["id"]*(i+2),r[0])
@@ -1276,7 +1276,7 @@ class epmv_c4d(gui.GeDialog):
         self.SetString(self.file,'1crn')
         
         self._pdbtype=self.AddComboBox(id=self.COMB_BOX["pdbtype"]["id"],flags=c4d.BFH_LEFT,initw=56)
-        map(lambda x,box=self._pdbtype:self.AddChild(box,x[0],x[1]),enumerate(self.pdbtype))
+        list(map(lambda x,box=self._pdbtype:self.AddChild(box,x[0],x[1]),enumerate(self.pdbtype)))
         self.AddButton(id=self.FETCH_BTN["id"], flags=c4d.BFH_LEFT | c4d.BFV_MASK,
                             initw=self.FETCH_BTN["width"],
                             inith=self.FETCH_BTN["height"],
@@ -1306,7 +1306,7 @@ class epmv_c4d(gui.GeDialog):
         #selection text area
         self.add_label(self.LABEL_ID[3],flags=c4d.BFH_LEFT)
         self._keywordtype=self.AddComboBox(id=self.COMB_BOX["keyword"]["id"],flags=c4d.BFH_LEFT,initw=80)
-        map(lambda x,box=self._keywordtype:self.AddChild(box,x[0],x[1]),enumerate(self.keyword))
+        list(map(lambda x,box=self._keywordtype:self.AddChild(box,x[0],x[1]),enumerate(self.keyword)))
         #self.add_label(self.LABEL_ID[14],flags=c4d.BFH_LEFT)
         self.GroupEnd()
         self.GroupBegin(id=1,flags=c4d.BFH_SCALEFIT | c4d.BFV_MASK,
@@ -1319,8 +1319,8 @@ class epmv_c4d(gui.GeDialog):
                        '(Mol:Ch:Rletter:Atom), eg "1CRN:A:ALA:CA", or keywords: BACKBONE, SIDECHAINS, etc...')
         
         self.AddComboBox(id=self.COMB_BOX["selection"]["id"],flags=c4d.BFH_LEFT,initw=80)
-        map(lambda x,box=self.COMB_BOX["selection"]["id"]:self.AddChild(box,x[0],x[1]),
-            enumerate(self.editselection))
+        list(map(lambda x,box=self.COMB_BOX["selection"]["id"]:self.AddChild(box,x[0],x[1]),
+            enumerate(self.editselection)))
         
         self.GroupEnd()
         self.GroupBegin(id=4,flags=c4d.BFH_SCALEFIT | c4d.BFV_MASK,
@@ -1338,7 +1338,7 @@ class epmv_c4d(gui.GeDialog):
         self.GroupBorderSpace(left, top, right, bottom)                       
         self.add_label(self.LABEL_ID[8],flags=c4d.BFH_LEFT)
         self._preset=self.AddComboBox(id=self.COMB_BOX["preset"]["id"],flags=c4d.BFH_SCALEFIT,initw=60)
-        map(lambda x,box=self._preset:self.AddChild(box,x[0],x[1]),enumerate(self.presettype))
+        list(map(lambda x,box=self._preset:self.AddChild(box,x[0],x[1]),enumerate(self.presettype)))
         self.GroupEnd()
         
         #the different representation and there options
@@ -1441,7 +1441,7 @@ class epmv_c4d(gui.GeDialog):
                     name=self.DATA_BTN["name"])
         self.add_label(self.LABEL_ID[5],flags=c4d.BFH_LEFT)
         self._datatype=self.AddComboBox(id=self.COMB_BOX["datatype"]["id"],flags=c4d.BFH_LEFT,initw=80)
-        map(lambda x,box=self._datatype:self.AddChild(box,x[0],x[1]),enumerate(self.datatype))
+        list(map(lambda x,box=self._datatype:self.AddChild(box,x[0],x[1]),enumerate(self.datatype)))
 #        self.trajectoryfile=self.AddEditText(id=self.DATA_TEXT["id"],flags=c4d.BFH_SCALEFIT | c4d.BFV_MASK)
 #        self.AddButton(id=self.DATA_BTN["id"], flags=c4d.BFH_LEFT | c4d.BFV_MASK,
 #                            initw=self.DATA_BTN["width"],
@@ -1481,10 +1481,10 @@ class epmv_c4d(gui.GeDialog):
         self.add_label(self.LABEL_ID[7],flags=c4d.BFH_LEFT)
         
         self.AddComboBox(id=self.COMB_BOX["scriptO"]["id"],flags=c4d.BFH_LEFT,initw=56)
-        map(lambda x,box=self.COMB_BOX["scriptO"]["id"]:self.AddChild(box,x[0],x[1]),enumerate(self.scriptliste))
+        list(map(lambda x,box=self.COMB_BOX["scriptO"]["id"]:self.AddChild(box,x[0],x[1]),enumerate(self.scriptliste)))
 
         self.AddComboBox(id=self.COMB_BOX["scriptS"]["id"],flags=c4d.BFH_LEFT,initw=56)
-        map(lambda x,box=self.COMB_BOX["scriptS"]["id"]:self.AddChild(box,x[0],x[1]),enumerate(self.scriptsave))
+        list(map(lambda x,box=self.COMB_BOX["scriptS"]["id"]:self.AddChild(box,x[0],x[1]),enumerate(self.scriptsave)))
 
         self.GroupEnd()
         
@@ -1537,15 +1537,15 @@ print 'with self = PMV instance, and epmv as ePMV'
         if self.restored :
             #self.set_up()
             for mol in self.mv.Mols:
-                print "restore ",mol.name
+                print("restore ",mol.name)
                 self.buttonLoad(None,mname=mol.name)
                 self.firstmol = False
                 #need to restore the data
                 for dataname in self.mv.iMolData[mol.name] :
-                    print "dataname ",dataname               
+                    print("dataname ",dataname)               
                     self.buttonLoadData(None,trajname=dataname,molname=mol.name)              
                 #need to restore the selection
-                if mol.name in self.mv.MolSelection.keys():
+                if mol.name in list(self.mv.MolSelection.keys()):
                     self.add_Selection(n=mol.name)
                 #for selname in self.mv.MolSelection[mol.name].keys() :
                 #    self.addChildToMolMenu(selname)
@@ -1559,7 +1559,7 @@ print 'with self = PMV instance, and epmv as ePMV'
     def timeFunction(self,function):
         t1=time()
         function()
-        print "time ", time()-t1
+        print("time ", time()-t1)
     
     def save_ePMVScript(self):
         commands=self.GetString(self.pmvcmds)
@@ -1592,7 +1592,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         
     def execPmvComds(self):
         cmds=self.GetString(self.pmvcmds)
-        print len(cmds),cmds
+        print(len(cmds),cmds)
         exec(cmds,{'self':self.mv,'epmv':self.epmv,'c4d':c4d})   
         self.updateViewer()
         return True
@@ -1600,12 +1600,12 @@ print 'with self = PMV instance, and epmv as ePMV'
     def check_update(self):
         ask = False
         #get the update file
-        import urllib
+        import urllib.request, urllib.parse, urllib.error
         URL=__url__[1]
         import WebServices
         test = WebServices.checkURL(URL)
         if test :
-            fURL=urllib.urlopen(URL)
+            fURL=urllib.request.urlopen(URL)
             note=fURL.read()
             fURL.close()
             fields=note.split()
@@ -1702,7 +1702,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         if not restore:
             if molname in self.mv.Mols.name : self.mv.hostApp.driver.duplicatemol=False
             self.mv.assignAtomsRadii(molname, united=0, log=0, overwrite=1)
-            print "Load ",molname,(self.GetLong(self._box))
+            print("Load ",molname,(self.GetLong(self._box)))
             self.dash=True
         if self.firstmol :
             self.mv.iMol[str(self.indice_mol)]=molname
@@ -1711,7 +1711,7 @@ print 'with self = PMV instance, and epmv as ePMV'
             self.indice_mol +=1         
             self.firstmol=False
         else :
-            print "new mol ",molname
+            print("new mol ",molname)
             self.AddChild(self._box,int(self.indice_mol),molname)#self.mv.Mols[-1].name)
             self.mv.iMol[str(self.indice_mol)]=molname
             self.SetLong(self._box, int(self.indice_mol))
@@ -1763,7 +1763,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         return True
         
     def buttonLoad(self,filename=None,mname=None):
-        print "buttonLoad", mname
+        print("buttonLoad", mname)
         if mname is None:
             name= self.GetString(self.EDIT_TEXT["id"])
             if len(name) == 0:
@@ -1845,7 +1845,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         else :
             self.add_child(self.trajbox,self.indiceData,trajname)#first traj is 2040
             self.SetLong(self.trajbox,self.indiceData)
-            nTraj=len(self.mv.Trajectories.keys())
+            nTraj=len(list(self.mv.Trajectories.keys()))
             #self.mv.iTraj[self.idata+nTraj-1]=self.mv.Trajectories[trajname]
             self.mv.iTraj[self.indiceData]=[self.mv.Trajectories[trajname],"traj"]
             self.indiceData += 1
@@ -1876,7 +1876,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         if molname == None :
             self.mv.readAny(file)
             sys.stderr.write('DObe')
-            name = self.mv.grids3D.keys()[-1] #the last read data
+            name = list(self.mv.grids3D.keys())[-1] #the last read data
             mname,mol=self.getMolName()
             self.mv.cmol = mol
             sys.stderr.write('before Select and isoContour')            
@@ -1885,7 +1885,7 @@ print 'with self = PMV instance, and epmv as ePMV'
                         isovalue=25.)#self.mv.grids3D[name].mean)  
             trajname=name#os.path.basename(filename)
             #print trajname
-            if mname == "" and "IsoSurface" not in self.mv.iMolData.keys():
+            if mname == "" and "IsoSurface" not in list(self.mv.iMolData.keys()):
                 self.mv.iMolData["IsoSurface"]=[]
                 mname = "IsoSurface"
             self.mv.iMolData[mname].append(file)
@@ -1906,7 +1906,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         else :
             self.AddChild(self.trajbox,self.indiceData,os.path.basename(trajname))
             self.SetLong(self.trajbox, int(self.indiceData))        
-            nTraj=len(self.mv.grids3D.keys())
+            nTraj=len(list(self.mv.grids3D.keys()))
             self.mv.iTraj[self.indiceData]=[self.mv.grids3D[trajname],"grid"]
             self.indiceData += 1   
             #self.mv.iTraj[self.idata+nTraj-1]=self.mv.grids[trajname]
@@ -1928,7 +1928,7 @@ print 'with self = PMV instance, and epmv as ePMV'
             else : self.gridData_2(file=filename)
             #elif extension == '.map' : self.gridData_1(file=filename)
         else :
-           print "restore ",trajname      
+           print("restore ",trajname)      
            if trajname.find(".model") != -1 or trajname.find(".dlg") != -1: #model conformation data
                self.modelData(dataname=trajname,molname=molname)          
            elif trajname.find("xtc") != -1 : #gromacs conformation data
@@ -1944,7 +1944,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         #print traji,self.mv.iTraj
         self.current_traj=self.mv.iTraj[traji]#[0]
         type = self.mv.iTraj[traji][1]
-        print "type",type
+        print("type",type)
         if type == "model":
             mname = self.current_traj[0].split(".")[0]
             type = self.current_traj[0].split(".")[1]
@@ -1971,7 +1971,7 @@ print 'with self = PMV instance, and epmv as ePMV'
             default=self.current_traj[0].mean
             step=0.01
             doit=self.SetReal
-        print self.slider,default,mini,maxi,step
+        print(self.slider,default,mini,maxi,step)
         doit(self.slider,default,mini,maxi,step)    
         self.updateViewer()
         return True
@@ -2015,7 +2015,7 @@ print 'with self = PMV instance, and epmv as ePMV'
 #                         '  Save Custom As...']
         #load,edit save representation preset
         preset=self.presettype[self.GetLong(self._preset)]
-        print preset
+        print(preset)
         if preset.strip() == 'Liccorice':
             #displayBS as licorice which is simply ratio == 1.0
                 #set the ratio and do the command
@@ -2086,7 +2086,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         sel=self.getSelectionLevel(mol)
 #        print sel,mname, mol
         if sel is mol.name :
-            print sel,mname, mol , "del"
+            print(sel,mname, mol , "del")
             res = c4d.gui.QuestionDialog("Are You sure you want to delete "+mol.name)
             if res : 
                 self.deleteMol()
@@ -2102,11 +2102,11 @@ print 'with self = PMV instance, and epmv as ePMV'
 
     def restoreMolMenu(self):
         #call this after flushing the combo box
-        for ind in self.mv.iMol.keys():
+        for ind in list(self.mv.iMol.keys()):
             self.AddChild(self._box,int(ind),self.mv.iMol[ind])
-            for selname in self.mv.selections[self.mv.iMol[ind]].keys():
+            for selname in list(self.mv.selections[self.mv.iMol[ind]].keys()):
                 #find indice
-                for inds in self.mv.iSel.keys():
+                for inds in list(self.mv.iSel.keys()):
                     if self.mv.iSel[inds] == selname :
                         self.AddChild(self._box,int(inds),self.mv.iSel[inds])
         
@@ -2147,19 +2147,19 @@ print 'with self = PMV instance, and epmv as ePMV'
         self.restoreMolMenu()
 
     def add_Selection(self,n=None):
-        print "add_selection"
+        print("add_selection")
         if n is not None:
-            for selname in self.mv.MolSelection[n].keys():
+            for selname in list(self.mv.MolSelection[n].keys()):
                 self.AddChild(self._box,self.indice_mol,selname)
                 self.mv.iSel[str(self.indice_mol)]=selname
                 self.indice_mol+=1               
             return True
         mname,mol=self.getMolName()   
         sel=self.getSelectionLevel(mol)       
-        print mname
-        print sel       
+        print(mname)
+        print(sel)       
         selname=mname+"_Selection"+str(len(self.mv.MolSelection[mname]))
-        print selname
+        print(selname)
         self.mv.MolSelection[mname][selname]=sel
         self.mv.selections[mname][selname]=sel
         self.mv.molDispl[selname]=[self.GetBool(self.cpk),self.GetBool(self.bs),
@@ -2174,7 +2174,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         return True       
 
     def getSelectionName(self,sel,mol):
-        for selname in self.mv.MolSelection[mol.name].keys() : 
+        for selname in list(self.mv.MolSelection[mol.name].keys()) : 
             if sel == self.mv.MolSelection[mol.name][selname] : return selname           
         return mol.name+"_Selection"+str(len(self.mv.MolSelection[mol.name]))
     
@@ -2201,9 +2201,9 @@ print 'with self = PMV instance, and epmv as ePMV'
             sel=mol.name+":::N,CA,C"
         elif selection.upper() == 'SIDECHAIN':              
             sel=mol.name+":::sidechain"
-        elif selection.upper() in AtomElements.keys(): sel=mol.name+':::'+selection
-        elif selection.upper() in RasmolAmino.keys(): sel=mol.name+'::'+self.ResidueSelector.r_keyD[selection]+':'
-        elif selection.lower() in ResidueSetSelector.residueList.keys() : sel=mol.name+'::'+selection+':'
+        elif selection.upper() in list(AtomElements.keys()): sel=mol.name+':::'+selection
+        elif selection.upper() in list(RasmolAmino.keys()): sel=mol.name+'::'+self.ResidueSelector.r_keyD[selection]+':'
+        elif selection.lower() in list(ResidueSetSelector.residueList.keys()) : sel=mol.name+'::'+selection+':'
         elif selection.split(':')[0] == mol.name : sel = selection
         elif selection.split(' ')[0].lower() == "chain" : sel = mol.name+':'+selection.split(' ')[1]+'::'
         elif selection == 'picked' : 
@@ -2215,7 +2215,7 @@ print 'with self = PMV instance, and epmv as ePMV'
                 #print o.get_name()#,o.get_type()
                 astr.append(self.epmv.helper.parseObjectName(o))
             sel=self.sortName(astr)
-            print "parsed selection ",sel
+            print("parsed selection ",sel)
             #sel=mol.name
         return sel
 
@@ -2225,13 +2225,13 @@ print 'with self = PMV instance, and epmv as ePMV'
         selname=""
         mname=""
         #print self.mv.iMol.keys()       
-        if str(val) in self.mv.iMol.keys(): 
+        if str(val) in list(self.mv.iMol.keys()): 
             selname=mname=self.mv.iMol[str(val)]
-        elif str(val) in self.mv.iSel.keys() : #it is the selecetionname
+        elif str(val) in list(self.mv.iSel.keys()) : #it is the selecetionname
             selname=self.mv.iSel[str(val)]
             mname=""
-            for mname in self.mv.MolSelection.keys():
-                for sname in self.mv.MolSelection[mname].keys():
+            for mname in list(self.mv.MolSelection.keys()):
+                for sname in list(self.mv.MolSelection[mname].keys()):
                     if selname == sname :
                         break
             if mname=="":
@@ -2245,7 +2245,7 @@ print 'with self = PMV instance, and epmv as ePMV'
 
     #######DISPLAY COMMAND######################################################
     def displayMetaB(self):
-        print "displayMetaB"
+        print("displayMetaB")
         #create metaballs from clouds /perchains or permolecule ?
         #_perMol option 
         _perMol = True 
@@ -2276,14 +2276,14 @@ print 'with self = PMV instance, and epmv as ePMV'
     def displayCPK(self):
         #c4d.gui.SetMousePointer(c4d.MOUSE_BUSY)
         mname,mol=self.getMolName()
-        if VERBOSE : print "CPK", mname
+        if VERBOSE : print("CPK", mname)
         scale = self.GetReal(self.cpk_slider)   
         self.mv.hostApp.driver.use_instances=True
         sel=self.getSelectionLevel(mol)
-        if VERBOSE : print "select ",sel
+        if VERBOSE : print("select ",sel)
         selection = self.mv.select(sel,negate=False, only=True, xor=False, 
                                    log=0, intersect=False)
-        if VERBOSE : print len(selection)
+        if VERBOSE : print(len(selection))
         if not isinstance(selection,Atom) : selection = selection.findType(Atom)
         maxi = len(selection)
         
@@ -2305,7 +2305,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         return True
 
     def displayBS(self):
-        if VERBOSE : print "displayBS"
+        if VERBOSE : print("displayBS")
         #c4d.gui.SetMousePointer(c4d.MOUSE_BUSY)
         mname,mol=self.getMolName()   
         sel=self.getSelectionLevel(mol) 
@@ -2316,8 +2316,8 @@ print 'with self = PMV instance, and epmv as ePMV'
         #print "self.displaySticksAndBalls('"+sel+"',log=1,negate=",(not self.get(self.bs)),")" 
         #print cradius*scale,scale,ratio
         self.mv.displaySticksAndBalls(sel, log=1, cquality=0, sticksBallsLicorice='Sticks and Balls', 
-									bquality=0, cradius=cradius*scale, only=False, bRad=0.3, 
-									negate=(not self.GetBool(self.bs)), bScale=scale)
+                                                                        bquality=0, cradius=cradius*scale, only=False, bRad=0.3, 
+                                                                        negate=(not self.GetBool(self.bs)), bScale=scale)
         #self.mv.colorByAtomType(sel, ['balls','sticks'], log=1)
         self.updateViewer()
         self.mv.molDispl[mname][1]=self.GetBool(self.bs)
@@ -2401,7 +2401,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         #print 'CoarseMS',name,sel,mname,parent
         option = self.GetReal(self.cms_slider)
         res = self.GetReal(self.cms_res_slider)
-        if name in mol.geomContainer.geoms.keys():
+        if name in list(mol.geomContainer.geoms.keys()):
             g = mol.geomContainer.geoms[name]
             proxy = None
             if hasattr(g,"color_obj"):
@@ -2437,7 +2437,7 @@ print 'with self = PMV instance, and epmv as ePMV'
             name='CoarseMS'+str(selname)
             chain=select.findParentsOfType(Chain)[0]
             parent=mol.geomContainer.masterGeom.chains_obj[chain.name]
-        if name not in mol.geomContainer.geoms.keys():
+        if name not in list(mol.geomContainer.geoms.keys()):
             g=self.epmv.coarseMolSurface(select,[32,32,32],isovalue=7.1,
                                          resolution=-0.3,name=name)
             atoms = mol.findType(Atom)
@@ -2523,10 +2523,10 @@ print 'with self = PMV instance, and epmv as ePMV'
     def createArmature(self):
         #should we use the selection ?
         #c4d.gui.SetMousePointer(c4d.MOUSE_BUSY)
-        if VERBOSE :print "create Armature"   
+        if VERBOSE :print("create Armature")   
         mname,mol=self.getMolName()   
         sel=self.getSelectionLevel(mol)    
-        if VERBOSE :print "for CA of ",mol.name
+        if VERBOSE :print("for CA of ",mol.name)
         doit=self.GetBool(self.armature)
         doc=c4d.documents.GetActiveDocument()
         name='armature'+mol.name
@@ -2554,7 +2554,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         doc=c4d.documents.GetActiveDocument()
         name='spline'+mol.name
         sp=doc.SearchObject(name)
-        if VERBOSE :print "spline",sp
+        if VERBOSE :print("spline",sp)
         if sp != None : 
             self.epmv.helper.toggleDisplay(sp,doit)
             self.updateViewer()
@@ -2660,7 +2660,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         mname,mol=self.getMolName()   
         sel=self.getSelectionLevel(mol)       
         mdl = mol.mdl
-        print mname
+        print(mname)
         # Select all atoms:
         atmsel = modeller.selection(mdl)
         
@@ -2668,11 +2668,11 @@ print 'with self = PMV instance, and epmv as ePMV'
         mdl.restraints.make(atmsel, restraint_type='stereo', spline_on_site=False)
         #mdl.restraints.write(file=mpath+mname+'.rsr')
         mpdf = atmsel.energy()
-        print "before optmimise"
+        print("before optmimise")
         # Create optimizer objects and set defaults for all further optimizations
         cg = modeller.optimizers.conjugate_gradients(output='REPORT')
         mol.pmvaction.last = 10000
-        print "optimise"
+        print("optimise")
         maxit = self.pd.GetLong(self.pd.NUMBERS['miniIterMax']['id'])
         mol.pmvaction.store = self.pd.GetBool(self.pd.CHECKBOXS['store']['id'])
         mol.pmvaction.redraw = True
@@ -2686,7 +2686,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         mname,mol=self.getMolName()   
         sel=self.getSelectionLevel(mol)       
         mdl = mol.mdl
-        print mname
+        print(mname)
         # Select all atoms:
         atmsel = modeller.selection(mdl)
         
@@ -2694,15 +2694,15 @@ print 'with self = PMV instance, and epmv as ePMV'
         mdl.restraints.make(atmsel, restraint_type='stereo', spline_on_site=False)
         #mdl.restraints.write(file=mpath+mname+'.rsr')
         mpdf = atmsel.energy()
-        print "before optmimise"
+        print("before optmimise")
         md = modeller.optimizers.molecular_dynamics(output='REPORT')
         mol.pmvaction.last = 10000
         mol.pmvaction.store = True
-        print "optimise"
+        print("optimise")
         maxit = self.pd.GetLong(self.pd.NUMBERS['mdIterMax']['id'])
         temp = self.pd.GetReal(self.pd.NUMBERS['mdTemp']['id'])
         mol.pmvaction.store = self.pd.GetBool(self.pd.CHECKBOXS['store']['id'])
-        print maxit,temp,mol.pmvaction.store
+        print(maxit,temp,mol.pmvaction.store)
         mol.pmvaction.redraw = True
         md.optimize(atmsel, temperature=temp, max_iterations=int(maxit),actions=mol.pmvaction)
         del md
@@ -2752,10 +2752,10 @@ print 'with self = PMV instance, and epmv as ePMV'
         c4d.gui.SetMousePointer(c4d.MOUSE_BUSY)
         #check the id/event
         #Menu id
-        for menu in self.MENU_ID.keys():
+        for menu in list(self.MENU_ID.keys()):
             for item in self.MENU_ID[menu]:
                 if item["name"] == "Recent Files" :
-                    if self.mv.recentFiles.categories.has_key("Documents"):
+                    if "Documents" in self.mv.recentFiles.categories:
                         for i,r in enumerate(self.mv.recentFiles.categories["Documents"]):
                             if id == item["id"]*(i+2) :
                                 self.buttonBrowse(file=r[0])					   				   		   
@@ -2766,30 +2766,30 @@ print 'with self = PMV instance, and epmv as ePMV'
         #Label Id
         for label in self.LABEL_ID:
             if id == label["id"] :
-                print "Label"
+                print("Label")
                 #return True
         #Checkbox ID
-        for cbut in self.CHECKBOXS.keys():
+        for cbut in list(self.CHECKBOXS.keys()):
             if id == self.CHECKBOXS[cbut]["id"]:
                 if self.epmv.timer : self.timeFunction(self.CHECKBOXS[cbut]["action"])
                 else : self.CHECKBOXS[cbut]["action"]()
                 #return True
 
         #Sliders ID
-        for slide in self.SLIDERS.keys():
+        for slide in list(self.SLIDERS.keys()):
             if id == self.SLIDERS[slide]["id"]:
                 if self.epmv.timer : self.timeFunction(self.SLIDERS[slide]["action"])
                 else : self.SLIDERS[slide]["action"]()
                 #return True
 
         #Combo Box ID
-        for box in self.COMB_BOX.keys():
+        for box in list(self.COMB_BOX.keys()):
             if id == self.COMB_BOX[box]["id"]:
                 if self.epmv.timer : self.timeFunction(self.COMB_BOX[box]["action"])
                 else : self.COMB_BOX[box]["action"]()
                 #return True
          #SEL_BTN ID
-        for box in self.SEL_BTN.keys():
+        for box in list(self.SEL_BTN.keys()):
             if id == self.SEL_BTN[box]["id"]:
                 if self.epmv.timer : self.timeFunction(self.SEL_BTN[box]["action"])
                 else : self.SEL_BTN[box]["action"]()
@@ -2802,23 +2802,23 @@ print 'with self = PMV instance, and epmv as ePMV'
             #print "editText"
             #self.EDIT_TEXT["action"]()
         elif id == self.LOAD_BTN["id"]:
-            if VERBOSE : print "load btn"
+            if VERBOSE : print("load btn")
             if self.epmv.timer : self.timeFunction(self.LOAD_BTN["action"])
             else :self.LOAD_BTN["action"]()
         elif id == self.FETCH_BTN["id"]:
-            if VERBOSE : print "load btn"
+            if VERBOSE : print("load btn")
             if self.epmv.timer : self.timeFunction(self.FETCH_BTN["action"])
             else :self.FETCH_BTN["action"]()
         elif id == self.DATA_BTN["id"]:
-            if VERBOSE : print "load data"
+            if VERBOSE : print("load data")
             if self.epmv.timer : self.timeFunction(self.DATA_BTN["action"])
             else :self.DATA_BTN["action"]()
         elif id == self.PMV_BTN["id"]:
-            if VERBOSE : print "load btn"
+            if VERBOSE : print("load btn")
             if self.epmv.timer : self.timeFunction(self.PMV_BTN["action"])
             else :self.PMV_BTN["action"]()
         elif id == self.KEY_BTN["id"]:
-            if VERBOSE : print "load btn"
+            if VERBOSE : print("load btn")
             if self.epmv.timer : self.timeFunction(self.KEY_BTN["action"])
             else :self.KEY_BTN["action"]()
         elif id == self.COLFIELD["id"]:
@@ -2839,7 +2839,7 @@ class epmv_C4dDialog(plugins.CommandData):
    dialog = None
    def Execute(self, doc):
          # create the dialog
-         print "execute"   
+         print("execute")   
          dname=doc.GetDocumentName()
          #if dname not in c4d.mv.keys() :
          #3       epmv = c4dAdaptor(debug=1)
@@ -2858,7 +2858,7 @@ class epmv_C4dDialog(plugins.CommandData):
                               defaultw=270, defaulth=375)
     
    def RestoreLayout(self, sec_ref):
-         print "restore",sec_ref    
+         print("restore",sec_ref)    
          doc=c4d.documents.GetActiveDocument()
          dname=doc.GetDocumentName()
          #print doc,dname,c4d.mv

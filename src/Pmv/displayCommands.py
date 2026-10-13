@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ###########################################################################
 #
@@ -17,10 +17,10 @@
 import warnings
 import traceback, math
 from types import ListType, TupleType, StringType, IntType, FloatType, LongType, StringType
-import Tkinter, Pmw
-import string
+import tkinter, Pmw
+from mglcompat import pystring as string
 import numpy
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 from Pmv.mvCommand import MVCommand, MVAtomICOM
 from Pmv.stringSelectorGUI import StringSelectorGUI
@@ -73,21 +73,21 @@ negate in self.lastUsedValues
         form = None
         if len(self.cmdForms):
             if formName is None:
-                form = self.cmdForms.values()[0]
+                form = list(self.cmdForms.values())[0]
             else:
                 form = self.cmdForms.get(formName, None)
 
-            if kw.has_key('only') and kw['only']:
+            if 'only' in kw and kw['only']:
                 disp = 'display only'
                 del kw['only']
-            elif  kw.has_key('negate') and kw['negate']:
+            elif  'negate' in kw and kw['negate']:
                 disp = 'undisplay'
                 del kw['negate']
             else:
                 disp = 'display'
             widget = form.descr.entryByName['default']['widget']
             widget.invoke(disp)
-        apply(MVCommand.setLastUsedValues, (self, formName), kw)
+        MVCommand.setLastUsedValues(*(self, formName), **kw)
 
 
     def handleNegateOnly(self):
@@ -113,7 +113,7 @@ negate and only values in self.lastUsedValues
 
     def handleDisplayValue(self, val):
         # creates the only and negate keywords based on the 'display' entry
-        if val.has_key('display'):
+        if 'display' in val:
             if val['display']=='display':
                 val['only']= False
                 val['negate'] = False
@@ -186,7 +186,7 @@ atoms.
                     changed = atoms.inter(atomSets)
                     doitoptions['negate'] = 1
                     if len(changed):
-                        apply(self.doitWrapper,(changed,), doitoptions)
+                        self.doitWrapper(*(changed,), **doitoptions)
                     doitoptions['negate'] = 0
                 else:
                     if action == 'add':
@@ -200,7 +200,7 @@ atoms.
         ## if there are atoms to be displayed in geoemtries created by this
         ## command, invoke the command
         if len(allAts):
-            apply(self.doitWrapper,(allAts,), doitoptions)
+            self.doitWrapper(*(allAts,), **doitoptions)
             
         ## FIXME not sure we need this !
         try:
@@ -268,7 +268,7 @@ atoms.
         if not nodes: return
         val = self.getFormValues()
         if val:
-            apply( self.doitWrapper, (nodes,), val )
+            self.doitWrapper(*(nodes,), **val)
 
 
 
@@ -306,7 +306,7 @@ class DisplayLines(DisplayCommand):
         geomContainer.geoms of the new molecule.
         New AtomSet are created as well and added to the geomContainer.atoms
         """
-        if self.vf.hasGui and self.vf.commands.has_key('dashboard'):
+        if self.vf.hasGui and 'dashboard' in self.vf.commands:
             self.vf.dashboard.resetColPercent(obj, '_showLinesStatus')
 
         #if not self.vf.hasGui: return
@@ -315,7 +315,7 @@ class DisplayLines(DisplayCommand):
         # lines representation needs 4 different geometries need to create
         # a master geometrie Geom.
         #wire = geomC.geoms['lines'] = Geom('lines',  shape=(0,0))
-        if not geomC.geoms.has_key('lines'):
+        if 'lines' not in geomC.geoms:
             wire = Geom('lines',
                         shape=(0,0),
                         inheritLighting=False,
@@ -468,7 +468,7 @@ class DisplayLines(DisplayCommand):
             self.nodeLogString = "'" + nodes +"'"
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
         
     def doit(self, nodes, lineWidth=2, displayBO=False , only=False,
@@ -531,12 +531,12 @@ class DisplayLines(DisplayCommand):
                 ggeoms['bonded'].Set(faces=[], vertices=[], tagModified=False)
             else:
                 # need the indices for the indexedPolylines
-                indices = map(lambda x: (x.atom1._bndIndex_,
-                                         x.atom2._bndIndex_), bonds)
+                indices = [(x.atom1._bndIndex_,
+                                         x.atom2._bndIndex_) for x in bonds]
                 if len(indices)==0:
                     ggeoms['bonded'].Set(visible=0, tagModified=False)
                 else:
-                    colors = map(lambda x: x.colors['lines'], _set)
+                    colors = [x.colors['lines'] for x in _set]
                     ggeoms['bonded'].Set( vertices=_set.coords,
                                           faces=indices,
                                           materials = colors,
@@ -551,7 +551,7 @@ class DisplayLines(DisplayCommand):
                 ggeoms['nobnds'].Set(vertices=[], tagModified=False)
             else:
                 vertices = atnobnd.coords
-                colors = map(lambda x: x.colors['lines'], atnobnd)
+                colors = [x.colors['lines'] for x in atnobnd]
                 ggeoms['nobnds'].Set(vertices=vertices,
                                      pointWidth=lineWidth,
                                      materials = colors,
@@ -590,13 +590,13 @@ class DisplayLines(DisplayCommand):
             bonds = setBo.bonds[0]
 
             # Get only the bonds with a bondOrder greater than 1
-            bondsBO= BondSet(filter(lambda x: not x.bondOrder is None and \
-                                    x.bondOrder>1, bonds)) 
+            bondsBO= BondSet([x for x in bonds if not x.bondOrder is None and \
+                                    x.bondOrder>1]) 
             if not bondsBO: return setOn, setOff
-            withVec = filter(lambda x: not hasattr( x.atom1, 'dispVec') \
-                             and not hasattr(x.atom2, 'dispVec'),bondsBO)
+            withVec = [x for x in bondsBO if not hasattr( x.atom1, 'dispVec') \
+                             and not hasattr(x.atom2, 'dispVec')]
             if len(withVec):
-                map(lambda x: x.computeDispVectors(), bondsBO)
+                list(map(lambda x: x.computeDispVectors(), bondsBO))
 
             vertices = []
             indices = []
@@ -653,7 +653,7 @@ class DisplayLines(DisplayCommand):
                 drawAtoms(mol, mol.allAtoms, displayBO, lineWidth, only,
                           negate)
         redraw = False
-        if kw.has_key("redraw") : redraw=True
+        if "redraw" in kw : redraw=True
         if self.createEvents:
             event = EditGeomsEvent(
                 'lines', [nodes,[lineWidth, only, negate,redraw]],
@@ -669,10 +669,10 @@ class DisplayLines(DisplayCommand):
             defaultValues = self.lastUsedValues['default']
 
             idf.append({'name':'displayBO',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue': defaultValues['displayBO'],
                         'wcfg':{'text': 'show BondOrder',
-                                'variable': Tkinter.IntVar()},
+                                'variable': tkinter.IntVar()},
                         'gridcfg':{'sticky':'w'}})
 
             idf.append({'name':'lineWidth',
@@ -698,7 +698,7 @@ class DisplayLines(DisplayCommand):
             if val['displayBO'] == 1: val['displayBO'] = True
             else:
                 val['displayBO'] = False
-            apply( self.doitWrapper, (nodes,), val)
+            self.doitWrapper(*(nodes,), **val)
         
 
     def onRemoveObjectFromViewer(self, mol):
@@ -717,7 +717,7 @@ class DisplayLines(DisplayCommand):
                    if hasattr(n, 'bonds'):
                        del n.bonds
            except:
-               print "exception displayCommands line 712"
+               print("exception displayCommands line 712")
        del levelNodes
 
 
@@ -753,7 +753,7 @@ class UndisplayLines(DisplayCommand):
     def onAddCmdToViewer(self):
         DisplayCommand.onAddCmdToViewer(self)
         #if not self.vf.hasGui: return 
-        if not self.vf.commands.has_key('displayLines'):
+        if 'displayLines' not in self.vf.commands:
             self.vf.loadCommand('displayCommands', ['displayLines'], 'Pmv',
                                 topCommand=0)
 
@@ -767,7 +767,7 @@ class UndisplayLines(DisplayCommand):
             self.nodeLogString = "'" + nodes +"'"
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return
-        apply(self.vf.displayLines, (nodes,), kw)
+        self.vf.displayLines(*(nodes,), **kw)
 
 
 class DisplayCPK(DisplayCommand):
@@ -796,10 +796,10 @@ class DisplayCPK(DisplayCommand):
         DisplayCommand.onAddCmdToViewer(self)
 
         if self.vf.hasGui:
-            self.showAtomProp = Tkinter.IntVar()
+            self.showAtomProp = tkinter.IntVar()
             self.showAtomProp.set(0)
 
-        if not self.vf.commands.has_key('assignAtomsRadii'):
+        if 'assignAtomsRadii' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'assignAtomsRadii', 'Pmv',
                                 topCommand=0)
         from MolKit.molecule import Molecule, Atom
@@ -828,7 +828,7 @@ class DisplayCPK(DisplayCommand):
         """Adds the cpk geometry and the cpk Atomset to the object's
         geometry container
         """
-        if self.vf.hasGui and self.vf.commands.has_key('dashboard'):
+        if self.vf.hasGui and 'dashboard' in self.vf.commands:
             self.vf.dashboard.resetColPercent(obj, '_showCPKStatus')
 
         #if not self.vf.hasGui: return
@@ -876,26 +876,26 @@ class DisplayCPK(DisplayCommand):
 
 
     def getLastUsedValues(self, formName='default', **kw):
-        vals = apply(DisplayCommand.getLastUsedValues, (self, formName), kw)
-        if vals.has_key('byproperty'):
+        vals = DisplayCommand.getLastUsedValues(*(self, formName), **kw)
+        if 'byproperty' in vals:
             if vals['byproperty']:
-                if vals.has_key('quality1'):
+                if 'quality1' in vals:
                     vals['quality']= vals.pop('quality1')
-                if vals.has_key('scaleFactor1'):
+                if 'scaleFactor1' in vals:
                     vals['scaleFactor'] = vals.pop('scaleFactor1')
-                if vals.has_key('offset'):
+                if 'offset' in vals:
                     vals['cpkRad'] = vals.pop('offset')
                 vals['propertyLevel'] = self.propertyLevel
             else:
-                if vals.has_key('quality1'):
+                if 'quality1' in vals:
                     vals.pop('quality1')
-                if vals.has_key('scaleFactor1'):
+                if 'scaleFactor1' in vals:
                     vals.pop('scaleFactor1')
-                if vals.has_key('propertyName'):
+                if 'propertyName' in vals:
                     vals.pop('propertyName')
-                if vals.has_key('propertyLevel'):
+                if 'propertyLevel' in vals:
                     vals.pop('propertyLevel')
-                if vals.has_key('offset'):
+                if 'offset' in vals:
                     vals.pop('offset')
         return vals
     
@@ -947,7 +947,7 @@ class DisplayCPK(DisplayCommand):
                 g.Set(visible=0, tagModified=False)
             else:
                 _set.sort()   # EXPENSIVE...
-                colors = map(lambda x: x.colors['cpk'], _set)
+                colors = [x.colors['cpk'] for x in _set]
                 cd = {}.fromkeys(['%f%f%f'%tuple(c) for c in colors])
                 if len(cd)==1:
                     colors = [colors[0]]
@@ -976,7 +976,7 @@ class DisplayCPK(DisplayCommand):
                     lVertexClosestAtomSet = mol.geomContainer.atoms['cpk']
                     if len(lVertexClosestAtomSet) > 0:
                         lVertexClosestAtomSetDict = dict(zip(lVertexClosestAtomSet,
-                                                             range(len(lVertexClosestAtomSet))))
+                                                             list(range(len(lVertexClosestAtomSet)))))
                         highlight = [0] * len(lVertexClosestAtomSet)
                         for i in range(len(lSelectedAtoms)):
                             lIndex = lVertexClosestAtomSetDict.get(lSelectedAtoms[i], None)
@@ -1025,7 +1025,7 @@ class DisplayCPK(DisplayCommand):
                 if sof: setOff += sof
                 
         redraw = False
-        if kw.has_key("redraw") : redraw=True
+        if "redraw" in kw : redraw=True
         if self.createEvents:
             event = EditGeomsEvent(
             'cpk', [nodes,[only, negate,scaleFactor,cpkRad,quality,
@@ -1058,7 +1058,7 @@ class DisplayCPK(DisplayCommand):
 
         #print "in __call__: only= ", only, "negate=", negate, "scaleFactor=", scaleFactor, "cpkRad=", cpkRad, "quality=", quality, "property = ", propertyName, "propertyLevel = ", propertyLevel, "kw:", keywords, "nodes:", nodes
         kw = {}
-        if not keywords.has_key('redraw'): kw['redraw'] = True
+        if 'redraw' not in keywords: kw['redraw'] = True
         if not type(scaleFactor) in [IntType, FloatType,
                                     LongType]: return 'ERROR'
         if not isinstance(quality, IntType) and quality>=0:
@@ -1070,7 +1070,7 @@ class DisplayCPK(DisplayCommand):
         kw['quality'] = quality
         kw['setScale']= setScale
         if propertyName is not None:
-            if type(propertyName) != types.StringType:
+            if type(propertyName) != bytes:
                 propertyName = propertyName[0]
             kw['propertyName'] = propertyName
             kw['propertyLevel']= propertyLevel
@@ -1084,7 +1084,7 @@ class DisplayCPK(DisplayCommand):
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return
         kw.update(keywords)
-        apply( self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
         
         #if self.showAtomProp.get() != byproperty:
         #   self.showAtomProp.set(byproperty)
@@ -1117,7 +1117,7 @@ class DisplayCPK(DisplayCommand):
 
             defaultValues = self.lastUsedValues['default']
             idf.append({'name': 'byproperty',
-                        'widgetType': Tkinter.Checkbutton,
+                        'widgetType': tkinter.Checkbutton,
                         'tooltip': 'allows the user to specify a property used to display/undisplay selected nodes using CPK representation',
                         'wcfg': {'text': 'By property',
                                  'variable': self.showAtomProp,
@@ -1212,7 +1212,7 @@ class DisplayCPK(DisplayCommand):
                 kw['quality'] = int(val['quality1'])
                 kw['scaleFactor']= val['scaleFactor1']
                 kw['propertyLevel'] = self.propertyLevel
-            apply(self.doitWrapper, (nodes,), kw)
+            self.doitWrapper(*(nodes,), **kw)
 
 
     def toggleInputByProp(self):
@@ -1230,7 +1230,7 @@ class DisplayCPK(DisplayCommand):
                 #molecules, atmSet = self.getNodes(self.vf.getSelection())
                 #properties = self.getProperties(atmSet[0])
                 properties = self.getProperties(lSelection)
-                propertyNames = map(lambda x: (x[0],None), properties)
+                propertyNames = [(x[0],None) for x in properties]
                 propertyNames.sort()
                 descr = []
                 descr.append ({'name':'propsGroup',
@@ -1246,7 +1246,7 @@ class DisplayCPK(DisplayCommand):
                               'listtext':['Atom', 'Residue', 'Chain','Molecule'],
                               'defaultValue':self.propertyLevel,'listoption':self.leveloption,
                               'wcfg':{'label_text':'Change the property level:',
-                                      'labelpos':'nw','orient': Tkinter.VERTICAL,
+                                      'labelpos':'nw','orient': tkinter.VERTICAL,
                                       'buttontype': "radiobutton",
                                       'command':self.updateLevel_cb,
                                       },
@@ -1285,13 +1285,13 @@ class DisplayCPK(DisplayCommand):
 ##                               #'gridcfg':{'row': -1}
 ##                               })
                 descr.append({'name':"valMin",
-                              'widgetType': Tkinter.Label,
+                              'widgetType': tkinter.Label,
                               'parent':'valminimaxi',
                               'wcfg': {'text':"Minimum:"},
                               'gridcfg':{'sticky':'w', 'columnspan':2}
                               })
                 descr.append({'name':"valMax",
-                              'widgetType': Tkinter.Label,
+                              'widgetType': tkinter.Label,
                               'parent':'valminimaxi',
                               'wcfg': {'text':"Maximum:"},
                               'gridcfg':{'sticky':'w', 'columnspan':2}
@@ -1346,15 +1346,15 @@ class DisplayCPK(DisplayCommand):
                 form.autoSize()
             else:
                 w = form.descr.entryByName['propsGroup']
-                apply( w['widget'].grid ,(),w['gridcfg'])
+                w['widget'].grid(*(), **w['gridcfg'])
                 form.autoSize()
         else:
-            if form.descr.entryByName.get('propertyName').has_key('required'):
+            if 'required' in form.descr.entryByName.get('propertyName'):
                 form.descr.entryByName.get('propertyName').pop('required')
             if form.descr.entryByName.get('propsGroup'):
                 form.descr.entryByName['propsGroup']['widget'].grid_forget()
             w = form.descr.entryByName['radiiGroup']
-            apply( w['widget'].grid ,(),w['gridcfg'])
+            w['widget'].grid(*(), **w['gridcfg'])
             form.autoSize()
 
 
@@ -1402,12 +1402,11 @@ current selection cannot be colored using this function."
         return propValues
 
     def getProperties(self, selection):
-        properties = filter(lambda x: type(x[1]) is types.IntType \
-                                 or type(x[1]) is types.FloatType,
-                                 selection[0].__dict__.items())
+        properties = [x for x in list(selection[0].__dict__.items()) if type(x[1]) is int \
+                                 or type(x[1]) is float]
 
         # Filter out the private members starting by __.
-        properties = filter(lambda x: x[0][:2]!='__', properties)
+        properties = [x for x in properties if x[0][:2]!='__']
         return properties
         
 
@@ -1422,11 +1421,11 @@ current selection cannot be colored using this function."
 ##         self.properties = filter(lambda x: x[0][:2]!='__', self.properties)
         properties = self.getProperties(selection)
         
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             # If the list of properties changed then need to update the listbox
             ebn = self.cmdForms['default'].descr.entryByName
             widget = ebn['propertyName']['widget']
-            propertyNames = map(lambda x: (x[0],None),properties)
+            propertyNames = [(x[0],None) for x in properties]
             propertyNames.sort()
             oldsel = widget.get()
             widget.setlist(propertyNames)
@@ -1480,7 +1479,7 @@ class DisplayCPKByProperty(DisplayCommand):
     def onAddCmdToViewer(self,):
         from mglutil.util.colorUtil import ToHEX
         DisplayCommand.onAddCmdToViewer(self)
-        if not self.vf.commands.has_key('assignAtomsRadii'):
+        if 'assignAtomsRadii' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'assignAtomsRadii', 'Pmv',
                                 topCommand=0)
         from MolKit.molecule import Molecule, Atom
@@ -1611,7 +1610,7 @@ current selection cannot be colored using this function."
                 g.Set(visible=0, tagModified=False)
             else:
                 _set.sort()   # EXPENSIVE...
-                colors = map(lambda x: x.colors['cpkByProp'], _set)
+                colors = [x.colors['cpkByProp'] for x in _set]
                 #cpkSF = Numeric.array(_set.cpkScale)
                 #atmRad = Numeric.array(self.propValues) * scaleFactor
                 #cpkRad = Numeric.array(self.propValues)
@@ -1631,7 +1630,7 @@ current selection cannot be colored using this function."
                     lVertexClosestAtomSet = mol.geomContainer.atoms['cpkByProp']
                     if len(lVertexClosestAtomSet) > 0:
                         lVertexClosestAtomSetDict = dict(zip(lVertexClosestAtomSet,
-                                                             range(len(lVertexClosestAtomSet))))
+                                                             list(range(len(lVertexClosestAtomSet)))))
                         highlight = [0] * len(lVertexClosestAtomSet)
                         for i in range(len(lSelectedAtoms)):
                             lIndex = lVertexClosestAtomSetDict.get(lSelectedAtoms[i], None)
@@ -1666,7 +1665,7 @@ current selection cannot be colored using this function."
             del self.expandedNodes____AtomSets
             del self.expandedNodes____Molecules
         except:
-            print 'cleanup could not find any expandedNodes____AtomSets'
+            print('cleanup could not find any expandedNodes____AtomSets')
 
 
     def __call__(self, nodes, property, only=False, negate=False, 
@@ -1680,7 +1679,7 @@ current selection cannot be colored using this function."
            \nscaleFactor --- value used to compute the radii of the sphere representing the atom (Sphere Radii = cpkRad + atom.radius * scaleFactor (default is 1.0)
            \ncpkRad --- value used to compute the radii of the sphere representing the atom (Sphere Radii = cpkRad + atom.radius * scaleFactor (default 0.0)
            \nquality --- sphere quality default value is 10"""
-        if not kw.has_key('redraw'): kw['redraw'] = True
+        if 'redraw' not in kw: kw['redraw'] = True
         if not type(scaleFactor) in [IntType, FloatType,
                                     LongType]: return 'ERROR'
         if not isinstance(quality, IntType) and quality>=0:
@@ -1694,7 +1693,7 @@ current selection cannot be colored using this function."
             self.nodeLogString = "'" + nodes +"'"
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return
-        apply( self.doitWrapper, (nodes,property), kw)
+        self.doitWrapper(*(nodes,property), **kw)
 
 
     def updateLevel_cb(self, tag):
@@ -1719,18 +1718,17 @@ current selection cannot be colored using this function."
     def updateChooser(self, selection):
         if not hasattr(self, 'properties'): self.properties = []
         oldProp = self.properties
-        self.properties = filter(lambda x: isinstance(x[1], IntType) \
-                                 or isinstance(x[1], FloatType),
-                                 selection[0].__dict__.items())
+        self.properties = [x for x in list(selection[0].__dict__.items()) if isinstance(x[1], IntType) \
+                                 or isinstance(x[1], FloatType)]
 
         # Filter out the private members starting by __.
-        self.properties = filter(lambda x: x[0][:2]!='__', self.properties)
+        self.properties = [x for x in self.properties if x[0][:2]!='__']
         
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             # If the list of properties changed then need to update the listbox
             ebn = self.cmdForms['default'].descr.entryByName
             widget = ebn['properties']['widget']
-            propertyNames = map(lambda x: (x[0],None), self.properties)
+            propertyNames = [(x[0],None) for x in self.properties]
             propertyNames.sort()
             oldsel = widget.get()
             widget.setlist(propertyNames)
@@ -1748,7 +1746,7 @@ current selection cannot be colored using this function."
 
         if lambdaFunc == 1:
             try:
-                self.propValues = map(func, nodes)
+                self.propValues = list(map(func, nodes))
             except KeyError:
                 msg= "Some nodes do not have this property, therefore the current selection cannot be colored using this function."
                 self.warningMsg(msg)
@@ -1867,7 +1865,7 @@ current selection cannot be colored using this function."
                                     },
                             'gridcfg':{'sticky':'we','columnspan':2}})
 
-                propertyNames = map(lambda x: (x[0],None), self.properties)
+                propertyNames = [(x[0],None) for x in self.properties]
                 propertyNames.sort()
                 idf.append({'name':'properties',
                             'widgetType':ListChooser,
@@ -1895,7 +1893,7 @@ current selection cannot be colored using this function."
                             
                 idf.append({'name':'updateCM',
                             'parent':'minMax',
-                            'widgetType':Tkinter.Button,
+                            'widgetType':tkinter.Button,
                             'tooltip':"Set cpk radii min and max values \n with the property values min\
  and maxi",
                             'wcfg':{'text':">>", 'command':self.updateCM},
@@ -1992,7 +1990,7 @@ current selection cannot be colored using this function."
         self.level = self.nameDict[self.vf.selectionLevel]
         self.selection.sort()
         self.updateChooser(self.selection)
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             # Check if the level is the same than the one on the menu bar
             ebn = self.cmdForms['default'].descr.entryByName
             levelwid = ebn['level']['widget']
@@ -2042,8 +2040,8 @@ current selection cannot be colored using this function."
             del val['level']
             del val['only']
         except:
-            print 'error in removing level from dict'
-        apply( self.doitWrapper, (nodes, property), val)
+            print('error in removing level from dict')
+        self.doitWrapper(*(nodes, property), **val)
 
 
 displayCPKByPropertyGuiDescr = {'widgetType':'Menu', 'menuBarName':'menuRoot',
@@ -2070,7 +2068,7 @@ class UndisplayCPK(DisplayCommand):
     def onAddCmdToViewer(self):
         DisplayCommand.onAddCmdToViewer(self)
         #if not self.vf.hasGui: return 
-        if not self.vf.commands.has_key('displayCPK'):
+        if 'displayCPK' not in self.vf.commands:
             self.vf.loadCommand('displayCommands', ['displayCPK'], 'Pmv',
                                 topCommand=0)
 
@@ -2082,7 +2080,7 @@ class UndisplayCPK(DisplayCommand):
             self.nodeLogString = "'" + nodes +"'"
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return
-        apply(self.vf.displayCPK, (nodes,),kw)
+        self.vf.displayCPK(*(nodes,), **kw)
 
 
        
@@ -2119,14 +2117,14 @@ Synopsis:
     def onAddCmdToViewer(self):
         DisplayCommand.onAddCmdToViewer(self)
 
-        if not self.vf.commands.has_key('assignAtomsRadii'):
+        if 'assignAtomsRadii' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'assignAtomsRadii', 'Pmv',
                                 topCommand=0)
 
 
     def onAddObjectToViewer(self, obj):
         #if not self.vf.hasGui: return
-        if self.vf.hasGui and self.vf.commands.has_key('dashboard'):
+        if self.vf.hasGui and 'dashboard' in self.vf.commands:
             self.vf.dashboard.resetColPercent(obj, '_showS&BStatus')
         defaultValues = self.lastUsedValues['default']
         obj.allAtoms.ballRad = defaultValues['bRad']
@@ -2277,7 +2275,7 @@ Synopsis:
             ballRadii = ballRadii.tolist()
             
             b = mol.geomContainer.geoms['balls']
-            bcolors = map(lambda x: x.colors['balls'], _set)
+            bcolors = [x.colors['balls'] for x in _set]
             b.Set(vertices=_set.coords, radii=ballRadii,
                   materials=bcolors, inheritMaterial=False, 
                   visible=1, tagModified=False)
@@ -2292,7 +2290,7 @@ Synopsis:
                     lVertexClosestAtomSet = mol.geomContainer.atoms['balls']
                     if len(lVertexClosestAtomSet) > 0:
                         lVertexClosestAtomSetDict = dict(zip(lVertexClosestAtomSet,
-                                                             range(len(lVertexClosestAtomSet))))
+                                                             list(range(len(lVertexClosestAtomSet)))))
                         highlight = [0] * len(lVertexClosestAtomSet)
                         for i in range(len(lSelectedAtoms)):
                             lIndex = lVertexClosestAtomSetDict.get(lSelectedAtoms[i], None)
@@ -2342,14 +2340,14 @@ Synopsis:
 
             bonds, atnobnd = _set.bonds
             mol.geomContainer.atoms['sticks'] = _set
-            indices = map(lambda x: (x.atom1._bndIndex_,
-                                     x.atom2._bndIndex_), bonds)
+            indices = [(x.atom1._bndIndex_,
+                                     x.atom2._bndIndex_) for x in bonds]
             g = mol.geomContainer.geoms['sticks']
             if len(indices) == 0:
                 g.Set(visible=0, tagModified=False, redo=False)
             else:
                 cRad = _set.cRad
-                scolors = map(lambda x: x.colors['sticks'], _set)
+                scolors = [x.colors['sticks'] for x in _set]
                 g.Set( vertices=_set.coords, faces=indices, radii=cRad,
                        materials=scolors, visible=1, quality=cquality,
                        tagModified=False, inheritMaterial=False)
@@ -2362,7 +2360,7 @@ Synopsis:
                     lVertexClosestAtomSet = mol.geomContainer.atoms['sticks']
                     if len(lVertexClosestAtomSet) > 0:
                         lVertexClosestAtomSetDict = dict(zip(lVertexClosestAtomSet,
-                                                             range(len(lVertexClosestAtomSet))))
+                                                             list(range(len(lVertexClosestAtomSet)))))
                         highlight = [0] * len(lVertexClosestAtomSet)
                         for i in range(len(lSelectedAtoms)):
                             lIndex = lVertexClosestAtomSetDict.get(lSelectedAtoms[i], None)
@@ -2475,13 +2473,13 @@ Synopsis:
                  if sof: setOff += sof
                  
              except:
-                 print 'ERROR command %s failed on molecule %s *****' %\
-                       (self.name, mol.name)
+                 print('ERROR command %s failed on molecule %s *****' %\
+                       (self.name, mol.name))
                  if self.vf.hasGui and self.vf.guiVisible==1 \
                     and self.vf.withShell:
                      self.vf.GUI.pyshell.top.deiconify()
                  traceback.print_exc()
-                 print 'ERROR *************************************'
+                 print('ERROR *************************************')
 
         if only and len(self.vf.Mols) != len(molecules):
             mols = self.vf.Mols - molecules
@@ -2505,7 +2503,7 @@ Synopsis:
                 if sof: setOff += sof
 
         redraw = False
-        if kw.has_key("redraw") : redraw=True
+        if "redraw" in kw : redraw=True
         if self.createEvents:
             event = EditGeomsEvent('bs', [nodes,[only, negate, bRad,
                                 bScale, bquality, cradius, cquality,
@@ -2524,8 +2522,7 @@ Synopsis:
         if (sticksBallsLicorice == 'Licorice') or (sticksBallsLicorice == 'Sticks only'):
             self.idf.entryByName['ballgroup']['widget'].grid_forget()
         else :
-            apply( self.idf.entryByName['ballgroup']['widget'].grid,(),
-                   self.idf.entryByName['ballgroup']['gridcfg'])
+            self.idf.entryByName['ballgroup']['widget'].grid(*(), **self.idf.entryByName['ballgroup']['gridcfg'])
 
 
     def buildFormDescr(self, formName='default', title ="Display sticks and balls"):
@@ -2664,7 +2661,7 @@ form buildFormDescr will be called for each formName.
                 del val['display']
             val['redraw'] = True
 
-            apply( self.doitWrapper, (self.vf.getSelection(),), val)
+            self.doitWrapper(*(self.vf.getSelection(),), **val)
         
 
     def __call__(self, nodes, only=False, negate=False,
@@ -2691,22 +2688,22 @@ form buildFormDescr will be called for each formName.
             warnings.warn("noballs is deprected, use sticksBallsLicorice='Sticks Only' instead")
             kw.pop('noballs')
 
-        if not kw.has_key('redraw'): kw['redraw'] = True
-        if not kw.has_key('only'): kw['only'] = only
-        if not kw.has_key('negate'): kw['negate'] = negate
-        if not kw.has_key('sticksBallsLicorice'): kw['sticksBallsLicorice'] = sticksBallsLicorice
-        if not kw.has_key('bRad'): kw['bRad'] = bRad
-        if not kw.has_key('bScale'): kw['bScale'] = bScale
-        if not kw.has_key('bquality'): kw['bquality'] = bquality
-        if not kw.has_key('cradius'): kw['cradius'] = cradius   
-        if not kw.has_key('cquality'): kw['cquality'] = cquality
-        if not kw.has_key('setScale'): kw['setScale'] = setScale
+        if 'redraw' not in kw: kw['redraw'] = True
+        if 'only' not in kw: kw['only'] = only
+        if 'negate' not in kw: kw['negate'] = negate
+        if 'sticksBallsLicorice' not in kw: kw['sticksBallsLicorice'] = sticksBallsLicorice
+        if 'bRad' not in kw: kw['bRad'] = bRad
+        if 'bScale' not in kw: kw['bScale'] = bScale
+        if 'bquality' not in kw: kw['bquality'] = bquality
+        if 'cradius' not in kw: kw['cradius'] = cradius   
+        if 'cquality' not in kw: kw['cquality'] = cquality
+        if 'setScale' not in kw: kw['setScale'] = setScale
         if type(nodes) is StringType:
             self.nodeLogString = "'" + nodes +"'"
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return 
         nodes = nodes.findType(Atom)
-        apply( self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
 
 displaySticksAndBallsGuiDescr = {'widgetType':'Menu', 'menuBarName':
@@ -2767,7 +2764,7 @@ class DisplaySSSB(DisplaySticksAndBalls):
             proteic = []
             notproteic = []
             for res in atm.parent.uniq():
-                if AAlist.has_key(res.type):
+                if res.type in AAlist:
                     proteic.append(res)
                 else:
                     notproteic.append(res)
@@ -2827,7 +2824,7 @@ class UndisplaySticksAndBalls(DisplayCommand):
     def onAddCmdToViewer(self):
         DisplayCommand.onAddCmdToViewer(self)
         #if not self.vf.hasGui: return 
-        if not self.vf.commands.has_key('displaySticksAndBalls'):
+        if 'displaySticksAndBalls' not in self.vf.commands:
             self.vf.loadCommand('displayCommands', ['displaySticksAndBalls'],
                                 'Pmv',topCommand=0)
 
@@ -2841,7 +2838,7 @@ class UndisplaySticksAndBalls(DisplayCommand):
             self.nodeLogString = "'" + nodes +"'"
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return
-        apply(self.vf.displaySticksAndBalls, (nodes,),kw)
+        self.vf.displaySticksAndBalls(*(nodes,), **kw)
         
 
 
@@ -3008,7 +3005,7 @@ form buildFormDescr will be called for each formName.
             ballRadii = ballRadii.tolist()
 
             b = mol.geomContainer.geoms['CAballs']
-            bcolors = map(lambda x: x.colors['CAballs'], _set)
+            bcolors = [x.colors['CAballs'] for x in _set]
             b.Set(vertices=_set.coords, radii=ballRadii,
                   materials=bcolors, inheritMaterial=False, 
                   visible=1, tagModified=False)
@@ -3023,7 +3020,7 @@ form buildFormDescr will be called for each formName.
                     lVertexClosestAtomSet = mol.geomContainer.atoms['CAballs']
                     if len(lVertexClosestAtomSet) > 0:
                         lVertexClosestAtomSetDict = dict(zip(lVertexClosestAtomSet,
-                                                             range(len(lVertexClosestAtomSet))))
+                                                             list(range(len(lVertexClosestAtomSet)))))
                         highlight = [0] * len(lVertexClosestAtomSet)
                         for i in range(len(lSelectedAtoms)):
                             lIndex = lVertexClosestAtomSetDict.get(lSelectedAtoms[i], None)
@@ -3113,7 +3110,7 @@ form buildFormDescr will be called for each formName.
                     g.Set(visible=0, tagModified=False)
                 else:
                     cRad = _set.cRad
-                    scolors = map(lambda x: x.colors['CAsticks'], _set)
+                    scolors = [x.colors['CAsticks'] for x in _set]
                     g.Set( vertices=_set.coords, faces=indices, radii=cRad,
                            materials=scolors, visible=1, quality=cquality,
                            tagModified=False,  inheritMaterial=False)
@@ -3126,7 +3123,7 @@ form buildFormDescr will be called for each formName.
                     lVertexClosestAtomSet = mol.geomContainer.atoms['CAsticks']
                     if len(lVertexClosestAtomSet) > 0:
                         lVertexClosestAtomSetDict = dict(zip(lVertexClosestAtomSet,
-                                                             range(len(lVertexClosestAtomSet))))
+                                                             list(range(len(lVertexClosestAtomSet)))))
                         highlight = [0] * len(lVertexClosestAtomSet)
                         for i in range(len(lSelectedAtoms)):
                             lIndex = lVertexClosestAtomSetDict.get(lSelectedAtoms[i], None)
@@ -3157,7 +3154,7 @@ form buildFormDescr will be called for each formName.
                     self.warningMsg("No CA atoms in %s"%mol.name) 
                     return
                  elif len(atm)==0 and len(molecules)>1:
-                    print "No CA atoms in %s"%mol.name
+                    print("No CA atoms in %s"%mol.name)
                  if sticksBallsLicorice == 'Licorice':
                      drawCABalls(mol,atm , only, 0, negate, cradius, 0,
                            cquality)
@@ -3171,13 +3168,13 @@ form buildFormDescr will be called for each formName.
                  
                                        
              except:
-                 print 'ERROR command %s failed on molecule %s *****' %\
-                       (self.name, mol.name)
+                 print('ERROR command %s failed on molecule %s *****' %\
+                       (self.name, mol.name))
                  if self.vf.hasGui and self.vf.guiVisible==1 \
                     and self.vf.withShell:
                      self.vf.GUI.pyshell.top.deiconify()
                  traceback.print_exc()
-                 print 'ERROR *************************************'
+                 print('ERROR *************************************')
 
             
         if only and len(self.vf.Mols) != len(molecules):
@@ -3197,10 +3194,10 @@ form buildFormDescr will be called for each formName.
                 drawCASticks(mol, mol.allAtoms, only, negate, cradius, cquality)
 
         redraw = False
-        if kw.has_key("redraw") : redraw=True
+        if "redraw" in kw : redraw=True
         if self.createEvents:
             event = EditGeomsEvent('trace', [nodes,[only, negate, bRad,bScale, bquality, 
-						cradius, cquality,sticksBallsLicorice]])
+                                                cradius, cquality,sticksBallsLicorice]])
             self.vf.dispatchEvent(event)
 
 
@@ -3229,7 +3226,7 @@ class UndisplayBackboneTrace(DisplayCommand):
     def onAddCmdToViewer(self):
         DisplayCommand.onAddCmdToViewer(self)
         #if not self.vf.hasGui: return 
-        if not self.vf.commands.has_key('displayBackboneTrace'):
+        if 'displayBackboneTrace' not in self.vf.commands:
             self.vf.loadCommand('displayCommands', ['displayBackboneTrace'],
                                 'Pmv',topCommand=0)
 
@@ -3243,7 +3240,7 @@ class UndisplayBackboneTrace(DisplayCommand):
             self.nodeLogString = "'" + nodes +"'"
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return
-        apply(self.vf.displayBackboneTrace, (nodes,),kw)
+        self.vf.displayBackboneTrace(*(nodes,), **kw)
 
 
 
@@ -3286,9 +3283,9 @@ class ShowMolecules(MVCommand):
         if hasattr(obj, 'displayMode'):
             delattr(obj, 'displayMode')
         if self.vf.hasGui:
-            if self.molList.has_key(obj.name):
+            if obj.name in self.molList:
                 del self.molList[obj.name]
-                if self.cmdForms.has_key('default'):
+                if 'default' in self.cmdForms:
                     self.cmdForms['default'].descr.entryByName[obj.name]\
                                                         ['widget'].grid_forget()
             else:
@@ -3300,25 +3297,25 @@ class ShowMolecules(MVCommand):
             return
         if not hasattr(self, 'molList') : self.molList = {}
         #if not self.vf.hasGui: return
-        obj.geomName = filter(lambda x, geomC = obj.geomContainer:
+        obj.geomName = list(filter(lambda x, geomC = obj.geomContainer:
                               geomC.geoms[x].visible == 1,
-                              obj.geomContainer.geoms.keys())
+                              list(obj.geomContainer.geoms.keys())))
         obj.geomName.remove('master')
                               
-        self.molList[obj.name] = Tkinter.IntVar()
+        self.molList[obj.name] = tkinter.IntVar()
         self.molList[obj.name].set(1)
 
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             if self.cmdForms['default'].root.state() == 'normal':
                 form = self.cmdForms['default']
                 cb = CallBackFunction(self.checkButton_cb,obj.name)
                 entry = {'name':obj.name,
-                         'widgetType': Tkinter.Checkbutton,
+                         'widgetType': tkinter.Checkbutton,
                          'defaultValue':self.molList[obj.name].get(),
                          'wcfg':{'text':obj.name+':'+'ON/OFF',
                                  'variable':self.molList[obj.name],
                                  'command':cb},
-                         'gridcfg':{'sticky':Tkinter.W}}
+                         'gridcfg':{'sticky':tkinter.W}}
 
                 form.addEntry(entry)
                 form.descr.entryByName[entry['name']] = entry
@@ -3361,9 +3358,9 @@ class ShowMolecules(MVCommand):
         if not molName or not type(molName) in [TupleType, ListType]:
             return
 
-        if not kw.has_key('redraw'): kw['redraw']=1
+        if 'redraw' not in kw: kw['redraw']=1
         kw['negate'] = negate
-        apply( self.doitWrapper, (molName,), kw)
+        self.doitWrapper(*(molName,), **kw)
         # Should not be done here
         if self.vf.hasGui:
             for name in molName:
@@ -3377,14 +3374,14 @@ class ShowMolecules(MVCommand):
             if len(self.vf.Mols) == 0: return idf
             names = self.vf.Mols.name
             idf.append({'name':'checkall',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text':'Hide All',
                                 'command':self.showHideAll_cb},
                         'gridcfg':{'sticky':'ew'}
                         })
             for name in self.vf.Mols.name:
                 idf.append({'name':name, 
-                            'widgetType': Tkinter.Checkbutton,
+                            'widgetType': tkinter.Checkbutton,
                             'defaultValue':self.molList[name].get(),
                             'wcfg':{'text':name+':'+'ON/OFF',
                                     'variable':self.molList[name],
@@ -3424,17 +3421,17 @@ class ShowMolecules(MVCommand):
                              blocking=0, scrolledFrame = 1, width=200,
                              height=150, onDestroy = self.dismissForm )
 
-        close_button = Tkinter.Button(form.help.master,
+        close_button = tkinter.Button(form.help.master,
                                          text='Close', command=self.dismissForm)
         close_button.grid(row=0,column=0,sticky='we')
 
     def dismissForm(self):
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             self.cmdForms['default'].withdraw()
     
 
 
-showMoleculeGuiDescr = {'widgetType':Tkinter.Button, 'barName':'Toolbar',
+showMoleculeGuiDescr = {'widgetType':tkinter.Button, 'barName':'Toolbar',
                         'buttonName':'show/hide molecule'}
         
 ShowMoleculeGUI = CommandGUI()
@@ -3466,7 +3463,7 @@ class BindGeomToMolecularFragment(BindGeomToMolecularFragmentBase):
     def doit(self, g, nodes, cutoff_from=3.5, cutoff_to=BHTree_CUT, instanceMatrices=None, **kw):
         mols = nodes.top.uniq()
         if len(mols) > 1:
-            print "bindGeomToMolecularFragment: ERROR: atoms belong to more than one molecule"
+            print("bindGeomToMolecularFragment: ERROR: atoms belong to more than one molecule")
             return
         mol = mols[0]
 
@@ -3531,7 +3528,7 @@ class BindGeomToMolecularFragment(BindGeomToMolecularFragmentBase):
                 geomC.atoms[gname]=u_atoms
                 #self.cl_atoms[gname] = cl_atoms
                 #create a unique identifier for all atoms
-                ids = map(lambda x, y: x.name+str(y), atoms, range(len(atoms)))
+                ids = list(map(lambda x, y: x.name+str(y), atoms, list(range(len(atoms)))))
                 atoms.sl_id = ids
                 mol_lookup = {}
                 i=0
@@ -3580,7 +3577,7 @@ class BindGeomToMolecularFragment(BindGeomToMolecularFragmentBase):
 #        for i in range(maxind+1):
 #            if i in atomIndices:
         for i in atomIndices:
-            if not seen.has_key(i):
+            if i not in seen:
                 l.append(atoms[i])
                 seen[i] = 1
         atomset = AtomSet( l )
@@ -3635,11 +3632,11 @@ class BindGeomToMolecularFragment(BindGeomToMolecularFragmentBase):
             
         #if isinstance(geom, IndexedPolygons):
         if isinstance(geom, Geom):
-            cl_atoms = apply(self.doitWrapper, (
-                geom , nodes, cutoff_from, cutoff_to, instanceMatrices), kw)
+            cl_atoms = self.doitWrapper(*(
+                geom , nodes, cutoff_from, cutoff_to, instanceMatrices), **kw)
             if cl_atoms is None:
-                print "Warning: no closest atoms found in cutoff : ", cutoff_to
-                print geom.name, "is not bound to molecule "
+                print("Warning: no closest atoms found in cutoff : ", cutoff_to)
+                print(geom.name, "is not bound to molecule ")
                 return 0
             return 1
         
@@ -3658,8 +3655,8 @@ class BindGeomToMolecularFragment(BindGeomToMolecularFragmentBase):
         cutoff_from = float(val['cutoff_from'])
         cutoff_to = float(val['cutoff_to'])
         mol = self.vf.expandNodes(mol)
-        cl_atoms = apply(self.doitWrapper, (self.objects[geom], mol,
-                                cutoff_from, cutoff_to), {})
+        cl_atoms = self.doitWrapper(*(self.objects[geom], mol,
+                                cutoff_from, cutoff_to), **{})
         if cl_atoms is None or len(cl_atoms) == 0:
             self.warningMsg("No atoms found in cutoff %.2f "%cutoff_to)
     
@@ -3679,7 +3676,7 @@ class BindGeomToMolecularFragment(BindGeomToMolecularFragmentBase):
                 molStr = molParser.getMoleculeInformation()
                 molecules.append(mol.name)
             self.objects = objects
-            sortedKeys = objects.keys()
+            sortedKeys = list(objects.keys())
             sortedKeys.sort()
             idf.append({'name': 'geoms',
                         'widgetType':Pmw.ComboBox,
@@ -3699,7 +3696,7 @@ class BindGeomToMolecularFragment(BindGeomToMolecularFragmentBase):
                         'gridcfg':{'sticky':'we', 'row': -1, 'column': 2,
                                    'columnspan':2},
                         })
-            idf.append({'widgetType':Tkinter.Label,
+            idf.append({'widgetType':tkinter.Label,
                         'wcfg': {'text':"Specify cutoff interval \n(for finding atoms closest to object's surface):"},
                         'gridcfg':{'sticky':'we', 'columnspan':4}
                         })
@@ -3749,22 +3746,22 @@ class BindGeomToMolecularFragment(BindGeomToMolecularFragmentBase):
                 new_coords.append(Numeric.dot(coordv, \
                                    Numeric.transpose(m))[:, :3])
             atom_coords = Numeric.concatenate(new_coords)
-        print "len atom_coords: ", len(atom_coords)
+        print("len atom_coords: ", len(atom_coords))
         bht = bhtreelib.BHtree( atom_coords, None, 10)
         cl_atoms = []
         mdist = cutoff_from
-        print "** Bind Geometry to Molecule Info: **"
-        print "** looking for closest atoms (cutoff range: %2f-%2f)...   **"%(cutoff_from, cutoff_to)
+        print("** Bind Geometry to Molecule Info: **")
+        print("** looking for closest atoms (cutoff range: %2f-%2f)...   **"%(cutoff_from, cutoff_to))
         cl_atoms = bht.closestPointsArray(obj_verts, mdist)
         while len(cl_atoms) == 0 and mdist <cutoff_to:
-            print "** ... no closest atoms found for cutoff = %2f; continue looking ... **"%mdist
+            print("** ... no closest atoms found for cutoff = %2f; continue looking ... **"%mdist)
             mdist=mdist+0.2
             cl_atoms = bht.closestPointsArray(obj_verts, mdist)
             #print "mdist: ", mdist, "  len cl_atoms: ", len(cl_atoms)
-        print "**... done. %d closest atoms found within distance: %2f **"%(len(cl_atoms) , mdist)
+        print("**... done. %d closest atoms found within distance: %2f **"%(len(cl_atoms) , mdist))
         if instanceMatrices:
             if cl_atoms:
-                return map(lambda x: x%natoms, cl_atoms)
+                return [x%natoms for x in cl_atoms]
         return cl_atoms
     
 BindGeomToMolecularFragmentGUI = CommandGUI()
@@ -3808,7 +3805,7 @@ class DisplayBoundGeom(DisplayCommand, BindGeomToMolecularFragmentBase):
 
     def guiCallback(self):
         # Update the comboBox with the name of the geometries
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             geomNames = self.getBoundGeomNames()
             ebn = self.cmdForms['default'].descr.entryByName
             w = ebn['geomNames']['widget']
@@ -3818,12 +3815,12 @@ class DisplayBoundGeom(DisplayCommand, BindGeomToMolecularFragmentBase):
         val = DisplayCommand.getFormValues(self)
         if val:
             val['nbVert'] = int(val['nbVert'][0])
-            apply( self.doitWrapper, (self.vf.getSelection(),), val )
+            self.doitWrapper(*(self.vf.getSelection(),), **val)
 
     def getBoundGeomNames(self):
         # get all objects(geometries) that were bound with  'bindGeomToMolecularFragment' command:
         molecules = self.vf.getSelection().top.uniq()
-        objects = self.data.keys()
+        objects = list(self.data.keys())
         mol_geoms = []
         if not len(objects):
             return []
@@ -3831,7 +3828,7 @@ class DisplayBoundGeom(DisplayCommand, BindGeomToMolecularFragmentBase):
             # find geoms that were bound to molecule mol:
             for o in objects:
                 obj = string.split(o, '|')[-1]
-                if mol.geomContainer.geoms.has_key(obj):
+                if obj in mol.geomContainer.geoms:
                     g = mol.geomContainer.geoms[obj]
                     if g.viewer !=None: # checking that the geometry is still in the viewer.
                         if g.mol == mol:
@@ -3877,7 +3874,7 @@ class DisplayBoundGeom(DisplayCommand, BindGeomToMolecularFragmentBase):
                     if hasattr(a, "sl_id"):
                         ind = mol_lookup[a.sl_id]
                         atomindices.append(ind)
-                cond = map(lambda x, y=atomindices: x in y, cl_atoms)
+                cond = list(map(lambda x, y=atomindices: x in y, cl_atoms))
                 #a new subset of vertex indices:
                 nvs = Numeric.nonzero(cond) #returns indices of cond,
                                             #where its elements != 0
@@ -3935,14 +3932,14 @@ class DisplayBoundGeom(DisplayCommand, BindGeomToMolecularFragmentBase):
                     displayed
            negate : flag when set to 1 undisplay the current selection
            nbVert : Nb of vertices per triangle need to select a triangle"""
-        if not kw.has_key('redraw'): kw['redraw']=1
+        if 'redraw' not in kw: kw['redraw']=1
         kw['only'] = only
         kw['negate'] = negate
         kw['nbVert'] = nbVert
         if type(nodes) is StringType:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
-        apply( self.doitWrapper, (nodes, ), kw)
+        self.doitWrapper(*(nodes, ), **kw)
 
 
 DisplayBoundGeomGUI = CommandGUI()
@@ -3956,7 +3953,7 @@ class UndisplayBoundGeom(DisplayBoundGeom):
            nodes  : TreeNodeSet holding the current selection (mv.getSelection())
            """
         kw['negate']= 1
-        apply(self.vf.displayBoundGeom, (nodes,),kw)
+        self.vf.displayBoundGeom(*(nodes,), **kw)
 
 
 
@@ -3972,18 +3969,18 @@ class DisplayInteractionsCommand(MVCommand):
         self.vf.loadModule('labelCommands', 'Pmv')
         self.vf.loadModule('displayCommands', 'Pmv')
         self.vf.loadModule('hbondCommands', 'Pmv')
-        self.showHbatSpheres = Tkinter.IntVar()
-        self.showCloseContactSpheres = Tkinter.IntVar()
-        self.showSS = Tkinter.IntVar()
-        self.showMM = Tkinter.IntVar()
-        self.showMsms = Tkinter.IntVar()
-        self.showResLabels = Tkinter.IntVar()
-        self.showPiPi = Tkinter.IntVar()
-        self.showPiCation = Tkinter.IntVar()
-        self.infoType = Tkinter.StringVar()
+        self.showHbatSpheres = tkinter.IntVar()
+        self.showCloseContactSpheres = tkinter.IntVar()
+        self.showSS = tkinter.IntVar()
+        self.showMM = tkinter.IntVar()
+        self.showMsms = tkinter.IntVar()
+        self.showResLabels = tkinter.IntVar()
+        self.showPiPi = tkinter.IntVar()
+        self.showPiCation = tkinter.IntVar()
+        self.infoType = tkinter.StringVar()
         self.infoType.set("")
         self.infoTypeList = ["ligand contacts", "receptor contacts", "hydrogen bonds"]
-        self.sphereType = Tkinter.StringVar()
+        self.sphereType = tkinter.StringVar()
         self.sphereType.set("wireframe")
         self.sphereTypeList = ["wireframe", "solid"]
         self.managed_sets = {}  #current sets to display
@@ -4045,7 +4042,7 @@ class DisplayInteractionsCommand(MVCommand):
                     ('lig_close_carbons', 'lcloseCs')]
         for k1,k2 in key_list:
             nodes = rDict[k1]
-            if k2 in self.vf.sets.keys():
+            if k2 in list(self.vf.sets.keys()):
                 self.vf.sets.pop(k2)
                 self.vf.saveSet(nodes, k2, addToDashboard=False)
             else:
@@ -4057,9 +4054,9 @@ class DisplayInteractionsCommand(MVCommand):
         from MolKit.protein import ResidueSet
         res = ResidueSet()
         for m in mols:
-            for k, v in m.geomContainer.atoms.items():
-	            if k[:3] in ['Coi', 'Hel', 'Str', 'Tur']:
-		            res += v
+            for k, v in list(m.geomContainer.atoms.items()):
+                    if k[:3] in ['Coi', 'Hel', 'Str', 'Tur']:
+                            res += v
         return res
 
 
@@ -4164,7 +4161,7 @@ class DisplayInteractionsCommand(MVCommand):
                 'ProteinLabels', 'ResidueLabels', 'nobnds', 'balls', 'bondorder', 'lines', 'CAballs']
         displayed_res = ResidueSet()
         gc = macro.geomContainer
-        for k in gc.atoms.keys():
+        for k in list(gc.atoms.keys()):
             if not k in keys_to_exclude:
                 displayed_res += gc.atoms[k].findType(Residue)
         if len(displayed_res):
@@ -4252,7 +4249,7 @@ class DisplayInteractionsCommand(MVCommand):
     def buildForm(self):
         ifd = self.ifd1 = InputFormDescr(title = "Specify two groups of nodes for interactions display:")
         ifd.append({'name':'keyLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':"First is treated as 'ligand' and second as 'receptor'",
                     'gridcfg':{'sticky':'w'}})
         ifd.append({'name': 'group1',
@@ -4274,12 +4271,12 @@ class DisplayInteractionsCommand(MVCommand):
                     'crColor':(1.,2.,0.),
             },
             'gridcfg':{'sticky':'we', 'columnspan':2}})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Ok',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we'},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we', 'column':1,'row':-1},
@@ -4302,7 +4299,7 @@ class DisplayInteractionsCommand(MVCommand):
             macro = self.vf.expandNodes(macro)
         except:
             raise  IOError
-        return apply(self.doitWrapper, (lig, macro,), kw)
+        return self.doitWrapper(*(lig, macro,), **kw)
 
 
     def cleanUpCrossSet(self):
@@ -4368,13 +4365,13 @@ class DisplayInteractionsCommand(MVCommand):
     def buildDisplayForm(self, lig, macro, event=None):
         ifd = self.ifd2 = InputFormDescr(title='Interactions Display Options')
         ifd.append({'name': 'msmsCB',
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'tooltip': "display solvent-excluded-surface geometry for 'ligand'",
                     'wcfg':{'text':"display msms",
                             'variable':self.showMsms},
                     'command': CallBackFunction(self.updateMsms, lig, macro),
-                    'gridcfg':{'sticky':Tkinter.W, 'columnspan':3}})
-        ifd.append({'widgetType':Tkinter.Label,
+                    'gridcfg':{'sticky':tkinter.W, 'columnspan':3}})
+        ifd.append({'widgetType':tkinter.Label,
                     'tooltip': 'set which spheres to display and whether to use wireframe or solid',
                     'wcfg': {'text':"display spheres as"},
                     'gridcfg':{'sticky':'w'} })
@@ -4387,24 +4384,24 @@ class DisplayInteractionsCommand(MVCommand):
                     'selectioncommand': CallBackFunction(self.updateSphereDisplay, lig, macro),
                     },
             'gridcfg':{'sticky':'w', 'row':-1, 'column':1}})
-        ifd.append({'widgetType':Tkinter.Label,
+        ifd.append({'widgetType':tkinter.Label,
                     'tooltip': 'set which spheres to display ',
                     'wcfg': {'text':"on atoms in:"},
                     'gridcfg':{'sticky':'e'} })
         ifd.append({'name': 'closeAtsCB',
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'tooltip': "display spheres on pairs of atoms closer than sum of vdw radii*Scaling Factor.\nWhen msms surface for 'ligand' is displayed, spheres are displayed only on the 'receptor'",
                     'wcfg':{'text':"close contact",
                             'variable':self.showCloseContactSpheres},
                     'command': CallBackFunction(self.updateCCCpk, lig, macro),
-                    'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':1}})
+                    'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':1}})
         ifd.append({'name': 'hbondsCB',
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'tooltip': "display spheres on atoms involved in hydrogen bonds\nbetween ligand atoms and receptor atoms.\nWhen msms surface for ligand is displayed, spheres are displayed only on the receptor\n(Hbonds are displayed as small green spheres)",
                     'wcfg':{'text':"hydrogen bonds",
                             'variable':self.showHbatSpheres},
                     'command': CallBackFunction(self.updateHBonds,lig, macro),
-                    'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':2}})
+                    'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':2}})
         ifd.append({'name':'vdwPercentCutoff',
                     'widgetType':ThumbWheel,
                     'tooltip': "used in finding 'close atoms' which are closer than:\ndistance = (atom1.vdw+atom2.vdw)*scaling_factor\n(smaller values find fewer contacts; larger values more)",
@@ -4417,27 +4414,27 @@ class DisplayInteractionsCommand(MVCommand):
                              'wheelPad':2, 'height':20},
                     'gridcfg':{'sticky':'e', 'columnspan':3}})
         ifd.append({'name': 'ssCB',
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'tooltip': 'display ribbon secondary structure for sequences of >3\nresidues in receptor with atoms close to ligand atoms.\nGaps of 1 residue are allowed',
                     'wcfg':{'text':"display ribbon for near residues",
                             'variable':self.showSS},
                     'command': CallBackFunction(self.showHideSecondaryStructure, lig, macro),
-                    'gridcfg':{'sticky':Tkinter.W, 'columnspan':2}})
+                    'gridcfg':{'sticky':tkinter.W, 'columnspan':2}})
         ifd.append({'name': 'ssALLCB',
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'tooltip': 'show/hide ribbon secondary structure for all residues',
                     'wcfg':{'text':"for all residues",
                             'variable':self.showMM},
                     'command': CallBackFunction(self.updateMM, lig, macro),
-                    'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':2 }})
+                    'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':2 }})
         ifd.append({'name': 'resLabCB',
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'tooltip': "display labels on all residues in 'receptor' which have\none or more atoms close to an atom in the 'ligand'",
                     'wcfg':{'text':"display labels on residues",
                             'variable':self.showResLabels},
                     'command': self.updateResLabels,
-                    'gridcfg':{'sticky':Tkinter.W, 'columnspan':3}})
-        ifd.append({'widgetType':Tkinter.Label,
+                    'gridcfg':{'sticky':tkinter.W, 'columnspan':3}})
+        ifd.append({'widgetType':tkinter.Label,
                     'tooltip': 'print list of residue contacts in python shell',
                     'wcfg': {'text':"output list of:"},
                     'gridcfg':{'sticky':'w'} })
@@ -4451,35 +4448,35 @@ class DisplayInteractionsCommand(MVCommand):
                     },
             'gridcfg':{'sticky':'w', 'row':-1, 'column':1, 'columnspan':2}})
         ifd.append({'name': 'piLabCB',
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'tooltip': "display pi-pi interactions between 'ligand' and 'receptor'. Note: initial calculation is slow...",
                     'wcfg':{'text':"display pi-pi interactions",
                             'variable':self.showPiPi},
                     'command': self.updatePiPi,
-                    'gridcfg':{'sticky':Tkinter.W}})
+                    'gridcfg':{'sticky':tkinter.W}})
         ifd.append({'name': 'piCationLabCB',
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'tooltip': "display cation-pi and pi-cation interactions between 'ligand' and 'receptor'. Note: initial calculation is slow...",
                     'wcfg':{'text':"display pi-cation interactions",
                             'variable':self.showPiCation},
                     'command': self.updatePiCation,
-                    'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':2}})
+                    'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':2}})
         ifd.append({'name': 'revertB',
-                    'widgetType': Tkinter.Button,
+                    'widgetType': tkinter.Button,
                     'text':'Revert',
                     'tooltip': "Revert to previous display and destroy this form",
                     'wcfg':{'bd':4},
                     'gridcfg':{'sticky':'we'},
                     'command':self.revert})
         ifd.append({'name': 'closeB',
-                    'widgetType': Tkinter.Button,
+                    'widgetType': tkinter.Button,
                     'text':'Close',
                     'tooltip': "Close without changing display\nUse 'Edit->Undo displayInteractions' to restore",
                     'wcfg':{'bd':4},
                     'gridcfg':{'sticky':'we', 'row':-1, 'column':1},
                     'command':self.close})
         ifd.append({'name': 'saveButton',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Save Image'},
                     'command': self.save,
                     'gridcfg':{'sticky':'we','row':-1,'column':2}})
@@ -4521,21 +4518,21 @@ class DisplayInteractionsCommand(MVCommand):
 
 
     def print_macro_residue_contacts(self, event=None):
-        print "\n\nresidues in 'receptor'-> 'ligand' residues in close contact"
+        print("\n\nresidues in 'receptor'-> 'ligand' residues in close contact")
         self.intDescr.print_macro_residue_contacts()
-        print "\n"
+        print("\n")
 
 
     def print_ligand_residue_contacts(self, event=None):
-        print "\n\nresidues in 'ligand'-> 'receptor' residues in close contact"
+        print("\n\nresidues in 'ligand'-> 'receptor' residues in close contact")
         self.intDescr.print_ligand_residue_contacts()
-        print "\n"
+        print("\n")
 
 
     def print_hydrogen_bonds(self, event=None):
-        print "\n\nhydrogen bonds (donor residue->acceptor residue(s))"
+        print("\n\nhydrogen bonds (donor residue->acceptor residue(s))")
         self.intDescr.print_hb_residue()
-        print "\n"
+        print("\n")
 
 
     def updateMsms(self, lig, macro): 
@@ -4647,7 +4644,7 @@ class DisplayInteractionsCommand(MVCommand):
                     'ProteinLabels', 'ResidueLabels', 'nobnds', 'balls', 'bondorder', 'lines', 'CAballs']
             displayed_atoms = AtomSet()
             gc = macro[0].top.geomContainer
-            for k in gc.atoms.keys():
+            for k in list(gc.atoms.keys()):
                 if not k in keys_to_exclude:
                     displayed_atoms += gc.atoms[k].findType(Atom)
             if len(displayed_atoms)!= len(macro_atoms):
@@ -4801,7 +4798,7 @@ class DisplayInteractionsCommand(MVCommand):
         self.vf.GUI.VIEWER.startAutoRedraw()
         c = self.vf.setbackgroundcolor
         if len(c.cmdForms):
-            f = c.cmdForms.values()[0]
+            f = list(c.cmdForms.values())[0]
             try:
                 if not f.f.master.master.winfo_ismapped():
                     self.vf.setbackgroundcolor.guiCallback()
@@ -4815,7 +4812,7 @@ class DisplayInteractionsCommand(MVCommand):
     def updatePiCation(self, event=None):
         rDict = self.intDescr.results
         #add_geom = False
-        if not 'cation_pi' in rDict.keys():
+        if not 'cation_pi' in list(rDict.keys()):
             self.intDescr.detectPiInteractions()
         cation_pi = rDict['cation_pi']
         pi_cation = rDict['pi_cation']
@@ -4883,7 +4880,7 @@ class DisplayInteractionsCommand(MVCommand):
     def updatePiPi(self, event=None):
         rDict = self.intDescr.results
         add_geom = False
-        if not 'pi_pi' in rDict.keys():
+        if not 'pi_pi' in list(rDict.keys()):
             self.intDescr.detectPiInteractions()
             add_geom = True
         pi_pi = rDict['pi_pi']

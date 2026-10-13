@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -26,7 +26,7 @@ from PyBabel.cycle import RingFinder
 from PyBabel.bo import BondOrder
 from PyBabel.aromatic import Aromatic
 from PyBabel.atomTypes import AtomHybridization
-import math, numpy.oldnumeric as Numeric
+import math, mglcompat.oldnumeric as Numeric
 
 
 class BondSelector:
@@ -51,8 +51,8 @@ class BondSelector:
         assert isinstance(bonds, BondSet)
         returnBonds = BondSet()
         for f in self.criteria:
-            newBonds = filter(f, bonds)
-            returnBonds.extend(BondSet(filter(f, bonds)))
+            newBonds = list(filter(f, bonds))
+            returnBonds.extend(BondSet(list(filter(f, bonds))))
         return self.makeUniq(returnBonds)
 
 
@@ -64,7 +64,7 @@ class BondSelector:
         d = {}
         for a in ats0:
             d[a] = 0
-        return AtomSet(d.keys())
+        return AtomSet(list(d.keys()))
 
 
     def makeUniq(self, bnds):
@@ -75,7 +75,7 @@ class BondSelector:
         d = {}
         for b in bnds:
             d[b] = 0
-        uniqBonds = d.keys()
+        uniqBonds = list(d.keys())
         if len(uniqBonds)==len(bnds):
             return BondSet(bnds)
         else:
@@ -311,7 +311,7 @@ class CycleBondSelector(BondSelector):
                     if b.atom1 in ats and b.atom2 in ats:
                         ANS[b] = 1
             #return BondSet(rf.allRingBonds)
-            bonds= BondSet(ANS.keys())
+            bonds= BondSet(list(ANS.keys()))
         return bonds
     
 
@@ -367,7 +367,7 @@ class AromaticCycleBondSelector2(BondSelector):
             for bnd in blist:
                 at = bnd.atom1
                 #next find the other bond in this cycle with at as one of the atoms:
-                z2 = filter(lambda x:x!=bnd and x.atom1==at or x.atom2==at, blist)
+                z2 = [x for x in blist if x!=bnd and x.atom1==at or x.atom2==at]
                 bnd.nextbond = z2[0]
                 neighbor = z2[0].atom1
                 if neighbor==at:
@@ -389,7 +389,7 @@ class AromaticCycleBondSelector2(BondSelector):
                 result1 = p
                 bnd.nrms = result1
                 #next find the other bond w/atom2:
-                z2 = filter(lambda x,bnd=bnd, at2=bnd.atom2, blist=blist:x!=bnd and x.atom1==at2 or x.atom2==at2, blist)
+                z2 = list(filter(lambda x,bnd=bnd, at2=bnd.atom2, blist=blist:x!=bnd and x.atom1==at2 or x.atom2==at2, blist))
                 #finally, return the other atom in this bond
                 bnd.nextbond2 = z2[0]
                 if bnd.nextbond2==bnd:
@@ -471,7 +471,7 @@ class PeptideAromaticCycleBondSelector(BondSelector):
 
     def select(self, bnds):
         resSet = self.getAtoms(bnds).parent.uniq()
-        aromResSet = resSet.get(lambda x: x.type in self.aromDict.keys())
+        aromResSet = resSet.get(lambda x: x.type in list(self.aromDict.keys()))
         if not aromResSet:
             return BondSet()
         bondDict = {}

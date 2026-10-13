@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # Last modified on Tue Sep  4 17:02:59 PDT 2001 by lindy
@@ -21,7 +21,7 @@ Requirements for ncoords.py:
 
 from mglutil.math.ncoords import Ncoords
 import unittest, math
-import numpy.oldnumeric as Numeric, numpy.oldnumeric.random_array as RandomArray
+import mglcompat.oldnumeric as Numeric, mglcompat.oldnumeric.random_array as RandomArray
 
 
 
@@ -62,7 +62,7 @@ class InputOutputValues(NcoordsTest):
 
     def test_input_error(self):
         """__init__         -- ValueError on bad input"""
-        self.assertRaises(ValueError, Ncoords, range(10))
+        self.assertRaises(ValueError, Ncoords, list(range(10)))
         self.assertRaises(ValueError, Ncoords, [(1,1,1),(1,1)] )
 
 

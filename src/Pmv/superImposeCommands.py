@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -13,8 +13,8 @@
 # $Id: superImposeCommands.py,v 1.24.4.1 2010/12/30 21:56:18 rhuey Exp $
 #
 
-import numpy.oldnumeric as Numeric, os
-import Tkinter, Pmw
+import mglcompat.oldnumeric as Numeric, os
+import tkinter, Pmw
 
 from Pmv.stringSelectorGUI import StringSelectorGUI
 from Pmv.mvCommand import MVCommand, MVAtomICOM
@@ -35,7 +35,7 @@ from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser
 #from mglutil.math import rigidFit
 from mglutil.math.rigidFit import RigidfitBodyAligner
 
-from SimpleDialog import SimpleDialog
+from tkinter.simpledialog import SimpleDialog
 
 class PmvAlignmentEditor(AlignmentEditor,MVCommand):
     """ An alignment editor that knows about Pmv
@@ -50,16 +50,16 @@ class PmvAlignmentEditor(AlignmentEditor,MVCommand):
         
     def addPmvMenu(self):
         if isinstance(self.mBar, Pmw.ScrolledFrame):
-            PmvButton = Tkinter.Menubutton(self.mBar.interior(),
+            PmvButton = tkinter.Menubutton(self.mBar.interior(),
                                            text='Pmv commands',
                                            underline=0)
         else:
-            PmvButton = Tkinter.Menubutton(self.mBar, text='Pmv commands',
+            PmvButton = tkinter.Menubutton(self.mBar, text='Pmv commands',
                                            underline=0)
             
         self.menuButtons['Pmv commands']=PmvButton
-        PmvButton.pack(side=Tkinter.LEFT, padx='1m')
-        PmvButton.menu = Tkinter.Menu(PmvButton)
+        PmvButton.pack(side=tkinter.LEFT, padx='1m')
+        PmvButton.menu = tkinter.Menu(PmvButton)
         PmvButton.menu.add_command(
             label='Get/Assign Molecule Sequence',
             command = self.getSequence)
@@ -73,7 +73,7 @@ class PmvAlignmentEditor(AlignmentEditor,MVCommand):
             label='Calculate Superposition',
             command = self.getPairsFromAlignment)
         PmvButton['menu']=PmvButton.menu
-        apply(self.mBar.tk_menuBar, self.menuButtons.values())
+        self.mBar.tk_menuBar(*list(self.menuButtons.values()))
 
     def setRefSequence(self):
         molName = MoleculeChooser(self.vf).go().name
@@ -136,10 +136,10 @@ class PmvAlignmentEditor(AlignmentEditor,MVCommand):
                 if ref.isalpha() and mob.isalpha():
                     refNodes.append(refRes)
                     mobNodes.append(mobRes)
-        print len(refNodes),len(mobNodes),refNodes[0],mobNodes[0]
+        print(len(refNodes),len(mobNodes),refNodes[0],mobNodes[0])
         #return refNodes,mobNodes
-        apply(self.vf.superimposeAtomsGC.doitWrapper, (refNodes,), {'log':0})
-        apply(self.vf.superimposeAtomsGC.doitWrapper, (mobNodes,), {'log':0})
+        self.vf.superimposeAtomsGC.doitWrapper(*(refNodes,), **{'log':0})
+        self.vf.superimposeAtomsGC.doitWrapper(*(mobNodes,), **{'log':0})
         self.vf.superimposeAtomsGC.typeVar.set('By Picking')
         
     def getSequence(self,mol=None):
@@ -190,12 +190,12 @@ class PmvAlignmentEditor(AlignmentEditor,MVCommand):
                 molName = seqTag
                 selectionKey = molName+':'+resTag[:1]+':'
                 resnum = resTag[1:]
-                if selectionKey in selStrings.keys():
+                if selectionKey in list(selStrings.keys()):
                     selStrings[selectionKey]=selStrings[selectionKey]+','+resnum
                 else:
                     selStrings[selectionKey]=','+resnum
-        for selStr in selStrings.keys():
-            print selStr+selStrings[selStr]
+        for selStr in list(selStrings.keys()):
+            print(selStr+selStrings[selStr])
             self.vf.select(selStr+selStrings[selStr],negate)
                 
 class SuperImposeAtomsCommand(MVCommand):
@@ -218,8 +218,8 @@ class SuperImposeAtomsCommand(MVCommand):
         # Nothing can be done if the two sets of coords are not of the same
         # size
         if not len(refCoords) == len(mobCoords):
-            print " ERROR: Cannot perform the superimposition because the 2 \
-            mv.lsets of Atoms are not of the same length"
+            print(" ERROR: Cannot perform the superimposition because the 2 \
+            mv.lsets of Atoms are not of the same length")
             return
 
         # Get the rotation and the translation ysing mglutil.math.rigidFit
@@ -246,8 +246,8 @@ class SuperImposeAtomsCommand(MVCommand):
         """
         None <- superimposeAtoms(refAtoms, mobAtoms, **kw)
         """
-        if not kw.has_key('redraw'): kw['redraw'] = 1
-        apply(self.doitWrapper, (refAtoms, mobAtoms), kw)
+        if 'redraw' not in kw: kw['redraw'] = 1
+        self.doitWrapper(*(refAtoms, mobAtoms), **kw)
         
 
 class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
@@ -304,21 +304,21 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
     def onAddCmdToViewer(self):
         # Check first is any of the command that superimpose depends on are
         # already loaded.
-        if not self.vf.commands.has_key('setICOM'):
+        if 'setICOM' not in self.vf.commands:
             self.vf.loadCommand('interactiveCommands', 'setICOM', 'Pmv',
                                 topCommand = 0)
-        if not self.vf.commands.has_key('superimposeAtoms'):
+        if 'superimposeAtoms' not in self.vf.commands:
             self.vf.loadCommand('superImposeCommands', 'superimposeAtoms',
                                 'Pmv', topCommand = 0)
             
-        if not self.vf.commands.has_key('startContinuousPicking'):
+        if 'startContinuousPicking' not in self.vf.commands:
             self.vf.loadCommand('dejaVuCommands','startContinuousPicking',
                                 'ViewerFramework', topCommand = 0)
 
-        if not self.vf.commands.has_key('stopContinuousPicking'):
+        if 'stopContinuousPicking' not in self.vf.commands:
             self.vf.loadCommand('dejaVuCommands','stopContinuousPicking',
                                 'ViewerFramework', topCommand = 0)
-        if not self.vf.commands.has_key('labelByExpression'):
+        if 'labelByExpression' not in self.vf.commands:
             self.vf.loadCommand('labelCommands', 'labelByExpression', 'Pmv',
                                 topCommand = 0)
 
@@ -345,14 +345,14 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
         if formName == 'superimpose':
             idf = InputFormDescr(title="Set Superimposition Parameters")
 
-            idf.append( {'widgetType':Tkinter.Label,
+            idf.append( {'widgetType':tkinter.Label,
                          'wcfg': {'text':'Get Nodes:'},
                          'gridcfg':{'sticky':'w'}})
 
-            self.typeVar = Tkinter.StringVar()
+            self.typeVar = tkinter.StringVar()
             self.typeVar.set('By Picking')
 
-            idf.append( {'widgetType':Tkinter.Radiobutton,
+            idf.append( {'widgetType':tkinter.Radiobutton,
                          'name': 'string',
                          'wcfg':{'variable':self.typeVar,
                                  'text': 'From String',
@@ -361,7 +361,7 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
                                  },
                          'gridcfg':{'sticky':'w', 'columnspan':3}})
 
-            idf.append( {'widgetType':Tkinter.Radiobutton,
+            idf.append( {'widgetType':tkinter.Radiobutton,
                          'name': 'string',
                          'wcfg':{'variable':self.typeVar,
                                  'text': 'From Alignment',
@@ -370,7 +370,7 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
                                  },
                          'gridcfg':{'sticky':'w', 'columnspan':3}})
 
-            idf.append( {'widgetType':Tkinter.Radiobutton,
+            idf.append( {'widgetType':tkinter.Radiobutton,
                          'name': 'refPicking',
                          'wcfg':{'variable':self.typeVar,
                                  'text': 'By Picking',
@@ -378,26 +378,26 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
                                  },
                          'gridcfg':{'sticky':'w'} })
 
-            idf.append( {'widgetType':Tkinter.Label,
+            idf.append( {'widgetType':tkinter.Label,
                          'wcfg': {'text':'Reference nodes:'},
                          'gridcfg':{'sticky':'w'}})
 
-            idf.append( {'widgetType':Tkinter.Label,
+            idf.append( {'widgetType':tkinter.Label,
                          'wcfg': {'text':'Mobile nodes:'},
                          'gridcfg':{'sticky':'e', 'row':-1}})
 
 
-            idf.append({'widgetType':Tkinter.Label,
+            idf.append({'widgetType':tkinter.Label,
                         'name':'firstNode',
                         'wcfg':{ 'text':''},
                         'gridcfg':{'sticky':'we'}})
 
-            idf.append({'widgetType': Tkinter.Label,
+            idf.append({'widgetType': tkinter.Label,
                         'name':'secondNode',
                         'wcfg':{ 'text':''},
                         'gridcfg':{'sticky':'we', 'row':-1}})
 
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'name':'editPairs',
                         'wcfg':{'text':'Edit Ref Atom -- Mob Atom Pairs',
                                 'command':self.editPairs_cb,},
@@ -405,22 +405,22 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
                         })
 
             # Continuous Superimposition
-            idf.append({'widgetType':Tkinter.Checkbutton,
+            idf.append({'widgetType':tkinter.Checkbutton,
                         'name':'continuous',
-                        'wcfg':{'variable':Tkinter.IntVar(),
+                        'wcfg':{'variable':tkinter.IntVar(),
                                 'text':'Continuous Superimposition',
                                 'command':self.continuous_cb,
                                 'padx':10,'pady':10},
                         'gridcfg':{'sticky':'w'}})
 
             # Reset & SuperImpose button.
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'name':'final',
                         'wcfg':{'width':15,'text':'Superimpose',
                                 'command':self.superimpose_cb},
                         'gridcfg':{'sticky':'we', 'row':-1}})
 
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'name':'reset',
                         'wcfg':{'text':'Reset', 'command':self.reset_cb},
                         'gridcfg':{'sticky':'we', 'row':-1}})
@@ -433,7 +433,7 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
                         'wcfg':
                         {'label_text':'Atoms to be consider for superimposition:',
                          'labelpos':'n','label_padx':10,'label_pady':10,
-                         'scrolledlist_items': self.filters.keys(),
+                         'scrolledlist_items': list(self.filters.keys()),
                          'selectioncommand':self.setDefault},
                         'gridcfg':{'sticky':'w'}})
         
@@ -450,7 +450,7 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
                          },
                         'gridcfg':{'sticky':'w', 'row':-1}})
             
-            entries = map(lambda x: (x, None), self.newPairs.keys())
+            entries = [(x, None) for x in list(self.newPairs.keys())]
             idf.append({'widgetType':ListChooser,
                         'name':'newpairs',
                         'wcfg':{'mode':'extended',
@@ -460,13 +460,13 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
                         'gridcfg':{'sticky':'wens', 'columnspan':2}})
             
 
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'name': 'delete',
                         'wcfg':{'width':15,'text': 'Delete Pairs',
                                 'command':self.delete_cb},
                         'gridcfg':{'sticky':'we', 'columnspan':2}})
             
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'name': 'dismiss',
                         'wcfg':{'text': 'DISMISS',
                                 'command':self.dismiss_cb},
@@ -475,15 +475,15 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
 
         elif formName == 'editString':
             idf = InputFormDescr(title = 'Get Nodes From String')
-            idf.append({'widgetType':Tkinter.Label,
+            idf.append({'widgetType':tkinter.Label,
                         'wcfg':{'text':'Reference Nodes: '},
                         'gridcfg':{'sticky':'w'}})
 
-            idf.append({'widgetType':Tkinter.Label,
+            idf.append({'widgetType':tkinter.Label,
                         'wcfg':{'text':'Mobile Nodes: '},
                         'gridcfg':{'sticky':'w', 'row':-1}})
 
-            idf.append({'widgetType':Tkinter.Label,
+            idf.append({'widgetType':tkinter.Label,
                         'wcfg':{'text':' '},
                         'gridcfg':{'columnspan':2, 'sticky':'w'}})
 
@@ -550,7 +550,7 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
         self.chooser = pairForm.descr.entryByName['newpairs']['widget']
 
     def dismiss_cb(self, event=None):
-        if self.cmdForms.has_key('editPair'):
+        if 'editPair' in self.cmdForms:
             self.cmdForms['editPair'].destroy()
             del self.cmdForms['editPair']
 
@@ -559,10 +559,10 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
         if hasattr(self.vf,'alnEditor'):
             self.vf.alnEditor.exit()
         val = self.showForm('editString')
-        print val
-        if not val == {} or (val.has_key('refNodes') and val.has_key('mobNodes')):
-            apply(self.doitWrapper, (val['refNodes'],), {'log':0})
-            apply(self.doitWrapper, (val['mobNodes'],), {'log':0})
+        print(val)
+        if not val == {} or ('refNodes' in val and 'mobNodes' in val):
+            self.doitWrapper(*(val['refNodes'],), **{'log':0})
+            self.doitWrapper(*(val['mobNodes'],), **{'log':0})
             self.typeVar.set('By Picking')
 
 
@@ -573,11 +573,11 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
         form = self.cmdForms['superimpose']
         supButton = form.descr.entryByName['final']['widget']
         if self.contVar.get() == 1:
-            supButton.configure(state=Tkinter.DISABLED)
+            supButton.configure(state=tkinter.DISABLED)
             if len(self.newPairs)>=4:
                 self.superimpose_cb()
         else:
-            supButton.configure(state=Tkinter.NORMAL)
+            supButton.configure(state=tkinter.NORMAL)
 
 
     def labelByName(self, pick):
@@ -589,7 +589,7 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
             self.vf.ICmdCaller.level.AddCallback(self.unlabelLevel)
             if level == Molecule : level = Protein
             self.node = atom.findType(level)
-            funcItems = map(lambda x: x.full_name(), self.node)
+            funcItems = [x.full_name() for x in self.node]
             self.vf.labelByExpression(self.node,
                                       font = 'arial1.glf',
                                       location = 'First', 
@@ -702,10 +702,8 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
     def superimpose_cb(self, event=None):
         if len(self.newPairs) >= 4 :
             # Need at least 4 pairs of atoms to do the superimposition
-            setAtm1 = AtomSet(map(lambda x: x[0],
-                                  self.newPairs.values()))
-            setAtm2 = AtomSet(map(lambda x: x[1],
-                                  self.newPairs.values()))
+            setAtm1 = AtomSet([x[0] for x in list(self.newPairs.values())])
+            setAtm2 = AtomSet([x[1] for x in list(self.newPairs.values())])
             if len(setAtm1) != len(setAtm2):
                 message = ' ERROR: the 2 sets of atoms are not of the length\nthe superimposition cannot be performed. ' 
                 self.warningMsg(msg)
@@ -721,7 +719,7 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
         if not len(ats): return 'ERROR'
         kw['redraw']=1
         kw['log']=0
-        return apply(self.doitWrapper, (ats,), kw)
+        return self.doitWrapper(*(ats,), **kw)
         
 
     def doit(self, nodes):
@@ -807,27 +805,27 @@ class SuperImposeAtomsGUICommand(MVCommand, MVAtomICOM):
             set2 = self.pair[1]
             set2.sort()
             if not set1 or not set2:
-                print "ERROR: One of the sets is None"
+                print("ERROR: One of the sets is None")
                 return
             elif len(set1) != len(set2):
                 if node.__class__ == Atom:
-                    print 'ERROR: the 2 sets of atoms are not of the same size'
+                    print('ERROR: the 2 sets of atoms are not of the same size')
                     return
 
             set1,set2
             if node.__class__ in [Protein,ProteinSet, Residue, ResidueSet,  Chain, ChainSet]:
                 filter = self.defaultFilter
-                if self.filters.has_key(filter):
+                if filter in self.filters:
                     set1 = self.pair[0].get(self.filters[filter])
                     set2 = self.pair[1].get(self.filters[filter])
                 if not set1 or not set2:
-                    print 'ERROR: cannot compute the superimposition'
-                    print 'not set1 or not set2'
+                    print('ERROR: cannot compute the superimposition')
+                    print('not set1 or not set2')
                     return
                 
                 elif len(set1) != len(set2):
-                    print 'ERROR: cannot compute the superimposition'
-                    print 'len(set1) != len(set2)'
+                    print('ERROR: cannot compute the superimposition')
+                    print('len(set1) != len(set2)')
                     return
 
             #print 'set1', set1
@@ -865,7 +863,7 @@ SuperImposeAtomsGUICommandGUI.addMenuCommand('menuRoot', 'Compute',
 class SuperimposeCoordsCommand(MVCommand):
     
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('superimposeAtoms'):
+        if 'superimposeAtoms' not in self.vf.commands:
             self.vf.loadCommand('superImposeCommands', 'superimposeAtoms',
                                 'Pmv', topCommand = 0)
             
@@ -938,8 +936,8 @@ class SuperimposeCoordsCommand(MVCommand):
             (Possibly inAtoms will contain all atoms in molecule to be 
             moved so inAllAtoms will be None.)
         """
-        if not kw.has_key('redraw'): kw['redraw'] = 0
-        apply(self.doitWrapper, (refAtoms, inAtoms, inAllAtoms), kw)
+        if 'redraw' not in kw: kw['redraw'] = 0
+        self.doitWrapper(*(refAtoms, inAtoms, inAllAtoms), **kw)
         
 
 commandList = [

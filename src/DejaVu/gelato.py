@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -27,109 +27,109 @@ from geomutils.geomalgorithms import  TriangleNormals
 from DejaVu import viewerConst
 from mglutil.math import rotax
 from numpy import matrix
-import numpy.oldnumeric as Numeric
-import numpy.oldnumeric as N
+import mglcompat.oldnumeric as Numeric
+import mglcompat.oldnumeric as N
 
 
 PROJ={	1:"orthographic",
-	0:"perspective"
-	}
+        0:"perspective"
+        }
 
 
 class Shader:
     ShaderDic={"plastic" 	: [	"\"float Ka\", 0",
-					"\"float Kd\", 1",
-					"\"float Ks\", 0.75",
-					"\"float roughness\", 0.05"],
+                                        "\"float Kd\", 1",
+                                        "\"float Ks\", 0.75",
+                                        "\"float roughness\", 0.05"],
 
-		"glass" 	: [	"\"float Ka\", 0.2",
-					"\"float Kd\", 0.25",
-					"\"float Ks\", 0.4",
-					"\"float roughness\", 0.1",
-					"\"string envname\",\"reflection\"",	
-					"\"float Kr\", 0.5",
-					"\"float samples\", 4"],
+                "glass" 	: [	"\"float Ka\", 0.2",
+                                        "\"float Kd\", 0.25",
+                                        "\"float Ks\", 0.4",
+                                        "\"float roughness\", 0.1",
+                                        "\"string envname\",\"reflection\"",	
+                                        "\"float Kr\", 0.5",
+                                        "\"float samples\", 4"],
 
-		"clay" 		: [	"\"float Ka\", 0.9",
-					"\"float Kd\", 1",
-					"\"float roughness\", 0.2"],
+                "clay" 		: [	"\"float Ka\", 0.9",
+                                        "\"float Kd\", 1",
+                                        "\"float roughness\", 0.2"],
 
-		"shinyplastic"	: [	"\"float Ks\", 0.9",
-					"\"float Kd\", 1",
-					"\"float eta\", 1.5",
-					"\"string envname\", \"reflection\""],
+                "shinyplastic"	: [	"\"float Ks\", 0.9",
+                                        "\"float Kd\", 1",
+                                        "\"float eta\", 1.5",
+                                        "\"string envname\", \"reflection\""],
 
-		"plasticss"	: [	"\"float Ks\", 0.9",
-					"\"float Kd\", 1",
-					"\"float Kss\", 1"],
-		
-		"metal" 	: [	"\"float Ka\", 1.0",
-					"\"float Kd\", 0.5",
-					"\"float Ks\", 0.8",
-					"\"float roughness\", 0.2",
-					"\"string envname\",\"reflection\"",
-					"\"float Kr\", 0.5",
-					"\"float samples\", 4"],
-	
-		"ambocclude"	: [	"\"string occlusionname\",\"localocclusion\"",
-					"\"float samples\", 256",
-					"\"float bias\", 0.01"],
+                "plasticss"	: [	"\"float Ks\", 0.9",
+                                        "\"float Kd\", 1",
+                                        "\"float Kss\", 1"],
+                
+                "metal" 	: [	"\"float Ka\", 1.0",
+                                        "\"float Kd\", 0.5",
+                                        "\"float Ks\", 0.8",
+                                        "\"float roughness\", 0.2",
+                                        "\"string envname\",\"reflection\"",
+                                        "\"float Kr\", 0.5",
+                                        "\"float samples\", 4"],
+        
+                "ambocclude"	: [	"\"string occlusionname\",\"localocclusion\"",
+                                        "\"float samples\", 256",
+                                        "\"float bias\", 0.01"],
 
-		"greenmarble"	: [	"\"float Ka\", 0.1",
-					"\"float Kd\", 0.6",
-					"\"float Ks\", 0.4",
-					"\"float roughness\", 0.1",
-					"\"float veinfreq\", 1",
-					"\"float sharpness\", 25",
-					"\"float shadingfreq\", 1"],
+                "greenmarble"	: [	"\"float Ka\", 0.1",
+                                        "\"float Kd\", 0.6",
+                                        "\"float Ks\", 0.4",
+                                        "\"float roughness\", 0.1",
+                                        "\"float veinfreq\", 1",
+                                        "\"float sharpness\", 25",
+                                        "\"float shadingfreq\", 1"],
 
-		"oak"		: [	"\"float Ka\", 1",
-					"\"float Kd\", 1",
-					"\"float Ks\", 0.25",
-					"\"float roughness\", 0.25",
-					"\"float divotdepth\", 0.5",
-					"\"float ringy\", 1",
-					"\"float ringfreq\", 8",
-					"\"float ringunevenness\", 0.3",
-					"\"float ringnoise\", 0.02",
-					"\"float ringnoisefreq\", 1",
-					"\"float trunkwobble\", 0.15",
-					"\"float trunkwobblefreq\", 0.025",
-					"\"float angularwobble\", 0.15",
-					"\"float angularwobblefreq\", 0.025",
-					"\"float grainy\", 1",
-					"\"float grainfreq\", 8",
-					"\"float shadingfreq\", 1"],
+                "oak"		: [	"\"float Ka\", 1",
+                                        "\"float Kd\", 1",
+                                        "\"float Ks\", 0.25",
+                                        "\"float roughness\", 0.25",
+                                        "\"float divotdepth\", 0.5",
+                                        "\"float ringy\", 1",
+                                        "\"float ringfreq\", 8",
+                                        "\"float ringunevenness\", 0.3",
+                                        "\"float ringnoise\", 0.02",
+                                        "\"float ringnoisefreq\", 1",
+                                        "\"float trunkwobble\", 0.15",
+                                        "\"float trunkwobblefreq\", 0.025",
+                                        "\"float angularwobble\", 0.15",
+                                        "\"float angularwobblefreq\", 0.025",
+                                        "\"float grainy\", 1",
+                                        "\"float grainfreq\", 8",
+                                        "\"float shadingfreq\", 1"],
 
-		"screen"	: [	"\"float Ka\", 1.0",
-					"\"float Kd\", 0.75",
-					"\"float Ks\", 0.4",
-					"\"float roughness\", 0.1",
-					"\"float sfreq\", 10",
-					"\"float tfreq\", 10",
-					"\"float sdensity\", 10",
-					"\"float tdensity\", 10"],
+                "screen"	: [	"\"float Ka\", 1.0",
+                                        "\"float Kd\", 0.75",
+                                        "\"float Ks\", 0.4",
+                                        "\"float roughness\", 0.1",
+                                        "\"float sfreq\", 10",
+                                        "\"float tfreq\", 10",
+                                        "\"float sdensity\", 10",
+                                        "\"float tdensity\", 10"],
 
-		"soapbubble"	: [	"\"float Ka\", 0.2",
-					"\"float Kd\", 0.25",
-					"\"float Ks\", 0.4",
-					"\"float roughness\", 0.1",
-					"\"string envname\", \"reflection\"",
-					"\"float Kr\", 0.5",
-					"\"float samples\", 4",
-					"\"float fakerefract\", 1"],
+                "soapbubble"	: [	"\"float Ka\", 0.2",
+                                        "\"float Kd\", 0.25",
+                                        "\"float Ks\", 0.4",
+                                        "\"float roughness\", 0.1",
+                                        "\"string envname\", \"reflection\"",
+                                        "\"float Kr\", 0.5",
+                                        "\"float samples\", 4",
+                                        "\"float fakerefract\", 1"],
 
-		"shownormals"	: [	"\"float bias\", 1"],
+                "shownormals"	: [	"\"float bias\", 1"],
 
-		"showfacing"	: [	"\"float Ka\", 0.25",
-					"\"float Kd\", 0.75"]
-	   }
+                "showfacing"	: [	"\"float Ka\", 0.25",
+                                        "\"float Kd\", 0.75"]
+           }
 
     def __init__(self):
-	self.name=""
-	self.Type="surface"
-	self.parameters=[]
-	
+        self.name=""
+        self.Type="surface"
+        self.parameters=[]
+        
 
     def vec3(self, x, y=None, z=None):
         """string <- vec3(x, y=None, z=None) returns a povray vector string
@@ -142,10 +142,10 @@ class Shader:
             return ' (%.2f, %.2f, %.2f) '% (x, y, z)
     
     def addParameters(typ,name,value):
-	if typ == "float" : self.parameters.append('"float %s", %f' % (typ,name,value))
-	elif typ == "string" : self.parameters.append('"string %s", %s' % (typ,name,value))
-	elif typ == "color" : self.parameters.append('"color %s", %s' % (typ,name,self.vec3(value)))
-	
+        if typ == "float" : self.parameters.append('"float %s", %f' % (typ,name,value))
+        elif typ == "string" : self.parameters.append('"string %s", %s' % (typ,name,value))
+        elif typ == "color" : self.parameters.append('"color %s", %s' % (typ,name,self.vec3(value)))
+        
 class Gelato:
     """Driver for Povray v3.x
     """
@@ -153,9 +153,9 @@ class Gelato:
     def __init__(self, shaderD=None,includes = []):
         """Create a PovRay file generator class for a given camera"""
         self.camera = None
-	self.PRECISION = 6
-	if shaderD== None : self.shaderDic=Shader.ShaderDic
-	else : self.shaderDic=shaderD
+        self.PRECISION = 6
+        if shaderD== None : self.shaderDic=Shader.ShaderDic
+        else : self.shaderDic=shaderD
         self.entries = ["""
 # 
 # Molecular graphics export from PMV 1.5.4
@@ -257,12 +257,12 @@ def vmd_cylinder():
 
     def set_transform(self, matrix):
                 return ('SetTransform %s\n' % self.matrix16(matrix))
-		    
+                    
     def append_transform(self, matrix):
                 return ('AppendTransform %s\n' % self.matrix16(matrix))
 
     def addRender(self):
-	self.entries.append("Render()")
+        self.entries.append("Render()")
 
     def addCamera(self, camera, scaleLight=2.0):
         """void <- addCamera(camera)  adds the given camera to the povray scene
@@ -272,42 +272,42 @@ def vmd_cylinder():
         """
                  
         # doesn't handle camera transformation yet
-	r,t,s=camera.viewer.rootObject.Decompose4x4(camera.GetMatrix())
-	astr=''
-	astr = astr + '\nAttribute(\"int[2] resolution\", ('+str(int(camera.width))+','+str(int(camera.height))+'))'
-	#astr = astr + '\nAttribute (\"int[2] spatialquality\", (4, 4))'
-	proj= PROJ[camera.projectionType]
-	astr = astr + '\nAttribute(\"string projection\",  \"'+proj+'\")'
-	if (camera.projectionType == 1):#ORTHO
-		astr = astr + '\nAttribute ("float[4] screen",'+self.vec4(camera.left,camera.right,camera.bottom,camera.top)+')'
-		#astr = astr + ('\nAttribute("float[4] screen", (%f, %f, %f, %f))'%(camera.left,camera.right,camera.bottom,camera.top)) #have to be adjust
-		astr = astr + '\nAttribute ("float far", '+str(camera.far)+')'
-		astr = astr + '\nAttribute ("float near", '+str(camera.near)+')'
-		#astr = astr + '\nTranslate'+self.vec3(camera.translation)
-	else :
-		#astr = astr + '\nAttribute ( "float shadingquality", 0.25 )'
-		#astr = astr + '\nAttribute ( "int[2] spatialquality", (1, 1) )'
-		astr = astr + '\nAttribute ("float fov", '+str(camera.fovy)+')'
-	#str = str + '\nCamera(\"'+camera.name+'\")'
-	astr = astr + '\nTranslate '+self.coord3(t)
+        r,t,s=camera.viewer.rootObject.Decompose4x4(camera.GetMatrix())
+        astr=''
+        astr = astr + '\nAttribute(\"int[2] resolution\", ('+str(int(camera.width))+','+str(int(camera.height))+'))'
+        #astr = astr + '\nAttribute (\"int[2] spatialquality\", (4, 4))'
+        proj= PROJ[camera.projectionType]
+        astr = astr + '\nAttribute(\"string projection\",  \"'+proj+'\")'
+        if (camera.projectionType == 1):#ORTHO
+                astr = astr + '\nAttribute ("float[4] screen",'+self.vec4(camera.left,camera.right,camera.bottom,camera.top)+')'
+                #astr = astr + ('\nAttribute("float[4] screen", (%f, %f, %f, %f))'%(camera.left,camera.right,camera.bottom,camera.top)) #have to be adjust
+                astr = astr + '\nAttribute ("float far", '+str(camera.far)+')'
+                astr = astr + '\nAttribute ("float near", '+str(camera.near)+')'
+                #astr = astr + '\nTranslate'+self.vec3(camera.translation)
+        else :
+                #astr = astr + '\nAttribute ( "float shadingquality", 0.25 )'
+                #astr = astr + '\nAttribute ( "int[2] spatialquality", (1, 1) )'
+                astr = astr + '\nAttribute ("float fov", '+str(camera.fovy)+')'
+        #str = str + '\nCamera(\"'+camera.name+'\")'
+        astr = astr + '\nTranslate '+self.coord3(t)
         self.entries.append( astr )
-	self.entries.append("\nWorld()\n")
-	#self.addBackground(camera)
-	#self.entries.append("Shader (\"surface\", \"plastic\", \"float Ks\", 0.9, \"float Kd\", 1)\n")
+        self.entries.append("\nWorld()\n")
+        #self.addBackground(camera)
+        #self.entries.append("Shader (\"surface\", \"plastic\", \"float Ks\", 0.9, \"float Kd\", 1)\n")
         for l in camera.viewer.lights:
             if l.enabled: self.addLight(l, scaleLight)
 
     def addBackground(self,camera):
-	astr="#####Background#######\n"
-	astr = astr + "PushAttributes()\n"
-	astr = astr + "Shader(\"surface\", \"constant\")\n"
-	astr = astr + ("Attribute(\"color C\", %s)\n"%self.vec3(camera.backgroundColor))
-	astr = astr + "Input(\"backplane.pyg\")\n"
-	astr = astr + "PopAttributes()\n"
-	self.entries.append( astr )
+        astr="#####Background#######\n"
+        astr = astr + "PushAttributes()\n"
+        astr = astr + "Shader(\"surface\", \"constant\")\n"
+        astr = astr + ("Attribute(\"color C\", %s)\n"%self.vec3(camera.backgroundColor))
+        astr = astr + "Input(\"backplane.pyg\")\n"
+        astr = astr + "PopAttributes()\n"
+        self.entries.append( astr )
 
     def addLight1(self):
-	self.entries.append("""Light ("amb1", "ambientlight", "float intensity", 0.1)
+        self.entries.append("""Light ("amb1", "ambientlight", "float intensity", 0.1)
 #Light ("spt1", "spotlight", "float intensity", 10.0,"point from",(0,0,20),"point to",(-0.628775, 10.648891, 26.800826))
 Light ("dpt1", "distantlight", "float intensity",0.8,"color lightcolor" , (1,1,1))
 #PushTransform ()
@@ -319,78 +319,78 @@ Light ("dpt1", "distantlight", "float intensity",0.8,"color lightcolor" , (1,1,1
 #Light ("pt1", "pointlight", "float intensity", 1.0)
 #PopTransform ()
 """)
-	
+        
 
     def addLight(self, light, scale=2.0):
         """void <- addLight(light) add a light source to the povray scene
         """
-	gv=[0.,0.,1]
-	v=light.direction[0:3]
-	mat=N.array(rotax.rotVectToVect(gv,v))
-	astr="PushTransform ()\n"
-	astr= astr + ("AppendTransform %s\n"%self.matrix16(mat.reshape(16,)))
-	astr= astr + "Light (\""+light.name.replace(" ","")+"\", \"distantlight\",\"float intensity\",0.5,"
-	astr= astr + "\"float __nonspecular\","+str(1-light.specular[0])+","
-	astr= astr + ("\"color lightcolor\" , %s)\n" % self.vec3(scale*light.diffuse[0],scale*light.diffuse[1], scale*light.diffuse[2]))
+        gv=[0.,0.,1]
+        v=light.direction[0:3]
+        mat=N.array(rotax.rotVectToVect(gv,v))
+        astr="PushTransform ()\n"
+        astr= astr + ("AppendTransform %s\n"%self.matrix16(mat.reshape(16,)))
+        astr= astr + "Light (\""+light.name.replace(" ","")+"\", \"distantlight\",\"float intensity\",0.5,"
+        astr= astr + "\"float __nonspecular\","+str(1-light.specular[0])+","
+        astr= astr + ("\"color lightcolor\" , %s)\n" % self.vec3(scale*light.diffuse[0],scale*light.diffuse[1], scale*light.diffuse[2]))
 
-	astr= astr + "PopTransform()\n" 
+        astr= astr + "PopTransform()\n" 
         self.entries.append( astr )
 
     def addShader(self,shader):
-	if shader == "soapbubble" : astr='Shader("surface","glass"'
-	else : astr='Shader("surface","%s"' % shader
-	for i in self.shaderDic[shader]:
-		astr = astr +","+ i 
-	astr = astr + ")\n"
-	self.entries.append(astr)
-	if shader == 'shinyplastic' or shader == 'metal' or shader == 'soapbubble' or shader == 'glass' :
-		self.entries.append("Attribute (\"string geometryset\", \"+reflection\")\n")
-	if shader == 'ambocclude' :
-		self.entries.append("""Attribute ("string geometryset", "+localocclusion")
+        if shader == "soapbubble" : astr='Shader("surface","glass"'
+        else : astr='Shader("surface","%s"' % shader
+        for i in self.shaderDic[shader]:
+                astr = astr +","+ i 
+        astr = astr + ")\n"
+        self.entries.append(astr)
+        if shader == 'shinyplastic' or shader == 'metal' or shader == 'soapbubble' or shader == 'glass' :
+                self.entries.append("Attribute (\"string geometryset\", \"+reflection\")\n")
+        if shader == 'ambocclude' :
+                self.entries.append("""Attribute ("string geometryset", "+localocclusion")
 Attribute ("float occlusion:maxpixeldist", 20)
 Attribute ("float occlusion:maxerror", 0.25)
 """)
-	
+        
     def addShader_old(self,shader):
-	if shader == '' : self.entries.append("")
-	if shader == 'clay' : 
-		self.entries.append("Shader (\"surface\", \"clay\", \"float Ka\", 0.9, \"float Kd\", 1,\"float roughness\", 0.2)\n")
-	if shader == 'plastic' :
-		#self.entries.append("Shader (\"surface\", \"plastic\", \"float Ks\", 0.9, \"float Kd\", 1)\n")
-		self.entries.append("Shader(\"surface\", \"plastic\", \"float Ka\", 0, \"float Kd\", 1, \"float Ks\", 0.75, \"float roughness\", 0.05)\n")
-	elif shader == 'shinyplastic' :
-		self.entries.append("Attribute (\"string geometryset\", \"+reflection\")\n")
-		self.entries.append("Shader (\"surface\", \"shinyplastic\", \"float Ks\", 0.9, \"float Kd\", 1,\"float eta\", 1.5,\"string envname\", \"reflection\")\n")
-	elif shader == 'plasticss':
-		self.entries.append("Shader (\"surface\", \"plasticss\", \"float Ks\", 0.9, \"float Kd\", 1,\"float Kss\", 1)\n")
-	elif shader == 'metal' :	
-		self.entries.append("Attribute (\"string geometryset\", \"+reflection\")\n")
-		self.entries.append("Shader (\"surface\", \"metal\", \"float Ka\", 1.0, \"float Kd\", 0.5,\"float Ks\", 0.8,\"float roughness\", 0.2,\"string envname\", \"reflection\",\"float Kr\", 0.5,\"float samples\", 4)\n")
-	elif shader == 'occlusion' :
-		self.entries.append("""Shader ("surface", "ambocclude", "string occlusionname", "localocclusion", "float samples", 256, "float bias", 0.01)
+        if shader == '' : self.entries.append("")
+        if shader == 'clay' : 
+                self.entries.append("Shader (\"surface\", \"clay\", \"float Ka\", 0.9, \"float Kd\", 1,\"float roughness\", 0.2)\n")
+        if shader == 'plastic' :
+                #self.entries.append("Shader (\"surface\", \"plastic\", \"float Ks\", 0.9, \"float Kd\", 1)\n")
+                self.entries.append("Shader(\"surface\", \"plastic\", \"float Ka\", 0, \"float Kd\", 1, \"float Ks\", 0.75, \"float roughness\", 0.05)\n")
+        elif shader == 'shinyplastic' :
+                self.entries.append("Attribute (\"string geometryset\", \"+reflection\")\n")
+                self.entries.append("Shader (\"surface\", \"shinyplastic\", \"float Ks\", 0.9, \"float Kd\", 1,\"float eta\", 1.5,\"string envname\", \"reflection\")\n")
+        elif shader == 'plasticss':
+                self.entries.append("Shader (\"surface\", \"plasticss\", \"float Ks\", 0.9, \"float Kd\", 1,\"float Kss\", 1)\n")
+        elif shader == 'metal' :	
+                self.entries.append("Attribute (\"string geometryset\", \"+reflection\")\n")
+                self.entries.append("Shader (\"surface\", \"metal\", \"float Ka\", 1.0, \"float Kd\", 0.5,\"float Ks\", 0.8,\"float roughness\", 0.2,\"string envname\", \"reflection\",\"float Kr\", 0.5,\"float samples\", 4)\n")
+        elif shader == 'occlusion' :
+                self.entries.append("""Shader ("surface", "ambocclude", "string occlusionname", "localocclusion", "float samples", 256, "float bias", 0.01)
 Attribute ("string geometryset", "+localocclusion")
 Attribute ("float occlusion:maxpixeldist", 20)
 Attribute ("float occlusion:maxerror", 0.25)
 """)
-	elif shader == 'screen' :
-		self.entries.append("Shader (\"surface\", \"screen\", \"float Ka\", 1.0, \"float Kd\", 0.75,\"float Ks\", 0.4,\"float roughness\", 0.1, \"float sfreq\", 10, \"float tfreq\", 10, \"float sdensity\", 10, \"float tdensity\", 10)\n")
-	elif shader == 'glass' :
-		self.entries.append("Attribute (\"string geometryset\", \"+reflection\")\n")
-		self.entries.append("Shader (\"surface\", \"glass\", \"float Ka\", 0.2, \"float Kd\", 0.25,\"float Ks\", 0.4,\"float roughness\", 0.1,\"string envname\", \"reflection\",\"float Kr\", 0.5,\"float samples\", 4)\n")
-	elif shader == 'soapbubble' :
-		self.entries.append("Attribute (\"string geometryset\", \"+reflection\")\n")
-		self.entries.append("Shader (\"surface\", \"glass\", \"float Ka\", 0.2, \"float Kd\", 0.25,\"float Ks\", 0.4,\"float roughness\", 0.1,\"string envname\", \"reflection\",\"float Kr\", 0.5,\"float samples\", 4,\"float fakerefract\", 1)\n")
-	elif shader == 'shownormals' :
-		self.entries.append("Shader (\"surface\", \"shownormals\", \"float bias\", 1)\n")
-	elif shader == 'showfacing' :
-		self.entries.append("Shader (\"surface\", \"showfacing\", \"float Ka\", 0.25, \"float Kd\", 0.75)\n")
+        elif shader == 'screen' :
+                self.entries.append("Shader (\"surface\", \"screen\", \"float Ka\", 1.0, \"float Kd\", 0.75,\"float Ks\", 0.4,\"float roughness\", 0.1, \"float sfreq\", 10, \"float tfreq\", 10, \"float sdensity\", 10, \"float tdensity\", 10)\n")
+        elif shader == 'glass' :
+                self.entries.append("Attribute (\"string geometryset\", \"+reflection\")\n")
+                self.entries.append("Shader (\"surface\", \"glass\", \"float Ka\", 0.2, \"float Kd\", 0.25,\"float Ks\", 0.4,\"float roughness\", 0.1,\"string envname\", \"reflection\",\"float Kr\", 0.5,\"float samples\", 4)\n")
+        elif shader == 'soapbubble' :
+                self.entries.append("Attribute (\"string geometryset\", \"+reflection\")\n")
+                self.entries.append("Shader (\"surface\", \"glass\", \"float Ka\", 0.2, \"float Kd\", 0.25,\"float Ks\", 0.4,\"float roughness\", 0.1,\"string envname\", \"reflection\",\"float Kr\", 0.5,\"float samples\", 4,\"float fakerefract\", 1)\n")
+        elif shader == 'shownormals' :
+                self.entries.append("Shader (\"surface\", \"shownormals\", \"float bias\", 1)\n")
+        elif shader == 'showfacing' :
+                self.entries.append("Shader (\"surface\", \"showfacing\", \"float Ka\", 0.25, \"float Kd\", 0.75)\n")
 
     def addColor(self, col):
         """
-	Attribute ( "color C", (0.75, 0.75, 0.75) )
+        Attribute ( "color C", (0.75, 0.75, 0.75) )
         """
-	astr=("Attribute ( \"color C\", %s )\n"%self.vec3( col ))
-	self.entries.append( astr )
+        astr=("Attribute ( \"color C\", %s )\n"%self.vec3( col ))
+        self.entries.append( astr )
 #        str = '  texture {\n'
 #        if not 'pigment' in texture.keys():
 #            str = str + '      pigment { color rgb %s }\n' %self.vec3( col )
@@ -428,7 +428,7 @@ Attribute ("float occlusion:maxerror", 0.25)
     def addGeom(self, geom,
                 texture = {'finish':'specular 1 roughness 0.001 ambient 0.3'},
                 bondRad = 0.15,
-		interpolation='linear'):
+                interpolation='linear'):
         """void <- addGeom(geometry, texture) adds a geometries to the povray
         scene
         Spheres, IndexedPolygons and IndexedPolylines are handled
@@ -437,7 +437,7 @@ Attribute ("float occlusion:maxerror", 0.25)
         from DejaVu.IndexedPolygons import IndexedPolygons
         from DejaVu.IndexedPolylines import IndexedPolylines
         from DejaVu.Cylinders import Cylinders
-        print texture
+        print(texture)
         if isinstance(geom, Spheres):
             self.entries.append('#####Object %s#######\n' % geom.name)
             self.addSpheres(geom, texture)
@@ -461,7 +461,7 @@ Attribute ("float occlusion:maxerror", 0.25)
         c = geom.materials[GL.GL_FRONT].prop[1]
         lines = geom.faceSet.faces.array
 
-        for i in xrange(len(v)):
+        for i in range(len(v)):
             if len(c)==len(v): col = c[i]
             else: col = c[0]
             self.entries.append('sphere{%s,%f\n' % (self.coord3(v[i]),
@@ -469,7 +469,7 @@ Attribute ("float occlusion:maxerror", 0.25)
             self.addTexture( texture, col )
             self.endShape()
 
-        for j in xrange(len(lines)):
+        for j in range(len(lines)):
             l = lines[j]
             if len(c) == len(v):
                 col1 = c[l[0]]
@@ -504,32 +504,32 @@ Attribute ("float occlusion:maxerror", 0.25)
 
     def mesh_geometry(self, name, single_sided, interpolation, nverts,\
                         verts, points, normals = None, vertexcolor = None, holes = None,transform = None):
-		#"""
-		#interp parameter may be "linear" or "catmull-clark" to indicate Catmull-Clark subdivision
-		#nverts[0..n f aces - 1] contains the number of vertices in each face.
-		#array verts, whose length is the sum of all the entries in nverts, contains the vertex indices of all faces.
-		#"""
-		points*=N.array((1.,1.,-1.),'f')
-		
-		astr=""
+                #"""
+                #interp parameter may be "linear" or "catmull-clark" to indicate Catmull-Clark subdivision
+                #nverts[0..n f aces - 1] contains the number of vertices in each face.
+                #array verts, whose length is the sum of all the entries in nverts, contains the vertex indices of all faces.
+                #"""
+                points*=N.array((1.,1.,-1.),'f')
+                
+                astr=""
                 if (transform != None ) : 
-			astr=astr + self.append_transform(transform)
-			#astr=astr + 'Scale (1.,1.,-1)\n'
+                        astr=astr + self.append_transform(transform)
+                        #astr=astr + 'Scale (1.,1.,-1)\n'
                 if (single_sided):
                         astr= astr +'Attribute ("int twosided", 0)\n'
-		
+                
 
                 astr= astr + ('Mesh ("%s", (%s), (%s), "vertex point P", (%s)' %
                         (interpolation, self.join_list(nverts), self.join_list(verts), self.join_list(points.flatten())))
 
                 if (normals != None):
-			normals*=N.array((1.,1.,-1.),'f')
+                        normals*=N.array((1.,1.,-1.),'f')
                         astr = astr +(', "vertex normal N", (%s)' % self.join_list(normals.flatten()))
-		#else :
-		#	astr = astr +(', "vertex normal N", (')
-		#	for i in points :
-		#		astr = astr +('surfacenormal %s,'%self.vec3(i))
-		#	astr = astr + ')'
+                #else :
+                #	astr = astr +(', "vertex normal N", (')
+                #	for i in points :
+                #		astr = astr +('surfacenormal %s,'%self.vec3(i))
+                #	astr = astr + ')'
                 if (vertexcolor != None):
                         astr= astr +(', "vertex color C", (%s)' % self.join_list(vertexcolor))
 
@@ -538,7 +538,7 @@ Attribute ("float occlusion:maxerror", 0.25)
                                 (len(holes), self.join_list(holes)))
 
                 astr= astr +')\n'
-		return astr
+                return astr
     def sortPoly(self, geom,vt, order=-1):
         """None <- sortPoly(order=-1)
 Sorts the geometry polygons according to z values of polygon's
@@ -558,9 +558,9 @@ by closest z first"""
         
         if len(geom.faceSet.faces.array):
             faces = Numeric.take(geom.faceSet.faces.array, ind[::order])
-	    n = geom.getFNormals()
-	    n = geom.faceSet.normals * geom.GetMatrix()
-	    normals = Numeric.take(n, ind[::order])
+            n = geom.getFNormals()
+            n = geom.faceSet.normals * geom.GetMatrix()
+            normals = Numeric.take(n, ind[::order])
             #
             #if geom.shading==GL.GL_FLAT: # we also need to re-arrange the
             #                          # face normals
@@ -573,43 +573,43 @@ by closest z first"""
            #             normals = geom.normals
            # else:
            #     normals = None
-	    #normals = None
+            #normals = None
             #geom.Set(faces=faces, fnormals=normals)
-	    return faces.copy(),normals.copy()
+            return faces.copy(),normals.copy()
 
     def addIndexedPolgygons(self, geom, texture, interpolation='linear'):
         """void <- addIndexedPolgygons(geom, texture)
-	self.mesh_geometry(name, transform, single_sided, interpolation, nverts, verts, points, normals)
+        self.mesh_geometry(name, transform, single_sided, interpolation, nverts, verts, points, normals)
         """
-	smooth=True
-	#interpolation = 'catmull-clark'#'linear' - need correct normal to use linear interpolation
+        smooth=True
+        #interpolation = 'catmull-clark'#'linear' - need correct normal to use linear interpolation
         single_sided = False
-	name=geom.name
-	#mat=matrix(geom.GetMatrix())
-	#transform = N.array(mat.T).reshape(16,)
+        name=geom.name
+        #mat=matrix(geom.GetMatrix())
+        #transform = N.array(mat.T).reshape(16,)
         transform = mat =  geom.GetMatrix()
-	transform = N.array(transform.transpose()).reshape(16,)
-	transform = None
+        transform = N.array(transform.transpose()).reshape(16,)
+        transform = None
         #vertices point
-	vt = geom.vertexSet.vertices*mat
-	#vt = geom.getVertices()#geom.vertexSet.vertices*mat #> use set transform of gelato : maybe compare performance
-	points = vt#*N.array((1.,1.,-1.),'f')
+        vt = geom.vertexSet.vertices*mat
+        #vt = geom.getVertices()#geom.vertexSet.vertices*mat #> use set transform of gelato : maybe compare performance
+        points = vt#*N.array((1.,1.,-1.),'f')
 
-	#vertex indice corrrespond to faces in Pmv
-	#before getting the face aneed to sort them according the orientation in the viewer
-	#f = geom.getFaces().copy()
-	#normals = geom.getFNormals()
-	faces,normals = self.sortPoly(geom,vt,order=1)
-	faces,normals = self.sortPoly(geom,vt,order=1)
-	#geom.sortPoly()
-	#faces = geom.getFaces().copy()
-	#print (f == geom.getFaces()).all()
-	verts = faces
-	
-	#number of vertices for each faces
-	nverts = []
-	for i in faces :
-		nverts.append(len(i))
+        #vertex indice corrrespond to faces in Pmv
+        #before getting the face aneed to sort them according the orientation in the viewer
+        #f = geom.getFaces().copy()
+        #normals = geom.getFNormals()
+        faces,normals = self.sortPoly(geom,vt,order=1)
+        faces,normals = self.sortPoly(geom,vt,order=1)
+        #geom.sortPoly()
+        #faces = geom.getFaces().copy()
+        #print (f == geom.getFaces()).all()
+        verts = faces
+        
+        #number of vertices for each faces
+        nverts = []
+        for i in faces :
+                nverts.append(len(i))
 
         #lines = ["mesh2 {\n\tvertex_vectors {\n\t\t%d,\n"%len(vt)]
         #for v in vt:
@@ -618,38 +618,38 @@ by closest z first"""
 
         # add normals
         normals = geom.getVNormals()
-	mat=geom.GetMatrix()[:3,:3]
-	normals = N.dot(normals,mat.transpose())
+        mat=geom.GetMatrix()[:3,:3]
+        normals = N.dot(normals,mat.transpose())
 
         # handle colors
         colors = geom.materials[GL.GL_FRONT].prop[1]
         vtcolor = False    
-	vertexcolor = []
+        vertexcolor = []
         colBinding = 'Overall'
         if len(colors)==len(points):
             colBinding = 'Per Vertex'
-	    vtcolor = True
-	    for i in colors : vertexcolor.append(i[0:3])
-	    vertexcolor = N.array(vertexcolor).flatten()
+            vtcolor = True
+            for i in colors : vertexcolor.append(i[0:3])
+            vertexcolor = N.array(vertexcolor).flatten()
         elif len(colors)==len(faces):
             colBinding = 'Per Face'
-	    vtcolor = True
-	    for i in colors : vertexcolor.append(i[0:3])
-	    vertexcolor = N.array(vertexcolor).flatten()
-	else : vertexcolor = None
-	# color
-	self.entries.append('PushAttributes ()\n')
-	if texture['pigment'] == "occlusion" or texture['pigment'] == "glass" : vertexcolor = None
-	if texture['pigment'] != "" : self.addShader(texture['pigment'])
-	if not vtcolor : self.addColor(colors[0][0:3])
-	# alpha
+            vtcolor = True
+            for i in colors : vertexcolor.append(i[0:3])
+            vertexcolor = N.array(vertexcolor).flatten()
+        else : vertexcolor = None
+        # color
+        self.entries.append('PushAttributes ()\n')
+        if texture['pigment'] == "occlusion" or texture['pigment'] == "glass" : vertexcolor = None
+        if texture['pigment'] != "" : self.addShader(texture['pigment'])
+        if not vtcolor : self.addColor(colors[0][0:3])
+        # alpha
         alpha = colors[0][3]
-	if (alpha < 1.0):
+        if (alpha < 1.0):
            alpha = round(alpha, self.PRECISION)
            self.entries.append('Attribute (\"color opacity\", %s)\n' % self.vec3(alpha, alpha, alpha))
-	mgeom=self.mesh_geometry(name, single_sided, interpolation, nverts, verts.flatten(), points,normals=normals, vertexcolor =vertexcolor,transform=transform)
-	self.entries.append(mgeom)
-	self.entries.append('PopAttributes ()\n')
+        mgeom=self.mesh_geometry(name, single_sided, interpolation, nverts, verts.flatten(), points,normals=normals, vertexcolor =vertexcolor,transform=transform)
+        self.entries.append(mgeom)
+        self.entries.append('PopAttributes ()\n')
 
 
     def addSpheres(self, geom, texture):
@@ -681,16 +681,16 @@ r.PopAttributes()
                 face = GL.GL_FRONT_AND_BACK
         if texture['pigment'] != '' : self.addShader(texture['pigment'])
         for i in range(len(geom.vertexSet)):
-	    self.entries.append('PushAttributes()\n')
+            self.entries.append('PushAttributes()\n')
             if fp:
                 col = fp.prop[1][i][:3]
-		alpha = fp.prop[1][i][3]
+                alpha = fp.prop[1][i][3]
             else:
                 col = (1.,1.,1.)
-		alpha = 1.0
+                alpha = 1.0
             self.addColor( col )
-	    # alpha
-	    if (alpha < 1.0):
+            # alpha
+            if (alpha < 1.0):
               alpha = round(alpha, self.PRECISION)
               self.entries.append('Attribute (\"color opacity\", %s)\n' % self.vec3(alpha, alpha, alpha))
             self.entries.append('Translate %s\n'%self.coord3(v[i]) )
@@ -699,38 +699,38 @@ r.PopAttributes()
             else:
                 self.entries.append('Scale(%f,%f,%f)\n'%(geom.radius,geom.radius,geom.radius) )
 
-	    self.entries.append("Sphere (1.0,-1.0,1.0,360.0)\n")
-	    self.entries.append("PopAttributes()\n")
+            self.entries.append("Sphere (1.0,-1.0,1.0,360.0)\n")
+            self.entries.append("PopAttributes()\n")
 
             #self.endShape()
 
 
     def addOneCylinder(self,v1,v2,color,alpha = 1.0):
-	gv=[0.,0.,1]
-	v=v2-v1
-	mat=N.array(rotax.rotVectToVect(gv,v))
-	# first translate on v1	
-	#then rotate
-	astr="PushTransform ()\n"
-	astr = astr + "Attribute (\"color C\", %s)\n"% self.vec3(color)
-	if (alpha < 1.0):
+        gv=[0.,0.,1]
+        v=v2-v1
+        mat=N.array(rotax.rotVectToVect(gv,v))
+        # first translate on v1	
+        #then rotate
+        astr="PushTransform ()\n"
+        astr = astr + "Attribute (\"color C\", %s)\n"% self.vec3(color)
+        if (alpha < 1.0):
               alpha = round(alpha, self.PRECISION)	
               self.entries.append('Attribute (\"color opacity\", %s)\n' % self.vec3(alpha, alpha, alpha))
-	astr = astr + "Translate %s\n" % self.coord3(v1)
-	astr = astr + ("AppendTransform %s\n"%self.matrix16(mat.reshape(16,)))
-	astr = astr + "nurbscyl ()\n"
-	astr = astr + "PopTransform ()\n"
-	return astr
-	
-	
+        astr = astr + "Translate %s\n" % self.coord3(v1)
+        astr = astr + ("AppendTransform %s\n"%self.matrix16(mat.reshape(16,)))
+        astr = astr + "nurbscyl ()\n"
+        astr = astr + "PopTransform ()\n"
+        return astr
+        
+        
     def addCylinders(self, geom, texture):
         """void <- addSpheres(geom, texture)
-	PushTransform ()
-	Attribute ("color C", %s)
-	Translate (x, y, z)
-	Rotate (a, x, y, z) OR AppendTransform (m16);
-	nurbscyl ()
-	PopTransform ()
+        PushTransform ()
+        Attribute ("color C", %s)
+        Translate (x, y, z)
+        Rotate (a, x, y, z) OR AppendTransform (m16);
+        nurbscyl ()
+        PopTransform ()
         """
         mat = geom.GetMatrix()
         v = geom.vertexSet.vertices*mat
@@ -749,7 +749,7 @@ r.PopAttributes()
             else:
                 bp = None
                 face = GL.GL_FRONT_AND_BACK
-	if texture['pigment'] != '' : self.addShader(texture['pigment'])
+        if texture['pigment'] != '' : self.addShader(texture['pigment'])
         f = geom.getFaces()
         for i in range(len(geom.faceSet)):
             for j in range(len(f[i])-1):
@@ -765,12 +765,12 @@ r.PopAttributes()
                 #     self.coord3(v[f[i][j+1]]), r2))
                 if fp:
                     col = c[f[i][j]][:3]
-    		    alpha=c[f[i][j]][3]
+                    alpha=c[f[i][j]][3]
                 else:
                     col = (1.,1.,1.)
-	            alpha = 1.0
-		self.entries.append(self.addOneCylinder(v[f[i][j]],v[f[i][j+1]],col))
-		self.entries.append(self.addOneCylinder(v[f[i][j+1]],v[f[i][j]],col))
+                    alpha = 1.0
+                self.entries.append(self.addOneCylinder(v[f[i][j]],v[f[i][j+1]],col))
+                self.entries.append(self.addOneCylinder(v[f[i][j+1]],v[f[i][j]],col))
                 #self.entries.append("\tpigment { color rgb<%6.3f, %6.3f, %6.3f> }\n"% tuple(col))
                 #self.entries.append("\tfinish { specular 1 roughness 0.001 ambient 0.3 }\n")
                 #self.endShape()

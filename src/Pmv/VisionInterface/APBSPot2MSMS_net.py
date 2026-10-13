@@ -38,7 +38,7 @@ try:
     Pmv_0 = PmvNode(vf=masterNet.editor.vf, constrkw = {'vf': 'masterNet.editor.vf'}, name='Pmv', library=pmvlib)
     masterNet.addNode(Pmv_0,35,8)
 except:
-    print "WARNING: failed to restore PmvNode named Pmv in network masterNet"
+    print("WARNING: failed to restore PmvNode named Pmv in network masterNet")
     print_exc()
     Pmv_0=None
 
@@ -48,7 +48,7 @@ try:
     Get_MSMS_Geom_1 = GetMSMSGeom(constrkw = {}, name='Get MSMS Geom', library=pmvlib)
     masterNet.addNode(Get_MSMS_Geom_1,35,147)
 except:
-    print "WARNING: failed to restore GetMSMSGeom named Get MSMS Geom in network masterNet"
+    print("WARNING: failed to restore GetMSMSGeom named Get MSMS Geom in network masterNet")
     print_exc()
     Get_MSMS_Geom_1=None
 
@@ -58,9 +58,9 @@ try:
     Choose_Molecule_3 = PmvMoleculeChooser(constrkw = {}, name='Choose Molecule', library=pmvlib)
     masterNet.addNode(Choose_Molecule_3,0,60)
     Choose_Molecule_3.inputPortByName['molecule'].widget.set("", run=False)
-    apply(Choose_Molecule_3.configure, (), {'expanded': True})
+    Choose_Molecule_3.configure(*(), **{'expanded': True})
 except:
-    print "WARNING: failed to restore PmvMoleculeChooser named Choose Molecule in network masterNet"
+    print("WARNING: failed to restore PmvMoleculeChooser named Choose Molecule in network masterNet")
     print_exc()
     Choose_Molecule_3=None
 
@@ -74,15 +74,15 @@ try:
     call_method_13 = Map_Pot_On_Geom_4.macroNetwork.nodes[8]
     call_method_13.inputPortByName['signature'].widget.set("Set materials inheritMaterial", run=False)
     Get_viewer_17 = Map_Pot_On_Geom_4.macroNetwork.nodes[12]
-    apply(Get_viewer_17.inputPortByName['attr'].widget.configure, (), {'choices': ('viewer',)})
+    Get_viewer_17.inputPortByName['attr'].widget.configure(*(), **{'choices': ('viewer',)})
     Get_viewer_17.inputPortByName['attr'].widget.set("viewer", run=False)
     Slice_Data_18 = Map_Pot_On_Geom_4.macroNetwork.nodes[13]
     Slice_Data_18.inputPortByName['_slice'].widget.set("[0]", run=False)
     from Vision.StandardNodes import Generic
     Generic_22 = Generic(constrkw = {}, name='Generic', library=stdlib)
     Map_Pot_On_Geom_4.macroNetwork.addNode(Generic_22,510,484)
-    apply(Generic_22.addInputPort, (), {'name': 'surf', 'cast': True, 'datatype': 'geom', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'red'})
-    apply(Generic_22.addInputPort, (), {'name': 'colors', 'cast': True, 'datatype': 'colorfloat3or4(0)', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'orange'})
+    Generic_22.addInputPort(*(), **{'name': 'surf', 'cast': True, 'datatype': 'geom', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'red'})
+    Generic_22.addInputPort(*(), **{'name': 'colors', 'cast': True, 'datatype': 'colorfloat3or4(0)', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'orange'})
     code = """def doit(self, geom, colors):
     geomC = geom.mol.geomContainer
     surfName = geom.userName
@@ -110,18 +110,18 @@ try:
             Map_Pot_On_Geom_4.macroNetwork.connectNodes(
                 Color_Map_12, Generic_22, "mappedColors", "colors", blocking=True)
         except:
-            print "WARNING: failed to restore connection between Color_Map_12 and Generic_22 in network Map_Pot_On_Geom_4.macroNetwork"
+            print("WARNING: failed to restore connection between Color_Map_12 and Generic_22 in network Map_Pot_On_Geom_4.macroNetwork")
     input_Ports_5 = Map_Pot_On_Geom_4.macroNetwork.ipNode
     if input_Ports_5 is not None and Generic_22 is not None:
         try:
             Map_Pot_On_Geom_4.macroNetwork.connectNodes(
                 input_Ports_5, Generic_22, "getSurfaceVFN_geometry", "surf", blocking=True)
         except:
-            print "WARNING: failed to restore connection between input_Ports_5 and Generic_22 in network Map_Pot_On_Geom_4.macroNetwork"
+            print("WARNING: failed to restore connection between input_Ports_5 and Generic_22 in network Map_Pot_On_Geom_4.macroNetwork")
     Map_Pot_On_Geom_4.macroNetwork.unfreeze()
     Map_Pot_On_Geom_4.shrink()
 except:
-    print "WARNING: failed to restore MapPotOnGeom named Map Pot On Geom in network masterNet"
+    print("WARNING: failed to restore MapPotOnGeom named Map Pot On Geom in network masterNet")
     print_exc()
     Map_Pot_On_Geom_4=None
 
@@ -131,7 +131,7 @@ try:
     Pmv_Viewer_23 = PmvViewer(viewer=masterNet.editor.vf.GUI.VIEWER, constrkw = {'viewer': 'masterNet.editor.vf.GUI.VIEWER'}, name='Pmv Viewer', library=pmvlib)
     masterNet.addNode(Pmv_Viewer_23,250,252)
 except:
-    print "WARNING: failed to restore PmvViewer named Pmv Viewer in network masterNet"
+    print("WARNING: failed to restore PmvViewer named Pmv Viewer in network masterNet")
     print_exc()
     Pmv_Viewer_23=None
 
@@ -140,9 +140,9 @@ try:
     from Volume.VisionInterface.VolumeNodes import PmvGridChooser
     Pmv_Grids_24 = PmvGridChooser(constrkw = {}, name='Pmv Grids', library=vollib)
     masterNet.addNode(Pmv_Grids_24,267,13)
-    apply(Pmv_Grids_24.configure, (), {'expanded': True})
+    Pmv_Grids_24.configure(*(), **{'expanded': True})
 except:
-    print "WARNING: failed to restore PmvGridChooser named Pmv Grids in network masterNet"
+    print("WARNING: failed to restore PmvGridChooser named Pmv Grids in network masterNet")
     print_exc()
     Pmv_Grids_24=None
 
@@ -154,31 +154,31 @@ if Pmv_0 is not None and Choose_Molecule_3 is not None:
         masterNet.connectNodes(
             Pmv_0, Choose_Molecule_3, "PMV", "Pmv", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Pmv_0 and Choose_Molecule_3 in network masterNet"
+        print("WARNING: failed to restore connection between Pmv_0 and Choose_Molecule_3 in network masterNet")
 if Choose_Molecule_3 is not None and Get_MSMS_Geom_1 is not None:
     try:
         masterNet.connectNodes(
             Choose_Molecule_3, Get_MSMS_Geom_1, "molecule", "molecule", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Choose_Molecule_3 and Get_MSMS_Geom_1 in network masterNet"
+        print("WARNING: failed to restore connection between Choose_Molecule_3 and Get_MSMS_Geom_1 in network masterNet")
 if Get_MSMS_Geom_1 is not None and Map_Pot_On_Geom_4 is not None:
     try:
         masterNet.connectNodes(
             Get_MSMS_Geom_1, Map_Pot_On_Geom_4, "msmsGeom", "getSurfaceVFN_geometry", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Get_MSMS_Geom_1 and Map_Pot_On_Geom_4 in network masterNet"
+        print("WARNING: failed to restore connection between Get_MSMS_Geom_1 and Map_Pot_On_Geom_4 in network masterNet")
 if Map_Pot_On_Geom_4 is not None and Pmv_Viewer_23 is not None:
     try:
         masterNet.connectNodes(
             Map_Pot_On_Geom_4, Pmv_Viewer_23, "Color Map_legend", "geometries", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Map_Pot_On_Geom_4 and Pmv_Viewer_23 in network masterNet"
+        print("WARNING: failed to restore connection between Map_Pot_On_Geom_4 and Pmv_Viewer_23 in network masterNet")
 if Pmv_Grids_24 is not None and Map_Pot_On_Geom_4 is not None:
     try:
         masterNet.connectNodes(
             Pmv_Grids_24, Map_Pot_On_Geom_4, "grid", "triInterp_grid", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Pmv_Grids_24 and Map_Pot_On_Geom_4 in network masterNet"
+        print("WARNING: failed to restore connection between Pmv_Grids_24 and Map_Pot_On_Geom_4 in network masterNet")
 masterNet.unfreeze()
 #masterNet.run()
 

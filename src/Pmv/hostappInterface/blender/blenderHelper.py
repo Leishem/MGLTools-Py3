@@ -1,8 +1,8 @@
 #!/usr/bin/python
 #TODO
 #stabilize curve and metaball...really unstable and produce segmentation fault
-import numpy.oldnumeric as Numeric
-import sys, os, os.path, struct, math, string
+import mglcompat.oldnumeric as Numeric
+import sys, os, os.path, struct, math; from mglcompat import pystring as string
 import Blender
 import bpy
 from Blender import *
@@ -62,7 +62,7 @@ VERBOSE = 0
 def Compose4x4(rot,tr,sc):
     import Blender
     from Blender import Mathutils
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     """ compose a blender matrix of shape (16,) from  a rotation (shape (16,)),
     translation (shape (3,)), and scale (shape (3,)) """
     translation=Mathutils.Vector(tr[0],tr[1],tr[2])
@@ -215,7 +215,7 @@ def AddObject(obj,parent=None,centerRoot=True,rePos=None):
     #    sc.link(obj)
     #except :
     if VERBOSE:
-        print "OUOS"              
+        print("OUOS")              
     if parent != None: 
         if type(obj) == list or type(obj) == tuple: parent.makeParent(obj)
         else : parent.makeParent([obj,])
@@ -256,7 +256,7 @@ def addObjToGeom(obj,geom):
                 #    geom.mesh.append(o.name)
             elif type(obj[1]) == dict :
                 geom.mesh={}                                                
-                for me in obj[1].keys():
+                for me in list(obj[1].keys()):
                     geom.mesh[me]=obj[1][me].name
             else :
                 geom.mesh=obj[1].name
@@ -275,7 +275,7 @@ def deleteObject(obj):
     try :
         sc.objects.unlink(obj)
     except:
-        print "problem deleting ", obj
+        print("problem deleting ", obj)
 
 def ObjectsSelection(listeObjects,typeSel="new"):
     """
@@ -335,7 +335,7 @@ def b_toEuler(bmatrix):
 
 def Compose4x4BGL(rot,trans,scale):
     import Blender 
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     GL=Blender.BGL
     """ compose a matrix of shape (16,) from  a rotation (shape (16,)),
     translation (shape (3,)), and scale (shape (3,)) """
@@ -355,13 +355,13 @@ matlist = str(Material.Get ())
 
 #check and create atoms materials
 #first remove keys CA
-for atms in AtomElements.keys():
+for atms in list(AtomElements.keys()):
     if not ('[Material "'+atms+'"]' in matlist):
         mat = Material.New(atms)
         col=(AtomElements[atms])
         mat.setRGBCol(col[0],col[1],col[2])
 #DG colors
-for atms in DavidGoodsell.keys():
+for atms in list(DavidGoodsell.keys()):
     if not ('[Material "'+atms[0]+'"]' in matlist):
         mat = Material.New(atms)
         col=(DavidGoodsell[atms])
@@ -424,7 +424,7 @@ for cn in cnames:
 ssk=['Heli', 'Shee', 'Coil', 'Turn', 'Stra']
 #check and create secondary structure materials
 SecondaryStructureType['Sheet']=SecondaryStructureType['Strand']
-for ss in SecondaryStructureType.keys():
+for ss in list(SecondaryStructureType.keys()):
     if not ('[Material "'+ss[:4]+'"]' in matlist):
         mat = Material.New(ss[:4])
         col=(SecondaryStructureType[ss])
@@ -447,7 +447,7 @@ def retrieveColorMat(color):
 def getAtomMaterial(atomname):
     mat= Material.Get("anyatom")
     try :
-        if atomname not in AtomElements.keys() and atomname not in DavidGoodsell.keys() and atomname != 'M':
+        if atomname not in list(AtomElements.keys()) and atomname not in list(DavidGoodsell.keys()) and atomname != 'M':
             mat= Material.Get('A')
         else :
             mat= Material.Get("anyatom")
@@ -582,8 +582,8 @@ def bezFromVecs1(vecs0,vecs1,vecs): #tYPE vECTOR
                        dot=A.dot(B)
                        angle=math.acos(dot)
                        if VERBOSE:
-                           print angle
-                           print math.degrees(angle)
+                           print(angle)
+                           print(math.degrees(angle))
                        newA=(math.radians(90)-angle/2)
                        nA=comput.rotatePoint(A*1.35,vecs1,[crP[0],crP[1],crP[2],-newA])
                        nB=comput.rotatePoint(B*1.35,vecs1,[crP[0],crP[1],crP[2],newA])
@@ -613,8 +613,8 @@ def bezList2Curve(x,typeC):
         coord1=Numeric.array(x[0])
         coord2=Numeric.array(x[1])    
     if VERBOSE:
-        print coord1
-        print coord2
+        print(coord1)
+        print(coord2)
     coord0=coord1-(coord2-coord1)
 
     if typeC == "tBezier" : cu.appendNurb(bezFromVecs(Vector(coord0[0],coord0[1],coord0[2]),Vector(coord1[0],coord1[1],coord1[2]))) # We must add with a point to start with
@@ -651,8 +651,8 @@ def bezList2Curve(x,typeC):
         coord0=Numeric.array(x[len(x)-2])
         coord1=Numeric.array(x[len(x)-1])        
     if VERBOSE:
-        print coord1
-        print coord2
+        print(coord1)
+        print(coord2)
     coord2=coord1+(coord1-coord0)
 
     if typeC == "tBezier" : cu_nurb.append(bezFromVecs(Vector(coord0[0],coord0[1],coord0[2]),Vector(coord1[0],coord1[1],coord1[2]))) # We must add with a point to start with
@@ -758,14 +758,14 @@ def createShapes2D(doc=None,parent=None):
 def findparent(name, bones):
     atms=name.split('_')
     if VERBOSE:
-        print atms    
-    for names in bones.keys() : 
+        print(atms)    
+    for names in list(bones.keys()) : 
         patms=names.split('_')
         if VERBOSE:
-            print patms
+            print(patms)
         if atms[0] == patms[1] : 
             if VERBOSE:
-                print "ok"
+                print("ok")
             return bones[names]
     return bones["root"]
 
@@ -797,7 +797,7 @@ def atoms_armature(name,x,scn):
         armData.makeEditable()
         eb = Armature.Editbone()
         eb.roll = 10
-        print "bone"+str(i)
+        print("bone"+str(i))
         bond=x.bonds[0][i]
         coord1=x[0]._coords[0]
         coord2=x[0]._coords[0]        
@@ -835,14 +835,14 @@ def bond_armature(name,x,scn):
     bones["root"]=eb
     armData.bones['bone0']=eb
     if VERBOSE:
-        print x.bonds,len(x.bonds[0])
+        print(x.bonds,len(x.bonds[0]))
     #x is the bond set for the selection given, it givent the interconection between atoms
     for i in range(len(x.bonds[0])):
         armData.makeEditable()
         eb = Armature.Editbone()
         eb.roll = 10
         if VERBOSE:
-            print "bone"+str(i)
+            print("bone"+str(i))
         bond=x.bonds[0][i]
         coord1=bond.atom1._coords[0]
         coord2=bond.atom2._coords[0]        
@@ -899,7 +899,7 @@ def armature(name,x,scn=None,root=None):
   eb = Armature.Editbone()
   eb.roll = 10
   if VERBOSE :
-      print "bone"+str(i-1)
+      print("bone"+str(i-1))
   #coord1=x[i].atms[x[i].atms.CApos()].xyz() #x.xyz()[i].split()
   #coord2=x[i+1].atms[x[i+1].atms.CApos()].xyz() #x.xyz()[i+1].split()
   coord1=x[i].coords #x.xyz()[i].split()
@@ -931,7 +931,7 @@ def armature(name,x,scn=None,root=None):
 
 def add_armature(armObj,obj):
      if VERBOSE:
-         print obj
+         print(obj)
      mods = obj.modifiers
      mod=mods.append(Modifier.Types.ARMATURE)
      mod[Modifier.Settings.OBJECT] = armObj
@@ -962,7 +962,7 @@ def oneMetaBall(metab,atom):
     AtmRadi = {"A":1.7,"N":"1.54","CA":"1.7","C":"1.7","O":"1.52","S":"1.85","H":"1.2","P" : "1.04"}
     name=atom.name
     atC=atom.coords
-    if name[0] not in AtomElements.keys() : name="A"
+    if name[0] not in list(AtomElements.keys()) : name="A"
     rad=AtmRadi[name[0]]
     me=metab.elements.add()
     me.radius=float(rad)*3.  
@@ -974,7 +974,7 @@ def metaballs(name,atoms,scn=None,root=None):
         scn = getCurrentScene()
     metab = Blender.Metaball.New()
     metab.name = name
-    map(lambda x,z=metab:oneMetaBall(z,x),atoms)
+    list(map(lambda x,z=metab:oneMetaBall(z,x),atoms))
 #    for at in atoms:
 #        atN=at.name
 #        atC=at.coords
@@ -1005,17 +1005,17 @@ def box(name,center=[0.,0.,0.],size=[1.,1.,1.],cornerPoints=None,visible=1):
      return bx
 
 def Sphere(name,res=16.,radius=1.0,pos=None,color=None):
- 	me=Mesh.Primitives.UVsphere(res,res,radius)#diameter
- 	me.name = "mesh_"+name
- 	if color == None :
- 	    color = [1.,1.,0.]
- 	addMaterial(name,[1.,1.,0.])
-	mat = Material.Get(name)
-	me.materials=[mat]
-	OBJ=getCurrentScene().objects.new(me,name)
- 	if pos == None : pos = [0.,0.,0.]
-	OBJ.setLocation(float(pos[0]),float(pos[1]),float(pos[2]))   
-	return OBJ
+        me=Mesh.Primitives.UVsphere(res,res,radius)#diameter
+        me.name = "mesh_"+name
+        if color == None :
+            color = [1.,1.,0.]
+        addMaterial(name,[1.,1.,0.])
+        mat = Material.Get(name)
+        me.materials=[mat]
+        OBJ=getCurrentScene().objects.new(me,name)
+        if pos == None : pos = [0.,0.,0.]
+        OBJ.setLocation(float(pos[0]),float(pos[1]),float(pos[2]))   
+        return OBJ
 
 def Cylinder(name,radius=1.,length=1.,res=16,pos = None):
     #import numpy
@@ -1047,8 +1047,8 @@ def createMeshSphere(**kwargs):
         return sphere
 """
 def oldTube(name,nTube,x,scn,armObj,res=32,size=0.25,sc=2.,join=0):
- print "size sel"
- print len(x)
+ print("size sel")
+ print(len(x))
  stick=[]
  tube=[]
  size=size*2.
@@ -1138,7 +1138,7 @@ def updateTubeMesh(geom,cradius=1.0,quality=0):
     basemesh = NMesh.GetRaw("mesh_baseCyl") #this one should never modified
     #reset mesh
     mats=mesh.materials
-    print mats
+    print(mats)
     mesh.verts=basemesh.verts[:]
     mesh.faces=basemesh.faces[:]
     #new sacle
@@ -1176,7 +1176,7 @@ def instancesCylinder(name,points,faces,radii,mesh,colors,scene,parent=None):
     mat = None
     if len(colors) == 1:
         mat = addMaterial('mat_'+name,colors[0])
-    for i in xrange(len(faces)):
+    for i in range(len(faces)):
         laenge,wsz,wz,coord=getStickProperties(points[faces[i][0]],points[faces[i][1]]) 	
         cname=name+str(i)
         mesh=Mesh.Get("mesh_"+mesh.getName().split("_")[1])    #"mesh_"+name
@@ -1238,13 +1238,13 @@ def biStick(atm1,atm2,hiera,instance,parent):
     name2="T_"+mol.name+"_"+n2[1]+"_"+util.changeR(n2[2])+"_"+n2[3]+"_"+atm1.name	        
 #    name1="T_"+n1[1]+"_"+n1[2]+"_"+n1[3]+"_"+atm2.name
 #    name2="T_"+n2[1]+"_"+n2[2]+"_"+n2[3]+"_"+atm1.name
-    if atm1.name[0] not in AtomElements.keys() : atN="A"
+    if atm1.name[0] not in list(AtomElements.keys()) : atN="A"
     else : atN = atm1.name[0]
     mat = Material.Get(atN)
     if mat == None :
         mat = addMaterial(atm1.name[0],[0.,0.,0.])
     obj1=oneCylinder(name1,c0,(c0+(vect/2.)),instance,material=mat)
-    if atm2.name[0] not in AtomElements.keys() : atN="A"
+    if atm2.name[0] not in list(AtomElements.keys()) : atN="A"
     else : atN = atm2.name[0]
     mat = Material.Get(atN)
     if mat == None :
@@ -1300,8 +1300,8 @@ def Tubeold(set,sel,points,faces,scn,armObj,res=32,size=0.25,sc=2.,join=0,
  size=size*2.
  #coord1=x[0].atms[x[0].atms.CApos()].xyz() #x.xyz()[i].split()
  #coord2=x[1].atms[x[1].atms.CApos()].xyz() #x.xyz()[i+1].split()
- print len(points)
- print len(faces)
+ print(len(points))
+ print(len(faces))
  coord1=points[faces[0][0]]
  coord2=points[faces[0][1]]
  atm1=bonds[0].atom1#[faces[0][0]]
@@ -1341,7 +1341,7 @@ def Tubeold(set,sel,points,faces,scn,armObj,res=32,size=0.25,sc=2.,join=0,
   mat = Material.Get('sticks')
   me.materials=[mat]
   tube.append(me)
-  print name
+  print(name)
   #fullname = x[i].full_name()
   OBJ=Object.New('Mesh',name)
   #OBJ=Object.New('Mesh')
@@ -1378,7 +1378,7 @@ def createBaseTube(quality=0,radius=None):
         segments = 25
         rings = 25
     iMe={}    
-    for atn in AtmRadi.keys():
+    for atn in list(AtmRadi.keys()):
         if radius==None : radius=AtmRadi[atn]
         iMe[atn]=Mesh.Primitives.UVsphere(int(segments),int(rings),1)#float(radius)*2.)
         mat = Material.Get(atn)
@@ -1386,7 +1386,7 @@ def createBaseTube(quality=0,radius=None):
         Smatrix=ScaleMatrix(float(radius)*2., 4)
         iMe[atn].transform(Smatrix)
         #iMe[atn].smooth()
-        print atn,iMe[atn]
+        print(atn,iMe[atn])
     return iMe
 
 def updateSphereMesh(geom,quality=0.0,cpkRad=0.0,scale=1.0,radius=None):
@@ -1400,11 +1400,11 @@ def updateSphereMesh(geom,quality=0.0,cpkRad=0.0,scale=1.0,radius=None):
         rings = 25"""
     #names=NMesh.GetNames()
     if VERBOSE:
-        print "upadteSpheres ",names
-        print geom.mesh
-    for name in geom.mesh.values(): 
+        print("upadteSpheres ",names)
+        print(geom.mesh)
+    for name in list(geom.mesh.values()): 
         #if name in names:
-            if VERBOSE: print "UPDATE ",name
+            if VERBOSE: print("UPDATE ",name)
             basemesh =  NMesh.GetRaw("Mbasesphere")
             mesh=NMesh.GetRaw(name)
             mesh.verts=basemesh.verts[:]
@@ -1443,7 +1443,7 @@ def createBaseSphere(name="",quality=0,radius=None,cpkRad=0.0,scale=1.0,scene=No
         toggleDisplay(basesphere,display=False)
     #radius = CPKradi+AtomRadi*scaleFactor
     if scene is not None : iObj=[]
-    for atn in  AtmRadi.keys():
+    for atn in  list(AtmRadi.keys()):
         rad=float(AtmRadi[atn])#float(cpkRad)+float(AtmRadi[atn])*float(scale)
         iMe[atn]= NMesh.GetRaw(name+'_mesh_'+atn)
         #print "iMe ",iMe[atn]
@@ -1469,7 +1469,7 @@ def createBaseSphere(name="",quality=0,radius=None,cpkRad=0.0,scale=1.0,scene=No
     return iMe
 
 def updateSphereObj(obj,coord):
-    if VERBOSE : print "upadteObjSpheres"
+    if VERBOSE : print("upadteObjSpheres")
     c=coord
     o=obj#getObject(nameo)
     #o.setLocation(float(c[0]),float(c[1]),float(c[2]))
@@ -1480,13 +1480,13 @@ def updateSphereObj(obj,coord):
 def updateSphereObjs(g):
     if not hasattr(g,'obj') : return
     newcoords=g.getVertices()
-    if VERBOSE : print "upadteObjSpheres"
-    print 'g.obj',g.obj
+    if VERBOSE : print("upadteObjSpheres")
+    print('g.obj',g.obj)
     for i,nameo in enumerate(g.obj):
         c=newcoords[i]
-        print 'name',str(nameo)
+        print('name',str(nameo))
         o=getObject(str(nameo))
-        print 'object',o
+        print('object',o)
         o.setLocation(float(c[0]),float(c[1]),float(c[2]))
     
 def findatmParentHierarchie(atm,indice,hiera):
@@ -1526,10 +1526,10 @@ def instancesAtomsSphere(name,x,iMe,scn,mat=None, scale=1.0,Res=32,R=None,
         oneparent = True 
         atoms = c.residues.atoms
         parent=findatmParentHierarchie(atoms[0],n,hiera)
-        for j in xrange(len(atoms.coords)):
+        for j in range(len(atoms.coords)):
             at=atoms[j]
             atN=at.name
-            if atN[0] not in AtomElements.keys() : atN="A"
+            if atN[0] not in list(AtomElements.keys()) : atN="A"
             #print atN
             #fullname = at.full_name()
             atC=atoms.coords[j]#at._coords[0]
@@ -1574,7 +1574,7 @@ def instancesSphere(name,centers,radii,meshsphere,colors,scene,parent=None):
     mat = None
     if len(colors) == 1:
         mat = addMaterial('mat_'+name,colors[0])
-    for j in xrange(len(centers)):
+    for j in range(len(centers)):
         spname = name+str(j)
         atC=centers[j]
         #meshsphere is the object which is link to the mesh
@@ -1615,14 +1615,14 @@ def AtomMesh(name,typMes,x,scn,armObj,scale,Res=32,R=None,join=0):
     at=x[j]
     atN=at.name
     fullname = at.full_name()
-    print fullname
+    print(fullname)
     atC=at._coords[0]
     if R !=None : rad=R
-    elif AtmRadi.has_key(atN[0]) : rad=AtmRadi[atN[0]]
+    elif atN[0] in AtmRadi : rad=AtmRadi[atN[0]]
     else : rad=AtmRadi['H']
     if typMes == "Cube" : me=Mesh.Primitives.Cube(float(rad)*scale) #Cylinder(verts, diameter, length)
     elif typMes == "Sphere" : 
-        print "SPHERE"+str(j)
+        print("SPHERE"+str(j))
         me=Mesh.Primitives.UVsphere(64,int(Res),float(rad)*scale)
     elif typMes == "Empty2" : 
         me=Mesh.Primitives.UVsphere(64,int(Res),0.1)
@@ -1639,7 +1639,7 @@ def AtomMesh(name,typMes,x,scn,armObj,scale,Res=32,R=None,join=0):
              mods = obj[k].modifiers
              mod=mods.append(Modifier.Types.ARMATURE)
              mod[Modifier.Settings.OBJECT] = armObj
-    if AtmRadi.has_key(atN[0]) : mat = Material.Get(atN[0])
+    if atN[0] in AtmRadi : mat = Material.Get(atN[0])
     else : mat = Material.Get('H')
     if typMes == "Mb" : 
         me.co = Blender.Mathutils.Vector(atC[0], atC[1], atC[2])    
@@ -1668,7 +1668,7 @@ def AtomMesh(name,typMes,x,scn,armObj,scale,Res=32,R=None,join=0):
     #scn.link(bball)
  #join the mesh..
  if typMes != "Mb" and typMes != "Empty"  and join==1 : 
-    print "JOIN"
+    print("JOIN")
     obj[0].join(obj[1:])
     for ind in range(1,len(obj)):
         #obj[0].join([obj[ind]])
@@ -1694,15 +1694,15 @@ def getGeomName(geom):
     return name
 
 def updateLines(lines, chains=None):
-	#lines = getObject(name)	
-	#if lines == None or chains == None:
-	    #print lines,chains	
-	    parent = getObject(chains.full_name())	
-	    #print parent		
-	    bonds, atnobnd = chains.residues.atoms.bonds
-	    indices = map(lambda x: (x.atom1._bndIndex_,
-								x.atom2._bndIndex_), bonds)
-	    updatePoly(lines,vertices=chains.residues.atoms.coords,faces=indices)
+        #lines = getObject(name)	
+        #if lines == None or chains == None:
+            #print lines,chains	
+            parent = getObject(chains.full_name())	
+            #print parent		
+            bonds, atnobnd = chains.residues.atoms.bonds
+            indices = [(x.atom1._bndIndex_,
+                                                                x.atom2._bndIndex_) for x in bonds]
+            updatePoly(lines,vertices=chains.residues.atoms.coords,faces=indices)
 
 def duplicateIndices(indices,n):
     newindices = [ (i[0],i[1],i[1]+n,i[0]+n) for i in indices ]
@@ -1720,8 +1720,8 @@ def createPolygonLines(molecules,atomSets):
             lines = getObject(ch.full_name()+'_line')
             if lines == None :
                 bonds, atnobnd = ch.residues.atoms.bonds
-                indices = map(lambda x: (x.atom1._bndIndex_,
-                                         x.atom2._bndIndex_), bonds)
+                indices = [(x.atom1._bndIndex_,
+                                         x.atom2._bndIndex_) for x in bonds]
                 
                 n=len(ch.residues.atoms.coords)
                 
@@ -1747,8 +1747,8 @@ def editLines(molecules,atomSets):
             lines = getObject(ch.full_name()+'_line')
             if lines == None :
                 bonds, atnobnd = ch.residues.atoms.bonds
-                indices = map(lambda x: (x.atom1._bndIndex_,
-                                         x.atom2._bndIndex_), bonds)
+                indices = [(x.atom1._bndIndex_,
+                                         x.atom2._bndIndex_) for x in bonds]
                 
                 lines = createsNmesh(ch.full_name()+'_line',ch.residues.atoms.coords,
                                      None,indices)
@@ -1763,12 +1763,12 @@ def PointCloudObject(name,**kw):
     coords=kw['vertices']
     me=bpy.data.meshes.new(name)
     me.verts.extend(coords)
-    if kw.has_key('faces'):
+    if 'faces' in kw:
         if kw['faces']:
             me.faces.extend([(x,x+1,x+2) for x in range(1,len(me.verts)-3) ])
     ob = Blender.Object.New("Mesh",name+"ds")
     ob.link(me)
-    if kw.has_key('parent') : 
+    if 'parent' in kw : 
         addObjectToScene(getCurrentScene(),ob,parent=kw['parent'])
     return ob
 
@@ -1782,7 +1782,7 @@ def updateCloudObject(name,coords):
     #remove previous vertice and face
     mats=mesh.materials
     mesh.verts=None
-    mesh.faces.delete(1,range(len(mesh.faces)))
+    mesh.faces.delete(1,list(range(len(mesh.faces))))
     #add the new one
     mesh.verts.extend(coords)            # add vertices to mesh
     #set by default the smooth
@@ -1794,13 +1794,13 @@ def polygons(name,proxyCol=False,smooth=True,color=None,dejavu=False,
              material=None, **kw):
     vertices = kw["vertices"]
     faces = kw["faces"]
-    if type(faces) not in [types.ListType, types.TupleType]:
+    if type(faces) not in [list, tuple]:
         faces = faces.tolist()
     normals = kw["normals"]
     frontPolyMode = 'fill'
-    if kw.has_key("frontPolyMode") : frontPolyMode = kw["frontPolyMode"]
+    if "frontPolyMode" in kw : frontPolyMode = kw["frontPolyMode"]
     shading = 'flat'
-    if kw.has_key("shading") : shading=kw["shading"]#'flat'
+    if "shading" in kw : shading=kw["shading"]#'flat'
     #vlist = []
     polygon=bpy.data.meshes.new(name)
     polygon.verts.extend(vertices)    	# add vertices to mesh
@@ -1828,8 +1828,8 @@ def polygons(name,proxyCol=False,smooth=True,color=None,dejavu=False,
 
 def createsNmesh(name,vertices,vnormals,faces,color=[[1,0,0],],material=None,smooth=True,proxyCol=False):
     polygon = polygons(name, vertices=vertices,normals=vnormals,faces=faces,
-			material=material,color=color,
-			smooth=smooth,proxyCol=proxyCol)
+                        material=material,color=color,
+                        smooth=smooth,proxyCol=proxyCol)
     obpolygon = Blender.Object.New("Mesh","Mesh_"+name)
     obpolygon.link(polygon)
     return obpolygon,polygon
@@ -1841,7 +1841,7 @@ def updatePoly(obj,vertices=None,faces=None):
     mesh=Mesh.Get("Mesh_"+obj.name)
     mats=mesh.materials
     mesh.verts=None
-    mesh.faces.delete(1,range(len(mesh.faces)))
+    mesh.faces.delete(1,list(range(len(mesh.faces))))
     #add the new one
     mesh.verts.extend(vertices)            # add vertices to mesh
     mesh.faces.extend(faces)          # add faces to the mesh (also adds edges)
@@ -1862,7 +1862,7 @@ def updateMesh(geom,parent=None,proxyCol=None,mol=None):
     #remove previous vertice and face
     mats=mesh.materials
     mesh.verts=None
-    mesh.faces.delete(1,range(len(mesh.faces)))
+    mesh.faces.delete(1,list(range(len(mesh.faces))))
     #add the new one
     mesh.verts.extend(geom.getVertices())            # add vertices to mesh
     faces = geom.getFaces()
@@ -1934,8 +1934,8 @@ def checkChangeMaterial(o,typeMat,atom=None,parent=None,color=None):
             else : colorMaterial(requiredMatname,color)
         elif typeMat == "ByAtom" :
                         #changeMaterialSchemColor(typeMat)
-            if matname not in AtmRadi.keys() : #switch to atom materials
-                    if names[5][0] not in AtomElements.keys() : 
+            if matname not in list(AtmRadi.keys()) : #switch to atom materials
+                    if names[5][0] not in list(AtomElements.keys()) : 
                         o.setMaterials([Material.Get('A')])
                     else :
                         o.setMaterials([Material.Get(names[5][0])])
@@ -1943,19 +1943,19 @@ def checkChangeMaterial(o,typeMat,atom=None,parent=None,color=None):
                         #changeMaterialSchemColor(typeMat)
                         #if matname not in DavidGoodsell.keys() :
             name = util.lookupDGFunc(atom)
-            if name not in DavidGoodsell.keys() : 
+            if name not in list(DavidGoodsell.keys()) : 
                 o.setMaterials([Material.Get('A')])
             else :            
                 o.setMaterials([Material.Get(name)])
         elif typeMat == "ByResi" or typeMat == "Residu":
-            print matname
+            print(matname)
             rname = res.type.replace(" ","")
-            print "x"+rname+"x"
+            print("x"+rname+"x")
             if rname in ['A', 'C', 'G', 'T', 'U'] :
                 rname = 'D'+rname            
-            if matname not in RasmolAminocorrected.keys():
+            if matname not in list(RasmolAminocorrected.keys()):
             #switch to residues materials
-                if rname not in RasmolAminocorrected.keys(): rname='hetatm'
+                if rname not in list(RasmolAminocorrected.keys()): rname='hetatm'
                 o.setMaterials([Material.Get(rname)])
         elif typeMat == "BySeco" :
             if matname not in ssk : #switch to ss materials
@@ -1983,7 +1983,7 @@ def applyMultiMat(geom,colors):
         ncolor = [f.col[0][0],f.col[0][1],f.col[0][2]]
         i,mat=getMatFromColorComparison(mesh.materials, ncolor)
         if mat is None :
-            print ncolor,k
+            print(ncolor,k)
         f.mat = i
 
 def changeColor(geom,colors,perVertex=True,perObjectmat=None,pb=False):
@@ -2039,21 +2039,21 @@ def changeColor(geom,colors,perVertex=True,perObjectmat=None,pb=False):
 
 def changeMaterialSchemColor(typeMat):
      if typeMat == "ByAtom":
-          for atms in AtomElements.keys() : colorMaterial(atms,AtomElements[atms])
+          for atms in list(AtomElements.keys()) : colorMaterial(atms,AtomElements[atms])
      elif typeMat == "AtomsU" :
-          for atms in DavidGoodsell.keys() :colorMaterial(atms,DavidGoodsell[atms])
+          for atms in list(DavidGoodsell.keys()) :colorMaterial(atms,DavidGoodsell[atms])
               #if (atms == "P") or (atms == "A") or (atms == "CA"): colorMaterial(atms[0],AtomElements[atms])
               #else : 
               #colorMaterial(atms,DavidGoodsell[atms])
      elif typeMat == "ByResi":
-          for res in RasmolAminocorrected.keys(): 
+          for res in list(RasmolAminocorrected.keys()): 
               col = RasmolAminocorrected[res]
               name = res.strip()
               colorMaterial(name,col)
      elif typeMat == "Residu":
-          for res in Shapely.keys(): colorMaterial(res,Shapely[res])
+          for res in list(Shapely.keys()): colorMaterial(res,Shapely[res])
      elif typeMat == "BySeco":
-          for ss in SecondaryStructureType.keys(): colorMaterial(ss[0:4],SecondaryStructureType[ss])
+          for ss in list(SecondaryStructureType.keys()): colorMaterial(ss[0:4],SecondaryStructureType[ss])
      else : pass
 
 def colorMaterial(mat,color):
@@ -2064,7 +2064,7 @@ def colorMaterial(mat,color):
         ncolors=color#blenderColor(color)
         mat.setRGBCol([ncolors[0],ncolors[1],ncolors[2]])
     except :
-        print "no mat "+mat
+        print("no mat "+mat)
 
 def applyMaterial(obj,mat):
     obj.setMaterials([mat])
@@ -2104,8 +2104,8 @@ def changeVertexStickColor(geom,colors):
         ncolor = util.convertColor(colors[0])
     nbV=len(mesh.verts)
     split=(nbV-2)/2
-    a=range(0,split)
-    b=range(split,(nbV-2))
+    a=list(range(0,split))
+    b=list(range(split,(nbV-2)))
     for f in mesh.faces:
         for i, v in enumerate(f):
             col= f.col[i]
@@ -2202,16 +2202,16 @@ def msms(nodes, surfName='MSMS-MOL', pRadius=1.5, density=1.0,
         if nodes is None or not nodes:
             return
         # Check the validity of the input
-        if not type(density) in [types.IntType, types.FloatType] or \
+        if not type(density) in [int, float] or \
            density < 0: return 'ERROR'
-        if not type(pRadius) in [types.IntType, types.FloatType] or \
+        if not type(pRadius) in [int, float] or \
            pRadius <0: return 'ERROR'
               
         # get the set of molecules and the set of atoms per molecule in the
         # current selection
         if perMol:
             molecules = nodes.top.uniq()
-            atmSets = map(lambda x: x.allAtoms, molecules)
+            atmSets = [x.allAtoms for x in molecules]
          
         #else:
         #    molecules, atmSets = self.vf.getNodesByMolecule(nodes, Atom)
@@ -2256,7 +2256,7 @@ def prepareMesh2Pmv(mesh,molname=None):
     msg='\n'
     msg+='from DejaVu.IndexedGeom import IndexedGeom\n'
     msg+='from DejaVu.IndexedPolygons import IndexedPolygons\n'
-    msg+='import numpy.oldnumeric as Numeric\n'
+    msg+='import mglcompat.oldnumeric as Numeric\n'
     msg+='g=IndexedPolygons(name="'+mesh.name+'")\n'
     msg+='inheritMaterial = None\n'
     
@@ -2305,17 +2305,17 @@ def recoverObjToGeom(scn,mv):
         #just check cpk for now
         cpk=[]
         cpkmesh={}    
-        for atn in  AtmRadi.keys():
+        for atn in  list(AtmRadi.keys()):
             name='mesh_'+atn
             o=getObject(name)
-            if o == mol.geomContainer.geoms['cpk'].mesh[atn] : print atn
+            if o == mol.geomContainer.geoms['cpk'].mesh[atn] : print(atn)
             else : mol.geomContainer.geoms['cpk'].mesh[atn]=o                    
         for atm in mol.allAtoms:
             nameo = "S"+"_"+atm.full_name()
             cpk.append(getObject(nameo))
             #print cpk[-1].name
         for o,c in zip(mol.geomContainer.geoms['cpk'].obj,cpk):
-            if o == c :print "??",o, o.name
+            if o == c :print("??",o, o.name)
             else : o=c
 
         #mol.geomContainer.geoms['cpk'].obj=cpk[:]
@@ -2339,17 +2339,17 @@ def updateCoordFromObj(mv,sel,display=True,debug=True):
         #print "parsed ",hi
         molname = hi[0]
         #chname = hi[1]
-        print "molname",molname
+        print("molname",molname)
         if hasattr(mv,'energy'): #ok need to compute energy
             #first update obj position: need mat_transfo_inv attributes at the mollevel
             #compute matrix inverse of actual position (should be the receptor...)
-            print "ok energy"
+            print("ok energy")
             rec = mv.energy.current_scorer.mol1
             lig = mv.energy.current_scorer.mol2
-            print rec.name, lig.name
-            print molname
+            print(rec.name, lig.name)
+            print(molname)
             if rec.name == molname or lig.name == molname:
-                print "update"
+                print("update")
                 #updateMolAtomCoord(rec)
                 updateMolAtomCoord(lig)
                 get_nrg_score(mv.energy,display=display)
@@ -2366,7 +2366,7 @@ def updateCoordFromObj(mv,sel,display=True,debug=True):
 
 def cAD3Energies(mv,mols,atomset1,atomset2,add_Conf=False,debug = False):
     from mglutil.hostappli import comput_util as C
-    print "prepareSolver"
+    print("prepareSolver")
     mv.energy = C.EnergyHandler(mv)
     #mv.energy.add(atomset1,atomset2)#type=c_ad3Score by default
     mv.energy.add(atomset1,atomset2,type = "ad4Score")
@@ -2383,7 +2383,7 @@ def cAD3Energies(mv,mols,atomset1,atomset2,add_Conf=False,debug = False):
                     #mol.allAtoms.updateCoords(vt,ind=confNum)
                     # add arconformationIndex to top instance ( molecule)
                     mol.cconformationIndex = confNum
-    print "done"                
+    print("done")                
     if debug :
         pass
         """s1=c4d.BaseObject(c4d.Osphere)
@@ -2442,7 +2442,7 @@ def get_nrg_score(energy,display=True):
     #print energy.current_scorer
     #print energy.current_scorer.score
     vf = energy.viewer
-    print "score :"+str(energy.current_scorer.score)[0:5]
+    print("score :"+str(energy.current_scorer.score)[0:5])
     #text = getObject("score")
     #if text != None :
     #    text[2111] = "score :"+str(energy.current_scorer.score)[0:5]
@@ -2504,10 +2504,10 @@ def updateMolAtomCoord(mol):
     # the idea : spline/dynamic move link to cpl whihc control balls
     # this should be the actual coordinate of the ligand
     # what about the rc...
-    print "update", mol.name
+    print("update", mol.name)
     vt = []
     sph = mol.geomContainer.geoms['cpk'].obj
-    print len(sph),sph[0],getObject(sph[0]).getLocation("worldspace")
+    print(len(sph),sph[0],getObject(sph[0]).getLocation("worldspace"))
     for name in sph:
         o = getObject(name)
         pos=o.getLocation("worldspace")#get_mg().off

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 
 ############################################################################
@@ -47,7 +47,7 @@ from DejaVu.Shapes import Shape2D, Triangle2D, Circle2D, Rectangle2D,\
 from Pmv.stringSelectorGUI import StringSelectorGUI
 from PyBabel.util import vec3
 
-import Tkinter, numpy.oldnumeric as Numeric, math, string, os
+import tkinter, mglcompat.oldnumeric as Numeric, math, os; from mglcompat import pystring as string
 from string import strip, split
 from types import StringType
 
@@ -150,7 +150,7 @@ class GetHydrogenBondDonors(MVCommand):
         self.flag = self.flag | self.objArgOnly
     
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('typeAtoms'):
+        if 'typeAtoms' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'typeAtoms', 'Pmv',
                                 topCommand=0)
 
@@ -168,7 +168,7 @@ class GetHydrogenBondDonors(MVCommand):
             tops = ats.top.uniq()
             for t in tops:
                 self.vf.typeAtoms(t.allAtoms, topCommand=0)
-        return apply(self.doitWrapper, (ats, donorList), kw)
+        return self.doitWrapper(*(ats, donorList), **kw)
 
 
     def checkForPossibleH(self, ats, blen):
@@ -225,7 +225,7 @@ hydrogenBond Acceptors.
         self.flag = self.flag | self.objArgOnly
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('typeAtoms'):
+        if 'typeAtoms' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'typeAtoms', 'Pmv',
                                 topCommand=0)
 
@@ -244,7 +244,7 @@ hydrogenBond Acceptors.
             tops = ats.top.uniq()
             for t in tops:
                 self.vf.typeBonds(t.allAtoms, topCommand=0)
-        return apply(self.doitWrapper, (ats, acceptorList), kw)
+        return self.doitWrapper(*(ats, acceptorList), **kw)
 
 
     def filterAcceptors(self, accAts):
@@ -320,7 +320,7 @@ Lei, AJ Rader, Donald J.Jacobs and Leslie A. Kuhn.
 
     def onAddCmdToViewer(self):
         self.vf.loadModule('measureCommands', 'Pmv', log=0)
-        if not self.vf.commands.has_key('typeAtoms'):
+        if 'typeAtoms' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'typeAtoms', 'Pmv',
                                 topCommand=0, log=0)
         
@@ -340,7 +340,7 @@ Lei, AJ Rader, Donald J.Jacobs and Leslie A. Kuhn.
         if not len(hats):
             self.warningMsg('no hbonds in specified nodes')
             return 'ERROR'
-        return apply(self.doitWrapper, (hats,), kw)
+        return self.doitWrapper(*(hats,), **kw)
 
 
     def getEnergy(self, b):
@@ -472,8 +472,8 @@ class ShowHBDonorsAcceptors(MVCommand):
         for n in varNames:
             exec('self.'+n+'=Tkinter.IntVar()')
             exec('self.'+n+'.set(1)')
-        self.showDTypeSel = Tkinter.IntVar()
-        self.showATypeSel = Tkinter.IntVar()
+        self.showDTypeSel = tkinter.IntVar()
+        self.showATypeSel = tkinter.IntVar()
 
 
     def __call__(self, dnodes, anodes, donorList=allDonors,
@@ -485,7 +485,7 @@ class ShowHBDonorsAcceptors(MVCommand):
         anodes = self.vf.expandNodes(anodes)
         acats = anodes.findType(Atom)
         if not (len(donats) or len(acats)): return 'ERROR'
-        apply(self.doitWrapper, (donats, acats, donorList, acceptorList), kw)
+        self.doitWrapper(*(donats, acats, donorList, acceptorList), **kw)
 
 
     def doit(self, donats, acats,  donorList, acceptorList):
@@ -570,7 +570,7 @@ class ShowHBDonorsAcceptors(MVCommand):
         ifd2 = self.ifd2 = InputFormDescr(title = "Show/Hide Donors and Acceptors")
         if len(dAts2):
             ifd2.append({'name':'donor2',
-                'widgetType':Tkinter.Checkbutton,
+                'widgetType':tkinter.Checkbutton,
                 'wcfg':{'text':'sp2 donors ',
                     'variable': self.sp2D,
                     'command': CallBackFunction(self.showGeom, 
@@ -579,7 +579,7 @@ class ShowHBDonorsAcceptors(MVCommand):
                 'gridcfg':{'sticky':'w'}})
         if len(dAts3):
             ifd2.append({'name':'donor3',
-                'widgetType':Tkinter.Checkbutton,
+                'widgetType':tkinter.Checkbutton,
                 'wcfg':{'text':'sp3 donors ',
                     'variable': self.sp3D,
                     'command': CallBackFunction(self.showGeom, 
@@ -589,7 +589,7 @@ class ShowHBDonorsAcceptors(MVCommand):
                # 'gridcfg':{'sticky':'w', 'row':-1, 'column':1}})
         if len(acAts2):
             ifd2.append({'name':'accept2',
-                'widgetType':Tkinter.Checkbutton,
+                'widgetType':tkinter.Checkbutton,
                 'wcfg':{'text':'sp2 acceptors ',
                     'variable': self.sp2A,
                     'command': CallBackFunction(self.showGeom, 
@@ -598,7 +598,7 @@ class ShowHBDonorsAcceptors(MVCommand):
                 'gridcfg':{'sticky':'w'}})
         if len(acAts3):
             ifd2.append({'name':'accept3',
-                'widgetType':Tkinter.Checkbutton,
+                'widgetType':tkinter.Checkbutton,
                 'wcfg':{'text':'sp3 acceptors ',
                     'variable': self.sp3A,
                     'command': CallBackFunction(self.showGeom, 
@@ -606,12 +606,12 @@ class ShowHBDonorsAcceptors(MVCommand):
                     },
                 'gridcfg':{'sticky':'w'}})
                 #'gridcfg':{'sticky':'w', 'row':-1, 'column':1}})
-        ifd2.append({'widgetType': Tkinter.Button,
+        ifd2.append({'widgetType': tkinter.Button,
             'text':'Select',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'ew' },
             'command':CallBackFunction(self.select_cb,dAts2,dAts3,acAts2,acAts3)})
-        ifd2.append({'widgetType': Tkinter.Button,
+        ifd2.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'ew', 'column':1,'row':-1},
@@ -647,11 +647,11 @@ class ShowHBDonorsAcceptors(MVCommand):
     def buildForm(self):
         ifd = self.ifd = InputFormDescr(title = "Select nodes + types of donor-acceptors:")
         ifd.append({'name':'DkeyLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'For Hydrogen Bonds Donors:',
                     'gridcfg':{'sticky':'w','columnspan':3}})
         ifd.append({'name':'selDRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Use all atoms',
                 'variable': self.hideDSel,
                 'value':1,
@@ -659,7 +659,7 @@ class ShowHBDonorsAcceptors(MVCommand):
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'selDRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Set atoms to use',
                 'variable': self.hideDSel,
                 'value':0,
@@ -676,49 +676,49 @@ class ShowHBDonorsAcceptors(MVCommand):
             },
             'gridcfg':{'sticky':'we', 'columnspan':2 }})
         ifd.append({'name':'limitDTypes',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Limit donor types ',
                 'variable': self.showDTypeSel,
                 'command':self.hideDTypes
                 },
             'gridcfg':{'sticky':'w', 'columnspan':2}})
         ifd.append({'name':'N3+',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'N3+',
                 'variable': self.N3, },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'O3',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'O3',
                 'variable': self.O3, },
             'gridcfg':{'sticky':'w','row':-1, 'column':1}})
         ifd.append({'name':'S3',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'S3',
                 'variable': self.S3, },
             'gridcfg':{'sticky':'w','row':-1, 'column':2}})
         ifd.append({'name':'Nam',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Nam',
                 'variable': self.Nam, },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'Ng+',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Ng+',
                 'variable': self.Ng, },
             'gridcfg':{'sticky':'w','row':-1, 'column':1}})
         ifd.append({'name':'Npl',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Npl',
                 'variable': self.Npl, },
             'gridcfg':{'sticky':'w','row':-1, 'column':2}})
         #now the acceptors
         ifd.append({'name':'AkeyLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'For Hydrogen Bonds Acceptors:',
                     'gridcfg':{'sticky':'w','columnspan':3}})
         ifd.append({'name':'selARB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Use all atoms',
                 'variable': self.hideASel,
                 'value':1,
@@ -726,7 +726,7 @@ class ShowHBDonorsAcceptors(MVCommand):
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'selARB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Set atoms to use',
                 'variable': self.hideASel,
                 'value':0,
@@ -743,53 +743,53 @@ class ShowHBDonorsAcceptors(MVCommand):
             },
             'gridcfg':{'sticky':'we', 'columnspan':2 }})
         ifd.append({'name':'limitTypes',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Limit acceptor types ',
                 'variable': self.showATypeSel,
                 'command':self.hideATypes
                 },
             'gridcfg':{'sticky':'w', 'columnspan':2}})
         ifd.append({'name':'aO3',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'O3',
                 'variable': self.aO3, },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'aS3',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'S3',
                 'variable': self.aS3, },
             'gridcfg':{'sticky':'w','row':-1, 'column':1}})
         ifd.append({'name':'aO2',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'O2',
                 'variable': self.aO2, },
             'gridcfg':{'sticky':'w','row':-1, 'column':2}})
         ifd.append({'name':'aO-',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'O-',
                 'variable': self.aO,},
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'aNpl',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Npl',
                 'variable': self.aNpl, },
             'gridcfg':{'sticky':'w', 'row':-1, 'column':1}})
         ifd.append({'name':'aNam',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Nam',
                 'variable': self.aNam, },
             'gridcfg':{'sticky':'w','row':-1, 'column':2}})
         ifd.append({'name':'useSelCB',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'select from current selection',
                 'variable': self.useSelection, },
             'gridcfg':{'sticky':'w'}})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Ok',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'ew', 'columnspan':2 },
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'ew', 'column':2,'row':-1},
@@ -987,15 +987,15 @@ atoms in viewer
             self.vf.GUI.VIEWER.AddObject(item, parent=self.masterGeom)
 
         self.vf.loadModule('labelCommands', 'Pmv', log=0)
-        self.showAll = Tkinter.IntVar()
+        self.showAll = tkinter.IntVar()
         self.showAll.set(1)
-        self.showDistLabels = Tkinter.IntVar()
+        self.showDistLabels = tkinter.IntVar()
         self.showDistLabels.set(1)
-        self.dispTheta = Tkinter.IntVar()
+        self.dispTheta = tkinter.IntVar()
         self.dispTheta.set(0)
-        self.dispPhi = Tkinter.IntVar()
+        self.dispPhi = tkinter.IntVar()
         self.dispPhi.set(0)
-        self.dispEnergy = Tkinter.IntVar()
+        self.dispEnergy = tkinter.IntVar()
         self.dispEnergy.set(0)
         self.dverts = []
         self.dlabs = []
@@ -1019,7 +1019,7 @@ atoms in viewer
         nodes =self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
         ats = nodes.findType(Atom)
-        apply(self.doitWrapper, (ats,), kw)
+        self.doitWrapper(*(ats,), **kw)
 
 
     def reset(self):
@@ -1057,7 +1057,7 @@ atoms in viewer
             bndD = {}
             for b in bnds:
                 bndD[b] = 0
-            hbnds2 = bndD.keys()
+            hbnds2 = list(bndD.keys())
             hbnds2.sort()
             for b in hbnds2:
                 atNames.append((b.donAt.full_name(), None))
@@ -1066,7 +1066,7 @@ atoms in viewer
         if not hasattr(self, 'ifd'):
             ifd = self.ifd=InputFormDescr(title = 'Hydrogen Bonds:')
             ifd.append({'name': 'hbondLabel',
-                'widgetType': Tkinter.Label,
+                'widgetType': tkinter.Label,
                 'wcfg':{'text': str(len(atNames)) + ' Atoms in hbonds:'},
                 'gridcfg':{'sticky': 'we', 'columnspan':2}})
             ifd.append({'name': 'atsLC',
@@ -1084,43 +1084,43 @@ atoms in viewer
                 'gridcfg':{'sticky':'we', 'weight':2,'row':2,
                         'column':0, 'columnspan':2}})
             ifd.append({'name':'showAllBut',
-                'widgetType':Tkinter.Checkbutton,
+                'widgetType':tkinter.Checkbutton,
                 'wcfg': { 'text':'Show All ',
                     'variable': self.showAll,
                     'command': CallBackFunction(self.showAllHBonds, \
                            hats)},
                 'gridcfg':{'sticky':'we','weight':2}})
             ifd.append({'name':'showDistBut',
-                'widgetType':Tkinter.Checkbutton,
+                'widgetType':tkinter.Checkbutton,
                 'wcfg': { 'text':'Show Distances ',
                     'variable': self.showDistLabels,
                     'command': self.showDistances},
                 'gridcfg':{'sticky':'we', 'row':-1, 'column':1,'weight':2}})
             ifd.append({'name':'showThetaBut',
-                'widgetType':Tkinter.Checkbutton,
+                'widgetType':tkinter.Checkbutton,
                 'wcfg': { 'text':'Show theta\n(don-h->acc)',
                     'variable': self.dispTheta,
                     'command': CallBackFunction(self.showAngles, hats)},
                 'gridcfg':{'sticky':'we','weight':2}})
             ifd.append({'name':'showPhiBut',
-                'widgetType':Tkinter.Checkbutton,
+                'widgetType':tkinter.Checkbutton,
                 'wcfg': { 'text':'Show phi\n(h->acc-accN)',
                     'variable': self.dispPhi,
                     'command': CallBackFunction(self.showAngles, hats)},
                 'gridcfg':{'sticky':'we', 'row':-1, 'column':1,'weight':2}})
             ifd.append({'name':'showEnBut',
-                'widgetType':Tkinter.Checkbutton,
+                'widgetType':tkinter.Checkbutton,
                 'wcfg': { 'text':'Show Energy',
                     'variable': self.dispEnergy,
                     'command': CallBackFunction(self.showEnergies, hats)},
                 'gridcfg':{'sticky':'we','weight':2}})
             ifd.append({'name':'selAllBut',
-                'widgetType':Tkinter.Button,
+                'widgetType':tkinter.Button,
                 'wcfg': { 'text':'Select All ',
                     'command': CallBackFunction(self.selAllHBonds, hats)},
                 'gridcfg':{'sticky':'we','weight':2}})
             ifd.append({'name':'closeBut',
-                'widgetType':Tkinter.Button,
+                'widgetType':tkinter.Button,
                 'wcfg': { 'text':'Dismiss',
                     'command': self.dismiss_cb},
                 'gridcfg':{'sticky':'we', 'row':-1, 'column':1,'weight':2}})
@@ -1389,7 +1389,7 @@ atoms in viewer
         #put a selector here
         if len(sel):
             ats = sel.findType(Atom)
-            apply(self.doitWrapper, (ats,), {})
+            self.doitWrapper(*(ats,), **{})
 
 
 ShowHydrogenBondsGuiDescr = {'widgetType':'Menu',
@@ -1417,14 +1417,14 @@ class BuildHydrogenBondsGUICommand(MVCommand):
     
 
     def onAddCmdToViewer(self):
-        self.showSel = Tkinter.IntVar()
-        self.resetVar = Tkinter.IntVar()
+        self.showSel = tkinter.IntVar()
+        self.resetVar = tkinter.IntVar()
         self.resetVar.set(1)
-        self.showDef = Tkinter.IntVar()
-        self.distOnly = Tkinter.IntVar()
-        self.hideDTypeSel = Tkinter.IntVar()
-        self.hideATypeSel = Tkinter.IntVar()
-        self.showTypes = Tkinter.IntVar()
+        self.showDef = tkinter.IntVar()
+        self.distOnly = tkinter.IntVar()
+        self.hideDTypeSel = tkinter.IntVar()
+        self.hideATypeSel = tkinter.IntVar()
+        self.showTypes = tkinter.IntVar()
         varNames = ['hideDSel',  'N3', 'O3','S3','Nam', 'Ng', 'Npl',\
                 'hideASel',  'aS3', 'aO3', 'aO2', 'aO', 'aNpl',
                 'aNam']
@@ -1438,11 +1438,11 @@ class BuildHydrogenBondsGUICommand(MVCommand):
         #buildHbondGC
         self.hasAngles = 0
         atDict = self.vf.buildHBonds(nodes1, nodes2, paramDict, reset)
-        if not len(atDict.keys()):
+        if not len(list(atDict.keys())):
             self.warningMsg('3:no hydrogen bonds found')
             return 'ERROR'
         else:
-            msg = str(len(atDict.keys()))+' hydrogen bonds formed'
+            msg = str(len(list(atDict.keys())))+' hydrogen bonds formed'
             self.warningMsg(msg)
             
         #ats = AtomSet(atDict.keys())
@@ -1463,11 +1463,11 @@ class BuildHydrogenBondsGUICommand(MVCommand):
     def buildForm(self):
         ifd = self.ifd = InputFormDescr(title = "Select nodes + change parameters(optional):")
         ifd.append({'name':'keyLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'For Hydrogen Bond detection:',
                     'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'selRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Use all atoms',
                 'variable': self.showSel,
                 'value':0,
@@ -1475,7 +1475,7 @@ class BuildHydrogenBondsGUICommand(MVCommand):
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'selRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Specify two sets:',
                 'variable': self.showSel,
                 'value':1,
@@ -1502,7 +1502,7 @@ class BuildHydrogenBondsGUICommand(MVCommand):
             'gridcfg':{'sticky':'we', 'columnspan':2}})
 
         ifd.append({'name':'typeRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Use all donor-acceptorTypes',
                 'variable': self.showTypes,
                 'value':0,
@@ -1510,7 +1510,7 @@ class BuildHydrogenBondsGUICommand(MVCommand):
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'selRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Limit types:',
                 'variable': self.showTypes,
                 'value':1,
@@ -1518,91 +1518,91 @@ class BuildHydrogenBondsGUICommand(MVCommand):
                 },
             'gridcfg':{'sticky':'w', 'row':-1, 'column':1}})
         ifd.append({'name':'limitDTypes',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Limit donor types ',
                 'variable': self.hideDTypeSel,
                 'command':self.hideDTypes
                 },
             'gridcfg':{'sticky':'w', 'columnspan':2}})
         ifd.append({'name':'N3+',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'N3+',
                 'variable': self.N3, },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'O3',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'O3',
                 'variable': self.O3, },
             'gridcfg':{'sticky':'w','row':-1, 'column':1}})
         ifd.append({'name':'S3',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'S3',
                 'variable': self.S3, },
             'gridcfg':{'sticky':'w','row':-1, 'column':2}})
         ifd.append({'name':'Nam',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Nam',
                 'variable': self.Nam, },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'Ng+',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Ng+',
                 'variable': self.Ng, },
             'gridcfg':{'sticky':'w','row':-1, 'column':1}})
         ifd.append({'name':'Npl',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Npl',
                 'variable': self.Npl, },
             'gridcfg':{'sticky':'w','row':-1, 'column':2}})
 
         #now the acceptors
         ifd.append({'name':'limitATypes',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Limit acceptor types ',
                 'variable': self.hideATypeSel,
                 'command':self.hideATypes
                 },
             'gridcfg':{'sticky':'w', 'columnspan':2}})
         ifd.append({'name':'aO3',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'O3',
                 'variable': self.aO3, },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'aS3',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'S3',
                 'variable': self.aS3, },
             'gridcfg':{'sticky':'w','row':-1, 'column':1}})
         ifd.append({'name':'aO2',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'O2',
                 'variable': self.aO2, },
             'gridcfg':{'sticky':'w','row':-1, 'column':2}})
         ifd.append({'name':'aO-',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'O-',
                 'variable': self.aO,},
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'aNpl',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Npl',
                 'variable': self.aNpl, },
             'gridcfg':{'sticky':'w', 'row':-1, 'column':1}})
         ifd.append({'name':'aNam',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Nam',
                 'variable': self.aNam, },
             'gridcfg':{'sticky':'w','row':-1, 'column':2}})
 
         ifd.append({'name':'distOnly',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Use distance as only criteria',
                 'variable': self.distOnly,
                 },
             'gridcfg':{'sticky':'w', 'columnspan':2}})
 
         ifd.append({'name':'defRB0',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg':{'text':'Adjust default hydrogen bond parameters',
                 'variable': self.showDef,
                 'command':self.hideDefaults
@@ -1630,7 +1630,7 @@ class BuildHydrogenBondsGUICommand(MVCommand):
                      'gridcfg':{'columnspan':2,'sticky':'we'}})
         #min+max theta values for sp2 and for sp3 donors:
         ifd.append({ 'name':'d2lab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{ 'text': 'sp2 donor-hydrogen-acceptor angle limits:',
                 'font':(ensureFontCase('helvetica'),12,'bold')},
             'gridcfg':{'sticky':'w', 'columnspan':2}})
@@ -1658,7 +1658,7 @@ class BuildHydrogenBondsGUICommand(MVCommand):
                 'continuous':1, 'oneTurn':2, 'wheelPad':2, 'height':20},
             'gridcfg':{'sticky':'we', 'row':-1, 'column':1}})
         ifd.append({ 'name':'d3lab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
            'wcfg':{ 'text': 'sp3 donor-hydrogen-acceptor angle limits:',
                 'font':(ensureFontCase('helvetica'),12,'bold')},
             'gridcfg':{'sticky':'w', 'columnspan':2}})
@@ -1686,7 +1686,7 @@ class BuildHydrogenBondsGUICommand(MVCommand):
             'gridcfg':{'sticky':'we', 'row':-1, 'column':1}})
         #min+max phi values for sp2 and for sp3 donors:
         ifd.append({ 'name':'a2lab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{ 'text': 'sp2 donor-acceptor-acceptorN angle  limits:',
                 'font':(ensureFontCase('helvetica'),12,'bold')},
             'gridcfg':{'sticky':'w', 'columnspan':2}})
@@ -1713,7 +1713,7 @@ class BuildHydrogenBondsGUICommand(MVCommand):
                 'continuous':1, 'oneTurn':2, 'wheelPad':2, 'height':20},
             'gridcfg':{'sticky':'we', 'row':-1, 'column':1}})
         ifd.append({ 'name':'a3lab',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{ 'text': 'sp3 donor-acceptor-acceptorN angle limits:',
                 'font':(ensureFontCase('helvetica'),12,'bold')},
             'gridcfg':{'sticky':'w', 'columnspan':2}})
@@ -1740,25 +1740,25 @@ class BuildHydrogenBondsGUICommand(MVCommand):
                 'continuous':1, 'oneTurn':2, 'wheelPad':2, 'height':20},
             'gridcfg':{'sticky':'we', 'row':-1, 'column':1}})
         ifd.append({'name':'resetRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Remove all previous hbonds',
                 'variable': self.resetVar,
                 'value':1,
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'resetRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Add to previous hbonds',
                 'variable': self.resetVar,
                 'value':0,
                 },
             'gridcfg':{'sticky':'w', 'row':-1, 'column':1}})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Ok',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we'},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'we', 'column':1,'row':-1},
@@ -1985,7 +1985,7 @@ class BuildHydrogenBonds(MVCommand):
 
     def onAddCmdToViewer(self):
         self.distSelector = DistanceSelector(return_dist=0)
-        if not self.vf.commands.has_key('typeAtoms'):
+        if 'typeAtoms' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'typeAtoms', 'Pmv',
                                 topCommand=0)
 
@@ -2512,34 +2512,34 @@ class BuildHydrogenBonds(MVCommand):
             tops = group2.top.uniq()
             for t in tops:
                 self.vf.typeAtoms(t.allAtoms, topCommand=0)
-        if not paramDict.has_key('distCutoff'):
+        if 'distCutoff' not in paramDict:
             paramDict['distCutoff'] = 2.25
-        if not paramDict.has_key('distCutoff2'):
+        if 'distCutoff2' not in paramDict:
             paramDict['distCutoff2'] = 3.00
-        if not paramDict.has_key('d2min'):
+        if 'd2min' not in paramDict:
             paramDict['d2min'] = 120.
-        if not paramDict.has_key('d2max'):
+        if 'd2max' not in paramDict:
             paramDict['d2max'] = 180.
-        if not paramDict.has_key('d3min'):
+        if 'd3min' not in paramDict:
             paramDict['d3min'] = 120.
-        if not paramDict.has_key('d3max'):
+        if 'd3max' not in paramDict:
             paramDict['d3max'] = 170.
 
-        if not paramDict.has_key('a2min'):
+        if 'a2min' not in paramDict:
             paramDict['a2min'] = 130.
-        if not paramDict.has_key('a2max'):
+        if 'a2max' not in paramDict:
             paramDict['a2max'] = 170.
-        if not paramDict.has_key('a3min'):
+        if 'a3min' not in paramDict:
             paramDict['a3min'] = 120.
-        if not paramDict.has_key('a3max'):
+        if 'a3max' not in paramDict:
             paramDict['a3max'] = 170.
-        if not paramDict.has_key('distOnly'):
+        if 'distOnly' not in paramDict:
             paramDict['distOnly'] = 0
-        if not paramDict.has_key('donorTypes'):
+        if 'donorTypes' not in paramDict:
             paramDict['donorTypes'] = allDonors
-        if not paramDict.has_key('acceptorTypes'):
+        if 'acceptorTypes' not in paramDict:
             paramDict['acceptorTypes'] = allAcceptors
-        return apply( self.doitWrapper, (group1, group2, paramDict, reset), kw)
+        return self.doitWrapper(*(group1, group2, paramDict, reset), **kw)
 
 
 
@@ -2559,7 +2559,7 @@ which is invoked by it.
     
 
     def onAddCmdToViewer(self):
-        self.showSel = Tkinter.IntVar()
+        self.showSel = tkinter.IntVar()
         self.showSel.set(0)
 
 
@@ -2582,11 +2582,11 @@ which is invoked by it.
             return 
         ifd = self.ifd = InputFormDescr(title = "Select nodes + change parameters(optional):")
         ifd.append({'name':'keyLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'Add missing hydrogens to hbonds for:',
-                    'gridcfg':{'sticky':Tkinter.W, 'columnspan':2}})
+                    'gridcfg':{'sticky':tkinter.W, 'columnspan':2}})
         ifd.append({'name':'selRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'all atoms',
                 'variable': self.showSel,
                 'value':0,
@@ -2594,7 +2594,7 @@ which is invoked by it.
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'selRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'a subset of atoms ',
                 'variable': self.showSel,
                 'value':1,
@@ -2610,15 +2610,15 @@ which is invoked by it.
                     'crColor':(0.,1.,.2),
             },
             'gridcfg':{'sticky':'we', 'columnspan':2 }})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Ok',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W},
             'command':self.Accept_cb})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
-            'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'column':1,'row':-1},
+            'gridcfg':{'sticky':tkinter.E+tkinter.W, 'column':1,'row':-1},
             'command':self.Close_cb})
         self.form = self.vf.getUserInput(self.ifd, modal=0, blocking=0)
         self.form.root.protocol('WM_DELETE_WINDOW',self.Close_cb)
@@ -2699,7 +2699,7 @@ class AddHBondHydrogens(MVCommand):
         self.flag = self.flag | self.objArgOnly
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('typeAtoms'):
+        if 'typeAtoms' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'typeAtoms', 'Pmv',
                                 topCommand=0)
 
@@ -2761,7 +2761,7 @@ class AddHBondHydrogens(MVCommand):
         atom.babel_organic = 1
         bond = Bond(at, atom)
         atom.colors = {}
-        for key, value in at.colors.items():
+        for key, value in list(at.colors.items()):
             atom.colors[key] = (0.0, 1.0, 1.0)
             atom.opacities[key] = 1.0
         atom.number = len(at.parent.children)
@@ -2793,7 +2793,7 @@ class AddHBondHydrogens(MVCommand):
             for mol in ats.top.uniq():
                 mol.allAtoms.sort()
                 fst = mol.allAtoms[0].number
-                mol.allAtoms.number = range(fst, len(mol.allAtoms)+fst)
+                mol.allAtoms.number = list(range(fst, len(mol.allAtoms)+fst))
 
         # MS
         #assert len(newHs)==len(newHs.uniq())
@@ -2837,7 +2837,7 @@ class AddHBondHydrogens(MVCommand):
             tops = ats.top.uniq()
             for t in tops: 
                 self.vf.typeAtoms(t.allAtoms, topCommand=0)
-        return apply( self.doitWrapper, (ats,), kw)
+        return self.doitWrapper(*(ats,), **kw)
 
 
 
@@ -2905,13 +2905,13 @@ class LimitHydrogenBonds(MVCommand):
             self.vf.GUI.VIEWER.AddObject(item, parent=self.masterGeom)
 
         self.vf.loadModule('labelCommands', 'Pmv', log=0)
-        self.showAll = Tkinter.IntVar()
+        self.showAll = tkinter.IntVar()
         self.showAll.set(1)
-        self.disp_energy = Tkinter.IntVar()
+        self.disp_energy = tkinter.IntVar()
         self.disp_energy.set(0)
         self.everts = []
         self.e_labs = []
-        self.hideSel = Tkinter.IntVar()
+        self.hideSel = tkinter.IntVar()
         self.hideSel.set(1)
         self.bondsToDelete = []
         #SHOULD THIS BE A HYDROGENBONDSET?
@@ -2925,7 +2925,7 @@ class LimitHydrogenBonds(MVCommand):
         nodes =self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
         ats = nodes.findType(Atom)
-        apply(self.doitWrapper, (ats,), kw)
+        self.doitWrapper(*(ats,), **kw)
 
 
     def doit(self, ats):
@@ -2958,7 +2958,7 @@ class LimitHydrogenBonds(MVCommand):
             bndD = {}
             for b in bnds:
                 bndD[b] = 0
-            hbnds2 = bndD.keys()
+            hbnds2 = list(bndD.keys())
             hbnds2.sort()
             for b in hbnds2:
                 atNames.append((b.donAt.full_name(), None))
@@ -2975,7 +2975,7 @@ class LimitHydrogenBonds(MVCommand):
         self.origLabel = '0 hbonds to delete:'
         ifd = self.ifd=InputFormDescr(title = 'Hydrogen Bonds to Delete:')
         ifd.append({'name': 'hbondLabel',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'wcfg':{'text': self.origLabel},
             'gridcfg':{'sticky': 'wens', 'columnspan':2}})
         ifd.append({'name': 'atsLC',
@@ -3003,23 +3003,23 @@ class LimitHydrogenBonds(MVCommand):
                 'entrypackcfg':{'side':'bottom'}},
             'gridcfg':{'sticky':'we', 'columnspan':2}})
         ifd.append({'name':'resetBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Reset',
                 'command': self.reset},
             'gridcfg':{'sticky':'wens'}})
         ifd.append({'name':'showEnBut',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'wcfg': { 'text':'Show Energy',
                 'variable': self.disp_energy,
                 'command': CallBackFunction(self.showEnergies, hats)},
             'gridcfg':{'sticky':'wens', 'column':1, 'row':-1}})
         ifd.append({'name':'acceptBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Delete',
                 'command': self.Delete_cb},
             'gridcfg':{'sticky':'wens'}})
         ifd.append({'name':'closeBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Dismiss',
                 'command': self.dismiss_cb},
             'gridcfg':{'sticky':'wens', 'row':-1, 'column':1}})
@@ -3218,7 +3218,7 @@ class LimitHydrogenBonds(MVCommand):
             return
         ats = nodes.findType(Atom)
         self.form.withdraw()
-        apply(self.doitWrapper, (ats,), {})
+        self.doitWrapper(*(ats,), **{})
 
 
     def guiCallback(self):
@@ -3229,11 +3229,11 @@ class LimitHydrogenBonds(MVCommand):
         sel =  self.vf.getSelection()
         ifd = self.ifd = InputFormDescr(title = "Select nodes + energy limit")
         ifd.append({'name':'DkeyLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'For Hydrogen Bonds:',
-                    'gridcfg':{'sticky':Tkinter.W,'columnspan':3}})
+                    'gridcfg':{'sticky':tkinter.W,'columnspan':3}})
         ifd.append({'name':'selDRB0',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Use all atoms',
                 'variable': self.hideSel,
                 'value':1,
@@ -3241,7 +3241,7 @@ class LimitHydrogenBonds(MVCommand):
                 },
             'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'selDRB1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Set atoms to use',
                 'variable': self.hideSel,
                 'value':0,
@@ -3257,13 +3257,13 @@ class LimitHydrogenBonds(MVCommand):
                     'crColor':(0.,1.,.2),
             },
             'gridcfg':{'sticky':'we', 'columnspan':2 }})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Ok',
             'wcfg':{'bd':6,
                     'command':self.Ok_cb,
                     },
             'gridcfg':{'sticky':'ew', 'columnspan':2 }})
-        ifd.append({'widgetType': Tkinter.Button,
+        ifd.append({'widgetType': tkinter.Button,
             'text':'Cancel',
             'wcfg':{'bd':6},
             'gridcfg':{'sticky':'ew', 'column':2,'row':-1},
@@ -3312,7 +3312,7 @@ atoms in viewer
         self.initGeom()
         #from DejaVu.Labels import Labels
         self.verts = []
-        self.showAll = Tkinter.IntVar()
+        self.showAll = tkinter.IntVar()
         self.showAll.set(1)
         self.vf.loadModule('labelCommands', 'Pmv', log=0)
         # Create a ColorChooser.
@@ -3496,7 +3496,7 @@ atoms in viewer
             bndD = {}
             for b in bnds:
                 bndD[b] = 0
-            hbnds2 = bndD.keys()
+            hbnds2 = list(bndD.keys())
             hbnds2.sort()
             for b in hbnds2:
                 b.visible = 1
@@ -3658,7 +3658,7 @@ atoms in viewer
             },
             'gridcfg':{'sticky':'wens', 'columnspan':2}})
         ifd2.append({'name':'doneBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Done',
                 'command': self.closeChangeDVertLC},
             'gridcfg':{'sticky':'wens'}})
@@ -3716,7 +3716,7 @@ atoms in viewer
         #put a selector here
         if len(sel):
             ats = sel.findType(Atom)
-            apply(self.doitWrapper, (ats,), {})
+            self.doitWrapper(*(ats,), **{})
 
 
 
@@ -3763,7 +3763,7 @@ atoms in viewer as small spheres
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
         ats = nodes.findType(Atom)
-        apply(self.doitWrapper, (ats,), kw)
+        self.doitWrapper(*(ats,), **kw)
 
 
 
@@ -3788,7 +3788,7 @@ atoms in viewer as small spheres
         if not hasattr(self, 'ifd'):
             ifd = self.ifd=InputFormDescr(title = 'Show Hydrogen Bonds as Spheres')
             ifd.append({'name': 'hbondLabel',
-                'widgetType': Tkinter.Label,
+                'widgetType': tkinter.Label,
                 'wcfg':{'text': str(len(atNames)) + ' Atoms in hbonds:\n(1=visible, 0 not visible)'},
                 'gridcfg':{'sticky': 'wens', 'columnspan':2}})
             ifd.append({'name': 'atsLC',
@@ -3827,7 +3827,7 @@ atoms in viewer as small spheres
                     'entrypackcfg':{'side':'bottom'}},
                 'gridcfg':{'sticky':'wens','row':-1, 'column':1}})
             ifd.append( {'name':'quality',
-                'widgetType': Tkinter.Scale,
+                'widgetType': tkinter.Scale,
                 'wcfg':{'label':'quality',
                     'troughcolor':'green',
                      'from_':2, 'to_':20,
@@ -3836,18 +3836,18 @@ atoms in viewer as small spheres
                     'command':self.updateQuality },
                 'gridcfg':{'sticky':'wens'}})
             ifd.append({'name':'changeColorBut',
-                'widgetType':Tkinter.Button,
+                'widgetType':tkinter.Button,
                 'wcfg': { 'text':'Choose color',
                     'relief':'flat',
                     'command': self.changeColor},
                 'gridcfg':{'sticky':'wes', 'row':-1, 'column':1}})
             ifd.append({'name':'changeVertsBut',
-                'widgetType':Tkinter.Button,
+                'widgetType':tkinter.Button,
                 'wcfg': { 'text':'Set anchors',
                     'command': self.changeDVerts},
                 'gridcfg':{'sticky':'wens'}})
             ifd.append({'name':'closeBut',
-                'widgetType':Tkinter.Button,
+                'widgetType':tkinter.Button,
                 'wcfg': { 'text':'Dismiss',
                     'command': self.dismiss_cb},
                 'gridcfg':{'sticky':'wens', 'row':-1, 'column':1}})
@@ -3923,7 +3923,7 @@ atoms in viewer as cylinders
         nodes =self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
         ats = nodes.findType(Atom)
-        apply(self.doitWrapper, (ats,), kw)
+        self.doitWrapper(*(ats,), **kw)
 
 
 
@@ -3932,7 +3932,7 @@ atoms in viewer as cylinders
         if not hasattr(self, 'ifd'):
             ifd = self.ifd = InputFormDescr(title='Show Hydrogen Bonds as Cylinders')
             ifd.append({'name': 'hbondLabel',
-                'widgetType': Tkinter.Label,
+                'widgetType': tkinter.Label,
                 'wcfg':{'text': str(len(atNames)) + ' Atoms in hbonds:\n(1=visible, 0 not visible)'},
                 'gridcfg':{'sticky': 'wens', 'columnspan':2}})
             ifd.append({'name': 'atsLC',
@@ -3971,17 +3971,17 @@ atoms in viewer as cylinders
                     'entrypackcfg':{'side':'right'}},
                 'gridcfg':{'sticky':'wens', 'columnspan':2}})
             ifd.append({'name':'changeVertsBut',
-                'widgetType':Tkinter.Button,
+                'widgetType':tkinter.Button,
                 'wcfg': { 'text':'Set anchors',
                     'command': self.changeDVerts},
                 'gridcfg':{'sticky':'wens'}})
             ifd.append({'name':'changeColorBut',
-                'widgetType':Tkinter.Button,
+                'widgetType':tkinter.Button,
                 'wcfg': { 'text':'Change color',
                     'command': self.changeColor},
                 'gridcfg':{'sticky':'wes', 'row':-1, 'column':1}})
             ifd.append({'name':'closeBut',
-                'widgetType':Tkinter.Button,
+                'widgetType':tkinter.Button,
                 'wcfg': { 'text':'Dismiss',
                     'command': self.dismiss_cb},
                 'gridcfg':{'sticky':'wens','columnspan':2 }})
@@ -4118,7 +4118,7 @@ atoms in viewer using extruded geometries
         if not len(nodes): return 'ERROR'
         nodes = nodes.findType(Atom)
         kw['capsFlag'] = capsFlag
-        apply(self.doitWrapper, (nodes, shape2D), kw)
+        self.doitWrapper(*(nodes, shape2D), **kw)
 
 
     def interpolate(self, pt1, pt2):
@@ -4228,7 +4228,7 @@ atoms in viewer using extruded geometries
         if not hasattr(self, 'ifd2'):
             ifd = self.ifd2=InputFormDescr(title = 'Show Extruded Hydrogen Bonds')
             ifd.append({'name': 'hbondLabel',
-                'widgetType': Tkinter.Label,
+                'widgetType': tkinter.Label,
                 'wcfg':{'text': str(len(atNames)) + ' Atoms in hbonds:\n(1=visible, 0 not visible)'},
                 'gridcfg':{'sticky': 'wens', 'columnspan':2}})
 
@@ -4246,17 +4246,17 @@ atoms in viewer using extruded geometries
                 },
                 'gridcfg':{'sticky':'wens', 'row':2,'column':0, 'columnspan':2}})
             ifd.append({'name':'changeColorBut',
-                'widgetType':Tkinter.Button,
+                'widgetType':tkinter.Button,
                 'wcfg': { 'text':'Choose color',
                     'command': self.changeColor},
                 'gridcfg':{'sticky':'wes'}})
             ifd.append({'name':'changeVertsBut',
-                'widgetType':Tkinter.Button,
+                'widgetType':tkinter.Button,
                 'wcfg': { 'text':'Set anchors',
                     'command': self.changeDVerts},
                 'gridcfg':{'sticky':'wens','row':-1,'column':1}})
             ifd.append({'name':'closeBut',
-                'widgetType':Tkinter.Button,
+                'widgetType':tkinter.Button,
                 'wcfg': { 'text':'Dismiss',
                     'command': self.dismiss_cb},
                 'gridcfg':{'sticky':'wens','columnspan':2}})
@@ -4306,12 +4306,12 @@ atoms in viewer using extruded geometries
             },
             'gridcfg':{'sticky':'wens', 'columnspan':2}})
         ifd3.append({'name':'acceptBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Update extrusion',
                 'command': self.updateExtrusion_cb},
             'gridcfg':{'sticky':'wens'}})
         ifd3.append({'name':'doneBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Done',
                 'command': self.closeChangeDVertLC},
             'gridcfg':{'sticky':'wens'}})
@@ -4493,10 +4493,10 @@ atoms in viewer using extruded geometries
                         #'gridcfg':{'sticky':'we'}})
 
             idf.append({'name':'caps',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue':1,
                         'wcfg':{'text':'Caps',
-                                'variable': Tkinter.IntVar()},
+                                'variable': tkinter.IntVar()},
                         'gridcfg':{'sticky':'we','row':-1}})
 
             val = self.vf.getUserInput(idf)
@@ -4523,10 +4523,10 @@ atoms in viewer using extruded geometries
                      })
 
             idf.append({'name':'caps',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue':1,
                         'wcfg':{'text':'Caps',
-                                'variable': Tkinter.IntVar()},
+                                'variable': tkinter.IntVar()},
                         'gridcfg':{'sticky':'we'}})
 
             val = self.vf.getUserInput(idf)
@@ -4562,10 +4562,10 @@ atoms in viewer using extruded geometries
                      })
 
             idf.append({'name':'caps',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue':1,
                         'wcfg':{'text':'Caps ',
-                                'variable': Tkinter.IntVar()},
+                                'variable': tkinter.IntVar()},
                         'gridcfg':{'sticky':'we','row':-1}})
 
             val = self.vf.getUserInput(idf)
@@ -4591,10 +4591,10 @@ atoms in viewer using extruded geometries
                      })
 
             idf.append({'name':'caps',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue':1,
                          'wcfg':{'text':'Caps',
-                                 'variable': Tkinter.IntVar()},
+                                 'variable': tkinter.IntVar()},
                         'gridcfg':{'sticky':'we'}})
 
             val = self.vf.getUserInput(idf)
@@ -4620,10 +4620,10 @@ atoms in viewer using extruded geometries
                      })
 
             idf.append({'name':'caps',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue':1,
                         'wcfg':{'text':'Caps',
-                                'variable': Tkinter.IntVar()},
+                                'variable': tkinter.IntVar()},
                         'gridcfg':{'sticky':'we'}})
 
 
@@ -4675,7 +4675,7 @@ class WriteAssemblyHBonds(MVCommand):
         """None <--- writeAssemblyHB(filename, nodes, **kw)
         \nfilename ---  name of the hbond file
         \nnodes --- TreeNodeSet holding the current selection """
-        apply(self.doitWrapper, (filename, nodes,), kw)
+        self.doitWrapper(*(filename, nodes,), **kw)
 
 
     def fixIDS(self, chains):
@@ -4687,11 +4687,11 @@ class WriteAssemblyHBonds(MVCommand):
         self.entStrs = []
         self.chains = chains
         ifd.append({'name':'Lab1',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'Current',
                     'gridcfg':{'sticky':'we'}})
         ifd.append({'name':'Lab2',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'New',
                     'gridcfg':{'sticky':'we', 'row':-1, 'column':1}})
         for ch in chains:
@@ -4708,15 +4708,15 @@ class WriteAssemblyHBonds(MVCommand):
             self.nStrs.append(nStr)
             entStr = chid+'_ent'
             self.entStrs.append(entStr)
-            newEntVar = ent_varDict[ch] = Tkinter.StringVar()
+            newEntVar = ent_varDict[ch] = tkinter.StringVar()
             newEntVar.set(ch.id)
-            newCbVar = cb_varDict[ch] = Tkinter.IntVar()
+            newCbVar = cb_varDict[ch] = tkinter.IntVar()
             ifd.append({'name':nStr,
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':ch.full_name(),
                     'gridcfg':{'sticky':'we'}})
             ifd.append({'name':entStr,
-                'widgetType':Tkinter.Entry,
+                'widgetType':tkinter.Entry,
                 'wcfg':{ 'textvariable': newEntVar, },
                 'gridcfg':{'sticky':'we', 'row':-1, 'column':1}})
         vals = self.vf.getUserInput(self.ifd, modal=0, blocking=1, okcancel=1)
@@ -4727,10 +4727,10 @@ class WriteAssemblyHBonds(MVCommand):
                 ll = ch.id
                 wl = strip(vals[self.entStrs[i]])
                 if ll!=wl:
-                    print 'changed chain ', ch.full_name(), ' to ',  
+                    print('changed chain ', ch.full_name(), ' to ', end=' ')  
                     ch.id = wl[0]
                     ch.name = wl[0]
-                    print  ch.full_name()
+                    print(ch.full_name())
 
 
     def writeHYDBNDRecords(self, atoms, fptr):
@@ -4867,7 +4867,7 @@ class WriteIntermolHBonds(MVCommand):
         """None <- writeIntermolHB(filename, nodes, **kw)
         \nfilename --- name of the hbond file
         \nnodes --- TreeNodeSet holding the current selection """
-        apply(self.doitWrapper, (filename, nodes,), kw)
+        self.doitWrapper(*(filename, nodes,), **kw)
 
 
     def doit(self, filename, nodes):
@@ -4939,7 +4939,7 @@ class ReadIntermolHBonds(MVCommand):
         \nfilename --- name of the hbond file"""
         if not os.path.exists(filename):
             raise IOError
-        apply(self.doitWrapper, (filename,), kw)
+        self.doitWrapper(*(filename,), **kw)
 
 
     def doit(self, filename):
@@ -4999,7 +4999,7 @@ class ReadIntermolHBonds(MVCommand):
         file = self.vf.askFileOpen(types=[('hbnd files', '*.hbnd'), 
                 ('any', '*.*')], title="intermolecular hbonds file:")
         if file is None: return
-        apply(self.doitWrapper, (file,), {})
+        self.doitWrapper(*(file,), **{})
 
 
 ReadIntermolHBondsGuiDescr = {'widgetType':'Menu',
@@ -5049,7 +5049,7 @@ class AddHBondCommandGUICommand(MVCommand, MVAtomICOM):
 
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('setICOM'):
+        if 'setICOM' not in self.vf.commands:
             self.vf.loadCommand('interactiveCommands', 'setICOM', 'Pmv',
                                 topCommand=0) 
         miscGeom = self.vf.GUI.miscGeom
@@ -5072,7 +5072,7 @@ class AddHBondCommandGUICommand(MVCommand, MVAtomICOM):
             self.nodeLogString = "'"+atoms+"'"
         ats = self.vf.expandNodes(atoms)
         if not len(ats): return 'ERROR'
-        return apply(self.doitWrapper, (ats,), kw)
+        return self.doitWrapper(*(ats,), **kw)
 
 
     def doit(self, ats):
@@ -5115,11 +5115,11 @@ class AddHBondCommandGUICommand(MVCommand, MVAtomICOM):
             hats = AtomSet(self.vf.allAtoms.get(lambda x: hasattr(x,'hbonds')))
             if len(geom.vertexSet):
                 #first call dismiss_cb???
-                apply(cmd.dismiss_cb,(),{})
+                cmd.dismiss_cb(*(), **{})
                 d = {}
                 d['topCommand']=0
                 #update a visible geometry here
-                apply(cmd,(hats,), d)
+                cmd(*(hats,), **d)
         self.update()
 
 
@@ -5232,7 +5232,7 @@ class AddHBondCommand(MVCommand):
             for b in at2.hbonds:
                 if b.donAt==at2 or b.hAt==at2 or b.accAt==at2:
                     return 'ERROR'
-        return apply(self.doitWrapper, (at1, at2), kw)
+        return self.doitWrapper(*(at1, at2), **kw)
 
 
     def doit(self, at1, at2):
@@ -5283,7 +5283,7 @@ class RemoveHBondCommandGUICommand(MVCommand, MVBondICOM):
        
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('setICOM'):
+        if 'setICOM' not in self.vf.commands:
             self.vf.loadCommand('interactiveCommands', 'setICOM', 'Pmv',
                                 topCommand=0) 
         hbond_geoms = check_hbond_geoms(self.vf.GUI)
@@ -5316,10 +5316,10 @@ class RemoveHBondCommandGUICommand(MVCommand, MVBondICOM):
 
 
     def getObjects(self, pick):
-        for o, val in pick.hits.items(): ###loop over geometries
-            primInd = map(lambda x: x[0], val)
+        for o, val in list(pick.hits.items()): ###loop over geometries
+            primInd = [x[0] for x in val]
             g = o.mol.geomContainer
-            if g.geomPickToBonds.has_key(o.name):
+            if o.name in g.geomPickToBonds:
                 func = g.geomPickToBonds[o.name]
                 if func: return func(o, primInd)
             else:
@@ -5349,7 +5349,7 @@ class RemoveHBondCommandGUICommand(MVCommand, MVBondICOM):
             self.nodeLogString = "'"+atoms+"'"
         ats = self.vf.expandNodes(atoms)
         if not len(ats): return 'ERROR'
-        apply(self.doitWrapper, (ats,), kw)
+        self.doitWrapper(*(ats,), **kw)
 
 
     def doit(self, ats):
@@ -5389,11 +5389,11 @@ class RemoveHBondCommandGUICommand(MVCommand, MVBondICOM):
             hats = AtomSet(self.vf.allAtoms.get(lambda x: hasattr(x,'hbonds')))
             if len(geom.vertexSet):
                 #first call dismiss_cb???
-                apply(cmd.dismiss_cb,(),{})
+                cmd.dismiss_cb(*(), **{})
                 d = {}
                 d['topCommand']=0
                 #update visible geometry here
-                apply(cmd,(hats,),d)
+                cmd(*(hats,), **d)
 
 
     def setupUndoAfter(self, ats, **kw):
@@ -5461,7 +5461,7 @@ class RemoveHBondCommand(MVCommand):
         ats = self.vf.expandNodes(accAt)
         if not len(ats): return 'ERROR'
         accAt = ats[0]
-        return apply(self.doitWrapper, (at1, accAt), kw)
+        return self.doitWrapper(*(at1, accAt), **kw)
 
 
     def doit(self, atom1, accAt):

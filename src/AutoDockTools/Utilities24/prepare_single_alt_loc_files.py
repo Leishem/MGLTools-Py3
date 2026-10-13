@@ -19,8 +19,8 @@ def getAT_types(m):
     alt_items = {}
     for ent in AT_SET_SET:
         alt_items[ent.split("@")[1]] = 1
-    print "@@returning ", alt_items.keys(), " @@"
-    return alt_items.keys()
+    print("@@returning ", list(alt_items.keys()), " @@")
+    return list(alt_items.keys())
     
 
 if __name__ == '__main__':
@@ -30,22 +30,22 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: prepare_single_alt_loc_files.py -r filename.pdb"
-        print
-        print "    Description of command..."
-        print "        -r   filename.pdb "
-        print "        create separate pdb files for file with alt_loc coords"
-        print "    Optional parameters:"
-        print "        [-v]  verbose output (default is minimal output)"
-        print "        [-o pdb_stem]  (default creates 'filename_A.pdb', 'filename_B.pdb' etc)"
+        print("Usage: prepare_single_alt_loc_files.py -r filename.pdb")
+        print()
+        print("    Description of command...")
+        print("        -r   filename.pdb ")
+        print("        create separate pdb files for file with alt_loc coords")
+        print("    Optional parameters:")
+        print("        [-v]  verbose output (default is minimal output)")
+        print("        [-o pdb_stem]  (default creates 'filename_A.pdb', 'filename_B.pdb' etc)")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'r:vo:h')
 
-    except getopt.GetoptError, msg:
-        print 'prepare_single_alt_loc_files.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('prepare_single_alt_loc_files.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -63,20 +63,20 @@ if __name__ == '__main__':
     for o, a in opt_list:
         if o in ('-r', '--r'):
             filename = a
-            if verbose: print 'set filename to ', a
+            if verbose: print('set filename to ', a)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-o', '--o'):
             pdb_stem = a
-            if verbose: print 'set pdb_stem to ', a
+            if verbose: print('set pdb_stem to ', a)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
 
     if not filename:
-        print 'prepare_single_alt_loc_files: filename must be specified.'
+        print('prepare_single_alt_loc_files: filename must be specified.')
         usage()
         sys.exit()
 
@@ -86,20 +86,20 @@ if __name__ == '__main__':
 
 
     mols = Read(filename)
-    if verbose: print 'read ', filename
+    if verbose: print('read ', filename)
     mol = mols[0]
     if len(mols)>1:
-        if verbose: print "more than one molecule in file using molecule with most atoms"
+        if verbose: print("more than one molecule in file using molecule with most atoms")
         #use the molecule with the most atoms
         ctr = 1
         for m in mols[1:]:
             ctr += 1
             if len(m.allAtoms)>len(mol.allAtoms):
                 mol = m
-                if verbose: print "mol set to ", ctr, "th molecule with", len(mol.allAtoms), "atoms"
+                if verbose: print("mol set to ", ctr, "th molecule with", len(mol.allAtoms), "atoms")
     ats = mol.allAtoms.get("*@*")
     if not len(ats):
-        print 'Nothing to do:no alt loc atoms found in ', filename
+        print('Nothing to do:no alt loc atoms found in ', filename)
         sys.exit()
     list_to_write = getAT_types(mol)
     ATOMLINES = mol.parser.getAtomsLines(-2,0)

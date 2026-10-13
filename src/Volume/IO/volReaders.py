@@ -1,8 +1,8 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 import math
 from struct import pack, unpack, calcsize
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from Volume.Grid3D import Grid3DUC, Grid3DSI, Grid3DF, Grid3DD
 from mglutil.math.crystal import Crystal
 from mglutil.math.stats import stats
@@ -109,8 +109,8 @@ class VolumeReaderBase:
 
     def describe(self, hd):
         strg = "%s file: %s\n"%(hd['mapType'], hd['filename'])
-        if hd.has_key('mode'): strg += "mode: %d\n"%hd['mode']
-        if hd.has_key('mapc'):
+        if 'mode' in hd: strg += "mode: %d\n"%hd['mode']
+        if 'mapc' in hd:
             strg += "indices (1:fastest, 3:slowest) %d %d %d\n"%(
                 hd['mapc'], hd['mapr'], hd['maps'] )
         strg += "nc: %d, nr: %d, ns: %d\n"%(
@@ -118,14 +118,14 @@ class VolumeReaderBase:
         strg += "dimensions: %s\n"%hd['dimensions']
         strg += "origin: %s, %s, %s\n"%(
             hd['origin'][0], hd['origin'][1], hd['origin'][2])
-        if hd.has_key('ccell'):
+        if 'ccell' in hd:
             strg += "acell: %10.6f, bcell: %10.6f, ccell: %10.6f\n"%(
                 hd['acell'], hd['bcell'], hd['ccell'])
             strg += "alpha: %10.6f, beta: %10.6f, gamma: %10.6f\n"%(
                 hd['alpha'], hd['beta'], hd['gamma'])
-        if hd.has_key('nsymbt'):
+        if 'nsymbt' in hd:
             strg += "symmetry ops: %d bytes in length\n"%hd['nsymbt']
-        if hd.has_key('lskflg'):
+        if 'lskflg' in hd:
             strg += "Skew transformation Flag = %d\n"%hd['lskflg']
         strg += "min:  %10.6f\nmax:   %10.6f\nmean: %10.6f\nstdev: %10.6f\n"%(
             hd['amin'], hd['amax'], hd['amean'], hd['arms'])
@@ -181,7 +181,7 @@ By default the data is normalized.
         # else this is an unreadable ccp4 file
         if mode not in (0,1,2,3,4,5,10):
             f.close()
-            print "ReadCCP4: ERROR: %s is not a valid CCP4 file"%filename
+            print("ReadCCP4: ERROR: %s is not a valid CCP4 file"%filename)
             return
             
         # Collect header data:
@@ -346,8 +346,8 @@ By default the data is normalized.
         h['dimensions'] = str(self.data.shape)
 
         if disp_out is True:
-            print self.describe(h)
-            print 'time to read file: ', time()-t1
+            print(self.describe(h))
+            print('time to read file: ', time()-t1)
         
         return g
     
@@ -451,7 +451,7 @@ symmetry operators do not cross the ends of the 80-character 'lines' and the
 'lines' do not terminate in a *). 
 
 Map data array follows.\n"""
-        print txt
+        print(txt)
 
 
 class ReadMRC(VolumeReaderBase):
@@ -487,7 +487,7 @@ class ReadMRC(VolumeReaderBase):
         # else this is an unreadable ccp4 file
         if mode<0 or mode>4:
             f.close()
-            print "ReadMRC: ERROR: %s is not a valid MRC file"%filename
+            print("ReadMRC: ERROR: %s is not a valid MRC file"%filename)
             return
 
         #Collect header data
@@ -634,8 +634,8 @@ class ReadMRC(VolumeReaderBase):
         h['dimensions'] = str(self.data.shape)
         
         if disp_out is True:
-            print self.describe(h)
-            print 'time to read file: ', time()-t1
+            print(self.describe(h))
+            print('time to read file: ', time()-t1)
         
         return g
     
@@ -703,7 +703,7 @@ class ReadCNS(VolumeReaderBase):
         # the following line should contain "ZYX"
         if not re.search("ZYX",f.readline()): cns_file_error=True
         if cns_file_error is True:
-            print "ReadCNS: ERROR: %s is not a valid CNS/XPLOR file"%filename
+            print("ReadCNS: ERROR: %s is not a valid CNS/XPLOR file"%filename)
             return
 
         h.update({'nc':alen, 'nr':blen, 'ns':clen, 'mode':2})
@@ -743,7 +743,7 @@ class ReadCNS(VolumeReaderBase):
         assert float(line)==-9999, "penultimate line should hold -9999', got %d"%line
         line = f.readline() # density average and standard dev
         f.close()
-        mean, stddev = map(float, line.split())
+        mean, stddev = list(map(float, line.split()))
         h['amean'] = mean
         h['arms'] = stddev
 
@@ -772,8 +772,8 @@ class ReadCNS(VolumeReaderBase):
         h['dimensions'] = str(self.data.shape)
 
         if disp_out is True:
-            print self.describe(h)
-            print 'time: ', time()-t1
+            print(self.describe(h))
+            print('time: ', time()-t1)
 
         return g
 
@@ -818,7 +818,7 @@ the FORTRAN format statement (6E12.5).
 
 A three-letter character string which always reads `ZXY'.
 """
-        print txt
+        print(txt)
 
 class ReadGRD(VolumeReaderBase):
     """Read a GRD file and return a Grid3D object"""
@@ -854,7 +854,7 @@ class ReadGRD(VolumeReaderBase):
         # else this is an unreadable GRD file
         if processor not in (1,2,3):
             f.close()
-            print "ReadGRD: ERROR: %s is not a valid GRD file"%filename
+            print("ReadGRD: ERROR: %s is not a valid GRD file"%filename)
             return
             
         offset, nc, nr, ns  = unpack(sw+"4i", data[12:28])
@@ -922,8 +922,8 @@ class ReadGRD(VolumeReaderBase):
         h['dimensions'] = str(self.data.shape)
 
         if disp_out is True:
-            print self.describe(h)
-            print 'time: ', time()-t1
+            print(self.describe(h))
+            print('time: ', time()-t1)
         
         return g
 
@@ -965,7 +965,7 @@ class ReadGRD(VolumeReaderBase):
 
         The rest of the header section is unused.
 """
-        print txt
+        print(txt)
 
 class ReadBRIX(VolumeReaderBase):
     """Read a BRIX or MAPPAGE (DSN6) crystallographic density
@@ -1014,7 +1014,7 @@ class ReadBRIX(VolumeReaderBase):
 
             # if neither, then this is an invalid file
             if prod_norm != 100:                
-                print "ReadBRIX: ERROR: %s is not a valid DSN6 file"%filename
+                print("ReadBRIX: ERROR: %s is not a valid DSN6 file"%filename)
                 return
 
             xorigin,yorigin,zorigin=unpack(sw+'3h', data[:6])
@@ -1073,7 +1073,7 @@ class ReadBRIX(VolumeReaderBase):
                 h.update( {'alpha':alpha,'beta':beta,'gamma':gamma })
                 h.update( {'prod':prod,'plus':plus })
             else:
-                print "ReadBRIX: ERROR: %s is not a valid BRIX file"%filename
+                print("ReadBRIX: ERROR: %s is not a valid BRIX file"%filename)
                 return
             
         size, unpackType, arraytype, gtype = self.getGRDElemSize(1)
@@ -1104,7 +1104,7 @@ class ReadBRIX(VolumeReaderBase):
                         fixedData=(Numeric.fromstring(cubeData, arraytype))
                     else: #do byteswapping
                         rawData = Numeric.fromstring(cubeData, Numeric.Int16)
-                        swapData = rawData.byteswap().tostring()
+                        swapData = rawData.byteswap().tobytes()
                         fixedData = Numeric.fromstring(swapData, arraytype)
                     matrix = Numeric.reshape(fixedData, (8,8,8))
                     ndata[zstart:zstart+zfwd, ystart:ystart+yfwd, xstart:xstart+xfwd] = \
@@ -1130,8 +1130,8 @@ class ReadBRIX(VolumeReaderBase):
         h.update( {'amin':amin,'amax':amax,'amean':amean,'arms':arms} )
     
         if disp_out is True:
-            print self.describe(h)
-            print 'time: ', time()-t1
+            print(self.describe(h))
+            print('time: ', time()-t1)
         
         return g
 
@@ -1174,7 +1174,7 @@ is a signature (a "smiley") that enables O and other programs to
 recognize the format of the file. Then comes a keyworded sequence
 giving the origin, extent, unit cell parameters etc.
 """
-        print txt
+        print(txt)
     
 class ReadSPIDER(VolumeReaderBase):
     """Read a SPIDER formatted file"""
@@ -1210,7 +1210,7 @@ class ReadSPIDER(VolumeReaderBase):
 
         # if neither, then this is an invalid file
         if iform != 3:                
-            print "ReadSPIDER: ERROR: %s is not a valid SPIDER file"%filename
+            print("ReadSPIDER: ERROR: %s is not a valid SPIDER file"%filename)
             return
         
         ns, nr, irec, nhrec, iform = unpack(sw+'5f', data[:20])
@@ -1256,8 +1256,8 @@ class ReadSPIDER(VolumeReaderBase):
         h['dimensions'] = str(self.data.shape)
 
         if disp_out is True:
-            print self.describe(h)
-            print 'time: ', time()-t1
+            print(self.describe(h))
+            print('time: ', time()-t1)
         
         return g
 
@@ -1358,7 +1358,7 @@ ordering from GNU/Linux on Intel, or HP Alpha machines. SPIDER contains
 the "CP TO OPEND" operation to interconvert these files. However SPIDER
 can read/write either byte ordering now.
 """
-        print txt
+        print(txt)
 
 
 class ReadRawiv(VolumeReaderBase):
@@ -1387,8 +1387,8 @@ class ReadRawiv(VolumeReaderBase):
         self.header['ncells'] = ncells
         size = width*height*depth
         if verbose:
-            print "header: ", h
-            print "nverts: ", nverts, "ncells: ", ncells
+            print("header: ", h)
+            print("nverts: ", nverts, "ncells: ", ncells)
         # load the data
         #l = myfile.read(width*height*depth)
         l = myfile.read() # read the rest of the file
@@ -1402,7 +1402,7 @@ class ReadRawiv(VolumeReaderBase):
         elif elsize == 8:
             mode = 10
         else:
-            print "Error: in ReadRawiv - unsupported data type, size= %d"%elsize
+            print("Error: in ReadRawiv - unsupported data type, size= %d"%elsize)
             return None
         
         size, unpackType, arraytype, gtype = self.getGRDElemSize(mode)
@@ -1515,8 +1515,8 @@ class ReadEM(VolumeReaderBase):
         self.header.update(h)
 
         if disp_out is True:
-            print self.describe(self.header)
-            print 'time: ', time()-t1
+            print(self.describe(self.header))
+            print('time: ', time()-t1)
         
         return g
        

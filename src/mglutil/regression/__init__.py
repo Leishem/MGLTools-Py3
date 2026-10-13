@@ -1,11 +1,11 @@
 import sys
-import string
+from mglcompat import pystring as string
 
 VERSION = string.split(sys.version)[0]
 
 if VERSION >= '2.1':
-    import testplus
+    from . import testplus
 else:
-    import testplus_before_2_1
+    from . import testplus_before_2_1
     testplus = testplus_before_2_1
 

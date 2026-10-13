@@ -252,10 +252,10 @@ class ParameterARViewer(gui.SubDialog):
         patt8='patt39'#back   
         #why loadDevice didnt set the transfo_position correctly
         self.epmv.mv.art.patternMgr.loadDevice(name='head',type='cube4',width=40.,
-        								trans=[0.,0.,-30.])
+                                                                        trans=[0.,0.,-30.])
         self.epmv.mv.art.patternMgr.loadDevice(name='bott',type='cube4',
-        							listPatt=[patt6,patt7,patt8,patt5],width=40.,
-        							trans=[0.,0.,-30.])
+                                                                listPatt=[patt6,patt7,patt8,patt5],width=40.,
+                                                                trans=[0.,0.,-30.])
         #offset ?
         self.epmv.mv.art.patternMgr.groups['head'].offset = [60.,0.,0.]
         self.epmv.mv.art.patternMgr.groups['bott'].offset = [60.,0.,0.]
@@ -2003,8 +2003,8 @@ print 'with self = PMV instance, and epmv as ePMV'
         #print "self.displaySticksAndBalls('"+sel+"',log=1,negate=",(not self.get(self.bs)),")" 
         #print cradius*scale,scale,ratio
         self.mv.displaySticksAndBalls(sel, log=1, cquality=0, sticksBallsLicorice='Sticks and Balls', 
-									bquality=0, cradius=cradius*scale, only=False, bRad=0.3, 
-									negate=(not self.GetBool(self.bs)), bScale=scale)
+                                                                        bquality=0, cradius=cradius*scale, only=False, bRad=0.3, 
+                                                                        negate=(not self.GetBool(self.bs)), bScale=scale)
         #self.mv.colorByAtomType(sel, ['balls','sticks'], log=1)
         self.updateViewer()
         self.mv.molDispl[mname][1]=self.GetBool(self.bs)

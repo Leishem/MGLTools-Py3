@@ -19,10 +19,10 @@ NAFILE = "NA.DAT"
 ROTAMERFILE = "ROTAMER.DAT"
 
 import os
-from pdb import *
-from utilities import *
-from structures import *
-from routines import *
+from .pdb import *
+from .utilities import *
+from .structures import *
+from .routines import *
 
 class Definition:
     """
@@ -139,7 +139,7 @@ class Definition:
                 myResidue.addDihedral(myResidue.get("atoms")[dihedralA].get("name"))
   
         if len(myResidue.get("dihedralatoms")) != int(dihedrals[0]) * 4:
-            raise ValueError, "Corrupt entry for torsion angles when parsing %s" % name
+            raise ValueError("Corrupt entry for torsion angles when parsing %s" % name)
 
         if restype == 1:
             for i in range(myResidue.numAtoms()):
@@ -168,7 +168,7 @@ class Definition:
                     break
                     
         if not os.path.isfile(defpath):
-            raise ValueError, "%s not found!" % defpath
+            raise ValueError("%s not found!" % defpath)
         
         file = open(defpath)
         lines = file.readlines()
@@ -217,7 +217,7 @@ class Definition:
             rotamerdef.renumberResidues()
             self.chains.append(rotamerdef)
         else:
-            raise ValueError, "%s not found!" % ROTAMERFILE
+            raise ValueError("%s not found!" % ROTAMERFILE)
 
 class DefinitionChain(Chain):
     """

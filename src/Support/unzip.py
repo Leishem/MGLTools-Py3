@@ -47,10 +47,10 @@ class unzip:
         # extract files to directoryectory structure
         for i, name in enumerate(zf.namelist()):
             if self.verbose == True:
-                print "Extracting %s" % name
+                print("Extracting %s" % name)
             elif perc > 0 and (i % perc) == 0 and i > 0:
                 complete = int (i / perc) * percent
-                print "%s%% complete" % complete
+                print("%s%% complete" % complete)
 
             if not name.endswith('/'):
                 if os.name == 'nt': #sys.platform =='win32':
@@ -109,12 +109,12 @@ class unzip:
             #        directorys.append(name)
             #elif name.endswith('/'):
             #    directorys.append(name)
-        directories = directories.keys()
+        directories = list(directories.keys())
         directories.sort()
         return directories
 
 def usage():
-    print """usage: unzip.py -z <zipfile> -o <targetdirectory>
+    print("""usage: unzip.py -z <zipfile> -o <targetdirectory>
     <zipfile> is the source zipfile to extract
     <targetdirectory> is the target destination
 
@@ -127,7 +127,7 @@ def usage():
     --verbose
     --percent=10
     --zipfile=<zipfile>
-    --outdirectory=<targetdirectory>"""
+    --outdirectory=<targetdirectory>""")
     
 
 def main():

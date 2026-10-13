@@ -3,7 +3,7 @@ import sys,os
 
 #get the current software
 if __name__ == "__main__":
-	soft = os.path.basename(sys.argv[0]).lower()
+        soft = os.path.basename(sys.argv[0]).lower()
 else : 
     soft = __name__
 
@@ -70,7 +70,7 @@ armature,bones=epmv.helper.armature(name,atoms,scn=sc,root=masterParent)
 #attach the bones to ss
 listeObject=[]
 #maya have name issue!
-for name,g in mol.geomContainer.geoms.items():
+for name,g in list(mol.geomContainer.geoms.items()):
     if name[:4] in ['Heli', 'Shee', 'Coil', 'Turn', 'Stra']:
         if soft == 'maya':
             g.obj=g.obj[1:]
@@ -109,8 +109,8 @@ if soft == 'c4d':
 
 #make isocontour exple
 self.readAny(demodir+pdbname+mext)
-name = self.grids3D.keys()[-1]
-print name
+name = list(self.grids3D.keys())[-1]
+print(name)
 grid = self.grids3D[name]
 self.cmol = mol  	
 self.isoC.select(grid_name=name)

@@ -6,7 +6,7 @@
 from Pmv.mvCommand import MVCommand
 from ViewerFramework.VFCommand import CommandGUI
 import sys, subprocess, os
-from tkMessageBox import *
+from tkinter.messagebox import *
 
 class Update(MVCommand):
     
@@ -15,7 +15,7 @@ class Update(MVCommand):
         try:
             from Support.update import Update
         except ImportError:
-            print "Support package is needed to get updates"
+            print("Support package is needed to get updates")
             return
         
         update = Update()

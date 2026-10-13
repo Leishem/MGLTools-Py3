@@ -1,6 +1,6 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 N=Numeric
 import types
 
@@ -19,14 +19,14 @@ normal: return normalized vector
 def norm (A):
     """     Return normalized vector A.
 """
-    if type(A) == types.ListType:
+    if type(A) == list:
         A=Numeric.array(A,'f')
         res= A/Numeric.sqrt(Numeric.dot(A,A))
         return res.tolist()    
     elif type(A)==Numeric.ArrayType:    
         return A/Numeric.sqrt(Numeric.dot(A,A))    
     else:
-        print "Need a list or Numeric array"
+        print("Need a list or Numeric array")
         return None
 
 def getCenter(coords):

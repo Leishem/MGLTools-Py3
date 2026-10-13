@@ -96,7 +96,7 @@ Modules:
     the viewer.
 """
 
-import os, string, warnings
+import os, warnings; from mglcompat import pystring as string
 import traceback, sys, glob, time
 
 class VFEvent:
@@ -110,7 +110,7 @@ class VFEvent:
         if len(args):
             self.args = args
         if len(kw):
-            for k,v in kw.items():
+            for k,v in list(kw.items()):
                 setattr(self, k, v)
         
 class AddObjectEvent(VFEvent):
@@ -193,7 +193,7 @@ parent   -- parent geometry, if not specified we use self.masterGeom
                 nameUsed=True
                 break
 
-        if nameUsed or self.geoms.has_key(geomName):
+        if nameUsed or geomName in self.geoms:
             newName = geomName+str(len(self.geoms))
             geom.name = newName
             warnings.warn("renaming geometry %s to %s"%(geomName, newName))#, stacklevel=14)
@@ -235,17 +235,17 @@ from ViewerFramework.basicCommand import SaveSessionCommand, SaveSessionCommandG
 from ViewerFramework.helpCommands import helpCommand
 
 try:
-    from comm import Comm
+    from .comm import Comm
 except:
     pass
 
 from DejaVu import Viewer
 from DejaVu.Camera import Camera
 
-import types, Tkinter
-import thread
+import types, tkinter
+import _thread
 import os, sys, traceback
-import tkMessageBox
+import tkinter.messagebox
 from mglutil.preferences import UserPreference
 class ViewerFramework:
     """
@@ -280,8 +280,8 @@ class ViewerFramework:
 
         self.hasGui = gui
         self.embeded=False
-	self.cmdHistory = [] # history of command [(cmd, args, kw)]
-	
+        self.cmdHistory = [] # history of command [(cmd, args, kw)]
+        
         global __debug__
         self.withShell = withShell
         self.trapExceptions = trapExceptions
@@ -312,7 +312,7 @@ class ViewerFramework:
         # Interface to Visual Programming Environment, if available
         self.visionAPI = None
         if self.hasGui :
-    	    try:
+            try:
                     # does this package exists?
                     from Vision.API import VisionInterface
                     # create empty object. Note that this will be filled with life
@@ -327,10 +327,10 @@ class ViewerFramework:
         self.undoCmdStack = [] # list of strings used to undo
 
         # lock needs to be acquired before object can be added
-        self.objectsLock = thread.allocate_lock()
+        self.objectsLock = _thread.allocate_lock()
 
         # lock needs to be acquired before topcommands can be run
-        self.commandsLock = thread.allocate_lock()
+        self.commandsLock = _thread.allocate_lock()
 
         # nexted commands counter
         self.commandNestingLevel = 0
@@ -503,7 +503,7 @@ GUI geometry, and whether camera is docked or not.
         self.eventListeners = {}
         self.userpref.saveDefaults()
         self.userpref.loadSettings()
-        if self.userpref.has_key('Save Perspective on Exit') and  self.userpref['Save Perspective on Exit']['value'] == 'yes':
+        if 'Save Perspective on Exit' in self.userpref and  self.userpref['Save Perspective on Exit']['value'] == 'yes':
             self.restorePerspective()        
         #self.GUI.VIEWER.ReallyRedraw()
 
@@ -514,7 +514,7 @@ event has to be a class subclassing VFEvent
 """
         assert issubclass(event, VFEvent)
         assert callable(function)
-        if not self.eventListeners.has_key(event):
+        if event not in self.eventListeners:
             self.eventListeners[event] = [function]
         else:
             if function in self.eventListeners[event]:
@@ -528,7 +528,7 @@ event has to be a class subclassing VFEvent
         """call all registered listeners for this event type
 """
         assert isinstance(event, VFEvent)
-        if self.eventListeners.has_key(event.__class__):
+        if event.__class__ in self.eventListeners:
             if self.hasGui:
                 vi=self.GUI.VIEWER
                 autoRedraw = vi.autoRedraw
@@ -575,7 +575,7 @@ event has to be a class subclassing VFEvent
         function to define an hostapplication, take the string name of the application
         """
         if self.hasGui:
-			raise RuntiomeError("VF with GUI cannot be embedded")
+                        raise RuntiomeError("VF with GUI cannot be embedded")
         from ViewerFramework.hostApp import HostApp
         self.hostApp = HostApp(self, hostApp, debug=debug)
         self.embeded=True
@@ -730,10 +730,10 @@ event has to be a class subclassing VFEvent
         if not os.path.isdir(new):
             if not hasattr(self,'setUserPreference') or not hasattr(self.setUserPreference, 'form'): return
             root = self.setUserPreference.form.root
-            from tkMessageBox import showerror
+            from tkinter.messagebox import showerror
             showerror("Invalid Startup Directory", "Directory %s "%new +
            " does not exists. Please select a valid Directory", parent=root)
-            from tkFileDialog import askdirectory
+            from tkinter.filedialog import askdirectory
             dir = askdirectory(parent=root, 
                                title='Please select startup directory')
             if dir:
@@ -764,8 +764,8 @@ event has to be a class subclassing VFEvent
             try:
                 self.source(rcFile, globalNames=1, log=1)
                 return True
-            except Exception, inst:
-                print inst, rcFile
+            except Exception as inst:
+                print(inst, rcFile)
         return
         
     def tryOpenFileInWrite(self, filename):
@@ -802,15 +802,15 @@ event has to be a class subclassing VFEvent
         resourceFileLocation = findResourceFile(self,
                                                 resourceFile=self.resourceFile)
 
-        if resourceFileLocation.has_key('currentdir') and \
+        if 'currentdir' in resourceFileLocation and \
            not resourceFileLocation['currentdir'] is None:
             path = resourceFileLocation['currentdir']
 
-        elif resourceFileLocation.has_key('home') and \
+        elif 'home' in resourceFileLocation and \
              not resourceFileLocation['home'] is None:
             path = resourceFileLocation['home']
 
-        elif resourceFileLocation.has_key('package') and \
+        elif 'package' in resourceFileLocation and \
              not resourceFileLocation['package'] is None:
             path = resourceFileLocation['package']
         else:
@@ -827,10 +827,10 @@ event has to be a class subclassing VFEvent
         relies on the command to release a lock called self.done
         only works for commands, not for macros
         """
-        lock = thread.allocate_lock()
+        lock = _thread.allocate_lock()
         lock.acquire()
         func.private_threadDone = lock
-        apply( func, args, kw )
+        func(*args, **kw)
         func.waitForCompletion()
 
 
@@ -898,7 +898,7 @@ event has to be a class subclassing VFEvent
                     result = command( *args, **kw )
 
                 except:
-                    print 'ERROR *********************************************'
+                    print('ERROR *********************************************')
                     if self.guiVisible==1 and self.withShell:
                         self.GUI.pyshell.top.deiconify()
                         self.GUI.ROOT.config(cursor='')
@@ -924,7 +924,7 @@ event has to be a class subclassing VFEvent
         if self.hasGui:
             self.GUI.message(str,NL)
         else:
-            print str
+            print(str)
 
     def unsolicitedPick(self, pick):
         """treat and unsollicited picking event"""
@@ -934,7 +934,7 @@ event has to be a class subclassing VFEvent
             vi.unsolicitedPick(pick)
         else:
             #print picked geometry
-            for k in pick.hits.keys():
+            for k in list(pick.hits.keys()):
                 self.message(k)
         
     def addBasicCommands(self):
@@ -966,8 +966,8 @@ event has to be a class subclassing VFEvent
             if not os.path.isdir(self.vfResourcePath):
                 try:
                     os.mkdir(self.vfResourcePath)
-                except Exception, inst:
-                    print inst
+                except Exception as inst:
+                    print(inst)
                     txt="Cannot create the Resource Folder %s" %self.vfResourcePath
                     self.vfResourcePath = None                
 
@@ -1009,11 +1009,11 @@ event has to be a class subclassing VFEvent
             self.GUI.addMenuButton( bar, 'Grid3D', {}, {'side':'right'})
             
             try:
-                import grid3DCommands
+                from . import grid3DCommands
                 self.browseCommands("grid3DCommands", package="ViewerFramework", topCommand=0)
-            except Exception, inst:
-                print inst
-                print "Cannot import grid3DCommands. Disabling grid3DCommands..."
+            except Exception as inst:
+                print(inst)
+                print("Cannot import grid3DCommands. Disabling grid3DCommands...")
             #self.GUI.ROOT.after(1500, self.removeCommand.loadCommands)
              
         # load helpCommand and searchForCmd
@@ -1078,11 +1078,11 @@ adds a command to the list of commands currently executed when a new object
 is added
 """
         assert callable(cmd)
-        assert type(args)==types.TupleType or type(args)==types.ListType
-        assert type(kw)==types.DictType
+        assert type(args)==tuple or type(args)==list
+        assert type(kw)==dict
         assert cmd.flag & Command.objArgOnly
         kw['topCommand'] = 0
-        if type(args)==types.ListType:
+        if type(args)==list:
             args = tuple(args)
         self.onAddObjectCmds.append( (cmd, args, kw) )
 
@@ -1096,7 +1096,7 @@ is added
             if com[0]==cmd:
                 self.onAddObjectCmds.remove(com)
                 return com
-        print 'WARNING: command %s not found'%cmd.name
+        print('WARNING: command %s not found'%cmd.name)
         return None
 
         
@@ -1143,7 +1143,7 @@ is added
         for com in self.onAddObjectCmds:
             com[2]['redraw']=0
             com[2]['log']=0
-            apply( com[0], (obj,)+com[1], com[2])
+            com[0](*(obj,)+com[1], **com[2])
             # note we have to re-configure the progress bar because doitWrapper
             # will overwrite the mode to 'percent'
             #check for gui
@@ -1188,7 +1188,7 @@ is added
 
         # clean up the managedGeometries list
         if obj.geomContainer:
-            for cmd in self.commands.values():
+            for cmd in list(self.commands.values()):
                 if len(cmd.managedGeometries)==0: continue
                 geomList = []
                 for g in cmd.managedGeometries:
@@ -1210,7 +1210,7 @@ is added
     def addColorMap(self, colorMap):
         from DejaVu.colorMap import ColorMap
         assert isinstance(colorMap, ColorMap)
-        if self.colorMaps.has_key('colorMap.name'):
+        if 'colorMap.name' in self.colorMaps:
             warnings.warn('invalid attemp to replace an existing colormap')
         else:
             self.colorMaps[colorMap.name] = colorMap
@@ -1243,12 +1243,12 @@ is added
         assert isinstance(command, Command)
 
         # happens because of dependencies
-        if name in self.commands.keys():
+        if name in list(self.commands.keys()):
             return  self.commands[name]
 
         error = self.tryto(command.checkDependencies, self)
         if error=='ERROR':
-            print '\nWARNING: dependency check failed for command %s' % name
+            print('\nWARNING: dependency check failed for command %s' % name)
             return
         
 ##              def download_cb():
@@ -1299,7 +1299,7 @@ is added
         #call the onAddCmdToViewer method of the new command
         command.onAddCmdToViewer()
 
-        for c in self.commands.values():
+        for c in list(self.commands.values()):
             c.onAddNewCmd(command)
             
         if hasattr(command, 'onAddObjectToViewer'):
@@ -1358,7 +1358,7 @@ is added
             default = ''
             if idir: default = idir
             if ifile: default = os.path.join( default, ifile )
-            file = raw_input("file name [%s] :"%default)
+            file = input("file name [%s] :"%default)
             if file=='':
                 if default != '' and os.path.exists(file):
                     file = default
@@ -1395,7 +1395,7 @@ is added
             default = ''
             if idir: default = idir
             if ifile: default = os.path.join( default, ifile )
-            file = raw_input("file name [%s] :"%default)
+            file = input("file name [%s] :"%default)
             if file=='':
                 if default != '' and os.path.exists(file):
                     file = default
@@ -1424,21 +1424,21 @@ is added
             flag = self.tryOpenFileInWrite(fname1)
             while flag == 0:
                 idf = InputFormDescr(title = 'Directory not writable ...')
-                variable = Tkinter.StringVar()
-                idf.append({'name':'noLog','widgetType': Tkinter.Radiobutton,
+                variable = tkinter.StringVar()
+                idf.append({'name':'noLog','widgetType': tkinter.Radiobutton,
                             'text':'noLog','variable':variable,
                             'value':'noLog','defaultValue':'noLog',
-                            'gridcfg':{'sticky':Tkinter.W}})
+                            'gridcfg':{'sticky':tkinter.W}})
 
                 idf.append({'name':'browse','widgetType': 'SaveButton',
-                            'typeofwidget':Tkinter.Radiobutton,
+                            'typeofwidget':tkinter.Radiobutton,
                             'types':[ ('Python Files', '*.py')],
                             'title':'Choose a log File...',
                             'text':'browse',
                             'variable':variable,
                             'defaultValue':'noLog',
                             'value':'browse',
-                            'gridcfg':{'sticky':Tkinter.W}})
+                            'gridcfg':{'sticky':tkinter.W}})
                 self.GUI.ROOT.deiconify()
                 self.GUI.ROOT.update()
                 result = self.getUserInput(idf)
@@ -1448,11 +1448,11 @@ is added
                 elif result['noLog'] == 'noLog':
                     self.logMode  = 'no'
                     flag = 1
-                elif result['noLog'] == 'browse' and result.has_key('browse'):
+                elif result['noLog'] == 'browse' and 'browse' in result:
                     assert not result['browse'] in ['']
                     flag = self.tryOpenFileInWrite(result['browse'])
-                elif result['noLog'] == 'browse' and not result.has_key('browse'):
-                    print "you didn't enter a proper file name try again"
+                elif result['noLog'] == 'browse' and 'browse' not in result:
+                    print("you didn't enter a proper file name try again")
                     flag = 0
 
 
@@ -1464,10 +1464,10 @@ is added
 
     def warningMsg(self, msg, title='WARNING: ', parent = None):
         """None <- warningMsg(msg)"""
-        if type(title) is not types.StringType:
+        if type(title) is not bytes:
             title = 'WARNING: '
         if self.hasGui and self.messageFormat=='pop-up':
-            tkMessageBox.showwarning(title, msg,parent = parent)
+            tkinter.messagebox.showwarning(title, msg,parent = parent)
         else:
             sys.stdout.write(title+msg+'\n')
 
@@ -1475,9 +1475,9 @@ is added
     def askOkCancelMsg(self, msg):
         """None <- okCancelMsg(msg)"""
         if self.hasGui:
-            return tkMessageBox.askyesno('expand selection', msg)
+            return tkinter.messagebox.askyesno('expand selection', msg)
         else:
-            val = raw_input('anser [0]/1: '+msg+'\n')
+            val = input('anser [0]/1: '+msg+'\n')
             if val=='1': return 1
             else: return 0
 
@@ -1486,7 +1486,7 @@ is added
     def errorMsg(self, msg, errtype=RuntimeError):
         """None <- errorMsg(errorType, msg)"""
         if self.hasGui:
-            tkMessageBox.showerror(msg)
+            tkinter.messagebox.showerror(msg)
         raise errtype(msg)
 
 
@@ -1549,7 +1549,7 @@ coordinates
 """
         # FIXME this is in DejaVu.VIewer and should go away here
         vt = []
-        for geom, values in hits.items():
+        for geom, values in list(hits.items()):
             coords = geom.vertexSet.vertices.array
             for vert, instance in values:
                 M = geom.GetMatrix(geom.LastParentBeforeRoot(), instance[1:])

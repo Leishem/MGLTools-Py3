@@ -1,5 +1,5 @@
 #execfile('/Library/MGLTools/1.5.6/MGLToolsPckgs/mglutil/hostappli/lipid.py')
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from mglutil.hostappli import pdb_c4d as epmv
 self=epmv.start(debug=1)
 self.browseCommands('superimposeCommandsNew', commands=None, log=0, package='Pmv')
@@ -21,7 +21,7 @@ transMat = Numeric.array(self.superimposeAtoms.rigidfitAligner.translationMatrix
 
 #need to apply it on our geometry....but which level
 
-print rotMat
-print transMat
+print(rotMat)
+print(transMat)
 
-	
+        

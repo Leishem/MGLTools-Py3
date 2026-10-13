@@ -534,7 +534,7 @@ class ns0:
         schema = "http://nbcr.sdsc.edu/opal/types"
         substitutionGroup = None
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'getAppMetadataInput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'getAppMetadataInput')
             kw["aname"] = "_getAppMetadataInput"
             if ns0.AppMetadataInputType_Def not in ns0.getAppMetadataInput_Dec.__bases__:
                 bases = list(ns0.getAppMetadataInput_Dec.__bases__)
@@ -549,7 +549,7 @@ class ns0:
         schema = "http://nbcr.sdsc.edu/opal/types"
         substitutionGroup = None
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'getAppMetadataOutput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'getAppMetadataOutput')
             kw["aname"] = "_getAppMetadataOutput"
             if ns0.AppMetadataType_Def not in ns0.getAppMetadataOutput_Dec.__bases__:
                 bases = list(ns0.getAppMetadataOutput_Dec.__bases__)
@@ -564,7 +564,7 @@ class ns0:
         schema = "http://nbcr.sdsc.edu/opal/types"
         substitutionGroup = None
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'getAppConfigInput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'getAppConfigInput')
             kw["aname"] = "_getAppConfigInput"
             if ns0.AppConfigInputType_Def not in ns0.getAppConfigInput_Dec.__bases__:
                 bases = list(ns0.getAppConfigInput_Dec.__bases__)
@@ -579,7 +579,7 @@ class ns0:
         schema = "http://nbcr.sdsc.edu/opal/types"
         substitutionGroup = None
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'getAppConfigOutput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'getAppConfigOutput')
             kw["aname"] = "_getAppConfigOutput"
             if ns0.AppConfigType_Def not in ns0.getAppConfigOutput_Dec.__bases__:
                 bases = list(ns0.getAppConfigOutput_Dec.__bases__)
@@ -594,7 +594,7 @@ class ns0:
         schema = "http://nbcr.sdsc.edu/opal/types"
         substitutionGroup = None
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'launchJobInput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'launchJobInput')
             kw["aname"] = "_launchJobInput"
             if ns0.JobInputType_Def not in ns0.launchJobInput_Dec.__bases__:
                 bases = list(ns0.launchJobInput_Dec.__bases__)
@@ -609,7 +609,7 @@ class ns0:
         schema = "http://nbcr.sdsc.edu/opal/types"
         substitutionGroup = None
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'launchJobOutput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'launchJobOutput')
             kw["aname"] = "_launchJobOutput"
             if ns0.JobSubOutputType_Def not in ns0.launchJobOutput_Dec.__bases__:
                 bases = list(ns0.launchJobOutput_Dec.__bases__)
@@ -624,7 +624,7 @@ class ns0:
         schema = "http://nbcr.sdsc.edu/opal/types"
         substitutionGroup = None
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'launchJobBlockingInput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'launchJobBlockingInput')
             kw["aname"] = "_launchJobBlockingInput"
             if ns0.JobInputType_Def not in ns0.launchJobBlockingInput_Dec.__bases__:
                 bases = list(ns0.launchJobBlockingInput_Dec.__bases__)
@@ -639,7 +639,7 @@ class ns0:
         schema = "http://nbcr.sdsc.edu/opal/types"
         substitutionGroup = None
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'launchJobBlockingOutput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'launchJobBlockingOutput')
             kw["aname"] = "_launchJobBlockingOutput"
             if ns0.BlockingOutputType_Def not in ns0.launchJobBlockingOutput_Dec.__bases__:
                 bases = list(ns0.launchJobBlockingOutput_Dec.__bases__)
@@ -653,7 +653,7 @@ class ns0:
         literal = "queryStatusInput"
         schema = "http://nbcr.sdsc.edu/opal/types"
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'queryStatusInput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'queryStatusInput')
             kw["aname"] = "_queryStatusInput"
             class IHolder(str): typecode=self
             kw["pyclass"] = IHolder
@@ -665,7 +665,7 @@ class ns0:
         schema = "http://nbcr.sdsc.edu/opal/types"
         substitutionGroup = None
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'queryStatusOutput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'queryStatusOutput')
             kw["aname"] = "_queryStatusOutput"
             if ns0.StatusOutputType_Def not in ns0.queryStatusOutput_Dec.__bases__:
                 bases = list(ns0.queryStatusOutput_Dec.__bases__)
@@ -679,7 +679,7 @@ class ns0:
         literal = "getJobStatisticsInput"
         schema = "http://nbcr.sdsc.edu/opal/types"
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'getJobStatisticsInput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'getJobStatisticsInput')
             kw["aname"] = "_getJobStatisticsInput"
             class IHolder(str): typecode=self
             kw["pyclass"] = IHolder
@@ -691,7 +691,7 @@ class ns0:
         schema = "http://nbcr.sdsc.edu/opal/types"
         substitutionGroup = None
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'getJobStatisticsOutput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'getJobStatisticsOutput')
             kw["aname"] = "_getJobStatisticsOutput"
             if ns0.JobStatisticsType_Def not in ns0.getJobStatisticsOutput_Dec.__bases__:
                 bases = list(ns0.getJobStatisticsOutput_Dec.__bases__)
@@ -705,7 +705,7 @@ class ns0:
         literal = "getOutputsInput"
         schema = "http://nbcr.sdsc.edu/opal/types"
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'getOutputsInput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'getOutputsInput')
             kw["aname"] = "_getOutputsInput"
             class IHolder(str): typecode=self
             kw["pyclass"] = IHolder
@@ -717,7 +717,7 @@ class ns0:
         schema = "http://nbcr.sdsc.edu/opal/types"
         substitutionGroup = None
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'getOutputsOutput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'getOutputsOutput')
             kw["aname"] = "_getOutputsOutput"
             if ns0.JobOutputType_Def not in ns0.getOutputsOutput_Dec.__bases__:
                 bases = list(ns0.getOutputsOutput_Dec.__bases__)
@@ -732,7 +732,7 @@ class ns0:
         schema = "http://nbcr.sdsc.edu/opal/types"
         substitutionGroup = None
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'getOutputAsBase64ByNameInput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'getOutputAsBase64ByNameInput')
             kw["aname"] = "_getOutputAsBase64ByNameInput"
             if ns0.OutputsByNameInputType_Def not in ns0.getOutputAsBase64ByNameInput_Dec.__bases__:
                 bases = list(ns0.getOutputAsBase64ByNameInput_Dec.__bases__)
@@ -746,7 +746,7 @@ class ns0:
         literal = "getOutputAsBase64ByNameOutput"
         schema = "http://nbcr.sdsc.edu/opal/types"
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'getOutputAsBase64ByNameOutput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'getOutputAsBase64ByNameOutput')
             kw["aname"] = "_getOutputAsBase64ByNameOutput"
             class IHolder(str): typecode=self
             kw["pyclass"] = IHolder
@@ -757,7 +757,7 @@ class ns0:
         literal = "destroyInput"
         schema = "http://nbcr.sdsc.edu/opal/types"
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'destroyInput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'destroyInput')
             kw["aname"] = "_destroyInput"
             class IHolder(str): typecode=self
             kw["pyclass"] = IHolder
@@ -769,7 +769,7 @@ class ns0:
         schema = "http://nbcr.sdsc.edu/opal/types"
         substitutionGroup = None
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'destroyOutput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'destroyOutput')
             kw["aname"] = "_destroyOutput"
             if ns0.StatusOutputType_Def not in ns0.destroyOutput_Dec.__bases__:
                 bases = list(ns0.destroyOutput_Dec.__bases__)
@@ -784,7 +784,7 @@ class ns0:
         schema = "http://nbcr.sdsc.edu/opal/types"
         substitutionGroup = None
         def __init__(self, **kw):
-            kw["pname"] = (u'http://nbcr.sdsc.edu/opal/types', u'opalFaultOutput')
+            kw["pname"] = ('http://nbcr.sdsc.edu/opal/types', 'opalFaultOutput')
             kw["aname"] = "_opalFaultOutput"
             if ns0.FaultType_Def not in ns0.opalFaultOutput_Dec.__bases__:
                 bases = list(ns0.opalFaultOutput_Dec.__bases__)

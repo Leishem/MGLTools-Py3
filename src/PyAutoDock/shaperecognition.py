@@ -11,7 +11,7 @@
 #
 
 import math
-from scorer import ScoringStrategy
+from .scorer import ScoringStrategy
 from mglutil.math import usr
 
 

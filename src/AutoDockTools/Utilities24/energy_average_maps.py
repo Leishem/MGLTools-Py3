@@ -9,19 +9,19 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: energy_average_maps.py "
-        print 
-        print "    Invoke this script in directory containing all maps..."
-        print "    Optional parameters:"
-        print "        [-s]    map stem ('weighted')"
-        print "        [-v]    verbose output"
+        print("Usage: energy_average_maps.py ")
+        print() 
+        print("    Invoke this script in directory containing all maps...")
+        print("    Optional parameters:")
+        print("        [-s]    map stem ('weighted')")
+        print("        [-v]    verbose output")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 's:vh')
-    except getopt.GetoptError, msg:
-        print 'energy_average_maps.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('energy_average_maps.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -35,10 +35,10 @@ if __name__ == '__main__':
         #print "o=", o, " a=", a
         if o in ('-s', '--s'):
             map_stem = a
-            if verbose: print 'set map_stem to ', a
+            if verbose: print('set map_stem to ', a)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
@@ -58,25 +58,25 @@ if __name__ == '__main__':
     del(atomtypes['e'])
     del(atomtypes['d'])
 
-    all_stems = stems.keys()
+    all_stems = list(stems.keys())
     all_stems.sort()
-    if verbose: print 'all_stems=', all_stems
+    if verbose: print('all_stems=', all_stems)
 
-    all_types = atomtypes.keys()
+    all_types = list(atomtypes.keys())
     all_types.sort()
-    if verbose: print 'all_types=', all_types
+    if verbose: print('all_types=', all_types)
 
     all_lines = {}
     for t in all_types:      #loop over atom types
         for s in all_stems:  #loop over receptors
             all_lines[s] = {}
             fn = "%s.%s.map" %(s,t)
-            if verbose: print "opening ", fn
+            if verbose: print("opening ", fn)
             fptr = open(fn)
             all = fptr.readlines()
             fptr.close()
             #skip the first 6 lines of header and convert readlines output(strings) to floats
-            all_lines[s][t] = map(float, all[6:])
+            all_lines[s][t] = list(map(float, all[6:]))
         num_pts = len(all_lines[s][t]) 
         all_wt_values = []
         for i in range(num_pts):
@@ -103,7 +103,7 @@ if __name__ == '__main__':
             l = '%.3f\n'%v
             fptr.write(l)
         fptr.close()
-        if verbose: print "wrote ", fn
+        if verbose: print("wrote ", fn)
     #------------------------------------------------------------------
     #   d,e maps
     #------------------------------------------------------------------
@@ -111,12 +111,12 @@ if __name__ == '__main__':
         for s in all_stems:  #loop over receptors
             all_lines[s] = {}
             fn = "%s.%s.map" %(s,t)
-            if verbose: print "opening ", fn
+            if verbose: print("opening ", fn)
             fptr = open(fn)
             all = fptr.readlines()
             fptr.close()
             #skip the first 6 lines of header and convert to float
-            all_lines[s][t] = map(float, all[6:])
+            all_lines[s][t] = list(map(float, all[6:]))
         #perhaps check this is the same as the first part
         #assert len(all_lines[s][t])==num_pts 
         num_pts = len(all_lines[s][t]) 
@@ -129,7 +129,7 @@ if __name__ == '__main__':
                 val = all_lines[s][t][i]
                 pt_vals.append(val)
             #get list of absolute value of all the values for this point
-            abs_values = map(abs, pt_vals)
+            abs_values = list(map(abs, pt_vals))
             #get mininum of list of absolute values
             mval = min(abs_values)
             #get index of the mininum of list of absolute values
@@ -145,7 +145,7 @@ if __name__ == '__main__':
             l = '%.3f\n'%v
             fptr.write(l)
         fptr.close()
-        if verbose: print "wrote ", fn
+        if verbose: print("wrote ", fn)
 
     #------------------------------------------------------------------
     #   .fld and .xyz files: use last stem 's'
@@ -155,22 +155,22 @@ if __name__ == '__main__':
     fptr = open(xyz_fn)
     lines = fptr.readlines()
     fptr.close()
-    if verbose: print "read ", xyz_fn
+    if verbose: print("read ", xyz_fn)
     new_fn = map_stem + '.maps.xyz'
     optr = open(new_fn, 'w')
     for l in lines: 
         optr.write(l)
     optr.close()    
-    if verbose: print "wrote ", new_fn
+    if verbose: print("wrote ", new_fn)
     #fld file
     fld_fn = s + '.maps.fld'
     fptr = open(fld_fn)
     lines = fptr.readlines()
     fptr.close()
-    if verbose: print "read ", fld_fn
+    if verbose: print("read ", fld_fn)
     new_fn = map_stem + '.maps.fld'
     optr = open(new_fn, 'w')
     for l in lines: 
         optr.write(l.replace(s, map_stem))
     optr.close()    
-    if verbose: print "wrote ", new_fn
+    if verbose: print("wrote ", new_fn)

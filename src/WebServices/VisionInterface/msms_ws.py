@@ -29,8 +29,8 @@ Output Ports
 
     def __init__(self, name='WebMSMS', host = None, **kw):
         kw['name'] = name
-        apply( MacroNode.__init__, (self,), kw)
-        self.host = self.constrkw['host'] = `host`
+        MacroNode.__init__(*(self,), **kw)
+        self.host = self.constrkw['host'] = repr(host)
         from WebServices.VisionInterface.WSNodes import OpalService
         self.opal_service = OpalService(self.host)
 
@@ -46,7 +46,7 @@ Output Ports
         from Vision.StandardNodes import stdlib
         net.editor.addLibraryInstance(stdlib,"Vision.StandardNodes", "stdlib")
         
-        if self.library and not self.library.libraryDescr.has_key(self.host[1:-1]):
+        if self.library and self.host[1:-1] not in self.library.libraryDescr:
             from WebServices.VisionInterface.WSNodes import addreplaceCategory
             addreplaceCategory(self.host[1:-1])  
 
@@ -77,7 +77,7 @@ Output Ports
             input_Ports = self.macroNetwork.ipNode
             input_Ports.move(13, 4)
         except:
-            print "WARNING: failed to restore MacroInputNode named input Ports in network self.macroNetwork"
+            print("WARNING: failed to restore MacroInputNode named input Ports in network self.macroNetwork")
             print_exc()
             input_Ports=None
         try:
@@ -86,7 +86,7 @@ Output Ports
             output_Ports = self.macroNetwork.opNode
             output_Ports.move(256, 220)
         except:
-            print "WARNING: failed to restore MacroOutputNode named output Ports in network self.macroNetwork"
+            print("WARNING: failed to restore MacroOutputNode named output Ports in network self.macroNetwork")
             print_exc()
             output_Ports=None
         try:
@@ -95,12 +95,12 @@ Output Ports
             from MolKit.VisionInterface.MolKitNodes import AssignRadii
             Assign_Radii = AssignRadii(constrkw = {}, name='Assign Radii', library=molkitlib)
             self.macroNetwork.addNode(Assign_Radii,30,68)
-            apply(Assign_Radii.getInputPortByName('molecules').configure, (), {'color': '#c64e70', 'cast': True, 'shape': 'oval'})
-            apply(Assign_Radii.getInputPortByName('united').configure, (), {'color': 'yellow', 'cast': True, 'shape': 'circle'})
-            apply(Assign_Radii.getOutputPortByName('molecules').configure, (), {'color': '#c64e70', 'shape': 'oval'})
-            apply(Assign_Radii.getOutputPortByName('radii').configure, (), {'color': 'cyan', 'shape': 'oval'})
+            Assign_Radii.getInputPortByName('molecules').configure(*(), **{'color': '#c64e70', 'cast': True, 'shape': 'oval'})
+            Assign_Radii.getInputPortByName('united').configure(*(), **{'color': 'yellow', 'cast': True, 'shape': 'circle'})
+            Assign_Radii.getOutputPortByName('molecules').configure(*(), **{'color': '#c64e70', 'shape': 'oval'})
+            Assign_Radii.getOutputPortByName('radii').configure(*(), **{'color': 'cyan', 'shape': 'oval'})
         except:
-            print "WARNING: failed to restore AssignRadii named Assign Radii in network self.macroNetwork"
+            print("WARNING: failed to restore AssignRadii named Assign Radii in network self.macroNetwork")
             print_exc()
             Assign_Radii=None
         try:
@@ -109,13 +109,13 @@ Output Ports
             from MolKit.VisionInterface.MolKitNodes import NodeSelector
             Select_Nodes = NodeSelector(constrkw = {}, name='Select Nodes', library=molkitlib)
             self.macroNetwork.addNode(Select_Nodes,29,135)
-            apply(Select_Nodes.getInputPortByName('nodes').configure, (), {'color': '#c64e70', 'cast': True, 'shape': 'oval'})
-            apply(Select_Nodes.getInputPortByName('nodeType').configure, (), {'color': 'white', 'cast': True, 'shape': 'oval'})
-            apply(Select_Nodes.getInputPortByName('selectionString').configure, (), {'color': 'white', 'cast': True, 'shape': 'oval'})
-            apply(Select_Nodes.getOutputPortByName('nodes').configure, (), {'color': '#fe92a0', 'shape': 'oval'})
+            Select_Nodes.getInputPortByName('nodes').configure(*(), **{'color': '#c64e70', 'cast': True, 'shape': 'oval'})
+            Select_Nodes.getInputPortByName('nodeType').configure(*(), **{'color': 'white', 'cast': True, 'shape': 'oval'})
+            Select_Nodes.getInputPortByName('selectionString').configure(*(), **{'color': 'white', 'cast': True, 'shape': 'oval'})
+            Select_Nodes.getOutputPortByName('nodes').configure(*(), **{'color': '#fe92a0', 'shape': 'oval'})
             Select_Nodes.getInputPortByName("selectionString").widget.set(".*")
         except:
-            print "WARNING: failed to restore NodeSelector named Select Nodes in network self.macroNetwork"
+            print("WARNING: failed to restore NodeSelector named Select Nodes in network self.macroNetwork")
             print_exc()
             Select_Nodes=None
         try:
@@ -124,8 +124,8 @@ Output Ports
             from Vision.StandardNodes import Generic
             Get_xyzr = Generic(constrkw = {}, name='Get xyzr', library=stdlib)
             self.macroNetwork.addNode(Get_xyzr,30,194)
-            apply(Get_xyzr.addInputPort, (), {'name': 'atoms', 'cast': True, 'datatype': 'AtomSet', 'height': 8, 'width': 12, 'shape': 'oval', 'color': '#fe92a0'})
-            apply(Get_xyzr.addOutputPort, (), {'name': 'output', 'datatype': 'string', 'height': 12, 'width': 12, 'shape': 'oval', 'color': 'white'})
+            Get_xyzr.addInputPort(*(), **{'name': 'atoms', 'cast': True, 'datatype': 'AtomSet', 'height': 8, 'width': 12, 'shape': 'oval', 'color': '#fe92a0'})
+            Get_xyzr.addOutputPort(*(), **{'name': 'output', 'datatype': 'string', 'height': 12, 'width': 12, 'shape': 'oval', 'color': 'white'})
             code = """def doit(self, atoms):
     lines = ''
     for atom in atoms:
@@ -136,7 +136,7 @@ Output Ports
 
             Get_xyzr.configure(function=code)
         except:
-            print "WARNING: failed to restore Generic named Get xyzr in network self.macroNetwork"
+            print("WARNING: failed to restore Generic named Get xyzr in network self.macroNetwork")
             print_exc()
             Get_xyzr=None
         try:
@@ -145,18 +145,18 @@ Output Ports
             from DejaVu.VisionInterface.GeometryNode import IndexedPolygonsNE
             IndexedPolygons = IndexedPolygonsNE(constrkw = {}, name='IndexedPolygons', library=vizlib)
             self.macroNetwork.addNode(IndexedPolygons,273,147)
-            apply(IndexedPolygons.getInputPortByName('coords').configure, (), {'color': 'purple', 'cast': True, 'shape': 'circle'})
-            apply(IndexedPolygons.getInputPortByName('indices').configure, (), {'color': 'yellow', 'cast': True, 'shape': 'circle'})
-            apply(IndexedPolygons.getInputPortByName('vnormals').configure, (), {'cast': True, 'shape': 'circle'})
-            apply(IndexedPolygons.getInputPortByName('colors').configure, (), {'cast': True, 'shape': 'circle'})
-            apply(IndexedPolygons.getInputPortByName('name').configure, (), {'color': 'white', 'cast': True, 'shape': 'oval'})
-            apply(IndexedPolygons.getInputPortByName('instanceMatrices').configure, (), {'cast': True})
-            apply(IndexedPolygons.getInputPortByName('geomOptions').configure, (), {'color': 'cyan', 'cast': True, 'shape': 'oval'})
-            apply(IndexedPolygons.getInputPortByName('parent').configure, (), {'color': 'red', 'cast': True, 'shape': 'rect'})
-            apply(IndexedPolygons.getOutputPortByName('indexedPolygons').configure, (), {'color': 'red', 'shape': 'rect'})
-            apply(IndexedPolygons.getOutputPortByName('allGeometries').configure, (), {'color': 'red', 'shape': 'rect'})
+            IndexedPolygons.getInputPortByName('coords').configure(*(), **{'color': 'purple', 'cast': True, 'shape': 'circle'})
+            IndexedPolygons.getInputPortByName('indices').configure(*(), **{'color': 'yellow', 'cast': True, 'shape': 'circle'})
+            IndexedPolygons.getInputPortByName('vnormals').configure(*(), **{'cast': True, 'shape': 'circle'})
+            IndexedPolygons.getInputPortByName('colors').configure(*(), **{'cast': True, 'shape': 'circle'})
+            IndexedPolygons.getInputPortByName('name').configure(*(), **{'color': 'white', 'cast': True, 'shape': 'oval'})
+            IndexedPolygons.getInputPortByName('instanceMatrices').configure(*(), **{'cast': True})
+            IndexedPolygons.getInputPortByName('geomOptions').configure(*(), **{'color': 'cyan', 'cast': True, 'shape': 'oval'})
+            IndexedPolygons.getInputPortByName('parent').configure(*(), **{'color': 'red', 'cast': True, 'shape': 'rect'})
+            IndexedPolygons.getOutputPortByName('indexedPolygons').configure(*(), **{'color': 'red', 'shape': 'rect'})
+            IndexedPolygons.getOutputPortByName('allGeometries').configure(*(), **{'color': 'red', 'shape': 'rect'})
         except:
-            print "WARNING: failed to restore IndexedPolygonsNE named IndexedPolygons in network self.macroNetwork"
+            print("WARNING: failed to restore IndexedPolygonsNE named IndexedPolygons in network self.macroNetwork")
             print_exc()
             IndexedPolygons=None
         try:
@@ -166,28 +166,24 @@ Output Ports
             MSMS_WS = Generic(constrkw = {}, name='MSMS WS', library=stdlib)            
 
             self.macroNetwork.addNode(MSMS_WS,273,37)
-            apply(MSMS_WS.addInputPort, (), {'name': 'input_str', 'cast': True, 
+            MSMS_WS.addInputPort(*(), **{'name': 'input_str', 'cast': True, 
                    'datatype': 'string', 'height': 12, 'width': 12, 'shape': 'oval', 'color': 'white'})
-            apply(MSMS_WS.addInputPort, (), {'name': 'density', 'datatype': 'float', 'required':False})
-            apply(MSMS_WS.getInputPortByName('density').createWidget, (), 
-                   {'descr':{'initialValue': 1.0, 'increment':0.1, 'type':'float', 
+            MSMS_WS.addInputPort(*(), **{'name': 'density', 'datatype': 'float', 'required':False})
+            MSMS_WS.getInputPortByName('density').createWidget(*(), **{'descr':{'initialValue': 1.0, 'increment':0.1, 'type':'float', 
                      'master': 'ParamPanel', 'oneTurn':10, 'min':1.0, 'labelCfg': {'text': 'density'}, 'class': 'NEDial'}})
-            apply(MSMS_WS.addInputPort, (), {'name': 'probe_radius', 'datatype': 'float', 'required':False})
-            apply(MSMS_WS.getInputPortByName('probe_radius').createWidget, (), 
-                   {'descr':{'initialValue': 1.5, 'increment':0.1, 'type':'float', 
+            MSMS_WS.addInputPort(*(), **{'name': 'probe_radius', 'datatype': 'float', 'required':False})
+            MSMS_WS.getInputPortByName('probe_radius').createWidget(*(), **{'descr':{'initialValue': 1.5, 'increment':0.1, 'type':'float', 
                      'master': 'ParamPanel', 'oneTurn':10, 'min':0.5, 'labelCfg': {'text': 'probe radius'}, 'class': 'NEDial'}})
-            apply(MSMS_WS.addInputPort, (), {'name': 'allComp', 'datatype': 'int', 'required':False})
-            apply(MSMS_WS.getInputPortByName('allComp').createWidget, (), 
-                   {'descr':{'initialValue': 0, 'master': 'ParamPanel', 'labelCfg': 
+            MSMS_WS.addInputPort(*(), **{'name': 'allComp', 'datatype': 'int', 'required':False})
+            MSMS_WS.getInputPortByName('allComp').createWidget(*(), **{'descr':{'initialValue': 0, 'master': 'ParamPanel', 'labelCfg': 
                        {'text': 'all components'}, 'class': 'NECheckButton'}})
-            apply(MSMS_WS.addInputPort, (), {'name': 'getfile', 'datatype': 'boolean'})
-            apply(MSMS_WS.getInputPortByName('getfile').createWidget, (), 
-                   {'descr':{'master': 'ParamPanel', 'labelCfg': {'text': 'upload output'}, 'class': 'NECheckButton', 'initialValue':True }})
+            MSMS_WS.addInputPort(*(), **{'name': 'getfile', 'datatype': 'boolean'})
+            MSMS_WS.getInputPortByName('getfile').createWidget(*(), **{'descr':{'master': 'ParamPanel', 'labelCfg': {'text': 'upload output'}, 'class': 'NECheckButton', 'initialValue':True }})
 
 
-            apply(MSMS_WS.addOutputPort, (), {'name': 'vertices', 'datatype': 'coordinates3D', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'green'})
-            apply(MSMS_WS.addOutputPort, (), {'name': 'indices', 'datatype': 'faceIndices', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'purple'})
-            apply(MSMS_WS.addOutputPort, (), {'name': 'vnormals', 'datatype': 'normals3D', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'blue'})
+            MSMS_WS.addOutputPort(*(), **{'name': 'vertices', 'datatype': 'coordinates3D', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'green'})
+            MSMS_WS.addOutputPort(*(), **{'name': 'indices', 'datatype': 'faceIndices', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'purple'})
+            MSMS_WS.addOutputPort(*(), **{'name': 'vnormals', 'datatype': 'normals3D', 'height': 8, 'width': 12, 'shape': 'rect', 'color': 'blue'})
             MSMS_WS.host = self.host
             MSMS_WS.opal_service = self.opal_service
             
@@ -227,7 +223,7 @@ Output Ports
 """
             MSMS_WS.configure(function=code)
         except:
-            print "WARNING: failed to restore Generic named MSMS WS in network self.macroNetwork"
+            print("WARNING: failed to restore Generic named MSMS WS in network self.macroNetwork")
             print_exc()
             MSMS_WS=None
         self.macroNetwork.freeze()

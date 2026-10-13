@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # Last modified on Mon Mar 15 17:47:37 PST 2004 by lindy
@@ -15,18 +15,18 @@ Some definitions:
                 clusterings (keyed by tolerance).
 """
 
-import string
+from mglcompat import pystring as string
 import sys
-import numpy.oldnumeric as Numeric
-import UserList
+import mglcompat.oldnumeric as Numeric
+import collections
 
-class Cluster(UserList.UserList):
+class Cluster(collections.UserList):
     """A cluster is a list of conformations.
 
     The 'rank' of a conformation is its order in the list. 
     """
     def __init__(self, seed, info=None):
-        UserList.UserList.__init__(self, [seed])
+        collections.UserList.__init__(self, [seed])
         self.seed = seed
         if info:
             self.build(info)
@@ -50,18 +50,18 @@ class Cluster(UserList.UserList):
 
 
 
-class Clustering(UserList.UserList):
+class Clustering(collections.UserList):
     """A clustering is list of clusters resulting from a clustering operation.
     """
     def __init__(self):
-        UserList.UserList.__init__(self)
+        collections.UserList.__init__(self)
         self.tolerance = None # set by the Clusterer
 
 
     def do_stats(self):
         """Compute some statistics about this clustering.
         """
-        self.avg_size = Numeric.sum(map(len, self))/float(len(self))
+        self.avg_size = Numeric.sum(list(map(len, self)))/float(len(self))
         for c in self:
             c.do_stats()
 
@@ -92,7 +92,7 @@ class Clusterer:
             if hasattr(data[0], 'subset'):
                 ind = len(data[0].getCoords()) - len(data[0].subset) 
             else:
-                print "no subsets have been set up for conformations!"
+                print("no subsets have been set up for conformations!")
                 return "ERROR"
             for d in data:
                 d.flexres_energy = Numeric.add.reduce(d.total_energies[ind:])
@@ -255,7 +255,7 @@ class Clusterer:
         try:
             from python_cluster.cluster import HierarchicalClustering
         except:
-            print "HierarchicalClustering from python-cluster.cluster not found"
+            print("HierarchicalClustering from python-cluster.cluster not found")
             return
         assert linkage in ['single', 'complete', 'average', 'uclus']
         cl = HierarchicalClustering(self.data, self.get_distance, linkage=linkage)
@@ -284,23 +284,23 @@ class Clusterer:
                 rmsds.append(v)
         for i in range(len(rmsds)):            
             level = rmsds[i]
-            if debug: print "getlevel level=", level
+            if debug: print("getlevel level=", level)
             clustD[level] = cl.getlevel(level)
-            if debug: print "built->len(clustD[",level,"]=", len(clustD[level])
+            if debug: print("built->len(clustD[",level,"]=", len(clustD[level]))
             if len(clustD[level])==1:
-                if debug: print "all in a single cluster"
+                if debug: print("all in a single cluster")
   
 
     def show_clustering(self):
-        dk = self.clustering_dict.keys()
+        dk = list(self.clustering_dict.keys())
         dk.sort()
         for val in dk:
-            print val, ':'
+            print(val, ':')
             for clust in self.clustering_dict[val]:
                 for conf in clust:
-                    print conf.run,
-                print
-            print        
+                    print(conf.run, end=' ')
+                print()
+            print()        
                     
     def write_summary(self, filename=None):
         """
@@ -311,7 +311,7 @@ class Clusterer:
             file_ptr = sys.stdout
 
         # make sure the keys happen in the same order
-        sorted_keys = self.clustering_dict.keys()[:]
+        sorted_keys = list(self.clustering_dict.keys())[:]
         sorted_keys.sort()
         # write tolerances
         for tolerance in sorted_keys:
@@ -376,7 +376,7 @@ started a new cluster because it was 2.449 A-rmsd from the the reference.
             file_ptr = sys.stdout
 
         # make sure the keys happen in the same order
-        sorted_keys = self.clustering_dict.keys()[:]
+        sorted_keys = list(self.clustering_dict.keys())[:]
         sorted_keys.sort()
         # write tolerances
         for key in sorted_keys:
@@ -435,13 +435,13 @@ If comment is '#':
         dlg_run_str = ""
 
         # make sure the keys happen in the same order
-        sorted_keys = self.clustering_dict.keys()[:]
+        sorted_keys = list(self.clustering_dict.keys())[:]
         sorted_keys.sort()
         if rms==-1:
             rms = sorted_keys[0]
-            print "reporting rms %f clustering:"%rms
+            print("reporting rms %f clustering:"%rms)
         if rms not in sorted_keys:
-            print "no clustering exists at rms %f"%rms
+            print("no clustering exists at rms %f"%rms)
             return "ERROR"
         # add tolerances and energy used on 1 line
         if report_all and len(sorted_keys)>1:
@@ -547,13 +547,13 @@ If comment is '#':
             self.argsort = Numeric.argsort(energy_list)
             #print "self.argsort=", self.argsort
 
-        t_list = map(float, string.split(lines[0]))
+        t_list = list(map(float, string.split(lines[0])))
         #t_list for the example is [0.5, 2.0]
         num_t = len(t_list)   #number of clusterings
 
         for tolerance in t_list: # initialize the keys
-            if d.has_key(tolerance):
-                raise RuntimeError, "overwriting existing clustering"
+            if tolerance in d:
+                raise RuntimeError("overwriting existing clustering")
             c = d[tolerance] = Clustering()
             c.tolerance = tolerance
 
@@ -565,10 +565,10 @@ If comment is '#':
             ll = l.split()
             #eg: 2 tolerances gives [ 0,  0,  0,  0, 0.000, 0.000, 0.000,-14.645]
             #num_t *2
-            c_list = map(int, ll[:num_t*2])
-            data_list = map(float, ll[num_t*2:])
+            c_list = list(map(int, ll[:num_t*2]))
+            data_list = list(map(float, ll[num_t*2:]))
 
-            for t, i in zip(t_list, xrange(len(c_list)/2)):
+            for t, i in zip(t_list, range(len(c_list)/2)):
                 cluster_index = c_list[2*i]
                 cluster_rank = c_list[2*i+1]
                 conf = self.data[int(self.argsort[cx])]
@@ -622,9 +622,9 @@ If comment is '#':
         #should this be extend or add or something?
         self.clustering_dict[tolerance] = clusters
         #tell all the conformations about this_clustering: 'clusters'
-        for (cx, cl) in map(None, xrange(len(clusters)),
+        for (cx, cl) in map(None, range(len(clusters)),
                                  clusters):
-            for (rank, conf) in map(None, xrange(len(cl)), cl):
+            for (rank, conf) in map(None, range(len(cl)), cl):
                 conf.cluster_dict[tolerance] = (cx, rank)
 
 

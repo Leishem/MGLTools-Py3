@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -20,11 +20,11 @@
 # $Id$
 #
 import os
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 import types
 import math
 import warnings
-import Tkinter
+import tkinter
 import Pmw
 
 from opengltk.OpenGL import GL
@@ -98,7 +98,7 @@ class GlfLabels(Geom):
         'wire':   glf.glfDrawWiredString,
         'wire3d': glf.glfDraw3DWiredString,
         }
-    fontStyleList = fontStyleDict.keys()
+    fontStyleList = list(fontStyleDict.keys())
 
 
     def __init__(self, name=None, check=1, **kw):
@@ -140,7 +140,7 @@ class GlfLabels(Geom):
         self.vectorFonts = {}
         self.bitmapFonts = {}
 
-        apply( Geom.__init__, (self, name, check), kw)
+        Geom.__init__(*(self, name, check), **kw)
 
 
     def Set(self, check=1, redo=1, updateOwnGui=True, **kw):
@@ -150,7 +150,7 @@ redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
         #print "Set glfLabels"
-        redoFlags = apply( Geom.Set, (self, check, 0), kw )
+        redoFlags = Geom.Set(*(self, check, 0), **kw)
 
         labels = kw.get('labels')
         if labels:
@@ -271,7 +271,7 @@ This dictionary can be passed to the Set method to restore the object's state
 
         if __debug__:
             if check:
-                apply( checkKeywords, (self.name,self.keywords), kw)
+                checkKeywords(*(self.name,self.keywords), **kw)
 
         v = kw.get('vertices')
         if v:
@@ -433,7 +433,7 @@ This dictionary can be passed to the Set method to restore the object's state
             txt = None
         else:
             txt = labels[0]
-            if type(txt) != types.StringType:
+            if type(txt) != bytes:
                 txt= str(txt)
 
         self.prepareBillboardAndNormalForAllTextLines()
@@ -471,7 +471,7 @@ This dictionary can be passed to the Set method to restore the object's state
             if fp.binding[1] == viewerConst.OVERALL:
                 GL.glColor4fv(colorFront[0])
 
-        for i in xrange(centers.shape[0]):
+        for i in range(centers.shape[0]):
             if fp:
                 for m in (0,1,2,3,4):
                     if fp.binding[m] == viewerConst.PER_VERTEX:
@@ -490,7 +490,7 @@ This dictionary can be passed to the Set method to restore the object's state
             #GL.glPushName(i)
             if txt is None:
                 txt2 = self.labels[i]
-                if type(txt2) != types.StringType:
+                if type(txt2) != bytes:
                     txt2 = str(txt2)
                 self.drawOne3dTextLine(txt2, i)
             else:       
@@ -521,7 +521,7 @@ run=1 returns the IndexedPolygon object.
         if lLenLabelsVertices != len(self.labels):
             lSameText = True
             assert len(self.labels) > 0
-            if type(self.labels[0]) == types.StringType:
+            if type(self.labels[0]) == bytes:
                 output = glf.glfGet3DSolidStringTriangles(self.labels[0])
             else:
                 output = glf.glfGet3DSolidStringTriangles( str(self.labels[0]) )
@@ -546,7 +546,7 @@ run=1 returns the IndexedPolygon object.
         for i in range(lLenLabelsVertices):
             #print "i", i
             if lSameText is False:
-                if type(self.labels[0]) == types.StringType:
+                if type(self.labels[0]) == bytes:
                     output = glf.glfGet3DSolidStringTriangles(self.labels[i])
                 else:
                     output = glf.glfGet3DSolidStringTriangles( str(self.labels[i]) )
@@ -597,11 +597,11 @@ run=1 returns the IndexedPolygon object.
 
     def createOwnGui(self):
         #print "GlfLabels.createOwnGui", self
-        self.ownGui = Tkinter.Toplevel()
+        self.ownGui = tkinter.Toplevel()
         self.ownGui.title(self.name)
         self.ownGui.protocol('WM_DELETE_WINDOW', self.ownGui.withdraw )
 
-        frame1 = Tkinter.Frame(self.ownGui)
+        frame1 = tkinter.Frame(self.ownGui)
         frame1.pack(side='top')
 
         # labels
@@ -614,9 +614,9 @@ run=1 returns the IndexedPolygon object.
         self.ownGui.labelsEnt.pack(side='top', fill='x')
 
         # billboard
-        self.ownGui.billboardVar = Tkinter.IntVar()
+        self.ownGui.billboardVar = tkinter.IntVar()
         self.ownGui.billboardVar.set(self.billboard)
-        self.ownGui.guiBillboard = Tkinter.Checkbutton(
+        self.ownGui.guiBillboard = tkinter.Checkbutton(
                                 frame1,
                                 text='billboard',
                                 variable=self.ownGui.billboardVar,
@@ -624,9 +624,9 @@ run=1 returns the IndexedPolygon object.
         self.ownGui.guiBillboard.pack(side='top', fill='x')
 
         # includeCameraRotationInBillboard
-        self.ownGui.includeCameraRotationInBillboardVar = Tkinter.IntVar()
+        self.ownGui.includeCameraRotationInBillboardVar = tkinter.IntVar()
         self.ownGui.includeCameraRotationInBillboardVar.set(self.includeCameraRotationInBillboard)
-        self.ownGui.guiIncludeCameraRotationInBillboard = Tkinter.Checkbutton(
+        self.ownGui.guiIncludeCameraRotationInBillboard = tkinter.Checkbutton(
                                 frame1,
                                 text='includeCameraRotationInBillboard',
                                 variable=self.ownGui.includeCameraRotationInBillboardVar,

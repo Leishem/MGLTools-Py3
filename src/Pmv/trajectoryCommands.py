@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # $Header: /opt/cvs/python/packages/share1.5/Pmv/trajectoryCommands.py,v 1.18 2010/02/25 23:03:46 autin Exp $
@@ -11,8 +11,8 @@
 import warnings
 import os
 from MolKit.trajParser import trrParser, xtcParser
-import Pmw, Tkinter
-import numpy.oldnumeric as Numeric
+import Pmw, tkinter
+import mglcompat.oldnumeric as Numeric
 from opengltk.OpenGL import GL
 import time
 
@@ -46,7 +46,7 @@ class Trajectory:
         elif fext == ".xtc":
             return xtcParser(file)
         else:
-            print "ERROR: unsupported trajectory file format %s"%fext
+            print("ERROR: unsupported trajectory file format %s"%fext)
             return None
 
 
@@ -71,7 +71,7 @@ from mglutil.gui.InputForm.Tk.gui import InputFormDescr, InputForm, evalString
 from mglutil.util.callback import CallbackManager
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 from mglutil.util.packageFilePath import findFilePath
-import tkMessageBox
+import tkinter.messagebox
 from MolKit.pdbParser import PdbParser, PdbqParser, PdbqtParser
 from MolKit.groParser import groParser
 
@@ -101,7 +101,7 @@ class TrajPlayer(Player):
         kw['titleStr'] = titleStr
         self.vf = vf
         if self.vf.hasGui :
-            apply(Player.__init__, (self,), kw)
+            Player.__init__(*(self,), **kw)
         try:
             self.form.ifd.entryByName['setanimB']['widget'].grid_forget()
             #print 'withdrew SetAnim button'
@@ -111,7 +111,7 @@ class TrajPlayer(Player):
 
     def update(self, sequenceList=None, idList=None):
         if not sequenceList:
-            self.sequenceList = range(len(self.traj.coords))
+            self.sequenceList = list(range(len(self.traj.coords)))
             #self.sequenceList = self.traj.coords.keys()
         else :
             self.sequenceList = sequenceList
@@ -131,15 +131,15 @@ class TrajPlayer(Player):
             startTW.set(self.startFrame)
         if not idList:
             #insert 0 for original state
-            idL = range(0, len(self.sequenceList) + 1)
-            self.idList = map(str, idL)
+            idL = list(range(0, len(self.sequenceList) + 1))
+            self.idList = list(map(str, idL))
         else:
-            self.idList = map(str, idList)
+            self.idList = list(map(str, idList))
         #print "self.idList", self.idList
         
         if hasattr(self, 'form'):
             if hasattr(self.form, 'ent2'):
-                newLen = max(map(len, self.idList))
+                newLen = max(list(map(len, self.idList)))
                 if newLen>3:
                     #print 'update:updating ent2 width'
                     self.form.ent2.config(width=newLen)
@@ -194,9 +194,9 @@ class TrajPlayer(Player):
         #   3   play continuously in 2 directions
         #play framerate is frame/per second
         if not hasattr(self, 'playModeForm'):
-            self.showPlayMode = Tkinter.IntVar()
-            self.showFrameParmWidgets = Tkinter.IntVar()
-            self.playModeVar = Tkinter.StringVar()
+            self.showPlayMode = tkinter.IntVar()
+            self.showFrameParmWidgets = tkinter.IntVar()
+            self.playModeVar = tkinter.StringVar()
             self.playModeVar.set('once and stop')
             self.playModeList=[ 'once and stop', 
                                 'continuously in 1 direction',
@@ -218,14 +218,14 @@ class TrajPlayer(Player):
 ##                 'gridcfg':{'sticky':'ew', 'row':-1, 'column':1}})
 ##                 #'gridcfg':{'sticky':'ew'}})
             ifd2.append({'name':'playModeMb',
-                'widgetType': Tkinter.Menubutton,
+                'widgetType': tkinter.Menubutton,
                 'tooltip':'set play mode choice',
                 'wcfg':{ 'text':'Play Mode',
                        },
                 'gridcfg':{'sticky':'we'}})
                 #'gridcfg':{'sticky':'w', 'columnspan':2}})
             ifd2.append({'name':'adjustFrameParmsMb',
-                'widgetType': Tkinter.Checkbutton,
+                'widgetType': tkinter.Checkbutton,
                 'tooltip':'opens panel to set play rate, start conf number, end conf number \nand step size for playing conf sequence',
                 'wcfg':{ 'text':'Play Parameters',
                         'command': self.showFrameParms_cb,
@@ -233,7 +233,7 @@ class TrajPlayer(Player):
                        },
                 'gridcfg':{'sticky':'w', 'row':-1, 'column':1}})
             ifd2.append( {'name': 'framerateLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'frame rate:',
                         'font':(ensureFontCase('helvetica'),12,'bold')},
                     'gridcfg':{'sticky':'w'}})
@@ -259,7 +259,7 @@ class TrajPlayer(Player):
                         'continuous':0, 'wheelPad':1, 'height':20},
                     'gridcfg':{'sticky':'nesw', 'row':-1, 'column':1}})
             ifd2.append( {'name': 'startFrameLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'start frame:',
                         'font':(ensureFontCase('helvetica'),12,'bold')},
                     'gridcfg':{'sticky':'w'}})
@@ -290,7 +290,7 @@ class TrajPlayer(Player):
                         'continuous':0, 'wheelPad':1, 'height':20},
                     'gridcfg':{'sticky':'ew', 'row':-1,  'column':1}})
             ifd2.append( {'name': 'endFrameLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'end frame:',
                         'font':(ensureFontCase('helvetica'),12,'bold')},
                     'gridcfg':{'sticky':'w'}})
@@ -321,7 +321,7 @@ class TrajPlayer(Player):
                         'continuous':0, 'wheelPad':1, 'height':20},
                     'gridcfg':{'sticky':'nesw', 'row':-1, 'column':1}})
             ifd2.append( {'name': 'stepSizeLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'step size:',
                         'font':(ensureFontCase('helvetica'),12,'bold')},
                     'gridcfg':{'sticky':'w'}})
@@ -352,7 +352,7 @@ class TrajPlayer(Player):
                         'continuous':0, 'wheelPad':1, 'height':20},
                     'gridcfg':{'sticky':'nesw', 'row':-1, 'column':1}})
             ifd2.append({'name':'buildB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'tooltip':'build a new molecule with current conf coords\nand add it to viewer',
                 'wcfg':{ 'text':'Build Current',
                         'command': self.Build_cb,
@@ -361,7 +361,7 @@ class TrajPlayer(Player):
                 #'gridcfg':{'sticky':'ew', 'row':-1, 'column':1}})
 
             ifd2.append({'name':'writeB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'tooltip':'write a new file with current conf coords',
                 'wcfg':{ 'text':'Write Current',
                         'command': self.Write_cb,
@@ -370,7 +370,7 @@ class TrajPlayer(Player):
                 'gridcfg':{'sticky':'nesw', 'row':-1, 'column':1}})         
 
             ifd2.append({'name':'cancelB',
-                        'widgetType': Tkinter.Button,
+                        'widgetType': tkinter.Button,
                         'wcfg':{
                             'text': 'Close',
                             'command': self.cancelPlayMode_cb,
@@ -409,7 +409,7 @@ class TrajPlayer(Player):
         if not self.showPlayMode.get():
             #mB.config(bg='white')
             if not hasattr(mB, 'menu'):
-                mB.menu = Tkinter.Menu(mB)
+                mB.menu = tkinter.Menu(mB)
                 mB['menu'] = mB.menu
             else:
                 mB.menu.delete(1, 'end')
@@ -461,7 +461,7 @@ class TrajPlayer(Player):
         
 
     def SetRMSRef_cb(self, event=None):
-        print 'in SetRMSRef_cb'
+        print('in SetRMSRef_cb')
         return
 
 
@@ -561,18 +561,18 @@ class TrajPlayer(Player):
             fptr.close()
     
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import SliderWidget
-import Tkinter
+import tkinter
 
 
 class TrajSliderWidget(SliderWidget):
 
     def __init__(self, master =None, **kw):
 
-        apply(SliderWidget.__init__, (self, master), kw)
+        SliderWidget.__init__(*(self, master), **kw)
         self.draw.pack_forget()
         self.draw.pack(side="left")
         fnt='-*-helvetica-medium-r-narrow-*-*-120-*-*-*-*-*-*'
-        label=Tkinter.Label(self.frame, text=str(self.max), font=fnt)
+        label=tkinter.Label(self.frame, text=str(self.max), font=fnt)
         label.pack(side='left', fill="both", expand="yes")
 
 
@@ -604,7 +604,7 @@ class TrajPlayerCached(TrajPlayer):
               'gridcfg':{'sticky':'w','column':2, 'columnspan':4, }
               }
             cb = {'name': 'clearCache',
-             'widgetType': Tkinter.Button,
+             'widgetType': tkinter.Button,
              'text':'Clear rendering cache',
              'tooltip':"Delete cached trajectory rendered frames to regenerate\nnew frames using currently displayed geometry",
              'wcfg':{'bd':4},
@@ -640,7 +640,7 @@ class TrajPlayerCached(TrajPlayer):
             viewer = self.vf.GUI.VIEWER
         cache_list = False
         # check if we can cache the display list for this frame 
-        if self.dpyLists.has_key(ind):
+        if ind in self.dpyLists:
             if self.dpyLists[ind] is not None:
                 cache_list = True
                 viewer.currentCamera.dpyList = self.dpyLists[ind]
@@ -679,10 +679,10 @@ class TrajPlayerCached(TrajPlayer):
         #print "clearing cache: "
         vi = self.vf.GUI.VIEWER
         currentcontext = vi.currentCamera.tk.call(vi.currentCamera._w, 'contexttag')
-        for dl in  self.dpyLists.keys():
+        for dl in  list(self.dpyLists.keys()):
             if self.dpyLists[dl]is not None:
                 if currentcontext != self.dpyLists[dl][1]:
-                    print "currentcontext != self.dpyLists[%d][1]" %(dl,), currentcontext, self.dpyLists[dl][1]
+                    print("currentcontext != self.dpyLists[%d][1]" %(dl,), currentcontext, self.dpyLists[dl][1])
                     c = vi.currentCamera
                     c.tk.call(c._w, 'makecurrent')
 
@@ -708,7 +708,7 @@ class OpenTrajectoryCommand(MVCommand):
         self.trajFile = None
 
     def onAddCmdToViewer(self):
-        if self.vf.hasGui and not self.vf.commands.has_key("playTrajectory"):
+        if self.vf.hasGui and "playTrajectory" not in self.vf.commands:
             self.vf.loadCommand("trajectoryCommands", "playTrajectory", "Pmv", topCommand = 0)
                 
         if not hasattr(self.vf, "Trajectories"):
@@ -731,7 +731,7 @@ class OpenTrajectoryCommand(MVCommand):
         adds created Trajectory object to self.vf.Trajectories dictionary"""
         
         name = os.path.split(trajFile)[1]
-        trajnames = self.vf.Trajectories.keys()
+        trajnames = list(self.vf.Trajectories.keys())
         if name in trajnames:
             if ask:
                 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
@@ -758,11 +758,11 @@ class OpenTrajectoryCommand(MVCommand):
             trj.readTrajectory()
 
             self.vf.Trajectories[name] = trj
-            if self.vf.commands.has_key("playTrajectory"):
+            if "playTrajectory" in self.vf.commands:
                 if self.vf.playTrajectory.ifd:
                     cb = self.vf.playTrajectory.ifd.entryByName['trs']['widget']
                     sl = cb.component('scrolledlist')
-                    trajnames = self.vf.Trajectories.keys()
+                    trajnames = list(self.vf.Trajectories.keys())
                     sl.setlist(trajnames)
                     cb.selectitem(name)
             return name
@@ -795,7 +795,7 @@ class PlayTrajectoryCommand (MVCommand):
         self.ifd =None
 
     def onAddCmdToViewer(self):
-        if self.vf.hasGui and not self.vf.commands.has_key("openTrajectory"):
+        if self.vf.hasGui and "openTrajectory" not in self.vf.commands:
             self.vf.loadCommand("trajectoryCommands", "openTrajectory", "Pmv", topCommand = 0)
         
         if not hasattr(self.vf, "trajectories"):
@@ -826,7 +826,7 @@ class PlayTrajectoryCommand (MVCommand):
            adds created Trajectory object to self.vf.Trajectories dictionary"""
         
         name = os.path.split(trajFile)[1]
-        trajnames = self.vf.Trajectories.keys()
+        trajnames = list(self.vf.Trajectories.keys())
         if name in trajnames:
             if ask:
                 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
@@ -856,7 +856,7 @@ class PlayTrajectoryCommand (MVCommand):
             if self.ifd:
                 cb = self.ifd.entryByName['trs']['widget']
                 sl = cb.component('scrolledlist')
-                trajnames = self.vf.Trajectories.keys()
+                trajnames = list(self.vf.Trajectories.keys())
                 sl.setlist(trajnames)
                 cb.selectitem(name)
             return name
@@ -867,7 +867,7 @@ class PlayTrajectoryCommand (MVCommand):
         Looks for the trajectory  in self.vf.Trajectories and pops up the trajectory player GUI.
         """
         
-        apply( self.doitWrapper, (mol, trajName), {})
+        self.doitWrapper(*(mol, trajName), **{})
 
 
 
@@ -875,7 +875,7 @@ class PlayTrajectoryCommand (MVCommand):
     def buildFormDescr(self, formName):
         if formName == "showtraj":
             ifd = self.ifd = InputFormDescr(title = "Show trajectory")
-            trajnames = self.vf.Trajectories.keys()
+            trajnames = list(self.vf.Trajectories.keys())
             molecules = []
             for i in range(len(self.vf.Mols)):
                 mol = self.vf.Mols[i]
@@ -883,13 +883,13 @@ class PlayTrajectoryCommand (MVCommand):
                 molStr = molParser.getMoleculeInformation()
                 molecules.append(mol.name)
 
-            ifd.append({'widgetType':Tkinter.Label,
+            ifd.append({'widgetType':tkinter.Label,
                         'wcfg':{'text':'Read trajectory from file:'},
                         'gridcfg':{'sticky': 'e', 'column': 0}
                         })
             
             ifd.append({'name':'fileopen',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text':"...",#'Read trajectory from file',
                                 #'variable': ,
                                 'command': self.openTrajFile_cb,
@@ -920,17 +920,17 @@ class PlayTrajectoryCommand (MVCommand):
             
 
             
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                         'wcfg': {'text': 'Play Trajectory',
-                                 'relief' : Tkinter.RAISED,
+                                 'relief' : tkinter.RAISED,
                                  'borderwidth' : 3,
                                  'command':self.playTraj},
                         'gridcfg':{'sticky':'we', 'column':0, 'columnspan':2},
                         })
             
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                     'wcfg':{'text': 'Dismiss',
-                            'relief' : Tkinter.RAISED,
+                            'relief' : tkinter.RAISED,
                             'borderwidth' : 3,
                             'command':self.dismiss_cb},
                     'gridcfg':{'sticky':'we', 'row':-1, 'column':2, 'columnspan':2},
@@ -975,7 +975,7 @@ class PlayTrajectoryCommand (MVCommand):
         
     def dismiss_cb(self):
           """Withdraws the GUI."""
-          if self.cmdForms.has_key('showtraj'):
+          if 'showtraj' in self.cmdForms:
               self.cmdForms['showtraj'].destroy()
               self.ifd =None
 
@@ -998,7 +998,7 @@ class PlayTrajectoryCommand (MVCommand):
                 if self.vf.hasGui:
                     self.vf.warningMsg(msg)
                 else:
-                    print "WARNING:", msg
+                    print("WARNING:", msg)
                 return
             
             if len(mol.allAtoms) != len(traj.coords[0]) :
@@ -1006,7 +1006,7 @@ class PlayTrajectoryCommand (MVCommand):
                 if self.vf.hasGui:
                     self.vf.warningMsg(msg)
                 else:
-                    print "WARNING:", msg
+                    print("WARNING:", msg)
                 return
             if traj.player:
                 if traj.mol != mol:

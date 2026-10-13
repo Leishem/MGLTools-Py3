@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################
 #       ImageMagick for Vision
@@ -32,7 +32,7 @@ class Read(NetworkNode):
 
     def __init__(self, name='Read', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, filename):
         if filename and filename != 'File Name':
@@ -65,7 +65,7 @@ class Write(NetworkNode):
 
     def __init__(self, name='Write', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, filename):
         img = toSeq(img)
@@ -98,10 +98,10 @@ class toPIL(NetworkNode):
 
     def __init__(self, name='toPIL', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
-        import Image, numpy.oldnumeric as Numeric
+        import Image, mglcompat.oldnumeric as Numeric
 
         if len(img) > 1:
             img = toSeq(img)
@@ -116,7 +116,7 @@ class toPIL(NetworkNode):
         Aim = Numeric.reshape(Aim, (1, w*h*c))
         Aim = Aim.astype(Numeric.UnsignedInt8)
 
-        result = Image.fromstring('RGB', (image.width,image.height), Aim.tostring())
+        result = Image.fromstring('RGB', (image.width,image.height), Aim.tobytes())
         
         self.outputData(outImage=result)\n"""
 
@@ -137,13 +137,13 @@ class TkDisplay(NetworkNode):
 
     def __init__(self, name='TkDisplay', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
-        import Tkinter
+        import tkinter
         from PIL import ImageTk
         # This code from PILNodes.py written by Michel Sanner
-        self.top = Tkinter.Toplevel()
-        self.imCanvas = Tkinter.Canvas(self.top)
+        self.top = tkinter.Toplevel()
+        self.imCanvas = tkinter.Canvas(self.top)
         self.canvasImage = None
 
         code = """def doit(self, img):
@@ -162,7 +162,7 @@ class TkDisplay(NetworkNode):
         Aim = Numeric.reshape(Aim, (1, w*h*c))
         Aim = Aim.astype(Numeric.UnsignedInt8)
 
-        PILimage = Image.fromstring('RGB', (w,h), Aim.tostring())
+        PILimage = Image.fromstring('RGB', (w,h), Aim.tobytes())
 
         # This code from PILNodes.py written by Michel Sanner
         if PILimage:
@@ -186,7 +186,7 @@ class Display(NetworkNode):
 
     def __init__(self, name='Display', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -204,7 +204,7 @@ class Animate(NetworkNode):
 
     def __init__(self, name='Animate', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -226,7 +226,7 @@ class Copy(NetworkNode):
 
     def __init__(self, name='Copy', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -248,7 +248,7 @@ class toArray(NetworkNode):
 
     def __init__(self, name='toArrray', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -274,7 +274,7 @@ class getPixels(NetworkNode):
 
     def __init__(self, name='getPixels', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, x, y, c, r):
         img = toSeq(img)
@@ -372,7 +372,7 @@ class Halve(NetworkNode):
 
     def __init__(self, name='Halve', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -394,7 +394,7 @@ class Double(NetworkNode):
 
     def __init__(self, name='Double', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -418,7 +418,7 @@ class ResizeFactor(NetworkNode):
 
     def __init__(self, name='ResizeFactor', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, fact):
         img = toSeq(img)
@@ -459,7 +459,7 @@ class ResizeWidth(NetworkNode):
 
     def __init__(self, name='ResizeWidth', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, width):
         img = toSeq(img)
@@ -494,7 +494,7 @@ class ResizeHeight(NetworkNode):
 
     def __init__(self, name='ResizeHeight', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, height):
         img = toSeq(img)
@@ -530,7 +530,7 @@ class ResizeDim(NetworkNode):
 
     def __init__(self, name='ResizeDim', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, width, height):
         img = toSeq(img)
@@ -574,7 +574,7 @@ class SampleWidth(NetworkNode):
 
     def __init__(self, name='SampleWidth', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, width):
         img = toSeq(img)
@@ -609,7 +609,7 @@ class SampleHeight(NetworkNode):
 
     def __init__(self, name='SampleHeight', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, height):
         img = toSeq(img)
@@ -645,7 +645,7 @@ class SampleDim(NetworkNode):
 
     def __init__(self, name='SampleDim', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, width, height):
         img = toSeq(img)
@@ -689,7 +689,7 @@ class ScaleWidth(NetworkNode):
 
     def __init__(self, name='ScaleWidth', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, width):
         img = toSeq(img)
@@ -724,7 +724,7 @@ class ScaleHeight(NetworkNode):
 
     def __init__(self, name='ScaleHeight', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, height):
         img = toSeq(img)
@@ -760,7 +760,7 @@ class ScaleDim(NetworkNode):
 
     def __init__(self, name='ScaleDim', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, width, height):
         img = toSeq(img)
@@ -804,7 +804,7 @@ class ThumbFactor(NetworkNode):
 
     def __init__(self, name='ThumbFactor', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, fact):
         img = toSeq(img)
@@ -845,7 +845,7 @@ class ThumbWidth(NetworkNode):
 
     def __init__(self, name='ThumbWidth', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, width):
         img = toSeq(img)
@@ -880,7 +880,7 @@ class ThumbHeight(NetworkNode):
 
     def __init__(self, name='ThumbHeight', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, height):
         img = toSeq(img)
@@ -916,7 +916,7 @@ class ThumbDim(NetworkNode):
 
     def __init__(self, name='ThumbDim', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, width, height):
         img = toSeq(img)
@@ -963,7 +963,7 @@ class Rotate(NetworkNode):
 
     def __init__(self, name='Rotate', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, deg):
         img = toSeq(img)
@@ -1001,7 +1001,7 @@ class Flip(NetworkNode):
 
     def __init__(self, name='Flip', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -1023,7 +1023,7 @@ class Flop(NetworkNode):
 
     def __init__(self, name='Flop', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -1050,7 +1050,7 @@ class Chop(NetworkNode):
     
     def __init__(self, name='Chop', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, l, c, t, r):
         img = toSeq(img)
@@ -1113,7 +1113,7 @@ class Crop(NetworkNode):
     
     def __init__(self, name='Chop', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, w, h, x, y):
         img = toSeq(img)
@@ -1174,7 +1174,7 @@ class Roll(NetworkNode):
 
     def __init__(self, name='Roll', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, c, r):
         img = toSeq(img)
@@ -1218,7 +1218,7 @@ class Shave(NetworkNode):
 
     def __init__(self, name='Shave', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, c, r):
         img = toSeq(img)
@@ -1263,7 +1263,7 @@ class Shear(NetworkNode):
 
     def __init__(self, name='Shear', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, x, y, color):
         img = toSeq(img)
@@ -1317,7 +1317,7 @@ class Affine(NetworkNode):
 
     def __init__(self, name='Affine', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, sx, rx, ry, sy, tx, ty):
         img = toSeq(img)
@@ -1391,7 +1391,7 @@ class Contrast(NetworkNode):
 
     def __init__(self, name='Contrast', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, cont):
         img = toSeq(img)
@@ -1434,7 +1434,7 @@ class Colorize(NetworkNode):
 
     def __init__(self, name='Colorize', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, color, val):
         img = toSeq(img)
@@ -1491,7 +1491,7 @@ class Quantize(NetworkNode):
 
     def __init__(self, name='Quantize', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, colors, dither):
         img = toSeq(img)
@@ -1531,7 +1531,7 @@ class CompressMap(NetworkNode):
 
     def __init__(self, name='CompressMap', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -1554,7 +1554,7 @@ class Equalize(NetworkNode):
 
     def __init__(self, name='Equalize', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -1577,7 +1577,7 @@ class Normalize(NetworkNode):
     
     def __init__(self, name='Normalize', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -1604,7 +1604,7 @@ class Modulate(NetworkNode):
 
     def __init__(self, name='Modulate', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, b, s, h):
         img = toSeq(img)
@@ -1669,7 +1669,7 @@ class Negate(NetworkNode):
 
     def __init__(self, name='Negate', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, gray):
         img = toSeq(img)
@@ -1703,7 +1703,7 @@ class Solarize(NetworkNode):
 
     def __init__(self, name='Solarize', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, thresh):
         img = toSeq(img)
@@ -1745,7 +1745,7 @@ class Gamma(NetworkNode):
 
     def __init__(self, name='Gamma', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, r, g, b):
         img = toSeq(img)
@@ -1818,10 +1818,10 @@ class Level(NetworkNode):
 
     def __init__(self, name='Level', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, b, w, m):
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         result.level(b, m, w)
         self.outputData(outImage=result)\n"""
@@ -1887,10 +1887,10 @@ class OrderedDither(NetworkNode):
 
     def __init__(self, name='OrderedDither', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         result.ordered_dither()
         self.outputData(outImage=result)\n"""
@@ -1910,10 +1910,10 @@ class Channel(NetworkNode):
 
     def __init__(self, name='Channel', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, chan): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         result.channel(chan)
         self.outputData(outImage=result)\n"""
@@ -1955,10 +1955,10 @@ class CycleColors(NetworkNode):
 
     def __init__(self, name='CycleColors', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, val): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         result.cyclecolor(val)
         self.outputData(outImage=result)\n"""
@@ -1998,7 +1998,7 @@ class LAT(NetworkNode):
 
     def __init__(self, name='LAT', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, w, h, off):
         img = toSeq(img)
@@ -2071,7 +2071,7 @@ class Segment(NetworkNode):
 
     def __init__(self, name='Segment', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, space, verb, cluster, smooth):
         img = toSeq(img)
@@ -2161,10 +2161,10 @@ class LevelChannel(NetworkNode):
 
     def __init__(self, name='LevelChannel', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, chan, b, w, m):
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         result.levelchannel(chan, b, m, w)
         self.outputData(outImage=result)\n"""
@@ -2253,7 +2253,7 @@ class Threshold(NetworkNode):
 
     def __init__(self, name='Threshold', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, r, g, b, o):
         img = toSeq(img)
@@ -2340,10 +2340,10 @@ class Blur(NetworkNode):
 
     def __init__(self, name='Blur', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, sig):
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         if sig:
             result = blur(img, sig)
@@ -2380,10 +2380,10 @@ class Enhance(NetworkNode):
 
     def __init__(self, name='Enhance', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
-	img = toSeq(img)
+        img = toSeq(img)
         result = enhance(image)
         self.outputData(outImage=result)\n"""
 
@@ -2404,10 +2404,10 @@ class AddNoise(NetworkNode):
 
     def __init__(self, name='AddNoise', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, type): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         if type:
             result = addnoise(img, type)
@@ -2446,10 +2446,10 @@ class Despeckle(NetworkNode):
 
     def __init__(self, name='Despeckle', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = despeckle(image)
         self.outputData(outImage=result)\n"""
 
@@ -2471,10 +2471,10 @@ class MotionBlur(NetworkNode):
 
     def __init__(self, name='MotionBlur', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, sig, deg): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         if sig and deg:
             result = motionblur(img, sig, deg)
@@ -2525,10 +2525,10 @@ class ReduceNoise(NetworkNode):
 
     def __init__(self, name='ReduceNoise', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = reducenoise(img)
         self.outputData(outImage=result)\n"""
 
@@ -2549,10 +2549,10 @@ class Sharpen(NetworkNode):
 
     def __init__(self, name='Sharpen', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, sig): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         if sig:
             result = sharpen(img, sig)
@@ -2591,10 +2591,10 @@ class UnsharpMask(NetworkNode):
 
     def __init__(self, name='UnsharpMask', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, sig):
-	img = toSeq(img)
+        img = toSeq(img)
         result = blur(img, sig)
         self.outputData(outImage=result)\n"""
 
@@ -2634,10 +2634,10 @@ class Border(NetworkNode):
 
     def __init__(self, name='Border', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, w, h, color): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy();
         if type(eval(color)) == str:
             result = border(img, w, h, bordercolor=eval(color))
@@ -2708,10 +2708,10 @@ class Charcoal(NetworkNode):
 
     def __init__(self, name='Charcoal', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, rad, sig): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         if rad and sig:
             result = charcoal(img, rad, sig)
@@ -2766,10 +2766,10 @@ class Edge(NetworkNode):
 
     def __init__(self, name='Edge', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, rad): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = edge(img, rad)
         self.outputData(outImage=result)\n"""
 
@@ -2806,10 +2806,10 @@ class Emboss(NetworkNode):
 
     def __init__(self, name='Emboss', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, sig): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = emboss(img, sig)
         self.outputData(outImage=result)\n"""
 
@@ -2847,10 +2847,10 @@ class OilPaint(NetworkNode):
 
     def __init__(self, name='OilPaint', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, rad): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         if rad:
             result = oilpaint(img, rad)
@@ -2894,10 +2894,10 @@ class Frame(NetworkNode):
 
     def __init__(self, name='Border', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, w, h, i, o, color): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy();
         if type(eval(color)) == str:
             result = frame(img, w, h, i, o, mattecolor=eval(color))
@@ -2995,10 +2995,10 @@ class Implode(NetworkNode):
 
     def __init__(self, name='Implode', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, fact): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         if fact:
             result = implode(img, fact)
@@ -3035,10 +3035,10 @@ class MedianFilter(NetworkNode):
 
     def __init__(self, name='MedianFilter', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, rad): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = medianfilter(img, rad)
         self.outputData(outImage=result)\n"""
 
@@ -3075,10 +3075,10 @@ class Shade(NetworkNode):
 
     def __init__(self, name='Shade', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, az, el): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         if az and el:
             result = shade(img, az, el)
@@ -3132,10 +3132,10 @@ class Spread(NetworkNode):
 
     def __init__(self, name='Spread', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, rad): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         if rad:
             result = spread(img, rad)
@@ -3174,10 +3174,10 @@ class Swirl(NetworkNode):
 
     def __init__(self, name='Swirl', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, deg): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         if deg:
             result = swirl(img, deg)
@@ -3216,10 +3216,10 @@ class Raise(NetworkNode):
 
     def __init__(self, name='Raise', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, w, h, r): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         result.raise_(w, h, r)
         self.outputData(outImage=result)\n"""
@@ -3281,7 +3281,7 @@ class Wave(NetworkNode):
 
     def __init__(self, name='Wave', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, amp, length):
         img = toSeq(img)
@@ -3341,7 +3341,7 @@ class Plasma(NetworkNode):
 
     def __init__(self, name='Plasma', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, x1, y1, x2, y2, atten, depth):
         img = toSeq(img)
@@ -3430,7 +3430,7 @@ class Convolve(NetworkNode):
 
     def __init__(self, name='Convolve', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, kernel):
         img = toSeq(img)
@@ -3470,10 +3470,10 @@ class Transparent(NetworkNode):
 
     def __init__(self, name='Transparent', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, target, o, fuzz): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         o = o * 257
         if type(eval(target)) == str:
@@ -3544,10 +3544,10 @@ class FillOpaque(NetworkNode):
 
     def __init__(self, name='FillOpaque', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, target, color, fuzz): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         if type(eval(color)) == tuple:
             r, g, b = eval(color)
@@ -3612,10 +3612,10 @@ class Erase(NetworkNode):
 
     def __init__(self, name='Erase', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         result.set()
         self.outputData(outImage=result)\n"""
@@ -3638,10 +3638,10 @@ class Set(NetworkNode):
 
     def __init__(self, name='Set', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, color, o): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         o = o * 257
         if type(eval(color)) == str:
@@ -3695,7 +3695,7 @@ class SetOpacity(NetworkNode):
 
     def __init__(self, name='SetOpacity', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, o):
         img = toSeq(img)
@@ -3741,7 +3741,7 @@ class ColorFloodFill(NetworkNode):
 
     def __init__(self, name='ColorFloodFill', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img,  target, fill, x, y, fuzz):
         img = toSeq(img)
@@ -3832,7 +3832,7 @@ class MatteFloodFill(NetworkNode):
 
     def __init__(self, name='ColorFloodFill', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img,  target, o, x, y, fuzz):
         img = toSeq(img)
@@ -3927,10 +3927,10 @@ class Annotate(NetworkNode):
 
     def __init__(self, name='Annotate', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, fname, size, color, x, y, text): 
-	img = toSeq(img)
+        img = toSeq(img)
         result = img.copy()
         x = int(x)
         y = int(y)
@@ -4011,7 +4011,7 @@ class Draw(NetworkNode):
 
     def __init__(self, name='Draw', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, prim):
         img = toSeq(img)
@@ -4045,7 +4045,7 @@ class ClipPath(NetworkNode):
 
     def __init__(self, name='ClipPath', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, prim):
         img = toSeq(img)
@@ -4081,7 +4081,7 @@ class SetPixels(NetworkNode):
 
     def __init__(self, name='SetPixels', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, data, x, y, z):
         img = toSeq(img)
@@ -4136,7 +4136,7 @@ class CreateSeq(NetworkNode):
 
     def __init__(self, name='CreateSeq', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         result = toSeq(img)
@@ -4157,7 +4157,7 @@ class Average(NetworkNode):
 
     def __init__(self, name='Average', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -4183,7 +4183,7 @@ class Diff(NetworkNode):
 
     def __init__(self, name='Diff', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, img2):
         img = toSeq(img)
@@ -4216,7 +4216,7 @@ class Map(NetworkNode):
 
     def __init__(self, name='Map', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, img2, dither):
         img = toSeq(img)
@@ -4252,7 +4252,7 @@ class Mosaic(NetworkNode):
 
     def __init__(self, name='Mosaic', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -4276,7 +4276,7 @@ class Morph(NetworkNode):
 
     def __init__(self, name='Morph', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, frames):
         img = toSeq(img)
@@ -4316,7 +4316,7 @@ class Append(NetworkNode):
 
     def __init__(self, name='Append', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, stack):
         img = toSeq(img)
@@ -4349,7 +4349,7 @@ class Flatten(NetworkNode):
 
     def __init__(self, name='Flatten', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -4371,7 +4371,7 @@ class Stegano(NetworkNode):
 
     def __init__(self, name='Watermark', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, mark):
         img = toSeq(img)
@@ -4396,7 +4396,7 @@ class Stereo(NetworkNode):
 
     def __init__(self, name='Stereo', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img1, img2):
         img1 = toSeq(img1)
@@ -4425,7 +4425,7 @@ class Coalesce(NetworkNode):
 
     def __init__(self, name='Coalesce', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -4453,7 +4453,7 @@ class Composite(NetworkNode):
 
     def __init__(self, name='Composite', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img1, img2, x, y, method):
         img1 = toSeq(img1)
@@ -4541,7 +4541,7 @@ class Deconstruct(NetworkNode):
 
     def __init__(self, name='Deconstruct', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
         img = toSeq(img)
@@ -4566,7 +4566,7 @@ class DrawAffine(NetworkNode):
 
     def __init__(self, name="DrawAffine", **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img1, img2, affine):
         img1 = toSeq(img1)
@@ -4605,7 +4605,7 @@ class getImage(NetworkNode):
 
     def __init__(self, name='getImage', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img, index):
         img = toSeq(img)

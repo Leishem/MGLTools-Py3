@@ -1,7 +1,7 @@
 from mglutil.gui.BasicWidgets.Tk.trees.TreeWithButtons import \
      ColumnDescriptor ,TreeWithButtons, NodeWithButtons
 from MolKit.molecule import MolecularSystem
-import Pmw, Tkinter, os
+import Pmw, tkinter, os
 
 from MolKit.stringSelector import CompoundStringSelector
 from MolKit.molecule import MoleculeSet
@@ -27,7 +27,7 @@ attribute describing the hierarchy."""
         TreeWithButtons.__init__( *(self, master, root), **kw )
 
         # add backbone only widget
-        self.bbmodevar = Tkinter.StringVar()
+        self.bbmodevar = tkinter.StringVar()
         self.bbmodevar.set("CMD")
 
         canvas = self.canvas
@@ -115,7 +115,7 @@ attribute describing the hierarchy."""
         
         
     def createSelectionBox(self, master):
-        master1 = Tkinter.Frame(master)
+        master1 = tkinter.Frame(master)
 
         # add selector entry
         self.selector = CompoundStringSelector()
@@ -200,7 +200,7 @@ This setting can be overridden by each column (CMD)"""
     def expandParents(self, object):
         """Expand all parents of the node"""
         p = object.parent
-        if not self.objectToNode.has_key(p):
+        if p not in self.objectToNode:
             self.expandParents(p)
             
         self.objectToNode[p].expand()
@@ -257,7 +257,7 @@ class MolFragNodeWithButtons(NodeWithButtons):
 
 
     def postMoleculeMenu(self,event):
-        menu = Tkinter.Menu(tearoff=False)
+        menu = tkinter.Menu(tearoff=False)
         obj = self.object
         #isroot = False
 
@@ -354,7 +354,7 @@ class MolFragNodeWithButtons(NodeWithButtons):
                     for b in a.bonds:
                         a2 = b.atom1
                         if a2==a: a2 = b.atom2
-                        if hat.has_key(a2):
+                        if a2 in hat:
                             hydat.append(a2)
                 vf.displayLines(AtomSet(hydat), negate=negate)
 
@@ -365,7 +365,7 @@ class MolFragNodeWithButtons(NodeWithButtons):
                     for b in a.bonds:
                         a2 = b.atom1
                         if a2==a: a2 = b.atom2
-                        if hat.has_key(a2):
+                        if a2 in hat:
                             hydat.append(a2)
                 vf.displaySticksAndBalls(AtomSet(hydat), negate=negate)
 
@@ -376,7 +376,7 @@ class MolFragNodeWithButtons(NodeWithButtons):
                     for b in a.bonds:
                         a2 = b.atom1
                         if a2==a: a2 = b.atom2
-                        if hat.has_key(a2):
+                        if a2 in hat:
                             hydat.append(a2)
                 vf.displayCPK(AtomSet(hydat), negate=negate)
 
@@ -569,7 +569,7 @@ class MolFragNodeWithButtons(NodeWithButtons):
                 while topNode.parent.parent!=None:
                     topNode = topNode.parent
 
-                if results.has_key(topNode):
+                if topNode in results:
                     resultAtoms = results[topNode][3]
                     resultResidues = results[topNode][2]
                     resultChains = results[topNode][1]
@@ -591,7 +591,7 @@ class MolFragNodeWithButtons(NodeWithButtons):
                     node.chkbtval[column] = buttonValue
                 result = node.getNodes(column)
                 #result.append(node.getNodes(column))
-                obj = result.values()[0][0]
+                obj = list(result.values())[0][0]
                 #print 'HHHHH', node, result, obj
                 if isinstance(obj, AtomSet):
                     resultAtoms += obj
@@ -624,7 +624,7 @@ class SelectionWithButtons(MolFragNodeWithButtons):
         vf.centerOnNodes(obj.setClass(sel))
 
     def postSetMenu(self,event):
-        menu = Tkinter.Menu(tearoff=False)
+        menu = tkinter.Menu(tearoff=False)
         menu.add_command(label='Split', command=self.splitSelection)
         menu.add_command(label='Clone', command=self.cloneSelection)
         menu.add_separator()
@@ -653,7 +653,7 @@ class SelectionWithButtons(MolFragNodeWithButtons):
 
         nodes = self.getNodes(1)
         if nodes == self.tree().vf.Mols:
-            from tkMessageBox import showwarning
+            from tkinter.messagebox import showwarning
             showwarning("Warning", "select something first")
         else:
             nodes = self.getNodes(0) # does not use dashboard selection
@@ -670,7 +670,7 @@ class SelectionWithButtons(MolFragNodeWithButtons):
             #w.insertentry(0, nodes.buildRepr()[:30].replace(';', ''))
             w.insertentry(0, "split_%d"%self.nbSplits)
             self.nbSplits += 1
-            w.component('entry').selection_range(0, Tkinter.END) 
+            w.component('entry').selection_range(0, tkinter.END) 
             w.component('entry').focus_set()
             w.component('entry').bind('<Return>', cb)
             self.nameSelectionDialog.geometry(
@@ -698,7 +698,7 @@ class SelectionWithButtons(MolFragNodeWithButtons):
 
         # make one AtomSet out of all objects
         atoms = AtomSet([])
-        for node,objlist in nodes.items():
+        for node,objlist in list(nodes.items()):
             for obj in objlist: # each node has [AtomSet, ResidueSet, ...]
                 if len(obj)==0: continue
                 # get all atoms for this node
@@ -733,7 +733,7 @@ class SetWithButtons(SelectionWithButtons):
                        deleteAfterCopy=False)
         
     def postSetMenu(self,event):
-        menu = Tkinter.Menu(tearoff=False)
+        menu = tkinter.Menu(tearoff=False)
         menu.add_command(label='Rename', command=self.renameSet)
         menu.add_command(label='Split', command=self.splitSet)
         menu.add_command(label='Clone', command=self.copySet)
@@ -758,7 +758,7 @@ class SetWithButtons(SelectionWithButtons):
         name = name.replace('_','-')
 
         vi = vf.GUI.VIEWER
-        for node,objlist in self.getNodes(0).items():
+        for node,objlist in list(self.getNodes(0).items()):
             # find molecules
             atoms = AtomSet([]) # collect atoms from objlist
             for obj in objlist:
@@ -766,7 +766,7 @@ class SetWithButtons(SelectionWithButtons):
             mols = atoms.top.uniq()
             for mol in mols:
                 gc = mol.geomContainer
-                if gc.geoms.has_key(name):
+                if name in gc.geoms:
                     geom = gc.geoms[name]
                     del gc.geoms[name]
                     del gc.atoms[name]
@@ -783,7 +783,7 @@ class SetWithButtons(SelectionWithButtons):
 
 
     def renameSet(self):
-        from tkSimpleDialog import askstring
+        from tkinter.simpledialog import askstring
         oldname = self.object.name
         name = askstring("rename set", "new name:", initialvalue=oldname)
         if name is None:
@@ -814,7 +814,7 @@ class IonsWithButtons(SetWithButtons):
     # all atoms in residues with name in the ion names list
     def getNodes(self, column):
         allres = self.tree().vf.Mols.chains.residues
-        res = [a for a in allres if ionNames.has_key(a.type.strip())]
+        res = [a for a in allres if a.type.strip() in ionNames]
         return {self: [ResidueSet(res)]}
 
 
@@ -823,7 +823,7 @@ class DNAWithButtons(SetWithButtons):
     # all atoms in residues with name in the DNA names list
     def getNodes(self, column):
         allres = self.tree().vf.Mols.chains.residues
-        res = [a for a in allres if DNAnames.has_key(a.type.strip())]
+        res = [a for a in allres if a.type.strip() in DNAnames]
         return {self: [ResidueSet(res)]}
 
 
@@ -832,7 +832,7 @@ class RNAWithButtons(SetWithButtons):
     # all atoms in residues with name in the RNA names list
     def getNodes(self, column):
         allres = self.tree().vf.Mols.chains.residues
-        res = [a for a in allres if RNAnames.has_key(a.type.strip())]
+        res = [a for a in allres if a.type.strip() in RNAnames]
         return {self: [ResidueSet(res)]}
 
 
@@ -841,7 +841,7 @@ class STDAAWithButtons(SetWithButtons):
     # all atoms in residues with name in the amino acids names list
     def getNodes(self, column):
         allres = self.tree().vf.Mols.chains.residues
-        res = [a for a in allres if AAnames.has_key(a.type.strip())]
+        res = [a for a in allres if a.type.strip() in AAnames]
         return {self: [ResidueSet(res)]}
 
 
@@ -849,7 +849,7 @@ class LigandAtomsWithButtons(SetWithButtons):
     
     def getNodes(self, column):
         allres = self.tree().vf.Mols.chains.residues
-        res = [a for a in allres if not allResidueNames.has_key(a.type.strip())]
+        res = [a for a in allres if a.type.strip() not in allResidueNames]
         return {self: [ResidueSet(res)]}
 
 
@@ -905,7 +905,7 @@ class MVColumnDescriptor(ColumnDescriptor):
         #from Pmv.displayCommands import DisplayCommand
         #cmd.setLastUsedValues('default')
         # force display radio button
-        if cmd.cmdForms.has_key('default'): # if form exists change widget
+        if 'default' in cmd.cmdForms: # if form exists change widget
             dispW = cmd.cmdForms['default'].descr.entryByName['display']['widget']
             dispW.component('display').invoke() # set radio to 'display'
         else:
@@ -948,12 +948,12 @@ class MVColumnDescriptor(ColumnDescriptor):
         defaultValues.update( kw )
         
         if  self.commandType == 'checkbutton':
-            if defaultValues.has_key('negate'):
+            if 'negate' in defaultValues:
                 defaultValues['negate'] = not val
             elif not val:
                 return
         # when lines in dashboard are selected objects has one entry per line
-        for node,objlist in objects.items():
+        for node,objlist in list(objects.items()):
             for objs in objlist: # each node has [AtomSet, ResidueSet, ...]
                 if len(objs)==0: continue
                 
@@ -1082,8 +1082,8 @@ class MVSelectColumnDescriptor(MVColumnDescriptor):
 
         self.selectionDict = {}
         self.getNodeLevel = Atom
-        self.deselectVar = Tkinter.IntVar()
-        self.distanceVar = Tkinter.DoubleVar()
+        self.deselectVar = tkinter.IntVar()
+        self.distanceVar = tkinter.DoubleVar()
         self.distanceVar.set(5.0)
         
 
@@ -1127,7 +1127,7 @@ class MVSelectColumnDescriptor(MVColumnDescriptor):
         # reset deselection button
         self.deselectVar.set(0)
         
-        menu = Tkinter.Menu(tearoff=False)
+        menu = tkinter.Menu(tearoff=False)
         
         cb = CallbackFunction( self.vf.deselect, "*" )
         menu.add_command(label='Clear selection', command=cb)
@@ -1219,14 +1219,14 @@ class MVSelectColumnDescriptor(MVColumnDescriptor):
             if gca['sticks']:
                 asticks += gca['sticks']
             msmsAtoms = {}
-            for msmsName in mol.geomContainer.msms.keys():
-                if gca.has_key(msmsName) and gca[msmsName]:
+            for msmsName in list(mol.geomContainer.msms.keys()):
+                if msmsName in gca and gca[msmsName]:
                     msmsAtoms[msmsName] = gca[msmsName]
             if gca['AtomLabels']:
                 aalab += gca['AtomLabels']
             if gca['ResidueLabels']:
                 arlab += gca['ResidueLabels']
-            for k, v in gca.items():
+            for k, v in list(gca.items()):
                 if k[:4] in ['Heli', 'Stra', 'Turn', 'Coil']:
                     aribbon += gca[k]
 
@@ -1243,7 +1243,7 @@ class MVSelectColumnDescriptor(MVColumnDescriptor):
             cb = CallbackFunction( self.vf.select, aribbon.copy())
             menu.add_command(label='Ribbon', command=cb)
         if msmsAtoms:
-            for name, atoms in msmsAtoms.items():
+            for name, atoms in list(msmsAtoms.items()):
                 cb = CallbackFunction( self.vf.select, atoms.copy())
                 menu.add_command(label='Surface %s'%name,
                                  command=cb)
@@ -1277,7 +1277,7 @@ class MVSelectColumnDescriptor(MVColumnDescriptor):
 
     def setCutOff(self, cmd, obj, node):
         self.menu.post( *self.menuPosition )
-        self._tmproot = root = Tkinter.Toplevel()
+        self._tmproot = root = tkinter.Toplevel()
         root.transient()
         root.geometry("+%d+%d"%root.winfo_pointerxy())
         root.overrideredirect(True)
@@ -1305,12 +1305,12 @@ class MVSelectColumnDescriptor(MVColumnDescriptor):
         self._counter = c
 
         im = ImageTk.PhotoImage(file=os.path.join(iconPath,'ok20.png'))
-        b = Tkinter.Button(root, image=im, command=cb)
+        b = tkinter.Button(root, image=im, command=cb)
         b.im = im
         b.grid(row=0, column=1)
 
         im = ImageTk.PhotoImage(file=os.path.join(iconPath,'cancel20.png'))
-        b = Tkinter.Button(root, image=im, command=self.cancelCB)
+        b = tkinter.Button(root, image=im, command=self.cancelCB)
         b.im = im
         b.grid(row=0, column=2)
 
@@ -1371,7 +1371,7 @@ class MVSelectColumnDescriptor(MVColumnDescriptor):
         d = {}.fromkeys(molNames)
         centers = self.vf.selection.findType(Atom).coords
         oldSel = self.vf.getSelection().findType(Atom)[:]
-        self.vf.expandSelection(oldSel, centers, dist, d.keys(), )
+        self.vf.expandSelection(oldSel, centers, dist, list(d.keys()), )
 
 
 
@@ -1461,7 +1461,7 @@ class RibbonColumnDescriptor(MVColumnDescriptor):
 
         # get a dict ofr all selected nodes in dashboard
         nodedict = node.getObjects(column) # what to cmd will apply to
-        for node, lists in nodedict.items():
+        for node, lists in list(nodedict.items()):
             for _set in lists:
                 if len(_set):
                     cmd.doitWrapper( _set, **val)
@@ -1513,7 +1513,7 @@ class MSMSColumnDescriptor(MVColumnDescriptor):
         formValues = cmd.getLastUsedValues()
         formValues = cmd.fixValues(formValues)
 
-        for node,objlist in node.getObjects(colInd).items():
+        for node,objlist in list(node.getObjects(colInd).items()):
 
             # collect atoms from the 4 lists in objList
             atoms = AtomSet([]) # collect atoms from objlist
@@ -1570,7 +1570,7 @@ class MSMSColumnDescriptor(MVColumnDescriptor):
                     # have changed and we have to recompute the surface
                     recompute=True
                 else: # compare last parameters with ones in form
-                    for k,v in lastValues.items():
+                    for k,v in list(lastValues.items()):
                         nv = formValues.get(k, None)
                         if nv!=v:
                             #print 'MSMS recompute: new param', k, nv, v
@@ -1646,7 +1646,7 @@ class ColorColumnDescriptor(MVColumnDescriptor):
         self.onOnly = self.postMenu
         self.cbOn = self.postMenu
         self.cbOff = None
-        self.carbonOnly = Tkinter.IntVar()
+        self.carbonOnly = tkinter.IntVar()
 
         
     def execute(self, node, colInd):
@@ -1655,7 +1655,7 @@ class ColorColumnDescriptor(MVColumnDescriptor):
 
     def enableDisableColorCmdEntries(self):
         # disable menu entries if no geom is selected
-        geomsToColor=[k for k,v in self.geomsVar.items() if v.get()]
+        geomsToColor=[k for k,v in list(self.geomsVar.items()) if v.get()]
         if len(geomsToColor)==0:
             state = 'disable'
         else:
@@ -1668,7 +1668,7 @@ class ColorColumnDescriptor(MVColumnDescriptor):
                 lstate = 'disable'
             try:
                 self.menu.entryconfig(entry, state=lstate)
-            except Tkinter.TclError:
+            except tkinter.TclError:
                 pass
             
         for entry in ['By molecule', 'By chain',
@@ -1680,7 +1680,7 @@ class ColorColumnDescriptor(MVColumnDescriptor):
                       'Custom color']:
             try:
                 self.menu.entryconfig(entry, state=state)
-            except Tkinter.TclError:
+            except tkinter.TclError:
                 pass # happens for 'Chains by Rainbow' which is only in the
                      # menu for molecule entries to dashboard
 
@@ -1692,7 +1692,7 @@ class ColorColumnDescriptor(MVColumnDescriptor):
         if value=='all':
             # toggle all check buttons
             val = self.allGeomsVar.get()
-            [w.set(val) for w in self.geomsVar.values()]
+            [w.set(val) for w in list(self.geomsVar.values())]
         else:
             # toggle a check button
             var = self.geomsVar[value]
@@ -1704,14 +1704,14 @@ class ColorColumnDescriptor(MVColumnDescriptor):
 
 
     def colorChooser_cb(self, objects):
-        geomsToColor=[k for k,v in self.geomsVar.items() if v.get()]
+        geomsToColor=[k for k,v in list(self.geomsVar.items()) if v.get()]
         if len(geomsToColor)==0:
             # repost menu in same location
             self.menu.post(self.menu.winfo_x(), self.menu.winfo_y())
             return
 
         def cb(color, objects=objects, geomsToColor=geomsToColor):
-            for node, objlist in objects.items():
+            for node, objlist in list(objects.items()):
                 for obj in objlist: # each node has [AtomSet, ResidueSet, ...]
                     if len(obj)==0: continue
                     if self.carbonOnly.get():
@@ -1720,7 +1720,7 @@ class ColorColumnDescriptor(MVColumnDescriptor):
                             [x for x in obj.findType(Atom) if x.element=='C'])
                     self.vf.color(obj, [color], geomsToColor)
 
-        name = str([str(o) for o in objects.keys()])
+        name = str([str(o) for o in list(objects.keys())])
         cc = ColorChooser(immediate=1, commands=cb,
                           title='Color %s for %s'%(str(geomsToColor), name))
 
@@ -1728,12 +1728,12 @@ class ColorColumnDescriptor(MVColumnDescriptor):
 
 
     def color_cb(self, cmd, objects):
-        geomsToColor=[k for k,v in self.geomsVar.items() if v.get()]
+        geomsToColor=[k for k,v in list(self.geomsVar.items()) if v.get()]
         if len(geomsToColor)==0:
             # repost menu in same location
             self.menu.post(self.menu.winfo_x(), self.menu.winfo_y())
             return
-        for node, objlist in objects.items():
+        for node, objlist in list(objects.items()):
             for obj in objlist: # each node has [AtomSet, ResidueSet, ...]
                 if len(obj)==0: continue
 
@@ -1761,14 +1761,14 @@ class ColorColumnDescriptor(MVColumnDescriptor):
 
     def getVisibleGeoms(self, objects):
         geoms = {}
-        for node, objlist in objects.items():
+        for node, objlist in list(objects.items()):
             for objs in objlist: # each node has [AtomSet, ResidueSet, ...]
                 if len(objs)==0: continue
 
                 for ob in objs:
                     gc = ob.top.geomContainer
-                    for name, ats in gc.atoms.items():
-                        if gc.geoms.has_key(name) and gc.geoms[name].visible \
+                    for name, ats in list(gc.atoms.items()):
+                        if name in gc.geoms and gc.geoms[name].visible \
                                and len(ats):
                             if name[:4] in ['Heli', 'Stra', 'Turn', 'Coil']:
                                 geoms['secondarystructure'] = True
@@ -1777,7 +1777,7 @@ class ColorColumnDescriptor(MVColumnDescriptor):
                             else:
                                 geoms[name] = True
                         
-        return geoms.keys()
+        return list(geoms.keys())
 
         
     def postMenu(self, node, colInd, val, event=None):
@@ -1795,7 +1795,7 @@ class ColorColumnDescriptor(MVColumnDescriptor):
 ##         if isinstance(obj, list): # for sets
 ##             obj = obj[0]
 
-        menu = Tkinter.Menu(tearoff=False)
+        menu = tkinter.Menu(tearoff=False)
 
         # put entries to select geometry to color
         visibleGeoms = self.getVisibleGeoms(obj)
@@ -1808,7 +1808,7 @@ class ColorColumnDescriptor(MVColumnDescriptor):
         else:
             varVal = 0
             
-        self.allGeomsVar = Tkinter.IntVar()
+        self.allGeomsVar = tkinter.IntVar()
         self.allGeomsVar.set(varVal==1)
         self.geomsVar = {}
 
@@ -1821,7 +1821,7 @@ class ColorColumnDescriptor(MVColumnDescriptor):
                                  command=cb)
 
         for geom in visibleGeoms:
-            v = self.geomsVar[geom] = Tkinter.IntVar()
+            v = self.geomsVar[geom] = tkinter.IntVar()
             v.set(varVal)
             cb = CallbackFunction( self.handleCheckButtons, geom)
             menu.add_checkbutton(label=geom, variable=v, command=cb)
@@ -1867,7 +1867,7 @@ class ColorColumnDescriptor(MVColumnDescriptor):
         menu.add_command(label='By rainbow', command=cb)
 
         added = False
-        for ob in obj.values():
+        for ob in list(obj.values()):
             for o in ob:
                 if isinstance(o, MoleculeSet) or isinstance(ob, ProteinSet):
                     cb = CallbackFunction( self.color_cb,
@@ -1879,10 +1879,10 @@ class ColorColumnDescriptor(MVColumnDescriptor):
                 break
 
         mols = {}
-        for ob in obj.values():
+        for ob in list(obj.values()):
             mols.update( {}.fromkeys([o.top for o in ob]) )
             
-        for m in mols.keys():
+        for m in list(mols.keys()):
             if hasattr(m, 'builder'): # there is a ribbon
                 cb = CallbackFunction( self.color_cb,
                                        self.vf.colorBySecondaryStructure, obj )
@@ -1965,7 +1965,7 @@ class LabelColumnDescriptor(MVColumnDescriptor):
         # when lines in dashboard are selected objects has one entry per line
         if not useProp:
             del self.kw['properties']
-        for node,objlist in objects.items():
+        for node,objlist in list(objects.items()):
             for objs in objlist: # each node has [AtomSet, ResidueSet, ...]
                 if len(objs)==0: continue
                 
@@ -1986,9 +1986,9 @@ class LabelColumnDescriptor(MVColumnDescriptor):
 
         self.kw = {'properties':["name"]}
             
-        menu = Tkinter.Menu(tearoff=False)
+        menu = tkinter.Menu(tearoff=False)
 
-        self.labelVar = Tkinter.IntVar()
+        self.labelVar = tkinter.IntVar()
         self.labelVar.set(1)
         cb = CallbackFunction( self.handleRadioButtons, obj)
         menu.add_radiobutton(label='Label', variable=self.labelVar,
@@ -2176,7 +2176,7 @@ ColumnDescriptors.append(colInstColDescr)
 
 # MS I think this funciton is not OBSOLETE
 def loadAllColunms(mv):
-    print ' HUMM it actually gets called !'
+    print(' HUMM it actually gets called !')
     raise
     # adding columns to dashboard
     mv.dashboardSuspendRedraw(True)

@@ -16,7 +16,7 @@
 
 
 import unittest, sys
-import types, os, glob, string
+import types, os, glob; from mglcompat import pystring as string
 
 class TestSuite(unittest.TestSuite):
     def __init__(self, tests=(), setUpSuite=None, tearDownSuite=None):
@@ -72,7 +72,7 @@ class TestLoader(unittest.TestLoader):
         """
         
         ftc = []
-        if not type(functions) in [types.TupleType, types.ListType] and \
+        if not type(functions) in [tuple, list] and \
                type(functions) is types.FunctionType:
             functions = [functions,]
             
@@ -80,7 +80,7 @@ class TestLoader(unittest.TestLoader):
         modName = m.split('.')[-1]
         
         parts = m.split(".")[:-1]
-        import string
+        from mglcompat import pystring as string
         p = string.join(parts, '/')
         modPath = os.path.abspath(p)
         for func in functions:
@@ -95,7 +95,7 @@ class TestLoader(unittest.TestLoader):
         modPath = os.path.split(module.__file__)[0]
         modPath = os.path.abspath(modPath)
         ignoring = []
-        if self.ignore.has_key(modName):
+        if modName in self.ignore:
             # ignore the whole testModule
             ignoring = self.ignore[modName]
             if len(ignoring)==0:
@@ -142,7 +142,7 @@ class TestLoader(unittest.TestLoader):
         for name in dir(module):
             if name in ignoring: continue
             obj = getattr(module, name)
-            if (isinstance(obj, (type, types.ClassType)) and
+            if (isinstance(obj, type) and
                 issubclass(obj, unittest.TestCase)):
 ##                 inClass = dir(obj)
                 # Look if a setUpSuite and a tearDownSuite have been implemented
@@ -158,8 +158,8 @@ class TestLoader(unittest.TestLoader):
 ##                     tearDownSuite = getattr(obj, 'tearDownSuite')
 ##                     if not type(tearDownSuite) is types.MethodType:
 ##                         tearDownSuite=None
-                ts = self.suiteClass(tests = map(obj,
-                                                 self.getTestCaseNames(obj)),
+                ts = self.suiteClass(tests = list(map(obj,
+                                                 self.getTestCaseNames(obj))),
                                      setUpSuite=setUpSuite, tearDownSuite=tearDownSuite)
                 tests.append(ts)
                                
@@ -222,13 +222,13 @@ class TestLoader(unittest.TestLoader):
         for comp in components[1:]:
             testPack = getattr(testPack, comp)
 
-        if testPack.__dict__.has_key('ignore') :
+        if 'ignore' in testPack.__dict__ :
             ignore = getattr(testPack, 'ignore')
 
-        if modPrefix is None and testPack.__dict__.has_key('modPrefix'):
+        if modPrefix is None and 'modPrefix' in testPack.__dict__:
             modPrefix = getattr(testPack, "modPrefix")
 
-        if funcPrefix is None and testPack.__dict__.has_key('funcPrefix'):
+        if funcPrefix is None and 'funcPrefix' in testPack.__dict__:
             funcPrefix = getattr(testPack,'funcPrefix')
             
         # Then need to go in the given directory and get all the python files
@@ -312,7 +312,7 @@ class TestLoader(unittest.TestLoader):
             else:
                 return [obj.__name__,]
 
-        elif (isinstance(obj, (type, types.ClassType)) and
+        elif (isinstance(obj, type) and
               issubclass(obj, unittest.TestCase)):
             return [obj.__module__+'.'+obj.__name__,]
 
@@ -324,13 +324,13 @@ class TestLoader(unittest.TestLoader):
             name = name[:-3]
         if '/' in name:
             parts = name.split('/')
-            parts = filter(lambda x: x, parts)
+            parts = [x for x in parts if x]
         else:
             parts = name.split('.')
-            parts = filter(lambda x: x, parts)
+            parts = [x for x in parts if x]
         if module is None:
             if not parts:
-                raise ValueError, "incomplete test name: %s" % name
+                raise ValueError("incomplete test name: %s" % name)
             else:
                 parts_copy = parts[:]
                 while parts_copy:
@@ -346,7 +346,7 @@ class TestLoader(unittest.TestLoader):
         for part in parts:
             obj = getattr(obj, part)
             if part==testDirName:
-                if obj.__dict__.has_key('ignore'):
+                if 'ignore' in obj.__dict__:
                     self.ignore = getattr(obj,'ignore')
         return obj
     
@@ -389,7 +389,7 @@ class TestLoader(unittest.TestLoader):
             else:
                 return self.loadTestsFromModule(obj)
 
-        elif (isinstance(obj, (type, types.ClassType)) and
+        elif (isinstance(obj, type) and
               issubclass(obj, unittest.TestCase)):
             m = obj.__module__
             parts = m.split(".")[:-1]
@@ -411,17 +411,17 @@ class TestLoader(unittest.TestLoader):
             setUpSuite = None
             tearDownSuite = None
 
-            if module .__dict__.has_key('setUp'):
+            if 'setUp' in module .__dict__:
                 setUp = getattr(module , 'setUp')
-            if module .__dict__.has_key('tearDown'):
+            if 'tearDown' in module .__dict__:
                 tearDown = getattr(module , 'tearDown')
 
-            if module .__dict__.has_key('setUpSuite'):
+            if 'setUpSuite' in module .__dict__:
                 setUpSuite = getattr(module, 'setUpSuite')
                 if not type(setUpSuite) is types.FunctionType:
                     setUpSuite=None
 
-            if  module .__dict__.has_key('tearDownSuite'):
+            if  'tearDownSuite' in module .__dict__:
                 tearDownSuite = getattr(module, 'tearDownSuite')
                 if not type(tearDownSuite) is types.FunctionType:
                     tearDownSuite=None
@@ -433,21 +433,20 @@ class TestLoader(unittest.TestLoader):
             return (modPath, ts)
             
         elif type(obj) == types.UnboundMethodType:
-            newobj = obj.im_class(obj.__name__)
+            newobj = obj.__self__.__class__(obj.__name__)
             m = newobj.__module__
             parts = m.split(".")[:-1]
             p = string.join(parts, "/")
            
-            return (p, obj.im_class(obj.__name__))
+            return (p, obj.__self__.__class__(obj.__name__))
 
         elif callable(obj):
             test = obj()
             if not isinstance(test, unittest.TestCase) and \
                not isinstance(test, unittest.TestSuite):
-                raise ValueError, \
-                      "calling %s returned %s, not a test" % (obj,test)
+                raise ValueError("calling %s returned %s, not a test" % (obj,test))
             return (None,test)
         else:
-            raise ValueError, "don't know how to make test from: %s" % obj
+            raise ValueError("don't know how to make test from: %s" % obj)
         
 

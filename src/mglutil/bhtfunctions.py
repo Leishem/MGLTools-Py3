@@ -1,6 +1,6 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from bhtree import bhtreelib
 #
 # $Header: /opt/cvs/python/packages/share1.5/mglutil/bhtfunctions.py,v 1.9 2007/07/24 17:30:40 vareille Exp $
@@ -29,7 +29,7 @@ def findNearestAtoms(mol,vertices, **kw):
     
     coords = mol.allAtoms.coords
     if not hasattr(mol,'bhtree'):
-        print "Building bhtree for ",mol
+        print("Building bhtree for ",mol)
         ids = Numeric.arange(len(coords)).astype('i')
         bhtree = bhtreelib.TBHTree(coords,ids,10,10,9999.0)
         mol.bhtree = bhtree

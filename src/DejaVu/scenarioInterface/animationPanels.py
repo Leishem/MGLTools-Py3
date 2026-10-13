@@ -2,7 +2,7 @@
 ## GUI panels for creation Actions or MAA for example used in
 ## PMV/scenarioInterface/animationGui.py AnimationNotebook
 ##
-import Tkinter, Pmw
+import tkinter, Pmw
 from Scenario2.multipleActorsActions import MultipleActorsActions
 from mglutil.util.callback import CallbackFunction
 from Scenario2 import  _clipboard
@@ -42,7 +42,7 @@ class AnimationPanel:
 
         # set or create master 
         if self.master is None:
-            self.master = master = Tkinter.Toplevel()
+            self.master = master = tkinter.Toplevel()
             self.ownsMaster = True
         else:
             self.ownsMaster = False
@@ -50,15 +50,15 @@ class AnimationPanel:
         # create balloon
         self.balloon = Pmw.Balloon(self.master)
         # create top frame
-        self.frame = fm = Tkinter.Frame(self.master)
+        self.frame = fm = tkinter.Frame(self.master)
 
         # create group for geometry chooser
-	self.geomChooserG = w = Pmw.Group(fm, tag_text='Animateable objects')
+        self.geomChooserG = w = Pmw.Group(fm, tag_text='Animateable objects')
         w.pack(side='left', fill='both', expand=1, padx=6, pady=6)
 
         # add a group for animation buttons (clips)
         self.makeActionsG = w = Pmw.Group(fm, tag_text='Create Action')
-	w.pack(side='top', fill='both', expand=1, padx=6, pady=6)
+        w.pack(side='top', fill='both', expand=1, padx=6, pady=6)
         self.effectsContainer= w.interior()
 
         # add a group for saved animation clips
@@ -79,7 +79,7 @@ class AnimationPanel:
 
     def runMaa(self, maa):
         if hasattr(maa, "geomOrients") and maa.setOrient:
-            for o, val in maa.geomOrients.items():
+            for o, val in list(maa.geomOrients.items()):
                 #print "setting orient for:", o.name
                 setOrientation(o, val)
         elif maa.forceOrient:
@@ -101,7 +101,7 @@ class AnimationPanel:
         master = self.createdActionsG.interior()
 
         cb = CallbackFunction( self.runMaa, maa)
-        b = Tkinter.Button(master=master ,compound='left',
+        b = tkinter.Button(master=master ,compound='left',
                            command=cb, width=0, height=0)
         self.maaButtons.append(b)
         
@@ -110,7 +110,7 @@ class AnimationPanel:
         else:
             shortName = maa.__class__.__name__
         
-        if not self.maaButtonNames.has_key(shortName):
+        if shortName not in self.maaButtonNames:
             self.maaButtonNames[shortName] = 1
 
         count = self.maaButtonNames[shortName]
@@ -135,7 +135,7 @@ class AnimationPanel:
         """
         Opens the saved clip menu (right mouse click on the clip button)
         """
-        menu = Tkinter.Menu(self.master, title=maa.name)
+        menu = tkinter.Menu(self.master, title=maa.name)
 
 ##         cb = CallbackFunction(_clipboard.addMaa, maa)
 ##         menu.add_command(label="Add to Clipboard", command=cb)
@@ -185,8 +185,8 @@ class AnimationPanel:
         for i , _maa in enumerate(seqAnim.maas):
             if _maa[0] == maa:
                 name = maa.name
-                import tkMessageBox
-                ok = tkMessageBox.askokcancel("Delete %s?"%name,"%s is in Sequence Anim.\nThis will also remove the action from Sequence Anim."%name)
+                import tkinter.messagebox
+                ok = tkinter.messagebox.askokcancel("Delete %s?"%name,"%s is in Sequence Anim.\nThis will also remove the action from Sequence Anim."%name)
                 if not ok: return
                 position = _maa[1]
                 break
@@ -245,50 +245,50 @@ class ShowHideGeomPanel(AnimationPanel):
         
         # fly in button
         cb = CallbackFunction(self.makeMAA, FlyInObjectMAA, (), {})
-        w = self.flyinB = Tkinter.Button(parent, text='Fly In', command=cb)
+        w = self.flyinB = tkinter.Button(parent, text='Fly In', command=cb)
         w.grid(column=0, row=lastRow, sticky='ew')
         w.bind('<Button-3>', CallbackFunction( self.showMaaEditor_cb, FlyInObjectMAA, (), {}))
 
         # fly out button
         cb = CallbackFunction(self.makeMAA, FlyOutObjectMAA, (), {})
-        w = self.flyoutB = Tkinter.Button(parent, text='Fly Out', command=cb)
+        w = self.flyoutB = tkinter.Button(parent, text='Fly Out', command=cb)
         w.grid(column=1, row=lastRow, sticky='ew')
         w.bind('<Button-3>', CallbackFunction( self.showMaaEditor_cb, FlyOutObjectMAA , (), {}))
         lastRow += 1
 
         # fade in button
         cb = CallbackFunction(self.makeMAA, FadeInObjectMAA, (), {})
-        w = self.fadeinB = Tkinter.Button(parent, text='Fade In', command=cb)
+        w = self.fadeinB = tkinter.Button(parent, text='Fade In', command=cb)
         w.bind('<Button-3>', CallbackFunction( self.showMaaEditor_cb, FadeInObjectMAA, (), {}))
         w.grid(column=0, row=lastRow, sticky='ew')
 
         # fade out button
         cb = CallbackFunction(self.makeMAA, FadeOutObjectMAA, (), {})
-        w = self.fadeoutB = Tkinter.Button(parent, text='Fade Out', command=cb)
+        w = self.fadeoutB = tkinter.Button(parent, text='Fade Out', command=cb)
         w.bind('<Button-3>', CallbackFunction( self.showMaaEditor_cb, FadeOutObjectMAA, (), {}))
         w.grid(column=1, row=lastRow, sticky='ew')
         lastRow += 1
 
         # show button
         cb = CallbackFunction(self.makeMAA, VisibleObjectMAA, (), {'visible':1})
-        w = self.showB = Tkinter.Button(parent, text='Show', command=cb)
+        w = self.showB = tkinter.Button(parent, text='Show', command=cb)
         w.grid(column=0, row=lastRow, sticky='ew')
         
         # hide button
         cb = CallbackFunction(self.makeMAA, VisibleObjectMAA, (), {'visible':0})
-        w = self.hideB = Tkinter.Button(parent, text='Hide', command=cb)
+        w = self.hideB = tkinter.Button(parent, text='Hide', command=cb)
         w.grid(column=1, row=lastRow, sticky='ew')
         lastRow += 1
 
         # rotation button
         cb = CallbackFunction(self.makeMAA, RotationMAA, (), {})
-        w = self.rotationB = Tkinter.Button(parent, text='Rotate', command=cb)
+        w = self.rotationB = tkinter.Button(parent, text='Rotate', command=cb)
         w.grid(column=0, row=lastRow, sticky='ew')
         w.bind('<Button-3>', CallbackFunction( self.showMaaEditor_cb, RotationMAA, (), {}))
 
         # rock button
         cb = CallbackFunction(self.makeMAA, RockMAA, (), {})
-        w = self.rockB = Tkinter.Button(parent, text='Rock', command=cb)
+        w = self.rockB = tkinter.Button(parent, text='Rock', command=cb)
         w.grid(column=1, row=lastRow, sticky='ew')
         w.bind('<Button-3>', CallbackFunction( self.showMaaEditor_cb, RockMAA, (), {}))
         lastRow += 1
@@ -320,7 +320,7 @@ class ShowHideGeomPanel(AnimationPanel):
         """
         geometries, geomkw = self.getSelectedGeoms()
         if len(geometries)==0:
-            from tkMessageBox import showwarning
+            from tkinter.messagebox import showwarning
             showwarning("Warning", 'No geometry selected',
                         parent = gc.root)
             return
@@ -336,7 +336,7 @@ class ShowHideGeomPanel(AnimationPanel):
         """
         geometries, geomkw = self.getSelectedGeoms()
         if len(geometries)==0:
-            from tkMessageBox import showwarning
+            from tkinter.messagebox import showwarning
             showwarning("Warning", 'No geometry selected',
                         parent = gc.root)
             return

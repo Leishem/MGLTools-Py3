@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
 #
@@ -14,7 +14,7 @@
 
 
 import math
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 from PyAutoDock.MolecularSystem import MolecularSystem
 from PyAutoDock.scorer import DistDepPairwiseScorer
@@ -347,7 +347,7 @@ class HBondVectorCalculator:
         # hydrogen_ia is an atom
         # cache previously found answers in dict keyed by hydrogen_ia
         key = hydrogen_ia
-        if self.rvectors.has_key(key):
+        if key in self.rvectors:
             return self.rvectors[key] # reuse answer if possible
         
         # find the neighbor atom bonded to this Hydrogen
@@ -382,7 +382,7 @@ class HBondVectorCalculator:
         coords = oxygen_ia.coords
         # cache previously found answers in dict keyed by oxygen_ia
         key = tuple(coords)
-        if self.rvectors.has_key(key):
+        if key in self.rvectors:
             return self.rvectors[key] # reuse answer is possible
 
         # not found in self.rvectors so, calculate for the first time
@@ -576,7 +576,7 @@ class NewHBondVectorCalculator(HBondVectorCalculator):
         # if we know about this atom then return what we know
         #this differs from HBVC only in elm[0]
         key = hydrogen_ia
-        if self.rvectors.has_key(key):
+        if key in self.rvectors:
             return self.rvectors[key] #reuse answer if possible
 
        # find the neighbor atom bonded to this Hydrogen
@@ -614,7 +614,7 @@ class NewHBondVectorCalculator(HBondVectorCalculator):
         coords = oxygen_ia.coords
         # cache previously found answers in dict keyed by oxygen_ia
         key = tuple(coords)
-        if self.rvectors.has_key(key):
+        if key in self.rvectors:
             return self.rvectors[key] # reuse answer is possible
 
         # not found in self.rvectors so, calculate for the first time
@@ -738,7 +738,7 @@ class NewHBondVectorCalculator(HBondVectorCalculator):
     def nitrogen_get_rvector(self, nitrogen_ia):
         coords = nitrogen_ia.coords
         key = tuple(coords)
-        if self.rvectors.has_key(key):
+        if key in self.rvectors:
             return self.rvectors[key] # reuse answer
         # not found in self.rvectors so, calculate for the first time
 
@@ -1017,15 +1017,15 @@ manage only checking a required attr once per entity_sets.)
         #5/16:self.closestH = Numeric.zeros(lenA,'i')
         
         #make list with 'True' for positions of hydrogen in subsetA
-        map_A_Hs = map(lambda x: x=='HD', self.entities_a.autodock_element)
+        map_A_Hs = [x=='HD' for x in self.entities_a.autodock_element]
         mask_A_Hs = Numeric.logical_and(Numeric.array(map_A_Hs),1)
-        for i in xrange(self.lenB):
+        for i in range(self.lenB):
             #zero out distances to any non-hydrogen atoms in A
             list_i_Hs = (mask_A_Hs*Numeric.array(dist_matrix)[:,i]).tolist()
             #distance to closest hydrogen is the min of the list of distances
             # to hydrogens
             min_i = 9999999.
-            for j in xrange(lenA):
+            for j in range(lenA):
                 newVal = list_i_Hs[j]
                 if newVal!=0. and newVal<min_i:
                     min_i = newVal
@@ -1589,5 +1589,5 @@ class NewVanDerWaalsHybridWeights(DistDepPairwiseScorer, HBondVDWSmoothing):
 
 
 if __name__ == '__main__':
-    print "Test are in Tests/test_scorer.py"
+    print("Test are in Tests/test_scorer.py")
     # test_scorer.run_test()

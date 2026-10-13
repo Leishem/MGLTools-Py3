@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -21,7 +21,7 @@
 #
 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 import warnings
 
 from opengltk.OpenGL import GL
@@ -60,7 +60,7 @@ class IndexedGeom(Geom):
             kw['shape'] = (0,3)    # default shape for sphere set
 
         self.faceSet = FaceSet( shape= (0,0) )
-        apply( Geom.__init__, (self, name, check), kw)
+        Geom.__init__(*(self, name, check), **kw)
 
         self._modified = False
 
@@ -237,7 +237,7 @@ class IndexedGeom(Geom):
 
         if __debug__:
             if check:
-                apply( checkKeywords, (self.name,self.keywords), kw)
+                checkKeywords(*(self.name,self.keywords), **kw)
             
         t = kw.get( 'type')
         f = kw.get( 'faces')
@@ -321,9 +321,9 @@ updateOwnGui=True : allow to update owngui at the end this func
         # because we want to complete the treatment of it by Geom.Set
         highlight = kw.get('highlight', None)
 
-        redoFlags |= apply( Geom.Set, (self, check, 0), kw)
+        redoFlags |= Geom.Set(*(self, check, 0), **kw)
 
-        if kw.has_key('faces'):
+        if 'faces' in kw:
             self.numOfHighlightedIndex = 0
             self.faceSet.faces.SetValues( [] )
             if hasattr(self, 'edges'): del self.edges
@@ -878,25 +878,25 @@ updateOwnGui=True : allow to update owngui at the end this func
                 edgeKey['%d,%d'%(s3,s1)] = en
                 en += 1
 
-        faceEdges = map( lambda x: [], faces)
+        faceEdges = [[] for x in faces]
         for fn, f in enumerate(faces):
             s1,s2,s3 = f
             key = '%d,%d'%(s1,s2)
-            if edgeKey.has_key(key):
+            if key in edgeKey:
                 faceEdges[fn].append(edgeKey[key])
             else:
                 key = '%d,%d'%(s2,s1)
                 faceEdges[fn].append(edgeKey[key])
 
             key = '%d,%d'%(s2,s3)
-            if edgeKey.has_key(key):
+            if key in edgeKey:
                 faceEdges[fn].append(edgeKey[key])
             else:
                 key = '%d,%d'%(s3,s2)
                 faceEdges[fn].append(edgeKey[key])
 
             key = '%d,%d'%(s3,s1)
-            if edgeKey.has_key(key):
+            if key in edgeKey:
                 faceEdges[fn].append(edgeKey[key])
             else:
                 key = '%d,%d'%(s1,s3)
@@ -928,7 +928,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         nv = []
         nn = []
         i = 0
-        for k in d.keys():
+        for k in list(d.keys()):
             nv.append(eval(k))
             lookup[k] = i
             i = i + 1

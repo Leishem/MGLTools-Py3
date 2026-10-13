@@ -3,13 +3,13 @@
 import sys
 import traceback
 import time
-import httplib
-import urllib
+import http.client
+import urllib.request, urllib.parse, urllib.error
 import os
 import shutil
 import subprocess
 import tempfile
-import urlparse
+import urllib.parse
 
 
 from mglutil.web.services.AppService_client import AppServiceLocator, \
@@ -77,7 +77,7 @@ class OpalUtil(object):
         #TODO kill local running job
         if (self.jobID != None):
             #ok let's kill the running job
-            print "Killing job: " + self.jobID
+            print("Killing job: " + self.jobID)
             appLocator = AppServiceLocator()
             appServicePort = appLocator.getAppServicePort(self.opalNode.url)
             destroyReq = destroyRequest(self.jobID)
@@ -108,7 +108,7 @@ class OpalUtil(object):
         if ( separator == None ):
             separator=' '
         # map from flag ids to flag tags
-        flagtags = map(lambda x: flaghash[x],flags)
+        flagtags = [flaghash[x] for x in flags]
         command = ' '.join(flagtags)
         inputFiles = []
 
@@ -133,7 +133,7 @@ class OpalUtil(object):
             else:
                 command += ' '+val
 
-        print "The node " + self.opalNode.__class__.__name__ + " is going to execute the command: " + command
+        print("The node " + self.opalNode.__class__.__name__ + " is going to execute the command: " + command)
         #common code
         if (localRun==False):
             #print "Local run is: " + str(localRun) + " running remotely"
@@ -165,7 +165,7 @@ class OpalUtil(object):
         tagged_order = {}
         flag_order = {}
 
-        for k, v in params.iteritems():
+        for k, v in params.items():
             if v['config_type'] == 'FLAG':
                 flaghash[k] = v['tag']
                 flag_count = flag_count + 1
@@ -236,7 +236,7 @@ class OpalUtil(object):
             except:
                 pass
         
-        print "The node " + self.opalNode.__class__.__name__ + " is going to execute the command: " + command
+        print("The node " + self.opalNode.__class__.__name__ + " is going to execute the command: " + command)
         #common code
         if (localRun==False):
             #print "Local run is: " + str(localRun) + " running remotely"
@@ -306,7 +306,7 @@ class OpalUtil(object):
         #print "launchBasicJob"
         #this should be moved in the constructor...
 
-        print "The node " + self.opalNode.__class__.__name__ + " is going to execute the command: " + commandline
+        print("The node " + self.opalNode.__class__.__name__ + " is going to execute the command: " + commandline)
         if (localRun==False):
             results = self.executeWebJob(url, commandline, inFilesPath, numProcs)
         else :
@@ -355,7 +355,7 @@ class OpalUtil(object):
         req._numProcs = numProcs
 
         if inputFiles != []:
-            print "Uploading input files..."
+            print("Uploading input files...")
 
         resp_s = -1
 
@@ -363,15 +363,15 @@ class OpalUtil(object):
             try:
                 resp = appServicePort.launchJob(req)
                 resp_s = 0
-            except FaultException, inst:
+            except FaultException as inst:
                 estr = inst.fault.AsSOAP()
                 estr = estr.split("<message>")[1].split("</message>")[0]
                 t = strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                 cte = time.mktime(datetime.now().timetuple())
                 ete = cte + 60 * 60 + 10
                 
-                print "WARNING: " + t + " Opal FaultException from server: " + estr
-                print "         will try again in about an hour" 
+                print("WARNING: " + t + " Opal FaultException from server: " + estr)
+                print("         will try again in about an hour") 
                 while time.mktime(datetime.now().timetuple()) < ete:
                     if self.opalNode._vpe is not None:
                         self.opalNode._vpe.updateGuiCycle()
@@ -386,15 +386,15 @@ class OpalUtil(object):
                 s = -1
                 while s == -1:
                     try:
-                        urllib.urlopen(url)
+                        urllib.request.urlopen(url)
                         s = 0
                     except IOError:
                         t = strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                         cte = time.mktime(datetime.now().timetuple())
                         ete = cte + 60
-                        print "WARNING: " + t + " cannot connect to " + url
-                        print "         Are you connected to the internet?"
-                        print "         Will try again in about a minute"
+                        print("WARNING: " + t + " cannot connect to " + url)
+                        print("         Are you connected to the internet?")
+                        print("         Will try again in about a minute")
                         while time.mktime(datetime.now().timetuple()) < ete:
                             if self.opalNode._vpe is not None:
                                 self.opalNode._vpe.updateGuiCycle()
@@ -409,24 +409,24 @@ class OpalUtil(object):
             pass
 
         if inputFiles != []:
-            print "Done uploading input files."
+            print("Done uploading input files.")
 
         self.jobID = resp._jobID
-        print "Job outputs URL: " + resp._status._baseURL # urlparse.urljoin(url, '/' + self.jobID)
+        print("Job outputs URL: " + resp._status._baseURL) # urlparse.urljoin(url, '/' + self.jobID)
         status = resp._status._code
 
         while(status!=4 and status!=8):
             try:
                 status = appServicePort.queryStatus(queryStatusRequest(self.jobID))._code
-            except FaultException, inst:
+            except FaultException as inst:
                 estr = inst.fault.AsSOAP()
                 estr = estr.split("<message>")[1].split("</message>")[0]
                 t = strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                 cte = time.mktime(datetime.now().timetuple())
                 ete = cte + 60 * 60 + 10
                 
-                print "WARNING: " + t + " Opal FaultException from server: " + estr
-                print "         will try again in about an hour" 
+                print("WARNING: " + t + " Opal FaultException from server: " + estr)
+                print("         will try again in about an hour") 
                 while time.mktime(datetime.now().timetuple()) < ete:
                     if self.opalNode._vpe is not None:
                         self.opalNode._vpe.updateGuiCycle()
@@ -440,15 +440,15 @@ class OpalUtil(object):
             except:
                 status = -2
                 try:
-                    urllib.urlopen(url)
+                    urllib.request.urlopen(url)
                 except IOError:
                     status = -1
                     t = strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                     cte = time.mktime(datetime.now().timetuple())
                     ete = cte + 60
-                    print "WARNING: " + t + " cannot connect to " + url
-                    print "         Are you connected to the internet?"
-                    print "         Will try again in about a minute"
+                    print("WARNING: " + t + " cannot connect to " + url)
+                    print("         Are you connected to the internet?")
+                    print("         Will try again in about a minute")
                     while time.mktime(datetime.now().timetuple()) < ete:
                         if self.opalNode._vpe is not None:
                             self.opalNode._vpe.updateGuiCycle()
@@ -510,7 +510,7 @@ class OpalUtil(object):
         #setting up workind dir and input files
         #workingDir = os.tempnam()
         workingDir = tempfile.mkdtemp()
-        print "Job output files directory is: " + workingDir
+        print("Job output files directory is: " + workingDir)
         #workingDir = workingDir + '/app' + str(int(time.time()*100 ))
         #os.mkdir(workingDir)
         if inputFiles != None:

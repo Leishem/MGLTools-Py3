@@ -11,7 +11,7 @@
 #
 
 import math
-from scorer import DistDepPairwiseScorer
+from .scorer import DistDepPairwiseScorer
 
 
 class ElectrostaticsRefImpl(DistDepPairwiseScorer):

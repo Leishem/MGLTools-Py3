@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -22,8 +22,8 @@
 
 # third party packages 
 import types
-import Tkinter
-import numpy.oldnumeric as Numeric
+import tkinter
+import mglcompat.oldnumeric as Numeric
 import numpy
 #import Pmw
 #import os
@@ -56,7 +56,7 @@ Output Ports
         #import pdb;pdb.set_trace()
         
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         self.widgetDescr['contourspectrum'] = {
@@ -115,7 +115,7 @@ Output Ports
         # overwrite the contourspectrum widget's configure method to set the outputPort
         # data type when the contourspectrum is configured
         w = self.inputPorts[0].widget
-        apply( NEContourSpectrum.configure, (w, rebuild), kw)
+        NEContourSpectrum.configure(*(w, rebuild), **kw)
         dtype = kw.pop('type', None)
 
         if dtype:
@@ -128,8 +128,8 @@ Output Ports
         # the optionsPanel
         from mglutil.gui.BasicWidgets.Tk.Dial import ContourSpectrum
         contourspectrum = self.inputPorts[0].widget.widget
-        apply( ContourSpectrum.setType, (contourspectrum, dtype), {})
-        if type(dtype) == types.TypeType:
+        ContourSpectrum.setType(*(contourspectrum, dtype), **{})
+        if type(dtype) == type:
             dtype = dtype.__name__
 
         self.updateDataType(dtype)
@@ -140,7 +140,7 @@ Output Ports
         port = self.outputPorts[0]
         port.setDataType(dtype, tagModified=False)
         if port.data is not None:
-            if type(dtype) == types.TypeType:
+            if type(dtype) == type:
                 port.data = dtype(port.data)                
             else:
                 port.data = eval("%s(port.data)"%dtype)
@@ -267,17 +267,17 @@ Handles all PortWidget arguments and all ContourSpectrum arguments except for va
 
         # get all arguments handled by NEThumbweel and not by PortWidget
         widgetcfg = {}
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k in kw:
                 widgetcfg[k] = kw.pop(k)
 
         # call base class constructor
-        apply( PortWidget.__init__, ( self, port), kw)
+        PortWidget.__init__(*( self, port), **kw)
 
         # create the Dial widget
         
         #from NetworkEditor.spectrum import ContourSpectrumGUI
-        self.widget = apply( ContourSpectrum, (self.widgetFrame,), widgetcfg)
+        self.widget = ContourSpectrum(*(self.widgetFrame,), **widgetcfg)
         
         self.widget.callbacks.AddCallback(self.newValueCallback)
         # rename Options Panel to port name
@@ -307,7 +307,7 @@ Handles all PortWidget arguments and all ContourSpectrum arguments except for va
             self.set(self.widget.type(self.initialValue), run=0)
             
         # configure without rebuilding to avoid enless loop
-        apply( self.configure, (False,), widgetcfg)
+        self.configure(*(False,), **widgetcfg)
 
         self._setModified(False) # will be set to True by configure method
 
@@ -316,12 +316,12 @@ Handles all PortWidget arguments and all ContourSpectrum arguments except for va
         # call base class configure with rebuild=Flase. If rebuilt is needed
         # rebuildDescr will contain w=='rebuild' and rebuildDescr contains
         # modified descr
-        action, rebuildDescr = apply( PortWidget.configure, (self, False), kw)
+        action, rebuildDescr = PortWidget.configure(*(self, False), **kw)
             
         # handle ownConfigOpts entries
         if self.widget is not None:
             widgetOpts = {}
-            for k, v in kw.items():
+            for k, v in list(kw.items()):
                 if k in self.ownConfigOpts:
                     if k =='size':
                         action = 'rebuild'
@@ -330,7 +330,7 @@ Handles all PortWidget arguments and all ContourSpectrum arguments except for va
                         widgetOpts[k] = v
 
             if len(widgetOpts):
-                apply( self.widget.configure, (), widgetOpts)
+                self.widget.configure(*(), **widgetOpts)
 
         if action=='rebuild' and rebuild:
             action, rebuildDescr = self.rebuild(rebuildDescr)
@@ -376,7 +376,7 @@ Handles all PortWidget arguments and all ContourSpectrum arguments except for va
 
     def getDescr(self):
         cfg = PortWidget.getDescr(self)
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k == 'type': # type has to be handled separately
                 _type = self.widget.type
                 if _type == int:
@@ -393,7 +393,7 @@ Handles all PortWidget arguments and all ContourSpectrum arguments except for va
 
 
 
-class ContourSpectrum(Tkinter.Frame):
+class ContourSpectrum(tkinter.Frame):
     """This class implements a ContourSpectrum widget.
 it is fully a copy/paste from Dial
 """
@@ -405,8 +405,8 @@ it is fully a copy/paste from Dial
                  lockPrecision=0,lockShowLabel=0, lockValue=0,
                  lockType=0, lockContinuous=0,  signatures=None, **kw):
 
-        Tkinter.Frame.__init__(self, master)
-        Tkinter.Pack.config(self)
+        tkinter.Frame.__init__(self, master)
+        tkinter.Pack.config(self)
 
         self.callbacks = CallbackManager() # object to manage callback
                                         # functions. They get called with the
@@ -465,15 +465,15 @@ it is fully a copy/paste from Dial
         self.setLabel(self.labCfg)
 
         if master is None:
-            master = Tkinter.Toplevel()
+            master = tkinter.Toplevel()
 
         self.master = master   # widget master
 
         self.createCanvas(master)
 
-        Tkinter.Widget.bind(self.canvas, "<ButtonPress-1>", self.mouseDown)
-        Tkinter.Widget.bind(self.canvas, "<B1-Motion>", self.mouseMove)
-        Tkinter.Widget.bind(self.canvas, "<ButtonRelease-1>", self.mouseUp)
+        tkinter.Widget.bind(self.canvas, "<ButtonPress-1>", self.mouseDown)
+        tkinter.Widget.bind(self.canvas, "<B1-Motion>", self.mouseMove)
+        tkinter.Widget.bind(self.canvas, "<ButtonRelease-1>", self.mouseUp)
 
         # create cursor
         self.cursorTk = self.canvas.create_line( 0, 0, 0, 0, tags=['cursor'])
@@ -501,10 +501,10 @@ it is fully a copy/paste from Dial
         """Set widget callback. Must be callable function. Callback is called
 every time the widget value is set/modified"""
 
-        assert cb is None or callable(cb) or type(cb) is types.ListType,\
+        assert cb is None or callable(cb) or type(cb) is list,\
                "Illegal callback: must be either None or callable, or list. Got %s"%cb
         if cb is None: return
-        elif type(cb) is types.ListType:
+        elif type(cb) is list:
             for func in cb:
                 assert callable(func), "Illegal callback must be callable. Got %s"%func
                 self.callbacks.AddCallback(func)
@@ -610,8 +610,8 @@ every time the widget value is set/modified"""
 
 
     def createCanvas(self, master):
-        self.frame = Tkinter.Frame(self, borderwidth=3, relief='sunken')
-        self.canvas = Tkinter.Canvas(self.frame, width=self.width, height=self.height)
+        self.frame = tkinter.Frame(self, borderwidth=3, relief='sunken')
+        self.canvas = tkinter.Canvas(self.frame, width=self.width, height=self.height)
         self.xm = 25
         self.ym = 25
         self.labelId2 = self.canvas.create_text(self.xm+2, self.ym+2,
@@ -624,7 +624,7 @@ every time the widget value is set/modified"""
                                           font = self.labelFont)
 
         # pack em up
-        self.canvas.pack(side=Tkinter.TOP)
+        self.canvas.pack(side=tkinter.TOP)
         self.frame.pack(expand=1, fill='x')
         self.toggleWidgetLabel(self.showLabel)
 
@@ -654,7 +654,7 @@ every time the widget value is set/modified"""
 
     def setValue(self, val):
         #print "setValue"
-        assert type(val) in [types.IntType, types.FloatType],\
+        assert type(val) in [int, float],\
                "Illegal type for value: expected %s or %s, got %s"%(
                    type(1), type(1.0), type(val) )
         
@@ -687,14 +687,14 @@ every time the widget value is set/modified"""
             return
 
         d={}
-        for k, w in self.labCfg.items():
+        for k, w in list(self.labCfg.items()):
             if k == 'side': continue
             else: d[k] = w
-        if not 'side' in self.labCfg.keys():
+        if not 'side' in list(self.labCfg.keys()):
             self.labCfg['side'] = 'left'
 
         if not self.lab:
-            self.lab = Tkinter.Label(self, d)
+            self.lab = tkinter.Label(self, d)
             self.lab.pack(side=self.labCfg['side'])
             self.lab.bind("<Button-3>", self.toggleOptPanel)
         else:
@@ -706,7 +706,7 @@ every time the widget value is set/modified"""
  #####################################################################
 
     def configure(self, **kw):
-        for key,value in kw.items():
+        for key,value in list(kw.items()):
             # the 'set' parameter callbacks
             if key=='labCfg': self.setLabel(value)
             elif key=='type': self.setType(value)
@@ -730,7 +730,7 @@ every time the widget value is set/modified"""
 
     def setType(self, Type):
 
-        assert type(Type) in [types.StringType, types.TypeType],\
+        assert type(Type) in [bytes, type],\
                "Illegal type for datatype. Expected %s or %s, got %s"%(
                    type('a'), type(type), type(Type) )
         
@@ -764,7 +764,7 @@ every time the widget value is set/modified"""
 
     def setMin(self, min):
         if min is not None:
-            assert type(min) in [types.IntType, types.FloatType,
+            assert type(min) in [int, float,
                                  numpy.int, numpy.int8, numpy.int16,
                                  numpy.int32, numpy.int64,
                                  numpy.uint, numpy.uint8, numpy.uint16,
@@ -806,7 +806,7 @@ every time the widget value is set/modified"""
 
     def setMax(self, max):
         if max is not None:
-            assert type(max) in [types.IntType, types.FloatType,
+            assert type(max) in [int, float,
                                  numpy.int, numpy.int8, numpy.int16,
                                  numpy.int32, numpy.int64,
                                  numpy.uint, numpy.uint8, numpy.uint16,
@@ -846,7 +846,7 @@ every time the widget value is set/modified"""
 
 
     def setPrecision(self, val):
-        assert type(val) in [types.IntType, types.FloatType,
+        assert type(val) in [int, float,
                                  numpy.int, numpy.float32],\
                "Illegal type for precision. Expected type %s or %s, got %s"%(
                      type(0), type(0.0), type(val) )
@@ -905,7 +905,7 @@ every time the widget value is set/modified"""
                "Illegal value for showLabel. Expected 0, 1 or 2, got %s"%val
         
         if val != 0 and val != 1 and val != 2:
-            print "Illegal value. Must be 0, 1 or 2"
+            print("Illegal value. Must be 0, 1 or 2")
             return
         self.showLabel = val
         self.toggleWidgetLabel(val)
@@ -1053,8 +1053,7 @@ every time the widget value is set/modified"""
             for x,y in zip (f[0], f[1]):
                 coords.append(x)
                 coords.append(self.height-y*self.yratios[i])
-            self.tkLines.append( apply( self.canvas.create_line, coords,
-                                        {'fill':self.colors[i]}) )
+            self.tkLines.append( self.canvas.create_line(*coords, **{'fill':self.colors[i]}) )
 
 
 

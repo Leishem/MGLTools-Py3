@@ -29,7 +29,7 @@ Original code by W. Patrick Walters and Matthew T. Stahl
 
 
 import math
-from atomTypes import TypeConverter
+from .atomTypes import TypeConverter
 
 ###Partial equilization of orbital electronegativity, PEOP
 ###PEOP method to calculate a, b and c
@@ -292,8 +292,8 @@ class Gasteiger:
         #add values compute from energyParms information
         #NB: this overwrites specified entries BUT the numbers are
         #    virtually the same...
-        for element, elementD in energyParms.items():
-            for hybrid, hybridD in elementD.items():
+        for element, elementD in list(energyParms.items()):
+            for hybrid, hybridD in list(elementD.items()):
                 I0 = hybridD['I0']
                 E0 = hybridD['E0']
                 IPLUS = hybridD['I+']
@@ -312,7 +312,7 @@ class Gasteiger:
                     key = element + hybrid[-1]
                 self.par[key] = [a, b, c, 0.0]
                 
-        for p in self.par.values():
+        for p in list(self.par.values()):
             p[3] = p[0] + p[1] + p[2]
 
 
@@ -322,10 +322,10 @@ class Gasteiger:
         converter = TypeConverter("MAP")
         for a in atoms:
             type = converter.convert( a.babel_type )
-            if type[:2] in self.par.keys():
+            if type[:2] in list(self.par.keys()):
                 a._gast_par = self.par[type]
             else:
-                print "Sorry, there are no Gasteiger parameters available for atom %s"%a.full_name()
+                print("Sorry, there are no Gasteiger parameters available for atom %s"%a.full_name())
                 a._gast_par = [ 0.0, 0.0, 0.0, 1.0 ]
 
 
@@ -418,9 +418,9 @@ if __name__=="__main__":
 #        f.write("%2d %4s %10.4f\n"%(i+1, a.babel_type, a.gast_charge))
 #    f.close()
     
-    for element, elementD in energyParms.items():
-        print 'Element = ', element
-        for hybrid, hybridD in elementD.items():
+    for element, elementD in list(energyParms.items()):
+        print('Element = ', element)
+        for hybrid, hybridD in list(elementD.items()):
             I0 = hybridD['I0']
             E0 = hybridD['E0']
             IPLUS = hybridD['I+']
@@ -428,11 +428,11 @@ if __name__=="__main__":
             a = 0.5 * (I0 + E0)
             b = 0.25 * (IPLUS + EPLUS - E0)
             c = 0.25 * (IPLUS - 2 * I0 + EPLUS - E0)
-            print '    ',hybrid, ' hybridization:'
-            print '        a =', a,
-            print 'b =', b,
-            print 'c =', c
-        print '\n',
+            print('    ',hybrid, ' hybridization:')
+            print('        a =', a, end=' ')
+            print('b =', b, end=' ')
+            print('c =', c)
+        print('\n', end=' ')
             
 
 

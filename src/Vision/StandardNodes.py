@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #########################################################################
 #
@@ -19,10 +19,10 @@ import os
 import warnings
 import types
 import numpy
-import numpy.oldnumeric as Numeric
-import Pmw, Tkinter
-import string, types, re
-from UserList import UserList
+import mglcompat.oldnumeric as Numeric
+import Pmw, tkinter
+import types, re; from mglcompat import pystring as string
+from collections import UserList
 from NetworkEditor.items import NetworkNode, FunctionNode
 from NetworkEditor.macros import MacroNode
 import inspect
@@ -33,7 +33,7 @@ class Generic(NetworkNode):
     
     def __init__(self, name='Generic', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
 
 class ATEST(NetworkNode):
@@ -42,7 +42,7 @@ class ATEST(NetworkNode):
     
     def __init__(self, name='Generic', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='float(0)', name='singleFloat', required=False)
         ip.append(datatype='float(3)', name='float3', required=False)
@@ -61,7 +61,7 @@ class TestDefaultValues(NetworkNode):
 
     def __init__(self, name='ATEST', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='None', name='required')
         ip.append(datatype='None', required=False, name='optNodefault')
@@ -89,21 +89,21 @@ Output Ports
     
     def __init__(self, name='HasNewData', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
-	code = """def doit(self, in1):
+        code = """def doit(self, in1):
     if self.inputPorts[0].hasNewValidData():
         self.outputData(result=in1)
     #else:
     #    return 'stop'
 """
             
-	if code: self.setFunction(code)
+        if code: self.setFunction(code)
 
-	ip = self.inputPortsDescr
-	ip.append(datatype='None', required=True, name='in1')
+        ip = self.inputPortsDescr
+        ip.append(datatype='None', required=True, name='in1')
 
-	self.outputPortsDescr.append(datatype='None', name='result')
+        self.outputPortsDescr.append(datatype='None', name='result')
 
 
 class ListOf(NetworkNode):
@@ -120,7 +120,7 @@ Output:
 """
     def __init__(self, name='LitsOf', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         # define a function that creates a new port each time a connection
         # to this port is made
@@ -183,7 +183,7 @@ Output:
 """
     def __init__(self, name='zip', **kw):
         kw['name'] = name
-        apply( ListOf.__init__, (self,), kw )
+        ListOf.__init__(*(self,), **kw)
 
         code = """def doit(self, newport):
     lists = [ p.getData() for p in self.inputPorts[1:] ]
@@ -205,7 +205,7 @@ Output:
 """
     def __init__(self, name='Random', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='float', name='offset', required=False, defaultValue=.5)
@@ -247,7 +247,7 @@ Output:
 """
     def __init__(self, name='SelectOnExtendion', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         op = self.outputPortsDescr
         op.append(datatype='list', name='matching')
@@ -283,7 +283,7 @@ Output:
 """
     def __init__(self, name='ExclusiveOR', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         op = self.outputPortsDescr
         op.append(datatype='None', name='value')
@@ -326,7 +326,7 @@ Output:
 """
     def __init__(self, name='select', **kw):
         kw['name'] = name
-        apply( ListOf.__init__, (self,), kw )
+        ListOf.__init__(*(self,), **kw)
 
         code = """def doit(self, newport):
     values = []
@@ -352,7 +352,7 @@ Output Ports
 """
     def __init__(self, name='DelayBuffer', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['delay'] = {
             'class':'NEThumbWheel', 'master':'node',
@@ -407,7 +407,7 @@ Output Ports
 """
     def __init__(self, name='FilenameOps', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         ip = self.inputPortsDescr
@@ -422,7 +422,7 @@ Output Ports
         ip.append(datatype='string', name='extList', required=False,
                   balloon='a list of extension used to create new filename')
         
-	self.widgetDescr['withPath'] = {
+        self.widgetDescr['withPath'] = {
             'class':'NECheckButton', 'master':'node', 'initialValue':1,
             'labelCfg':{'text':'with path'},
             }
@@ -491,7 +491,7 @@ Output Ports
 """
     def __init__(self, name='Entry', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         self.widgetDescr['format'] = {
@@ -526,7 +526,7 @@ class NumberedFilename(NetworkNode):
 """
     def __init__(self, name='numberedName', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         self.widgetDescr['directory'] = {
@@ -603,7 +603,7 @@ class Filelist(NetworkNode):
 """
     def __init__(self, name='Entry', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         self.widgetDescr['directory'] = {
@@ -659,7 +659,7 @@ Output Ports
 
     def __init__(self, name='Entry', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         self.widgetDescr['entry'] = {
@@ -684,7 +684,7 @@ filebrowser."""
 
     def __init__(self, name='File Browser', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         #self.readOnly = 1                                                                   
         code = """def doit(self, filename):                                                  
@@ -718,7 +718,7 @@ class DirBrowserNE(NetworkNode):
     
     def __init__(self, name='File Browser', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         #self.readOnly = 1
         code = """def doit(self, directory):
@@ -763,7 +763,7 @@ class MakeZipFileNE(NetworkNode):
     
     def __init__(self, name='File Browser', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         #self.readOnly = 1
         code = """def doit(self, input_directory, output_directory, output_name):
@@ -804,7 +804,7 @@ Output Ports
 
     def __init__(self, name='Thumbwheel', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.model = None
         self.resolution = 0
@@ -816,10 +816,10 @@ Output Ports
             'initialValue':0.0,
             'labelCfg':{'text':''} }
 
-	self.inputPortsDescr.append(datatype='float', name='thumbwheel')
-	self.inputPortsDescr.append(datatype='float', name='mini',
+        self.inputPortsDescr.append(datatype='float', name='thumbwheel')
+        self.inputPortsDescr.append(datatype='float', name='mini',
                                     required=False)
-	self.inputPortsDescr.append(datatype='float', name='maxi',
+        self.inputPortsDescr.append(datatype='float', name='maxi',
                                     required=False)
         
         self.outputPortsDescr.append(datatype='float', name='value')
@@ -902,7 +902,7 @@ Output Ports
 
     def __init__(self, name='Thumbwheel', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.model = None
         self.resolution = 0
@@ -954,7 +954,7 @@ Output Ports
 
     def __init__(self, name='Dial', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         self.widgetDescr['dial'] = {
@@ -1048,7 +1048,7 @@ Output Ports
 
     def __init__(self, name='Dial', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         self.widgetDescr['dial'] = {
@@ -1165,13 +1165,13 @@ Input Ports
 
     def __init__(self, name='Show/Hide Panel', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.model = None
         self.resolution = 0
         self.inNodeWidgetsVisibleByDefault = True
  
-	self.widgetDescr['button'] = {
+        self.widgetDescr['button'] = {
             'class':'NECheckButton', 'master':'node',
             'initialValue':1,
             'labelCfg':{'text':'ParamPanel'},
@@ -1229,13 +1229,13 @@ Output Ports
 
     def __init__(self, name='Checkbutton', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.model = None
         self.resolution = 0
         self.inNodeWidgetsVisibleByDefault = True
  
-	self.widgetDescr['button'] = {
+        self.widgetDescr['button'] = {
             'class':'NECheckButton', 'master':'node',
             'intialValue':0, 'lockedOnPort':True,
             'labelCfg':{'text':'check'},
@@ -1271,13 +1271,13 @@ Output Ports
 
     def __init__(self, name='Checkbutton', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.model = None
         self.resolution = 0
         self.inNodeWidgetsVisibleByDefault = True
  
-	self.widgetDescr['button'] = {
+        self.widgetDescr['button'] = {
             'class':'NEButton', 'master':'node', 'lockedOnPort':True,
             'labelCfg':{'text':'press me'},
             }
@@ -1308,7 +1308,7 @@ Output Ports
 
     def __init__(self, name='Save Lines', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         #self.readOnly = 1
         code = """def doit(self, data, filename):
@@ -1347,7 +1347,7 @@ Ouput Ports
 """
     def __init__(self, name='Text editor', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         if os.name == 'nt' or os.name == 'dos':
            texteditor = 'notepad.exe'
@@ -1395,7 +1395,7 @@ Ouput Ports
 """
     def __init__(self, name='Open', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         
         if os.name == 'nt' or os.name == 'dos':
             open_prog = 'explorer'
@@ -1448,9 +1448,9 @@ Notes
 
     def __init__(self, name='Pass', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
-	
-	code = """def doit(self, in1):
+        NetworkNode.__init__(*(self,), **kw)
+        
+        code = """def doit(self, in1):
     if in1 is not None:
         self.outputData(out1=in1)
 """
@@ -1471,7 +1471,7 @@ Notes
                                     afterDisconnect=afterDisconnectCode,
                                     )
         
-	self.outputPortsDescr.append(datatype='None', name='out1')
+        self.outputPortsDescr.append(datatype='None', name='out1')
 
 
 class Map(NetworkNode):
@@ -1487,9 +1487,9 @@ Output Ports
 
     def __init__(self, name='Map', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
-	
-	code = """def doit(self, dataList, function):
+        NetworkNode.__init__(*(self,), **kw)
+        
+        code = """def doit(self, dataList, function):
     if function is not None \
       and dataList is not None \
       and len(dataList) > 0:
@@ -1503,11 +1503,11 @@ Output Ports
             'class':'NEEntry', 'master':'node',
             'labelCfg':{'text':'function:'}}
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='None', name='dataList')
-	ip.append(datatype='string', name='function')
+        ip.append(datatype='string', name='function')
 
-	self.outputPortsDescr.append(datatype='None', name='out')
+        self.outputPortsDescr.append(datatype='None', name='out')
 
 
 class Counter(NetworkNode):
@@ -1531,9 +1531,9 @@ Notes
         kw['name'] = name
         self.counter = 0 # increments every time the node runs
         
-        apply( NetworkNode.__init__, (self,), kw)
-	
-	code = """def doit(self, in1, reset):
+        NetworkNode.__init__(*(self,), **kw)
+        
+        code = """def doit(self, in1, reset):
     self.counter = self.counter + 1
     self.outputData(out1=in1, counts=self.counter)
 """
@@ -1547,13 +1547,13 @@ Notes
             'labelCfg':{'text':'hello'},
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='None', required=False, name='in1')
-	ip.append(datatype='int', required=False, name='reset')
+        ip.append(datatype='int', required=False, name='reset')
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='None', name='out1')
-	op.append(datatype='int', name='counts')
+        op.append(datatype='int', name='counts')
 
 
     def reset(self):
@@ -1579,7 +1579,7 @@ Output Ports
 
     def __init__(self, name='NumericTable', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 ##          self.mode = None # can be 'list' or 'instance'
         self.numData = None
         
@@ -1694,7 +1694,7 @@ Output Ports
     
     def __init__(self, name='stddev', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='list', name='values')
@@ -1733,7 +1733,7 @@ Output Ports
     
     def __init__(self, name='Op1', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         code = """def doit(self, data, operation, applyToElements):
@@ -1767,7 +1767,7 @@ Output Ports
             'selectioncommand':self.rename,
             }
 
-	self.widgetDescr['applyToElements'] = {
+        self.widgetDescr['applyToElements'] = {
             'class':'NECheckButton', 'master':'node',
             'labelGridCfg':{'sticky':'w', 'columnspan':2},
             'widgetGridCfg':{'sticky':'w'},
@@ -1802,7 +1802,7 @@ Output Ports
     
     def __init__(self, name='Op2', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         code = """def doit(self, data1, data2, operation, applyToElements):
@@ -1881,7 +1881,7 @@ Output Ports
             'selectioncommand':self.rename,
             }
 
-	self.widgetDescr['applyToElements'] = {
+        self.widgetDescr['applyToElements'] = {
             'class':'NECheckButton', 'master':'node',
             'labelGridCfg':{'sticky':'w', 'columnspan':2},
             'widgetGridCfg':{'sticky':'w'},
@@ -1918,7 +1918,7 @@ Output Ports
 
     def __init__(self, name='Op3', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
         
         code = """def doit(self, data, operation, from_, to_, applyToElements):
@@ -1973,7 +1973,7 @@ Output Ports
             'labelCfg':{'text':'to:'},
             }
 
-	self.widgetDescr['applyToElements'] = {
+        self.widgetDescr['applyToElements'] = {
             'class':'NECheckButton', 'master':'node',
             'labelGridCfg':{'sticky':'w', 'columnspan':2},
             'widgetGridCfg':{'sticky':'w'},
@@ -2007,15 +2007,15 @@ Output Ports
     
     def __init__(self, name='BinaryOp', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['number'] = {
             'class':'NEThumbWheel','master':'node',
             'width':75, 'height':21, 'oneTurn':10, 'type':'int', 'wheelPad':2,
             'initialValue':10, 'labelCfg':{'text':''}
             }
- 	self.inputPortsDescr.append(datatype='None', name='object')
- 	self.inputPortsDescr.append(datatype='int', name='number')
+        self.inputPortsDescr.append(datatype='None', name='object')
+        self.inputPortsDescr.append(datatype='int', name='number')
         
         self.outputPortsDescr.append(datatype='list', name='dupObjects')
 
@@ -2043,7 +2043,7 @@ Output Ports
     
     def __init__(self, name='Cast', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, data, newtype):
     ed = self.getEditor()
@@ -2101,7 +2101,7 @@ Output Ports
 
 
     def afterAddingToNetwork(self):
-        allTypes = self.network.getTypeManager().portTypeInstances.keys()
+        allTypes = list(self.network.getTypeManager().portTypeInstances.keys())
         allTypes.sort()
         self.inputPorts[1].widget.setlist(allTypes)
 
@@ -2136,7 +2136,7 @@ Notes
 
     def __init__(self, name='getattr', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         code ="""def doit(self, objects, attr):
 
@@ -2330,7 +2330,7 @@ Output Ports
     
     def __init__(self, name='Setattr', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, object, value, name):
     setattr( object, name, value )
@@ -2440,11 +2440,11 @@ Example
         newportnames = self.posArgNames + self.namedArgNames
         #print newportnames
         for p in self.inputPorts[2:]:
-	    if lastOK == len(newportnames):
-		break
-            if p.required and not self.posArgNamesDict.has_key(p.name):
+            if lastOK == len(newportnames):
                 break
-            if not p.required and self.posArgNamesDict.has_key(p.name):
+            if p.required and p.name not in self.posArgNamesDict:
+                break
+            if not p.required and p.name in self.posArgNamesDict:
                 break
            
             if p.name == newportnames[lastOK][1]:
@@ -2453,8 +2453,8 @@ Example
                 lastOK = lastOK + 1
             else:
                 break
-	if lastOK == len(self.inputPorts): # nothing changed
-	    return
+        if lastOK == len(self.inputPorts): # nothing changed
+            return
         pl = self.inputPorts[2+lastOK:][:]
         pl.reverse()
         for p in pl:
@@ -2463,11 +2463,11 @@ Example
         # create all inputPorts behind lastOK
         #portTypes = ed.typeManager.portTypeInstances.keys()
         for name in newportnames[lastOK:]:
-            if self.posArgNamesDict.has_key(name[1]):
+            if name[1] in self.posArgNamesDict:
                 ipdescr = {'name':name[1]}
             else:
                 ipdescr = {'name':name[1], 'required':False}
-            ip = apply( self.addInputPort, (), ipdescr )
+            ip = self.addInputPort(*(), **ipdescr)
             #print 'CREATING', ip.name, ip.number
             self.newCode = self.newCode + """, %s"""%name[1]
 
@@ -2490,7 +2490,7 @@ Example
         kw['name'] = name
         kw['sourceCode'] = sourceCode
         kw['originalClass'] = originalClass
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.method = ''
         self.oldSignature = '' # used to compare old a new user input
@@ -2582,7 +2582,7 @@ Example
         args.append( self.inputPorts[1].getData() )
         for i in range(2,len(self.inputPorts)):
             args.append(None)
-        apply( self.dynamicComputeFunction, tuple(args) )
+        self.dynamicComputeFunction(*tuple(args))
         
         
 
@@ -2601,9 +2601,9 @@ Output Ports
     
     def __init__(self, name='Builtin', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
-	code = """def doit(self, values, func ):
+        code = """def doit(self, values, func ):
     if len(func) == 0:
         return
     else:
@@ -2615,18 +2615,18 @@ Output Ports
         self.outputData(result=res)
 """
             
-	if code: self.setFunction(code)
+        if code: self.setFunction(code)
 
         self.widgetDescr['func'] = {
             'class':'NEEntry', 'master':'node', 'width':16,
             'labelCfg':{'text':'function:'},
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='None', name='values')
-	ip.append(datatype='string', name='func')
+        ip.append(datatype='string', name='func')
         
-	self.outputPortsDescr.append(datatype='None', name='result')
+        self.outputPortsDescr.append(datatype='None', name='result')
 
 
 
@@ -2658,7 +2658,7 @@ Notes
     
     def __init__(self, name='eval', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         code = """def doit(self, command, importString, in1):
@@ -2721,7 +2721,7 @@ Input Ports
 """
     def __init__(self, name='assign', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['variable'] = {
             'class':'NEEntry', 'master':'node',
@@ -2768,12 +2768,12 @@ Output Ports
     def __init__(self, name='accum', **kw):
 
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.isSchedulingNode = True # this node is not scheduled in the net.py/
 
         self.accumList = [] # internal list to accumulate data
         
-	code = """def doit(self, data, begin, output):
+        code = """def doit(self, data, begin, output):
     #print 'ACCUM', data, begin, output, self.accumList
     if begin is True:
         self.accumList = []
@@ -2788,11 +2788,11 @@ Output Ports
 
         ip = self.inputPortsDescr
         ip.append(datatype='None', name='data')
-	ip.append(datatype='boolean', name='begin')
+        ip.append(datatype='boolean', name='begin')
         ip.append(datatype='boolean', name='output')
 
         op = self.outputPortsDescr
-	op.append(datatype='list', name='listOfValues')
+        op.append(datatype='list', name='listOfValues')
 
 
 
@@ -2819,12 +2819,12 @@ Output Ports
 
         kw['name'] = name
         kw['progbar'] = 1 # add a progress bar to the node
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.isSchedulingNode = True # this node is not scheduled in the net.py/
                                   # method widthFirstChildren()
         self.readOnly = 1
         
-	code = """def doit(self, listToLoopOver, stopOnFailure):
+        code = """def doit(self, listToLoopOver, stopOnFailure):
     iter = 0
     length = len(listToLoopOver)
 
@@ -2895,15 +2895,15 @@ Output Ports
             }
         
         op = self.outputPortsDescr
-	op.append(datatype='None', name='oneItem')
+        op.append(datatype='None', name='oneItem')
         op.append(datatype='int', balloon='0-based iteration index',
                   name='iter')
-	op.append(datatype='boolean',
+        op.append(datatype='boolean',
                   balloon='sends "True" when iterate starts to iterate',
                   name='begin')
-	op.append(datatype='boolean',
+        op.append(datatype='boolean',
                   balloon='output "True" when loop is over', name='end')
-	op.append(datatype='int', balloon='number of iteration to be done',
+        op.append(datatype='int', balloon='number of iteration to be done',
                   name='maxIter')
 
 
@@ -2925,13 +2925,13 @@ Output Ports
 
         kw['name'] = name
         #kw['progbar'] = 1 # add a progress bar to the node
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.isSchedulingNode = True # this node is not scheduled in the net.py/
                                   # method widthFirstChildren()
         self.readOnly = 0
         self.accumulate = []  # list used for accumulation
         
-	code = """def doit(self, condition, val1, val2, val3):
+        code = """def doit(self, condition, val1, val2, val3):
     iter = 0
     net = self.network
     p = self.getOutputPortByName('run')
@@ -2985,7 +2985,7 @@ Output Ports
             }
         
         op = self.outputPortsDescr
-	op.append(datatype='int', name='run')
+        op.append(datatype='int', name='run')
 
 
 
@@ -3032,7 +3032,7 @@ Output Ports
 
     def __init__(self, name='print formated string', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         # define a function that adds creates a new port each time a connection
         # to this port is made
@@ -3070,7 +3070,7 @@ Output Ports
         op = self.outputPortsDescr
         op.append(datatype='string', name='formatedstring')
 
-	code = """def doit(self, format, arguments):
+        code = """def doit(self, format, arguments):
     vlist = []
     for p in self.inputPorts[2:]:
         vlist.append(p.getData())
@@ -3084,7 +3084,7 @@ Output Ports
 """
         self.setFunction(code)
             
-	if code: self.setFunction(code)
+        if code: self.setFunction(code)
 
 
 class PopUpMessage(NetworkNode):
@@ -3099,9 +3099,9 @@ Output Ports
     
     def __init__(self, name='print', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
-	code = """def doit(self, in1):
+        code = """def doit(self, in1):
     print in1
 
     try:
@@ -3111,9 +3111,9 @@ Output Ports
       return
 """
             
-	if code: self.setFunction(code)
+        if code: self.setFunction(code)
 
-	self.inputPortsDescr.append(name='in1', datatype='None')
+        self.inputPortsDescr.append(name='in1', datatype='None')
 
 
 class Print(NetworkNode):
@@ -3128,15 +3128,15 @@ Output Ports
     
     def __init__(self, name='print', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
-	code = """def doit(self, in1):
+        code = """def doit(self, in1):
     print in1
 """
             
-	if code: self.setFunction(code)
+        if code: self.setFunction(code)
 
-	self.inputPortsDescr.append(name='in1', datatype='None')
+        self.inputPortsDescr.append(name='in1', datatype='None')
 
 
 class Len(NetworkNode):
@@ -3151,14 +3151,14 @@ Output Ports
 
     def __init__(self, name='len', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
-	code = """def doit(self, in1):
+        code = """def doit(self, in1):
     self.outputData(length = len(in1))
 """
-	if code: self.setFunction(code)
+        if code: self.setFunction(code)
 
-	self.inputPortsDescr.append(datatype='None', name='in1')
+        self.inputPortsDescr.append(datatype='None', name='in1')
 
         self.outputPortsDescr.append(datatype='int', name='length')
 
@@ -3177,7 +3177,7 @@ Output Ports
 
     def __init__(self, name='AsType', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.dtypes= [
             'Character', 'Complex', 'Complex0', 'Complex16', 'Complex32',
@@ -3196,13 +3196,13 @@ Output Ports
             'labelCfg':{'text':'operator'}
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='None', name='inArrayList')
-	ip.append(datatype='string', name='dtype')
+        ip.append(datatype='string', name='dtype')
 
-	self.outputPortsDescr.append(name='outArray')
+        self.outputPortsDescr.append(name='outArray')
 
-	code = """def doit(self, data, dtype):
+        code = """def doit(self, data, dtype):
     if isinstance(data, Numeric.ArrayType):
         self.outputData(outArray=data.astype(getattr(Numeric,dtype)))
     else:
@@ -3210,7 +3210,7 @@ Output Ports
         self.outputData(outArray=d.astype(getattr(Numeric,dtype)))
 """
             
-	if code: self.setFunction(code)
+        if code: self.setFunction(code)
 
 
 class UnaryFuncs(NetworkNode):
@@ -3229,7 +3229,7 @@ Output Ports
 
     def __init__(self, name='Array Funcs1', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operations= ['arccos ', 'arccosh', 'arcsin', 'arcsinh', 'arctan',
                           'actanh', 'cos', 'cosh', 'exp', 'log', 'log10',
@@ -3243,13 +3243,13 @@ Output Ports
             'labelCfg':{'text':'operator'},
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='None', name='inArrayList')
-	ip.append(datatype='string', name='operator')
+        ip.append(datatype='string', name='operator')
 
-	self.outputPortsDescr.append(name='outArrayList')
+        self.outputPortsDescr.append(name='outArrayList')
 
-	code = """def doit(self, data, operator):
+        code = """def doit(self, data, operator):
     result = []
     if operator=='':
         return
@@ -3266,7 +3266,7 @@ Output Ports
        self.outputData(outArrayList=result)
 """
             
-	if code: self.setFunction(code)
+        if code: self.setFunction(code)
 
 
 class BinaryFuncs(NetworkNode):
@@ -3286,7 +3286,7 @@ Output Ports
     
     def __init__(self, name='ArrayFuncs2', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.operations= ['add', 'subtract', 'multiply', 'divide',
                           'remainder', 'power']
@@ -3299,21 +3299,21 @@ Output Ports
             'labelCfg':{'text':'operator'},
             }
 
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='None', name='inArrayList1')
         ip.append(datatype='None', name='inArrayList2')
         ip.append(datatype='string', name='operator')
 
-	self.outputPortsDescr.append(name='outArrayList')
+        self.outputPortsDescr.append(name='outArrayList')
 
-	code = """def doit(self, inArrayList1, inArrayList2, operator):
+        code = """def doit(self, inArrayList1, inArrayList2, operator):
     if operator=='': return
     op = getattr(Numeric, operator)
     result = op(Numeric.array(inArrayList1), Numeric.array(inArrayList2) )
     self.outputData(outArrayList=result)
 """
             
-	if code: self.setFunction(code)
+        if code: self.setFunction(code)
         
 ##  class method
 ##       self.operations = ['add', 'subtract', 'multiply', 'divide',
@@ -3349,12 +3349,12 @@ Output Ports
 
     def __init__(self, name='Vector3D', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.model = None
         self.resolution = 0
  
- 	self.widgetDescr['vector3D'] = {
+        self.widgetDescr['vector3D'] = {
             'class':'NEVectorGUI', 'master':'node',
             'size':100, 'continuous':1, 'vector':[1.,0,0],
             'labelCfg':{'text':''},
@@ -3414,10 +3414,10 @@ Output Ports:
         self.objectList = None # stores the valueList if values are of type
                                # instance
         
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
          
-	self.widgetDescr['buttonPanel'] = {
+        self.widgetDescr['buttonPanel'] = {
             'class':'NEMultiCheckButtons', 'lockedOnPort':True,
             'valueList':valueList, 'callback':self.myCallback,
             'labelCfg':{'text':''} }
@@ -3660,7 +3660,7 @@ Output Ports
 
     def __init__(self, name='ScrolledText', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['scrolltext'] = {
             'class':'NEScrolledText', 'hull_width':400, 'hull_height':300,
@@ -3703,7 +3703,7 @@ Output Ports
         kw['name'] = name
         self.inNodeWidgetsVisibleByDefault = True
         self.text = ''
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         #self.readOnly = 1
         self.selectedLines = [] # list of indices of selected lines
         self.lastSelectedLinesStr=''
@@ -3776,7 +3776,7 @@ Output Ports
 
     def afterAddingToNetwork(self):
         fixedFont = Pmw.logicalfont('Fixed')
-        st = self.lineSelectorMaster = Tkinter.Toplevel()
+        st = self.lineSelectorMaster = tkinter.Toplevel()
         self.lineSelector = Pmw.ScrolledText(
             st,
             usehullsize = 1,
@@ -3792,14 +3792,14 @@ Output Ports
         self.lineSelector.grid(sticky='nsew', 
                                column=0, row=0, columnspan=3)
 
-        Tkinter.Button(st, text="select regular expression:",
+        tkinter.Button(st, text="select regular expression:",
                        command=self.selectFromRE).grid(column=0, row=1)
-        self.revar = Tkinter.StringVar()
-        self.reentryTk = Tkinter.Entry(st, textvariable=self.revar)
+        self.revar = tkinter.StringVar()
+        self.reentryTk = tkinter.Entry(st, textvariable=self.revar)
         self.reentryTk.grid(column=1, row=1)
 
         
-        Tkinter.Button(st, text="output lines",
+        tkinter.Button(st, text="output lines",
                        command=self.outputSelection).grid(column=2, row=1)
 
         st.protocol("WM_DELETE_WINDOW", self.inputPorts[1].widget.widget.invoke)
@@ -3817,8 +3817,8 @@ Output Ports
         else:
             fromInd = int(self.pressIndex.split('.')[0])
             toInd = int(index.split('.')[0])
-            self.selectedlines = range(fromInd-1, toInd)
-            t.tag_add(Tkinter.SEL, str(fromInd)+'.0', str(toInd)+'.end')
+            self.selectedlines = list(range(fromInd-1, toInd))
+            t.tag_add(tkinter.SEL, str(fromInd)+'.0', str(toInd)+'.end')
             self.lastSelectedLinesStr = 'range(%d,%d)'%(fromInd-1, toInd)
         self.pressIndex = None
                 
@@ -3838,7 +3838,7 @@ Output Ports
         for i, line in enumerate(self.text):
             if pattern.match(line):
                 st.insert('end', line)
-                st.tag_add(Tkinter.SEL, "%d.0"%(i+1), "%d.0"%(i+2))
+                st.tag_add(tkinter.SEL, "%d.0"%(i+1), "%d.0"%(i+2))
                 st.clipboard_append(line)
                 selectedLines.append(i)
             else:
@@ -3879,7 +3879,7 @@ example:
 
     def __init__(self, name='Extract columns', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         #self.readOnly = 1
         code = """def doit(self, data, columns, sep, cast):
@@ -3976,7 +3976,7 @@ Output Ports
     def __init__(self, name='Read Field', **kw):
         import pickle
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         #self.readOnly = 1
         code = """def doit(self, filename):
@@ -4022,7 +4022,7 @@ Output Ports
     def __init__(self, name='Save Field', **kw):
         import pickle
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         fileTypes=[('all', '*')]
 
@@ -4042,7 +4042,7 @@ Output Ports
     if filename and len(filename) and field:
 
         import pickle
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         field = Numeric.array(field)
         f = open(filename, 'w')
         p = pickle.Pickler(f)
@@ -4070,7 +4070,7 @@ Output Ports
    
     def __init__(self, name='Change Background', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['color'] = {
             'class':'NEEntry', 'master':'node', 'width':16,
@@ -4078,9 +4078,9 @@ Output Ports
             'labelCfg':{'text':'color:'},
             }
 
-	self.inputPortsDescr.append(datatype='None', name='color')
+        self.inputPortsDescr.append(datatype='None', name='color')
 
-	code = """def doit(self, color):
+        code = """def doit(self, color):
     ed = self.getEditor()
     if type(color) in [types.ListType, Numeric.ArrayType, types.TupleType]:
         assert len(color) == 3 or len(color) == 4
@@ -4098,7 +4098,7 @@ Output Ports
     ed.currentNetwork.scrolledCanvas.interior().configure(background=colorStr)
 """
             
-	if code: self.setFunction(code)
+        if code: self.setFunction(code)
 
 
 
@@ -4129,7 +4129,7 @@ Output Ports
         
     def __init__(self, name='Slice Data', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.recStop = 0 # this is used to break out of the recursice function
         self.dType = None # the dataType
@@ -4167,7 +4167,7 @@ Output Ports
         
     def __init__(self, name='Index', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, data, index):
     lendata = len(data)
@@ -4227,7 +4227,7 @@ Output Ports
         
     def __init__(self, name='Split', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='None',
@@ -4274,7 +4274,7 @@ Output Ports
         
     def __init__(self, name='Slice', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, data, fromInd, toInd, step):
 
@@ -4288,7 +4288,7 @@ Output Ports
     result = data[ slice( fromInd, toInd, step)]
 
     if result is not None:
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         if isinstance(result, Numeric.ArrayType):
             self.outputPorts[0].setDataType('NumericArray', tagModified=False)
             self.outputData(data=result)
@@ -4349,7 +4349,7 @@ Output Ports
         
     def __init__(self, name='Range', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, fromInd, toInd, step):
 
@@ -4428,7 +4428,7 @@ Output Ports
 
     def __init__(self, name='ComboBox', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.objectList = None # stores the valueList 
         self.nameList = None   # stores the optional nameList
@@ -4514,7 +4514,7 @@ Output Ports
                         break
             else:
                 for i in range(len(self.objectList)):
-                    if type(self.objectList[i]) == types.StringType and self.objectList[i] == selection:
+                    if type(self.objectList[i]) == bytes and self.objectList[i] == selection:
                         data = self.objectList[i]
                         break
                     elif repr(self.objectList[i]) == selection:
@@ -4555,7 +4555,7 @@ class IfNode(NetworkNode):
 
     def __init__(self, name='if else', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inNodeWidgetsVisibleByDefault = True
 
@@ -4605,7 +4605,7 @@ unbound and a checkbutton is bound to the condition port.
 
     def __init__(self, name='if else', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         self.widgetDescr['condition'] = {
@@ -4646,7 +4646,7 @@ i.e. 'data==3.14' is a valide condition
 
     def __init__(self, name='if', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         self.isSchedulingNode = True # this node is not scheduled in the net.py/
@@ -4704,7 +4704,7 @@ i.e. 'data==3.14' is a valide condition
 
     def __init__(self, name='if', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         self.widgetDescr['condition'] = {
@@ -4738,7 +4738,7 @@ class RegressionTestMacro(MacroNode):
     
     def __init__(self, constrkw={}, name='NodeLibraryMacro', **kw):
         kw['name'] = name
-        apply( MacroNode.__init__, (self,), kw)
+        MacroNode.__init__(*(self,), **kw)
 
     def beforeAddingToNetwork(self, net):
         MacroNode.beforeAddingToNetwork(self, net)
@@ -4831,28 +4831,28 @@ class RunFunction(FunctionNode):
                  name='runFunction', **kw):
 
         # we do this to pass the variables into kw
-        if functionOrString is not None or kw.has_key('functionOrString') is False:
+        if functionOrString is not None or ('functionOrString' in kw) is False:
             kw['functionOrString'] = functionOrString
-        elif kw.has_key('functionOrString') is True:
+        elif ('functionOrString' in kw) is True:
             functionOrString = kw['functionOrString']
-        if importString is not None or kw.has_key('importString') is False:
+        if importString is not None or ('importString' in kw) is False:
             kw['importString'] = importString
-        elif kw.has_key('importString') is True:
+        elif ('importString' in kw) is True:
             importString = kw['importString']
-        if len(posArgsNames)>0 or kw.has_key('posArgsNames') is False:
+        if len(posArgsNames)>0 or ('posArgsNames' in kw) is False:
             kw['posArgsNames'] = posArgsNames
-        elif kw.has_key('posArgsNames') is True:
+        elif ('posArgsNames' in kw) is True:
             posArgsNames = kw['posArgsNames']
-        if len(namedArgs)>0 or kw.has_key('namedArgs') is False:
+        if len(namedArgs)>0 or ('namedArgs' in kw) is False:
             kw['namedArgs'] = namedArgs
-        elif kw.has_key('namedArgs') is True:
+        elif ('namedArgs' in kw) is True:
             namedArgs = kw['namedArgs']
-        if name is not None or kw.has_key('name') is False:
+        if name is not None or ('name' in kw) is False:
             kw['name'] = name
-        elif kw.has_key('name') is True:
+        elif ('name' in kw) is True:
             name = kw['name']       
 
-        apply( FunctionNode.__init__, (self,), kw )
+        FunctionNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         ip = self.inputPortsDescr

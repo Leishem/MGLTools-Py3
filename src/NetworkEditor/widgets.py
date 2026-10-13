@@ -75,8 +75,8 @@ node.nodeWidgetMaster created in node.buildNodeIcon. For widgets in the
 parameter panel the master is node.paramPanel.widgetFrame.
 """
 
-import Tkinter, Pmw, warnings
-import os, types, string
+import tkinter, Pmw, warnings
+import os, types; from mglcompat import pystring as string
 import warnings
 import user
 
@@ -209,7 +209,7 @@ initialValue: used to set widget in constructor
         # they do not appear on kw
         # NOTE: use PortWidget instead self here, else we also get all keys
         # that were added in Subclasses!
-        for key in PortWidget.configOpts.keys():
+        for key in list(PortWidget.configOpts.keys()):
             v = kw.get(key, None)
             default = self.configOpts[key]['defaultValue']
             if isinstance(default, dict):
@@ -235,14 +235,14 @@ initialValue: used to set widget in constructor
         elif master =='macroParamPanel':
             self.masterTk = node.network.macroNode.paramPanel.widgetFrame
             self._trigger = node.schedule
-        elif master in port.network.userPanels.keys():
+        elif master in list(port.network.userPanels.keys()):
             self.masterTk = port.network.userPanels[master].frame
             self._trigger = node.schedule
         else:
             lNetwork = port.network
             while hasattr(lNetwork, 'macroNode'):
                 lNetwork = lNetwork.macroNode.network
-                if master in lNetwork.userPanels.keys():
+                if master in list(lNetwork.userPanels.keys()):
                     self.masterTk = lNetwork.userPanels[master].frame
                     self._trigger = node.schedule
                     break
@@ -251,23 +251,23 @@ initialValue: used to set widget in constructor
                 return
 
         # create label
-        self.tklabel = apply( Tkinter.Label, (self.masterTk,), self.labelCfg)
+        self.tklabel = tkinter.Label(*(self.masterTk,), **self.labelCfg)
         self.tklabel.bind("<Button-3>", self.postWidgetMenu)
         self.tklabel.configure(bg='#c3d0a6')
 
-        apply( self.configure, (False,), kw) # configure without rebuilding
+        self.configure(*(False,), **kw) # configure without rebuilding
 
         # create widget frame
-        self.widgetFrame = Tkinter.Frame(self.masterTk)
+        self.widgetFrame = tkinter.Frame(self.masterTk)
         
         self.gridLabelAndWidget()
 
         # create menu to access port and widget editors and config panel
-		# got rid of useless tearoff
-        self.menu = Tkinter.Menu(port.node.getEditor(), title='Widget Menu', tearoff=False)
+                # got rid of useless tearoff
+        self.menu = tkinter.Menu(port.node.getEditor(), title='Widget Menu', tearoff=False)
         self.menu.add_separator()
 
-        if master in port.network.userPanels.keys():
+        if master in list(port.network.userPanels.keys()):
             self.menu.add_command(label='Label Editor', underline=0, command=self.label_cb)
 
         self.menu.add_command(label='Port Editor', underline=0, 
@@ -280,7 +280,7 @@ initialValue: used to set widget in constructor
 
         # we need to add an empty panel menu here, since we will delete it
         # in postWidgetMenu and rebuild it
-        self.panelmenu = Tkinter.Menu(self.menu, tearoff=0)
+        self.panelmenu = tkinter.Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label='Move to', menu=self.panelmenu, underline=0)
 
         self.vEditor = port.getEditor()
@@ -302,13 +302,13 @@ initialValue: used to set widget in constructor
 
     def _procTrigger(self):
         value = self.get()
-        if type(value)==types.StringType:
+        if type(value)==bytes:
             cmd = self._cmdStr + "'%s', run=0)"%value
         else:
             cmd = self._cmdStr + str(value) + ', run=0)'
         import os
         procid = os.getpid()
-        print 'SENDING', procid, cmd
+        print('SENDING', procid, cmd)
         self.port.network.remoteProcessSocket.send(cmd)
 
 
@@ -348,14 +348,14 @@ start port or widget editor"""
             cb = CallBackFunction( self.moveWidgetToPanel, 'macroParamPanel')
             self.panelmenu.add_command(label='MacroParamPanel', command=cb, underline=2)
 
-        for name in self.port.network.userPanels.keys():
+        for name in list(self.port.network.userPanels.keys()):
             cb = CallBackFunction( self.moveWidgetToPanel, name)
             self.panelmenu.add_command(label=name, command=cb)
 
         lNetwork = self.port.network
         while hasattr(lNetwork, 'macroNode'):
             lNetwork = lNetwork.macroNode.network
-            for name in lNetwork.userPanels.keys():
+            for name in list(lNetwork.userPanels.keys()):
                 cb = CallBackFunction( self.moveWidgetToPanel, name)
                 self.panelmenu.add_command(label=name, command=cb)
 
@@ -371,7 +371,7 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
         gridCfg = self.widgetGridCfg 
         # check for panel specific gridCfg
         descr = self.port.node.widgetDescr[self.name]
-        if descr.has_key('widgetGridCfg'+self.master):
+        if 'widgetGridCfg'+self.master in descr:
             gridCfg = descr['widgetGridCfg'+self.master]
             #print 'FFFFFFFF found panel grid', self.master, gridCfg
         return gridCfg
@@ -380,7 +380,7 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
     def gridLabelAndWidget(self):
         #print "gridLabelAndWidget"
 
-        if self.master is not None and self.master in self.port.network.userPanels.keys():
+        if self.master is not None and self.master in list(self.port.network.userPanels.keys()):
             return
 
         if self.widgetFrame is None:
@@ -408,7 +408,7 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
         hasrow = hascol = True
         labelSide = gridCfg.pop('labelSide', 'left')
 
-        if not gridCfg.has_key('row'):
+        if 'row' not in gridCfg:
             # programmer has not provided a row, pack label's rowspan down if
             # labelSide is 'top'
             gridCfg['row'] = y
@@ -416,7 +416,7 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
                 gridCfg['row'] += self.labelGridCfg.get('rowspan', 1)
             hasrow = False
             
-        if not gridCfg.has_key('column'):
+        if 'column' not in gridCfg:
             # programmer has not provided a column, pack in column 'columspan'
             # of label if labelSide is left, else pack at column 0
             gridCfg['column'] = 0
@@ -444,10 +444,10 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
 
             # grid the label
             if len(self.labelCfg['text']):
-                apply( self.tklabel.grid, (), self.labelGridCfg)
+                self.tklabel.grid(*(), **self.labelGridCfg)
                 
             # grid the widget
-            apply( self.widgetFrame.grid, (), gridCfg)
+            self.widgetFrame.grid(*(), **gridCfg)
 
         elif labelSide == 'right':
             # add columspan for widget's column
@@ -456,10 +456,10 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
 
             # grid the label
             if len(self.labelCfg['text']):
-                apply( self.tklabel.grid, (), self.labelGridCfg)
+                self.tklabel.grid(*(), **self.labelGridCfg)
 
             # grid the widget
-            apply( self.widgetFrame.grid, (), gridCfg)
+            self.widgetFrame.grid(*(), **gridCfg)
 
         elif labelSide == 'top':
             # subtract rowspan for widget's row
@@ -474,10 +474,10 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
 
             # grid the label
             if len(self.labelCfg['text']):
-                apply( self.tklabel.grid, (), self.labelGridCfg)
+                self.tklabel.grid(*(), **self.labelGridCfg)
 
             # grid the widget
-            apply( self.widgetFrame.grid, (), gridCfg)
+            self.widgetFrame.grid(*(), **gridCfg)
 
         elif labelSide == 'bottom':
             # add rowspan for widget's row
@@ -486,10 +486,10 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
 
             # grid the label
             if len(self.labelCfg['text']):
-                apply( self.tklabel.grid, (), self.labelGridCfg)
+                self.tklabel.grid(*(), **self.labelGridCfg)
                 
             # grid the widget
-            apply( self.widgetFrame.grid, (), gridCfg)
+            self.widgetFrame.grid(*(), **gridCfg)
         else:
             warnings.warn("%s illegal labelSide"%labelSide)
             
@@ -568,9 +568,9 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
             # update rebuildDescr
             rebuildDescr['widgetPlacerCfg'] = widgetPlacerCfg
 
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             if k == 'master':
-                if self.master not in self.port.network.userPanels.keys() \
+                if self.master not in list(self.port.network.userPanels.keys()) \
                    or v != self.master:
                    # the last part (or v != self.master)
                    # has been hadded otherwise you need to say twice that you want
@@ -622,18 +622,18 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
                 gridit = True
 
             elif k == 'labelCfg':
-                if self.master not in self.port.network.userPanels.keys():
+                if self.master not in list(self.port.network.userPanels.keys()):
                     if len(self.labelCfg['text'])==0 and len(v['text'])>0:
-                        apply( self.tklabel.grid, (), self.labelGridCfg)
+                        self.tklabel.grid(*(), **self.labelGridCfg)
 
                     if len(self.labelCfg['text'])>0 and len(v['text'])==0:
                         self.tklabel.grid_forget()
 
                 self.labelCfg.update(v)
                 rebuildDescr['labelCfg'] = self.labelCfg
-                apply( self.tklabel.configure, (), v)
+                self.tklabel.configure(*(), **v)
 
-                if self.master not in self.port.network.userPanels.keys():
+                if self.master not in list(self.port.network.userPanels.keys()):
                     gridit = True
                     if self.inNode and action!='rebuild':
                         action = 'resize'
@@ -654,7 +654,7 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
             elif k[:13]=='widgetGridCfg' and len(k)>13:
                 # widget panels grid configuration dicts
                 descr = self.port.node.widgetDescr[self.name]
-                if descr.has_key(self.name):
+                if self.name in descr:
                     descr[self.name].update(v)
                 else:
                     self.port.node.widgetDescr[self.name][k] = v
@@ -698,7 +698,7 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
 
         if action is None \
           and self.widget is not None \
-          and kw.has_key('initialValue'):
+          and 'initialValue' in kw:
             self.set(kw['initialValue'], 0);
 
         if gridit:
@@ -728,9 +728,9 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
 ##                 rebuildDescr.pop('row', None)
 ##                 rebuildDescr.pop('column', None)
                     
-            if self.oldmaster in self.port.network.userPanels.keys():
+            if self.oldmaster in list(self.port.network.userPanels.keys()):
                 self.port.network.userPanels[self.oldmaster].deleteWidget(self)
-            if rebuildDescr['master'] in self.port.network.userPanels.keys():
+            if rebuildDescr['master'] in list(self.port.network.userPanels.keys()):
                 addWidgetToPanel = True
         
         port = self.port
@@ -757,7 +757,7 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
         if addWidgetToPanel:
             panel = port.editor.panelFromName(newWidget.master)
             if panel:
-                if rebuildDescr.has_key('widgetPlacerCfg'):
+                if 'widgetPlacerCfg' in rebuildDescr:
                     widgetPlacerCfg = rebuildDescr['widgetPlacerCfg']
                 else:
                     widgetPlacerCfg = None
@@ -783,7 +783,7 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
                 else:
                     masterName = self.master
             else:
-                if self.master in self.port.network.userPanels.keys():
+                if self.master in list(self.port.network.userPanels.keys()):
                     masterName = self.master
 
         descr = {
@@ -795,17 +795,17 @@ in the node's widgetDescr that is specific for the master (i.e. 'node',
             'initialValue': self.initialValue,
             }
         
-        if len(self.labelGridCfg.keys()):
+        if len(list(self.labelGridCfg.keys())):
             descr['labelGridCfg'] = self.labelGridCfg
-        if len(self.widgetGridCfg.keys()):
+        if len(list(self.widgetGridCfg.keys())):
             descr['widgetGridCfg'] = self.widgetGridCfg
         descr['labelCfg'] = self.labelCfg
-        for k,v in self.port.node.widgetDescr[self.name].items():
+        for k,v in list(self.port.node.widgetDescr[self.name].items()):
             if k[:13]=='widgetGridCfg' and len(k)>13:
                 descr[k] = v
 
         widgetPlacerCfg = self.widgetFrame.place_info()
-        if widgetPlacerCfg.has_key('relx') and widgetPlacerCfg.has_key('rely'):
+        if 'relx' in widgetPlacerCfg and 'rely' in widgetPlacerCfg:
             descr['widgetPlacerCfg'] = {'relx': widgetPlacerCfg['relx'],
                                         'rely': widgetPlacerCfg['rely'] }
 
@@ -859,7 +859,7 @@ node base class and return a dictionary with the differences
         ownDescr = self.getDescr().copy()
         lConstrkw = {'masternet': self.port.network}
         lConstrkw.update(self.port.node.constrkw)
-        dummy = apply(self.port.node.__class__,(),lConstrkw) # we need the base class node
+        dummy = self.port.node.__class__(*(), **lConstrkw) # we need the base class node
         origWidgetDescr = self.__class__.configOpts.copy()
         nodeWidgetDescr = dummy.widgetDescr[self.port.name].copy()
 
@@ -868,7 +868,7 @@ node base class and return a dictionary with the differences
             rowspan=1, columnspan=1, sticky='w', padx=0, pady=0, ipadx=0,
             ipady=0)
         # update it with whatever we find in the nodeWidgetDescr
-        if nodeWidgetDescr.has_key('labelGridCfg'):
+        if 'labelGridCfg' in nodeWidgetDescr:
             labelGridDefaults.update(nodeWidgetDescr['labelGridCfg'] )
 
         # create a defaults dict to compare agains for widgetGridCfg
@@ -878,14 +878,14 @@ node base class and return a dictionary with the differences
             rowspan=1, columnspan=1, sticky='w', padx=0, pady=0, ipadx=0,
             ipady=0, labelSide='left', labelCfg=dict(text=''))
         # update it with whatever we find in the nodeWidgetDescr
-        if nodeWidgetDescr.has_key('widgetGridCfg'):
+        if 'widgetGridCfg' in nodeWidgetDescr:
             widgetGridDefaults.update(nodeWidgetDescr['widgetGridCfg'])
 
         descr = {}
         # compare to widget definitions in node
-        for k,v in ownDescr.items():
+        for k,v in list(ownDescr.items()):
             if k == 'initialValue':
-                if nodeWidgetDescr.has_key('initialValue'):
+                if 'initialValue' in nodeWidgetDescr:
                     if v == nodeWidgetDescr['initialValue']:
                         continue
                 elif v == origWidgetDescr['initialValue']['defaultValue']:
@@ -895,10 +895,10 @@ node base class and return a dictionary with the differences
                 continue
                 
             elif k == 'labelCfg':
-                if nodeWidgetDescr.has_key('labelCfg'):
+                if 'labelCfg' in nodeWidgetDescr:
                     if v['text'] == nodeWidgetDescr['labelCfg']['text']:
                         continue
-                elif origWidgetDescr.has_key('labelCfg'):
+                elif 'labelCfg' in origWidgetDescr:
                     if v['text'] == origWidgetDescr['labelCfg']['defaultValue']['text']:
                         continue
 
@@ -909,7 +909,7 @@ node base class and return a dictionary with the differences
             # by self.gridLabelAndWidget, using 'labelSide'
             elif k == 'labelGridCfg':
                 tmpdict = {}
-                for tk, tv in v.items():
+                for tk, tv in list(v.items()):
                     if tk == 'row':
                         continue
                     elif tk == 'column':
@@ -918,13 +918,13 @@ node base class and return a dictionary with the differences
                         if tv != labelGridDefaults[tk]:
                             tmpdict[tk] = tv
 
-                if len(tmpdict.keys()):
+                if len(list(tmpdict.keys())):
                     descr[k] = tmpdict
                 continue
 
             elif k == 'widgetGridCfg' or k == 'widgetGridCfg%s'%self.master:
                 tmpdict = {}
-                for tk, tv in v.items():
+                for tk, tv in list(v.items()):
                     if tk == 'row':
                         continue
                     elif tk == 'column':
@@ -933,17 +933,17 @@ node base class and return a dictionary with the differences
                         if tv != widgetGridDefaults[tk]:
                             tmpdict[tk] = tv
 
-                if len(tmpdict.keys()):
+                if len(list(tmpdict.keys())):
                     descr[k] = tmpdict 
                 continue
             
-            if k in nodeWidgetDescr.keys():
+            if k in list(nodeWidgetDescr.keys()):
                 if v != nodeWidgetDescr[k]:
                     descr[k] = v
 
             
             # compare to default configuration options of widget
-            elif k in origWidgetDescr.keys():
+            elif k in list(origWidgetDescr.keys()):
                 if v != origWidgetDescr[k]['defaultValue']:
                     descr[k] = v
 
@@ -961,21 +961,21 @@ class LabelWidgetEditor:
     def __init__(self, panel, widget):
         #print "LabelWidgetEditor.__init__"
 
-        self.master = Tkinter.Toplevel()
+        self.master = tkinter.Toplevel()
         self.master.title('Widget Label Editor')
         self.master.protocol("WM_DELETE_WINDOW", self.master.withdraw)
 
         self.widget = widget
         self.panel = panel
 
-        labelNameTk = Tkinter.StringVar()
+        labelNameTk = tkinter.StringVar()
         labelNameTk.set(widget.labelCfg['text'])
-        labelSideTk = Tkinter.StringVar()
+        labelSideTk = tkinter.StringVar()
         labelSideTk.set(widget.widgetGridCfg['labelSide'])
 
-        self.labelName = Tkinter.Label(self.master, text='name:')
+        self.labelName = tkinter.Label(self.master, text='name:')
         self.labelName.grid(row=0, column=0, sticky='w')
-        self.entryName = Tkinter.Entry(self.master, 
+        self.entryName = tkinter.Entry(self.master, 
                                        width=10,
                                        textvariable=labelNameTk )
         self.entryName.grid(row=0, column=1, sticky='we')
@@ -1183,15 +1183,15 @@ Handles all PortWidget arguments and all Thumbwheel arguments except for value.
 
         # get all arguments handled by NEThumbweel and not by PortWidget
         widgetcfg = {}
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k in kw:
                 widgetcfg[k] = kw.pop(k)
 
         # call base class constructor
-        apply( PortWidget.__init__, ( self, port), kw)
+        PortWidget.__init__(*( self, port), **kw)
 
         # create the Thumbwheel widget
-        self.widget = apply( ThumbWheel, (self.widgetFrame,), widgetcfg)
+        self.widget = ThumbWheel(*(self.widgetFrame,), **widgetcfg)
         self.widget.callbacks.AddCallback(self.newValueCallback)
         # rename Options Panel to port name
         self.widget.opPanel.setTitle("%s : %s"%(port.node.name, port.name) )
@@ -1218,21 +1218,21 @@ Handles all PortWidget arguments and all Thumbwheel arguments except for value.
             self.set(self.widget.type(self.initialValue), run=0)
             
         # configure without rebuilding to avoid enless loop
-        apply( self.configure, (False,), widgetcfg)
+        self.configure(*(False,), **widgetcfg)
 
 
     def configure(self, rebuild=True, **kw):
         # call base class configure with rebuild=Flase. If rebuilt is needed
         # rebuildDescr will contain w=='rebuild' and rebuildDescr contains
         # modified descr
-        action, rebuildDescr = apply( PortWidget.configure, (self, False), kw)
+        action, rebuildDescr = PortWidget.configure(*(self, False), **kw)
 
         
         # handle ownConfigOpts entries
         if self.widget is not None:
             widgetOpts = {}
-            for k, v in kw.items():
-                if k in self.ownConfigOpts.keys():
+            for k, v in list(kw.items()):
+                if k in list(self.ownConfigOpts.keys()):
                     if k in ['width', 'height', 'wheelPad', 'orient']:
                         action = 'rebuild'
                         rebuildDescr[k] = v
@@ -1240,7 +1240,7 @@ Handles all PortWidget arguments and all Thumbwheel arguments except for value.
                         widgetOpts[k] = v
 
             if len(widgetOpts):
-                apply( self.widget.configure, (), widgetOpts)
+                self.widget.configure(*(), **widgetOpts)
 
         if action=='rebuild' and rebuild:
             action, rebuildDescr = self.rebuild(rebuildDescr)
@@ -1286,7 +1286,7 @@ Handles all PortWidget arguments and all Thumbwheel arguments except for value.
 
     def getDescr(self):
         cfg = PortWidget.getDescr(self)
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k == 'type': # type has to be handled separately
                 _type = self.widget.type
                 if _type == int:
@@ -1441,15 +1441,15 @@ Handles all PortWidget arguments and all Dial arguments except for value.
 
         # get all arguments handled by NEThumbweel and not by PortWidget
         widgetcfg = {}
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k in kw:
                 widgetcfg[k] = kw.pop(k)
 
         # call base class constructor
-        apply( PortWidget.__init__, ( self, port), kw)
+        PortWidget.__init__(*( self, port), **kw)
 
         # create the Dial widget
-        self.widget = apply( Dial, (self.widgetFrame,), widgetcfg)
+        self.widget = Dial(*(self.widgetFrame,), **widgetcfg)
         self.widget.callbacks.AddCallback(self.newValueCallback)
         # rename Options Panel to port name
         self.widget.opPanel.setTitle("%s : %s"%(port.node.name, port.name) )
@@ -1476,7 +1476,7 @@ Handles all PortWidget arguments and all Dial arguments except for value.
             self.set(self.widget.type(self.initialValue), run=0)
             
         # configure without rebuilding to avoid enless loop
-        apply( self.configure, (False,), widgetcfg)
+        self.configure(*(False,), **widgetcfg)
 
         self._setModified(False) # will be set to True by configure method
 
@@ -1485,12 +1485,12 @@ Handles all PortWidget arguments and all Dial arguments except for value.
         # call base class configure with rebuild=Flase. If rebuilt is needed
         # rebuildDescr will contain w=='rebuild' and rebuildDescr contains
         # modified descr
-        action, rebuildDescr = apply( PortWidget.configure, (self, False), kw)
+        action, rebuildDescr = PortWidget.configure(*(self, False), **kw)
             
         # handle ownConfigOpts entries
         if self.widget is not None:
             widgetOpts = {}
-            for k, v in kw.items():
+            for k, v in list(kw.items()):
                 if k in self.ownConfigOpts:
                     if k =='size':
                         action = 'rebuild'
@@ -1499,7 +1499,7 @@ Handles all PortWidget arguments and all Dial arguments except for value.
                         widgetOpts[k] = v
 
             if len(widgetOpts):
-                apply( self.widget.configure, (), widgetOpts)
+                self.widget.configure(*(), **widgetOpts)
 
         if action=='rebuild' and rebuild:
             action, rebuildDescr = self.rebuild(rebuildDescr)
@@ -1544,7 +1544,7 @@ Handles all PortWidget arguments and all Dial arguments except for value.
 
     def getDescr(self):
         cfg = PortWidget.getDescr(self)
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k == 'type': # type has to be handled separately
                 _type = self.widget.type
                 if _type == int:
@@ -1572,7 +1572,7 @@ class TkPortWidget(PortWidget):
         # such as width, height, bg, etc....
         self.widgetDescr = {}
 
-        apply( PortWidget.__init__, (self, port), kw)
+        PortWidget.__init__(*(self, port), **kw)
 
         # create a Tkvariable to store thwidget's state
         self.var = None
@@ -1580,13 +1580,13 @@ class TkPortWidget(PortWidget):
 
     def configure(self, rebuild=True, **kw):
         # handle all Tkinter keywords for self.widget
-        action, rebuildDescr = apply( PortWidget.configure, (self, 0), kw)
+        action, rebuildDescr = PortWidget.configure(*(self, 0), **kw)
 
         # handle ownConfigOpts entries
         if self.widget is not None:
             widgetOpts = {}
             tkOptions = self.widget.configure()
-            for k, v in kw.items():
+            for k, v in list(kw.items()):
 
                 # skip base class keywords
                 if k in PortWidget.configOpts:
@@ -1597,7 +1597,7 @@ class TkPortWidget(PortWidget):
                 
             if len(widgetOpts):
                 self.widgetDescr.update(widgetOpts)
-                apply( self.widget.configure, (), widgetOpts)
+                self.widget.configure(*(), **widgetOpts)
 
         if action=='rebuild' and rebuild:
             action, rebuildDescr = self.rebuild(rebuildDescr)
@@ -1647,13 +1647,13 @@ Additional constructor arguments are any Tkinter.Entry arguments.
     def __init__(self, port, **kw):
         
         # call base class constructor
-        apply( TkPortWidget.__init__, (self, port), kw)
+        TkPortWidget.__init__(*(self, port), **kw)
 
-        self.var = Tkinter.StringVar()
+        self.var = tkinter.StringVar()
         widgetcfg = {'textvariable':self.var}
 
         # create the Entry widget
-        self.widget = apply( Tkinter.Entry, (self.widgetFrame,), widgetcfg )
+        self.widget = tkinter.Entry(*(self.widgetFrame,), **widgetcfg)
         self.widget.bind('<Return>', self.newValueCallback)
         #self.widget.bind('<FocusOut>', self.newValueCallback)
         # bind right mouse button click
@@ -1662,7 +1662,7 @@ Additional constructor arguments are any Tkinter.Entry arguments.
         self.widget.pack(side='left')
 
         # configure without rebuilding to avoid enless loop
-        apply( self.configure, (False,), kw)
+        self.configure(*(False,), **kw)
 
         if self.initialValue is not None:
             self.set(self.initialValue, run=0)
@@ -1671,7 +1671,7 @@ Additional constructor arguments are any Tkinter.Entry arguments.
 
 
     def configure(self, rebuild=True, **kw):
-        action, rebuildDescr = apply( TkPortWidget.configure, (self, 0), kw)
+        action, rebuildDescr = TkPortWidget.configure(*(self, 0), **kw)
             
         #  this methods just creates a resize action if width changes
         if self.widget is not None:
@@ -1735,7 +1735,7 @@ Tkinter.Entry argument.
         
         # create all self.title filetypes and initialDir with default values
         # if they are not specified in kw
-        for key in self.ownConfigOpts.keys():
+        for key in list(self.ownConfigOpts.keys()):
             v = kw.get(key, None)
             if v is None: # self.configure will not do anyting for this key
                 setattr(self, key, self.ownConfigOpts[key]['defaultValue'])
@@ -1743,19 +1743,19 @@ Tkinter.Entry argument.
         # get all arguments handled only by this widget and not by base class
         # remove them from kw
         widgetcfg = {}
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k in kw:
                 widgetcfg[k] = kw.pop(k)
 
         self.initialDir = None
         
         # call base class constructor
-        apply( NEEntry.__init__, (self, port), kw)
+        NEEntry.__init__(*(self, port), **kw)
         # bind right mouse button click
         self.widget.bind("<Button-3>", self.postWidgetMenu)
 
         # create the FleBrowser button
-        self.FBbutton = Tkinter.Button(self.widgetFrame, text='...',
+        self.FBbutton = tkinter.Button(self.widgetFrame, text='...',
                                        relief='raised',
                                        command=self.getDirFromBrowser )
         #self.FBbutton.grid(row=0, column=2)
@@ -1767,7 +1767,7 @@ Tkinter.Entry argument.
         self.widget.pack()
 
         # configure without rebuilding to avoid enless loop
-        apply( self.configure, (False,), widgetcfg) 
+        self.configure(*(False,), **widgetcfg) 
 
         # bind function to display file browser
         # THIS DOES NOT WORK ON LINUX MACHINES
@@ -1781,13 +1781,13 @@ Tkinter.Entry argument.
 
 
     def configure(self, rebuild=True, **kw):
-        action, rebuildDescr = apply( NEEntry.configure, (self, False), kw)
+        action, rebuildDescr = NEEntry.configure(*(self, False), **kw)
             
         # handle ownConfigOpts entries
         if self.widget is not None:
             
             widgetOpts = {}
-            for k, v in kw.items():
+            for k, v in list(kw.items()):
                 if k=='title':
                     self.title = v
                 elif k=='initialDir':
@@ -1863,7 +1863,7 @@ Tkinter.Entry argument.
         
         # create all self.title filetypes and initialDir with default values
         # if they are not specified in kw
-        for key in self.ownConfigOpts.keys():
+        for key in list(self.ownConfigOpts.keys()):
             v = kw.get(key, None)
             if v is None: # self.configure will not do anyting for this key
                 setattr(self, key, self.ownConfigOpts[key]['defaultValue'])
@@ -1871,17 +1871,17 @@ Tkinter.Entry argument.
         # get all arguments handled only by this widget and not by base class
         # remove them from kw
         widgetcfg = {}
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k in kw:
                 widgetcfg[k] = kw.pop(k)
 
         # call base class constructor
-        apply( NEEntry.__init__, (self, port), kw)
+        NEEntry.__init__(*(self, port), **kw)
         # bind right mouse button click
         self.widget.bind("<Button-3>", self.postWidgetMenu)
 
         # create the FleBrowser button
-        self.FBbutton = Tkinter.Button(self.widgetFrame, text='...',
+        self.FBbutton = tkinter.Button(self.widgetFrame, text='...',
                                        relief='raised',
                                        command=self.getFileFromBrowser )
         #self.FBbutton.grid(row=0, column=2)
@@ -1893,7 +1893,7 @@ Tkinter.Entry argument.
         self.widget.pack()
 
         # configure without rebuilding to avoid enless loop
-        apply( self.configure, (False,), widgetcfg) 
+        self.configure(*(False,), **widgetcfg) 
 
         # bind function to display file browser
         # THIS DOES NOT WORK ON LINUX MACHINES
@@ -1909,13 +1909,13 @@ Tkinter.Entry argument.
 
 
     def configure(self, rebuild=True, **kw):
-        action, rebuildDescr = apply( NEEntry.configure, (self, False), kw)
+        action, rebuildDescr = NEEntry.configure(*(self, False), **kw)
             
         # handle ownConfigOpts entries
         if self.widget is not None:
             
             widgetOpts = {}
-            for k, v in kw.items():
+            for k, v in list(kw.items()):
                 if k=='filetypes':
                     self.filetypes = v
                 elif k=='title':
@@ -1969,7 +1969,7 @@ Tkinter.Entry argument.
 
     def __init__(self, port, **kw):
 
-        apply( NEEntryWithFileBrowser.__init__, (self, port), kw)
+        NEEntryWithFileBrowser.__init__(*(self, port), **kw)
         
         self.getFileObj = FileSaveBrowser(
             #lastDir=self.initialDir,
@@ -1996,17 +1996,16 @@ Additional constructor arguments are any Tkinter.Checkbutton arguments.
     def __init__(self, port, **kw):
 
         # call base class constructor
-        apply( TkPortWidget.__init__, (self, port), kw)
+        TkPortWidget.__init__(*(self, port), **kw)
 
-        self.var = Tkinter.IntVar()
+        self.var = tkinter.IntVar()
         widgetcfg = {'variable':self.var, 'command':self.newValueCallback }
         
         # configure without rebuilding to avoid enless loop
         #apply( self.configure, (False,), widgetcfg)
 
         # create the Checkbutton widget
-        self.widget = apply( Tkinter.Checkbutton, (self.widgetFrame,),
-                             widgetcfg )
+        self.widget = tkinter.Checkbutton(*(self.widgetFrame,), **widgetcfg)
         # bind right mouse button click
         self.widget.bind("<Button-3>", self.postWidgetMenu)
         self.widget.pack()
@@ -2043,9 +2042,9 @@ Additional constructor arguments are any Tkinter.Button arguments.
     def __init__(self, port, **kw):
 
         # call base class constructor
-        apply( TkPortWidget.__init__, (self, port), kw)
+        TkPortWidget.__init__(*(self, port), **kw)
 
-        self.var = Tkinter.IntVar()
+        self.var = tkinter.IntVar()
         widgetcfg = {}
         
         cmd = kw.pop('command',None)
@@ -2057,13 +2056,13 @@ Additional constructor arguments are any Tkinter.Button arguments.
         #apply( self.configure, (False,), widgetcfg)
 
         # create the Button widget
-        self.widget = apply( Tkinter.Button, (self.widgetFrame,), widgetcfg )
+        self.widget = tkinter.Button(*(self.widgetFrame,), **widgetcfg)
         # bind right mouse button click
         self.widget.bind("<Button-3>", self.postWidgetMenu)
         self.widget.pack()
 
         # configure without rebuilding to avoid enless loop
-        apply( self.configure, (False,), kw)
+        self.configure(*(False,), **kw)
 
         if self.initialValue is not None:
             self.set(self.initialValue, run=0)
@@ -2118,16 +2117,16 @@ class PmwPortWidget(PortWidget):
         # this dict is used to save Pmw widget options applied to the widget
         self.widgetDescr = {}
 
-        apply( PortWidget.__init__, (self, port), kw)
+        PortWidget.__init__(*(self, port), **kw)
 
     def configure(self, rebuild=True, **kw):
         # handle all Pmw keywords for self.widget
-        action, rebuildDescr = apply( PortWidget.configure, (self, 0), kw)
+        action, rebuildDescr = PortWidget.configure(*(self, 0), **kw)
         # handle ownConfigOpts that create an action
         if self.widget is not None:
             widgetOpts = {}
 
-            for k, v in kw.items():
+            for k, v in list(kw.items()):
                 # skip base class keywords
                 if k in PortWidget.configOpts:
                     continue
@@ -2145,7 +2144,7 @@ class PmwPortWidget(PortWidget):
 
             if len(widgetOpts):
                 self.widgetDescr.update(widgetOpts)
-                apply( self.widget.configure, (), widgetOpts)
+                self.widget.configure(*(), **widgetOpts)
 
         if action=='rebuild' and rebuild:
             action, rebuildDescr = self.rebuild(rebuildDescr)
@@ -2165,7 +2164,7 @@ class PmwPortWidget(PortWidget):
         as keys"""
         
         pmwkw = {}
-        for k,v in options.items():
+        for k,v in list(options.items()):
             if k in ['labelSide', 'widgetGridCfg', 'labelGridCfg']:
                 continue
             elif k == 'widgetGridCfg%s'%widget.master:
@@ -2207,15 +2206,15 @@ Only the the current value will be saved.""",
         # get all arguments handled only by this widget and not by base class
         # remove them from kw
         widgetcfg = {}
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k in kw:
                 widgetcfg[k] = kw.pop(k)
 
         combokw = { 'dropdown' : kw.pop('dropdown', True) }
 
         # call base class constructor
-        apply( PmwPortWidget.__init__, (self, port), kw)
-        for key in self.configOpts.keys():
+        PmwPortWidget.__init__(*(self, port), **kw)
+        for key in list(self.configOpts.keys()):
             v = kw.get(key, None)
             if v is None: # self.configure will not do anyting for this key
                 setattr(self, key, self.configOpts[key]['defaultValue'])
@@ -2237,9 +2236,9 @@ Only the the current value will be saved.""",
         combokw['labelpos'] = None
         # now, create widget
         if combokw['dropdown'] is True:
-            self.widget = apply( kbComboBox, (self.widgetFrame,), combokw)
+            self.widget = kbComboBox(*(self.widgetFrame,), **combokw)
         else:
-            self.widget = apply( Pmw.ComboBox, (self.widgetFrame,), combokw)
+            self.widget = Pmw.ComboBox(*(self.widgetFrame,), **combokw)
 
         # bind right mouse button click
         self.widget.bind("<Button-3>", self.postWidgetMenu)
@@ -2252,7 +2251,7 @@ Only the the current value will be saved.""",
         del combokw['labelpos']
         del combokw['dropdown']
         widgetcfg.update(combokw)
-        apply( self.configure, (False,), widgetcfg)
+        self.configure(*(False,), **widgetcfg)
         
         if self.initialValue is not None:
             self.set(self.initialValue, run=0)
@@ -2263,12 +2262,12 @@ Only the the current value will be saved.""",
     def configure(self, rebuild=True, **kw):
         #print "NEComboBox.configure", kw
         # handle all Tkinter keywords for self.widget
-        action, rebuildDescr = apply( PmwPortWidget.configure, (self, 0), kw)
+        action, rebuildDescr = PmwPortWidget.configure(*(self, 0), **kw)
             
         # handle ownConfigOpts that create an action
         if self.widget is not None:
             PmwOptions = self.widget.configure()
-            for k, v in kw.items():
+            for k, v in list(kw.items()):
                 # check if it is a Tk option for this Tk widget
                 if k in ['entryfield_entry_width', 'entry_width']:
                     action = 'resize'
@@ -2422,22 +2421,22 @@ vector.
 
         # create all attributes that will not be created by configure because
         # they do not appear on kw
-        for key in self.ownConfigOpts.keys():
+        for key in list(self.ownConfigOpts.keys()):
             v = kw.get(key, None)
             if v is None: # self.configure will not do anyting for this key
                 setattr(self, key, self.ownConfigOpts[key]['defaultValue'])
 
         # get all arguments handled by NEThumbweel and not by PortWidget
         widgetcfg = {}
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k in kw:
                 widgetcfg[k] = kw.pop(k)
 
         # call base class constructor
-        apply( PortWidget.__init__, ( self, port), kw)
+        PortWidget.__init__(*( self, port), **kw)
 
         # create the vectorGUI widget
-        self.widget = apply( vectorGUI, (self.widgetFrame,), widgetcfg)
+        self.widget = vectorGUI(*(self.widgetFrame,), **widgetcfg)
         self.widget.callbacks.AddCallback(self.newValueCallback)
         # bind right mouse button click
         self.widget.canvas.bind("<Button-3>", self.postWidgetMenu)
@@ -2451,7 +2450,7 @@ vector.
                 break
             
         # configure without rebuilding to avoid enless loop
-        apply( self.configure, (False,), widgetcfg)
+        self.configure(*(False,), **widgetcfg)
 
         if self.initialValue is not None:
             self.set(self.initialValue, run=0)
@@ -2481,14 +2480,14 @@ vector.
         # call base class configure with rebuild=Flase. If rebuilt is needed
         # rebuildDescr will contain w=='rebuild' and rebuildDescr contains
         # modified descr
-        action, rebuildDescr = apply( PortWidget.configure, (self, False), kw)
+        action, rebuildDescr = PortWidget.configure(*(self, False), **kw)
             
         # handle ownConfigOpts entries
         if self.widget is not None:
 
             widgetOpts = {}
-            for k, v in kw.items():
-                if k in self.ownConfigOpts.keys():
+            for k, v in list(kw.items()):
+                if k in list(self.ownConfigOpts.keys()):
                     if k in ['size']:
                         action = 'rebuild'
                         rebuildDescr[k] = v
@@ -2496,7 +2495,7 @@ vector.
                         widgetOpts[k] = v
 
             if len(widgetOpts):
-                apply( self.widget.configure, (), widgetOpts)
+                self.widget.configure(*(), **widgetOpts)
 
         if action=='rebuild' and rebuild:
             action, rebuildDescr = self.rebuild(rebuildDescr)
@@ -2509,7 +2508,7 @@ vector.
 
     def getDescr(self):
         cfg = PortWidget.getDescr(self)
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             val = getattr(self.widget, k)
             if val != self.ownConfigOpts[k]['defaultValue']:
                 cfg[k] = val
@@ -2559,29 +2558,29 @@ callback",
 
         # create all attributes that will not be created by configure because
         # they do not appear on kw
-        for key in self.ownConfigOpts.keys():
+        for key in list(self.ownConfigOpts.keys()):
             v = kw.get(key, None)
             if v is None: # self.configure will not do anyting for this key
                 setattr(self, key, self.ownConfigOpts[key]['defaultValue'])
 
         # get all arguments handled by NEThumbweel and not by PortWidget
         widgetcfg = {}
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k in kw:
                 widgetcfg[k] = kw.pop(k)
 
 
         # call base class constructor
-        apply( PortWidget.__init__, (self, port), kw)
+        PortWidget.__init__(*(self, port), **kw)
         
         # create the MultiCheckbutton widget
-        self.widget = apply( MultiCheckbuttons, (self.widgetFrame,),widgetcfg )
+        self.widget = MultiCheckbuttons(*(self.widgetFrame,), **widgetcfg)
         self.widget.callback = self.newValueCallback
         # bind right mouse button click
         self.widget.bind("<Button-3>", self.postWidgetMenu)
        
         # configure without rebuilding to avoid enless loop
-        apply( self.configure, (False,), widgetcfg)
+        self.configure(*(False,), **widgetcfg)
 
         if self.initialValue is not None:
             self.set(self.initialValue, run=0)
@@ -2620,21 +2619,21 @@ callback",
         # call base class configure with rebuild=Flase. If rebuilt is needed
         # rebuildDescr will contain w=='rebuild' and rebuildDescr contains
         # modified descr
-        action, rebuildDescr = apply( PortWidget.configure, (self, False), kw)
+        action, rebuildDescr = PortWidget.configure(*(self, False), **kw)
             
         # handle ownConfigOpts entries
         if self.widget is not None:
 
             widgetOpts = {}
-            for k, v in kw.items():
-                if k in self.ownConfigOpts.keys():
+            for k, v in list(kw.items()):
+                if k in list(self.ownConfigOpts.keys()):
                     if k == 'checkbuttonNames':
                         self.widget.rebuild(v)
                     else:
                         widgetOpts[k] = v
 
             if len(widgetOpts):
-                apply( self.widget.configure, (), widgetOpts)
+                self.widget.configure(*(), **widgetOpts)
             
         return action, rebuildDescr
 
@@ -2654,13 +2653,13 @@ callback",
         paramPanel = self.port.node.paramPanel
         parent = paramPanel.mBar
         
-        Special_button = Tkinter.Menubutton(parent, text='Special',
+        Special_button = tkinter.Menubutton(parent, text='Special',
                                             underline=0)
         paramPanel.menuButtons['Special'] = Special_button
-        Special_button.pack(side=Tkinter.LEFT, padx="1m")
+        Special_button.pack(side=tkinter.LEFT, padx="1m")
 
-		# got rid of useless tearoff
-        Special_button.menu = Tkinter.Menu(Special_button, tearoff=False)
+                # got rid of useless tearoff
+        Special_button.menu = tkinter.Menu(Special_button, tearoff=False)
         Special_button.menu.add_separator()
 
         Special_button.menu.add_command(label='Check All', underline=0, 
@@ -2675,7 +2674,7 @@ callback",
 
         Special_button['menu'] = Special_button.menu
 
-        apply( paramPanel.mBar.tk_menuBar, paramPanel.menuButtons.values() )
+        paramPanel.mBar.tk_menuBar(*list(paramPanel.menuButtons.values()))
 
 
     def toggleRegexpGUI(self, event=None):
@@ -2770,26 +2769,26 @@ class NEScrolledText(PmwPortWidget):
         # get all arguments handled only by this widget and not by base class
         # remove them from kw
         widgetcfg = {}
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k in kw:
                 v = kw[k]
                 widgetcfg[k] = kw.pop(k)
                 setattr(self, k, v)
                 
         # call base class constructor
-        apply( PmwPortWidget.__init__, (self, port), kw)
+        PmwPortWidget.__init__(*(self, port), **kw)
 
         scrollkw = self.getPmwOptions(self, kw)
         
         # create widget
-	self.widget = apply( Pmw.ScrolledText, (self.widgetFrame,), scrollkw)
+        self.widget = Pmw.ScrolledText(*(self.widgetFrame,), **scrollkw)
         # bind right mouse button click
         self.widget.bind("<Button-3>", self.postWidgetMenu)
         self.widgetFrame.bind("<Button-3>", self.postWidgetMenu)
-	self.widget.pack(padx=5, pady=5, fill='both', expand=1)
+        self.widget.pack(padx=5, pady=5, fill='both', expand=1)
 
         # configure without rebuilding to avoid enless loop
-        apply( self.configure, (False,), widgetcfg)
+        self.configure(*(False,), **widgetcfg)
 
         if self.initialValue is not None:
             self.set(self.initialValue, run=0)
@@ -2825,13 +2824,13 @@ class NEScrolledText(PmwPortWidget):
 
     def configure(self, rebuild=True, **kw):
         # handle all Tkinter keywords for self.widget
-        action, rebuildDescr = apply( PmwPortWidget.configure, (self, 0), kw)
+        action, rebuildDescr = PmwPortWidget.configure(*(self, 0), **kw)
             
         # handle ownConfigOpts that create an action
         if self.widget is not None:
             
             PmwOptions = self.widget.configure()
-            for k, v in kw.items():
+            for k, v in list(kw.items()):
                 # check if it is a Tk option for this Tk widget
                 if k in ['hull_width', 'hull_height']:
                     action = 'resize'
@@ -2881,28 +2880,28 @@ class NEXYZGUI(PortWidget):
         
         # create all attributes that will not be created by configure because
         # they do not appear on kw
-        for key in self.ownConfigOpts.keys():
+        for key in list(self.ownConfigOpts.keys()):
             v = kw.get(key, None)
             if v is None: # self.configure will not do anyting for this key
                 setattr(self, key, self.ownConfigOpts[key]['defaultValue'])
 
         # get all arguments handled by NEThumbweel and not by PortWidget
         widgetcfg = {}
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k in kw:
                 widgetcfg[k] = kw.pop(k)
 
         # call base class constructor
-        apply( PortWidget.__init__, ( self, port), kw)
+        PortWidget.__init__(*( self, port), **kw)
 
         # create the Thumbwheel widget
-        self.widget = apply( xyzGUI, (self.widgetFrame,), widgetcfg)
+        self.widget = xyzGUI(*(self.widgetFrame,), **widgetcfg)
         # bind right mouse button click
         self.widget.bind("<Button-3>", self.postWidgetMenu)
         self.widget.callbacks.AddCallback(self.newValueCallback)
 
         # configure without rebuilding to avoid enless loop
-        apply( self.configure, (False,), widgetcfg)
+        self.configure(*(False,), **widgetcfg)
 
         if self.initialValue is not None:
             self.set(self.initialValue, run=0)
@@ -2927,14 +2926,14 @@ class NEXYZGUI(PortWidget):
         # call base class configure with rebuild=Flase. If rebuilt is needed
         # rebuildDescr will contain w=='rebuild' and rebuildDescr contains
         # modified descr
-        action, rebuildDescr = apply( PortWidget.configure, (self, False), kw)
+        action, rebuildDescr = PortWidget.configure(*(self, False), **kw)
             
         # handle ownConfigOpts entries
         if self.widget is not None:
 
             widgetOpts = {}
-            for k, v in kw.items():
-                if k in self.ownConfigOpts.keys():
+            for k, v in list(kw.items()):
+                if k in list(self.ownConfigOpts.keys()):
                     if k in ['widthX', 'heightX', 'wheelPadX',
                              'widthY', 'heightY', 'wheelPadY',
                              'widthZ', 'heightZ', 'wheelPadZ',]:
@@ -2944,7 +2943,7 @@ class NEXYZGUI(PortWidget):
                         widgetOpts[k] = v
 
             if len(widgetOpts):
-                apply( self.widget.configure, (), widgetOpts)
+                self.widget.configure(*(), **widgetOpts)
 
         if action=='rebuild' and rebuild:
             action, rebuildDescr = self.rebuild(rebuildDescr)
@@ -2957,7 +2956,7 @@ class NEXYZGUI(PortWidget):
 
     def getDescr(self):
         cfg = PortWidget.getDescr(self)
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k == 'typeX': # type has to be handled separately
                 _type = self.widget.type
                 if _type == int:
@@ -3106,7 +3105,7 @@ over.
     wdescr = {'class':className}
     if descr:
         klass = widgetsTable[className]
-        for k, v in descr.items():
+        for k, v in list(descr.items()):
             if k in klass.configOpts:
                 wdescr[k] = v
     return wdescr
@@ -3134,8 +3133,8 @@ class WidgetEditor:
     def __init__(self, widget, master=None):
         #print "WidgetEditor.__init__"
         if master is None:
-            master = Tkinter.Toplevel()
-        self.top = Tkinter.Frame(master)
+            master = tkinter.Toplevel()
+        self.top = tkinter.Frame(master)
         master.protocol("WM_DELETE_WINDOW", self.Cancel_cb)
         self.widgetFormName = {}
         self.widget = widget
@@ -3153,7 +3152,7 @@ class WidgetEditor:
         #descr['initialValue']['defaultValue'] = self.widget.get()
 
         # build widgets for each parameter
-        keys = descr.keys()
+        keys = list(descr.keys())
         keys.sort()
         row = 0
         for k in keys:
@@ -3169,75 +3168,75 @@ class WidgetEditor:
             if type is None:
                 continue
             curval = currentConfig.pop(k, None)
-            if v.has_key('validValues'):
+            if 'validValues' in v:
                 w = kbComboBox(self.top, scrolledlist_items=v['validValues'] )
-                if v.has_key('defaultValue'):
+                if 'defaultValue' in v:
                     opt['value'] = v['defaultValue']
                     w.selectitem(curval or v['defaultValue'])
             else:
                 valid = {}
 
                 if type is 'boolean':
-                    var = Tkinter.IntVar()
+                    var = tkinter.IntVar()
                     opt['variable']=var
-                    w = apply( Tkinter.Checkbutton, (self.top,), opt )
+                    w = tkinter.Checkbutton(*(self.top,), **opt)
                     w.var = var
-                    if v.has_key('defaultValue'):
+                    if 'defaultValue' in v:
                         opt['value'] = curval or v['defaultValue']
                         var.set(opt['value'])
                     gridOpts = {'row':row, 'column':1, 'sticky':'w'}
 
                 elif type in ['int', 'float']:
                     valid['stringtovalue'] = eval(type)
-                    if v.has_key('min'):
+                    if 'min' in v:
                         valid['min'] = v['min']
                         valid['minstrict'] = 0
-                    if v.has_key('max'):
+                    if 'max' in v:
                         valid['max'] = v['max']
                         valid['maxstrict'] = 0
                     opt['validate'] = valid
 
                     if curval:
                         opt['value'] = curval
-                    elif v.has_key('defaultValue'):
+                    elif 'defaultValue' in v:
                         opt['value'] = v['defaultValue']
-                    elif v.has_key('min'):
+                    elif 'min' in v:
                         opt['value'] = v['min']
-                    elif v.has_key('max'):
+                    elif 'max' in v:
                         opt['value'] = v['max']
                     else:
                         opt['value'] = eval( type+'(0)')
                     if opt['value'] is None:
                         opt['value'] = 'None'
-                    w = apply( Pmw.EntryField, (self.top,), opt )
+                    w = Pmw.EntryField(*(self.top,), **opt)
                 elif type in ['dict', 'list', 'tuple']:
-                    if v.has_key('defaultValue'):
+                    if 'defaultValue' in v:
                         opt['value'] = curval or v['defaultValue']
-                    w = apply( Pmw.EntryField, (self.top,), opt )
+                    w = Pmw.EntryField(*(self.top,), **opt)
                 elif type == 'string':
-                    if v.has_key('defaultValue'):
+                    if 'defaultValue' in v:
                         opt['value'] = curval or v['defaultValue']
-                    w = apply( Pmw.EntryField, (self.top,), opt )
+                    w = Pmw.EntryField(*(self.top,), **opt)
                 else:
-                    if v.has_key('defaultValue'):
+                    if 'defaultValue' in v:
                         opt['value'] = curval or v['defaultValue']
                     else:
-                        print 'skipping ', k, type
+                        print('skipping ', k, type)
             if w:
-                lab = Tkinter.Label(self.top, text=k)
+                lab = tkinter.Label(self.top, text=k)
                 lab.grid(row=row, column=0, sticky='e')
                 self.widgetFormName[k] = (w, v, opt['value'])
-                apply( w.grid, (), gridOpts)
+                w.grid(*(), **gridOpts)
                 row += 1
 
             self.currentValues[k] = opt['value']
 
         # add Tkinter Options entry
         row += 1
-        Tkinter.Label(self.top, text="Tkinter Options").grid(
+        tkinter.Label(self.top, text="Tkinter Options").grid(
             row=row, column=0, sticky='e')
 
-        w = apply( Pmw.EntryField, (self.top,), {'command':self.Apply_cb} )
+        w = Pmw.EntryField(*(self.top,), **{'command':self.Apply_cb})
         opt = {'defaultValue':None, 'type':'string'}
 
         self.widgetFormName['TkOptions'] = (w, opt, None)
@@ -3247,13 +3246,13 @@ class WidgetEditor:
         row += 1
 
         # add OK button
-        Tkinter.Button(self.top, text='OK', command=self.OK_cb ).grid(
+        tkinter.Button(self.top, text='OK', command=self.OK_cb ).grid(
             column=0, row=row, sticky='ew')
         # add Apply button
-        Tkinter.Button(self.top, text='Apply', command=self.Apply_cb ).grid(
+        tkinter.Button(self.top, text='Apply', command=self.Apply_cb ).grid(
             column=1, row=row, sticky='ew')
         # add Cancel button
-        Tkinter.Button(self.top, text='Cancel', command=self.Cancel_cb ).grid(
+        tkinter.Button(self.top, text='Cancel', command=self.Cancel_cb ).grid(
             column=2, row=row, sticky='ew')
 
         self.top.pack()
@@ -3261,7 +3260,7 @@ class WidgetEditor:
 
     def getValues(self):
         result = {}
-        for k, w_and_v_and_val in self.widgetFormName.items():
+        for k, w_and_v_and_val in list(self.widgetFormName.items()):
             w, v, value = w_and_v_and_val
 
             # parse TkOptions, append them to result. Since we parse and
@@ -3298,7 +3297,7 @@ class WidgetEditor:
                     else:
                         continue
                 val = cast(val)
-            elif isinstance(w, Tkinter.Checkbutton):
+            elif isinstance(w, tkinter.Checkbutton):
                 val = cast(w.var.get())
             else:
                 val = cast(w.component('entryfield').get())
@@ -3317,7 +3316,7 @@ class WidgetEditor:
             # because widget could be destroyed by configure and
             # port.configureWidget deletes the old widget
             #apply( port.configureWidget, (), values)
-            w, descr = apply( self.widget.configure, (), values)
+            w, descr = self.widget.configure(*(), **values)
             
             # in case we rebuild widget:
             if self.widget != self.port.widget:

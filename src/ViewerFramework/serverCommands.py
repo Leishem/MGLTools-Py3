@@ -23,7 +23,7 @@ except ImportError:
 
 from mglutil.popen2Threads import SysCmdInThread
 from mglutil.gui.InputForm.Tk.gui import InputForm, InputFormDescr
-import Tkinter
+import tkinter
 
 import sys, os
 if os.name == 'nt': #sys.platform=='win32':
@@ -35,21 +35,21 @@ class StartServer(Command):
     """ This class implements methods to start a server"""
 
     def checkDependencies(self, vf):
-        import thread
+        import _thread
 
     def doit(self):
-        import thread
+        import _thread
         com = self.vf.socketComm
         if com.port:
-            print 'WARNING: server already running on port', com.port
+            print('WARNING: server already running on port', com.port)
             return
         self.vf.socketComm.startServer()
-        thread.start_new(com.acceptClients, (self.vf.clients_cb,))
+        _thread.start_new(com.acceptClients, (self.vf.clients_cb,))
 
         self.vf.GUI.ROOT.after(300, self.vf.sendViewerState)
 
         # create a threadsafe command queue
-        from Queue import Queue
+        from queue import Queue
         self.vf.cmdQueue = Queue(-1) # infinite size
         self.vf.GUI.ROOT.after(10, self.vf.runClientCommands)
 
@@ -73,7 +73,7 @@ class WebDrivenTutorial(Command):
         if hasattr(self,'cmd'):
             if not mswin:
                 import os,signal
-                print 'killing process Karrigell'
+                print('killing process Karrigell')
                 pid = self.cmd.com.pid
                 os.kill(pid,signal.SIGKILL)
                 #self.cmd.com.kill(signal.SIGKILL)
@@ -102,9 +102,9 @@ class WebDrivenTutorial(Command):
         port = 8080
         status,port = self.startKarrigell(port,karrigell_start,karrigell_init)
         if status:
-            print 'Karrigell started, listenning on port %d'%port
+            print('Karrigell started, listenning on port %d'%port)
         else:
-            print 'Karrigell could not be started'
+            print('Karrigell could not be started')
             return
 
         # web page have to be in the server_root directory which
@@ -122,7 +122,7 @@ class WebDrivenTutorial(Command):
         """
         if hasattr(self,'cmd'):
             del(self.cmd)
-        print "Trying to start Karrigell on port %d"%port
+        print("Trying to start Karrigell on port %d"%port)
         self.cmd =  SysCmdInThread("python -u %s -P %d %s "%(karrigell_start,
                                                              port,karrigell_init),
                                    hasGui=False)
@@ -173,11 +173,11 @@ class WebDrivenTutorial(Command):
                                    idir=server_root,
                                    title='Select a web page or folder')
         if file is not None:
-            import string
+            from mglcompat import pystring as string
             webpage = string.split(file,'Karrigell-2.0.3')[1]
             kw['karrigell_path']=server_root
             kw['file'] = webpage
-            apply(self.doitWrapper,(),kw)
+            self.doitWrapper(*(), **kw)
 
     def __call__(self,karrigell_path=None,file=None,**kw):
         """ None<-web_tutorial( karrigell_path=None,file=None,**kw)
@@ -186,7 +186,7 @@ class WebDrivenTutorial(Command):
         """
         kw['karrigell_path'] = karrigell_path
         kw['file'] = file
-        apply(self.doitWrapper,(),kw)
+        self.doitWrapper(*(), **kw)
 
 
 class StartWebControlServer(Command):
@@ -194,16 +194,16 @@ class StartWebControlServer(Command):
 receive commands from a web browser"""
 
     def checkDependencies(self, vf):
-        import thread
+        import _thread
 
     def doit(self):
-        import thread
+        import _thread
         com = self.vf.webControl
         if com.port:
-            print 'WARNING: server already running on port', com.port
+            print('WARNING: server already running on port', com.port)
             return
         com.startServer()
-        thread.start_new(com.acceptClients, (self.clients_cb,))
+        _thread.start_new(com.acceptClients, (self.clients_cb,))
 
         # print port number to a file in file pmv_server.pid in the directory where the
         # python process was started, if the package Karigell does not exist, otherwise
@@ -222,7 +222,7 @@ receive commands from a web browser"""
         f.write('%d'%com.port)
         f.close()
 
-        from Queue import Queue
+        from queue import Queue
         self.cmdQueue = Queue(-1) # infinite size
 
         # start checking for messages from the web controler
@@ -245,7 +245,7 @@ receive commands from a web browser"""
             if cmd:
                 #print 'got', cmd
                 w = cmd.split('||')
-                if self.vf.commands.has_key(w[0]):
+                if w[0] in self.vf.commands:
                     # cmd should be a string where the Viewerframework command is separate by |
                     # from a tuple representing the args separated by | from a dictonnary
                     # which represent the keyword arguments of commands
@@ -257,7 +257,7 @@ receive commands from a web browser"""
 
                     args = eval(w[1])
                     kw = eval(w[2])
-                    apply( self.vf.commands[w[0]], args,kw )
+                    self.vf.commands[w[0]](*args, **kw)
 
         self.vf.GUI.ROOT.after(10, self.checkForCommands)
 
@@ -274,21 +274,21 @@ class ConnectToServer(Command):
     """ This class implements method to connect to a server."""
 
     def checkDependencies(self, vf):
-        import thread
+        import _thread
 
     def doit(self):
-        import thread
+        import _thread
 
         idf = InputFormDescr("Viewerframework server connection!")
-        idf.append({'widgetType':Tkinter.Entry,
+        idf.append({'widgetType':tkinter.Entry,
                     'name': 'host','defaultValue':'localhost',
                     'wcfg':{'label':'Host name or IP'}, 
-                    'gridcfg':{'sticky':Tkinter.E}
+                    'gridcfg':{'sticky':tkinter.E}
                    })
-        idf.append({'widgetType':Tkinter.Entry,
+        idf.append({'widgetType':tkinter.Entry,
                     'name': 'port','defaultValue':'50000',
                     'wcfg':{'label':"Server's Port"}, 
-                    'gridcfg':{'sticky':Tkinter.E}
+                    'gridcfg':{'sticky':tkinter.E}
                     })
         self.idf = idf
         val = self.vf.getUserInput(idf)
@@ -296,7 +296,7 @@ class ConnectToServer(Command):
                                            self.vf.server_cb)
 
         # create a threadsafe command queue
-        from Queue import Queue
+        from queue import Queue
         self.vf.cmdQueue = Queue(-1) # infinite size
         self.vf.GUI.ROOT.after(10, self.vf.runServerCommands)
 
@@ -305,7 +305,7 @@ if imdFound:
         """ This class implements method to connect to a imd server."""
 
         def checkDependencies(self, vf):
-            import thread
+            import _thread
 
         def setup(self,hostname,port,molname,atmslist="",htype="steered"):
             self.host = hostname
@@ -315,34 +315,34 @@ if imdFound:
             self.htype = htype
 
         def doit(self,gui=True):
-            import thread
+            import _thread
             if self.vf.hasGui and gui:        
                 idf = InputFormDescr("Viewerframework imd server connection!")
-                idf.append({'widgetType':Tkinter.Entry,
+                idf.append({'widgetType':tkinter.Entry,
                         'name': 'host','defaultValue':'localhost',
                         'wcfg':{'label':'Host name or IP'}, 
-                        'gridcfg':{'sticky':Tkinter.E}
+                        'gridcfg':{'sticky':tkinter.E}
                        })
-                idf.append({'widgetType':Tkinter.Entry,
+                idf.append({'widgetType':tkinter.Entry,
                         'name': 'port','defaultValue':'2030',
                         'wcfg':{'label':"Server's Port"}, 
-                        'gridcfg':{'sticky':Tkinter.E}
+                        'gridcfg':{'sticky':tkinter.E}
                         })
 
-                idf.append({'widgetType':Tkinter.Entry,
+                idf.append({'widgetType':tkinter.Entry,
                         'name': 'molname','defaultValue':'',
                         'wcfg':{'label':"molecule name"}, 
-                        'gridcfg':{'sticky':Tkinter.E}
+                        'gridcfg':{'sticky':tkinter.E}
                         })
-                idf.append({'widgetType':Tkinter.Entry,
+                idf.append({'widgetType':tkinter.Entry,
                         'name': 'handler','defaultValue':'',
                         'wcfg':{'label':"handler atoms"}, 
-                        'gridcfg':{'sticky':Tkinter.E}
+                        'gridcfg':{'sticky':tkinter.E}
                         })
-                idf.append({'widgetType':Tkinter.Entry,
+                idf.append({'widgetType':tkinter.Entry,
                         'name': 'htype','defaultValue':'',
                         'wcfg':{'label':"handler type"}, 
-                        'gridcfg':{'sticky':Tkinter.E}
+                        'gridcfg':{'sticky':tkinter.E}
                         })
 
                 self.idf = idf
@@ -408,7 +408,7 @@ if imdFound:
                     if hasattr(self.vf,'art'):
                         self.vf.art.doimd = True
                         from ARViewer import util
-                        import numpy.oldnumeric as Numeric
+                        import mglcompat.oldnumeric as Numeric
                         M = m.pat.mat_transfo
                         vt=util.ApplyMatrix(Numeric.array(m.allAtoms.coords),M,transpose=False)
                     else :
@@ -416,7 +416,7 @@ if imdFound:
                     N+=len(m.allAtoms.coords)
                     coords.extend(vt)
                 self.vf.imd.N = N
-                print "sendFcoords"
+                print("sendFcoords")
                 self.vf.imd.imd_send_fcoords(self.vf.imd.N,coords)
             self.vf.browseCommands('handlerCommand',package='ViewerFramework', topCommand=0)
             self.vf.handler.isinited = False
@@ -426,7 +426,7 @@ if imdFound:
             if self.vf.hasGui and self.vf.imd.gui :
                 if not self.vf.imd.mindy : 
                     self.vf.imd.start()
-                print "after"
+                print("after")
                 self.vf.GUI.ROOT.after(1, self.vf.updateIMD)
 
 # add StartServer Command

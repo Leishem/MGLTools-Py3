@@ -1,5 +1,5 @@
 path = __path__[0]
-import os, sys, string
+import os, sys; from mglcompat import pystring as string
 
 def findExecModule(modname):
     
@@ -15,7 +15,7 @@ def findExecModule(modname):
     if os.path.exists(pth):
         return pth
     else:
-        print 'ERROR! Module %s not found in %s'%(modname, path)
+        print('ERROR! Module %s not found in %s'%(modname, path))
         return None
 __MGLTOOLSVersion__ = '1-4alpha3'
 CRITICAL_DEPENDENCIES = ['mglutil']

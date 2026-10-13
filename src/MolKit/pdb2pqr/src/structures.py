@@ -49,10 +49,10 @@ __author__ = "Todd Dolinsky"
 
 BACKBONE = ["N","CA","C","O","O2","HA","HN","H","tN"]
 
-import string
-from pdb import *
-from utilities import *
-from quatfit import *
+from mglcompat import pystring as string
+from .pdb import *
+from .utilities import *
+from .quatfit import *
 
 class Chain:
     """
@@ -93,7 +93,7 @@ class Chain:
                 return item
             except AttributeError:
                 message = "Unable to get object \"%s\" in class Chain" % name
-                raise ValueError, message
+                raise ValueError(message)
 
     def addResidue(self, residue):
         """
@@ -237,7 +237,7 @@ class Residue:
             return item
         except AttributeError:
             message = "Unable to access object \"%s\" in class Residue" % name
-            raise ValueError, message
+            raise ValueError(message)
 
     def set(self, name, value):
         """
@@ -270,7 +270,7 @@ class Residue:
                 setattr(self, name, value)
             except AttributeError:
                 message = "Unable to set object \"%s\" in class Residue" % name
-                raise ValueError, message
+                raise ValueError(message)
 
     def numAtoms(self):
         """
@@ -536,7 +536,7 @@ class Atom(ATOM):
         if type == "ATOM" or type == "HETATM":
             self.type = type
         else:
-            raise ValueError, "Invalid atom type %s (Atom Class IN structures.py)!"
+            raise ValueError("Invalid atom type %s (Atom Class IN structures.py)!")
         self.serial = atom.serial
         self.name = atom.name
         self.altLoc = ""
@@ -651,7 +651,7 @@ class Atom(ATOM):
             return item
         except AttributeError:
             message = "Unable to access object \"%s\" in class Atom" % name
-            raise ValueError, message
+            raise ValueError(message)
 
     def set(self, name, value):
         """
@@ -689,7 +689,7 @@ class Atom(ATOM):
             setattr(self, name, value)
         except AttributeError:
             message = "Unable to set object \"%s\" in class Atom" % name
-            raise ValueError, message   
+            raise ValueError(message)   
 
     def getCoords(self):
         """

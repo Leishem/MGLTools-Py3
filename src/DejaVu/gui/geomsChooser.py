@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -17,10 +17,10 @@
 #
 #
 
-import string, math
-import numpy.oldnumeric as Numeric
+import math; from mglcompat import pystring as string
+import mglcompat.oldnumeric as Numeric
 from types import IntType
-import Tkinter
+import tkinter
 #from Tkinter import *
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr,InputForm,CallBackFunction
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser
@@ -45,11 +45,11 @@ class geomsChooser:
  
     def toggleExpansion(self, event):
         # get a 0-based index into list of names
-	o = self.lc.lb.nearest(event.y)
+        o = self.lc.lb.nearest(event.y)
         fullName = self.getFullName(o)
-	#obj = self.objectByName(self.olist.get(o))
+        #obj = self.objectByName(self.olist.get(o))
         obj = self.viewer.FindObjectByName(fullName)
-	if obj:
+        if obj:
             childGeoms = obj.AllObjects()
             if len(childGeoms)==1:  # this geoemtry has no children
                 return
@@ -129,29 +129,29 @@ class geomsChooser:
         else: return i
 
     def lstripChar(self, name, char):
-	n = string.count(name,'~')
-	return n, name[ n : ]
+        n = string.count(name,'~')
+        return n, name[ n : ]
 
     def countParents(self, object):
-	c = 0
-	while object.parent:
-	    c = c+1
-	    object = object.parent
-	return c
+        c = 0
+        while object.parent:
+            c = c+1
+            object = object.parent
+        return c
 
     def addObject(self, obj, parent):
         if not obj.listed: return
-	if not parent:
-	    self.lc.insert(0,obj.name)
-	    self.lc.select(obj.name)
-	else:
+        if not parent:
+            self.lc.insert(0,obj.name)
+            self.lc.select(obj.name)
+        else:
             if not parent.isExpandedInObjectList: return
                 
             i = self.objectIndex(parent)
-	    if i==-1: return
-	    c = self.countParents(obj)
+            if i==-1: return
+            c = self.countParents(obj)
             prefix = '~'*c
-	    name = prefix + obj.name
+            name = prefix + obj.name
             # now we need to skip all children already there
             l = self.lc.lb.get(0,'end')
             while 1:
@@ -159,12 +159,12 @@ class geomsChooser:
                 if i==len(l): break
                 if self.lc.get(i)[:c]!=prefix: break
 
-	    self.lc.insert(i, name)
+            self.lc.insert(i, name)
 
     def getFullNameList(self,name,list,dic):
         """ get the list of fullName from geomDic """
 
-        for p in dic.keys():
+        for p in list(dic.keys()):
             name1 = name +'|'+p
             if dic[p] != {}:
                 list = self.getFullNameList(name1,list,dic[p])
@@ -219,7 +219,7 @@ class geomsChooser:
                     GL.glPushMatrix()
                     GL.glMultMatrixf(m)
                     if len(obj.children):
-                        map( camera.Draw, obj.children)
+                        list(map( camera.Draw, obj.children))
                     else:
                         camera.Draw(obj)
                     GL.glPopMatrix()
@@ -230,7 +230,7 @@ class geomsChooser:
                     for m in obj.instanceMatricesFortran:
                         GL.glPushMatrix()
                         GL.glMultMatrixf(m)
-                        map( camera.Draw, obj.children)
+                        list(map( camera.Draw, obj.children))
                         GL.glPopMatrix()
                 # draw transparent object that do not have children
                 if obj.isTransparent() and not len(obj.children):
@@ -260,13 +260,13 @@ class geomsChooser:
                                'sticky':'wens','rowspan':3}})
         
         ifd.append({'name':'add',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'tooltip':""" Add the selected geom to selected frame""",
                     'wcfg':{'text':'>>','command':self.add_cb},
                     'gridcfg':{'row':1,'column':1,'rowspan':1 }})
         
         ifd.append({'name':'remove',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'tooltip':""" remove the selected geom to selected """,
                     'wcfg':{'text':'<<','command':self.remove_cb},
                     'gridcfg':{'row':2,'column':1,'rowspan':1 }})
@@ -282,13 +282,13 @@ class geomsChooser:
                     'gridcfg':{'sticky':'we', 
                                'row':0, 'column':2,'rowspan':3}})
         ifd.append({'name':'clear',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'tooltip':""" Clear entry """,
                     'wcfg':{'text':'Clear','width':10,
                             'command':self.clear_cb},
                     'gridcfg':{'sticky':'we','row':0, 'column':3}})
         ifd.append({'name':'remove',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'tooltip':""" remove the selected geom to selected """,
                     'wcfg':{'text':'<<','command':self.remove_cb},
                     'gridcfg':{'row':2,'column':1,'rowspan':1 }})
@@ -320,7 +320,7 @@ class geomsChooser:
                     self.form.withdraw()
         else:
             if not master:
-                master = Tkinter.Toplevel()
+                master = tkinter.Toplevel()
                 master.title('GeomChooser')
             else:
                 master = master
@@ -349,7 +349,7 @@ class geomsChooser:
         lgeom=[]
         geomDic = self.assignGeom[0]
         # get geom name to load
-        o = map(int,self.lc.lb.curselection())
+        o = list(map(int,self.lc.lb.curselection()))
         for Ind in o:
             fullName = self.getFullName(Ind)
             obj = self.viewer.FindObjectByName(fullName)
@@ -357,12 +357,12 @@ class geomsChooser:
             l = string.split(fullName,'|')[1:]
             for i in range(len(l)):
                 if i==0:
-                    if not geomDic.has_key(l[i]):
+                    if l[i] not in geomDic:
                         dic = geomDic[l[i]]={}
                     else:
                         dic = geomDic[l[i]]
                 else:
-                    if not dic.has_key(l[i]):
+                    if l[i] not in dic:
                         dic[l[i]]={}
                         
                     dic = dic[l[i]]
@@ -371,7 +371,7 @@ class geomsChooser:
 
     def insertValue(self,ind,prefix,dic):
         """ insert Value of a dictionnary in the listchooser2"""
-        for key in dic.keys():
+        for key in list(dic.keys()):
             if dic[key] == {}:
                 ind = ind+1
                 self.lc2.insert(ind, prefix+key)

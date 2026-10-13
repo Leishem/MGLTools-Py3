@@ -1,7 +1,7 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 from DejaVu.colorMap import ColorMap
-from numpy.oldnumeric import array
+from mglcompat.oldnumeric import array
 cm = ColorMap('rw256')
 cfg = {'name': 'rw256', 'ramp': array([[ 1.        ,  1.        ,  1.        ,  1.        ],
        [ 1.        ,  1.        ,  1.        ,  1.        ],
@@ -259,4 +259,4 @@ cfg = {'name': 'rw256', 'ramp': array([[ 1.        ,  1.        ,  1.        ,  
        [ 1.        ,  0.011     ,  0.011     ,  1.        ],
        [ 1.        ,  0.006     ,  0.006     ,  1.        ],
        [ 1.        ,  0.        ,  0.        ,  1.        ]],'f'), 'maxi': 10.0, 'mini': 0.0}
-apply( cm.configure, (), cfg)
+cm.configure(*(), **cfg)

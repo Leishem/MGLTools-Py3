@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -12,7 +12,7 @@
 #
 # $Id: viewerConst.py,v 1.18 2009/08/12 19:09:58 vareille Exp $
 #
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from opengltk.OpenGL import GL
 
 FPRECISION = Numeric.Float32
@@ -31,7 +31,7 @@ PER_INSTANCE = 13
 
 ## FIXME these constances are defined here AND in Materials.py !
 propConst = ( GL.GL_AMBIENT, GL.GL_DIFFUSE,
-	      GL.GL_EMISSION, GL.GL_SPECULAR, GL.GL_SHININESS )
+              GL.GL_EMISSION, GL.GL_SPECULAR, GL.GL_SHININESS )
 propNum = { GL.GL_AMBIENT:0, GL.GL_DIFFUSE:1,
             GL.GL_EMISSION:2, GL.GL_SPECULAR:3, 
             GL.GL_SHININESS:4
@@ -67,10 +67,10 @@ POLYGON_MODES_REV = dict(zip(Back_POLYGON_MODES_values, Back_POLYGON_MODES_keys)
 
 POINTS_PRIMITIVES = (GL.GL_POINTS, )
 LINES_PRIMITIVES = (GL.GL_LINES, GL.GL_LINE_LOOP,
-		    GL.GL_LINE_STRIP )
+                    GL.GL_LINE_STRIP )
 POLYGON_PRIMITIVES = (GL.GL_TRIANGLES, GL.GL_TRIANGLE_STRIP,
-		      GL.GL_TRIANGLE_FAN, GL.GL_QUADS,
-		      GL.GL_QUAD_STRIP, GL.GL_POLYGON)
+                      GL.GL_TRIANGLE_FAN, GL.GL_QUADS,
+                      GL.GL_QUAD_STRIP, GL.GL_POLYGON)
 PRIMITIVES = POINTS_PRIMITIVES + LINES_PRIMITIVES + POLYGON_PRIMITIVES
 MINIMUM_LENGTH = {
  GL.GL_POINTS:1,

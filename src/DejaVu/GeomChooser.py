@@ -4,7 +4,7 @@ This module provides a Geoemtry picker for DejaVu Geometry objects
 
 from DejaVu import Viewer
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ObjectChooser
-import Tkinter
+import tkinter
 
 class GeomChooser:
     """
@@ -32,19 +32,19 @@ class GeomChooser:
         assert isinstance(viewer, Viewer)
         self.root = root
         self.viewer = viewer
-        self.frame = Tkinter.Frame(root)
+        self.frame = tkinter.Frame(root)
         self.frame1 = None
         if refreshButton or showAllButton:
-            f1 = self.frame1 = Tkinter.Frame(root)
+            f1 = self.frame1 = tkinter.Frame(root)
             if refreshButton:
-                self.refresh = Tkinter.Button(f1, text='Refresh Lists',
+                self.refresh = tkinter.Button(f1, text='Refresh Lists',
                                               command=self.updateList)
                 #self.refresh.pack(side='left', fill="x", expand=1)
                 self.refresh.pack(side='top', fill="x", expand=1,pady=10)
             if showAllButton:
-                self.showAllVar = Tkinter.IntVar()
+                self.showAllVar = tkinter.IntVar()
                 self.showAllVar.set(0)
-                self.show = Tkinter.Checkbutton(
+                self.show = tkinter.Checkbutton(
                     f1, text='Show all objects', variable=self.showAllVar,
                     command=self.showAll_cb)
                 #self.show.pack(side='left', fill="x", expand=1)
@@ -129,15 +129,15 @@ class GeomChooser:
         """Applies the specified keywords (kw) to the grid method of the frame
         containing geometry chooser"""
         self.frame.grid(kw)
-        if not kw.has_key('row'):
+        if 'row' not in kw:
             row = 0
         else:
             row = kw['row']
-        if not kw.has_key('column'):
+        if 'column' not in kw:
             column=0
         else:
             column=kw['column']
-        if kw.has_key('weight'):
+        if 'weight' in kw:
             weight = kw['weight']
         else:
             weight = 1

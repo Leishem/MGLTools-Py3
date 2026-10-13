@@ -35,11 +35,11 @@ def minimizeMDL(mol,maxit=1000,store=True):
     mdl.restraints.make(atmsel, restraint_type='stereo', spline_on_site=False)
     #mdl.restraints.write(file=mpath+mname+'.rsr')
     mpdf = atmsel.energy()
-    print "before optmimise"
+    print("before optmimise")
     # Create optimizer objects and set defaults for all further optimizations
     cg = modeller.optimizers.conjugate_gradients(output='REPORT')
     mol.pmvaction.last = 10000
-    print "optimise"
+    print("optimise")
     mol.pmvaction.store = store#self.pd.GetBool(self.pd.CHECKBOXS['store']['id'])
     cg.optimize(atmsel, max_iterations=maxit, actions=mol.pmvaction)#actions.trace(5, trcfil))
     del cg
@@ -53,11 +53,11 @@ def dynamicMDL(mol,temp=300,maxit=1000,store=True):
     mdl.restraints.make(atmsel, restraint_type='stereo', spline_on_site=False)
     #mdl.restraints.write(file=mpath+mname+'.rsr')
     mpdf = atmsel.energy()
-    print "before optmimise"
+    print("before optmimise")
     md = modeller.optimizers.molecular_dynamics(output='REPORT')
     mol.pmvaction.last = 10000
     mol.pmvaction.store = store
-    print "optimise"
+    print("optimise")
     md.optimize(atmsel, temperature=temp, max_iterations=int(maxit),actions=mol.pmvaction)
     del md
     return True
@@ -119,14 +119,14 @@ class pmvAction(action):
         mdl.restraints.make(self.atmsel, restraint_type='stereo', spline_on_site=False)
         #mdl.restraints.write(file=mpath+mname+'.rsr')
         self.mpdf = self.atmsel.energy()
-        print "before optmimise"
+        print("before optmimise")
         # Create optimizer objects and set defaults for all further optimizations
         if self.rtType == "mini" :
             self.cg = modeller.optimizers.conjugate_gradients(output='REPORT')
         elif self.rtType == "md" :
             self.cg = modeller.optimizers.molecular_dynamics(output='REPORT')
         self.last = 10000
-        print "optimise"
+        print("optimise")
         
     def modellerOptimize(self,maxit,temp=300):
         if self.cg is None :

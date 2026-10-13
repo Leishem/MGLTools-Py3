@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -17,13 +17,13 @@
 #
 
 import numpy
-import numpy.oldnumeric as Numeric, types, warnings
+import mglcompat.oldnumeric as Numeric, types, warnings
 
 from opengltk.OpenGL import GL
 from opengltk.extent import _gllib
 
 import DejaVu
-import Materials, datamodel, Clip
+from . import Materials, datamodel, Clip
 from DejaVu.colorTool import OneColor, resetMaterialMemory
 from DejaVu.Transformable import Transformable
 from DejaVu.Displayable import Displayable
@@ -165,11 +165,11 @@ class Geom(Common2d3dObject, Transformable, Displayable):
         self.invertNormals = False
 
         self.sharpColorBoundaries = None
-        if kw.has_key('sharpColorBoundaries') is False:
+        if ('sharpColorBoundaries' in kw) is False:
             kw['sharpColorBoundaries'] = True
 
         self.inheritSharpColorBoundaries = None
-        if kw.has_key('inheritSharpColorBoundaries') is False:
+        if ('inheritSharpColorBoundaries' in kw) is False:
             kw['inheritSharpColorBoundaries'] = True
 
         #print "kw['inheritSharpColorBoundaries']", kw['inheritSharpColorBoundaries']
@@ -189,7 +189,7 @@ class Geom(Common2d3dObject, Transformable, Displayable):
         else:
             self.vertexArrayFlag = False
             
-        apply( Common2d3dObject.__init__, (self, name, check), kw)
+        Common2d3dObject.__init__(*(self, name, check), **kw)
 
         assert len(self.vertexSet.vertices.ashape) < 4
 
@@ -512,7 +512,7 @@ geomName is the name of the Geom object in the source code generated.
     def SetFrontPolyMode(self, val):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-    	"""Modify the current Object's frontPolyMode"""
+        """Modify the current Object's frontPolyMode"""
 
         obj = self
         if obj.frontAndBack:
@@ -623,115 +623,115 @@ geomName is the name of the Geom object in the source code generated.
 
         if num is None:
             num = self.materials[GL.GL_FRONT].diff
-        elif type(num) is types.StringType:
+        elif type(num) is bytes:
             num = getattr(self.materials[GL.GL_FRONT], num)
 
         if face is None:
             face = GL.GL_FRONT
 
-	f = face
-	if face == GL.GL_FRONT_AND_BACK:
-	    f = GL.GL_FRONT
-	    self.frontAndBack = True
+        f = face
+        if face == GL.GL_FRONT_AND_BACK:
+            f = GL.GL_FRONT
+            self.frontAndBack = True
 
-	nn = self.materials[f].prop[num].shape[0]
-	#self.inheritMaterial = False
+        nn = self.materials[f].prop[num].shape[0]
+        #self.inheritMaterial = False
 
-	if not mode:
-	    if nn == 1:
-		self.materials[f].binding[num] = viewerConst.OVERALL
-	    elif nn == len(self.vertexSet.vertices):
-		self.materials[f].binding[num] = viewerConst.PER_VERTEX
-	    elif hasattr(self, 'faceSet') and nn == len(self.faceSet):
-		self.materials[f].binding[num] = viewerConst.PER_PART
-	    elif nn == len(self.instanceMatricesFortran):
-		self.materials[f].binding[num] = viewerConst.PER_INSTANCE
-	    else:
-		self.materials[f].binding[num] = -1
-		#self.inheritMaterial = True
+        if not mode:
+            if nn == 1:
+                self.materials[f].binding[num] = viewerConst.OVERALL
+            elif nn == len(self.vertexSet.vertices):
+                self.materials[f].binding[num] = viewerConst.PER_VERTEX
+            elif hasattr(self, 'faceSet') and nn == len(self.faceSet):
+                self.materials[f].binding[num] = viewerConst.PER_PART
+            elif nn == len(self.instanceMatricesFortran):
+                self.materials[f].binding[num] = viewerConst.PER_INSTANCE
+            else:
+                self.materials[f].binding[num] = -1
+                #self.inheritMaterial = True
 
-	else: # a mode is  requested
+        else: # a mode is  requested
 
-	    if mode==viewerConst.INHERIT:
-		self.materials[f].binding[num] = viewerConst.INHERIT
-	    if mode==viewerConst.PER_VERTEX and \
-	       nn >= len(self.vertexSet.vertices):
-		self.materials[f].binding[num] = viewerConst.PER_VERTEX
-	    elif hasattr(self, 'faceSet') and \
-		 mode==viewerConst.PER_PART and  nn >= len(self.faceSet):
-		self.materials[f].binding[num] = viewerConst.PER_PART
-	    elif mode==viewerConst.OVERALL and nn >= 1:
-		self.materials[f].binding[num] = viewerConst.OVERALL
-	    elif mode==viewerConst.PER_INSTANCE and nn >= len(self.instanceMatricesFortran):
-		self.materials[f].binding[num] = viewerConst.PER_INSTANCE
-	    else:
-		self.materials[f].binding[num] = -1
-		#self.inheritMaterial = True
+            if mode==viewerConst.INHERIT:
+                self.materials[f].binding[num] = viewerConst.INHERIT
+            if mode==viewerConst.PER_VERTEX and \
+               nn >= len(self.vertexSet.vertices):
+                self.materials[f].binding[num] = viewerConst.PER_VERTEX
+            elif hasattr(self, 'faceSet') and \
+                 mode==viewerConst.PER_PART and  nn >= len(self.faceSet):
+                self.materials[f].binding[num] = viewerConst.PER_PART
+            elif mode==viewerConst.OVERALL and nn >= 1:
+                self.materials[f].binding[num] = viewerConst.OVERALL
+            elif mode==viewerConst.PER_INSTANCE and nn >= len(self.instanceMatricesFortran):
+                self.materials[f].binding[num] = viewerConst.PER_INSTANCE
+            else:
+                self.materials[f].binding[num] = -1
+                #self.inheritMaterial = True
 
 
     def AddMaterial(self, values, propNum=None, face=GL.GL_FRONT,
-		    mode=None):
+                    mode=None):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Add materials to the current set"""
+        """Add materials to the current set"""
 
-	if not values: return
+        if not values: return
 
         if propNum is None:
             propNum = self.materials[GL.GL_FRONT].diff
-        elif type(propNum) is types.StringType:
+        elif type(propNum) is bytes:
             propNum = getattr(self.materials[GL.GL_FRONT], propNum)
 
-	f = face
-	if face == GL.GL_FRONT_AND_BACK:
-	    f = GL.GL_FRONT
-	    self.frontAndBack = True
+        f = face
+        if face == GL.GL_FRONT_AND_BACK:
+            f = GL.GL_FRONT
+            self.frontAndBack = True
 
-	if self.materials[f].prop[propNum].shape[0]==1 and \
-	   self.materials[f].binding[propNum] == viewerConst.OVERALL:
-	    self.materials[f].prop[propNum] = Numeric.array( (),
-					      viewerConst.FPRECISION )
-	    if propNum < 4:
-		self.materials[f].prop[propNum].shape = (0,4)
-	    else:
-		self.materials[f].prop[propNum].shape = (0,)
+        if self.materials[f].prop[propNum].shape[0]==1 and \
+           self.materials[f].binding[propNum] == viewerConst.OVERALL:
+            self.materials[f].prop[propNum] = Numeric.array( (),
+                                              viewerConst.FPRECISION )
+            if propNum < 4:
+                self.materials[f].prop[propNum].shape = (0,4)
+            else:
+                self.materials[f].prop[propNum].shape = (0,)
 
-	values = Numeric.array( values ).astype(viewerConst.FPRECISION)
-	if propNum < 4:
-	    if values.shape[1] == 3:
-		alpha = Numeric.ones( (values.shape[0], 1),
-				      viewerConst.FPRECISION )
-		values = Numeric.concatenate( (values, alpha), 1 )
-	self.materials[f].prop[propNum] = \
-	   Numeric.concatenate( (self.materials[f].prop[propNum], values) )
-	self.MaterialBindingMode(propNum, face, mode)
+        values = Numeric.array( values ).astype(viewerConst.FPRECISION)
+        if propNum < 4:
+            if values.shape[1] == 3:
+                alpha = Numeric.ones( (values.shape[0], 1),
+                                      viewerConst.FPRECISION )
+                values = Numeric.concatenate( (values, alpha), 1 )
+        self.materials[f].prop[propNum] = \
+           Numeric.concatenate( (self.materials[f].prop[propNum], values) )
+        self.MaterialBindingMode(propNum, face, mode)
 
 
     def SetMaterial(self, values, propNum, face=GL.GL_FRONT,
-		    mode=None):
+                    mode=None):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Set the materials
+        """Set the materials
         WARNING: when back face colors are set, two sided lighting has to
         be enabled"""
 
-	if not values: return
+        if not values: return
         if propNum is None:
             propNum = self.materials[GL.GL_FRONT].diff
-        elif type(propNum) is types.StringType:
+        elif type(propNum) is bytes:
             propNum = getattr(self.materials[GL.GL_FRONT], propNum)
 
-	f = face
-	if face == GL.GL_FRONT_AND_BACK: f = GL.GL_FRONT
+        f = face
+        if face == GL.GL_FRONT_AND_BACK: f = GL.GL_FRONT
         elif face == GL.GL_BACK:
             self.viewer.lightModel.Set(twoSide = 1)
-	self.materials[f].prop[propNum] = Numeric.array( (),
+        self.materials[f].prop[propNum] = Numeric.array( (),
                                                 viewerConst.FPRECISION )
-	if propNum < 4:
-	    self.materials[f].prop[propNum].shape = (0,4)
-	else:
-	    self.materials[f].prop[propNum].shape = (0,)
-	self.AddMaterial(values, propNum, face, mode)
+        if propNum < 4:
+            self.materials[f].prop[propNum].shape = (0,4)
+        else:
+            self.materials[f].prop[propNum].shape = (0,)
+        self.AddMaterial(values, propNum, face, mode)
 
 #        mat = self.materials[f].prop[propNum]
 #        if len(mat) and propNum==1: # diffuse
@@ -762,34 +762,34 @@ geomName is the name of the Geom object in the source code generated.
     def Add(self, check=1, redo=1, **kw):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""add data to this object
+        """add data to this object
 set self.redoDspLst to 1 to force re-building of geometries DpyList
 which implies recontruction of main display list.
 set redoMain to 1 to force on reconstruction of main DpyList"""
-        print "Geom.Add"
+        print("Geom.Add")
 
         if __debug__:
             if check:
-                apply( checkKeywords, (self.name,self.keywords), kw)
+                checkKeywords(*(self.name,self.keywords), **kw)
             
-	v = kw.get( 'vertices')
-	n = kw.get( 'vnormals')
-	m = kw.get( 'materials')
-	pf = kw.get( 'polyFace')
-	mbm = kw.get( 'matBind')
-	pn = kw.get( 'propName')
+        v = kw.get( 'vertices')
+        n = kw.get( 'vnormals')
+        m = kw.get( 'materials')
+        pf = kw.get( 'polyFace')
+        mbm = kw.get( 'matBind')
+        pn = kw.get( 'propName')
 
-	if v: self.vertexSet.vertices.AddValues( v )
-	if n: self.vertexSet.normals.AddValues( n )
+        if v: self.vertexSet.vertices.AddValues( v )
+        if n: self.vertexSet.normals.AddValues( n )
 
-	if v or n:
+        if v or n:
             self.redoDspLst = 1
-	    self.vertexSet.normals.PropertyStatus(len(self.vertexSet))
+            self.vertexSet.normals.PropertyStatus(len(self.vertexSet))
 
         # expect a set of 4x4 transformation matrices with translation in
         # last column. We store a flat version of the transposed matrix since
         # this is what can be passed to OpenGL directly
-	imat = kw.get( 'instanceMatrices')
+        imat = kw.get( 'instanceMatrices')
         if imat:
             imat = Numeric.array(imat).astype('f')
             imat = Numeric.reshape(imat, (-1,4,4))
@@ -800,11 +800,11 @@ set redoMain to 1 to force on reconstruction of main DpyList"""
                 self.instanceMatricesFortran = conc( (self.instanceMatricesFortran, m) )
             self.redoDspLst = 1
 
-	if m:
+        if m:
             self.redoDspLst = 1
             self.AddMaterial( m, propNum=pn, mode=mbm )
-	elif v or imat:
-	    self.MaterialBindingMode(pn, face=pf, mode=mbm)
+        elif v or imat:
+            self.MaterialBindingMode(pn, face=pf, mode=mbm)
 
         if v or n:
             if self.shading==GL.GL_SMOOTH:
@@ -825,9 +825,9 @@ the properties are set for the entire subtree.
 """
         #print "SetForChildren", kw
         for c in self.children:
-            apply( c.Set, (), kw)
+            c.Set(*(), **kw)
             if recursive in (True, 1):
-                apply( c.SetForChildren, (True,), kw)
+                c.SetForChildren(*(True,), **kw)
 
 
     def _setRotation(self, val):
@@ -854,8 +854,8 @@ the properties are set for the entire subtree.
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
         try:
             mat = Numeric.reshape(Numeric.array(val), (3,)).astype('f')
-        except ValueError, e:
-            raise ValueError, e
+        except ValueError as e:
+            raise ValueError(e)
         self.scale = mat
         return self._redoFlags['redoViewerDisplayListFlag']
 
@@ -877,7 +877,7 @@ updateOwnGui=True : allow to update owngui at the end this func
 """
         #print "Geom.Set"
 
-        redoFlags = apply( Common2d3dObject.Set, (self, check, 0), kw)
+        redoFlags = Common2d3dObject.Set(*(self, check, 0), **kw)
         if len(kw) == 0:
             return self.redoNow(redo, updateOwnGui, redoFlags)
 
@@ -918,7 +918,7 @@ updateOwnGui=True : allow to update owngui at the end this func
             self.vertexSet = datamodel.VertexSet( v, s )
 
         # set default face side and default material property
-        if type(lPf) is types.StringType:
+        if type(lPf) is bytes:
             lPf = lPf.lower()
             if lPf == 'none': lPf=GL.GL_NONE
             elif lPf == 'back': lPf=GL.GL_BACK
@@ -941,16 +941,16 @@ updateOwnGui=True : allow to update owngui at the end this func
 
             # the line below does not force re-computation we the number
             # of coordinates is the same change
-	    self.vertexSet.normals.PropertyStatus(len(self.vertexSet))
+            self.vertexSet.normals.PropertyStatus(len(self.vertexSet))
 
         if v is not None:
             if n is None:
                 self.vertexSet.normals.status = viewerConst.NONE
-            if hasattr(self, 'faceSet') or kw.has_key('faces'):
+            if hasattr(self, 'faceSet') or 'faces' in kw:
                 self.faceSet.normals.status = viewerConst.NONE
 
         if t is not None:
-            from Texture import Texture
+            from .Texture import Texture
             assert isinstance(t, Texture)
             self.texture = t
             t.objects.append(self)
@@ -967,24 +967,24 @@ updateOwnGui=True : allow to update owngui at the end this func
         if tx is not None:
             redoFlags |= self._redoFlags['redoDisplayListFlag']
             self.vertexSet.texCoords = datamodel.VectorProperties('texCoords',
-					  tx, datatype=viewerConst.FPRECISION)
+                                          tx, datatype=viewerConst.FPRECISION)
 
-	    shp = self.vertexSet.texCoords.ashape
-	    assert len(shp)==2 and (shp[1] in (1,2,3,4))
+            shp = self.vertexSet.texCoords.ashape
+            assert len(shp)==2 and (shp[1] in (1,2,3,4))
             if hasattr(self, 'texture') and self.texture:
                 self.texture.auto = 0
             
-	if not v is None or tx is not None:
-	    if hasattr(self.vertexSet, 'texCoords'):
-		self.vertexSet.texCoords.PropertyStatus(len(self.vertexSet))
+        if not v is None or tx is not None:
+            if hasattr(self.vertexSet, 'texCoords'):
+                self.vertexSet.texCoords.PropertyStatus(len(self.vertexSet))
 
-	fmode = kw.pop( 'frontPolyMode', None)
-	if fmode:
+        fmode = kw.pop( 'frontPolyMode', None)
+        if fmode:
            
             redoFlags |= self._redoFlags['redoDisplayListFlag']
-            if type(fmode) == types.StringType:
+            if type(fmode) == bytes:
                 fmode = viewerConst.POLYGON_MODES[fmode]
-            assert fmode in viewerConst.POLYGON_MODES.values()
+            assert fmode in list(viewerConst.POLYGON_MODES.values())
             self.frontPolyMode = fmode
             if fmode==viewerConst.INHERIT:
                 self.inheritFrontPolyMode = True
@@ -994,12 +994,12 @@ updateOwnGui=True : allow to update owngui at the end this func
                and self.lighting:
                 self.GetNormals()
                 
-	bmode = kw.pop( 'backPolyMode', None)
-	if bmode is not None:
+        bmode = kw.pop( 'backPolyMode', None)
+        if bmode is not None:
             redoFlags |= self._redoFlags['redoDisplayListFlag']
-            if type(bmode) == types.StringType:
+            if type(bmode) == bytes:
                 bmode = viewerConst.POLYGON_MODES[bmode]
-            assert bmode in viewerConst.POLYGON_MODES.values()
+            assert bmode in list(viewerConst.POLYGON_MODES.values())
             self.backPolyMode = bmode
             if bmode==viewerConst.INHERIT:
                 self.inheritBackPolyMode = True
@@ -1009,13 +1009,13 @@ updateOwnGui=True : allow to update owngui at the end this func
                and self.lighting:
                 self.GetNormals()
             
-	smode = kw.pop('shading', None)
-	if smode is not None:
+        smode = kw.pop('shading', None)
+        if smode is not None:
            
             redoFlags |= self._redoFlags['redoDisplayListFlag']
-            if type(smode) == types.StringType:
+            if type(smode) == bytes:
                 smode = viewerConst.SHADINGS[smode]
-            assert smode in viewerConst.SHADINGS.values()
+            assert smode in list(viewerConst.SHADINGS.values())
             if smode==viewerConst.INHERIT:
                 self.inheritShading = True
             else:
@@ -1079,8 +1079,8 @@ updateOwnGui=True : allow to update owngui at the end this func
             if not m is None:
                 try:
                     m = Numeric.array(m, 'f')                
-                except ValueError, e:
-                    raise ValueError, e
+                except ValueError as e:
+                    raise ValueError(e)
                 self.materials[pf].SetMaterial( m, pn, self._modified )
                 if pn is None or pn==1 or pn in ['diffuse', 'DIFFUSE', 'diff', 'DIFF']:
                     if len(m.shape)==2 and m.shape[1]==4: # opacity info was provided
@@ -1118,38 +1118,38 @@ updateOwnGui=True : allow to update owngui at the end this func
         if not val is None:
             redoFlags |= self._setTransparent(val)
 
-	# Schedules this object to hide in val seconds
-	val = kw.pop( 'transient', None)
-	if not val is None:
-	    assert isinstance(val, types.IntType)
-	    if self.viewer:
-		self.visible = 1
+        # Schedules this object to hide in val seconds
+        val = kw.pop( 'transient', None)
+        if not val is None:
+            assert isinstance(val, int)
+            if self.viewer:
+                self.visible = 1
                 self.redoDspLst =1 
                 self.viewer.cameras[0].after(val*100, self._Hide)
-	    else: raise NameError ("Object %s isn't in a viewer"
-				   % (self.name,))
+            else: raise NameError ("Object %s isn't in a viewer"
+                                   % (self.name,))
 
-	val = kw.pop( 'lineWidth', None)
-	if not val is None:
-	    assert type(val) == type(0.0) or type(val) == type(0)
-	    assert val >= 1
-	    self.lineWidth = int(val)
+        val = kw.pop( 'lineWidth', None)
+        if not val is None:
+            assert type(val) == type(0.0) or type(val) == type(0)
+            assert val >= 1
+            self.lineWidth = int(val)
             redoFlags |= self._redoFlags['redoDisplayListFlag']
 
-	val = kw.pop( 'pointWidth', None)
-	if  not val is None:
-	    assert type(val) == type(0.0) or type(val) == type(0)
-	    assert val >= 1
-	    self.pointWidth = int(val)
+        val = kw.pop( 'pointWidth', None)
+        if  not val is None:
+            assert type(val) == type(0.0) or type(val) == type(0)
+            assert val >= 1
+            self.pointWidth = int(val)
             redoFlags |= self._redoFlags['redoDisplayListFlag']
 
-	val = kw.pop( 'visible', None)
-	if  not val is None:
-	    if val in (True, False):
+        val = kw.pop( 'visible', None)
+        if  not val is None:
+            if val in (True, False):
                 if val != self.visible and self.viewer:
                     redoFlags |= self._redoFlags['redoDisplayListFlag']
-		self.visible = val
-	    else: raise ValueError("visible can only be True or False")
+                self.visible = val
+            else: raise ValueError("visible can only be True or False")
 
         val = kw.pop('lighting', None)
         if not val is None:
@@ -1171,55 +1171,55 @@ updateOwnGui=True : allow to update owngui at the end this func
                 redoFlags |= self._redoFlags['updateOwnGuiFlag']
                 redoFlags |= self._redoFlags['redoDisplayListFlag']
 
-	val = kw.pop( 'stippleLines', None)
-	if  not val is None:
-	    if val in (True, False):
-		self.stippleLines = val
-	    else: raise ValueError("stippleLines can only be True or False")
-
-	val = kw.pop( 'stipplePolygons', None)
-	if  not val is None:
+        val = kw.pop( 'stippleLines', None)
+        if  not val is None:
             if val in (True, False):
-		self.stipplePolygons = val
-	    else: raise ValueError("stipplePolygons can only be True or False")
+                self.stippleLines = val
+            else: raise ValueError("stippleLines can only be True or False")
 
-	val = kw.pop( 'outline', None)
-	if  not val is None:
-	    if val in (True, False):
-		self.drawOutline = (val, val)
+        val = kw.pop( 'stipplePolygons', None)
+        if  not val is None:
+            if val in (True, False):
+                self.stipplePolygons = val
+            else: raise ValueError("stipplePolygons can only be True or False")
+
+        val = kw.pop( 'outline', None)
+        if  not val is None:
+            if val in (True, False):
+                self.drawOutline = (val, val)
             elif val in ((True, True),(True, False),(False, True),(False, False)):
                 self.drawOutline = val
-	    else: raise ValueError("outline can only be True or False, or a tuple like (True, True)")
+            else: raise ValueError("outline can only be True or False, or a tuple like (True, True)")
             redoFlags |= self._setTransparent('implicit')
 
-	val = kw.pop( 'culling', None)
-	if val is not None:
-            if type(val) is types.StringType:
+        val = kw.pop( 'culling', None)
+        if val is not None:
+            if type(val) is bytes:
                 if val.lower()=="inherit": val=viewerConst.INHERIT
                 elif val.lower()=="none": val=GL.GL_NONE
                 elif val.lower()=="front": val=GL.GL_FRONT
                 elif val.lower()=="back": val=GL.GL_BACK
                 elif val.lower()=="front_and_back": val=GL.GL_FRONT_AND_BACK
-	    assert val in (viewerConst.INHERIT, GL.GL_NONE,
-			   GL.GL_BACK, GL.GL_FRONT_AND_BACK,
-			   GL.GL_FRONT) 
+            assert val in (viewerConst.INHERIT, GL.GL_NONE,
+                           GL.GL_BACK, GL.GL_FRONT_AND_BACK,
+                           GL.GL_FRONT) 
             redoFlags |= self._redoFlags['redoDisplayListFlag']
-	    if val in (GL.GL_BACK, GL.GL_NONE, GL.GL_FRONT,
-			GL.GL_FRONT_AND_BACK ):
-		self.inheritCulling = False
-		self.culling = val
-	    elif val == viewerConst.INHERIT:
-		self.inheritCulling = True
+            if val in (GL.GL_BACK, GL.GL_NONE, GL.GL_FRONT,
+                        GL.GL_FRONT_AND_BACK ):
+                self.inheritCulling = False
+                self.culling = val
+            elif val == viewerConst.INHERIT:
+                self.inheritCulling = True
 
- 	val = kw.pop( 'pickableVertices', None)
- 	if  not val is None:
- 	    if val in (True, False):
- 		self.pickableVertices = val
- 	    else: raise ValueError("pickableVertices can only be True or False")
+        val = kw.pop( 'pickableVertices', None)
+        if  not val is None:
+            if val in (True, False):
+                self.pickableVertices = val
+            else: raise ValueError("pickableVertices can only be True or False")
 
- 	val = kw.pop( 'scissor', None)
- 	if  not val is None:
- 	    if val in (True, False):
+        val = kw.pop( 'scissor', None)
+        if  not val is None:
+            if val in (True, False):
                 if val == 1:
                     val = True
                 elif val == 0:
@@ -1235,48 +1235,48 @@ updateOwnGui=True : allow to update owngui at the end this func
                 raise ValueError("scissor can only be True or False")
 
         val = kw.pop( 'scissorX', None)
- 	if  not val is None:
+        if  not val is None:
             if val < 0 : val=0
             self.scissorX = int(val)
             redoFlags |= self._redoFlags['redoViewerDisplayListFlag']
 
- 	val = kw.pop( 'scissorY', None)
- 	if  not val is None:
+        val = kw.pop( 'scissorY', None)
+        if  not val is None:
             if val < 0 : val=0
             self.scissorY = int(val)
             redoFlags |= self._redoFlags['redoViewerDisplayListFlag']
 
         val = kw.pop( 'scissorW', None)
- 	if  not val is None:
+        if  not val is None:
             if val < 1 : val=1
             self.scissorW = int(val)
             self.scissorAspectRatio = float(self.scissorW) /self.scissorH
             redoFlags |= self._redoFlags['redoViewerDisplayListFlag']
 
         val = kw.pop( 'scissorH', None)
- 	if  not val is None:
+        if  not val is None:
             if val < 1 : val=1
             self.scissorH = int(val)
             self.scissorAspectRatio = float(self.scissorW) /self.scissorH
             redoFlags |= self._redoFlags['redoViewerDisplayListFlag']
 
         val = kw.pop( 'scissorAspectRatio', None)
- 	if  not val is None:
+        if  not val is None:
             if val < 0.0 : val=-val
             self.scissorAspectRatio = float(val)
             self.scissorW = int(self.scissorAspectRatio * self.scissorH)
             redoFlags |= self._redoFlags['redoViewerDisplayListFlag']
 
         val = kw.pop( 'depthMask', None)
- 	if  not val is None:
- 	    if val in (True, False):
- 		self.depthMask = val
+        if  not val is None:
+            if val in (True, False):
+                self.depthMask = val
                 redoFlags |= self._redoFlags['redoDisplayListFlag']
- 	    else:
+            else:
                 raise ValueError("depthMask can only be True or False")
 
         val = kw.pop( 'blendFunctions', None)
- 	if  not val is None:
+        if  not val is None:
             assert len(val)==2, "arguemnt should be a 2-tuple"
             src, dst = val
             if   src=="GL_ZERO": src=GL.GL_ZER
@@ -1544,33 +1544,33 @@ updateOwnGui=True : allow to update owngui at the end this func
     def __repr__(self):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	v = hasattr(self, 'vertexSet')
-	f = hasattr(self, 'faceSet')
-	if v and f:
-	    return '<%s> %s with %d vertices and %d faces' % (self.__class__,
-			  self.name, len(self.vertexSet), len(self.faceSet) )
-	if v:
-	    return '<%s> %s with %d vertices' % (self.__class__,
-					self.name,  len(self.vertexSet) )
+        v = hasattr(self, 'vertexSet')
+        f = hasattr(self, 'faceSet')
+        if v and f:
+            return '<%s> %s with %d vertices and %d faces' % (self.__class__,
+                          self.name, len(self.vertexSet), len(self.faceSet) )
+        if v:
+            return '<%s> %s with %d vertices' % (self.__class__,
+                                        self.name,  len(self.vertexSet) )
 
-	return '<%s> ' % (self.__class__, )
+        return '<%s> ' % (self.__class__, )
 
 
     def BoundingBox(self, display=None, color=None, lineWidth=None):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Turn Bounding Box drawing on and off, set attributs"""
+        """Turn Bounding Box drawing on and off, set attributs"""
 
-	if not display is None:
-	    assert display in viewerConst.BB_MODES
-	    self.drawBB = display
+        if not display is None:
+            assert display in viewerConst.BB_MODES
+            self.drawBB = display
 
-	if color:
-	    color = OneColor( color )
-	    if color: self.colorBB = color
+        if color:
+            color = OneColor( color )
+            if color: self.colorBB = color
 
-	if lineWidth:
-	    self.lineWidthBB = lineWidth
+        if lineWidth:
+            self.lineWidthBB = lineWidth
 
 
     def Draw(self):
@@ -1625,33 +1625,33 @@ Should be call by RedoDisplayList in between glNewList/ glEndList
     def AddClipPlane(self, cp, side=-1, clipChildren=True, tagModified=True):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Add the arbitrary clipping plane 'cp' to this geometry"""
+        """Add the arbitrary clipping plane 'cp' to this geometry"""
 
         self._modified = tagModified
         
-	if not isinstance(cp, Clip.ClippingPlane):
-	    msg = 'First agument has to be an instance of a ClippingPlane'
-	    raise AttributeError(msg)
+        if not isinstance(cp, Clip.ClippingPlane):
+            msg = 'First agument has to be an instance of a ClippingPlane'
+            raise AttributeError(msg)
 
-	if not self.viewer:
-	    msg = 'clipping plane can only be added after the is in a viewer'
-	    raise RuntimeError(msg)
+        if not self.viewer:
+            msg = 'clipping plane can only be added after the is in a viewer'
+            raise RuntimeError(msg)
 
-	if side in (-1,1):
+        if side in (-1,1):
             self.clipSide[cp.num] = side
-	else:
+        else:
             raise AttributeError('side can only be 1 or -1')
         
-	if clipChildren is True:
+        if clipChildren is True:
             self.clipPI.append( cp )
-	elif clipChildren is False:
+        elif clipChildren is False:
             self.clipP.append( cp )
-	else:
+        else:
             raise AttributeError('clipChildren can only be True or False')
 
         self.viewer.activeClippingPlanes = self.viewer.activeClippingPlanes + 1
         if not self.viewer.currentClip:
-	    self.viewer.currentClip = cp
+            self.viewer.currentClip = cp
 
         self.viewer.deleteOpenglList()
 
@@ -1659,7 +1659,7 @@ Should be call by RedoDisplayList in between glNewList/ glEndList
     def RemoveClipPlane(self, cp):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Remove the clip. plane from the list of CP clipping this object"""
+        """Remove the clip. plane from the list of CP clipping this object"""
 
         if not isinstance(cp, Clip.ClippingPlane):
             msg = 'First agument has to be an instance of ClippingPlane'
@@ -1679,23 +1679,23 @@ Should be call by RedoDisplayList in between glNewList/ glEndList
         """Return a vector of 3D coordinates transformed by all
         transformations up to root (excluded)"""
         mat = self.GetMatrix( self.LastParentBeforeRoot(), instance )
-	one = Numeric.ones( (coords.shape[0], 1), coords.dtype.char )
-	c = Numeric.concatenate( (coords, one), 1 )
+        one = Numeric.ones( (coords.shape[0], 1), coords.dtype.char )
+        c = Numeric.concatenate( (coords, one), 1 )
         return Numeric.dot(c, Numeric.transpose(mat))[:, :3]
 
 
     def TransformedCoords(self, root=None, instance=None):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Return the vertices after applying the current transformation"""
+        """Return the vertices after applying the current transformation"""
 
         if root is None:
             root = self.viewer.rootObject
-	if len(self.vertexSet):
-	    m = self.GetMatrix(root, instance)
-	    return self.vertexSet.vertices * m
-	else:
-	    return None
+        if len(self.vertexSet):
+            m = self.GetMatrix(root, instance)
+            return self.vertexSet.vertices * m
+        else:
+            return None
     
 
 ##     def GravityCenterSubtree(self):
@@ -1779,7 +1779,7 @@ Should be call by RedoDisplayList in between glNewList/ glEndList
 
             GL.glPopMatrix()
 
-	GL.glPopMatrix()     # Restore the matrix
+        GL.glPopMatrix()     # Restore the matrix
 
                
     def ComputeBB(self):
@@ -1812,14 +1812,14 @@ Should be call by RedoDisplayList in between glNewList/ glEndList
     def _DrawBox(self, bbmin, bbmax):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Draw the bounding box using lines"""
+        """Draw the bounding box using lines"""
 
-	GL.glPushAttrib(GL.GL_CURRENT_BIT | GL.GL_LIGHTING_BIT |
-			GL.GL_LINE_BIT )
-	GL.glShadeModel(GL.GL_FLAT)
-	GL.glDisable(GL.GL_LIGHTING)
-	GL.glColor4fv ( self.colorBB )
-	GL.glLineWidth( self.lineWidthBB )
+        GL.glPushAttrib(GL.GL_CURRENT_BIT | GL.GL_LIGHTING_BIT |
+                        GL.GL_LINE_BIT )
+        GL.glShadeModel(GL.GL_FLAT)
+        GL.glDisable(GL.GL_LIGHTING)
+        GL.glColor4fv ( self.colorBB )
+        GL.glLineWidth( self.lineWidthBB )
         #FIXME build a display list for a cube once
         # just scale the 3 dimensions and translate
 
@@ -1852,27 +1852,27 @@ Should be call by RedoDisplayList in between glNewList/ glEndList
         GL.glVertex3f(float(bbmax[0]),float(bbmin[1]),float(bbmin[2]))
         GL.glVertex3f(float(bbmax[0]),float(bbmin[1]),float(bbmax[2]))
         GL.glEnd()
-	GL.glPopAttrib()
+        GL.glPopAttrib()
 
 
     def DrawTreeBoundingBox(self):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Draw's the bounding box of this object and all of its visible
-	   descendants"""
+        """Draw's the bounding box of this object and all of its visible
+           descendants"""
 
-	#bbmin, bbmax = self.BoundingBoxSubtree()
+        #bbmin, bbmax = self.BoundingBoxSubtree()
         bbmin, bbmax = self.ComputeBB()
-	self._DrawBox( bbmin, bbmax )
+        self._DrawBox( bbmin, bbmax )
 
 
     def DrawBoundingBox(self):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Draw's the objects bounding box"""
+        """Draw's the objects bounding box"""
 
-	self._DrawBox( self.vertexSet.vertices.bbmin, 
-		       self.vertexSet.vertices.bbmax )
+        self._DrawBox( self.vertexSet.vertices.bbmin, 
+                       self.vertexSet.vertices.bbmax )
         
 
     def addVertexNormalsGeom(self):
@@ -1892,7 +1892,7 @@ Should be call by RedoDisplayList in between glNewList/ glEndList
         v = self.getVertices()
         if len(n) == 0:
             return None
-        pts = map(lambda x,y: (x, (x[0]+y[0],x[1]+y[1],x[2]+y[2])), v,n)
+        pts = list(map(lambda x,y: (x, (x[0]+y[0],x[1]+y[1],x[2]+y[2])), v,n))
         from DejaVu.Polylines import Polylines
         g = Polylines(self.name+'_vertexnormals', vertices=pts)
         g.inheritedNormarrow = GL.GL_NONE
@@ -1976,41 +1976,41 @@ Should be call by RedoDisplayList in between glNewList/ glEndList
     def RenderMode(self, mode=None, shading=None, face=GL.GL_FRONT, redo=1):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Set the render mode"""
+        """Set the render mode"""
         warnings.warn('RenderMode is deprecated, use .Set(frontPolyMode=, shading=)',
                       DeprecationWarning, stacklevel=2)
         
         if not mode is None:
-            if type(mode) == types.StringType:
+            if type(mode) == bytes:
                 mode = viewerConst.POLYGON_MODES[mode]
-	    if mode in viewerConst.POLYGON_MODES.values():
-		if face==GL.GL_BACK:
-		    self.backPolyMode = mode
-		    self.inheritBackPolyMode = False
-		else:
-		    self.frontPolyMode = mode
-		    self.inheritFrontPolyMode = False
-	    elif mode==viewerConst.INHERIT:
-		if face==GL.GL_BACK:
-		    self.inheritBackPolyMode = True
-		else:
-		    self.inheritFrontPolyMode = True
-	    else:
-		raise AttributeError('Invalide polygon mode')
+            if mode in list(viewerConst.POLYGON_MODES.values()):
+                if face==GL.GL_BACK:
+                    self.backPolyMode = mode
+                    self.inheritBackPolyMode = False
+                else:
+                    self.frontPolyMode = mode
+                    self.inheritFrontPolyMode = False
+            elif mode==viewerConst.INHERIT:
+                if face==GL.GL_BACK:
+                    self.inheritBackPolyMode = True
+                else:
+                    self.inheritFrontPolyMode = True
+            else:
+                raise AttributeError('Invalide polygon mode')
             
         if not shading is None:
             inhSet = False
             if shading == viewerConst.INHERIT:
                 shading = GL.GL_NONE
-        	self.inheritShading = True
-        	inhSet = True
+                self.inheritShading = True
+                inhSet = True
         
             if shading in viewerConst.SHADINGS:
-        	if not inhSet:
-        	    self.inheritShading = False
-        	    self.shading = shading
+                if not inhSet:
+                    self.inheritShading = False
+                    self.shading = shading
             else:
-        	raise AttributeError('Invalid shading model %d' % (shading,))
+                raise AttributeError('Invalid shading model %d' % (shading,))
         
             if self.viewer:
                 if (mode==GL.GL_FILL or shading != 'ignore'):

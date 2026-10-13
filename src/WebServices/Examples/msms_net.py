@@ -43,7 +43,7 @@ try:
     Pmv_Viewer_0 = PmvViewer(viewer=masterNet.editor.vf.GUI.VIEWER, constrkw = {'viewer': 'masterNet.editor.vf.GUI.VIEWER'}, name='Pmv Viewer', library=pmvlib)
     masterNet.addNode(Pmv_Viewer_0,67,184)
 except:
-    print "WARNING: failed to restore PmvViewer named Pmv Viewer in network masterNet"
+    print("WARNING: failed to restore PmvViewer named Pmv Viewer in network masterNet")
     print_exc()
     Pmv_Viewer_0=None
 try:
@@ -57,7 +57,7 @@ try:
     HIS_1 = PmvMolecule(molecule=masterNet.editor.vf.expandNodes("HIS")[0], constrkw = {'molecule': 'masterNet.editor.vf.expandNodes("HIS")[0]'}, name='HIS', library=pmvlib)
     masterNet.addNode(HIS_1,69,17)
 except:
-    print "WARNING: failed to restore PmvMolecule named HIS in network masterNet"
+    print("WARNING: failed to restore PmvMolecule named HIS in network masterNet")
     print_exc()
     HIS_1=None
 try:
@@ -67,16 +67,16 @@ try:
     MSMS_mgldev_scripps_10 = msms_wsMacroNode(host='http://mgldev.scripps.edu/services', constrkw = {'host': "'http://mgldev.scripps.edu/services'"}, name='MSMS@mgldev.scripps', library=wslib)
     masterNet.addNode(MSMS_mgldev_scripps_10,67,90)
     MSMS_WS_17 = MSMS_mgldev_scripps_10.macroNetwork.nodes[6]
-    apply(MSMS_WS_17.inputPortByName['density'].createWidget, (), {'descr':{'initialValue': 1.0, 'min': 1.0, 'labelGridCfg': {'column': 0, 'row': 3}, 'master': 'ParamPanel', 'increment': 0.10000000000000001, 'widgetGridCfg': {'column': 1, 'labelSide': 'left', 'row': 3}, 'labelCfg': {'text': 'density'}, 'class': 'NEDial', 'oneTurn': 10}})
-    apply(MSMS_WS_17.inputPortByName['probe_radius'].createWidget, (), {'descr':{'initialValue': 1.5, 'min': 0.5, 'labelGridCfg': {'column': 0, 'row': 5}, 'master': 'ParamPanel', 'increment': 0.10000000000000001, 'widgetGridCfg': {'column': 1, 'labelSide': 'left', 'row': 5}, 'labelCfg': {'text': 'probe radius'}, 'class': 'NEDial', 'oneTurn': 10}})
-    apply(MSMS_WS_17.inputPortByName['allComp'].createWidget, (), {'descr':{'initialValue': 0, 'labelGridCfg': {'column': 0, 'row': 7}, 'master': 'ParamPanel', 'widgetGridCfg': {'column': 1, 'labelSide': 'left', 'row': 7}, 'labelCfg': {'text': 'all components'}, 'class': 'NECheckButton'}})
+    MSMS_WS_17.inputPortByName['density'].createWidget(*(), **{'descr':{'initialValue': 1.0, 'min': 1.0, 'labelGridCfg': {'column': 0, 'row': 3}, 'master': 'ParamPanel', 'increment': 0.10000000000000001, 'widgetGridCfg': {'column': 1, 'labelSide': 'left', 'row': 3}, 'labelCfg': {'text': 'density'}, 'class': 'NEDial', 'oneTurn': 10}})
+    MSMS_WS_17.inputPortByName['probe_radius'].createWidget(*(), **{'descr':{'initialValue': 1.5, 'min': 0.5, 'labelGridCfg': {'column': 0, 'row': 5}, 'master': 'ParamPanel', 'increment': 0.10000000000000001, 'widgetGridCfg': {'column': 1, 'labelSide': 'left', 'row': 5}, 'labelCfg': {'text': 'probe radius'}, 'class': 'NEDial', 'oneTurn': 10}})
+    MSMS_WS_17.inputPortByName['allComp'].createWidget(*(), **{'descr':{'initialValue': 0, 'labelGridCfg': {'column': 0, 'row': 7}, 'master': 'ParamPanel', 'widgetGridCfg': {'column': 1, 'labelSide': 'left', 'row': 7}, 'labelCfg': {'text': 'all components'}, 'class': 'NECheckButton'}})
 
     ## saving connections for network MSMS@mgldev.scripps ##
     MSMS_mgldev_scripps_10.macroNetwork.freeze()
     MSMS_mgldev_scripps_10.macroNetwork.unfreeze()
     MSMS_mgldev_scripps_10.shrink()
 except:
-    print "WARNING: failed to restore msms_wsMacroNode named MSMS@mgldev.scripps in network masterNet"
+    print("WARNING: failed to restore msms_wsMacroNode named MSMS@mgldev.scripps in network masterNet")
     print_exc()
     MSMS_mgldev_scripps_10=None
 masterNet.freeze()

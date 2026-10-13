@@ -18,7 +18,7 @@ in the set.
 """
 
 import types
-from UserList import UserList
+from collections import UserList
 from mglutil.util import misc
 
 verbose = False
@@ -85,7 +85,7 @@ class ListSet(UserList):  # would (list) work???
         while True:
             pselDict = {}
             for p in parents:
-                selChildren = [x for x in p.children if selDict.has_key(x)]
+                selChildren = [x for x in p.children if x in selDict]
                 if len(selChildren) == len(p.children):
                     pselDict[p] = True # all children are in so it might
                                        # be added at next level
@@ -98,12 +98,12 @@ class ListSet(UserList):  # would (list) work???
             if len(pselDict)==0:
                 break
             level = level+1
-            nparents = {}.fromkeys([x.parent for x in pselDict.keys()]).keys()
+            nparents = list({}.fromkeys([x.parent for x in list(pselDict.keys())]).keys())
             #if len(pselDict)<10:
             #    print 'AAAAAAAAAA', pselDict, nparents, parents
             if nparents[0]==None:
                 for p in parents:
-                    selChildren = [x for x in p.children if selDict.has_key(x)]
+                    selChildren = [x for x in p.children if x in selDict]
                     if len(selChildren) == len(p.children):
                         names += p.full_name()+':'*level+';'
                 break
@@ -155,7 +155,7 @@ class ListSet(UserList):  # would (list) work???
 
     def setStringRepr(self, string):
         """set the string representation of this set"""
-        assert type(string) in types.StringTypes
+        assert type(string) in (str,)
         self.stringRepr = string
 
 
@@ -194,7 +194,7 @@ class ListSet(UserList):  # would (list) work???
         """
 
         if member[:2]=='__':
-            if self.__dict__.has_key(member):
+            if member in self.__dict__:
                 return self.__dict__[member]
             else:
                 raise AttributeError('member %s not found'%member)
@@ -340,7 +340,7 @@ class ListSet(UserList):  # would (list) work???
                     stringRepr += ','+m.name
         else:
             if verbose: 
-                print 'WARNING long stringRepr due to getslice'
+                print('WARNING long stringRepr due to getslice')
             stringRepr = ''
             for obj in self.data[i:j]:
                 stringRepr += obj.full_name()+';'
@@ -350,7 +350,7 @@ class ListSet(UserList):  # would (list) work???
 
     def __delslice__(self, i, j):
         if verbose:
-            print 'WARNING long stringRepr due to delslice'
+            print('WARNING long stringRepr due to delslice')
         del self.data[i:j]
         stringRepr = ''
         for obj in self.data:
@@ -389,7 +389,7 @@ class ListSet(UserList):  # would (list) work???
         elif verbose:
             import traceback
             traceback.print_stack()
-            print 'extending sets with no stringRepr:', repr(self), repr(right)
+            print('extending sets with no stringRepr:', repr(self), repr(right))
         
         
     def __iadd__(self, right):
@@ -409,7 +409,7 @@ class ListSet(UserList):  # would (list) work???
         elif verbose:
             import traceback
             traceback.print_stack()
-            print 'adding sets with no stringRepr:', repr(self), repr(right)
+            print('adding sets with no stringRepr:', repr(self), repr(right))
             stringRepr = None
         return self.__class__( self.data + right.data, stringRepr=stringRepr)
 
@@ -429,7 +429,7 @@ class ListSet(UserList):  # would (list) work???
         elif verbose:
             import traceback
             traceback.print_stack()
-            print 'union of sets with no stringRepr:', repr(self), repr(right)
+            print('union of sets with no stringRepr:', repr(self), repr(right))
             stringRepr = None
         return self.__class__( misc.uniq(self.data + right.data),
                               stringRepr=stringRepr )
@@ -455,7 +455,7 @@ class ListSet(UserList):  # would (list) work???
         elif verbose:
             import traceback
             traceback.print_stack()
-            print 'xoring sets with no stringRepr:', repr(self), repr(right)
+            print('xoring sets with no stringRepr:', repr(self), repr(right))
             stringRepr = None
         return self.__class__( l1.data + l2.data, stringRepr=stringRepr )
 
@@ -480,7 +480,7 @@ class ListSet(UserList):  # would (list) work???
         # l1 is always shorter list
         for o in l2.data: o._setFlag = 0
         for o in l1.data: o._setFlag = 1
-        newlist = filter( lambda x: x._setFlag==1, l2.data )
+        newlist = [x for x in l2.data if x._setFlag==1]
         for o in l2.data:
             if hasattr(o, '_setFlag'):
                 del o._setFlag
@@ -493,7 +493,7 @@ class ListSet(UserList):  # would (list) work???
         elif verbose:
             import traceback
             traceback.print_stack()
-            print 'intersecting sets with no stringRepr:', repr(self), repr(right)
+            print('intersecting sets with no stringRepr:', repr(self), repr(right))
             stringRepr = None
         return self.__class__(misc.uniq(newlist), stringRepr=stringRepr)
 
@@ -513,7 +513,7 @@ class ListSet(UserList):  # would (list) work???
         if len(self.data)==0: return self.copy()
         for o in self.data: o._setFlag = 1
         for o in right.data: o._setFlag = 0
-        newlist = filter( lambda x: x._setFlag==1, self.data )
+        newlist = [x for x in self.data if x._setFlag==1]
         for o in self.data:
             if hasattr(o, '_setFlag'):
                 del o._setFlag
@@ -525,7 +525,7 @@ class ListSet(UserList):  # would (list) work???
         elif verbose:
             import traceback
             traceback.print_stack()
-            print 'subtracting sets with no stringRepr:', repr(self), repr(right)
+            print('subtracting sets with no stringRepr:', repr(self), repr(right))
             #stringRepr = None
         return self.__class__(newlist, stringRepr=stringRepr)
 
@@ -540,7 +540,7 @@ class ListSet(UserList):  # would (list) work???
         l = []
         d = {}
         for value in self.data:
-            if not d.has_key(id(value)):
+            if id(value) not in d:
                 d[id(value)]=value
                 l.append(value)
         self.__dict__['data'] = l

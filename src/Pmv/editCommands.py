@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
 #
@@ -26,8 +26,8 @@ from Pmv.moleculeViewer import DeleteAtomsEvent, AddAtomsEvent
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 from mglutil.util.callback import CallBackFunction
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser
-from tkMessageBox import *
-from SimpleDialog import SimpleDialog
+from tkinter.messagebox import *
+from tkinter.simpledialog import SimpleDialog
 
 
 from Pmv.mvCommand import MVCommand, MVAtomICOM, MVBondICOM
@@ -45,8 +45,8 @@ from DejaVu.Points import CrossSet
 
 from Pmv.stringSelectorGUI import StringSelectorGUI
 
-import types, Tkinter, Pmw, math, os
-import numpy.oldnumeric as Numeric
+import types, tkinter, Pmw, math, os
+import mglcompat.oldnumeric as Numeric
 from string import letters, strip, find
 
 def check_edit_geoms(VFGUI):
@@ -83,7 +83,7 @@ class DeleteWaterCommand(MVCommand):
     def onAddCmdToViewer(self):
         self.vf._deletedLevels = []
         #if self.vf.hasGui and not self.vf.commands.has_key('deleteMol'):
-        if not self.vf.commands.has_key('deleteAtomSet'):
+        if 'deleteAtomSet' not in self.vf.commands:
             self.vf.loadCommand("deleteCommands", "deleteAtomSet", "Pmv",
                                 topCommand=0)
 
@@ -98,13 +98,13 @@ class DeleteWaterCommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None<---deleteWater(nodes, **kw)
         \nnodes --- TreeNodeSet from which to delete waters"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         try:
             nodes = self.vf.expandNodes(nodes)
         except:
             raise IOError
-        apply ( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def guiCallback(self):
@@ -174,13 +174,13 @@ Original code by W. Patrick Walters and Matthew T. Stahl\n
     def __call__(self, nodes, **kw):
         """None<---typeAtoms(nodes, **kw)
         \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         try:
             nodes = self.vf.expandNodes(nodes)
         except:
             raise IOError
-        apply ( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def guiCallback(self):
@@ -248,12 +248,12 @@ to change assigned atom types.
     def __call__(self, nodes, **kw):
         """None<---editAtomTypeGC(nodes, **kw)
         \nnodes --- TreeNodeSet """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         ats = self.vf.expandNodes(nodes)
         if not len(ats): return 'ERROR'
         ats = ats.findType(Atom)
-        apply ( self.doitWrapper, (ats,), kw )
+        self.doitWrapper(*(ats,), **kw)
 
 
     def doit(self, ats):
@@ -265,7 +265,7 @@ to change assigned atom types.
                 #self.warningMsg(msg)
                 #typeAtoms does whole molecule
                 self.vf.typeAtoms(atom, topCommand=0)
-            if atom.element not in self.atmTypeDict.keys():
+            if atom.element not in list(self.atmTypeDict.keys()):
                 msg = 'No alternative atom types available for this element'
                 self.warningMsg(msg)
                 continue
@@ -353,12 +353,12 @@ class EditAtomTypeCommand(MVCommand):
         """None <- editAtomType(ats, btype, **kw)
         \nat --- atom 
         \nbtype --- babel_type"""
-        if type(ats) is types.StringType:
+        if type(ats) is bytes:
             self.nodeLogString = "'"+ats+"'"
         ats = self.vf.expandNodes(ats)
         if not len(ats): return 'ERROR'
         at = ats.findType(Atom)[0]
-        apply ( self.doitWrapper, (at, btype,), kw )
+        self.doitWrapper(*(at, btype,), **kw)
 
 
     def doit(self, at, btype):
@@ -402,17 +402,17 @@ to change atom charge.
         if self.vf.hasGui:
             edit_geoms = check_edit_geoms(self.vf.GUI)
             self.vf.GUI.VIEWER.AddObject(self.spheres, parent=edit_geoms)
-            self.oldCharge = Tkinter.StringVar()
+            self.oldCharge = tkinter.StringVar()
 
 
     def __call__(self, nodes, **kw):
         """None<---editAtomChargeGC(nodes, **kw)
         \nnodes --- TreeNodeSet """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
-        apply ( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes,):
@@ -424,16 +424,16 @@ to change atom charge.
         self.vf.GUI.VIEWER.Redraw()
         if not hasattr(atom,'charge'):
             msg = 'atom has no charge: calling XXXXX'
-            print msg
+            print(msg)
             #self.warningMsg(msg)
         self.oldCharge.set(atom.charge)
         ifd = self.ifd = InputFormDescr(title='Enter New Charge')
         ifd.append({'name':'eCLab',
-                'widgetType':Tkinter.Label,
+                'widgetType':tkinter.Label,
                 'text':'Enter new charge for:\n' + atom.full_name(),
                 'gridcfg':{'sticky':'we'}})
         ifd.append({'name':'eCEnt',
-            'widgetType':Tkinter.Entry,
+            'widgetType':tkinter.Entry,
             'wcfg':{'textvariable':self.oldCharge},
             'gridcfg':{'sticky':'we', 'row':-1, 'column':1}})
         vals = self.vf.getUserInput(ifd)
@@ -549,7 +549,7 @@ to change atom charge.
         for at in ats:
             ##typeAtoms types everything so can't undo it
             #if hasattr(at, 'babel_type'):
-            ustr=ustr + '"at=self.expandNodes('+'\''+at.full_name()+'\''+')[0];at._charges[at.chargeSet]=float(\''+ str(at.charge)+'\');res = at.parent; import numpy.oldnumeric as Numeric;from MolKit.protein import ResidueSet; res.new_sum = round(Numeric.sum(res.atoms.charge),4);self.labelByProperty(ResidueSet([res]), properties = (\'new_sum\',),textcolor = \'yellow\',font=\'arial1.glf\',log=0)"'
+            ustr=ustr + '"at=self.expandNodes('+'\''+at.full_name()+'\''+')[0];at._charges[at.chargeSet]=float(\''+ str(at.charge)+'\');res = at.parent; import mglcompat.oldnumeric as Numeric;from MolKit.protein import ResidueSet; res.new_sum = round(Numeric.sum(res.atoms.charge),4);self.labelByProperty(ResidueSet([res]), properties = (\'new_sum\',),textcolor = \'yellow\',font=\'arial1.glf\',log=0)"'
         self.undoCmds = "exec("+ustr+")"
         #NEED to redo labels here, too
                 
@@ -659,10 +659,10 @@ Original code by W. Patrick Walters and Matthew T. Stahl\n
             # create a new attribute to know which rings a bond belongs to maybe should be done in cycle.py
             if not mol.rings is None:
                 mol.rings.bondRings = {}
-                for ind in xrange(len(mol.rings.rings)):
+                for ind in range(len(mol.rings.rings)):
                     r = mol.rings.rings[ind]
                     for b in r['bonds']:
-                        if not mol.rings.bondRings.has_key(b):
+                        if b not in mol.rings.bondRings:
                             mol.rings.bondRings[b] = [ind,]
                         else:
                             mol.rings.bondRings[b].append(ind)
@@ -685,9 +685,9 @@ Original code by W. Patrick Walters and Matthew T. Stahl\n
         \nwithRings --- default is 0"""
 
         kw['withRings'] = withRings
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
-        apply ( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def guiCallback(self):
@@ -695,8 +695,8 @@ Original code by W. Patrick Walters and Matthew T. Stahl\n
         ifd = InputFormDescr(title="Type bonds:")
         ifd.append({'name': 'rings',
                     'text': 'With Rings',
-                    'widgetType': Tkinter.Checkbutton,
-                    'variable': Tkinter.IntVar(),
+                    'widgetType': tkinter.Checkbutton,
+                    'variable': tkinter.IntVar(),
                     'gridcfg': {'sticky':'w'}})
         val = self.vf.getUserInput(ifd)
         sel = self.vf.getSelection()
@@ -752,9 +752,9 @@ class AddHydrogensGUICommand(MVCommand):
            \nrenumber ---  Boolean flag when set to True the atoms are renumbered. (default is True)
            """
         #kw['topCommand'] = 0
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
-        apply(self.doitWrapper,(nodes,polarOnly,method,renumber,), kw)
+        self.doitWrapper(*(nodes,polarOnly,method,renumber,), **kw)
 
 
     def doit(self, nodes, polarOnly, method, renumber):
@@ -827,9 +827,9 @@ class AddHydrogensGUICommand(MVCommand):
             if tryAnyway == "No":
                 return "ERROR"
         ifd = InputFormDescr(title = "Add Hydrogens:")
-        hydrogenChoice = Tkinter.IntVar()
+        hydrogenChoice = tkinter.IntVar()
         hydrogenChoice.set(0)
-        methodChoice = Tkinter.StringVar()
+        methodChoice = tkinter.StringVar()
         if os.path.splitext(sel.top[0].parser.filename)[1]=='.pdb':
             methodChoice.set('noBondOrder')
         else:
@@ -839,49 +839,49 @@ class AddHydrogensGUICommand(MVCommand):
         #else:
             #methodChoice.set('withBondOrder')
         #methodChoice.set('noBondOrder')
-        renumberChoice = Tkinter.IntVar()
+        renumberChoice = tkinter.IntVar()
         renumberChoice.set(1)
         ifd.append({'name': 'allHs',
                     'text': 'All Hydrogens',
-                    'widgetType': Tkinter.Radiobutton,
+                    'widgetType': tkinter.Radiobutton,
                     'value':0,
                     'variable': hydrogenChoice,
                     'gridcfg': {'sticky':'w'}})
         ifd.append({'name': 'polarOnly',
                     'text': 'Polar Only',
-                    'widgetType': Tkinter.Radiobutton,
+                    'widgetType': tkinter.Radiobutton,
                     'value':1,
                     'variable': hydrogenChoice,
                     'gridcfg': {'sticky':'w'}})
         ifd.append({'name':'methodLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'Method',
-                    'gridcfg':{'sticky':Tkinter.W}})
+                    'gridcfg':{'sticky':tkinter.W}})
         ifd.append({'name': 'noBondOrder',
                     'text': 'noBondOrder (for pdb files...)',
-                    'widgetType': Tkinter.Radiobutton,
+                    'widgetType': tkinter.Radiobutton,
                     'value':'noBondOrder',
                     'variable': methodChoice,
                     'gridcfg': {'sticky':'w'}})
         ifd.append({'name': 'withBondOrder',
                     'text': 'withBondOrder (if you trust the bond order info)',
-                    'widgetType': Tkinter.Radiobutton,
+                    'widgetType': tkinter.Radiobutton,
                     'value':'withBondOrder',
                     'variable': methodChoice,
                     'gridcfg': {'sticky':'w'}})
         ifd.append({'name':'renumberLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'Renumber atoms to include new hydrogens',
-                    'gridcfg':{'sticky':Tkinter.W}})
+                    'gridcfg':{'sticky':tkinter.W}})
         ifd.append({'name': 'yesRenumber',
                     'text': 'yes',
-                    'widgetType': Tkinter.Radiobutton,
+                    'widgetType': tkinter.Radiobutton,
                     'value':1,
                     'variable': renumberChoice,
                     'gridcfg': {'sticky':'w'}})
         ifd.append({'name': 'noRenumber',
                     'text': 'no',
-                    'widgetType': Tkinter.Radiobutton,
+                    'widgetType': tkinter.Radiobutton,
                     'value':0,
                     'variable': renumberChoice,
                     'gridcfg': {'sticky':'w'}})
@@ -972,16 +972,16 @@ Original code by W. Patrick Walters and Matthew T. Stahl\n
         self.flag = self.flag | self.objArgOnly
     
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('typeBonds'):
+        if 'typeBonds' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'typeBonds','Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key("saveSet"):
+        if "saveSet" not in self.vf.commands:
             self.vf.loadCommand("selectionCommands", "saveSet", "Pmv",
                                 topCommand=0)
-        if not self.vf.commands.has_key("selectSet"):
+        if "selectSet" not in self.vf.commands:
             self.vf.loadCommand("selectionCommands", "selectSet", "Pmv",
                                 topCommand=0)
-        if not self.vf.commands.has_key("fixHNames"):
+        if "fixHNames" not in self.vf.commands:
             self.vf.loadCommand("editCommands", "fixHNames", "Pmv",
                                 topCommand=0)
             
@@ -1002,9 +1002,9 @@ Original code by W. Patrick Walters and Matthew T. Stahl\n
         \nThe hydrogen atoms added to each molecule are also saved as a set
         called mol.name + '_addedH'
         """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
-        return apply(self.doitWrapper,(nodes,polarOnly,method,renumber,), kw)
+        return self.doitWrapper(*(nodes,polarOnly,method,renumber,), **kw)
 
 
     def doit(self, nodes, polarOnly=False, method='noBondOrder',
@@ -1044,7 +1044,7 @@ Original code by W. Patrick Walters and Matthew T. Stahl\n
             # build lists of all H atoms bonded to the same heavy atom
             bondedAtomDict = {}  # key is heavy atom
             for a in hat:
-                if bondedAtomDict.has_key(a[1]):
+                if a[1] in bondedAtomDict:
                     bondedAtomDict[a[1]].append(a)
                 else:
                     bondedAtomDict[a[1]] = [a]
@@ -1055,7 +1055,7 @@ Original code by W. Patrick Walters and Matthew T. Stahl\n
             molNewHs = AtomSet([]) # list of created H atoms for this molecule
             heavyAtoms = AtomSet([]) # list of atoms that need new radii
             
-            for heavyAtom, HatmsDscr in bondedAtomDict.items():
+            for heavyAtom, HatmsDscr in list(bondedAtomDict.items()):
                 # do not add H to Carbon atoms if polarOnly is specified
                 if polarOnly:
                     if heavyAtom.element=='C': continue
@@ -1113,7 +1113,7 @@ Original code by W. Patrick Walters and Matthew T. Stahl\n
 
                     # create the color entries for all geoemtries
                     # available for the heavyAtom
-                    for key, value in heavyAtom.colors.items():
+                    for key, value in list(heavyAtom.colors.items()):
                         atom.colors[key]=(1.0, 1.0, 1.0)
                         atom.opacities[key]=1.0
                     # DO NOT set charges to 0.0
@@ -1133,7 +1133,7 @@ Original code by W. Patrick Walters and Matthew T. Stahl\n
 
             if renumber:
                 fst = mol.allAtoms[0].number
-                mol.allAtoms.number = range(fst, len(mol.allAtoms)+fst)
+                mol.allAtoms.number = list(range(fst, len(mol.allAtoms)+fst))
 
 
             # save the added atoms as a set
@@ -1142,7 +1142,7 @@ Original code by W. Patrick Walters and Matthew T. Stahl\n
                 self.vf.saveSet( molNewHs, setName,
                                  'added by addh command', topCommand=0)
 
-        for r in resList.keys():
+        for r in list(resList.keys()):
             r.assignUniqIndex()
 
         # update self.vf.Mols.allAtoms
@@ -1186,10 +1186,10 @@ which is invoked by it with the current selection, if there is one.
     def __call__(self, nodes, **kw):
         """None <- fixHNamesGC(nodes, **kw)
         \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         
-        apply( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def guiCallback(self):
@@ -1302,9 +1302,9 @@ in a pdb file.\n
     def __call__(self, nodes, **kw):
         """None <--- fixHNames(nodes, **kw)
            \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
-        apply ( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
    
 
 
@@ -1495,10 +1495,10 @@ class SplitNodesGUICommand(MVCommand):
            \nlevelToSplit --- splitting level
            \ntop ---
            \nrenumber --- default is 1"""
-        if type(levelToSplit)==types.StringType:
+        if type(levelToSplit)==bytes:
             levelToSplit = self.levelDict[levelToSplit]
         kw['renumber'] = renumber
-        apply(self.doitWrapper, (nodes, levelToSplit, top,), kw)
+        self.doitWrapper(*(nodes, levelToSplit, top,), **kw)
 
 
     def fixIDS(self, chains):
@@ -1509,11 +1509,11 @@ class SplitNodesGUICommand(MVCommand):
         self.entStrs = []
         self.chains = chains
         ifd.append({'name':'Lab1',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'Current',
                     'gridcfg':{'sticky':'we'}})
         ifd.append({'name':'Lab2',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'New',
                     'gridcfg':{'sticky':'we', 'row':-1, 'column':1}})
         for ch in chains:
@@ -1532,14 +1532,14 @@ class SplitNodesGUICommand(MVCommand):
             self.nStrs.append(nStr)
             entStr = chid+'_ent'
             self.entStrs.append(entStr)
-            newEntVar = ent_varDict[ch] = Tkinter.StringVar()
+            newEntVar = ent_varDict[ch] = tkinter.StringVar()
             newEntVar.set(ch.id)
             ifd.append({'name':nStr,
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':ch.full_name(),
                     'gridcfg':{'sticky':'we'}})
             ifd.append({'name':entStr,
-                'widgetType':Tkinter.Entry,
+                'widgetType':tkinter.Entry,
                 'wcfg':{ 'textvariable': newEntVar, },
                 'gridcfg':{'sticky':'we', 'row':-1, 'column':1}})
         vals = self.vf.getUserInput(self.ifd, modal=0, blocking=1)
@@ -1552,14 +1552,14 @@ class SplitNodesGUICommand(MVCommand):
 
                 wl = strip(vals[self.entStrs[i]])
                 if len(wl) and ln!=1:
-                    print 'changed chain ', ch.full_name(), ' to ',  
+                    print('changed chain ', ch.full_name(), ' to ', end=' ')  
                     ch.id = wl[0]
                     ch.name = wl[0]
-                    print  ch.full_name()
+                    print(ch.full_name())
 
 
     def doit(self, nodes, levelToSplit, top, **kw):
-        mol = apply(self.vf.splitNodes, (nodes, levelToSplit, top,),kw)
+        mol = self.vf.splitNodes(*(nodes, levelToSplit, top,), **kw)
         # if levelToSplit is Molecule/Protein then mol is new mol
         # otherwise it is nodes.top with new levelToSplit items: chains or
         # residues....
@@ -1603,26 +1603,26 @@ class SplitNodesGUICommand(MVCommand):
         if len(levelChoices)==1:
             self.doitWrapper(nodes,self.levelDict[levelChoices[0]],top)
         else:
-            renumberChoice = Tkinter.IntVar()
+            renumberChoice = tkinter.IntVar()
             renumberChoice.set(1)
             ifd = InputFormDescr(title='Choose Split Level')    
             ifd.append({'name':'level',
-                    'widgetType': Tkinter.Radiobutton,
+                    'widgetType': tkinter.Radiobutton,
                     'listtext':levelChoices,
-                    'gridcfg':{'sticky':Tkinter.W}})
+                    'gridcfg':{'sticky':tkinter.W}})
             ifd.append({'name':'renumberLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'Renumber atoms after split',
-                    'gridcfg':{'sticky':Tkinter.W}})
+                    'gridcfg':{'sticky':tkinter.W}})
             ifd.append({'name': 'yesRenumber',
                     'text': 'yes',
-                    'widgetType': Tkinter.Radiobutton,
+                    'widgetType': tkinter.Radiobutton,
                     'value':1,
                     'variable': renumberChoice,
                     'gridcfg': {'sticky':'w'}})
             ifd.append({'name': 'noRenumber',
                     'text': 'no',
-                    'widgetType': Tkinter.Radiobutton,
+                    'widgetType': tkinter.Radiobutton,
                     'value':0,
                     'variable': renumberChoice,
                     'gridcfg': {'sticky':'w'}})
@@ -1698,12 +1698,12 @@ eg. splitting at the chain level adds a new chain to the Protein, etc. etc.\n
            \nif levelToSplit is Molecule/Protein, the new molecule is returned
            OTHERWISE the modified molecule is returned"""
 
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
-        if type(levelToSplit)==types.StringType:
+        if type(levelToSplit)==bytes:
             levelToSplit = self.levelDict[levelToSplit]
         kw['renumber'] = renumber
-        return apply(self.doitWrapper, (nodes, levelToSplit, top,), kw)
+        return self.doitWrapper(*(nodes, levelToSplit, top,), **kw)
 
 
     def doit(self, nodes, levelToSplit, top, **kw):
@@ -1734,8 +1734,8 @@ eg. splitting at the chain level adds a new chain to the Protein, etc. etc.\n
         #returnVal = []
         #then need to split each parent with its children in nodes
         for parent in parents:
-            children = nodes.__class__(filter(lambda x, parent=parent, nodes=nodes:\
-                x in parent.findType(nodes.elementType), nodes))
+            children = nodes.__class__(list(filter(lambda x, parent=parent, nodes=nodes:\
+                x in parent.findType(nodes.elementType), nodes)))
             #newnode of class levelToSplit is returned with proper children:
             #if top, add to viewer else adopt it by correct parent
             #split returns a copy of parent so thisResult is really parentCOPY
@@ -1770,7 +1770,7 @@ eg. splitting at the chain level adds a new chain to the Protein, etc. etc.\n
             if renumber:
                 for m in [top, newtop]:
                     fst = m.allAtoms[0].number
-                    m.allAtoms.number = range(fst, len(m.allAtoms)+fst)
+                    m.allAtoms.number = list(range(fst, len(m.allAtoms)+fst))
             #have to rebuilt allAtoms
 
             #newAllAtoms = AtomSet([])
@@ -1817,7 +1817,7 @@ by those of the second set.\n
            \nfieldList --- fields of type Int or Float in a list, default is []
            \nnegate --- flag when set to 1 undisplay the current selection, default is 0"""
         kw['negate'] = negate
-        apply(self.doitWrapper, (set1, set2, fieldList,), kw)
+        self.doitWrapper(*(set1, set2, fieldList,), **kw)
 
 
     def doit(self,set1, set2, fieldList, **kw):
@@ -1847,28 +1847,28 @@ by those of the second set.\n
 
     def guiCallback(self):
         import Pmv.selectionCommands
-        set_entries=self.vf.sets.keys()
+        set_entries=list(self.vf.sets.keys())
         if not len(set_entries):
             msg='No current sets'
             self.warningMsg(msg)
             return
         ifd=InputFormDescr(title='Select two sets')
         ifd.append({'name':'labelSet1',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text':'Change Set1 values',
-            'gridcfg':{'sticky':Tkinter.W}})
+            'gridcfg':{'sticky':tkinter.W}})
         ifd.append({'name': 'set1List',
-            'widgetType': Tkinter.Radiobutton,
+            'widgetType': tkinter.Radiobutton,
             'listtext':set_entries,
-            'gridcfg':{'sticky':Tkinter.W}})
+            'gridcfg':{'sticky':tkinter.W}})
         ifd.append({'name':'labelSet2',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text':'by values in Set2',
-            'gridcfg':{'sticky':Tkinter.W, 'row':0, 'column':1}})
+            'gridcfg':{'sticky':tkinter.W, 'row':0, 'column':1}})
         ifd.append({'name': 'set2List',
-            'widgetType': Tkinter.Radiobutton,
+            'widgetType': tkinter.Radiobutton,
             'listtext':set_entries,
-            'gridcfg':{'sticky':Tkinter.W, 'row':1, 'column':1}})
+            'gridcfg':{'sticky':tkinter.W, 'row':1, 'column':1}})
 
         vals = self.vf.getUserInput(ifd)
         if vals is not None and len(vals)>0:
@@ -1877,28 +1877,26 @@ by those of the second set.\n
         else:
             return
 
-        entries1 = filter(lambda x: isinstance(x[1], types.IntType)\
-                        or isinstance(x[1], types.FloatType),
-                        set1[0].__dict__.items())
-        entries1=map(lambda x: x[0], entries1)
-        entries2 = filter(lambda x: isinstance(x[1], types.IntType)\
-                        or isinstance(x[1], types.FloatType),
-                        set2[0].__dict__.items())
-        entries2=map(lambda x: x[0], entries2)
+        entries1 = [x for x in list(set1[0].__dict__.items()) if isinstance(x[1], int)\
+                        or isinstance(x[1], float)]
+        entries1=[x[0] for x in entries1]
+        entries2 = [x for x in list(set2[0].__dict__.items()) if isinstance(x[1], int)\
+                        or isinstance(x[1], float)]
+        entries2=[x[0] for x in entries2]
 
-        entries = filter(lambda x,entries2=entries2:x in entries2, entries1)
+        entries = list(filter(lambda x,entries2=entries2:x in entries2, entries1))
 
         ifd=InputFormDescr(title='Select Property')
         ifd.append({'name': 'propList',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'listtext': entries,
             'title':'Select Property(s) to Merge',
-            'gridcfg':{'sticky':Tkinter.W}})
+            'gridcfg':{'sticky':tkinter.W}})
         ifd.append({'name':'negateB',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'defaultValue':0,
             'wcfg':{'text':'Subtract (when on)'},
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E}})
         vals = self.vf.getUserInput(ifd)
         if vals is not None and len(vals)>0:
             fieldList = vals['propList']
@@ -1907,7 +1905,7 @@ by those of the second set.\n
             kw['log'] =1
             kw['redraw'] =1
             
-            apply(self.doitWrapper, (set1, set2, [vals['propList']],), kw)
+            self.doitWrapper(*(set1, set2, [vals['propList']],), **kw)
 
 
 mergeFieldsCommandGuiDescr = {'widgetType':'Menu','menuBarName':'menuRoot',
@@ -1962,7 +1960,7 @@ One by one items in the first set adopt children of items of the second set\n
 \nset2 --- second set
 
            """
-        return apply(self.doitWrapper, (set1, set2,), kw)
+        return self.doitWrapper(*(set1, set2,), **kw)
 
 
     def doit(self,set1, set2, **kw):
@@ -2057,7 +2055,7 @@ One by one items in the first set adopt children of items of the second set\n
 
     def guiCallback(self):
         import Pmv.selectionCommands
-        set_entries=self.vf.sets.keys()
+        set_entries=list(self.vf.sets.keys())
         if not len(set_entries):
             msg='No current sets'
             self.warningMsg(msg)
@@ -2068,26 +2066,26 @@ One by one items in the first set adopt children of items of the second set\n
             return
         ifd=InputFormDescr(title='Select two sets')
         ifd.append({'name':'labelSet1',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text':'Add to Set1',
-            'gridcfg':{'sticky':Tkinter.W}})
+            'gridcfg':{'sticky':tkinter.W}})
         ifd.append({'name': 'set1List',
-            'widgetType': Tkinter.Radiobutton,
+            'widgetType': tkinter.Radiobutton,
             'listtext':set_entries,
-            'gridcfg':{'sticky':Tkinter.W}})
+            'gridcfg':{'sticky':tkinter.W}})
         ifd.append({'name':'labelSet2',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'text':'children of nodes in Set2',
-            'gridcfg':{'sticky':Tkinter.W, 'row':0, 'column':1}})
+            'gridcfg':{'sticky':tkinter.W, 'row':0, 'column':1}})
         ifd.append({'name': 'set2List',
-            'widgetType': Tkinter.Radiobutton,
+            'widgetType': tkinter.Radiobutton,
             'listtext':set_entries,
-            'gridcfg':{'sticky':Tkinter.W, 'row':1, 'column':1}})
+            'gridcfg':{'sticky':tkinter.W, 'row':1, 'column':1}})
         ifd.append({'name':'negateB',
-            'widgetType':Tkinter.Checkbutton,
+            'widgetType':tkinter.Checkbutton,
             'defaultValue':0,
             'wcfg':{'text':'Negate'},
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E}})
         vals = self.vf.getUserInput(ifd)
         if vals is not None and len(vals)>0:
             set1=self.vf.sets[vals['set1List']]
@@ -2096,7 +2094,7 @@ One by one items in the first set adopt children of items of the second set\n
             dict['log'] = 1
             dict['redraw'] = 1
             dict['negate'] = int(vals['negateB'])
-            apply(self.doitWrapper,(set1, set2,),dict)
+            self.doitWrapper(*(set1, set2,), **dict)
 
 
 mergeSetsCommandGuiDescr = {'widgetType':'Menu','menuBarName':'menuRoot',
@@ -2135,11 +2133,11 @@ class MergeNPHsGUICommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None <- mergeNPHSGC(nodes, **kw)
 \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes, **kw):
@@ -2154,18 +2152,18 @@ class MergeNPHsGUICommand(MVCommand):
                 msg += m.name + ','
             msg =  msg[:-1] + ' has ' + str(len(hs_with_no_bonds)) + ' hydrogen(s) with no bonds:'
             for at in hs_with_no_bonds:
-                print 'adding ', at.full_name()
+                print('adding ', at.full_name())
                 msg += at.parent.parent.name + ':'+ at.parent.name +':'+ at.name + ','
-                print 'EC:', msg
+                print('EC:', msg)
             self.warningMsg(msg[:-1])
         #npHs = ats.get(lambda x: x.element=='H' and
                        #(x.bonds[0].atom1.element=='C' or 
                         #x.bonds[0].atom2.element=='C'))
         npHs = hs_with_bonds.get(lambda x: x.bonds[0].atom1.element=='C' or x.bonds[0].atom2.element=='C')
         if npHs is not None and len(npHs)!=0:
-            if kw.has_key('logBaseCmd'):
+            if 'logBaseCmd' in kw:
                 kw['topCommand'] = kw['logBaseCmd']
-            apply(self.vf.mergeNPHS,(npHs,),kw)
+            self.vf.mergeNPHS(*(npHs,), **kw)
             self.vf.select.updateSelectionIcons()
         else:
             return 'ERROR'
@@ -2183,14 +2181,14 @@ class MergeNPHsGUICommand(MVCommand):
         Do you want to continue?""" 
                 idf = self.idf = InputFormDescr(title="WARNING")
                 idf.append({'name': 'testLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':text},
                     'gridcfg':{'columnspan':3,'sticky':'w'}})
-                idf.append({'widgetType':Tkinter.Button,
+                idf.append({'widgetType':tkinter.Button,
                     'wcfg':{'text':'CONTINUE',
                         'command':CallBackFunction(self.cont_cb, sel)},
                     'gridcfg':{'sticky':'we'}})
-                idf.append({'widgetType':Tkinter.Button,
+                idf.append({'widgetType':tkinter.Button,
                     'wcfg':{'text':'CANCEL', 'command':self.cancel_cb},
                     'gridcfg':{'row':-1,'sticky':'we'}})
                 self.form = self.vf.getUserInput(idf, modal=0, blocking=0)
@@ -2239,11 +2237,11 @@ class MergeNPHsCommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None <- mergeNPHS(nodes, **kw)
 \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
-        return apply(self.doitWrapper, (nodes,), kw)
+        return self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes, **kw):
@@ -2295,11 +2293,11 @@ class MergeLonePairsGUICommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None <- mergeLPSGC(nodes, **kw)
 \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes, **kw):
@@ -2308,9 +2306,9 @@ class MergeLonePairsGUICommand(MVCommand):
                  and (x.name[0]=='L' or \
                  x.name[1]=='L'))
         if lps is not None and len(lps)!=0:
-            if kw.has_key('logBaseCmd'):
+            if 'logBaseCmd' in kw:
                 kw['topCommand'] = kw['logBaseCmd']
-            apply(self.vf.mergeLPS, (lps,), kw)
+            self.vf.mergeLPS(*(lps,), **kw)
             self.vf.select.updateSelectionIcons()
         else:
             return 'ERROR'
@@ -2328,14 +2326,14 @@ class MergeLonePairsGUICommand(MVCommand):
         Do you want to continue?""" 
                 idf = self.idf = InputFormDescr(title="WARNING")
                 idf.append({'name': 'testLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':text},
                     'gridcfg':{'columnspan':3,'sticky':'w'}})
-                idf.append({'widgetType':Tkinter.Button,
+                idf.append({'widgetType':tkinter.Button,
                     'wcfg':{'text':'CONTINUE',
                         'command':CallBackFunction(self.cont_cb, sel)},
                     'gridcfg':{'sticky':'we'}})
-                idf.append({'widgetType':Tkinter.Button,
+                idf.append({'widgetType':tkinter.Button,
                     'wcfg':{'text':'CANCEL', 'command':self.cancel_cb},
                     'gridcfg':{'row':-1,'sticky':'we'}})
                 self.form = self.vf.getUserInput(idf, modal=0, blocking=0)
@@ -2390,11 +2388,11 @@ in the first or second position.
     def __call__(self, nodes, **kw):
         """None<---mergeLPS(nodes, **kw)
 \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
-        return apply(self.doitWrapper, (nodes,), kw)
+        return self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes, **kw):
@@ -2433,13 +2431,13 @@ in the first or second position.
                 continue
             #process each field in lps._charges.keys()
             #to get only the ones every lps has:
-            chList = lps[0]._charges.keys()
+            chList = list(lps[0]._charges.keys())
             for at in lps:
-                chs = at._charges.keys()
+                chs = list(at._charges.keys())
                 for c in chList:
                     if c not in chs: chList.remove(c)
             if not len(chList): 
-                 print 'no consistent chargeSet across sulfurs\ncharge on sulfurs unchanged'
+                 print('no consistent chargeSet across sulfurs\ncharge on sulfurs unchanged')
                 #self.warningMsg('no consistent chargeSet across sulfurs\ncharge on sulfurs unchanged')
             for chargeSet in chList:
                 for lp in lps:
@@ -2501,10 +2499,10 @@ for each atom and entering each atom's charge in its _charges dictionary.
         """None<---computeGasteigerGC(nodes, **kw)
            \nnodes --- TreeNodeSet holding the current selection"""
 
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         if not len(nodes): return
-        return apply(self.doitWrapper, (nodes,), kw )
+        return self.doitWrapper(*(nodes,), **kw)
 
 
     def guiCallback(self):
@@ -2552,7 +2550,7 @@ class ComputeGasteigerCommand(MVCommand):
 
         for at in allAtoms:
             #if hasattr(at, 'gast_charge'):
-            if at._charges.has_key('gasteiger'):
+            if 'gasteiger' in at._charges:
                 chargeAts.append(at)
                 charges.append(at._charges['gasteiger'])
             else:
@@ -2574,11 +2572,11 @@ class ComputeGasteigerCommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None <- computeGasteiger(nodes, **kw)
            \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return
-        apply ( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
 
     def doit(self, nodes ):
         #nodes = self.vf.expandNodes(nodes)
@@ -2586,7 +2584,7 @@ class ComputeGasteigerCommand(MVCommand):
 
         mols = nodes.top.uniq()
         for mol in mols:
-            babel_typed = filter(lambda x: hasattr(x,'babel_type'), mol.allAtoms)
+            babel_typed = [x for x in mol.allAtoms if hasattr(x,'babel_type')]
             if len(babel_typed)==len(mol.allAtoms):
                 continue
             babel = AtomHybridization()
@@ -2641,10 +2639,10 @@ class AddKollmanChargesGUICommand(MVCommand):
     def __call__(self, nodes, **kw):
         """totalCharge <- addKollmanChargesGC(nodes, **kw)
 \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         kw['topCommand'] = 0
-        return apply(self.doitWrapper, (nodes,), kw)
+        return self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes,):
@@ -2709,9 +2707,9 @@ class AddKollmanChargesCommand(MVCommand):
     def __call__(self, nodes, **kw):
         """totalCharge<---addKollmanCharges(nodes, **kw)
 \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
-        return apply(self.doitWrapper, (nodes,), kw)
+        return self.doitWrapper(*(nodes,), **kw)
 
 
     def setupUndoBefore(self, nodes):
@@ -2722,7 +2720,7 @@ class AddKollmanChargesCommand(MVCommand):
         nochargeAts = AtomSet([])
         for at in allAtoms:
             #if hasattr(at, 'gast_charge'):
-            if at._charges.has_key('Kollman'):
+            if 'Kollman' in at._charges:
                 chargeAts.append(at)
                 charges.append(at._charges['Kollman'])
             else:
@@ -2756,11 +2754,11 @@ class AddKollmanChargesCommand(MVCommand):
 
         total = 0.0
         for a in allAtoms:
-            if not self.q.has_key(a.parent.type):
+            if a.parent.type not in self.q:
                 a._charges['Kollman'] = 0.0
             else:
                 dict = self.q[a.parent.type]
-                if dict.has_key(a.name):
+                if a.name in dict:
                     a._charges['Kollman'] = dict[a.name]
                     total = total + a._charges['Kollman']
                 else:
@@ -2800,25 +2798,25 @@ class AddKollmanChargesCommand(MVCommand):
         """
         nresSet =  nres.atoms.get('N')
         if nresSet is None or len(nresSet)==0:
-            if self.q.has_key(nres.type):
+            if nres.type in self.q:
                 for at in nres.atoms:
                     try:
                         at._charges['Kollman'] = self.q[at.parent.type][at.name]
                     except:
                         at._charges['Kollman'] = 0.0
             else:
-                print  nres.name, ' not in qkollua; charges set to 0.0'
+                print(nres.name, ' not in qkollua; charges set to 0.0')
                 for at in nres.atoms:
                     at._charges['Kollman'] = 0.0
             return total
         Natom = nres.atoms.get('N')[0]
         caresSet = nres.atoms.get('CA')
         if caresSet is None or len(caresSet)==0:
-            if self.q.has_key(nres.type):
+            if nres.type in self.q:
                 for at in nres.atoms:
                     at._charges['Kollman'] = self.q[at.parent.type][at.name]
             else:
-                print  nres.name, ' not in qkollua; charges set to 0.0'
+                print(nres.name, ' not in qkollua; charges set to 0.0')
                 for at in nres.atoms:
                     at._charges['Kollman'] = 0.0
             return total
@@ -2828,7 +2826,7 @@ class AddKollmanChargesCommand(MVCommand):
             hlist = Natom.findHydrogens()
             #5/5:assert len(hlist), 'polar hydrogens missing from n-terminus'
             if not len(hlist): 
-                print 'polar hydrogens missing from n-terminus of chain ' + nres.parent.name
+                print('polar hydrogens missing from n-terminus of chain ' + nres.parent.name)
                 #self.warningMsg('polar hydrogens missing from n-terminus')
             if nres.type == 'PRO':
                 #divide .059 additional charge between CA + CD
@@ -2839,7 +2837,7 @@ class AddKollmanChargesCommand(MVCommand):
                     CDatom = CDatom[0]
                     CDatom._charges['Kollman'] = CDatom._charges['Kollman'] + .029
                 else:
-                    print 'WARNING: no CD atom in ', nres.name
+                    print('WARNING: no CD atom in ', nres.name)
                 Natom._charges['Kollman'] = Natom._charges['Kollman'] + .274
                 CAatom._charges['Kollman'] = CAatom._charges['Kollman'] + .030
                 for ha in hlist:
@@ -2852,7 +2850,7 @@ class AddKollmanChargesCommand(MVCommand):
             
             return total + 1
         else:
-            print 'WARNING: no CA atom in ', nres.name
+            print('WARNING: no CA atom in ', nres.name)
             return total
 
 
@@ -2911,13 +2909,13 @@ class AddKollmanChargesCommand(MVCommand):
             d = self.q['HIS']
         else:
             msgStr = his.full_name() + ' missing both hydrogens!'
-            print msgStr
+            print(msgStr)
             #self.warningMsg(msgStr)
             return total
 
         #assign charges
         for a in his.atoms:
-            if d.has_key(a.name):
+            if a.name in d:
                 a._charges['Kollman'] = d[a.name]
             else:
                 a._charges['Kollman'] = 0.0
@@ -2946,7 +2944,7 @@ class AddKollmanChargesCommand(MVCommand):
 
         #assign charges
         for a in cys.atoms:
-            if d.has_key(a.name):
+            if a.name in d:
                 a._charges['Kollman'] = d[a.name]
             else:
                 a._charges['Kollman'] = 0.0
@@ -2988,12 +2986,12 @@ class AverageChargeErrorCommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None<---averageChargeError(nodes, **kw)
            \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         kw['topCommand'] = 0
         nodes = self.vf.expandNodes(nodes)
         if len(nodes): 
-            apply(self.doitWrapper,(nodes,), kw)
+            self.doitWrapper(*(nodes,), **kw)
         else: 
             return 'ERROR'
 
@@ -3010,7 +3008,7 @@ class AverageChargeErrorCommand(MVCommand):
             self.averageCharge(res)
         tops = resSet.top.uniq()
         for t in tops:
-            okAts = t.allAtoms.get(lambda x: not x._charges.has_key('adjustedCharge'))
+            okAts = t.allAtoms.get(lambda x: 'adjustedCharge' not in x._charges)
             if okAts is not None and len(okAts)!=0:
                 okAts.addCharges('adjustedCharges', okAts.charge)
         t.allAtoms.setCharges('adjustedCharges')
@@ -3266,10 +3264,10 @@ class CheckChargesGUICommand(MVCommand):
 
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('labelByProperty'):
+        if 'labelByProperty' not in self.vf.commands:
             self.vf.loadCommand('labelCommands', 'labelByProperty','Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('labelByExpression'):
+        if 'labelByExpression' not in self.vf.commands:
             self.vf.loadCommand('labelCommands', 'labelByExpression','Pmv',
                                 topCommand=0)
         if not hasattr(self.vf, 'checkResCharges'):
@@ -3289,12 +3287,12 @@ class CheckChargesGUICommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None<---checkChargesGC(nodes, **kw)
            \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         kw['topCommand'] = 0
         nodes = self.vf.expandNodes(nodes)
         if len(nodes): 
-            apply(self.doitWrapper,(nodes,), kw)
+            self.doitWrapper(*(nodes,), **kw)
         else: 
             return 'ERROR'
 
@@ -3316,9 +3314,9 @@ class CheckChargesGUICommand(MVCommand):
         #if the molecule has changed....
         ifd = self.ifd=InputFormDescr(title='Check Residue Charge Results:')
         ifd.append({'name': 'numResErrsLabel',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'wcfg':{'text': str(len(resSet)) + ' Residues with non-integral charge:\n(double click to edit charges on a residue\nyellow number is amt to add\nfor closest integral charge)'},
-            'gridcfg':{'sticky': Tkinter.W+Tkinter.E}})
+            'gridcfg':{'sticky': tkinter.W+tkinter.E}})
         ifd.append({'name': 'resLC',
             'widgetType':ListChooser,
             'wcfg':{
@@ -3332,20 +3330,20 @@ class CheckChargesGUICommand(MVCommand):
                     'width': 30}},
             'gridcfg':{'sticky':'news','row':2,'column':0} })
         ifd.append({'name': 'chargeLabel',
-            'widgetType':Tkinter.Label,
+            'widgetType':tkinter.Label,
             'wcfg':{'text':'Net Charge on ResidueSet:  ' + str(totalCharge)},
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E}})
         ifd.append({'name':'averBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Spread Charge Deficit\nover all atoms in residue',
                 'command': CallBackFunction(self.averageCharge, resSet)},
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E}})
         #ifd.append({'name':'showBut',
             #'widgetType':Tkinter.Button,
             #'wcfg': { 'text':'Save Non-Integral Charge Residues As Set',
                 #'command': CallBackFunction(self.saveErrResidues, resSet)},
             #'gridcfg':{'sticky':Tkinter.W+Tkinter.E}})
-        ifd.append({'widgetType':Tkinter.Button,
+        ifd.append({'widgetType':tkinter.Button,
             'wcfg':{'bd':6, 'text':'Dismiss',
                     'command': CallBackFunction(self.Dismiss_cb, resSet)},
             'gridcfg':{'sticky':'ew', 'columnspan':4}})
@@ -3465,7 +3463,7 @@ class SetChargeCommand(MVCommand):
 
     def onAddCmdToViewer(self):
         if self.vf.hasGui:
-            self.key = Tkinter.StringVar()
+            self.key = tkinter.StringVar()
 
 
     def __call__(self, nodes, key, **kw):
@@ -3473,7 +3471,7 @@ class SetChargeCommand(MVCommand):
            \nnodes --- TreeNodeSet holding the current selection
            \nkey --- what charges (keyword of the _charges dictionary).
            """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         #is this a good idea?
@@ -3482,10 +3480,10 @@ class SetChargeCommand(MVCommand):
         if len(nodes): 
             nodes = nodes.findType(Atom)
             #check that the key is valid
-            nodes_with_key = filter(lambda x: key in x._charges.keys(), nodes)
+            nodes_with_key = [x for x in nodes if key in list(x._charges.keys())]
             if len(nodes_with_key)!=len(nodes):
                 raise KeyError
-            return apply(self.doitWrapper,(nodes, key), kw)
+            return self.doitWrapper(*(nodes, key), **kw)
         else: return 'ERROR'
 
 
@@ -3500,9 +3498,9 @@ class SetChargeCommand(MVCommand):
             return
         nodes = z.findType(Atom)
         # only displays the charges keys f
-        keys = nodes._charges.keys()
+        keys = list(nodes._charges.keys())
         if not len(keys):
-            print 'no charges to choose from'
+            print('no charges to choose from')
             return
         self.key.set(keys[0])
         if len(keys)>1:
@@ -3510,22 +3508,22 @@ class SetChargeCommand(MVCommand):
             ifd = self.ifd = InputFormDescr(title = 'Select charge')
             ifd.append({'name': 'chargeList',
                         'listtext': keys,
-                        'widgetType': Tkinter.Radiobutton,
+                        'widgetType': tkinter.Radiobutton,
                         'groupedBy': 10,
                         'defaultValue': currentCharge,
                         'variable': self.key,
-                        'gridcfg': {'sticky': Tkinter.W}})
+                        'gridcfg': {'sticky': tkinter.W}})
             val = self.vf.getUserInput(ifd)
             if val is None or val=={} or not len(val):
                 return 
         else:
-            print 'using only available charge: ', keys[0]
+            print('using only available charge: ', keys[0])
         kw = {}
         kw['redraw'] = 0
 ##         if self.vf.userpref['expandNodeLogString']['value'] == 0:
 ##             self.nodeLogString = "self.getSelection()"
 
-        apply(self.doitWrapper, (nodes, self.key.get()), kw)
+        self.doitWrapper(*(nodes, self.key.get()), **kw)
 
 setChargeGUICommandGuiDescr = {'widgetType':'Menu',
                                   'menuBarName':'menuRoot',
@@ -3559,13 +3557,13 @@ class CheckResidueChargesCommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None <- checkResCharges(nodes, **kw)
            \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if len(nodes): 
             #if there are nodes, there have to be Residues
             resSet = nodes.findType(Residue).uniq()
-            return apply(self.doitWrapper,(resSet,), kw)
+            return self.doitWrapper(*(resSet,), **kw)
         else: 
             kw['log'] = 0
             self.warningMsg('no nodes specified')
@@ -3658,36 +3656,36 @@ class AssignAtomsRadiiCommand(MVCommand):
                     existing radii information.\n
 
         """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 
         kw['united'] = united
         kw['overwrite'] = overwrite
-        apply(self.doitWrapper, (nodes, ), kw)
+        self.doitWrapper(*(nodes, ), **kw)
 
         
     def guiCallback(self):
         nodes = self.vf.getSelection()
         if not nodes: return
         idf = InputFormDescr(title="Assign Atoms Radii")
-        idf.append({'widgetType':Tkinter.Checkbutton,
+        idf.append({'widgetType':tkinter.Checkbutton,
                     'name':'united',
                     'tooltip': "When united is set to 1 it means that the radii should be calculated without hydrogen atoms.",
                     'defaultValue':1,
                     'wcfg':{'text':'United Radii',
-                            'variable':Tkinter.IntVar()},
+                            'variable':tkinter.IntVar()},
                     'gridcfg':{'sticky':'w'}})
-        idf.append({'widgetType':Tkinter.Checkbutton,
+        idf.append({'widgetType':tkinter.Checkbutton,
                     'name':'overwrite',
                     'tooltip': "When overwrite is off the existing radii information won't be overwritten.",
                     'defaultValue':0,
-                    'wcfg':{'text':'Overwrite Radii','variable':Tkinter.IntVar()},
+                    'wcfg':{'text':'Overwrite Radii','variable':tkinter.IntVar()},
                     'gridcfg':{'sticky':'w'}})
 
         val = self.vf.getUserInput(idf)
         if val is None or val == {}: return
-        apply(self.doitWrapper, (self.vf.getSelection(),), val)
+        self.doitWrapper(*(self.vf.getSelection(),), **val)
 
 assignAtomsRadiiGUICommandGuiDescr = {'widgetType':'Menu',
                                       'menuBarName':'menuRoot',

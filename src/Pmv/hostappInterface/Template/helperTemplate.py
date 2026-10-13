@@ -12,8 +12,8 @@ fill the different function using the hostApp API
 """
 #Python import
 import numpy
-import numpy.oldnumeric as Numeric
-import sys, os, os.path, struct, math, string
+import mglcompat.oldnumeric as Numeric
+import sys, os, os.path, struct, math; from mglcompat import pystring as string
 from math import *    
 from types import StringType, ListType
 
@@ -72,7 +72,7 @@ def start(debug=0):
     @return:  an instance of pmv.
     """
      
-    if VERBOSE : print "start PMV - debug ",debug
+    if VERBOSE : print("start PMV - debug ",debug)
     mv = MoleculeViewer(logMode = 'overwrite', customizer=None, master=None,
                         title='pmv', withShell= 0,verbose=False, gui = False)
     mv.addCommand(BindGeomToMolecularFragment(), 
@@ -590,7 +590,7 @@ def addMaterial(name,color):
     doc = getCurrentScene()
     # look if the material already exist
     __mat = None#doc.SearchMaterial(name) put your code here
-    if VERBOSE : print name,color	  
+    if VERBOSE : print(name,color)	  
     if __mat != None :
         return __mat	  		
     else :
@@ -765,10 +765,10 @@ def getMaterialListe():
     
     Material=getMaterials()
     matlist=[]
-    matlist.extend(Material["atoms"].keys())
-    matlist.extend(Material["residus"].keys())
-    matlist.extend(Material["ss"].keys())
-    matlist.extend(Material["sticks"].keys())            
+    matlist.extend(list(Material["atoms"].keys()))
+    matlist.extend(list(Material["residus"].keys()))
+    matlist.extend(list(Material["ss"].keys()))
+    matlist.extend(list(Material["sticks"].keys()))            
     return matlist
 
 def makeLabels(mol,selection):
@@ -793,7 +793,7 @@ def updateRTSpline(spline,selectedPoint,distance = 2.0,DistanceBumping = 1.85):
     #get the total number of point of the curve
     nb_points = spline.GetPointCount()
     #update upstream
-    for j in xrange(selectedPoint,nb_points-1):
+    for j in range(selectedPoint,nb_points-1):
         #get point j and j+1
         leaderB = spline.GetPointAll(j)
         myPos = spline.GetPointAll(j+1)
@@ -857,7 +857,7 @@ def updateMolAtomCoord(mol,index=-1):
         #get the object o position, use the hostApp api 
         pos=(0.,0.,0.)#o.GetMg().off
         vt.append(pos)
-	if index == -1 : index = 0	
+        if index == -1 : index = 0	
     mol.allAtoms.updateCoords(vt,ind=index)
 
 def updateCoordFromObj(mv,sel,debug=True):
@@ -908,7 +908,7 @@ def updateCoordFromObj(mv,sel,debug=True):
                             #from Pmv import amberCommands
                             #amberCommands.Amber94Config = {}
                             #amberCommands.CurrentAmber94 = {}
-							#amb_ins = Amber94(atoms, prmfile=filename)
+                                                        #amb_ins = Amber94(atoms, prmfile=filename)
                             mv.setup_Amber94(mol.name+":",mv.energy.name,mol.prname,indice=mol.cconformationIndex)
                             mv.minimize_Amber94(mv.energy.name, dfpred=10.0, callback_freq='10', callback=1, drms=1e-06, maxIter=100., log=0)
                             #mv.md_Amber94(mv.energy.name, 349, callback=1, filename='0', log=0, callback_freq=10)
@@ -972,7 +972,7 @@ def Cylinder(name,radius=1.,length=1.,res=16, pos = [0.,0.,0.]):
 #    baseCyl length = length
 #    baseCyl resolution = res
     return baseCyl
-		
+                
 def Sphere(name,radius=1.0,res=0, pos = [0.,0.,0.]):
     """
     Create a hostobject of type sphere.
@@ -1048,7 +1048,7 @@ def updateSphereMesh(geom,quality=0,cpkRad=0.8,scale=0.,radius=0):
     
     AtmRadi = {"A":1.7,"N":"1.54","C":"1.85","O":"1.39","S":"1.85","H":"1.2","P" : "1.7"}
     #print geom.mesh
-    for name in geom.mesh.keys() : 
+    for name in list(geom.mesh.keys()) : 
         #get the scale factor
         scaleFactor=float(cpkRad)+float(AtmRadi[name])*float(scale)
         if float(cpkRad) > 0. :
@@ -1096,7 +1096,7 @@ def createBaseSphere(name="BaseMesh",quality=0,cpkRad=0.,scale=0.,
     baseSphere = Sphere(name+"_sphere",radius=1.0,res=QualitySph[str(quality)])
     addObjectToScene(getCurrentScene(),baseSphere,parent=baseShape)
     if mat == None : mat=create_Atoms_materials()
-    for atn in AtmRadi.keys():
+    for atn in list(AtmRadi.keys()):
         atparent=newEmpty(name+"_"+atn)
         scaleFactor=float(cpkRad)+float(AtmRadi[atn])*float(scale)
         rad=AtmRadi[atn]
@@ -1231,38 +1231,38 @@ def instancesAtomsSphere(name,x,iMe,doc,mat=None,scale=1.0,
     hiera = 'default'		
     mol = x[0].getParentOfType(Protein)		
     molname = name.split("_")[0]
-    if VERBOSE : print "molname ", molname,mol
+    if VERBOSE : print("molname ", molname,mol)
     Spline = getObject("spline"+molname)
     for c in mol.chains:
-		spher=[]
-		oneparent = True 
-		atoms = c.residues.atoms
-		parent=findatmParentHierarchie(atoms[0],n,hiera)
-		#print "finded",parent        
-		for j in xrange(len(atoms.coords)):
-			#at=res.atoms[j]
-			at=atoms[j]
-			radius = at.radius
-			scaleFactor=float(R)+float(radius)*float(scale)
-			atN=at.name
-			#print atN
-			if atN[0] not in AtmRadi.keys(): atN="A"
-			fullname = at.full_name()
-			#print fullname
-			atC=at.coords#at._coords[0]
-			spher.append( None ) #instance HotApp object
+                spher=[]
+                oneparent = True 
+                atoms = c.residues.atoms
+                parent=findatmParentHierarchie(atoms[0],n,hiera)
+                #print "finded",parent        
+                for j in range(len(atoms.coords)):
+                        #at=res.atoms[j]
+                        at=atoms[j]
+                        radius = at.radius
+                        scaleFactor=float(R)+float(radius)*float(scale)
+                        atN=at.name
+                        #print atN
+                        if atN[0] not in list(AtmRadi.keys()): atN="A"
+                        fullname = at.full_name()
+                        #print fullname
+                        atC=at.coords#at._coords[0]
+                        spher.append( None ) #instance HotApp object
             #sphs[i][1001]=meshsphere #set the mesh for the instance
             #sphs[i].SetName(name+str(i))        #set the name for the instance
             #sphs[i].SetPos(c4dv(centers[i]))    #set the position for the instance
             #sphs[i][905]=scale               #set the scale for the instance
             #set the colors for the instance
-			addObjectToScene(getCurrentScene(),spher[j],parent=cp)
-			toggleDisplay(spher[j],False)
-			k=k+1
-			if pb :
-				progressBar(j/len(coords)," cpk ")
+                        addObjectToScene(getCurrentScene(),spher[j],parent=cp)
+                        toggleDisplay(spher[j],False)
+                        k=k+1
+                        if pb :
+                                progressBar(j/len(coords)," cpk ")
                 update()
-		sphers.extend(spher)
+                sphers.extend(spher)
     if pb :
         resetProgressBar(0)
     return sphers
@@ -1387,7 +1387,7 @@ def updateTubeObj(atm1,atm2,bicyl=False):
         name="T_"+atm1.name+str(atm1.number)+"_"+atm2.name+str(atm2.number)
         o=getObject(name)
         updateOneSctick(o,c0,c1)
-		        		
+                                        
 def updateOneSctick(o,coord1,coord2):
     """
     update one tube object from new coordinate.
@@ -1457,7 +1457,7 @@ def biStick(atm1,atm2,hiera,instance):
     addObjectToScene(getCurrentScene(),stick[0],parent=parent)
     addObjectToScene(getCurrentScene(),stick[1],parent=parent)	
     return stick
-	
+        
 def Tube(set,atms,points,faces,doc,mat=None,res=32,size=0.25,sc=1.,join=0,
          instance=None,hiera = 'perRes',bicyl=False,pb=False):
     """
@@ -1589,11 +1589,11 @@ def matrix2hostAppMat(mat,transpose = True):
     from Pmv.hostappInterface import comput_util as C
     #do we need to transpose
     if transpose :
-	    mat = Numeric.array(mat).transpose().reshape(16,)
+            mat = Numeric.array(mat).transpose().reshape(16,)
     else :
-	    mat = Numeric.array(mat).reshape(16,)
+            mat = Numeric.array(mat).reshape(16,)
     r,t,s = C.Decompose4x4(mat)  	
-    	#Order of euler angles: heading first, then attitude/pan, then bank
+        #Order of euler angles: heading first, then attitude/pan, then bank
     axis = C.ApplyMatrix(Numeric.array([[1.,0.,0.],[0.,1.,0.],[0.,0.,1.]]),r.reshape(4,4))
     #put your code here
     mx=None
@@ -1689,8 +1689,8 @@ def editLines(molecules,atomSets):
             lines = getObject(ch.full_name()+'_line')
             if lines == None :
                 bonds, atnobnd = ch.residues.atoms.bonds
-                indices = map(lambda x: (x.atom1._bndIndex_,
-                                         x.atom2._bndIndex_), bonds)
+                indices = [(x.atom1._bndIndex_,
+                                         x.atom2._bndIndex_) for x in bonds]
 
                 lines = createsNmesh(ch.full_name()+'_line',ch.residues.atoms.coords,
                                      None,indices)
@@ -1698,7 +1698,7 @@ def editLines(molecules,atomSets):
                 mol.geomContainer.geoms[ch.full_name()+'_line'] = lines
             else : #need to update
                 updateLines(lines, chains=ch)
-				
+                                
 def updateLines(lines, chains=None):
     """
     This function update a polygon representing the atom bond 
@@ -1711,15 +1711,15 @@ def updateLines(lines, chains=None):
     """
 
     #lines = getObject(name)	
-	#if lines == None or chains == None:
-	    #print lines,chains	
+        #if lines == None or chains == None:
+            #print lines,chains	
     parent = getObject(chains.full_name())	
-	    #print parent		
+            #print parent		
     bonds, atnobnd = chains.residues.atoms.bonds
-    indices = map(lambda x: (x.atom1._bndIndex_,
-								x.atom2._bndIndex_), bonds)
+    indices = [(x.atom1._bndIndex_,
+                                                                x.atom2._bndIndex_) for x in bonds]
     updatePoly(lines,vertices=chains.residues.atoms.coords,faces=indices)
-		
+                
 def PointCloudObject(name,**kw):
     """
     This function create a polygon representing the atom as point (vertex of the polygon).
@@ -1739,14 +1739,14 @@ def PointCloudObject(name,**kw):
     coords=kw['vertices']
     #get the number of face if any
     nface = 0	
-    if kw.has_key("faces"):
+    if "faces" in kw:
         nface = len(kw['faces'])
     #create the polygon of name 'name'
     obj= None
-    host_vertices = map(hostAppVector,coords)
+    host_vertices = list(map(hostAppVector,coords))
     #example of settin up the polygon using map, if the polygon have a setpoint 
     #method for instance
-    map(obj.SetPoint,range(len(coords)),host_vertices)    
+    list(map(obj.SetPoint,list(range(len(coords))),host_vertices))    
     #else you can just make a for loop
     addObjectToScene(getCurrentScene(),obj,parent=parent)    
     return obj
@@ -1799,9 +1799,9 @@ def polygons(name,smooth=False,color=[0.5,0.5,0.5], material=None, **kw):
     faces = kw["faces"]
     normals = kw["normals"]
     frontPolyMode='fill'
-    if kw.has_key("frontPolyMode"):	  
+    if "frontPolyMode" in kw:	  
         frontPolyMode = kw["frontPolyMode"]
-    if kw.has_key("shading") :  
+    if "shading" in kw :  
         shading=kw["shading"]#'flat'
     if frontPolyMode == "line" : #wire mode look for material wire
         material = None#getCurrentScene().SearchMaterial("wire") Put your code here
@@ -1811,8 +1811,8 @@ def polygons(name,smooth=False,color=[0.5,0.5,0.5], material=None, **kw):
     polygon = None #ex : c4d.PolygonObject(len(vertices), len(faces))
     #example of settin up the polygon using map, if the polygon have a setpoint 
     #method for instance
-    host_vertices = map(hostAppVector,vertices)
-    map(polygon.SetPoint,range(len(vertices)),host_vertices)
+    host_vertices = list(map(hostAppVector,vertices))
+    list(map(polygon.SetPoint,list(range(len(vertices))),host_vertices))
     #set the faces, you can use either a loop or a map function
     #here is the for loop checking the size of the face 
     #ie , 2, 3 or 4 vertices/faces
@@ -1896,7 +1896,7 @@ def instancePolygon(name, matrices=None, mesh=None,parent=None):
         #add the object to the scene under the given 'parent' object
         AddObject(instance[-1],parent=parent)
     return instance
-	  	
+                
 def updatePoly(polygon,faces=None,vertices=None):
     """
     This function update a given polygon mesh according the given new vertices and faces.
@@ -1971,15 +1971,15 @@ def changeMaterialSchemColor(typeMat):
     """     
     
     if typeMat == "ByAtom":
-        for atms in AtomElements.keys() : colorMaterial(atms,AtomElements[atms])
+        for atms in list(AtomElements.keys()) : colorMaterial(atms,AtomElements[atms])
     elif typeMat == "AtomsU" :
-        for atms in DavidGoodsell.keys() :colorMaterial(atms,DavidGoodsell[atms])
+        for atms in list(DavidGoodsell.keys()) :colorMaterial(atms,DavidGoodsell[atms])
     elif typeMat == "ByResi":
-        for res in RasmolAmino.keys(): colorMaterial(res,RasmolAmino[res])
+        for res in list(RasmolAmino.keys()): colorMaterial(res,RasmolAmino[res])
     elif typeMat == "Residu":
-        for res in Shapely.keys(): colorMaterial(res,Shapely[res])
+        for res in list(Shapely.keys()): colorMaterial(res,Shapely[res])
     elif typeMat == "BySeco":
-        for ss in SecondaryStructureType.keys(): colorMaterial(ss[0:4],SecondaryStructureType[ss])
+        for ss in list(SecondaryStructureType.keys()): colorMaterial(ss[0:4],SecondaryStructureType[ss])
     else : pass
 
 def checkChangeMaterial(o,typeMat,atom=None,parent=None,color=None):
@@ -2033,14 +2033,14 @@ def checkChangeMaterial(o,typeMat,atom=None,parent=None,color=None):
             assignMaterial (rMat, o)
         else : colorMaterial(requiredMatname,color)               
     if typeMat == "ByAtom" :
-        if matname not in AtmRadi.keys() :                #switch to atom materials
+        if matname not in list(AtmRadi.keys()) :                #switch to atom materials
             assignMaterial(Material["atoms"][names[5][0]], o)
     if typeMat == "AtomsU" :
         #if matname not in AtmRadi.keys() :               #switch to atom materials
         assignMaterial(Material["atoms"][lookupDGFunc(atom)],o)
     elif typeMat == "ByResi" :
-        if matname not in ResidueSelector.r_keyD.keys() : #switch to residues materials
-            if names[3] not in ResidueSelector.r_keyD.keys(): names[3]='hetatm'            
+        if matname not in list(ResidueSelector.r_keyD.keys()) : #switch to residues materials
+            if names[3] not in list(ResidueSelector.r_keyD.keys()): names[3]='hetatm'            
             assignMaterial(Material["residus"][names[3]],o)
     elif typeMat == "BySeco" :
         if matname not in ssk : #switch to ss materials
@@ -2088,10 +2088,10 @@ def checkChangeStickMaterial(o,typeMat,atoms,parent=None,color=None):
             assignMaterial(rMat,o)
         else : colorMaterial(requiredMatname,color)                        
     if typeMat == "ByAtom" or typeMat == "AtomsU" :
-        if matname not in Material["sticks"].keys() : #switch to atom materials
+        if matname not in list(Material["sticks"].keys()) : #switch to atom materials
                 assignMaterial(Material["sticks"][atoms[0].name[0]+atoms[1].name[0]])
     elif typeMat == "ByResi" :
-        if matname not in ResidueSelector.r_keyD.keys() : #switch to residues materials
+        if matname not in list(ResidueSelector.r_keyD.keys()) : #switch to residues materials
                 #print matname, names[3],Material["residus"]            
                 assignMaterial(Material["residus"][names[3]])
     elif typeMat == "BySeco" :
@@ -2142,7 +2142,7 @@ def changeColor(geom,colors,perVertex=False,proxyObject=None,doc=None,pb=False):
         #you can use the progress bar here
         if pb and (k%70) == 0:
             progress = float(k) / (len( mesh.faces ))
-            print progress, 'color mesh'
+            print(progress, 'color mesh')
     if unic :
         mat = None #get the object materials
         matname = "" #get the material name
@@ -2742,7 +2742,7 @@ def bindGeom2Bones(listeObject,bones):
 #    #array = Numeric.array(cam.im_array[:])    
 #    #n=int(len(array)/(cam.width*cam.height))
 #    im = Image.fromstring('RGBA',(mv.art.video.width,mv.art.video.height),
-#                           cam.im_array.tostring())
+#                           cam.im_array.tobytes())
 #    #cam.lock.release()
 #    rgba = im.split()
 #    new = Image.merge("RGBA", (rgba[order[0]],rgba[order[1]],rgba[order[2]],rgba[order[3]]))

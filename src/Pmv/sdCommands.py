@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -23,12 +23,12 @@
 
 import Pmv 
 import Pmw
-import Tkinter
-import numpy.oldnumeric as Numeric ; N = Numeric
-import string
+import tkinter
+import mglcompat.oldnumeric as Numeric ; N = Numeric
+from mglcompat import pystring as string
 import types
 import os
-import tkMessageBox
+import tkinter.messagebox
 from DejaVu.IndexedPolygons import IndexedPolygons
 from Pmv.displayCommands import DisplayCommand
 from Pmv.mvCommand import MVCommand
@@ -70,7 +70,7 @@ class MolIndexedPolygons(IndexedPolygons):
     
     def __init__(self, name = None, check=1, redo=1, **kw):
 
-        apply(IndexedPolygons.__init__, (self, name, check), kw)
+        IndexedPolygons.__init__(*(self, name, check), **kw)
         #atomIndices has for each atomIndex a list of vertexIndices:
         #the vertices for which this atom is the closest
         self.atomIndices = {}
@@ -91,7 +91,7 @@ class MolIndexedPolygons(IndexedPolygons):
         vfloat = []
         vint = []
         tri = []
-        for key in self.properties.keys():
+        for key in list(self.properties.keys()):
             self.displayprops[key]= []
         #flag all vertices as _not_ in the list to be returned
         displayFlags = -1*Numeric.ones(len(self.vertexIndices))
@@ -99,7 +99,7 @@ class MolIndexedPolygons(IndexedPolygons):
             vindex = vindexList[x]
             #get hold of the propereties for the displayed vertices and
             #stick in the vertice.properties index for coloring purposes
-            for key in self.properties.keys():
+            for key in list(self.properties.keys()):
                 value = self.properties[key][vindex]
                 self.displayprops[key].append(value)
             # flag the vertices being included as being returned
@@ -248,12 +248,12 @@ class ReadMolIndexedPolygons(MVCommand):
 
     def doit(self, molName, vertfile, trifile, atom_index=None, propertyList=[], name=None, display=1):
 
-        print "molName",molName
-        print "vertfile",vertfile
-        print "trifile",trifile
-        print "atom_index",atom_index
-        print "propertyList",propertyList
-        print "name",name
+        print("molName",molName)
+        print("vertfile",vertfile)
+        print("trifile",trifile)
+        print("atom_index",atom_index)
+        print("propertyList",propertyList)
+        print("name",name)
         # first try to read the files:
         try:
             infile = open(vertfile,'r')
@@ -322,7 +322,7 @@ class ReadMolIndexedPolygons(MVCommand):
             name = "%ssurf%d" % (name,geomC.nbMolindexedpolygons)
 
         # get all the atoms for the molecule
-        if name in geomC.atoms.keys():
+        if name in list(geomC.atoms.keys()):
             #update the old geometry
             geomC.molindexedpolygons[name]=atm
             geomC.atoms[name]=atm
@@ -374,7 +374,7 @@ class ReadMolIndexedPolygons(MVCommand):
             vnormals.append(([float(numbers[3]),
                               float(numbers[4]),
                               float(numbers[5])]))
-            props = map(lambda x: float(x), numbers[6:])
+            props = [float(x) for x in numbers[6:]]
             if len(propertyList):
                 for x in range(len(propertyList)):
                     properties[propertyList[x]].append(props[x])
@@ -383,11 +383,11 @@ class ReadMolIndexedPolygons(MVCommand):
         if vertfile.split(".")[-1] in ["exp","exp2"]:
             ats = mol.allAtoms
             cg = Numeric.average(mol.allAtoms.coords)
-            rg = map(lambda x: (x-cg)*(x-cg), mol.allAtoms.coords)
+            rg = [(x-cg)*(x-cg) for x in mol.allAtoms.coords]
             rg = Numeric.average(rg)
             rg = Numeric.sum(Numeric.average(rg))
             rg = Numeric.sqrt(rg)
-            g.vertices = map(lambda x: x*rg + cg, g.vertices)
+            g.vertices = [x*rg + cg for x in g.vertices]
         g.vnormals = Numeric.array(vnormals,'f')
         for line in tridata:
             numbers = string.split(line)
@@ -426,10 +426,10 @@ class ReadMolIndexedPolygons(MVCommand):
         geomC.nbMolindexedpolygons = geomC.nbMolindexedpolygons+1
 
         if len(vertices):
-	    # print 'setting vertices:', vertices
+            # print 'setting vertices:', vertices
             g.Set( vertices=vertices[:], vnormals=vnormals[:], faces=triangles[:],
                    visible=1 )
-	    #print 'after setting vertices:', g.vertexSet.vertices.array
+            #print 'after setting vertices:', g.vertexSet.vertices.array
 
         if display:
             self.vf.displaySurface(mol, name=name, topCommand=0, setupUndo=1)
@@ -471,9 +471,9 @@ class ReadMolIndexedPolygons(MVCommand):
            atom_file: (optional) output of cluster assigning atoms to vertices
            propertyList: list of names of surface properties in the vertfile
            """
-        if not kw.has_key('redraw'): kw['redraw'] = 1
-        apply( self.doitWrapper, (molName, vertfile, trifile,
-                                  atom_file, propertyList, name), kw)
+        if 'redraw' not in kw: kw['redraw'] = 1
+        self.doitWrapper(*(molName, vertfile, trifile,
+                                  atom_file, propertyList, name), **kw)
 
 
 class ColorMolIndexedPolygons(ColorCommand):
@@ -504,7 +504,7 @@ class ColorMolIndexedPolygons(ColorCommand):
     """
 
     def onAddCmdToViewer(self):
-       if 'rgb256' not in self.vf.colorMaps.keys():
+       if 'rgb256' not in list(self.vf.colorMaps.keys()):
            ramp = RGBRamp(256)
            cmap = ColorMapGUI(name='rgb256', ramp=ramp, allowRename=False, modifyMinMax=True)
            self.vf.addColorMap(cmap)
@@ -517,8 +517,8 @@ class ColorMolIndexedPolygons(ColorCommand):
             geomC = mol.geomContainer
             if hasattr(geomC,'molindexedpolygons'):
                 for geom in geomsToColor:
-                    if geom in geomC.geoms.keys():
-                        for key in geomC.geoms[geom].properties.keys():
+                    if geom in list(geomC.geoms.keys()):
+                        for key in list(geomC.geoms[geom].properties.keys()):
                             if key not in propsAvailable:
                                 propsAvailable.append(key)
         idf = self.idf = InputFormDescr(title = self.name)
@@ -551,10 +551,10 @@ class ColorMolIndexedPolygons(ColorCommand):
             childGeomsName = self.getChildrenGeomsName(mol)
             # We only put the one we are ineterested in in the list
             # of geomsAvailable 
-            for geomName in geomC.molindexedpolygons.keys():
+            for geomName in list(geomC.molindexedpolygons.keys()):
                 if geomName in ['master','selectionSpheres']:
                     continue
-                if geomC.atoms.has_key(geomName):
+                if geomName in geomC.atoms:
                     if geomName in childGeomsName:
                         continue
                     if showUndisplay == 0 and  \
@@ -566,10 +566,10 @@ class ColorMolIndexedPolygons(ColorCommand):
                     if not geomC.geoms[geomName].children:
                         continue
                     else:
-                        empty = filter(lambda x, geomC=geomC:
-                                       geomC.atoms.has_key(x.name) and \
+                        empty = list(filter(lambda x, geomC=geomC:
+                                       x.name in geomC.atoms and \
                                        geomC.atoms[x.name]==[],
-                                       geomC.geoms[geomName].children)
+                                       geomC.geoms[geomName].children))
                         if len(empty)==len(geomC.geoms[geomName].children)\
                            and showUndisplay == 0:
                             continue
@@ -579,7 +579,7 @@ class ColorMolIndexedPolygons(ColorCommand):
         
 
     def doit(self,nodes,geomsToColor,property,colorMap=None,**kw):
-        if 'rgb256' not in self.vf.colorMaps.keys():
+        if 'rgb256' not in list(self.vf.colorMaps.keys()):
             self.vf.colorMaps['rgb256'] = ColorMapGUI('rgb256', RGBRamp(256), 
                                      allowRename=False, modifyMinMax=True)
         if colorMap is None:
@@ -598,10 +598,10 @@ class ColorMolIndexedPolygons(ColorCommand):
             geomC = mol.geomContainer
             fmax = -9999.0
             fmin = 9999.0
-            for g in geomC.geoms.values():
+            for g in list(geomC.geoms.values()):
                 if g.name not in geomsToColor or not hasattr(g,'properties'):
                     continue
-                if property in g.properties.keys():
+                if property in list(g.properties.keys()):
                     geometries[g.name]=g
                     if fmax < max(g.properties[property]):
                         fmax = max(g.properties[property])
@@ -611,7 +611,7 @@ class ColorMolIndexedPolygons(ColorCommand):
 ##             if hasattr(self,'colorMapGUI'):
 ##                 self.colorMapGUI.update(mini=fmin,maxi=fmax)
             # now go through again, this time setting the colors
-            for g in geometries.values():
+            for g in list(geometries.values()):
                 prop = Numeric.array(g.displayprops[property]).astype('f')
                 #get rid of any other coloring
                 colors = self.colorMap.Map(prop)
@@ -644,7 +644,7 @@ class ColorMolIndexedPolygons(ColorCommand):
         """
         #molsAvailable = self.getAvailableMols()
         #if nodes not in molsAvailable: return None
-        apply(self.doitWrapper, (nodes, geomsToColor,property,colorMap), {'redraw':1})
+        self.doitWrapper(*(nodes, geomsToColor,property,colorMap), **{'redraw':1})
         
     
     def guiCallback(self):
@@ -671,13 +671,11 @@ class ColorMolIndexedPolygons(ColorCommand):
             self.colorMapGUI.addCallback( self.colorMapEditor_cb )
         self.colorMapEditor_Args = (nodes,geomsToColor,colorProp,)
         # pass the arguments to doit
-        apply(self.doitWrapper, self.colorMapEditor_Args+(self.colorMap,),
-              {'redraw':1,'log':0,'setupUndo':0})
+        self.doitWrapper(*self.colorMapEditor_Args+(self.colorMap,), **{'redraw':1,'log':0,'setupUndo':0})
 
         
     def colorMapEditor_cb(self, colorMap):
-        apply(self.doitWrapper, self.colorMapEditor_Args,
-              {'redraw':1,'log':1})
+        self.doitWrapper(*self.colorMapEditor_Args, **{'redraw':1,'log':1})
 
 
 
@@ -724,14 +722,12 @@ class ReadDockdata(ReadMolIndexedPolygons):
            atom_file: (optional) output of cluster assigning atoms to vertices
            propertyList: list of names of surface properties in the vertfile
            """
-        if not kw.has_key('redraw'): kw['redraw'] = 1
+        if 'redraw' not in kw: kw['redraw'] = 1
         if not name:
             name = os.path.split(vertfile)[1]
             name = name.replace('_','')
 
-        apply( self.doitWrapper,
-               (molName, vertfile, trifile, atom_file, propertyList, name),
-               kw )
+        self.doitWrapper(*(molName, vertfile, trifile, atom_file, propertyList, name), **kw)
 
 
     def guiCallback(self):
@@ -756,7 +752,7 @@ class ReadDockdata(ReadMolIndexedPolygons):
         propertyList = ['Area','ShapeIndex','Curvedness',
                         'Hydro1','Hydro2','Electro','Bval']
         atom_index= None
-        apply( self.doitWrapper, (molName,vertfile,atom_index,None,propertyList,name))
+        self.doitWrapper(*(molName,vertfile,atom_index,None,propertyList,name))
 
 class ReadHarmony(ReadMolIndexedPolygons):
     """
@@ -781,14 +777,14 @@ class ReadHarmony(ReadMolIndexedPolygons):
     """
 
     def __call__(self,molName, vertfile, atom_index=None, name=None, **kw):
-        if not kw.has_key('redraw'): kw['redraw'] = 1
+        if 'redraw' not in kw: kw['redraw'] = 1
         if not name:
             name = os.path.split(vertfile)[1]
             name = name.replace('_','')
         
         propertyList=['Gaussian Curvature','Mean Curvature',
                       'Max Curvature','Min Curvature','Area']
-        apply(self.doitWrapper, (molName,vertfile,atom_index, None,propertyList,name), kw)
+        self.doitWrapper(*(molName,vertfile,atom_index, None,propertyList,name), **kw)
 
 
     def guiCallback(self):
@@ -813,7 +809,7 @@ class ReadHarmony(ReadMolIndexedPolygons):
         propertyList = ['Gaussian Curvature','Mean Curvature',
                         'Max Curvature','Min Curvature','Area']
         atom_index=None
-        apply( self.doitWrapper, (molName,vertfile,atom_index,None,propertyList,name))
+        self.doitWrapper(*(molName,vertfile,atom_index,None,propertyList,name))
 
 
 class ReadBlur(ReadMolIndexedPolygons):
@@ -841,7 +837,7 @@ class ReadBlur(ReadMolIndexedPolygons):
     """
 
     def __call__(self,molName, vertfile, atom_index=None, name=None, **kw):
-        if not kw.has_key('redraw'): kw['redraw'] = 1
+        if 'redraw' not in kw: kw['redraw'] = 1
         if not name:
             name = os.path.split(vertfile)[1]
             name = name.replace('_','')
@@ -851,11 +847,11 @@ class ReadBlur(ReadMolIndexedPolygons):
             f = open(trifile)
             f.close()
         except:
-            raise(IOError("Cannot open %d for reading" % trifile))
+            raise IOError
         propertyList = ['Area','ShapeIndex','Curvedness',
                         'Hydro1','Hydro2','Electro','Bval',
                         'Kmin', 'Kmax']
-        apply(self.doitWrapper, (molName,vertfile,trifile,atom_index,propertyList,name), kw)
+        self.doitWrapper(*(molName,vertfile,trifile,atom_index,propertyList,name), **kw)
 
 
     def guiCallback(self):
@@ -879,14 +875,14 @@ class ReadBlur(ReadMolIndexedPolygons):
             f = open(trifile)
             f.close()
         except:
-            raise(IOError("Cannot open %d for reading" % trifile))
+            raise IOError
         name = os.path.split(vertfile)[1]
         name = name.replace('_','')
         propertyList = ['Area','ShapeIndex','Curvedness',
                         'Hydro1','Hydro2','Electro','Bval',
                         'Kmin', 'Kmax']
         atom_index=None
-        apply( self.doitWrapper, (molName,vertfile,trifile,atom_index,propertyList,name))
+        self.doitWrapper(*(molName,vertfile,trifile,atom_index,propertyList,name))
 
 
 class ReadMSMS(ReadMolIndexedPolygons):
@@ -895,10 +891,10 @@ class ReadMSMS(ReadMolIndexedPolygons):
     def __call__(self,molName, vertfile, trifile, atom_index=None, name=None, **kw):
         if not vertfile: vertfile = molName +'.vert'
         if not trifile: trifile = molName +'.tri'
-        if not kw.has_key('redraw'): kw['redraw'] = 1
+        if 'redraw' not in kw: kw['redraw'] = 1
         if not name:
             name = '%sMSMS' % (molName)
-        apply(self.doitWrapper, (molName,vertfile,trifile, atom_index), kw)
+        self.doitWrapper(*(molName,vertfile,trifile, atom_index), **kw)
 
 
 class DisplayMolIndexedPolygons(DisplayCommand):
@@ -931,17 +927,17 @@ class DisplayMolIndexedPolygons(DisplayCommand):
             idf = InputFormDescr(title ="Display indexedpolygons for %s:"%mol.name)
             geomC = mol.geomContainer
             if name == 'ask':
-                for surfName in geomC.molindexedpolygons.keys():
+                for surfName in list(geomC.molindexedpolygons.keys()):
                     idf.append({'name':surfName,
-                                'widgetType':Tkinter.Checkbutton,
+                                'widgetType':tkinter.Checkbutton,
                                 'wcfg':{'text':surfName,
-                                        'variable':Tkinter.IntVar()},
+                                        'variable':tkinter.IntVar()},
                                 'gridcfg':{'sticky':'w'}})
                 val = self.vf.getUserInput(idf)
 
-            elif name in geomC.molindexedpolygons.keys():
+            elif name in list(geomC.molindexedpolygons.keys()):
                 val = {}
-                for surfName in geomC.molindexedpolygons.keys():
+                for surfName in list(geomC.molindexedpolygons.keys()):
                     if surfName == name:
                         val[surfName]=1
                     else:
@@ -949,13 +945,13 @@ class DisplayMolIndexedPolygons(DisplayCommand):
                         
             elif name == 'all':
                 val = {}
-                for surfName in geomC.molindexedpolygons.keys():
+                for surfName in list(geomC.molindexedpolygons.keys()):
                     val[surfName] = 1
 
             if not val:
                 return None
             
-            for surfName in geomC.molindexedpolygons.keys():
+            for surfName in list(geomC.molindexedpolygons.keys()):
                 if not val[surfName]: continue
 
                 set = geomC.atoms[surfName]
@@ -981,7 +977,7 @@ class DisplayMolIndexedPolygons(DisplayCommand):
                 else:
                     vf, vi, f = srf.getTriangles(atomindices)
                     col = mol.geomContainer.getGeomColor(surfName)
-		    # ... g.set() is commented by Qing on 8/15/2005 ...
+                    # ... g.set() is commented by Qing on 8/15/2005 ...
                     # g.Set( vertices = vf[:,:3], vnormals = vf[:,3:6],
                     #       faces = f[:,:3], materials=col, visible=1 )
 
@@ -991,20 +987,20 @@ class DisplayMolIndexedPolygons(DisplayCommand):
            only   : flag when set to 1 only the current selection will be
                     displayed
            negate : flag when set to 1 undisplay the current selection"""
-        if not kw.has_key('redraw'): kw['redraw']=1
+        if 'redraw' not in kw: kw['redraw']=1
         kw['only'] = only
         kw['negate'] = negate
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
 
         mols = self.vf.expandNodes(nodes)
         if name == None:
             for mol in mols:
-                for name in mol.geomContainer.molindexedpolygons.keys():
+                for name in list(mol.geomContainer.molindexedpolygons.keys()):
                     kw['name']
-                    apply( self.doitWrapper, (nodes, name), kw)
+                    self.doitWrapper(*(nodes, name), **kw)
         else:
-            apply( self.doitWrapper, (nodes,name), kw )
+            self.doitWrapper(*(nodes,name), **kw)
 
 
     def guiCallback(self):
@@ -1017,7 +1013,7 @@ class DisplayMolIndexedPolygons(DisplayCommand):
                             'buttontype':'radiobutton'},
                     'gridcfg':{'sticky': 'we'}})
         val = self.vf.getUserInput(idf)
-	if val:
+        if val:
             if val['display']=='display':
                 val['only']= 0
                 val['negate'] = 0
@@ -1034,7 +1030,7 @@ class DisplayMolIndexedPolygons(DisplayCommand):
             val['name']='ask'
             if self.vf.userpref['Expand Node Log String']['value'] == 0:
                 self.nodeLogString = "self.getSelection()"
-            apply( self.doitWrapper, (self.vf.getSelection(),), val)
+            self.doitWrapper(*(self.vf.getSelection(),), **val)
             
 class UndisplayMolIndexedPolygons(DisplayMolIndexedPolygons):
     def __call__(self, nodes, name, **kw):
@@ -1042,7 +1038,7 @@ class UndisplayMolIndexedPolygons(DisplayMolIndexedPolygons):
            nodes  : TreeNodeSet holding the current selection (mv.getSelection())
            """
         kw['negate']= 1
-        apply(self.vf.displaySurface, (nodes,name),kw)
+        self.vf.displaySurface(*(nodes,name), **kw)
 
 
 class ApplyTransformations(MVSelectFromStringCommand):
@@ -1087,8 +1083,8 @@ class ApplyTransformations(MVSelectFromStringCommand):
         molName:
         index  :
         """
-        if not kw.has_key('redraw'): kw['redraw']=1
-        apply (self.doitWrapper, (mol,index), kw)
+        if 'redraw' not in kw: kw['redraw']=1
+        self.doitWrapper(*(mol,index), **kw)
         
 
     def doit(self,mol,index):
@@ -1100,8 +1096,8 @@ class ApplyTransformations(MVSelectFromStringCommand):
         savedSets = self.vf.sets
         if refSetName and mobSetName:
             # make sure the sets exist.
-            if (mobSetName in savedSets.keys() and refSetName
-                in savedSets.keys()):
+            if (mobSetName in list(savedSets.keys()) and refSetName
+                in list(savedSets.keys())):
                 #have the sets changed?
                 if (refSetName != self.refSetName or
                     mobSetName != self.mobSetName):
@@ -1123,16 +1119,16 @@ class ApplyTransformations(MVSelectFromStringCommand):
                         refRes = refSet[x]
                         mobRes = mobSet[x]
                         for atname in ['C','CA','CB','N','O']:
-                            if (atname in refRes.childByName.keys()
-                                and atname in mobRes.childByName.keys()):
+                            if (atname in list(refRes.childByName.keys())
+                                and atname in list(mobRes.childByName.keys())):
                                 xyz = refRes.childByName[atname].coords[:]
                                 if type(xyz)!=type([]):
                                     xyz=xyz.tolist()
                                 refXYZ.append(xyz)
                                 xyz = mobRes.childByName[atname].coords[:]
                                 mobXYZ.append(xyz)
-                    map(lambda x: x.append(1.),mobXYZ)
-                    map(lambda x: x.append(1.),refXYZ)
+                    list(map(lambda x: x.append(1.),mobXYZ))
+                    list(map(lambda x: x.append(1.),refXYZ))
                     self.mobXYZ = N.array(mobXYZ,'f')
                     self.refXYZ = N.array(refXYZ,'f')
                     self.refMol = refSet.top.uniq()[0]
@@ -1145,14 +1141,14 @@ class ApplyTransformations(MVSelectFromStringCommand):
                 refMatrix= N.reshape(refMatrix,(4,4))
             #if either of the GUI entries is not a set, delete it in the GUI
             #to provide a clue
-        if mobSetName not in savedSets.keys():
+        if mobSetName not in list(savedSets.keys()):
             mobSetName = None
             self.ifd.entryByName['MobSet']['widget'].setentry('')
-        if refSetName not in savedSets.keys():
+        if refSetName not in list(savedSets.keys()):
             refSetName = None
             self.ifd.entryByName['RefSet']['widget'].setentry('')
         # loop through the list and display one after another
-        validRange = range(len(mol.qlist['totaltransforms']))
+        validRange = list(range(len(mol.qlist['totaltransforms'])))
         for val in index:
             # reset values > max to max
             if (val-1) > validRange[-1]:
@@ -1258,7 +1254,7 @@ class ApplyTransformations(MVSelectFromStringCommand):
 
     def getMolVal(self, event=None):
         molWidget=self.ifd[0]['widget']
-        for molStr in self.molVar.keys():
+        for molStr in list(self.molVar.keys()):
             #figure out which check button was just changed
             newVal=self.molVar[molStr].get()
             if newVal==self.oldmolVar[molStr]:
@@ -1279,7 +1275,7 @@ class ApplyTransformations(MVSelectFromStringCommand):
                 molWidget.setentry('')
         # set molVar to zero for all other molecules
         # is this necessary? Yes
-        for mol in self.molVar.keys():
+        for mol in list(self.molVar.keys()):
             if mol != molStr:
                 self.molCts[mol]=0
                 self.oldmolVar[mol]=0
@@ -1320,13 +1316,13 @@ class ApplyTransformations(MVSelectFromStringCommand):
         #move cursor back to Molecule entry
         self.ifd[0]['widget'].focus()
         ###SHOULD ALL THE VARIABLES BE ZEROED HERE???
-        for key in self.molCts.keys():
+        for key in list(self.molCts.keys()):
             self.molCts[key]=0
         if hasattr(self, 'oldmolVar'):
-            for item in self.oldmolVar.keys():
+            for item in list(self.oldmolVar.keys()):
                 self.oldmolVar[item] = 0
         if hasattr(self, 'molVar'):
-            for item in self.molVar.keys():
+            for item in list(self.molVar.keys()):
                 self.molVar[item].set(0)
         if self.form: self.form.lift()
 
@@ -1340,13 +1336,13 @@ class ApplyTransformations(MVSelectFromStringCommand):
                         'wcfg':{'command':self.onChangeMolecule,
                                 'label_text':'Mobile Mol Name',
                                 'labelpos':'w'},
-                        'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                        'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                    'columnspan':3} })
             ifd.append({'name': 'Mol List',
                         'tooltip':'Select the molecule to be transformed',
-                        'widgetType':Tkinter.Menubutton,
+                        'widgetType':tkinter.Menubutton,
                         'text': 'Molecule List ...',
-                        'gridcfg':{'sticky':Tkinter.W,
+                        'gridcfg':{'sticky':tkinter.W,
                                    'row':-1,
                                    'columnspan':1} })
             ifd.append({'widgetType':Pmw.Counter,
@@ -1355,51 +1351,51 @@ class ApplyTransformations(MVSelectFromStringCommand):
                                 'entryfield_command':self.onChangeRange,
                                 'entryfield_value':'0',
                                 'autorepeat':0,
-                                'labelpos':Tkinter.W+Tkinter.E,
+                                'labelpos':tkinter.W+tkinter.E,
                                 'label_text':'Transform #'},
-                        'gridcfg':{'sticky':Tkinter.W,
+                        'gridcfg':{'sticky':tkinter.W,
                                    'columnspan':2,}})
             ifd.append({'name':'Score',
                         'widgetType':Pmw.EntryField,
                         'wcfg':{'command':None,
                                 'labelpos':'w',
                                 'label_text':'Score, Cluster Size, (Rmsd)'},
-                        'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                        'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                    'row':-1,
                                    'columnspan':2}})
             ifd.append({'name': 'Reset',
                         'tooltip':'Restores the current molecule to its original position',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'text': 'Reset',
                         'wcfg':{'bd':6},
-                        'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                        'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                    'columnspan':2},
                         'command': self.reset})
             ifd.append({'name': 'ClearForm',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'text': 'Clear Form',
                         'wcfg':{'bd':6},
-                        'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                        'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                    'row':-1,
                                    'columnspan':2}, 
                         'command': self.clearForm})
-            ifd.append({'widgetType':Tkinter.Checkbutton,
+            ifd.append({'widgetType':tkinter.Checkbutton,
                         'name':'CenterChooser',
                         'defaultValue':0,
                         'text':'Choose Center',
-                        'wcfg':{'variable':Tkinter.IntVar()},
+                        'wcfg':{'variable':tkinter.IntVar()},
                         'gridcfg':{'columnspan':2}})
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                         'name':'Dismiss',
                         'text':'Dismiss',
                         'wcfg':{'bd':6},
-                        'gridcfg':{'sticky':Tkinter.E+Tkinter.W,
+                        'gridcfg':{'sticky':tkinter.E+tkinter.W,
                                    'row':-1,
                                    'columnspan':2},
                         'command': self.Dismiss_cb})
             ifd.append({'widgetType':Pmw.EntryField,
                         'name':'Qdir',
-                        'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                        'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                    'columnspan':4},
                         'wcfg':{'command':self.onChangeQdir,
                                 'label_text':'Qlist Directory',
@@ -1411,7 +1407,7 @@ class ApplyTransformations(MVSelectFromStringCommand):
                                 'selectioncommand':self.onChangeQlist,
                                 'entryfield_command':self.onChangeQlist,
                                 'scrolledlist_items':()},
-                        'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                        'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                    'columnspan':4}})
             ifd.append({'widgetType':Pmw.ComboBox,
                         'name':'Preferred',
@@ -1420,57 +1416,57 @@ class ApplyTransformations(MVSelectFromStringCommand):
                                 'selectioncommand':self.selFromPref,
                                 'entryfield_command':self.onChangeQlist,
                                 'scrolledlist_items':()},
-                        'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                        'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                    'columnspan':2}})
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                         'name':'WriteList',
                         'text':'Write List',
                         'command':self.writeList,
                         'wcfg':{'bd':6},
-                        'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                        'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                    'row':-1,
                                    'columnspan':2}})
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                         'name':'Add',
                         'text':'Add to list',
                         'wcfg':{'bd':6},
-                        'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                        'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                    'columnspan':2},
                         'command': self.addToList})
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                         'name':'Remove',
                         'text':'Remove from list',
                         'wcfg':{'bd':6},
-                        'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                        'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                    'row':-1,
                                    'columnspan':2},
                         'command': self.removeFromList})
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                         'name':'WritePDB',
                         'text':'WritePDB',
                         'command':self.writePdb,
                         'wcfg':{'bd':6},
-                        'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                        'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                    'columnspan':2}})
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                         'name':'WritePDBQ',
                         'text':'WritePDBQ',
                         'command':self.writePdbq,
                         'wcfg':{'bd':6},
-                        'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                        'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                    'row':-1,
                                    'columnspan':2}})
             ifd.append({'widgetType':Pmw.EntryField,
                         'name':'RefSet',
                         'wcfg':{'label_text':'Ref Set',
                                 'labelpos':'w'},
-                        'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                        'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                    'columnspan':2} })
             ifd.append({'widgetType':Pmw.EntryField,
                         'name':'MobSet',
                         'wcfg':{'label_text':'Mobile Set',
                                 'labelpos':'w'},
-                        'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                        'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                    'row':-1,
                                    'columnspan':2} })
                         
@@ -1632,7 +1628,7 @@ class ApplyTransformations(MVSelectFromStringCommand):
             if value > maxval:
                 value = maxval
                 args = self.buildArgs([value])
-            apply(self.doitWrapper, tuple(args),{'redraw':1})
+            self.doitWrapper(*tuple(args), **{'redraw':1})
             self.ifd[10]['widget'].setentry('')
             return str(value)
         except:
@@ -1673,7 +1669,7 @@ class ApplyTransformations(MVSelectFromStringCommand):
             self.ifd[10]['widget'].setentry('')
             self.buildQlistMenu()
             #modify the molCts dictionary
-            for key in self.molCts.keys():
+            for key in list(self.molCts.keys()):
                 if key == molName:
                     self.molCts[key]=1
                 else:
@@ -1689,7 +1685,7 @@ class ApplyTransformations(MVSelectFromStringCommand):
         else:
             return None
         if args:
-            apply(self.doitWrapper, tuple(args), {'redraw':1})
+            self.doitWrapper(*tuple(args), **{'redraw':1})
             self.ifd[10]['widget'].setentry('')
         else:
             return None
@@ -1708,9 +1704,9 @@ class ApplyTransformations(MVSelectFromStringCommand):
                         item = string.split(item,'-')
                         if item[1]!='':
                             if int(item[1])<int(item[0]):
-                                item = range(int(item[0]),int(item[1])-1,-1)
+                                item = list(range(int(item[0]),int(item[1])-1,-1))
                             else:
-                                item = range(int(item[0]),int(item[1])+1)
+                                item = list(range(int(item[0]),int(item[1])+1))
                         else:
                             item = [int(item[0])]
                         for x in item:
@@ -1794,7 +1790,7 @@ class ReadTransformations(MVCommand):
             if mol:
                 if center == 'ask':
                     center = CenterChooser(self.vf).go()
-                apply( self.doitWrapper, (mol,fileName,center), kw)
+                self.doitWrapper(*(mol,fileName,center), **kw)
 
 
         def guiCallback(self):
@@ -1828,7 +1824,7 @@ class ReadTransformations(MVCommand):
             if hasattr(mol,'preferredList'):
                 if mol.preferredList != []:
                     msg = 'Reading in new quaternions will destroy the preferred list.'
-                    proceed = tkMessageBox.askokcancel('Read Quaternions',msg)
+                    proceed = tkinter.messagebox.askokcancel('Read Quaternions',msg)
                     if not proceed:
                         return None
             try:
@@ -1873,8 +1869,8 @@ class ReadTransformations(MVCommand):
                     msg = 'Error in file'
                     self.vf.warningMsg(msg)
                     return None
-                trans = N.array(map(lambda x: float(x), numbers[1:4]),'f')
-                quat = N.array(map(lambda x: float(x), numbers[4:8]),'f')
+                trans = N.array([float(x) for x in numbers[1:4]],'f')
+                quat = N.array([float(x) for x in numbers[4:8]],'f')
                 transl = Transform(trans = trans)
                 rotate = Transform(quaternion = quat)
                 RawTrans = transl*rotate
@@ -1903,8 +1899,8 @@ class SelectVertex(Command, ICOM):
     def __init__(self, func=None):
         Command.__init__(self, func)
         ICOM.__init__(self)
-	# self.objArgOnly = 1
-	# self.negateKw = 1
+        # self.objArgOnly = 1
+        # self.negateKw = 1
 
 
     def setupUndoBefore(self, obj):
@@ -1916,32 +1912,32 @@ class SelectVertex(Command, ICOM):
     def doit(self, objects):
         # objects is pick.hist = {geom: [(vertexInd, intance),...]}
         vt = []
-        print "\nobjects clicked by left button: \n", objects
-        for geom, values in objects.items():
+        print("\nobjects clicked by left button: \n", objects)
+        for geom, values in list(objects.items()):
             # print "    geom: ", geom
             # print "    values: ", values
             for vert, instance in values:
-	        # print properties
-		Area       = geom.properties['Area'][vert]
-		ShapeIndex = geom.properties['ShapeIndex'][vert]
-		Curvedness = geom.properties['Curvedness'][vert]
-		Hydro1     = geom.properties['Hydro1'][vert]
-		Hydro2     = geom.properties['Hydro2'][vert]
-		Electro    = geom.properties['Electro'][vert]
-		Bval       = geom.properties['Bval'][vert]
-		Kmin       = geom.properties['Kmin'][vert]
-		Kmax       = geom.properties['Kmax'][vert]
+                # print properties
+                Area       = geom.properties['Area'][vert]
+                ShapeIndex = geom.properties['ShapeIndex'][vert]
+                Curvedness = geom.properties['Curvedness'][vert]
+                Hydro1     = geom.properties['Hydro1'][vert]
+                Hydro2     = geom.properties['Hydro2'][vert]
+                Electro    = geom.properties['Electro'][vert]
+                Bval       = geom.properties['Bval'][vert]
+                Kmin       = geom.properties['Kmin'][vert]
+                Kmax       = geom.properties['Kmax'][vert]
                 self.vf.message( '\n'+ geom.name + ' - Vertex (zero-based): %d'%( vert ) )
                 self.vf.message( '    Area: %.3f, ShapeIndex: %.3f, Curvedness: %.3f\n    Hydro1: %.3f, Hydro2: %.3f, Electro: %.3f\n    Bval: %.3f, Kmin: %.3f, Kmax: %.3f'      
-			       %( Area, ShapeIndex, Curvedness, 
-			          Hydro1, Hydro2, Electro, 
-				  Bval, Kmin, Kmax ) )
-		# print original coordinates and normals
+                               %( Area, ShapeIndex, Curvedness, 
+                                  Hydro1, Hydro2, Electro, 
+                                  Bval, Kmin, Kmax ) )
+                # print original coordinates and normals
                 pt = geom.vertices[vert]
-		nm = geom.vnormals[vert]
+                nm = geom.vnormals[vert]
                 self.vf.message( '    Original coordinate: %.3f, %.3f, %.3f'%(pt[0], pt[1], pt[2]) )
                 self.vf.message( '    Original normal: %.3f, %.3f, %.3f'%(nm[0], nm[1], nm[2]) )
-		# print current coordinates and normals
+                # print current coordinates and normals
                 M = geom.GetMatrix(geom.LastParentBeforeRoot(), instance[1:])
                 ptx = M[0][0]*pt[0]+M[0][1]*pt[1]+M[0][2]*pt[2]+M[0][3]
                 pty = M[1][0]*pt[0]+M[1][1]*pt[1]+M[1][2]*pt[2]+M[1][3]
@@ -1952,9 +1948,9 @@ class SelectVertex(Command, ICOM):
                 nmz = M[2][0]*nm[0]+M[2][1]*nm[1]+M[2][2]*nm[2]+M[2][3]
                 self.vf.message( '    Current coordinate: %.3f, %.3f, %.3f'%(ptx, pty, ptz) )
                 self.vf.message( '    Current normal: %.3f, %.3f, %.3f'%(nmx, nmy, nmz) )
-		# print (on python shell) instance and transformation matrix applied
-                print "        instance: ", instance
-                print "        transformation matrix M applied: \n", M
+                # print (on python shell) instance and transformation matrix applied
+                print("        instance: ", instance)
+                print("        transformation matrix M applied: \n", M)
         g = [0,0,0]
         i = 0
         for v in vt:
@@ -1972,7 +1968,7 @@ class SelectVertex(Command, ICOM):
         # we do not want this command to log or undo itself
         kw['topCommand']=0
         kw['busyIdle']=1
-        apply( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
 
 
 

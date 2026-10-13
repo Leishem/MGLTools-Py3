@@ -78,7 +78,7 @@ class RingFinder:
         else:
             num = 0
             for b in atom.bonds:
-                if not self.bondInCycle.has_key(b):
+                if b not in self.bondInCycle:
                     num = num + 1
                     bond = b
             if num == 1:
@@ -120,7 +120,7 @@ class RingFinder:
             for b in a.bonds:
                 atom2 = b.atom1
                 if atom2==a: atom2=b.atom2
-                if len(atom2.bonds)==1 or self.bondInCycle.has_key(b):
+                if len(atom2.bonds)==1 or b in self.bondInCycle:
                     num = num + 1
 
             # if at least on bond not in a cycle find smallest cycle for a
@@ -138,7 +138,7 @@ class RingFinder:
                         if len(ra)==len(r):
                             same = 1
                             for a in ra:
-                                if not r.has_key(a):
+                                if a not in r:
                                     same = 0
                                     break
                             if same==1:
@@ -190,8 +190,8 @@ class RingFinder:
 ##                          for b in rb:
 ##                              print b.atom1.name,'-',b.atom2.name
 ##                          print 'END RING ======================'
-        self.allRingAtoms = self.allRingAtoms.keys()
-        self.allRingBonds = self.allRingBonds.keys()
+        self.allRingAtoms = list(self.allRingAtoms.keys())
+        self.allRingBonds = list(self.allRingBonds.keys())
 
 
     def findSmallestRing(self, root, maxLevel):
@@ -283,13 +283,13 @@ class RingFinder:
                     # level. else atom2 should be found in
                     # bndDicts[level]
 
-                    if atinstack.has_key(atom2):
+                    if atom2 in atinstack:
                         #print 'CYCLE', atom2.name
                         # even number of atoms
                         #print 'instack'
                         #for a in atinstack:
                         #    print a.name
-                        if levelDict.has_key(atom2):
+                        if atom2 in levelDict:
                             #print 'EVEN ******************'
                             # cycle with even number of atoms
                             # b1 is the bond from which we arrived at atom2
@@ -303,7 +303,7 @@ class RingFinder:
                             ringAtoms = [atom2, at1, at2]
                             ringBonds = [b, b1]
                             # backtrack through level
-                        elif bndDicts[level].has_key(atom2):
+                        elif atom2 in bndDicts[level]:
                             # odd number of atoms in cycle
                             # b1 is the bond from which we arrived at atom2
                             # previousely at this level
@@ -595,11 +595,11 @@ class RingFinder:
             return
         i = 0
         for r in self.rings:
-            print 'RING ',i
+            print('RING ',i)
             for j in range(len(r['atoms'])):
                 a = r['atoms'][j]
                 b = r['bonds'][j]
-                print '%10s %4d %s'%(a.name, a.number, repr(b))
+                print('%10s %4d %s'%(a.name, a.number, repr(b)))
             i = i + 1
 
             
@@ -612,7 +612,7 @@ if __name__ == '__main__':
     mol.buildBondsByDistance()
     allAtoms = mol.chains.residues.atoms
 
-    print 'Looking for rings'
+    print('Looking for rings')
     r = RingFinder()
     bonds = (allAtoms.bonds)[0]
     r.findRings(allAtoms, bonds)
@@ -627,9 +627,9 @@ if __name__ == '__main__':
     allAtoms = mol.chains.residues.atoms
 
 
-    print 'Looking for rings ...'
+    print('Looking for rings ...')
     r = RingFinder()
-    print "Done"
+    print("Done")
     bonds = (allAtoms.bonds)[0]
     r.findRings(allAtoms, bonds)
 

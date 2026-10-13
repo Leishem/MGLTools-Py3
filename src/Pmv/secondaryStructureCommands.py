@@ -12,7 +12,7 @@
 #
 
 
-from Tkinter import Label, Checkbutton, Radiobutton, StringVar, IntVar
+from tkinter import Label, Checkbutton, Radiobutton, StringVar, IntVar
 import Pmw
 import types
 from types import StringType, IntType
@@ -22,7 +22,7 @@ from opengltk.OpenGL import GL
 from DejaVu.IndexedPolygons import IndexedPolygons
 from DejaVu.Shapes import Shape2D, Triangle2D, Circle2D, Rectangle2D,\
      Square2D, Ellipse2D
-from NucleicBases import Add_Nucleic_Bases
+from .NucleicBases import Add_Nucleic_Bases
 from ViewerFramework.VFCommand import CommandGUI
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ExtendedSliderWidget, ListChooser,\
@@ -118,7 +118,7 @@ class ComputeSecondaryStructureCommand(MVCommand):
         # Load the dependent commands if not already loaded in the
         # application
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('saveSet'):
+        if 'saveSet' not in self.vf.commands:
             self.vf.loadCommand("selectionCommands", "saveSet", "Pmv",
                                 topCommand=0)
 
@@ -177,10 +177,10 @@ class ComputeSecondaryStructureCommand(MVCommand):
                 #print molModes
                 # a mode to get the information has been specified
                 # for the given molecules
-                if molModes and not molModes.has_key(mol.name):
+                if molModes and mol.name not in molModes:
                     # if the mode has not been specified for a molecule
                     # print a message and continue
-                    print 'No mode has been specified for %s'%mol.name
+                    print('No mode has been specified for %s'%mol.name)
                     continue
                 else:
                     # Set the mode to the given value.
@@ -273,18 +273,15 @@ class ComputeSecondaryStructureCommand(MVCommand):
             for ss in chain.secondarystructureset:
                 name = "%s%s"%(ss.name, ss.chain.id)
                 setName = mol.name+':'+name[-1]+':'+name[:-1]
-                if self.vf.sets.has_key(setName):
+                if setName in self.vf.sets:
                     del self.vf.sets[setName]
                 #del sets__[mol.name+':'+name[-1]+':'+name[:-1]]
             delattr(chain, 'secondarystructureset')
             
             # delete the secondarystructure attribute of the residues when
             # existing.
-            resWithSS = filter(lambda x:hasattr(x, 'secondarystructure'),
-                               chain.residues)
-            resTest = map(lambda x:
-                          delattr(x, 'secondarystructure'),
-                          resWithSS)
+            resWithSS = [x for x in chain.residues if hasattr(x, 'secondarystructure')]
+            resTest = [delattr(x, 'secondarystructure') for x in resWithSS]
             
         # call the onRemoveObjectFromViewer for the mol.
         self.vf.undoableDelete__ = False
@@ -293,7 +290,7 @@ class ComputeSecondaryStructureCommand(MVCommand):
         
         # Also need to clean up the sheet2D information.
         for c in mol.chains:
-            if hasattr(c, 'sheet2D') and c.sheet2D.has_key('ssSheet2D'):
+            if hasattr(c, 'sheet2D') and 'ssSheet2D' in c.sheet2D:
                 del c.sheet2D['ssSheet2D']
 
         
@@ -316,7 +313,7 @@ class ComputeSecondaryStructureCommand(MVCommand):
 
             # check if there are amino acids in the selection
             aa = [x for x in mol.chains.residues if \
-                  AAnames.has_key(x.type.strip().upper())]
+                  x.type.strip().upper() in AAnames]
 
             if len(aa)==0: # NO AA -> cannot use file, PROSS or STRIDE
                 self.molModes[mol.name]=None
@@ -394,13 +391,13 @@ class ComputeSecondaryStructureCommand(MVCommand):
 
     def guiCallback(self):
         val = self.showForm('getSSInfo', force=1)
-        for key,value in val.items():
+        for key,value in list(val.items()):
             self.molModes[key] = value
             del val[key]
         if self.molModes == {}: # happens if selection was empty
             return
         val['molModes'] = self.molModes
-        apply(self.doitWrapper, (self.nodes,), val)
+        self.doitWrapper(*(self.nodes,), **val)
 
 
 class ExtrudeSecondaryStructureCommand(MVCommand):
@@ -489,7 +486,7 @@ class ExtrudeSecondaryStructureCommand(MVCommand):
         # private flag to specify whether or not the geometries for the SS
         # have been created.
         obj.__hasSSGeom = 0
-        if self.vf.hasGui and self.vf.commands.has_key('dashboard'):
+        if self.vf.hasGui and 'dashboard' in self.vf.commands:
             self.vf.dashboard.resetColPercent(obj, '_showRibbonStatus')
 
 
@@ -499,7 +496,7 @@ class ExtrudeSecondaryStructureCommand(MVCommand):
         from DejaVu.Geom import Geom
         geomC = obj.geomContainer
 
-        if not geomC.geoms.has_key('secondarystructure'):
+        if 'secondarystructure' not in geomC.geoms:
             
             t = Geom('secondarystructure', shape=(0,0), protected=True)
             geomC.addGeom( t, parent=geomC.masterGeom, redo=0 ) 
@@ -657,7 +654,7 @@ class ExtrudeSecondaryStructureCommand(MVCommand):
         kw['display'] = display
         #print "kw.has_key('only')=", kw.has_key('only')
         #print kw.get('only', 'no_value')
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
         
 
     def doit(self, nodes, shape1=None, shape2=None, frontcap=True, endcap=True,
@@ -671,13 +668,13 @@ class ExtrudeSecondaryStructureCommand(MVCommand):
         shape2o = shape2
         
         if not type(nbchords)==IntType:
-            print "invalid parameter nbchords:", nbchords
+            print("invalid parameter nbchords:", nbchords)
             return 
         if gapEnd>len(nodes):
-            print "invalid parameter gapEnd:", gapEnd
+            print("invalid parameter gapEnd:", gapEnd)
             return 
         if gapBeg>len(nodes):
-            print "invalid parameter gapBeg:", gapBeg
+            print("invalid parameter gapBeg:", gapBeg)
             return 
 
         molecules, residueSets = self.vf.getNodesByMolecule(nodes, Residue)
@@ -701,14 +698,14 @@ class ExtrudeSecondaryStructureCommand(MVCommand):
             reswithss = residues.get(lambda x:
                                      hasattr(x, 'secondarystructure'))
             if reswithss is None:
-                print 'no secondary structure in that selection'
+                print('no secondary structure in that selection')
                 continue
 
             selectionSS = reswithss.secondarystructure.uniq()
             chains = residues.parent.uniq()
 
             # highlight selection
-            if molSelectedResiduesDict.has_key(mol) and len(molSelectedResiduesDict[mol]) > 0:
+            if mol in molSelectedResiduesDict and len(molSelectedResiduesDict[mol]) > 0:
                 lHighlight = True
             else:
                 lHighlight = False
@@ -730,7 +727,7 @@ class ExtrudeSecondaryStructureCommand(MVCommand):
                 if not hasattr(chain, 'sheet2D'):
                     chain.sheet2D = {}
                 if not hasattr(chain,'secondarystructureset'):
-                    print 'no secondary structure set for chain: %s !'%chain.id
+                    print('no secondary structure set for chain: %s !'%chain.id)
                     chain.sheet2D['ssSheet2D'] = None
                     continue
                 
@@ -738,7 +735,7 @@ class ExtrudeSecondaryStructureCommand(MVCommand):
                 
                 # 1- Check if the sheet2D for a secondary structure has been
                 # computed already.
-                if chain.sheet2D.has_key('ssSheet2D'):
+                if 'ssSheet2D' in chain.sheet2D:
                     if chain.sheet2D['ssSheet2D'] is None:
                         newsheet = 0
                         continue
@@ -758,7 +755,7 @@ class ExtrudeSecondaryStructureCommand(MVCommand):
                     else:
                         newsheet = 0
                     
-                elif not chain.sheet2D.has_key('ssSheet2D'):
+                elif 'ssSheet2D' not in chain.sheet2D:
                     rt = chain.ribbonType()
                     if rt=='NA':
                         ExtrudeNA(chain)
@@ -787,17 +784,17 @@ class ExtrudeSecondaryStructureCommand(MVCommand):
                     # to compute the sheet2D. if not remove the ss.
                     if SS.sheet2D is None:
                         continue
-                    if filter(lambda x, rs = SS.sheet2D.resInSheet:
-                              not x in rs, SS.residues):
-                        print "WARNING: Removing %s from secondary structure set. One or more residues \
-doesn't have CA and O"%SS.name
+                    if list(filter(lambda x, rs = SS.sheet2D.resInSheet:
+                              not x in rs, SS.residues)):
+                        print("WARNING: Removing %s from secondary structure set. One or more residues \
+doesn't have CA and O"%SS.name)
                         # remove the SS from the set and etc....
                         #delattr(SS.residues, 'secondarystructure')
                         #ssSet.remove(SS)
                         removeSS.append(SS)
                         name = "%s%s"%(SS.name, SS.chain.id)
                         setName = mol.name+':'+name[-1]+':'+name[:-1]
-                        if self.vf.sets.has_key(setName):
+                        if setName in self.vf.sets:
                             del self.vf.sets[setName]
                         #del sets__[mol.name+':'+name[-1]+':'+name[:-1]]
                         g = mol.geomContainer.geoms[name]
@@ -851,7 +848,7 @@ doesn't have CA and O"%SS.name
                     if lHighlight is True:# and chain in residueSet :
                         highlight = [0]*len(SS.exElt.vertices)
                         for lResidue in molSelectedResiduesDict[mol]:
-                            if resfacesDict.has_key(lResidue):
+                            if lResidue in resfacesDict:
                                 for lFace in resfacesDict[lResidue]:
                                     for lVertexIndex in lFace:
                                         highlight[int(lVertexIndex)] = 1
@@ -882,13 +879,13 @@ doesn't have CA and O"%SS.name
                 kw['only'] = 1
             kw['setupUndo'] = 1
             #print "calling displayExtrudedSS with ", kw
-            apply(self.vf.displayExtrudedSS,(nodes,),  kw)
+            self.vf.displayExtrudedSS(*(nodes,), **kw)
 #            gg = g.viewer.FindObjectByName('root|1dwb_0|secondarystructure|Coil1L')
 #            print 'AFTER DISPLAY', gg
             #self.vf.displayExtrudedSS(nodes, setupUndo=1, topCommand=0)
 
         redraw = False
-        if kw.has_key("redraw") : redraw=True
+        if "redraw" in kw : redraw=True
         event = EditGeomsEvent(
             'SSextrude', [nodes,[shape1, shape2, frontcap, endcap,
                                  arrow, nbchords, gapBeg, gapEnd, larrow,
@@ -1219,7 +1216,7 @@ doesn't have CA and O"%SS.name
             return val
 
         if typeshape:
-            if val.has_key('arrow') and not val['arrow']:
+            if 'arrow' in val and not val['arrow']:
                 val['larrow'] = 0
             else:
                 val['larrow'] = int((val['larrow']*nbchords)/4.)
@@ -1227,14 +1224,14 @@ doesn't have CA and O"%SS.name
             val['gapEnd'] = gapEnd
             val['nbchords'] = nbchords
 
-        apply(self.doitWrapper, (self.vf.getSelection(),), val)
+        self.doitWrapper(*(self.vf.getSelection(),), **val)
 
 
 
 class ExtrudeSecondaryStructureCommandUnic(ExtrudeSecondaryStructureCommand):
     """The ExtrudeCommand allows the user to represent the secondary structure 
-	elements by extruding 2D geometries along a 3D path.To execute this command use 
-	the entry 'extrude Secondary Structure' under the 'Compute' menu in the menu bar. 
+        elements by extruding 2D geometries along a 3D path.To execute this command use 
+        the entry 'extrude Secondary Structure' under the 'Compute' menu in the menu bar. 
    The panel that appears lets the user choose the 2D shapes for the extrusion. 
    The entry 'default' in the listChooser lets do a traditional ribbon representation.
    nbchords represents the number of points in the path3D corresponding to one residue. 
@@ -1280,7 +1277,7 @@ class ExtrudeSecondaryStructureCommandUnic(ExtrudeSecondaryStructureCommand):
             return
         from DejaVu.Geom import Geom
         geomC = obj.geomContainer
-        if not geomC.geoms.has_key('SS'):
+        if 'SS' not in geomC.geoms:
             
             t = Geom('SS', shape=(0,0), protected=True)
             geomC.addGeom( t, parent=geomC.masterGeom, redo=0 ) 
@@ -1327,13 +1324,13 @@ class ExtrudeSecondaryStructureCommandUnic(ExtrudeSecondaryStructureCommand):
         #print kw.get('only', 'no_value')
 
         if not type(nbchords)==IntType:
-            print "invalid parameter nbchords:", nbchords
+            print("invalid parameter nbchords:", nbchords)
             return 
         if gapEnd>len(nodes):
-            print "invalid parameter gapEnd:", gapEnd
+            print("invalid parameter gapEnd:", gapEnd)
             return 
         if gapBeg>len(nodes):
-            print "invalid parameter gapBeg:", gapBeg
+            print("invalid parameter gapBeg:", gapBeg)
             return 
 
         molecules, residueSets=self.vf.getNodesByMolecule(nodes, Residue)
@@ -1357,14 +1354,14 @@ class ExtrudeSecondaryStructureCommandUnic(ExtrudeSecondaryStructureCommand):
             reswithss = residues.get(lambda x:
                                      hasattr(x, 'secondarystructure'))
             if reswithss is None:
-                print 'no secondary structure in that selection'
+                print('no secondary structure in that selection')
                 continue
 
             selectionSS = reswithss.secondarystructure.uniq()
             chains = residues.parent.uniq()
 
             # highlight selection
-            if molSelectedResiduesDict.has_key(mol) and len(molSelectedResiduesDict[mol]) > 0:
+            if mol in molSelectedResiduesDict and len(molSelectedResiduesDict[mol]) > 0:
                 lHighlight = True
             else:
                 lHighlight = False
@@ -1376,14 +1373,14 @@ class ExtrudeSecondaryStructureCommandUnic(ExtrudeSecondaryStructureCommand):
                     chain.sheet2D = {}
                 
                 if not hasattr(chain,'secondarystructureset'):
-                    print 'no secondary structure set for chain: %s !'%chain.id
+                    print('no secondary structure set for chain: %s !'%chain.id)
                     chain.sheet2D['ssSheet2D'] = None
                     continue
                 
                 ssSet = chain.secondarystructureset
                 # 1- Check if the sheet2D for a secondary structure has been
                 # computed already.
-                if chain.sheet2D.has_key('ssSheet2D'):
+                if 'ssSheet2D' in chain.sheet2D:
                     if chain.sheet2D['ssSheet2D'] is None:
                         newsheet = 0
                         continue
@@ -1403,7 +1400,7 @@ class ExtrudeSecondaryStructureCommandUnic(ExtrudeSecondaryStructureCommand):
                     else:
                         newsheet = 0
                     
-                elif not chain.sheet2D.has_key('ssSheet2D'):
+                elif 'ssSheet2D' not in chain.sheet2D:
                     rt = chain.ribbonType()
                     if rt=='NA':
                         ExtrudeNA(chain)
@@ -1436,10 +1433,10 @@ class ExtrudeSecondaryStructureCommandUnic(ExtrudeSecondaryStructureCommand):
                     # to compute the sheet2D. if not remove the ss.
                     if SS.sheet2D is None:
                         continue
-                    if filter(lambda x, rs = SS.sheet2D.resInSheet:
-                              not x in rs, SS.residues):
-                        print "WARNING: Removing %s from secondary structure set. One or more residues \
-doesn't have CA and O"%SS.name
+                    if list(filter(lambda x, rs = SS.sheet2D.resInSheet:
+                              not x in rs, SS.residues)):
+                        print("WARNING: Removing %s from secondary structure set. One or more residues \
+doesn't have CA and O"%SS.name)
                         
                         # remove the SS from the set and etc....
                         #delattr(SS.residues, 'secondarystructure')
@@ -1493,7 +1490,7 @@ doesn't have CA and O"%SS.name
                     if lHighlight is True:# and chain in residueSet :
                         highlight = [0]*len(SS.exElt.vertices)
                         for lResidue in molSelectedResiduesDict[mol]:
-                            if resfacesDict.has_key(lResidue):
+                            if lResidue in resfacesDict:
                                 for lFace in resfacesDict[lResidue]:
                                     for lVertexIndex in lFace:
                                         highlight[int(lVertexIndex)] = 1
@@ -1527,7 +1524,7 @@ doesn't have CA and O"%SS.name
                 kw['only'] = 1
             kw['setupUndo'] = 1
             #print "calling displayExtrudedSS with ", kw
-            apply(self.vf.displayExtrudedSS,(nodes,),  kw)
+            self.vf.displayExtrudedSS(*(nodes,), **kw)
             #self.vf.displayExtrudedSS(nodes, setupUndo=1, topCommand=0)
 
 
@@ -1597,7 +1594,7 @@ upon atom deletion.
             for atom in atomSet.get("O"):
                 atom.parent.hasO = False
             
-            if not  mol.geomContainer.geoms.has_key('secondarystructure'): continue
+            if 'secondarystructure' not in mol.geomContainer.geoms: continue
             kw = mol.geomContainer.geoms['secondarystructure'].kw
             #cleanup SS atomset in geomcontainer             
             self.vf.computeSecondaryStructure.clean(mol)
@@ -1637,7 +1634,7 @@ upon atom deletion.
             #SSinSel = resWithSS.secondarystructure.uniq()
             #mol.geomContainer.atoms['secondarystructure']=resWithSS.atoms
             set = ResidueSet()
-            if mol.geomContainer.geoms.has_key('SS'):
+            if 'SS' in mol.geomContainer.geoms:
                 for ch in mol.chains :
                     set = set + mol.geomContainer.atoms['SS'+ch.id].parent
                     if len(set)==0: # nothing is displayed	
@@ -1668,7 +1665,7 @@ upon atom deletion.
             mol = SS.chain.parent
             name = '%s%s'%(SS.name, SS.chain.id)
             _set = mol.geomContainer.atoms[name]
-            inres = filter(lambda x, res=res: not x in res, _set)
+            inres = list(filter(lambda x, res=res: not x in res, _set))
             if len(inres) == 0:
                 # res and _set are the same
                 if negate:
@@ -1783,7 +1780,7 @@ upon atom deletion.
             reswithss = residues.get(lambda x:
                                      hasattr(x,'secondarystructure'))
             if reswithss is None:
-                print 'no secondary structure in that selection'
+                print('no secondary structure in that selection')
                 continue
             
             SSInSel = reswithss.secondarystructure.uniq()
@@ -1792,18 +1789,18 @@ upon atom deletion.
                 if not hasattr(c, 'secondarystructureset'):
                     continue
                 if not hasattr(c, 'sheet2D'):
-                    print "The chain %s doesn't have a sheet2D computed"%c.name
+                    print("The chain %s doesn't have a sheet2D computed"%c.name)
                     continue
-                elif (c.sheet2D.has_key('ssSheet2D') and \
+                elif ('ssSheet2D' in c.sheet2D and \
                       c.sheet2D['ssSheet2D'] is None): continue
-                if mol.geomContainer.geoms.has_key('SS') :
+                if 'SS' in mol.geomContainer.geoms :
                     faces=[]
                     vertices=[]	
                     normals=[]							
                     name = "SS"+c.id
                     g = mol.geomContainer.geoms[name]
                 SS, resInSS = self.getResiduesBySS(residues, c)
-                for s in xrange(len(c.secondarystructureset)):
+                for s in range(len(c.secondarystructureset)):
                     ss = c.secondarystructureset[s]
                     res = resInSS[s]
                     if ss in SSInSel and not hasattr(ss, 'exElt') \
@@ -1811,7 +1808,7 @@ upon atom deletion.
                         self.vf.extrudeSecondaryStructure(res, display=0,
                                                           topCommand=0)
 
-                    if mol.geomContainer.geoms.has_key('SS') :
+                    if 'SS' in mol.geomContainer.geoms :
                         son, sof, f, n, v = drawResidues(ss, res, only , negate ,uniq=True)
                         faces.extend(numpy.array(f)+len(v))
                         vertices.extend(v)
@@ -1822,19 +1819,19 @@ upon atom deletion.
                     if son: setOn += son
                     if sof: setOff += sof
 
-                if mol.geomContainer.geoms.has_key('SS') :
+                if 'SS' in mol.geomContainer.geoms :
                     g.Set(visible=not negate)
                     
             kw["only"] = only
             kw["negate"] = negate
             mol.geomContainer.geoms['secondarystructure'].kw = kw      				
         redraw = False
-        if kw.has_key("redraw") : redraw=True
+        if "redraw" in kw : redraw=True
         event = EditGeomsEvent('SSdisplay', [nodes,[only, negate,redraw]],
                                setOn=setOn, setOff=setOff)
         self.vf.dispatchEvent(event)
 
-					
+                                        
     def cleanup(self):
         """ Method called by afterDoit to clean up things eventhough the doit
         failes."""
@@ -1854,11 +1851,11 @@ upon atom deletion.
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return
-        if not kw.has_key('redraw'):kw['redraw']=1
+        if 'redraw' not in kw:kw['redraw']=1
         kw['only'] = only
         kw['negate'] = negate
         
-        apply(self.doitWrapper, (nodes,),kw)
+        self.doitWrapper(*(nodes,), **kw)
 
     def getResiduesBySS(self, residues, chain):
         resWithSS = residues.get(lambda x: hasattr(x, 'secondarystructure'))
@@ -1884,7 +1881,7 @@ class UndisplayExtrudedSSCommand(DisplayCommand):
          nodes --- TreeNodeSet holding the current selection
     """
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('displayExtrudedSS'):
+        if 'displayExtrudedSS' not in self.vf.commands:
             self.vf.loadCommand('secondaryStructureCommands',
                                 ['displayExtrudedSS'], 'Pmv',
                                 topCommand=0)
@@ -1899,7 +1896,7 @@ class UndisplayExtrudedSSCommand(DisplayCommand):
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return
         kw['negate']= 1
-        apply(self.vf.displayExtrudedSS, (nodes,), kw)
+        self.vf.displayExtrudedSS(*(nodes,), **kw)
 
 
 
@@ -1968,26 +1965,26 @@ class RibbonCommand(MVCommand):
                   will be displayed
         \nnegate ---  flag when set to 1 undisplay the current selection
         """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         
-        if not kw.has_key('redraw'): kw['redraw']=1
+        if 'redraw' not in kw: kw['redraw']=1
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return
         kw['only']=only
         kw['negate']=negate
         #print "in ribbon with only=", only
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
         
         
     def doit(self, nodes, **kw):
         #print "in ribbon.doit with only=", kw['only']
-        apply(self.vf.computeSecondaryStructure,(nodes,), {'topCommand':False})
+        self.vf.computeSecondaryStructure(*(nodes,), **{'topCommand':False})
         kw['topCommand'] = 0
         #kw['only'] = only
         #kw['negate'] = negate
         
-        apply(self.vf.extrudeSecondaryStructure,(nodes,), kw)
+        self.vf.extrudeSecondaryStructure(*(nodes,), **kw)
         #self.vf.computeSecondaryStructure(nodes, topCommand=0)
         #self.vf.extrudeSecondaryStructure(nodes, topCommand=0)
 
@@ -2012,7 +2009,7 @@ class ColorBySSElementType(ColorFromPalette):
             'SecondaryStructureType', SecondaryStructureType,
             info=c, lookupMember = 'structureType')
 
-        if not self.vf.commands.has_key('color'):
+        if 'color' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'color', 'Pmv',
                                 topCommand=0)
         self.undoCmdsString= self.vf.color.name
@@ -2071,11 +2068,11 @@ class ColorBySSElementType(ColorFromPalette):
         updatedGeomsToColor = []
         for mol in molecules:
             for gName in geomsToColor:
-                if not mol.geomContainer.geoms.has_key(gName): continue
+                if gName not in mol.geomContainer.geoms: continue
                 geom = mol.geomContainer.geoms[gName]
                 if geom.children != []:
                     # get geom Name:
-                    childrenNames = map(lambda x: x.name, geom.children)
+                    childrenNames = [x.name for x in geom.children]
                     updatedGeomsToColor = updatedGeomsToColor + childrenNames
                     for childGeom in geom.children:
                         childGeom.Set(inheritMaterial=0, redo=0, tagModified=False)
@@ -2175,5 +2172,5 @@ def initModule(viewer):
     initializes these commands also. """
 
     for dict in commandList:
-	viewer.addCommand(dict['cmd'], dict['name'], dict['gui'])
+        viewer.addCommand(dict['cmd'], dict['name'], dict['gui'])
 

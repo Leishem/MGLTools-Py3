@@ -96,7 +96,7 @@ class video_tk:
     #self.mainloop()
     
   def arrayToBmp(self,array):
-    for i in xrange(self.width):
+    for i in range(self.width):
         for j in range(self.height):
             rgba = array[i][j]
             px = c4d.Vector(int(rgba[0]),int(rgba[1]),int(rgba[2])) #int
@@ -125,17 +125,17 @@ class video_tk:
           im_array = utils.convert_ARGB_RGBA(self.videoApp.cam.im_array)
     else:
           im_array = self.videoApp.cam.im_array
-    print len(im_array)      
-    #im = Image.fromstring(self.pixel_format,(self.width,self.height),im_array.tostring())
+    print(len(im_array))      
+    #im = Image.fromstring(self.pixel_format,(self.width,self.height),im_array.tobytes())
     #im = im_array.reshape(self.width,self.height,self.videoApp.cam.pixelsize)
     #self.arrayToBmp(im)
-    print "ImageFromString"
-    im = Image.fromstring(self.pixel_format,(self.width,self.height),im_array.tostring())
+    print("ImageFromString")
+    im = Image.fromstring(self.pixel_format,(self.width,self.height),im_array.tobytes())
     self.videoApp.lock.release()
-    print "save"
+    print("save")
     im.save('/tmp/tmp.png')
     #self.photo[1000] = '/tmp/tmp.png'
-    print "up texture"
+    print("up texture")
     #c4d.call_command(1023410)
     #self.videoApp.lock.release()
     # update Tk label

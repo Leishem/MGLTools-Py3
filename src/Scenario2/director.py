@@ -5,7 +5,7 @@
 from time import sleep
 import warnings, weakref, numpy
 
-from actor import Actor
+from .actor import Actor
 from Scenario2 import MaxKF
 
 try:
@@ -336,7 +336,7 @@ class MAADirector(EventHandler):
             generates a AddMAA event
         """
         if not isinstance(maa, MultipleActorsActions) and not isinstance(maa, MAAGroup):
-            raise TypeError, "in addMaaat() maa must be an instance of MultipleActorsActions or MAAGroup"
+            raise TypeError("in addMaaat() maa must be an instance of MultipleActorsActions or MAAGroup")
         #assert isinstance(maa, MultipleActorsActions)
         assert isinstance(position, int)
 
@@ -372,7 +372,7 @@ class MAADirector(EventHandler):
             # if the maa contains a redraw actor add it to self.redrawActors
             # and remove it from the maa (after the "for" loop)
             if foundDejaVu and isinstance(actor, RedrawActor):
-                if not self.redrawActors.has_key(actor.object):
+                if actor.object not in self.redrawActors:
                     self.redrawActors[actor.object] = actor
                     redrawInd.append(i)
                     
@@ -402,7 +402,7 @@ class MAADirector(EventHandler):
         """
         Stop autoRedraw in all Viewer associates with RedrawActors
         """
-        for actor in self.redrawActors.values():
+        for actor in list(self.redrawActors.values()):
             #print "stopped autoredraw"
             actor.object.stopAutoRedraw()
             
@@ -410,7 +410,7 @@ class MAADirector(EventHandler):
         """
         Start autoRedraw in all Viewer associates with RedrawActors
         """
-        for actor in self.redrawActors.values():
+        for actor in list(self.redrawActors.values()):
             #print "start autoredraw"
             actor.object.startAutoRedraw()
 
@@ -419,7 +419,7 @@ class MAADirector(EventHandler):
         make sure all Viewers will redraw
         """
         #print 'Viewer Redraw'
-        for actor in self.redrawActors.values():
+        for actor in list(self.redrawActors.values()):
             if self.needsRedraw and actor.playing:
                 actor.setValue()
                 self.needsRedraw = False
@@ -431,19 +431,19 @@ class MAADirector(EventHandler):
         make sure all Viewers will redraw
         """
         
-        for actor in self.redrawActors.values():
+        for actor in list(self.redrawActors.values()):
             if actor.playing:
                 vi = actor.object
                 root = vi.rootObject
-                if orient.has_key(root.fullName): # snapshot orient 
-                    allkeys = orient.keys()
+                if root.fullName in orient: # snapshot orient 
+                    allkeys = list(orient.keys())
                     ort = {}
                     ort.update(orient[root.fullName])
                     allkeys.remove(root.fullName)
-                    if orient.has_key('fieldOfView'):
+                    if 'fieldOfView' in orient:
                         ort['fieldOfView'] = orient['fieldOfView']
                         allkeys.remove('fieldOfView')
-                    if orient.has_key('lookFrom'):
+                    if 'lookFrom' in orient:
                         ort['lookFrom'] = orient['lookFrom']
                         allkeys.remove('lookFrom')                                  
                     setOrientation(root, ort)
@@ -459,7 +459,7 @@ class MAADirector(EventHandler):
         """
         make sure all Viewers will redraw
         """
-        for actor in self.redrawActors.values():
+        for actor in list(self.redrawActors.values()):
             if actor.playing:
                 setRendering( actor.object, rendering )
 
@@ -489,7 +489,7 @@ class MAADirector(EventHandler):
 
         self.stopViewersAutoRedraw()
         
-        for i in xrange(fromPos, toPos+1):
+        for i in range(fromPos, toPos+1):
             self.setValuesAt(i)
             if callback:
                 callback(i)
@@ -534,7 +534,7 @@ class MAADirector(EventHandler):
                 if hasattr(maa, "geomOrients") and maa.setOrient:
                         #self.stopViewersAutoRedraw()
                         #stopAutoRedraw = True
-                        for o, val in maa.geomOrients.items():
+                        for o, val in list(maa.geomOrients.items()):
                             setOrientation(o, val)
                 
                 if hasattr( maa, 'rendering') and maa.forceRendering:
@@ -596,7 +596,7 @@ class MAADirector(EventHandler):
         rmaa = self.maas.pop(index)
         
         # check if self.redrawActors.values() contains a redraw actor from the removed maa:
-        for obj,redrawactor in self.redrawActors.items():
+        for obj,redrawactor in list(self.redrawActors.items()):
             if redrawactor._maa()==maa:
                 del self.redrawActors[redrawactor.object]
 ##         redrawactor = None 
@@ -741,8 +741,8 @@ class MAADirector(EventHandler):
                     
                         
 if __name__=='__main__':
-    from datatypes import FloatType
-    from interpolators import FloatScalarInterpolator
+    from .datatypes import FloatType
+    from .interpolators import FloatScalarInterpolator
 
     class foo:
 

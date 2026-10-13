@@ -131,5 +131,5 @@ if __name__=='__main__':
     wg = wrapperGenerator('../descr.py')
     code = wg.codeGen()
     f = open('test.py', 'w')
-    map(lambda l, f=f: f.write("%s"%l), code)
+    list(map(lambda l, f=f: f.write("%s"%l), code))
     f.close()

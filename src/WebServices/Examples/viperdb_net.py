@@ -41,7 +41,7 @@ try:
     masterNet.addNode(Save_Lines_0,25,112)
     Save_Lines_0.inputPortByName['filename'].widget.set("2plv.pdb", run=False)
 except:
-    print "WARNING: failed to restore SaveLines named Save Lines in network masterNet"
+    print("WARNING: failed to restore SaveLines named Save Lines in network masterNet")
     print_exc()
     Save_Lines_0=None
 try:
@@ -51,7 +51,7 @@ try:
     Pmv_1 = PmvNode(vf=masterNet.editor.vf, constrkw = {'vf': 'masterNet.editor.vf'}, name='Pmv', library=pmvlib)
     masterNet.addNode(Pmv_1,231,8)
 except:
-    print "WARNING: failed to restore PmvNode named Pmv in network masterNet"
+    print("WARNING: failed to restore PmvNode named Pmv in network masterNet")
     print_exc()
     Pmv_1=None
 try:
@@ -60,10 +60,10 @@ try:
     from Pmv.VisionInterface.PmvNodes import PmvChooseCommand
     Choose_Cmd_2 = PmvChooseCommand(constrkw = {}, name='Choose Cmd', library=pmvlib)
     masterNet.addNode(Choose_Cmd_2,231,92)
-    apply(Choose_Cmd_2.inputPortByName['cmdName'].widget.configure, (), {'choices': ['readPDB']})
+    Choose_Cmd_2.inputPortByName['cmdName'].widget.configure(*(), **{'choices': ['readPDB']})
     Choose_Cmd_2.inputPortByName['cmdName'].widget.set("readPDB", run=False)
 except:
-    print "WARNING: failed to restore PmvChooseCommand named Choose Cmd in network masterNet"
+    print("WARNING: failed to restore PmvChooseCommand named Choose Cmd in network masterNet")
     print_exc()
     Choose_Cmd_2=None
 try:
@@ -72,15 +72,15 @@ try:
     from Pmv.VisionInterface.PmvNodes import PmvRunCommand
     Run_readPDB_3 = PmvRunCommand(sortedArgNames=['topCommand', 'redraw', 'setupUndo', 'log'], command=masterNet.editor.vf.readPDB, namedArgs={'topCommand': True, 'redraw': True, 'setupUndo': True, 'log': True}, posArgsNames=['filename'], constrkw = {'sortedArgNames': "['topCommand', 'redraw', 'setupUndo', 'log']", 'command': 'masterNet.editor.vf.readPDB', 'namedArgs': "{'topCommand': True, 'redraw': True, 'setupUndo': True, 'log': True}", 'posArgsNames': "['filename']"}, name='Run readPDB', library=pmvlib)
     masterNet.addNode(Run_readPDB_3,231,175)
-    apply(Run_readPDB_3.addInputPort, (), {'name': 'filename', 'cast': True, 'datatype': 'string', 'height': 12, 'width': 12, 'shape': 'oval', 'color': 'white'})
-    apply(Run_readPDB_3.addInputPort, (), {'name': 'topCommand', 'cast': True, 'datatype': 'boolean', 'balloon': 'Defaults toTrue', 'required': False, 'height': 10, 'width': 10, 'shape': 'rect', 'color': 'yellow'})
-    apply(Run_readPDB_3.addInputPort, (), {'name': 'redraw', 'cast': True, 'datatype': 'boolean', 'balloon': 'Defaults toTrue', 'required': False, 'height': 10, 'width': 10, 'shape': 'rect', 'color': 'yellow'})
-    apply(Run_readPDB_3.addInputPort, (), {'name': 'setupUndo', 'cast': True, 'datatype': 'boolean', 'balloon': 'Defaults toTrue', 'required': False, 'height': 10, 'width': 10, 'shape': 'rect', 'color': 'yellow'})
-    apply(Run_readPDB_3.addInputPort, (), {'name': 'log', 'cast': True, 'datatype': 'boolean', 'balloon': 'Defaults toTrue', 'required': False, 'height': 10, 'width': 10, 'shape': 'rect', 'color': 'yellow'})
-    apply(Run_readPDB_3.inputPortByName['topCommand'].createWidget, (), {'descr':{'initialValue': True, 'labelGridCfg': {'column': 0, 'row': 1, 'sticky': 'w'}, 'master': 'ParamPanel', 'widgetGridCfg': {'column': 1, 'labelSide': 'left', 'row': 1}, 'labelCfg': {'text': 'topCommand'}, 'class': 'NECheckButton'}})
-    apply(Run_readPDB_3.inputPortByName['redraw'].createWidget, (), {'descr':{'initialValue': True, 'labelGridCfg': {'column': 0, 'row': 3, 'sticky': 'w'}, 'master': 'ParamPanel', 'widgetGridCfg': {'column': 1, 'labelSide': 'left', 'row': 3}, 'labelCfg': {'text': 'redraw'}, 'class': 'NECheckButton'}})
-    apply(Run_readPDB_3.inputPortByName['setupUndo'].createWidget, (), {'descr':{'initialValue': True, 'labelGridCfg': {'column': 0, 'row': 5, 'sticky': 'w'}, 'master': 'ParamPanel', 'widgetGridCfg': {'column': 1, 'labelSide': 'left', 'row': 5}, 'labelCfg': {'text': 'setupUndo'}, 'class': 'NECheckButton'}})
-    apply(Run_readPDB_3.inputPortByName['log'].createWidget, (), {'descr':{'initialValue': True, 'labelGridCfg': {'column': 0, 'row': 7, 'sticky': 'w'}, 'master': 'ParamPanel', 'widgetGridCfg': {'column': 1, 'labelSide': 'left', 'row': 7}, 'labelCfg': {'text': 'log'}, 'class': 'NECheckButton'}})
+    Run_readPDB_3.addInputPort(*(), **{'name': 'filename', 'cast': True, 'datatype': 'string', 'height': 12, 'width': 12, 'shape': 'oval', 'color': 'white'})
+    Run_readPDB_3.addInputPort(*(), **{'name': 'topCommand', 'cast': True, 'datatype': 'boolean', 'balloon': 'Defaults toTrue', 'required': False, 'height': 10, 'width': 10, 'shape': 'rect', 'color': 'yellow'})
+    Run_readPDB_3.addInputPort(*(), **{'name': 'redraw', 'cast': True, 'datatype': 'boolean', 'balloon': 'Defaults toTrue', 'required': False, 'height': 10, 'width': 10, 'shape': 'rect', 'color': 'yellow'})
+    Run_readPDB_3.addInputPort(*(), **{'name': 'setupUndo', 'cast': True, 'datatype': 'boolean', 'balloon': 'Defaults toTrue', 'required': False, 'height': 10, 'width': 10, 'shape': 'rect', 'color': 'yellow'})
+    Run_readPDB_3.addInputPort(*(), **{'name': 'log', 'cast': True, 'datatype': 'boolean', 'balloon': 'Defaults toTrue', 'required': False, 'height': 10, 'width': 10, 'shape': 'rect', 'color': 'yellow'})
+    Run_readPDB_3.inputPortByName['topCommand'].createWidget(*(), **{'descr':{'initialValue': True, 'labelGridCfg': {'column': 0, 'row': 1, 'sticky': 'w'}, 'master': 'ParamPanel', 'widgetGridCfg': {'column': 1, 'labelSide': 'left', 'row': 1}, 'labelCfg': {'text': 'topCommand'}, 'class': 'NECheckButton'}})
+    Run_readPDB_3.inputPortByName['redraw'].createWidget(*(), **{'descr':{'initialValue': True, 'labelGridCfg': {'column': 0, 'row': 3, 'sticky': 'w'}, 'master': 'ParamPanel', 'widgetGridCfg': {'column': 1, 'labelSide': 'left', 'row': 3}, 'labelCfg': {'text': 'redraw'}, 'class': 'NECheckButton'}})
+    Run_readPDB_3.inputPortByName['setupUndo'].createWidget(*(), **{'descr':{'initialValue': True, 'labelGridCfg': {'column': 0, 'row': 5, 'sticky': 'w'}, 'master': 'ParamPanel', 'widgetGridCfg': {'column': 1, 'labelSide': 'left', 'row': 5}, 'labelCfg': {'text': 'setupUndo'}, 'class': 'NECheckButton'}})
+    Run_readPDB_3.inputPortByName['log'].createWidget(*(), **{'descr':{'initialValue': True, 'labelGridCfg': {'column': 0, 'row': 7, 'sticky': 'w'}, 'master': 'ParamPanel', 'widgetGridCfg': {'column': 1, 'labelSide': 'left', 'row': 7}, 'labelCfg': {'text': 'log'}, 'class': 'NECheckButton'}})
     code = """
 
 
@@ -149,7 +149,7 @@ def doit(self, command, filename, topCommand, redraw, setupUndo, log):
 """
     Run_readPDB_3.configure(function=code)
 except:
-    print "WARNING: failed to restore PmvRunCommand named Run readPDB in network masterNet"
+    print("WARNING: failed to restore PmvRunCommand named Run readPDB in network masterNet")
     print_exc()
     Run_readPDB_3=None
 try:
@@ -159,7 +159,7 @@ try:
     Set_Instances_4 = PmvSetInstanceMatrices(constrkw = {}, name='Set Instances', library=pmvlib)
     masterNet.addNode(Set_Instances_4,233,252)
 except:
-    print "WARNING: failed to restore PmvSetInstanceMatrices named Set Instances in network masterNet"
+    print("WARNING: failed to restore PmvSetInstanceMatrices named Set Instances in network masterNet")
     print_exc()
     Set_Instances_4=None
 try:
@@ -178,7 +178,7 @@ try:
     output_Ports_7.inputPorts[1].configure(singleConnection=True)
     Icosahedral_5.shrink()
 except:
-    print "WARNING: failed to restore Icos1 named Icosahedral in network masterNet"
+    print("WARNING: failed to restore Icos1 named Icosahedral in network masterNet")
     print_exc()
     Icosahedral_5=None
 try:
@@ -189,7 +189,7 @@ try:
     masterNet.addNode(viperdb_mgldev_scripps_14,8,6)
     viperdb_mgldev_scripps_14.inputPortByName['pdb_id'].widget.set("2plv", run=False)
 except:
-    print "WARNING: failed to restore viperdbNode named viperdb@mgldev.scripps in network masterNet"
+    print("WARNING: failed to restore viperdbNode named viperdb@mgldev.scripps in network masterNet")
     print_exc()
     viperdb_mgldev_scripps_14=None
 masterNet.freeze()

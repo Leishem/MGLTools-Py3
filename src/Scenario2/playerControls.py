@@ -1,9 +1,9 @@
 from mglutil.gui.BasicWidgets.Tk.player import Player
 from Scenario2.events import PlayerStartEvent, PlayerStopEvent
 from Scenario2.director import MAADirector
-import Tkinter, Pmw
+import tkinter, Pmw
 import sys, os
-import tkFileDialog
+import tkinter.filedialog
 from time import strftime
 
 class PlayerControls(Player):
@@ -58,7 +58,7 @@ class PlayerControls(Player):
             self.codecType = 'mpeg2video'
         self.filename = 'movie.mpg'
         self.fileTypes = [("MPG", ".mpg")]
-        self.cameraSize=Tkinter.StringVar()
+        self.cameraSize=tkinter.StringVar()
         self.cameraSize.set("current")
         root = self.root
         screenw, screenh = root.winfo_screenwidth(), root.winfo_screenheight()
@@ -84,9 +84,9 @@ class PlayerControls(Player):
             title="Record Options")
         dialog.withdraw()
         # create a frame to hold group to force setting orient and rendering
-        frame = Tkinter.Frame(dialog.interior())
+        frame = tkinter.Frame(dialog.interior())
 
-        bn = Tkinter.Button(frame, text="Save As:", command = self.browseFile_cb,
+        bn = tkinter.Button(frame, text="Save As:", command = self.browseFile_cb,
                             width= 0, height=0)
         self.balloon.bind(bn, "Opens file browser")
         bn.grid(row=0, column=0,sticky='ew')
@@ -106,7 +106,7 @@ class PlayerControls(Player):
         self.codecw.grid( row=1, column=0, columnspan=2, sticky='ew')
         self.cameraSizeMenub = None
         if self.vf:
-            listitems = self.resolutions.keys()
+            listitems = list(self.resolutions.keys())
 ##             csize = Pmw.ComboBox(frame, labelpos = 'w',
 ##                                 label_text = 'Camera Size:',
 ##                                 #entryfield_validate = self.entryValidate,
@@ -117,12 +117,12 @@ class PlayerControls(Player):
 ##                                  selectioncommand=self.setCameraSize_cb)
             
 ##             csize.grid( row=2, column=0, columnspan=2, sticky='ew')
-            self.cameraSizeMenub = mb= Tkinter.Menubutton(frame, text='Select camera size...',
+            self.cameraSizeMenub = mb= tkinter.Menubutton(frame, text='Select camera size...',
                            underline=0, relief='raised')
             #mb('<Button-1>', toggleMenu, '+')
             mb.grid( row=2, column=0, columnspan=2, sticky='ew')
-            mb.menu = Tkinter.Menu(mb)
-            for s in self.resolutions.keys():
+            mb.menu = tkinter.Menu(mb)
+            for s in list(self.resolutions.keys()):
                 mb.menu.add_radiobutton(label=s,
                                         var=self.cameraSize,
                                         value = s,
@@ -146,7 +146,7 @@ class PlayerControls(Player):
                 fileDir = os.path.dirname(os.path.realpath(self.filename))
             else:
                 fileDir = os.getcwd()
-        file = tkFileDialog.asksaveasfilename( filetypes=self.fileTypes,
+        file = tkinter.filedialog.asksaveasfilename( filetypes=self.fileTypes,
                                                initialdir=fileDir,
                                                initialfile=None,
                                                title="Save file")
@@ -212,7 +212,7 @@ class PlayerControls(Player):
                 cbVar = ifd.entryByName['recordB']['wcfg']['variable']
                 cbVar.set(0)
                 return 
-            for viActor in self.director.redrawActors.values():
+            for viActor in list(self.director.redrawActors.values()):
                 cam = viActor.object.currentCamera
                 self.setCameraSize_cb(viActor.object)
                 self.getFileName_cb()
@@ -229,10 +229,10 @@ class PlayerControls(Player):
         if not self.recording:
             return
         self.recording = False
-        for viActor in self.director.redrawActors.values():
+        for viActor in list(self.director.redrawActors.values()):
             cam = viActor.object.currentCamera
             cam.stop()
-            print 'Recorded', cam.nbRecordedframes
+            print('Recorded', cam.nbRecordedframes)
         ifd = self.form.ifd
         cbVar = ifd.entryByName['recordB']['wcfg']['variable']
         cbVar.set(0)

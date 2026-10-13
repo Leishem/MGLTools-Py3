@@ -4,7 +4,7 @@
 ## Copyrights TSRI and M. Sanner
 ##
 
-import Tkinter, Pmw
+import tkinter, Pmw
 
 from Scenario2.clipboard import AddMAAToClipBoardEvent, RemoveMAAFromClipBoardEvent
 from Scenario2.clipboard import Clipboard
@@ -61,7 +61,7 @@ class ClipboardGUI:
         Create a ScrolledFrame to old MAA entries
         """
         if self.master is None:
-            self.master = master = Tkinter.Toplevel()
+            self.master = master = tkinter.Toplevel()
             self.ownsMaster = True
         else:
             self.ownsMaster = False
@@ -81,7 +81,7 @@ class ClipboardGUI:
         configure callback of menu entried with the current orientation and post
         menu
         """
-        menu = Tkinter.Menu(self.master, title = "Animation")
+        menu = tkinter.Menu(self.master, title = "Animation")
         from Scenario2 import addTargetsToMenu
         addTargetsToMenu(menu, maa)
         menu.add_command(label = "Delete",
@@ -91,7 +91,7 @@ class ClipboardGUI:
 
 
     def clearGUI(self):
-        for maa, entry in self.maaw.items():
+        for maa, entry in list(self.maaw.items()):
             entry.destroy()
 
 
@@ -102,9 +102,9 @@ class ClipboardGUI:
 
          master = self.MAAContainer.interior()
        
-         self.maaw[maa] = frame = Tkinter.Frame(master)
+         self.maaw[maa] = frame = tkinter.Frame(master)
          
-         b = Tkinter.Button(master=frame ,compound='left', text=maa.name,
+         b = tkinter.Button(master=frame ,compound='left', text=maa.name,
                             command=maa.run, width=25, height=2)
 
          b.name = maa.name

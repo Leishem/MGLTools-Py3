@@ -12,7 +12,7 @@
 # $Id: stylesCommands.py,v 1.11 2010/10/29 21:45:49 sanner Exp $
 #
 from mglutil.util.callback import CallbackFunction
-import Tkinter, Pmw, os
+import tkinter, Pmw, os
 from Pmv.mvCommand import MVCommand, MVCommandGUI
 from DejaVu.states import setRendering, getRendering
 
@@ -80,7 +80,7 @@ if len(stack): setRendering(self.GUI.VIEWER, stack.pop(), True)
                 file=os.path.join(path, name+'_icon.png'))
 
             cb = CallbackFunction(self.applyStyle, styleObj)
-            b = Tkinter.Button(inside, compound='left', image=photoIcon,
+            b = tkinter.Button(inside, compound='left', image=photoIcon,
                                command=cb)
             b.photo = photoIcon
 
@@ -88,7 +88,7 @@ if len(stack): setRendering(self.GUI.VIEWER, stack.pop(), True)
             height = b.photo.height()
             b.place(x=currentx, y=currenty, width=width, height=height )
 
-            textw = Tkinter.Label(inside, text=name, justify='left')
+            textw = tkinter.Label(inside, text=name, justify='left')
             textw.place(x=width+border, y=currenty)
             textw.update() # to allow label to appear and size to be correct
             currenty += max(textw.winfo_height(), height + border)
@@ -113,9 +113,9 @@ if len(stack): setRendering(self.GUI.VIEWER, stack.pop(), True)
 
 
     def showLargeImage(self, photo, text, event=None):
-        self.largeImageRoot = top = Tkinter.Toplevel()
+        self.largeImageRoot = top = tkinter.Toplevel()
         #top.overrideredirect(True)
-        canvas = Tkinter.Canvas(top)
+        canvas = tkinter.Canvas(top)
         w = photo.width()
         h = photo.height()
         textw = canvas.create_text(

@@ -16,7 +16,7 @@ self.readMolecule(plugDir+"/data/1BTA.pdb",log=1)
 self.displayCPK("1BTA",log=1)
 
 self.openTrajectory(plugDir+'/data/1BTA.xtc', log=0)
-tname=self.Trajectories.keys()[0] #1BTA_md_noh2o.xtc
+tname=list(self.Trajectories.keys())[0] #1BTA_md_noh2o.xtc
 molname=self.Mols[0].name #1BTA_noh2o_model1
 traj=self.Trajectories['1BTA.xtc']
 mol=self.Mols[0]

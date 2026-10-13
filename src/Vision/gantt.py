@@ -1,4 +1,4 @@
-import Pmw, Tkinter
+import Pmw, tkinter
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 
 class Gantt:
@@ -11,12 +11,12 @@ The task are specified as a list of (name, start, end) 3-tuples
 
         # create panel if needed
         if root is None:
-            root = Tkinter.Toplevel()
+            root = tkinter.Toplevel()
             root.title("Execution profile")
             self.ownsMaster = True
         else:
-            assert isinstance(root, Tkinter.Toplevel) or\
-                   isinstance(root, Tkinter.Frame)
+            assert isinstance(root, tkinter.Toplevel) or\
+                   isinstance(root, tkinter.Frame)
             self.ownsMaster = False
         self.root = root
 
@@ -34,7 +34,7 @@ The task are specified as a list of (name, start, end) 3-tuples
 
         self.scrolledCanvas.pack(expand=True, fill='both')
 
-        f = self.bframe = Tkinter.Frame(root)
+        f = self.bframe = tkinter.Frame(root)
         
         self.scaleTimeTW = ThumbWheel(
             f, showLabel=0, width=70, height=16, type=float, value=0,

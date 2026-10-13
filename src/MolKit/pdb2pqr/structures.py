@@ -14,8 +14,8 @@ __author__ = "Todd Dolinsky"
 
 BACKBONE = ["N","CA","C","O","O2","HA","HN","H","tN"]
 
-import string
-from pdb import *
+from mglcompat import pystring as string
+from .pdb import *
 
 class Chain:
     """
@@ -56,7 +56,7 @@ class Chain:
                 return item
             except AttributeError:
                 message = "Unable to get object \"%s\" in class Chain" % name
-                raise ValueError, message
+                raise ValueError(message)
 
     def addResidue(self, residue):
         """
@@ -193,7 +193,7 @@ class Residue:
             return item
         except AttributeError:
             message = "Unable to access object \"%s\" in class Residue" % name
-            raise ValueError, message
+            raise ValueError(message)
 
     def set(self, name, value):
         """
@@ -226,7 +226,7 @@ class Residue:
                 setattr(self, name, value)
             except AttributeError:
                 message = "Unable to set object \"%s\" in class Residue" % name
-                raise ValueError, message
+                raise ValueError(message)
 
     def checkAtomNames(self):
         """
@@ -306,7 +306,7 @@ class Residue:
         # There should be nothing left in old
 
         if len(old) != 0:
-            raise ValueError, "Error Occurred when renaming hydrogens: %s" % old
+            raise ValueError("Error Occurred when renaming hydrogens: %s" % old)
 
     def updateIntraBonds(self, defresidue):
         """
@@ -325,7 +325,7 @@ class Residue:
                 elif self.isNterm and atomname in ["H2","H3"]:
                     continue
                 else:
-                    raise ValueError, "Atom %s not found in updateIntraBonds!" % atomname
+                    raise ValueError("Atom %s not found in updateIntraBonds!" % atomname)
             for bondatomname in defatom.get("intrabonds"):
                 if self.getAtom(bondatomname):
                     atom.addIntraBond(bondatomname)
@@ -497,7 +497,7 @@ class Atom(ATOM):
         if type == "ATOM" or type == "HETATM":
             self.type = type
         else:
-            raise ValueError, "Invalid atom type %s!"
+            raise ValueError("Invalid atom type %s!")
         self.serial = atom.serial
         self.name = atom.name
         self.altLoc = atom.altLoc
@@ -581,7 +581,7 @@ class Atom(ATOM):
             return item
         except AttributeError:
             message = "Unable to access object \"%s\" in class Atom" % name
-            raise ValueError, message
+            raise ValueError(message)
 
     def set(self, name, value):
         """
@@ -619,7 +619,7 @@ class Atom(ATOM):
             setattr(self, name, value)
         except AttributeError:
             message = "Unable to set object \"%s\" in class Atom" % name
-            raise ValueError, message   
+            raise ValueError(message)   
 
     def getCoords(self):
         """

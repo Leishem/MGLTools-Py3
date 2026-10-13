@@ -13,7 +13,7 @@ __author__ = "Todd Dolinsky"
 SMALL = 1.0e-7
 DIHEDRAL = 57.2958
 
-import string
+from mglcompat import pystring as string
 from math import *
 
 class Matrix:
@@ -35,7 +35,7 @@ class Matrix:
         for row in lists:
             if self.cols == 0: self.cols = len(row)
             if len(row) != self.cols:
-                raise ValueError, "Irregularly sized matrix!"
+                raise ValueError("Irregularly sized matrix!")
 
     def __str__(self):
         """
@@ -88,7 +88,7 @@ class Matrix:
         for i in range(m):
             for j in range(i+1,m):
                 if U.info[i][i] == 0.0:
-                    raise ValueError, "LU decomposition needs non-zero diags!"
+                    raise ValueError("LU decomposition needs non-zero diags!")
                 val = float(U.info[j][i])/U.info[i][i]
                 L.info[j][i] = val
                 for k in range(n):
@@ -140,7 +140,7 @@ def shortestPath(graph, start, end, path=[]):
     path = path + [start]
     if start == end:
         return path
-    if not graph.has_key(start):
+    if start not in graph:
         return None
     shortest = None
     for node in graph[start]:
@@ -205,13 +205,13 @@ def getFile(path):
             file:  File object containing PDB file (file object)
     """
 
-    import os, urllib
+    import os, urllib.request, urllib.parse, urllib.error
 
     file = None
     if not os.path.isfile(path):
         URLpath = "http://www.rcsb.org/pdb/cgi/export.cgi/" + path + \
                   ".pdb?format=PDB&pdbId=" + path + "&compression=None"
-        file = urllib.urlopen(URLpath)
+        file = urllib.request.urlopen(URLpath)
     else:
         file = open(path)
     return file

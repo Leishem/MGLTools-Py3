@@ -1,7 +1,7 @@
-from Tkinter import _default_root, Tk
+from tkinter import _default_root, Tk
 
 if _default_root is None:
-	_default_root = Tk()
+        _default_root = Tk()
         _default_root.withdraw()
         
 #toglInstallDir = '/tsri/python/sun4SunOS5/lib/ '

@@ -11,13 +11,13 @@ def getRendering(viewer, checkAnimatable=False):
             if not g.animatable:
                 continue
         state = g.getState(full=1)
-        if state.has_key('rotation'):
+        if 'rotation' in state:
             del state['rotation']
-        if state.has_key('translation'):
+        if 'translation' in state:
             del state['translation']
-        if state.has_key('scale'):
+        if 'scale' in state:
             del state['scale']
-        if state.has_key('pivot'):
+        if 'pivot' in state:
             del state['pivot']
         del state['name']
         if g.parent is not None and g.parent.visible == 0:
@@ -69,7 +69,7 @@ def setRendering( viewer, rendering, redraw=False):
     old = viewer.suspendRedraw 
     viewer.suspendRedraw = True
     for g in viewer.rootObject.AllObjects():
-        if not rendering.has_key(g.fullName):
+        if g.fullName not in rendering:
             g.Set(visible = 0)
         else:
             vis = rendering[g.fullName].get('visible', None)
@@ -81,12 +81,12 @@ def setRendering( viewer, rendering, redraw=False):
                 if mat: g.materials[GL.GL_FRONT].Set(**mat)
                 mat = tmp.pop('rawMaterialB', None)
                 if mat: g.materials[GL.GL_BACK].Set(**mat)
-                if tmp.has_key('clipPlanes'):
+                if 'clipPlanes' in tmp:
                     tmp.pop('clipPlanes')
                 g.Set( **tmp )
 
     cam = viewer.currentCamera
-    if rendering.has_key('camera'):
+    if 'camera' in rendering:
         cam.Set(**rendering['camera'])
     viewer.suspendRedraw = old
     if redraw:
@@ -100,7 +100,7 @@ def setObjectRendering(viewer, object, rendering):
     if mat: object.materials[GL.GL_FRONT].Set(**mat)
     mat = tmp.pop('rawMaterialB', None)
     if mat: object.materials[GL.GL_BACK].Set(**mat)
-    if tmp.has_key('clipPlanes'):
+    if 'clipPlanes' in tmp:
         tmp.pop('clipPlanes')
     object.Set( **tmp )
 
@@ -136,7 +136,7 @@ def setOrientation(geom, orient):
              translation=orient['translation'],
              scale=orient['scale'],
              pivot=orient['pivot'])
-    if orient.has_key('fieldOfView'):
+    if 'fieldOfView' in orient:
         geom.viewer.currentCamera._setFov(orient['fieldOfView'])
-    if orient.has_key('lookFrom'):
+    if 'lookFrom' in orient:
         geom.viewer.currentCamera._setLookFrom(orient['lookFrom'])

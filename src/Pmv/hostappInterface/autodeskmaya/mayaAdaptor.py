@@ -56,13 +56,13 @@ class mayaAdaptor(epmvAdaptor):
         self.use_progressBar = False
 
     def _resetProgressBar(self,max):
-		maya.cmds.progressBar(maya.pb, edit=True, maxValue=max,progress=0)
-		
+                maya.cmds.progressBar(maya.pb, edit=True, maxValue=max,progress=0)
+                
     def _progressBar(self,progress,label):
-		#maxValue = 100	
-		#did not work	
-		#maya.cmds.progressBar(maya.pb, edit=True, progress=progress*100)
-		maya.cmds.progressBar(maya.pb, edit=True, step=1)
+                #maxValue = 100	
+                #did not work	
+                #maya.cmds.progressBar(maya.pb, edit=True, progress=progress*100)
+                maya.cmds.progressBar(maya.pb, edit=True, step=1)
 
     def _makeRibbon(self,name,coords,shape=None,spline=None,parent=None):
         sc=self._getCurrentScene()

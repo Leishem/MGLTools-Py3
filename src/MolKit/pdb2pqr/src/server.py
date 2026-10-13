@@ -46,7 +46,7 @@
 __date__   = "17 March 2007"
 __author__ = "Todd Dolinsky"
 
-import string
+from mglcompat import pystring as string
 import os
 import sys
 import time
@@ -242,30 +242,30 @@ def printAcceptance(name):
             name:    The ID of the HTML page to redirect to (string)
     """
     waittime = int(REFRESHTIME/2.0)
-    print "Content-type: text/html\n"
-    print "<HTML>"
-    print "<HEAD>"
-    print "<TITLE>PDB2PQR Progress</TITLE>"
-    print "<link rel=\"stylesheet\" href=\"%s\" type=\"text/css\">" % STYLESHEET
-    print "<meta http-equiv=\"Refresh\" content=\"%s; url=%s%s%s-tmp.html\">" % \
-          (waittime, WEBSITE, TMPDIR, name)
-    print "</HEAD>"
-    print "<BODY>"
-    print "<H2>PDB2PQR Progress</H2><P>"
-    print "The PDB2PQR server is generating your results - this page will automatically "
-    print "refresh every %s seconds.<P>" % REFRESHTIME
-    print "Thank you for your patience!<P>"
+    print("Content-type: text/html\n")
+    print("<HTML>")
+    print("<HEAD>")
+    print("<TITLE>PDB2PQR Progress</TITLE>")
+    print("<link rel=\"stylesheet\" href=\"%s\" type=\"text/css\">" % STYLESHEET)
+    print("<meta http-equiv=\"Refresh\" content=\"%s; url=%s%s%s-tmp.html\">" % \
+          (waittime, WEBSITE, TMPDIR, name))
+    print("</HEAD>")
+    print("<BODY>")
+    print("<H2>PDB2PQR Progress</H2><P>")
+    print("The PDB2PQR server is generating your results - this page will automatically ")
+    print("refresh every %s seconds.<P>" % REFRESHTIME)
+    print("Thank you for your patience!<P>")
 
-    print "Server Information:<P>"
-    print "<blockquote>"
+    print("Server Information:<P>")
+    print("<blockquote>")
     loads = getLoads()
     if loads != None:
-        print "<font size=2>Server load:</font> <code>%s (1min)  %s (5min)  %s (15min)</code><BR>" % (loads[0], loads[1], loads[2])
+        print("<font size=2>Server load:</font> <code>%s (1min)  %s (5min)  %s (15min)</code><BR>" % (loads[0], loads[1], loads[2]))
 
-    print "<font size=2>Server time:</font> <code>%s</code><BR>" % (time.asctime(time.localtime()))
-    print "</blockquote>"
+    print("<font size=2>Server time:</font> <code>%s</code><BR>" % (time.asctime(time.localtime())))
+    print("</blockquote>")
     
-    print "</BODY></HTML>"
+    print("</BODY></HTML>")
 
 def getLoads():
     """

@@ -19,7 +19,7 @@
 #
 
 import os
-import Tkinter
+import tkinter
 import Pmw
 from math import floor, ceil
 
@@ -96,7 +96,7 @@ class Sticker(Insert2d):
         self.framePolygonMode = GL.GL_LINE #GL.GL_FILL # GL.GL_NONE for no frame
         self.frameSpace = (.2, .2)
 
-        apply( Insert2d.__init__, (self, name), kw)
+        Insert2d.__init__(*(self, name), **kw)
 
         self.needsRedoDpyListOnResize = True
 
@@ -108,7 +108,7 @@ redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
         #print "Sticker.Set"
-        redoFlags = apply( Insert2d.Set, (self, check, 0), kw)
+        redoFlags = Insert2d.Set(*(self, check, 0), **kw)
         
         label = kw.get('label')
         if label:
@@ -314,11 +314,11 @@ updateOwnGui=True : allow to update owngui at the end this func
 
     def createOwnGui(self):
         #print "GlfLabels.createOwnGui", self
-        self.ownGui = Tkinter.Toplevel()
+        self.ownGui = tkinter.Toplevel()
         self.ownGui.title(self.name)
         self.ownGui.protocol('WM_DELETE_WINDOW', self.ownGui.withdraw )
 
-        frame1 = Tkinter.Frame(self.ownGui)
+        frame1 = tkinter.Frame(self.ownGui)
         frame1.pack(side='top')
 
         # label
@@ -342,9 +342,9 @@ updateOwnGui=True : allow to update owngui at the end this func
         self.ownGui.guiFontNameComboBox.pack(side='top', fill='x')
 
         # wirefont
-        self.ownGui.wireFontVar = Tkinter.IntVar()
+        self.ownGui.wireFontVar = tkinter.IntVar()
         self.ownGui.wireFontVar.set(self.wireFont)
-        self.ownGui.guiWireFont = Tkinter.Checkbutton(
+        self.ownGui.guiWireFont = tkinter.Checkbutton(
                                 frame1,
                                 text='wire font',
                                 variable=self.ownGui.wireFontVar,
@@ -429,7 +429,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                               label_text='frame PolygonMode',
                               labelpos='w',
                               initialitem=self.framePolygonModeDictRev[self.framePolygonMode],
-                              items=self.framePolygonModeDict.keys(),
+                              items=list(self.framePolygonModeDict.keys()),
                               command=self.setWithOwnGui
                               )
         self.ownGui.guiFramePolygonModeOptionMenu.pack(side='top', fill='x')

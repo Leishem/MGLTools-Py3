@@ -42,7 +42,7 @@ disconnectFromServer(self, clientSocket) can be called to disconnect fropm a ser
 """
 import sys, time
 from socket import *
-import thread, types
+import _thread, types
 
 class Comm:
 
@@ -74,7 +74,7 @@ class Comm:
                 import traceback
                 traceback.print_exc()
                 port = port + 1
-                print port
+                print(port)
     ##
     ## server side
     def startServer(self, port=None):
@@ -88,21 +88,21 @@ class Comm:
         self.maxConnections = maxConnections
         self.serverSocket.listen(maxConnections)
         if self.verbose:
-            print "server ready, listening to port ", self.port
+            print("server ready, listening to port ", self.port)
         while 1:
             conn, addr = self.serverSocket.accept()
             name = gethostbyaddr(conn.getpeername()[0])[0] + str(addr[1])
             self.clients[name] = ( conn, addr )
             if self.verbose:
-                print 'Connected by', name, '\n'
-            thread.start_new(self.listenToClient, (name, conn, func))
+                print('Connected by', name, '\n')
+            _thread.start_new(self.listenToClient, (name, conn, func))
             
     def listenToClient(self, name, client, func):
         while (1):
             data = client.recv(1024)
             if data=='':
                 if self.verbose:
-                    print 'Connection closed by client'
+                    print('Connection closed by client')
                 self.hangupClient(client)
                 return
 
@@ -113,7 +113,7 @@ class Comm:
                 chunk = client.recv(MSGLEN-len(msg))
                 if chunk == '':
                     if self.verbose:
-                        print 'Connection closed by client'
+                        print('Connection closed by client')
                     self.hangupClient(client)
                     return
                 msg = msg + chunk
@@ -121,17 +121,17 @@ class Comm:
             func(name, msg)
 
     def hangupClient(self, client):
-        if type(client) == types.StringType:
+        if type(client) == bytes:
             cl = self.clients[client][0]
         else:
             cl = client
             client = None
-            for key, value in self.clients.items():
+            for key, value in list(self.clients.items()):
                 if value[0]==cl:
                     client = key
                     break
             if client is None:
-                raise ValueError, "client not found"
+                raise ValueError("client not found")
             
         cl.close()
         del self.clients[client]
@@ -139,15 +139,15 @@ class Comm:
     def sendToClients(self, message):
         """send a messaqe to all clients"""
         #print 'server sending to client', message
-        for c in self.clients.values():
-            print 'server sending', len(message), '%020d'%len(message)
+        for c in list(self.clients.values()):
+            print('server sending', len(message), '%020d'%len(message))
             c[0].send('%020d'%len(message))
             c[0].send(message)
         
 
     def getClients(self):
         """send a messaqe to all clients"""
-        return self.clients.keys()
+        return list(self.clients.keys())
 
     ##
     ## client side
@@ -160,13 +160,13 @@ class Comm:
         serverSocket.connect( ( host, port))
         name = gethostbyaddr(serverSocket.getpeername()[0])[0]+str(port)
         self.serverSockets[name] = serverSocket
-        thread.start_new(self.listenToServer, (name, serverSocket, func))
+        _thread.start_new(self.listenToServer, (name, serverSocket, func))
 
         
     def listenToServer(self, name, client, func):
         while (1):
             data = client.recv(20)
-            print 'client receives', data
+            print('client receives', data)
             MSGLEN = int(data)
             #print 'FFFFF  client receving', MSGLEN
             msg = ''
@@ -174,7 +174,7 @@ class Comm:
                 chunk = client.recv(MSGLEN-len(msg))
                 if chunk == '':
                     if self.verbose:
-                        print 'Connection closed by server'
+                        print('Connection closed by server')
                         self.disconnectFromServer(client)
                         return
                 msg = msg + chunk
@@ -183,24 +183,24 @@ class Comm:
 
 
     def disconnectFromServer(self, server):
-        if type(server) == types.StringType:
+        if type(server) == bytes:
             cl = self.serverSockets[server]
         else:
             cl = server
             server = None
-            for key, values in self.serverSockets.items():
+            for key, values in list(self.serverSockets.items()):
                 if values==cl:
                     server = key
                     break
             if server is None:
-                raise ValueError, "server not found"
+                raise ValueError("server not found")
         cl.shutdown(2)
         cl.close()
         del self.serverSockets[server]
 
     def getServers(self):
         """send a messaqe to all servers"""
-        return self.serverSockets.keys()
+        return list(self.serverSockets.keys())
 
 
 if __name__ == '__main__':
@@ -209,11 +209,11 @@ if __name__ == '__main__':
     #com.acceptClients()
 
     def foo1(client, data):
-        print 'client %s sent> %s'%(client,data)
+        print('client %s sent> %s'%(client,data))
 
-    thread.start_new(com.acceptClients, (foo1,))
+    _thread.start_new(com.acceptClients, (foo1,))
 
     def foo(server, data):
-        print 'server %s sent> %s'%(server,data)
+        print('server %s sent> %s'%(server,data))
 
     #com.connectToServer('', 50008, foo)

@@ -2,7 +2,7 @@ from DejaVu.GeomChooser import GeomChooser
 from Pmv.GeomFilter import GeomFilter
 from Pmv.moleculeViewer import MoleculeViewer
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser
-import Tkinter
+import tkinter
 
 
 class PmvSetChooser(ListChooser):
@@ -19,7 +19,7 @@ class PmvSetChooser(ListChooser):
     def getPmvSets(self):
         """Return a list containing the names of pmv sets"""
         pmvsets = []
-        for key, value in self.mv.sets.items():
+        for key, value in list(self.mv.sets.items()):
             pmvsets.append( (key, value.comments) )
 ##         if len(pmvsets):
 ##             pmvsets.insert(0, ("None", " "))
@@ -36,7 +36,7 @@ class PmvSetChooser(ListChooser):
         items = []
         setNames = self.get()
         for name in setNames:
-            if self.mv.sets.has_key(name):
+            if name in self.mv.sets:
                 items.append( (name, self.mv.sets[name]))
 
         return items

@@ -4,9 +4,9 @@
 "GUI for listing available Web Service"
 
 import sys,time
-import Tkinter
+import tkinter
 import Pmw
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from mglutil.web.services.AppService_client import AppServiceLocator, launchJobRequest, \
 getOutputsRequest, queryStatusRequest, getAppMetadataRequest
@@ -17,11 +17,11 @@ class ListWS:
     """
     def __init__(self, parent = None):
         if not parent:
-            parent = Tkinter.Tk()
+            parent = tkinter.Tk()
             Pmw.initialise(parent)
             title = 'View the list of deployed Web services'
             parent.title(title)
-            exitButton = Tkinter.Button(parent, text = 'Exit', command = parent.destroy)
+            exitButton = tkinter.Button(parent, text = 'Exit', command = parent.destroy)
             exitButton.pack(side = 'bottom')
         self.parent = parent
         # Create a group widget to contain the ComboBox for the Hosts.
@@ -38,9 +38,9 @@ class ListWS:
 
         # ScrolledListBox for listing Services
         from mglutil.gui.BasicWidgets.Tk.TreeWidget.tree import TreeView
-        frame = Tkinter.Frame(parent)
+        frame = tkinter.Frame(parent)
         frame.pack(side = 'left',fill='both')
-        label = Tkinter.Label(frame,text = 'Services')
+        label = tkinter.Label(frame,text = 'Services')
         label.pack()
         self.Services_Tree = TreeView(master=frame,treeWidth=230,width=230)
         self.Services_Tree.setAction(event='select', 
@@ -65,7 +65,7 @@ class ListWS:
         self.Description_Text.configure(text_state = 'normal')
         self.Description_Text.clear()
         self.URL = self.Hosts_ComboBox.get()
-        opener = urllib.FancyURLopener({}) 
+        opener = urllib.request.FancyURLopener({}) 
 
         for key in self.Services_dict:
             self.Services_Tree.deleteNode(key)
@@ -75,8 +75,8 @@ class ListWS:
         except IOError:
             errorMsg = self.URL+"/servlet/AxisServlet could not be found"
             errorMsg += "\nPlease make sure that server is up and running"
-            import tkMessageBox
-            tkMessageBox.showerror("Error!",errorMsg)
+            import tkinter.messagebox
+            tkinter.messagebox.showerror("Error!",errorMsg)
             self.parent.config(cursor='')
             return
 
@@ -85,8 +85,8 @@ class ListWS:
         if text[0].find('<h2>And now... Some Services</h2>') == -1:
             errorMsg = self.URL+"/servlet/AxisServlet could not be found"
             errorMsg += "\nPlease make sure that server is up and running"
-            import tkMessageBox
-            tkMessageBox.showerror("Error!",errorMsg)
+            import tkinter.messagebox
+            tkinter.messagebox.showerror("Error!",errorMsg)
             self.parent.config(cursor='')
             return
         text = text[1:]

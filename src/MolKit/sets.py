@@ -13,7 +13,7 @@
 #  
 #
 
-from tree import TreeNodeSet
+from .tree import TreeNodeSet
 import types
 
 class Sets(dict):
@@ -23,17 +23,17 @@ Object used to manage a collection of explicit sets of TreeNodes
 
     def add(self, name, set, overwrite=True):
         assert isinstance(set, TreeNodeSet)
-        assert type(name) in types.StringTypes
+        assert type(name) in (str,)
                
         if not overwrite:
-            assert name not in self.keys()
+            assert name not in list(self.keys())
         self[name] = set
 
 
     def remove(self, name):
         # remove a set by name. Silently ignore non existing sets but returns
         # true when a set gets deleted, else returns False
-        if name in self.keys():
+        if name in list(self.keys()):
             del self[name]
             return True
         return False
@@ -43,7 +43,7 @@ Object used to manage a collection of explicit sets of TreeNodes
         # remove a set that is specified by a TreeNodeSet.
         # Silently ignore non existing sets but returns
         # true when a set gets deleted, else returns False
-        for n,s in self.items():
+        for n,s in list(self.items()):
             if s==set:
                 del self[n]
                 return True
@@ -58,7 +58,7 @@ Object used to manage a collection of explicit sets of TreeNodes
         else:  # select the sets of a given type
             assert issubclass(stype, TreeNodeSet)
             result = {}
-            for name,set in self.items():
+            for name,set in list(self.items()):
                 if isinstance(set, stype):
                     result[name] = set
             return result

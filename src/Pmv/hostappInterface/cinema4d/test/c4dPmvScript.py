@@ -42,33 +42,33 @@ if exemple1 :
     sym=False
     coarse=True
     colors=[(1.0, 0.0, 0.0),
-		(1.0, 0.0, 0.0),
-		(1.0, 0.0, 0.0),
-		(1.0, 1.0, 0.0),
-		(0.0, 0.0, 1.0),
-		(0.0, 0.0, 1.0),
-		(0.0, 0.0, 1.0),
-		]
+                (1.0, 0.0, 0.0),
+                (1.0, 0.0, 0.0),
+                (1.0, 1.0, 0.0),
+                (0.0, 0.0, 1.0),
+                (0.0, 0.0, 1.0),
+                (0.0, 0.0, 1.0),
+                ]
     for i,c in enumerate(P.chains) :
-		if coarse :
-				print "coarseMS"		
-				name="CoarseMS"+c.name
-				g=c4dutil.coarseMolSurface(self,c,[32,32,32],isovalue=7.1,resolution=-0.3,name=name)
-				print name
-				mol.geomContainer.geoms[name]=g
-				print "nmesh"
-				c4dobj=c4dutil.createsNmesh(name,g.getVertices(),None,g.getFaces(),smooth=True)
-				c4dobj.set_name(name)
-				c4dobj.calc_vertexmap(c4dobj)
-				g.obj=c4dobj
-				print c4dobj
-				c4dutil.addObjectToScene(doc,c4dobj)
-				self.color(c, [colors[i]], [name], log=1)
-		else :
-				print 'MSMS'+c.name
-				self.computeMSMS(c, log=1, perMol=0, display=True, surfName='MSMS'+c.name)
-				print i
-				self.color(c, [colors[i]], ["MSMS"+c.name], log=1)
+                if coarse :
+                                print("coarseMS")		
+                                name="CoarseMS"+c.name
+                                g=c4dutil.coarseMolSurface(self,c,[32,32,32],isovalue=7.1,resolution=-0.3,name=name)
+                                print(name)
+                                mol.geomContainer.geoms[name]=g
+                                print("nmesh")
+                                c4dobj=c4dutil.createsNmesh(name,g.getVertices(),None,g.getFaces(),smooth=True)
+                                c4dobj.set_name(name)
+                                c4dobj.calc_vertexmap(c4dobj)
+                                g.obj=c4dobj
+                                print(c4dobj)
+                                c4dutil.addObjectToScene(doc,c4dobj)
+                                self.color(c, [colors[i]], [name], log=1)
+                else :
+                                print('MSMS'+c.name)
+                                self.computeMSMS(c, log=1, perMol=0, display=True, surfName='MSMS'+c.name)
+                                print(i)
+                                self.color(c, [colors[i]], ["MSMS"+c.name], log=1)
     if sym:	  
        #Ok now create the instance object
        from symserv.utils import readInstancesMatsFromFile
@@ -106,14 +106,14 @@ if exemple2 :
     sheet=mol.chains[0].sheet2D['ssSheet2D']
     sheet.chords=1
     sheet.compute(sheet.coords, sheet.isHelix, nbrib=sheet.nrib, nbchords=sheet.chords, offset=sheet.offset)
-    print sheet
-	#smooth = Ribbon.ribbon2D(sheet.nrib, sheet.width, sheet.chords, sheet.offset, len(sheet.coords), sheet.coords,sheet.isHelix, 0.5)
+    print(sheet)
+        #smooth = Ribbon.ribbon2D(sheet.nrib, sheet.width, sheet.chords, sheet.offset, len(sheet.coords), sheet.coords,sheet.isHelix, 0.5)
     shap=c4d.BaseObject(c4d.Onull)
     shap.set_name('BaseShape')
     c4dutil.addObjectToScene(doc,shap)
     shape2d,array =c4dutil.createShapes2D()#doc=doc,parent=shap)
     for k,o in enumerate(array) :c4dutil.addObjectToScene(doc,o,parent=shap)
-	   #one=c4dutil.morph2dObject('sh1',shape2d['coil'],shape2d['helix'])
+           #one=c4dutil.morph2dObject('sh1',shape2d['coil'],shape2d['helix'])
     #for o in shape2d.values() : c4dutil.addObjectToScene(doc,o,parent=shap)
     #points=atoms=mol.allAtoms.get("CA").coords
     #L,sh=c4dutil.c4dSpecialRibon('LOFT',points)
@@ -129,12 +129,12 @@ if exemple2 :
     #for i,at in enumerate(mol.allAtoms.get("CA")):
     sh=c4dutil.c4dSecondaryLoftsSp('ssSheet2D',atoms)
     for k,o in enumerate(sh) :c4dutil.addObjectToScene(doc,o,parent=loft)
-		
+                
     """		
     for ss in mol.chains[0].secondarystructureset:
         #points=ss.exElt.path3D#[1:-1]#ss.sheet2D.path
-		#colors=ss.exElt.colors #color RGB for each point???
-		        #start=ss.start.getPrevious()
+                #colors=ss.exElt.colors #color RGB for each point???
+                        #start=ss.start.getPrevious()
         #if start :  points.append(start.get('CA').coords[0])
         points=[]
         for r in ss.children : points.append(r.get('CA').coords[0])
@@ -145,10 +145,10 @@ if exemple2 :
         #sh=c4dutil.c4dSpecialRibon(ss.name,points,dshape=ss.name[:4],shape2dlist=shape2d)
         sh=c4dutil.c4dSecondaryLofts(ss.name,ss.exElt.matrix,dshape=shape)
         for i,o in enumerate(sh) : #clean-up
-		    #if i % 2 != 0 : 
-		    #    del o
-		    #    continue
-		    c4dutil.addObjectToScene(doc,o,parent=loft)
+                    #if i % 2 != 0 : 
+                    #    del o
+                    #    continue
+                    c4dutil.addObjectToScene(doc,o,parent=loft)
         prev=points[-1]
     self.displayCPK("1CRN:::CA", log=1)
     #print atoms
@@ -156,7 +156,7 @@ if exemple2 :
     #print armature"""
 
 
-			
+                        
 #self.colorBySecondaryStructure("1CRN", ['secondarystructure'], log=1)
     #self.displayCPK("1CRN", log=1)
     #self.colorByAtomType("1CRN", ['cpk'], log=1)
@@ -164,9 +164,9 @@ if exemple2 :
     #self.displaySticksAndBalls("1CRN", log=1, cquality=0, sticksBallsLicorice='Licorice', bquality=0, cradius=0.2, only=False, bRad=0.3, negate=False, bScale=0.0)
 #exemple3
 if exemple3 :
-	#server/client mode
-	self.hostApp.setServer('localhost',50000)
-	self.hostApp.start()
+        #server/client mode
+        self.hostApp.setServer('localhost',50000)
+        self.hostApp.start()
 if exemple4 :
     self.readMolecule('/Users/ludo/blenderKTF/loop.pdb',log=1)
     P=mol=self.getMolFromName('loop')			#Protein    instance
@@ -177,11 +177,11 @@ if exemple4 :
     #self.colorBySecondaryStructure("1CRN", ['secondarystructure'], log=1)
     atoms=mol.allAtoms.get("CA")
     self.displayCPK("loop:::CA", log=1)
-    print atoms
+    print(atoms)
     armature=c4dutil.Armature('armature',atoms,doc=doc,root=mol.geomContainer.masterGeom.obj)
-    print armature
+    print(armature)
     #armature can be attached using the skin tools/object and the skin attribute
-	#on mesh...so convert, then connect (cf join), then apply skin
+        #on mesh...so convert, then connect (cf join), then apply skin
     #self.displayExtrudedSS("1CRN", negate=False, only=False, log=1)
     #self.colorBySecondaryStructure("1CRN", ['secondarystructure'], log=1)
 

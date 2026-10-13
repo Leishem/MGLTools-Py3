@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #######################################################################
 #
@@ -23,8 +23,8 @@
 #
 
 
-import Tkinter
-import numpy.oldnumeric as Numeric, math, types
+import tkinter
+import mglcompat.oldnumeric as Numeric, math, types
 import warnings
 import re
 from NetworkEditor.items import NetworkNode
@@ -87,7 +87,7 @@ Output Ports
 
     def __init__(self, name='Test Volume', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         self.xo = self.yo = self.zo = 0.0
         
         self.widgetDescr['dim'] = {
@@ -97,9 +97,9 @@ Output Ports
         self.inputPortsDescr.append(datatype='None', required=False,
                                     name='point')
 
-	self.outputPortsDescr.append(datatype='Grid3DF', name='grid')
+        self.outputPortsDescr.append(datatype='Grid3DF', name='grid')
 
-	code = """def doit(self, dim, point):
+        code = """def doit(self, dim, point):
     if point is None:
         point = (0.,0,0)
     self.xo, self.yo, self.zo = point
@@ -126,7 +126,7 @@ Output Ports
 
     def __init__(self, name='PointsBB', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         #ip.append(datatype='coord3', name='points')
@@ -134,7 +134,7 @@ Output Ports
 
         self.outputPortsDescr.append(datatype='list', name='boundingBox')
 
-	code = """def doit(self, points):
+        code = """def doit(self, points):
 
     import numpy
     p1 = numpy.min(points, 0)
@@ -161,16 +161,16 @@ Output Ports
 
     def __init__(self, name='GridPoints', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         
         self.inputPortsDescr.append(datatype='Grid3D', name='grid')
         self.inputPortsDescr.append(datatype='float', name='cutLow')
         self.inputPortsDescr.append(datatype='float', name='cutHigh')
 
-	self.outputPortsDescr.append(datatype='list', name='points')
-	self.outputPortsDescr.append(datatype='list', name='values')
+        self.outputPortsDescr.append(datatype='list', name='points')
+        self.outputPortsDescr.append(datatype='list', name='values')
 
-	code = """def doit(self, grid, cutLow, cutHigh):
+        code = """def doit(self, grid, cutLow, cutHigh):
     import numpy
 
     coords, values, a, b, c = grid.gridPoints(cutLow, cutHigh)
@@ -243,7 +243,7 @@ Output Ports
 
     def __init__(self, name='Grid3D', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='int', name='dimx')
@@ -287,11 +287,11 @@ Output Ports
             'initialValue': '1,1,1'
             }
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
 
-	code = """def doit(self, dimx, dimy, dimz, dtype, origin, stepsize, boundingBox):
+        code = """def doit(self, dimx, dimy, dimz, dtype, origin, stepsize, boundingBox):
 
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     dt = GridTypeToArray[dtype]
     array= Numeric.zeros( (dimx,dimy,dimz), dt)
     gtype = ArrayTypeToGrid[dt]
@@ -332,16 +332,16 @@ Output Ports
 
     def __init__(self, name='setValAtPos', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='Grid3D', name='grid')
         ip.append(datatype='list', name='positions')
         ip.append(datatype='list', name='values')
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
 
-	code = """def doit(self, grid, positions, values):
+        code = """def doit(self, grid, positions, values):
 
     assert len(positions)==len(values)
     ox, oy, oz = grid.origin
@@ -373,15 +373,15 @@ Output Ports
 
     def __init__(self, name='NumericToGrid', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         
         self.inputPortsDescr.append(datatype='NumericArray', name='array')
         self.inputPortsDescr.append(datatype='Grid3D', name='headerGrid',
                                     required=False)
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
         
-	code = """def doit(self, array, headerGrid):
+        code = """def doit(self, array, headerGrid):
     if not isinstance(array, Numeric.ArrayType):
         castok = False
         tp = [Numeric.UInt8, Numeric.Int16, Numeric.Int32, Numeric.Float8,
@@ -430,7 +430,7 @@ Output Ports
 
     def __init__(self, name='SampleGrid', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         
         self.inputPortsDescr.append(datatype='Grid3D', name='grid')
         self.inputPortsDescr.append(datatype='int', name='step')
@@ -441,9 +441,9 @@ Output Ports
             'labelCfg':{'text':'step:'},
             }
         
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
         
-	code = """def doit(self, grid, step):
+        code = """def doit(self, grid, step):
 
     if step==1:
         self.outputData(grid=grid)
@@ -487,16 +487,16 @@ Output Ports
 
     def __init__(self, name='GridByLookUp', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         
         self.inputPortsDescr.append(datatype='Grid3D', name='gridToLookUp')
         self.inputPortsDescr.append(datatype='Grid3D', name='newGrid')
         
-	self.outputPortsDescr.append(datatype='Grid3D', name='newGrid')
+        self.outputPortsDescr.append(datatype='Grid3D', name='newGrid')
         
-	code = """def doit(self, gridToLookUp, newGrid):
+        code = """def doit(self, gridToLookUp, newGrid):
 
-    import numpy.oldnumeric as N
+    import mglcompat.oldnumeric as N
 
     points = []
     ox, oy, oz = newGrid.getOriginReal()
@@ -540,7 +540,7 @@ Output Ports
 """
     def __init__(self, name='ArrayOp', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append({'datatype': 'Grid3D', 'name': 'grid1'})
         ip.append({'datatype': 'Grid3D', 'name': 'grid2'})
@@ -595,7 +595,7 @@ Output Ports
 """
     def __init__(self, name='ArrayOp', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append({'datatype': 'Grid3D', 'name': 'grid'})
         ip.append({'datatype': 'float', 'name': 'value'})
@@ -662,7 +662,7 @@ Output Ports
 """
     def __init__(self, name='OrthoSlice', **kw):
         kw['name'] = name
-        apply( GeometryNode.__init__, (self, 'OrthoSlice'), kw )        
+        GeometryNode.__init__(*(self, 'OrthoSlice'), **kw)        
 
         ip = self.inputPortsDescr
         ip.append({'datatype': 'Grid3D', 'name': 'grid'})
@@ -900,7 +900,7 @@ Output Ports
 """
     def __init__(self, name='ArrayOp', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append({'datatype': 'Grid3D', 'name': 'grid'})
         ip.append({'datatype': 'string', 'name': 'axis'})
@@ -917,7 +917,7 @@ Output Ports
         op.append({'datatype': '2Darray', 'name': 'projection'})
 
         code = """def doit(self, grid, axis):
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
 
     axisInt = ['x', 'y', 'z'].index(axis)
     proj = data = Numeric.sum(grid.data, axisInt)
@@ -941,14 +941,14 @@ Output Ports
 
     def __init__(self, name='SetOrigin', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         
         self.inputPortsDescr.append(datatype='Grid3D', name='grid')
         self.inputPortsDescr.append(datatype='None', name='origin')
         
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
         
-	code = """def doit(self, grid, origin):
+        code = """def doit(self, grid, origin):
     assert len(origin)==3
     assert type(origin[0])==types.FloatType
     assert type(origin[1])==types.FloatType
@@ -973,14 +973,14 @@ Output Ports
 
     def __init__(self, name='StepSize', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         
         self.inputPortsDescr.append(datatype='Grid3D', name='grid')
         self.inputPortsDescr.append(datatype='None', name='stepSize')
         
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
         
-	code = """def doit(self, grid, stepSize):
+        code = """def doit(self, grid, stepSize):
     assert len(stepSize)==3
     assert type(stepSize[0])==types.FloatType
     assert type(stepSize[1])==types.FloatType
@@ -1005,7 +1005,7 @@ Output Ports
 
     def __init__(self, name='ScaleGrid', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         
         self.inputPortsDescr.append(datatype='Grid3D', name='grid')
         self.inputPortsDescr.append(datatype='None', name='center')
@@ -1017,9 +1017,9 @@ Output Ports
             'master':'node'
             }
         
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
         
-	code = """def doit(self, grid, center):
+        code = """def doit(self, grid, center):
     ocenter = grid.centerPoint()
     grid.origin[0] += center[0]-ocenter[0]
     grid.origin[1] += center[1]-ocenter[1]
@@ -1045,14 +1045,14 @@ Output Ports
 
     def __init__(self, name='VolumeStats', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         
         self.inputPortsDescr.append(datatype='Grid3D', name='grid')
-	self.outputPortsDescr.append(datatype='float', name='mini')
-	self.outputPortsDescr.append(datatype='float', name='maxi')
+        self.outputPortsDescr.append(datatype='float', name='mini')
+        self.outputPortsDescr.append(datatype='float', name='maxi')
         self.outputPortsDescr.append(datatype='float', name='mean')
         self.outputPortsDescr.append(datatype='float', name='stdDev')
-	code = """def doit(self, grid):
+        code = """def doit(self, grid):
     
     mymin, mymax, mymean, mystdev = grid.stats()
     self.outputData(mini=mymin,maxi=mymax,mean=mymean,stdDev=mystdev)
@@ -1083,7 +1083,7 @@ Output Ports
 
     def __init__(self, name='NumericToGrid', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['copy'] = {'class':'NECheckButton', 'master':'node',
             'initialValue':0,
@@ -1094,9 +1094,9 @@ Output Ports
         self.inputPortsDescr.append(datatype='Grid3D', name='grid')
         self.inputPortsDescr.append(datatype='boolean', name='copy')
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
         
-	code = """def doit(self, grid, copy):
+        code = """def doit(self, grid, copy):
     art = Numeric.ascontiguousarray(Numeric.transpose(grid.data), grid.data.dtype.char)
     if copy is False:
         grid.data = art
@@ -1125,13 +1125,13 @@ Output Ports
 
     def __init__(self, name='Orthog', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append(datatype='Grid3D', name='grid')
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
 
-	code = """def doit(self, grid):
+        code = """def doit(self, grid):
     if grid.crystal is None:
         self.outputPorts[0].setDataType(grid)
         self.outputData(grid=grid)
@@ -1219,7 +1219,7 @@ Output Ports
     def __init__(self, name='Grid3DBB', **kw):
         
         kw['name'] = name
-        apply( GeometryNode.__init__, (self, 'Grid3DBB'), kw )        
+        GeometryNode.__init__(*(self, 'Grid3DBB'), **kw)        
         
         ip = self.inputPortsDescr
         ip.append(datatype='Grid3D', name='grid')
@@ -1303,7 +1303,7 @@ Output Ports
 
     def __init__(self, name='Place Box', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='string', name='placement')
@@ -1321,10 +1321,10 @@ Output Ports
         }
 
 
-	self.outputPortsDescr.append(datatype='geom', name='geom')
+        self.outputPortsDescr.append(datatype='geom', name='geom')
         self.bb = Box('regionBox', maxCube=[.5,.5,.5], minCube=[-.5,-.5,-.5])
 
-	code = """def doit(self, placement, grid):
+        code = """def doit(self, placement, grid):
     ori = grid.origin
     dims = grid.data.shape
     if placement=='No Box': pt1=ori
@@ -1406,7 +1406,7 @@ class ReadAnyMap(NetworkNode):
 
     def __init__(self, constrkw={}, name='ReadAnyMap', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         fileTypes = [('All supported files', '*.map *.fld *.ccp4 *.dx *.grd '+ 
 '*.omap *.brix* *.dsn6* *.cns *.xplo*r* *.d*e*l*phi *.mrc *.rawiv *.spi *.uhbd'),
                      ('AutoGrid', '*.map'),
@@ -1435,7 +1435,7 @@ class ReadAnyMap(NetworkNode):
         ip.append(datatype='string', name='filename')
         ip.append(datatype='boolean', name='normalize', defaultValue=True)
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
 
         global ifd
         ifd=InputFormDescr(title='Map Types')
@@ -1464,7 +1464,7 @@ class ReadAnyMap(NetworkNode):
                     })
 
 
-	code = """def doit(self, filename, normalize):
+        code = """def doit(self, filename, normalize):
         global ifd
         if not filename: return
         else:
@@ -1533,7 +1533,7 @@ Output Ports
 
     def __init__(self, name='Read Binary 3D file', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['dims'] = {'class':'NEEntry',
             'labelGridCfg':{'sticky':'we'}, 'master':'node',
@@ -1572,10 +1572,10 @@ Output Ports
         self.inputPortsDescr.append(datatype='string', name='dtype')
         self.inputPortsDescr.append(datatype='string', name='byteorder')
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
-	self.reader = DelphiReaderBin()
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.reader = DelphiReaderBin()
         
-	code = """def doit(self, filename, dims, dtype, byteorder):
+        code = """def doit(self, filename, dims, dtype, byteorder):
     if not filename:
         return
 
@@ -1600,7 +1600,7 @@ Output Ports
     elif byteorder=='network': swapc = '!'
     else: swapc = ''
 
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     if dtype=='double':
         dtypec='d'
         ntype=Numeric.Float64
@@ -1651,7 +1651,7 @@ Output Ports
 
     def __init__(self, name='Read Delphi bin', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {'class':'NEEntryWithFileBrowser',
             'master':'node', 'title':'browse files',
@@ -1659,10 +1659,10 @@ Output Ports
             'labelCfg':{'text':'file:'}, 'width':10 }
         self.inputPortsDescr.append(datatype='string', name='filename')
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
-	self.reader = DelphiReaderBin()
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.reader = DelphiReaderBin()
         
-	code = """def doit(self, filename):
+        code = """def doit(self, filename):
     if not filename:
         return
     grid = self.reader.read(filename)
@@ -1685,7 +1685,7 @@ Output Ports
 
     def __init__(self, name='Read UHBD ASCII', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {'class':'NEEntryWithFileBrowser',
             'master':'node', 'title':'browse files',
@@ -1693,10 +1693,10 @@ Output Ports
             'labelCfg':{'text':'file:'}, 'width':10 }
         self.inputPortsDescr.append(datatype='string', name='filename')
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
-	self.reader = UHBDReaderASCII()
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.reader = UHBDReaderASCII()
         
-	code = """def doit(self, filename):
+        code = """def doit(self, filename):
     if not filename:
         return
     grid = self.reader.read(filename)
@@ -1720,7 +1720,7 @@ Output Ports
 
     def __init__(self, name='Read MRC', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {'class':'NEEntryWithFileBrowser',
             'master':'node', 'title':'browse files',
@@ -1728,10 +1728,10 @@ Output Ports
             'labelCfg':{'text':'file:'}, 'width':10 }
         self.inputPortsDescr.append(datatype='string', name='filename')
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
-	self.reader = ReadMRC()
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.reader = ReadMRC()
         
-	code = """def doit(self, filename):
+        code = """def doit(self, filename):
     if not filename:
         return
     grid = self.reader.read(filename)
@@ -1758,7 +1758,7 @@ Output Ports
 
     def __init__(self, name='Read CCP4', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {'class':'NEEntryWithFileBrowser',
             'master':'node', 'title':'browse files',
@@ -1773,10 +1773,10 @@ Output Ports
         self.inputPortsDescr.append(datatype='string', name='filename')
         self.inputPortsDescr.append(datatype='boolean', required=False, name='normalize', defaultValue=True)
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
-	self.reader = ReadCCP4()
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.reader = ReadCCP4()
         
-	code = """def doit(self, filename, normalize):
+        code = """def doit(self, filename, normalize):
     if not filename:
         return
     grid = self.reader.read(filename, normalize=normalize)
@@ -1803,7 +1803,7 @@ Output Ports
 
     def __init__(self, name='Read SPIDER', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {'class':'NEEntryWithFileBrowser',
             'master':'node', 'title':'browse files',
@@ -1818,10 +1818,10 @@ Output Ports
         self.inputPortsDescr.append(datatype='string', name='filename')
         self.inputPortsDescr.append(datatype='boolean', required=False, name='normalize', defaultValue=True)
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
-	self.reader = ReadSPIDER()
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.reader = ReadSPIDER()
         
-	code = """def doit(self, filename, normalize):
+        code = """def doit(self, filename, normalize):
     if not filename:
         return
     grid = self.reader.read(filename, normalize=normalize)
@@ -1848,7 +1848,7 @@ Output Ports
 
     def __init__(self, name='Read CNS/XPLOR', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {'class':'NEEntryWithFileBrowser',
             'master':'node', 'title':'browse files',
@@ -1865,10 +1865,10 @@ Output Ports
         self.inputPortsDescr.append(datatype='string', name='filename')
         self.inputPortsDescr.append(datatype='boolean', required=False, name='normalize', defaultValue=True)
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
-	self.reader = ReadCNS()
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.reader = ReadCNS()
         
-	code = """def doit(self, filename, normalize):
+        code = """def doit(self, filename, normalize):
     if not filename:
         return
     grid = self.reader.read(filename, normalize=normalize)
@@ -1894,7 +1894,7 @@ Output Ports
 
     def __init__(self, name='Read GRD', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {'class':'NEEntryWithFileBrowser',
             'master':'node', 'title':'browse files',
@@ -1909,10 +1909,10 @@ Output Ports
         self.inputPortsDescr.append(datatype='string', name='filename')
         self.inputPortsDescr.append(datatype='boolean', required=False, name='normalize', defaultValue=True)
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
-	self.reader = ReadGRD()
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.reader = ReadGRD()
         
-	code = """def doit(self, filename, normalize):
+        code = """def doit(self, filename, normalize):
     if not filename:
         return
     grid = self.reader.read(filename, normalize=normalize)
@@ -1941,7 +1941,7 @@ Output Ports
 
     def __init__(self, name='Read EM', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {'class':'NEEntryWithFileBrowser',
             'master':'node', 'title':'browse files',
@@ -1950,10 +1950,10 @@ Output Ports
         
         self.inputPortsDescr.append(datatype='string', name='filename')
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
-	self.reader = ReadEM()
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.reader = ReadEM()
         
-	code = """def doit(self, filename):
+        code = """def doit(self, filename):
     if not filename:
         return
     grid = self.reader.read(filename)
@@ -1980,7 +1980,7 @@ Output Ports
 
     def __init__(self, name='Read BRIX', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {'class':'NEEntryWithFileBrowser',
             'master':'node', 'title':'browse files',
@@ -1997,10 +1997,10 @@ Output Ports
         self.inputPortsDescr.append(datatype='string', name='filename')
         self.inputPortsDescr.append(datatype='boolean', required=False, name='normalize', defaultValue=True)
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
-	self.reader = ReadBRIX()
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.reader = ReadBRIX()
         
-	code = """def doit(self, filename, normalize):
+        code = """def doit(self, filename, normalize):
     if not filename:
         return
     grid = self.reader.read(filename, normalize=normalize)
@@ -2024,7 +2024,7 @@ Output Ports
 
     def __init__(self, name='Read MRC', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {'class':'NEEntryWithFileBrowser',
             'master':'node', 'title':'browse files',
@@ -2033,10 +2033,10 @@ Output Ports
         self.inputPortsDescr.append(datatype='string', name='filename')
         self.inputPortsDescr.append(datatype='boolean', required=False, name='normalize', defaultValue=True)
 
-	self.outputPortsDescr.append(datatype='Grid3DF', name='grid')
-	self.reader = ReadDX()
+        self.outputPortsDescr.append(datatype='Grid3DF', name='grid')
+        self.reader = ReadDX()
         
-	code = """def doit(self, filename, normalize):
+        code = """def doit(self, filename, normalize):
     if not filename:
         return
     grid = self.reader.read(filename, normalize)
@@ -2060,7 +2060,7 @@ Output Ports
 
     def __init__(self, name='Read FLD Binary', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {'class':'NEEntryWithFileBrowser',
             'master':'node', 'title':'browse files',
@@ -2095,7 +2095,7 @@ Output Ports
 
     def __init__(self, name='Read MRC', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {'class':'NEEntryWithFileBrowser',
             'master':'node', 'title':'browse files',
@@ -2104,10 +2104,10 @@ Output Ports
         self.inputPortsDescr.append(datatype='string', name='filename')
         self.inputPortsDescr.append(datatype='boolean', required=False, name='normalize', defaultValue=True)
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
-	self.reader = ReadRawiv()
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.reader = ReadRawiv()
         
-	code = """def doit(self, filename, normalize):
+        code = """def doit(self, filename, normalize):
     if not filename:
         return
     grid = self.reader.read(filename)
@@ -2129,7 +2129,7 @@ Input Ports
 """
     def __init__(self, name='Read MRC', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         wd = self.widgetDescr
         
@@ -2143,9 +2143,9 @@ Input Ports
         self.inputPortsDescr.append(datatype='string', name='filename', required=False, defaultValue='output.rawiv')
 
         from Volume.IO.volWriters import WriteRawiv
-	self.wr = WriteRawiv()
+        self.wr = WriteRawiv()
         
-	code = """def doit(self, grid, filename):
+        code = """def doit(self, grid, filename):
         if grid:
             dims = grid.dimensions
             origin = grid.origin
@@ -2168,7 +2168,7 @@ Output Ports
 
     def __init__(self, name='Read AutoGrid Map', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {'class':'NEEntryWithFileBrowser',
             'master':'node', 'title':'browse files',
@@ -2176,9 +2176,9 @@ Output Ports
             'labelCfg':{'text':'file:'}, 'width':10 }
         self.inputPortsDescr.append(datatype='string', name='filename')
 
-	self.outputPortsDescr.append(datatype='Grid3D', name='grid')
-	self.reader = ReadAutoGrid()    
-	code = """def doit(self, filename):
+        self.outputPortsDescr.append(datatype='Grid3D', name='grid')
+        self.reader = ReadAutoGrid()    
+        code = """def doit(self, filename):
     if not filename:
         return
     grid = self.reader.read(filename)
@@ -2204,7 +2204,7 @@ Output Ports
 
     def __init__(self, name='TriInterp', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='Grid3D', name='grid')
@@ -2213,9 +2213,9 @@ Output Ports
         op = self.outputPortsDescr
         op.append(datatype='list', name='data')
         
-	code = """def doit(self, grid, points):
+        code = """def doit(self, grid, points):
     values = []
-    import numpy.oldnumeric as N
+    import mglcompat.oldnumeric as N
 
     origin = N.array(grid.origin, Numeric.Float32)
     stepSize = N.array(grid.stepSize, Numeric.Float32)
@@ -2251,7 +2251,7 @@ Output Ports
     
     def __init__(self, name='UT-Isocontour', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.data = None
         self.verbosity = 0
         
@@ -2406,7 +2406,7 @@ Output Ports
 
     def __init__(self, name='MapGrid', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         wd = self.widgetDescr
         wd['datatype'] = {
@@ -2465,7 +2465,7 @@ Output Ports
         from Volume.Operators.MapData import MapGridData
         self.mapper = MapGridData()
         
-	code = """def doit(self, grid, datatype, src_min, src_max, dst_min, dst_max, mapping, powerOf2):
+        code = """def doit(self, grid, datatype, src_min, src_max, dst_min, dst_max, mapping, powerOf2):
     kw = {}
 
     if datatype.lower()!='none':
@@ -2569,7 +2569,7 @@ Output Ports:
     
     def __init__(self, name='UTVolRen', **kw):
         kw['name'] = name
-        apply( GeometryNode.__init__, (self,'UTVolRen'), kw )
+        GeometryNode.__init__(*(self,'UTVolRen'), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='Grid3DUC', name='grid')
@@ -2668,7 +2668,7 @@ Output:
         kw['originalClass'] = NetworkNode
         kw['library'] = library
 
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['fillValue'] = {
             'class':'NEDial', 'size':50, 'master':'node',
@@ -2748,7 +2748,7 @@ Output:
         kw['name'] = name
         kw['originalClass'] = NetworkNode
         kw['library'] = library
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append(datatype='geom', name='mesh')
         self.inputPortsDescr.append(datatype='Grid3D', name='gridMask')
@@ -2788,7 +2788,7 @@ Output:
         kw['name'] = name
         kw['originalClass'] = NetworkNode
         kw['library'] = library
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append(datatype='Grid3D', name='grid3D')
         self.inputPortsDescr.append(datatype='geom', name='Box')
@@ -2860,7 +2860,7 @@ Ouput:
 """
     def __init__(self, constrkw={},  name='Logic OP', library=None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='Grid3D', name='grid1')
@@ -2936,13 +2936,13 @@ Input:
     grid : Grid3D Volume object
     value: threshold value
     operation: greater, equal, not_equal, greater_equal, less, less_equal
-	
+        
 Ouput:
     mask: the Grid3DUC mask resulting from the operation.
 """
     def __init__(self, constrkw={},  name='ThresholdMask', library=None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         # define a function to determine the datatype of the input port
         codeOnConnect = """def onConnect(self,conn):
@@ -3017,7 +3017,7 @@ Output:
         kw['name'] = name
         kw['originalClass'] = NetworkNode
         kw['library'] = library
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='list', name='centers')
@@ -3078,7 +3078,7 @@ Output:
         kw['name'] = name
         kw['originalClass'] = NetworkNode
         kw['library'] = library
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='AtomSet', name='atoms')
@@ -3158,7 +3158,7 @@ Output:
         kw['name'] = name
         kw['originalClass'] = NetworkNode
         kw['library'] = library
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='coordinates3D', name='coords')
@@ -3244,7 +3244,7 @@ Output:
         kw['name'] = name
         kw['originalClass'] = NetworkNode
         kw['library'] = library
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='coordinates3D', name='coords')
@@ -3410,7 +3410,7 @@ Output:
         kw['name'] = name
         kw['originalClass'] = NetworkNode
         kw['library'] = library
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='TreeNodeSet', name='molFrag')
@@ -3505,7 +3505,7 @@ class UTsdf(NetworkNode):
         kw['name'] = name
         kw['originalClass'] = NetworkNode
         kw['library'] = library
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype= 'geom', name='geom')
@@ -3638,7 +3638,7 @@ class TSRIsdf(NetworkNode):
         kw['name'] = name
         kw['originalClass'] = NetworkNode
         kw['library'] = library
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype= 'geom', name='geom')
@@ -3677,7 +3677,7 @@ class TSRIsdf(NetworkNode):
         faces = geometry.getFaces()
         vnormals = geometry.getVNormals()
 
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         mini = Numeric.minimum.reduce(Numeric.array(vertices)) 
         maxi = Numeric.maximum.reduce(Numeric.array(vertices))
         bboxp = [ mini-padding, maxi+padding ]
@@ -3763,7 +3763,7 @@ Output:
         kw['name'] = name
         kw['originalClass'] = NetworkNode
         kw['library'] = library
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='Grid3D', name='dataGrid')
@@ -3773,7 +3773,7 @@ Output:
         op.append(datatype='Grid3D', name='clippedMap')
 
         code = """def doit(self, dataGrid, maskGrid):
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     zeros = Numeric.zeros(dataGrid.dimensions, dataGrid.data.dtype.char)
     clippedData = Numeric.where(maskGrid.data, dataGrid.data, zeros)
     if hasattr(dataGrid, 'crystal') and dataGrid.crystal:
@@ -3802,7 +3802,7 @@ Input Ports
     def __init__(self, name='Write CCP4', **kw):
         kw['name'] = name
 
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['filename'] = {'class':'NEEntryWithFileSaver',
             'master':'node', 'title':'browse files',
@@ -3810,9 +3810,9 @@ Input Ports
         self.inputPortsDescr.append(datatype='string', name='filename')
         self.inputPortsDescr.append(datatype='Grid3DF', name='grid')
 
-	self.writer = WriteCCP4()
+        self.writer = WriteCCP4()
         
-	code = """def doit(self, filename, grid):
+        code = """def doit(self, filename, grid):
     if not filename:
         return
     grid = self.writer.write(filename, grid)
@@ -3835,7 +3835,7 @@ Output Ports
 
     def __init__(self, name='Write CCP4', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['stepSize'] = {
             'class':'NEThumbWheel', 'master':'node', 'initialValue':1.,
@@ -3851,7 +3851,7 @@ Output Ports
 
         self.outputPortsDescr.append(datatype='Grid3DUC', name='grid3D')
         
-	code = """def doit(self, molecFrag, stepSize, padding):
+        code = """def doit(self, molecFrag, stepSize, padding):
     from MolKit.molecule import Atom
     atoms = molecFrag.findType(Atom)
     try:
@@ -3877,7 +3877,7 @@ Output Ports
     print 'Molecule BB grid has dimensions: ', dims
 
     from Volume.Grid3D import Grid3DUC
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     ar = Numeric.zeros( dims, Numeric.UnsignedInt8)
     grid = Grid3DUC( ar, minimum, (stepSize,)*3, {} )
     self.outputData(grid3D = grid)
@@ -3911,7 +3911,7 @@ Output Ports
 
 ##     myfile = open(filename, 'rb' )
 ##     l = myfile.read(256*4)
-##     import numpy.oldnumeric as Numeric
+##     import mglcompat.oldnumeric as Numeric
 ##     byte_map =Numeric.fromstring(l,(256*4), Numeric.UnsignedInt8) 
 ##     byte_map = Numeric.reshape(byte_map,(256,4))
 ##     myfile.close()
@@ -3963,7 +3963,7 @@ Output Ports
 ##         if code: self.setFunction(code)
 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 class UTMesher(NetworkNode):
     """Generates triangular/quadrilaterial meshes for a level set surface,
@@ -3996,7 +3996,7 @@ class UTMesher(NetworkNode):
 
     def __init__(self, name='UT-mesh', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         
         self.widgetDescr['meshtype'] = {
             'class':'NEComboBox', 'master':'node',
@@ -4277,8 +4277,8 @@ inner_isoval, inner_error, outersurf, crossection, planeX, planeZ):
             # [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3]] - first triangle ...
             
             vs, fs = self.removeUnusedVerts(vertarr, newfaces)
-            vertset = map(lambda x: x[:3], cutoutverts)
-            noremove = map(lambda x: x[3], cutoutverts)
+            vertset = [x[:3] for x in cutoutverts]
+            noremove = [x[3] for x in cutoutverts]
             lenv =  len(vertset)
             if lenv:
                 faceset = Numeric.arange( lenv) #create faces for vertset
@@ -4302,7 +4302,7 @@ inner_isoval, inner_error, outersurf, crossection, planeX, planeZ):
             return self.apply_mat(vertarr), facearr
         
     def apply_mat(self, vertarr):
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         mat = Numeric.identity(4, 'f')
         stepSize = self.stepSize
         origin = self.origin
@@ -4325,7 +4325,7 @@ inner_isoval, inner_error, outersurf, crossection, planeX, planeZ):
         for face in facelist:
             nf = []
             for v in face:
-                if not vertdict.has_key(v):
+                if v not in vertdict:
                     newverts.append(vertlist[v])
                     vertdict[v] = nvert
                     nvert = nvert + 1
@@ -4347,7 +4347,7 @@ inner_isoval, inner_error, outersurf, crossection, planeX, planeZ):
             if noremove:
                 nd = noremove[i]
             else: nd = 0
-            if not vl.has_key(key):
+            if key not in vl:
                 vl[key] = nvert
                 vrl[i] = nvert
                 nvert +=1
@@ -4362,7 +4362,7 @@ inner_isoval, inner_error, outersurf, crossection, planeX, planeZ):
 
         faceList = []
         for f in faces:
-            faceList.append( map( lambda x, l=vrl: vrl[x],  f ) )
+            faceList.append( list(map( lambda x, l=vrl: vrl[x],  f )) )
 
         return vertList, faceList
 
@@ -4380,7 +4380,7 @@ inner_isoval, inner_error, outersurf, crossection, planeX, planeZ):
                 if f[1] == f[0] or f[1] == f[2]:
                     count = count +1
                     continue
-                if not fdict.has_key(tuple(f)):
+                if tuple(f) not in fdict:
                     newfaces.append(f)
                     fdict[tuple(f)] = True
             #print "in checkFaces oldlen : %d , newlen %d, count %d" % (len(faces), len(newfaces), count)
@@ -4421,7 +4421,7 @@ inner_isoval, inner_error, outersurf, crossection, planeX, planeZ):
         #in which the vertex is found
         for i, f in enumerate(faces):
             for v in f:
-                if not vdict.has_key(v):
+                if v not in vdict:
                     vdict[v] = [i]
                 else:
                     vdict[v].append(i)
@@ -4431,7 +4431,7 @@ inner_isoval, inner_error, outersurf, crossection, planeX, planeZ):
         newfaces2 = []
         while Fco:
             if len(newfaces1) > len(faces):
-                print "Warning: len(newfaces1) > len(faces) ",len(newfaces1), len(faces)  
+                print("Warning: len(newfaces1) > len(faces) ",len(newfaces1), len(faces))  
                 return newfaces1, newfaces2
             Fco = 0
             _Vco = []
@@ -4440,7 +4440,7 @@ inner_isoval, inner_error, outersurf, crossection, planeX, planeZ):
             for vert in Vco:
                 vfs = vdict[vert]
                 for i in vfs:
-                    if fdict.has_key(i):
+                    if i in fdict:
                         Fco = Fco+1
                         f= fdict.pop(i)
                         newfaces1.append(f) # add found triangle to the list of triangles of the first surface
@@ -4452,9 +4452,9 @@ inner_isoval, inner_error, outersurf, crossection, planeX, planeZ):
             Vco  = _Vco
 
 
-        newfaces2 = fdict.values()
+        newfaces2 = list(fdict.values())
         t2 = time()
-        print "time to find faces : %.2f" % (t2-t1) 
+        print("time to find faces : %.2f" % (t2-t1)) 
         return newfaces1, newfaces2 
 
 
@@ -4470,7 +4470,7 @@ The isocontour value dial is located in the macro node's parameter Panel
 
     def __init__(self, constrkw={}, name='UTIsoMac', **kw):
         kw['name'] = name
-        apply( MacroNode.__init__, (self,), kw)
+        MacroNode.__init__(*(self,), **kw)
 
     def beforeAddingToNetwork(self, net):
         MacroNode.beforeAddingToNetwork(self, net)
@@ -4497,17 +4497,17 @@ The isocontour value dial is located in the macro node's parameter Panel
         from Volume.VisionInterface.VolumeNodes import Isocontour
         node3 = Isocontour(constrkw = {}, name='UT-Isocontour', library=vollib)
         node0.macroNetwork.addNode(node3,201,92)
-        apply(node3.inputPorts[1].widget.configure, (), {
+        node3.inputPorts[1].widget.configure(*(), **{
             'widgetGridCfgmacroParamPanel': {'row': 1},
             'labelCfg': {'text': 'Iso. value:'},
             'widgetGridCfg': {'row': 1},
             'continuous': None, 
             'master': 'macroParamPanel'})
         node3.inputPorts[1].widget.set(1.0,0)
-        apply(node3.inputPorts[2].widget.configure, (), {
+        node3.inputPorts[2].widget.configure(*(), **{
             'widgetGridCfg': {'row': 1},
             'widgetGridCfgParamPanel': {'row': 1}})
-        apply(node3.inputPorts[3].widget.configure, (), {
+        node3.inputPorts[3].widget.configure(*(), **{
             'labelGridCfg': {'sticky': 'ew'},
             'widgetGridCfg': {'row': 3},
             'widgetGridCfgnode': {'row': 3}})
@@ -4550,7 +4550,7 @@ macro node's parameter Panel
 
     def __init__(self, constrkw={}, name='UTIsoMac', **kw):
         kw['name'] = name
-        apply( MacroNode.__init__, (self,), kw)
+        MacroNode.__init__(*(self,), **kw)
 
     def beforeAddingToNetwork(self, net):
         MacroNode.beforeAddingToNetwork(self, net)
@@ -4577,17 +4577,17 @@ macro node's parameter Panel
         from Volume.VisionInterface.VolumeNodes import Isocontour
         node3 = Isocontour(constrkw = {}, name='UT-Isocontour', library=vollib)
         node0.macroNetwork.addNode(node3,201,92)
-        apply(node3.inputPorts[1].widget.configure, (), {
+        node3.inputPorts[1].widget.configure(*(), **{
             'widgetGridCfgmacroParamPanel': {'row': 1},
             'labelCfg': {'text': 'Iso. value:'},
             'widgetGridCfg': {'row': 1},
             'continuous': None, 
             'master': 'macroParamPanel'})
         node3.inputPorts[1].widget.set(1.0,0)
-        apply(node3.inputPorts[2].widget.configure, (), {
+        node3.inputPorts[2].widget.configure(*(), **{
             'widgetGridCfg': {'row': 1},
             'widgetGridCfgParamPanel': {'row': 1}})
-        apply(node3.inputPorts[3].widget.configure, (), {
+        node3.inputPorts[3].widget.configure(*(), **{
             'labelGridCfg': {'sticky': 'ew'},
             'widgetGridCfg': {'row': 3},
             'widgetGridCfgnode': {'row': 3}})
@@ -4606,13 +4606,13 @@ macro node's parameter Panel
         node6 = QSlim(constrkw = {}, name='QSlim', library=vizlib)
         node0.macroNetwork.addNode(node6,235,281)
         node6.inputPorts[3].widget.set(0,0)
-        apply(node6.inputPortByName['percent'].widget.configure, (), {
+        node6.inputPortByName['percent'].widget.configure(*(), **{
             'continuous': None, 'widgetGridCfg': {'row': 2},
             'labelCfg': {'text': '% triang. to keep:'},
             'master': 'macroParamPanel'})
-        apply(node6.inputPortByName['targetfaces'].widget.configure, (), {
+        node6.inputPortByName['targetfaces'].widget.configure(*(), **{
             'widgetGridCfg': {'row': 3}})
-        apply(node6.inputPortByName['rebuild'].widget.configure, (), {
+        node6.inputPortByName['rebuild'].widget.configure(*(), **{
             'widgetGridCfg': {'row': 5}})
 
 
@@ -4667,7 +4667,7 @@ The geometry created by the IndexedPolygon node is modified by the Qslim node
 
     def __init__(self, constrkw={}, name='CoarseModel', **kw):
         kw['name'] = name
-        apply(UT_IsoDecim.__init__, (self,), kw)
+        UT_IsoDecim.__init__(*(self,), **kw)
 
     def beforeAddingToNetwork(self, net):
         UT_IsoDecim.beforeAddingToNetwork(self, net)
@@ -4704,10 +4704,10 @@ The geometry created by the IndexedPolygon node is modified by the Qslim node
         node18.move(19, 240)
         node18.inputPorts[1].widget.set(1.0,0)
         node18.inputPorts[1].unbindWidget()
-        apply(node18.inputPorts[2].widget.configure, (), {
+        node18.inputPorts[2].widget.configure(*(), **{
             'widgetGridCfg': {'row': 1},
             'widgetGridCfgParamPanel': {'row': 1}})
-        apply(node18.inputPorts[3].widget.configure, (), {
+        node18.inputPorts[3].widget.configure(*(), **{
             'labelGridCfg': {'sticky': 'ew'},
             'widgetGridCfg': {'row': 3},
             'widgetGridCfgnode': {'row': 3}})
@@ -4730,13 +4730,13 @@ The geometry created by the IndexedPolygon node is modified by the Qslim node
         from Volume.VisionInterface.VolumeNodes import UTBlurring
         node22 = UTBlurring(constrkw = {}, name='UT Blur', library=vollib)
         node15.macroNetwork.addNode(node22,67,84)
-        apply(node22.inputPorts[1].widget.configure, (), {
+        node22.inputPorts[1].widget.configure(*(), **{
             'widgetGridCfg': {'row': 1}})
-        apply(node22.inputPorts[2].widget.configure, (), {
+        node22.inputPorts[2].widget.configure(*(), **{
             'widgetGridCfg': {'row': 3}})
-        apply(node22.inputPorts[3].widget.configure, (), {
+        node22.inputPorts[3].widget.configure(*(), **{
             'widgetGridCfg': {'row': 5}})
-        apply(node22.inputPorts[4].widget.configure, (), {
+        node22.inputPorts[4].widget.configure(*(), **{
             'widgetGridCfg': {'row': 7},
             'widgetGridCfgmacroParamPanel': {'row': 1, 'sticky': 'w'},
             'master': 'macroParamPanel'})
@@ -4745,22 +4745,22 @@ The geometry created by the IndexedPolygon node is modified by the Qslim node
         from Vision.StandardNodes import Operator2
         node40 = Operator2(constrkw = {}, name='add', library=stdlib)
         node15.macroNetwork.addNode(node40,319,159)
-        apply(node40.inputPorts[2].widget.configure, (), {
+        node40.inputPorts[2].widget.configure(*(), **{
             'widgetGridCfg': {'row': 1}})
         node40.inputPorts[2].widget.set("add",0)
-        apply(node40.inputPorts[3].widget.configure, (), {
+        node40.inputPorts[3].widget.configure(*(), **{
             'widgetGridCfg': {'column': 2, 'row': 3}})
-        apply(node40.configure, (), {'expanded': False})
+        node40.configure(*(), **{'expanded': False})
 
         from Vision.StandardNodes import Operator2
         node41 = Operator2(constrkw = {}, name='mul', library=stdlib)
         node15.macroNetwork.addNode(node41,360,217)
-        apply(node41.inputPorts[2].widget.configure, (), {
+        node41.inputPorts[2].widget.configure(*(), **{
             'widgetGridCfg': {'row': 1}})
         node41.inputPorts[2].widget.set("mul",0)
-        apply(node41.inputPorts[3].widget.configure, (), {
+        node41.inputPorts[3].widget.configure(*(), **{
             'widgetGridCfg': {'column': 2, 'row': 3}})
-        apply(node41.configure, (), {'expanded': False})
+        node41.configure(*(), **{'expanded': False})
 
         from Vision.StandardNodes import DialNE
         node42 = DialNE(constrkw = {}, name='Dial', library=stdlib)
@@ -4770,12 +4770,12 @@ The geometry created by the IndexedPolygon node is modified by the Qslim node
         from Vision.StandardNodes import Operator2
         node43 = Operator2(constrkw = {}, name='add', library=stdlib)
         node15.macroNetwork.addNode(node43,375,276)
-        apply(node43.inputPorts[2].widget.configure, (), {
+        node43.inputPorts[2].widget.configure(*(), **{
             'widgetGridCfg': {'row': 1}})
         node43.inputPorts[2].widget.set("add",0)
-        apply(node43.inputPorts[3].widget.configure, (), {
+        node43.inputPorts[3].widget.configure(*(), **{
             'widgetGridCfg': {'column': 2, 'row': 3}})
-        apply(node43.configure, (), {'expanded': False})
+        node43.configure(*(), **{'expanded': False})
 
         from Vision.StandardNodes import DialNE
         node44 = DialNE(constrkw = {}, name='Dial', library=stdlib)
@@ -4790,7 +4790,7 @@ The geometry created by the IndexedPolygon node is modified by the Qslim node
         node46 = ThumbWheelNE(constrkw = {}, name='IsoValScaling',
                               library=stdlib)
         node15.macroNetwork.addNode(node46,561,351)
-        apply(node46.inputPorts[0].widget.configure, (), {
+        node46.inputPorts[0].widget.configure(*(), **{
             'labelCfg': {'text': '+/- Tight '}, 'continuous': 0,
             'master': 'macroParamPanel', 'increment':0,
             'widgetGridCfgmacroParamPanel': {'row': 3, 'sticky': 'w'},
@@ -4800,27 +4800,27 @@ The geometry created by the IndexedPolygon node is modified by the Qslim node
         from Vision.StandardNodes import Operator2
         node47 = Operator2(constrkw = {}, name='mul', library=stdlib)
         node15.macroNetwork.addNode(node47,429,370)
-        apply(node47.inputPorts[2].widget.configure, (), {
+        node47.inputPorts[2].widget.configure(*(), **{
             'widgetGridCfg': {'row': 1}})
         node47.inputPorts[2].widget.set("mul",0)
-        apply(node47.inputPorts[3].widget.configure, (), {
+        node47.inputPorts[3].widget.configure(*(), **{
             'widgetGridCfg': {'column': 2, 'row': 3}})
-        apply(node47.configure, (), {'expanded': False})
+        node47.configure(*(), **{'expanded': False})
 
         from DejaVu.VisionInterface.DejaVuNodes import QSlim
         node48 = QSlim(constrkw = {}, name='QSlim', library=vizlib)
         node15.macroNetwork.addNode(node48,19, 421)
-        apply(node48.inputPortByName['percent'].widget.configure, (), {
+        node48.inputPortByName['percent'].widget.configure(*(), **{
             'widgetGridCfg': {'sticky': 'ew','row': 3},
             'labelCfg': {'text': '%triang. to keep'},
             'continuous': 0, 'master': 'macroParamPanel',
             'widgetGridCfgmacroParamPanel': {'row': 5, 'sticky': 'w'},
             'widgetGridCfg': {'row': 1}})
-        apply(node48.inputPortByName['targetfaces'].widget.configure, (), {
+        node48.inputPortByName['targetfaces'].widget.configure(*(), **{
             'widgetGridCfg': {'row': 3},
             'widgetGridCfgParamPanel': {'row': 3}})
         node48.inputPortByName['targetfaces'].widget.set("",0)
-        apply(node48.inputPortByName['rebuild'].widget.configure, (), {
+        node48.inputPortByName['rebuild'].widget.configure(*(), **{
             'labelGridCfg': {'sticky': 'ew'},
             'widgetGridCfg': {'row': 5},
             'widgetGridCfgParamPanel': {'row': 5}})
@@ -4829,8 +4829,8 @@ The geometry created by the IndexedPolygon node is modified by the Qslim node
         from Vision.StandardNodes import Eval
         node52 = Eval(constrkw = {}, name='min(in1, in2)', library=stdlib)
         node15.macroNetwork.addNode(node52,299, 356)
-        apply(node52.addInputPort, (), {'datatype': 'None', 'name': 'in2'})
-        apply(node52.inputPorts[0].widget.configure, (), {
+        node52.addInputPort(*(), **{'datatype': 'None', 'name': 'in2'})
+        node52.inputPorts[0].widget.configure(*(), **{
             'widgetGridCfg': {'row': 1}})
         node52.inputPorts[0].widget.set("min(in1, in2)",0)
 ##        code =  """def doit(self, command, in1, in2):
@@ -4851,20 +4851,20 @@ The geometry created by the IndexedPolygon node is modified by the Qslim node
         from Vision.StandardNodes import GetAttr
         node33 = GetAttr(constrkw = {}, name='Get name', library=stdlib)
         node15.macroNetwork.addNode(node33,189,118)
-        apply(node33.inputPorts[1].widget.configure, (), {'choices': ['name']})
+        node33.inputPorts[1].widget.configure(*(), **{'choices': ['name']})
         node33.inputPorts[1].widget.set("name",0)
         
         from Vision.StandardNodes import Index
         node34 = Index(constrkw = {}, name='Index', library=stdlib)
         node15.macroNetwork.addNode(node34,189,179)
-        apply(node34.inputPorts[1].widget.configure, (), {
+        node34.inputPorts[1].widget.configure(*(), **{
             'widgetGridCfg': {'row': 1}})
 
         from Vision.StandardNodes import Eval
         node35 = Eval(constrkw = {}, name='Coarse+in1', library=stdlib)
         node15.macroNetwork.addNode(node35,187,254)
         node35.inputPortByName['in1'].required = True
-        apply(node35.inputPorts[0].widget.configure, (), {
+        node35.inputPorts[0].widget.configure(*(), **{
             'widgetGridCfg': {'row': 1}})
         node35.inputPorts[0].widget.set("'Coarse'+in1",0)
 
@@ -4988,7 +4988,7 @@ try:
     import MolKit
     vollib.addNode(MoleculeBBGrid, 'Mol BB Grid', 'Mapper')
 except:
-    print 'Volume/VisionInterface/VolumeNodes: failed to import MolKit'
+    print('Volume/VisionInterface/VolumeNodes: failed to import MolKit')
 vollib.addNode(SpheresMask, 'Spheres Mask', 'Mapper')
 vollib.addNode(GaussiansMask, 'Gaussians Blur', 'Mapper')
 vollib.addNode(BoundingBox, 'GridBB', 'Mapper')
@@ -5023,23 +5023,22 @@ try:
     from UTpackages.UTmesh import lbiemesher
     vollib.addNode(UTMesher, 'UT-mesh', 'Mapper')
 except ImportError:
-    print 'Warning: Module "lbiemesher" could not be imported.\n'+\
-          '         Node "UTMesher" was not added to the Library.'
+    print('Warning: Module "lbiemesher" could not be imported.\n'+\
+          '         Node "UTMesher" was not added to the Library.')
 
 try:
     from UTpackages.UTisocontour import isocontour
     isocontour.setVerboseLevel(0)
     vollib.addNode(Isocontour, 'UT-Isocontour', 'Mapper')
 except:
-    print 'Warning: Module "isocontour" could not be imported.\n'+\
-          '         Node "Isocontour" was not added to the Library.'
+    print('Warning: Module "isocontour" could not be imported.\n'+\
+          '         Node "Isocontour" was not added to the Library.')
 
 try:
     from Volume.Renderers.UTVolumeLibrary import UTVolumeLibrary
     vollib.addNode(UTVolRen, 'UT-VolRen', 'Mapper')
 except:
-    print \
-       'Warning: Failed to import VolumeLibrary. UTVolRen node not available.'
+    print('Warning: Failed to import VolumeLibrary. UTVolRen node not available.')
 
 try:
     from UTpackages.UTblur import blur
@@ -5219,7 +5218,7 @@ Output:
     def __init__(self, name='Pmv Grid Chooser', **kw):
         kw['name'] = name
 
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['gridName'] = {
             'class':'NEComboBox', 'master':'node',
@@ -5254,7 +5253,7 @@ Output:
         editor = self.getEditor()
         if hasattr(editor,'vf'):
             grids = editor.vf.grids3D
-            gridNames = grids.keys()
+            gridNames = list(grids.keys())
             w = self.inputPortByName['gridName'].widget
             if w:
                 w.configure(choices=gridNames)

@@ -20,13 +20,13 @@ class RotationFile(NetworkNode):
     
     def __init__(self, name='Rotation File', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
-	# show the entry widget by default
+        # show the entry widget by default
         self.inNodeWidgetVisibleByDefault = True
 
 
-	fileTypes=[('all', '*')]
+        fileTypes=[('all', '*')]
 
         self.widgetDescr['filename'] = {
             'class':'NEEntryWithFileBrowser', 'master':'node',
@@ -34,26 +34,26 @@ class RotationFile(NetworkNode):
             'labelCfg':{'text':'file:'},
             }
 
-	self.inputPortsDescr.append(datatype='string', name='filename')
+        self.inputPortsDescr.append(datatype='string', name='filename')
 
         op = self.outputPortsDescr
         op.append(datatype='float(0,9)', name='rotations')
 
         code = """def doit(self, filename):
     if filename and len(filename):    
-	f = open(filename)
-    	data = f.readlines()
-    	f.close()
+        f = open(filename)
+        data = f.readlines()
+        f.close()
 
-    	rots = []
-    	for line in data:
-        	rots.append( map(float, line.split()) )
+        rots = []
+        for line in data:
+                rots.append( map(float, line.split()) )
     
     self.outputData(rotations=rots)
 """
         self.setFunction(code)
 
-	
+        
 class ReadLog(NetworkNode):
     """Read an F2Dock log file and out put a list of scores, translations,
 rotations
@@ -67,7 +67,7 @@ Output:
     
     def __init__(self, name='ReadLog', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         self.inputPortsDescr.append(datatype='string', name='filename')
@@ -114,7 +114,7 @@ Output:
 
     def __init__(self, name='ReadLog', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         self.mat = numpy.zeros( (4,4), 'f')
@@ -147,8 +147,8 @@ Output:
 
     negt1 = numpy.identity(4)
     for i in range(len(initialConf)):
-    	negt1[i,3] = initialConf[i] * -1
-	
+        negt1[i,3] = initialConf[i] * -1
+        
     t2 = numpy.identity(4)
     t2[:3,3] = [tx, ty, tz]
 

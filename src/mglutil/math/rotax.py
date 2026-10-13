@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 """ This file contains the following functions,
 rotax
@@ -11,7 +11,7 @@ interpolate3DTransform
 
 
 from math import pi, sin, cos, sqrt
-import numpy.oldnumeric as N
+import mglcompat.oldnumeric as N
 degtorad = pi/180.
 
 
@@ -46,7 +46,7 @@ def rotax( a, b, tau, transpose=1 ):
     s = v[0]*v[0]+v[1]*v[1]+v[2]*v[2]
     if s > 0.0:
         s = sqrt(s)
-	v = [v[0]/s, v[1]/s, v[2]/s]
+        v = [v[0]/s, v[1]/s, v[2]/s]
     else:
         val = sqrt(1.0/3.0)
         v = (val, val, val)
@@ -72,9 +72,9 @@ def rotax( a, b, tau, transpose=1 ):
     # add translation
     for i in (0,1,2):
         rot[3][i] = a[i]
-	for j in (0,1,2):
+        for j in (0,1,2):
             rot[3][i] = rot[3][i]-rot[j][i]*a[j]
-	rot[i][3]=0.0
+        rot[i][3]=0.0
 
     if transpose:
         return rot
@@ -121,11 +121,11 @@ vect1 and vect2 can be any vector (non-normalized)
     # compute angle of rotation
     if nc<0.0:
         if i is not None:
-            print 'truncating nc on step:', i, nc
+            print('truncating nc on step:', i, nc)
         nc=0.0
     elif nc>1.0:
         if i is not None:
-            print 'truncating nc on step:', i, nc
+            print('truncating nc on step:', i, nc)
         nc=1.0
         
     alpha = asin(nc)
@@ -182,8 +182,8 @@ def mat_to_quat(matrix,transpose=1):
 
     det = matrix[0]*cofactor1 + matrix[1]*cofactor2 + matrix[2]*cofactor3
     if not (0.999 < det < 1.001):
-        print "Not a unit matrix: so not a pure rotation"
-        print 'Value of Determinant is: ',det
+        print("Not a unit matrix: so not a pure rotation")
+        print('Value of Determinant is: ',det)
     trace = matrix[0] + matrix[5] + matrix[10] + matrix[15]       
     if trace > 0.0000001:# rotation other than 180deg
         S = 0.5/sqrt(trace)
@@ -365,7 +365,7 @@ p = 0.9 means apply M2 first, then apply 50% of M'.  M' is the transformation
         nextMat = matrixList[offset]
         p = (percent-indexList[offset-1])/(
                                     indexList[offset]-indexList[offset-1])
-        from numpy.oldnumeric.linear_algebra import inverse
+        from mglcompat.oldnumeric.linear_algebra import inverse
         M = N.dot(inverse(prevMat), nextMat)
         Mat = _interpolateMat(M, p)
         return N.dot(prevMat, Mat)
@@ -388,7 +388,7 @@ def interpolate3DTransform1(matrixList, indexList, percent):
 
     prevMat = matrixList[i-1]
     nextMat = matrixList[i]
-    from numpy.oldnumeric.linear_algebra import inverse
+    from mglcompat.oldnumeric.linear_algebra import inverse
     M = N.dot(inverse(prevMat), nextMat)
     p = (percent-indexList[i-1]) / (indexList[i]-indexList[i-1])
     Mat = _interpolateMat(M, p)

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -22,8 +22,8 @@
 # $Id: DejaVuWidgets.py,v 1.43 2007/11/09 18:37:43 vareille Exp $
 #
 
-import numpy.oldnumeric as Numeric
-import Tkinter, Pmw
+import mglcompat.oldnumeric as Numeric
+import tkinter, Pmw
 
 from NetworkEditor.widgets import TkPortWidget, PortWidget
 
@@ -52,7 +52,7 @@ Handle all things that can be set to a finite list of values in a Geometry
     def __init__(self, port, **kw):
         
         # call base class constructor
-        apply( PortWidget.__init__, (self, port), kw)
+        PortWidget.__init__(*(self, port), **kw)
         
         self.booleanProps = [
                                 'disableTexture',
@@ -82,32 +82,32 @@ Handle all things that can be set to a finite list of values in a Geometry
         self.choiceProps = {
             'frontPolyMode':viewerConst.Front_POLYGON_MODES_keys,
             'backPolyMode':viewerConst.Back_POLYGON_MODES_keys,
-            'shading':viewerConst.SHADINGS.keys(),
-            'culling':viewerConst.CULLINGS.keys(),
+            'shading':list(viewerConst.SHADINGS.keys()),
+            'culling':list(viewerConst.CULLINGS.keys()),
         }
 
-        self.frame = Tkinter.Frame(self.widgetFrame, borderwidth=3,
+        self.frame = tkinter.Frame(self.widgetFrame, borderwidth=3,
                                    relief = 'ridge')
 
         self.propWidgets = {} # will hold handle to widgets created
         self.optionsDict = {} # widget's value
         
         import Pmw
-        items = self.booleanProps + self.choiceProps.keys()
+        items = self.booleanProps + list(self.choiceProps.keys())
         w = Pmw.Group(self.frame, tag_text='Add a Property Widget')
         self.chooser = Pmw.ComboBox(
             w.interior(), label_text='', labelpos='w',
             entryfield_entry_width=20, scrolledlist_items=items,
             selectioncommand=self.addProp)
         self.chooser.pack(padx=2, pady=2, expand='yes', fill='both')
- 	w.pack(fill = 'x', expand = 1, side='top')
+        w.pack(fill = 'x', expand = 1, side='top')
 
         w = Pmw.Group(self.frame, tag_text='Property Widgets')
         self.propWidgetMaster = w.interior()
         w.pack(fill='both', expand = 1, side='bottom')
 
         # configure without rebuilding to avoid enless loop
-        apply( self.configure, (False,), kw)
+        self.configure(*(False,), **kw)
         self.frame.pack(expand='yes', fill='both')
         
         if self.initialValue is not None:
@@ -117,18 +117,18 @@ Handle all things that can be set to a finite list of values in a Geometry
 
 
     def addProp(self, prop):
-        if self.propWidgets.has_key(prop):
+        if prop in self.propWidgets:
             return
 
-        l = Tkinter.Label(self.propWidgetMaster, text=prop)
+        l = tkinter.Label(self.propWidgetMaster, text=prop)
         l.grid(padx=2, pady=2, row=len(self.propWidgets)+1, column=0,
                sticky='e')
 
         if prop in self.booleanProps:
-            var = Tkinter.IntVar()
+            var = tkinter.IntVar()
             var.set(0)
             cb = CallBackFunction( self.setBoolean, (prop, var))
-            widget = Tkinter.Checkbutton(self.propWidgetMaster,
+            widget = tkinter.Checkbutton(self.propWidgetMaster,
                                          variable=var, command=cb)
             self.propWidgets[prop] = (widget, var)
             self.setBoolean( (prop, var) )
@@ -161,7 +161,7 @@ Handle all things that can be set to a finite list of values in a Geometry
         
     def set(self, valueDict, run=1):
         self._setModified(True)
-        for k,v in valueDict.items():
+        for k,v in list(valueDict.items()):
             self.addProp(k)
             if k in self.booleanProps:
                 self.propWidgets[k][1].set(v)
@@ -179,7 +179,7 @@ Handle all things that can be set to a finite list of values in a Geometry
 
         
     def configure(self, rebuild=True, **kw):
-        action, rebuildDescr = apply( PortWidget.configure, (self, 0), kw)
+        action, rebuildDescr = PortWidget.configure(*(self, 0), **kw)
             
         #  this methods just creates a resize action if width changes
         if self.widget is not None:
@@ -213,7 +213,7 @@ class NEColorMap(PortWidget):
 
 
     def configure(self, rebuild=True, **kw):
-        action, rebuildDescr = apply( PortWidget.configure, (self, 0), kw)
+        action, rebuildDescr = PortWidget.configure(*(self, 0), **kw)
 
         # handle ownConfigOpts entries
         if self.widget is not None:
@@ -226,11 +226,11 @@ class NEColorMap(PortWidget):
                 if self.widget.viewer != viewer:
                     self.widget.SetViewer(viewer)
                 
-            for k, v in kw.items():
+            for k, v in list(kw.items()):
                 if k=='viewer':
                     continue
                 elif k=='mini' or k=='maxi':
-                    apply( self.widget.update, (), {k:v} )
+                    self.widget.update(*(), **{k:v})
                 elif k=='filename':
                     self.widget.read(v)
 
@@ -239,14 +239,14 @@ class NEColorMap(PortWidget):
         
         # create all attributes that will not be created by configure because
         # they do not appear on kw
-        for key in self.ownConfigOpts.keys():
+        for key in list(self.ownConfigOpts.keys()):
             v = kw.get(key, None)
             if v is None: # self.configure will not do anyting for this key
                 setattr(self, key, self.ownConfigOpts[key]['defaultValue'])
 
         # get all arguments handled this widget and not by PortWidget
         widgetcfg = {}
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k in kw:
                 widgetcfg[k] = kw.pop(k)
 
@@ -261,10 +261,10 @@ class NEColorMap(PortWidget):
 
         # create an instance of the ColorMap which is required to instanciate
         # the ColorMapGUI (i.e. the widget)
-        cM = apply( ColorMap, ('cmap',), cmkw)
+        cM = ColorMap(*('cmap',), **cmkw)
         
         # call base class constructor
-        apply( PortWidget.__init__, ( self, port), kw)
+        PortWidget.__init__(*( self, port), **kw)
 
         # create the widget
         widgetcfg['master'] = self.widgetFrame
@@ -275,7 +275,7 @@ class NEColorMap(PortWidget):
         #except:
         #    pass
 
-        self.widget = apply( ColorMapGUI, (cM,), widgetcfg)
+        self.widget = ColorMapGUI(*(cM,), **widgetcfg)
         
         # we call cmCallback because cm passed the color map as an argument
         # and node.schedule takes no argument
@@ -374,7 +374,7 @@ class NEColorMap(PortWidget):
         self._setModified(True)
         
         if isinstance(value, dict):
-            apply(ColorMapGUI.configure,(self.widget,),value)
+            ColorMapGUI.configure(*(self.widget,), **value)
         else:
             self.widget.set(value)
             
@@ -430,22 +430,22 @@ class NEColorWheel(PortWidget):
         
         # create all attributes that will not be created by configure because
         # they do not appear on kw
-        for key in self.ownConfigOpts.keys():
+        for key in list(self.ownConfigOpts.keys()):
             v = kw.get(key, None)
             if v is None: # self.configure will not do anyting for this key
                 setattr(self, key, self.ownConfigOpts[key]['defaultValue'])
 
         # get all arguments handled by this widget and not by PortWidget
         widgetcfg = {}
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k in kw:
                 widgetcfg[k] = kw.pop(k)
 
         # call base class constructor
-        apply( PortWidget.__init__, ( self, port), kw)
+        PortWidget.__init__(*( self, port), **kw)
 
         # create the widget
-        self.widget = apply( ColorWheel, (self.widgetFrame,), widgetcfg)
+        self.widget = ColorWheel(*(self.widgetFrame,), **widgetcfg)
         self.widget.AddCallback(self.cwCallback)
 
         # configure without rebuilding to avoid enless loop
@@ -527,22 +527,22 @@ class NEColorEditor(PortWidget):
         
         # create all attributes that will not be created by configure because
         # they do not appear on kw
-        for key in self.ownConfigOpts.keys():
+        for key in list(self.ownConfigOpts.keys()):
             v = kw.get(key, None)
             if v is None: # self.configure will not do anyting for this key
                 setattr(self, key, self.ownConfigOpts[key]['defaultValue'])
 
         # get all arguments handled by this widget and not by PortWidget
         widgetcfg = {}
-        for k in self.ownConfigOpts.keys():
+        for k in list(self.ownConfigOpts.keys()):
             if k in kw:
                 widgetcfg[k] = kw.pop(k)
 
         # call base class constructor
-        apply( PortWidget.__init__, ( self, port), kw)
+        PortWidget.__init__(*( self, port), **kw)
 
         # create the widget
-        self.widget = apply( ColorEditor, (self.widgetFrame,), widgetcfg)
+        self.widget = ColorEditor(*(self.widgetFrame,), **widgetcfg)
         self.widget.cbManager.AddCallback(self.cwCallback)
         self.widget.pack()
         # configure without rebuilding to avoid enless loop

@@ -54,7 +54,7 @@ arguments:
                     #if actor.scenarioname == "DejaVuScenario":
                     director.needsRedraw = True
                     if actor.printValuesWhenSetting:
-                        print "setting frame %d value of actor %s to " % (frame, actor.name), value
+                        print("setting frame %d value of actor %s to " % (frame, actor.name), value)
                     actor.setValue(value)
 
                     # post-step callback
@@ -107,7 +107,7 @@ class RedrawActorProcess(ActorProcess):
                     maa.reorderTransparentChildren(parents)
                 
             if actor.printValuesWhenSetting:
-                print "setting frame %d value of actor %s" % (frame, actor.name)
+                print("setting frame %d value of actor %s" % (frame, actor.name))
             actor.setValue()
             # post-step callback
             try:
@@ -233,7 +233,7 @@ class MultipleActorsActions:
         else we return None
         """
         import types
-        if type(actor) == types.StringType:
+        if type(actor) == bytes:
             name = actor
         else:
             name = actor.name
@@ -384,7 +384,7 @@ class MultipleActorsActions:
             gui.root.protocol('WM_DELETE_WINDOW', gui.root.withdraw)
             self.gui = gui
             if setDirector:
-                for scenario in self.scenarios.values():
+                for scenario in list(self.scenarios.values()):
                     scenario.setDirector()
         else:
             if title:
@@ -584,7 +584,7 @@ class MultipleActorsActions:
             if a.name[-7:]=='opacity':
                 obj = a.object
                 opacityGeoms.append(obj)
-                if parents.has_key(obj.parent):
+                if obj.parent in parents:
                     parents[obj.parent].append(obj)
                 else:
                     parents[obj.parent] = [obj]
@@ -596,7 +596,7 @@ class MultipleActorsActions:
         Reorder children of same parent from back to front"""
         
         import numpy
-        for parent, objs in parents.items():
+        for parent, objs in list(parents.items()):
             allobjs = []
             for o in parent.children:
                 if o.visible:

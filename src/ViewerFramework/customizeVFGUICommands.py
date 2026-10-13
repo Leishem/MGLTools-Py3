@@ -23,7 +23,7 @@ from ViewerFramework.VFCommand import CommandGUI, Command
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 from mglutil.util.callback import CallBackFunction
 from mglutil.util.misc import ensureFontCase
-import types, string, Tkinter, Pmw, sys, os
+import types, tkinter, Pmw, sys, os; from mglcompat import pystring as string
 
 class HideGUICommand(Command):
     """Allow to Hide the  ViewerFrameworkGUI at any time
@@ -37,9 +37,9 @@ class HideGUICommand(Command):
     def __call__(self, **kw):
         """ None <- ShowHideGUI( **kw)
         """
-        if not kw.has_key('redraw'):
+        if 'redraw' not in kw:
             kw['redraw']=0
-        apply(self.doitWrapper, (), kw)
+        self.doitWrapper(*(), **kw)
 
 
     def doit(self):
@@ -89,9 +89,9 @@ class ShowGUICommand(Command):
     def __call__(self,**kw):
         """ None <- ShowGUI(**kw)
         """
-        if not kw.has_key('redraw'):
+        if 'redraw' not in kw:
             kw['redraw']=1
-        apply(self.doitWrapper, (), kw)
+        self.doitWrapper(*(), **kw)
 
     def doit(self):
         if self.vf.hasGui and self.vf.guiVisible == 0 :
@@ -152,10 +152,10 @@ class BindActionToMouse(Command):
         assert buttonNum in (1,2,3)
         cam = self.vf.GUI.VIEWER.currentCamera
         assert modifier in cam.mouseButtonModifiers
-        assert action in cam.actions[actionDict].keys()
+        assert action in list(cam.actions[actionDict].keys())
         kw['modifier'] = modifier
         kw['actionDict'] = actionDict
-        apply( self.doitWrapper, (action, buttonNum,), kw )
+        self.doitWrapper(*(action, buttonNum,), **kw)
         self.forwhat = actionDict
         
 
@@ -188,7 +188,7 @@ class BindActionToMouse(Command):
             'defaultValue': 'None',
             'wcfg':{ 'labelpos':'nw', 'label_text':'Action:',
                      'selectioncommand': self.actionSet_cb,
-                     'scrolledlist_items':cam.actions[self.forwhat].keys()},
+                     'scrolledlist_items':list(cam.actions[self.forwhat].keys())},
             'gridcfg':{'sticky':'ew', 'padx':2, 'pady':1}
             })
         self.ifd.append({
@@ -201,11 +201,11 @@ class BindActionToMouse(Command):
             })
         self.ifd.append({
             'name':'set',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'wcfg':{'text':'Set', 'command':self.set_cb, },
             'gridcfg':{'sticky':'ew', 'padx':2, 'pady':1}
             })
-        self.ifd.append({'widgetType':Tkinter.Button,
+        self.ifd.append({'widgetType':tkinter.Button,
                          'name':'dismiss',
                          'wcfg':{'text':'dismiss',
                                  'command':self.dismiss_cb},
@@ -218,7 +218,7 @@ class BindActionToMouse(Command):
         self.forwhat = self.ifd.entryByName['forwhat']['widget'].get()
         c = self.vf.GUI.VIEWER.currentCamera
         w = self.ifd.entryByName['action']['widget']
-        w.setlist(c.actions[self.forwhat].keys())
+        w.setlist(list(c.actions[self.forwhat].keys()))
 
 
     def actionSet_cb(self, event=None):
@@ -239,8 +239,7 @@ class BindActionToMouse(Command):
         buttonNum = int(self.ifd.entryByName['buttonNum']['widget'].get())
         modifier = self.ifd.entryByName['modifier']['widget'].get()
 
-        apply( self.doitWrapper, (action, buttonNum,),
-               {'modifier':modifier, 'actionDict':self.forwhat} )
+        self.doitWrapper(*(action, buttonNum,), **{'modifier':modifier, 'actionDict':self.forwhat})
 
         
     def dismiss_cb(self, event=None):
@@ -288,10 +287,10 @@ class ChangeFont(Command):
 
     def onAddCmdToViewer(self):
         if self.vf.hasGui:
-            self.familyVar=Tkinter.StringVar()
-            self.sizeVar=Tkinter.IntVar()
-            self.styleVar=Tkinter.StringVar()
-            self.fontVar=Tkinter.StringVar()
+            self.familyVar=tkinter.StringVar()
+            self.sizeVar=tkinter.IntVar()
+            self.styleVar=tkinter.StringVar()
+            self.fontVar=tkinter.StringVar()
             self.vf.userpref.add( 'Fonts', self.getCurrentFont(),
                            callbackFunc = [self.callbackFunc],
                            validateFunc = self.validateFunc,
@@ -317,7 +316,7 @@ class ChangeFont(Command):
         except :
             pass
         if len(wid.children)==0: return
-        for item in wid.children.values():
+        for item in list(wid.children.values()):
             self.makeChange(item, newfont)    
 
 
@@ -332,7 +331,7 @@ class ChangeFont(Command):
         """None <- changeFont(font, **kw)
         font has to be a 3-tuple ('arial', 14, 'normal')
         """
-        apply( self.doitWrapper, (font,), kw )
+        self.doitWrapper(*(font,), **kw)
 
     
     def guiCallback(self):
@@ -360,32 +359,32 @@ class ChangeFont(Command):
                             'selectioncommand': self.changeSampleFont,
                             },
                     'gridcfg':{'sticky':'w'}})
-        ifd.append({'widgetType':Tkinter.Radiobutton,
+        ifd.append({'widgetType':tkinter.Radiobutton,
                 'name':'size',
                 'listtext':sizeNames,
                 'defaultValue':self.sizeVar.get(),
                 'command': self.changeSampleOpt,
                 'wcfg':{'variable':self.sizeVar},
-                'gridcfg':{'sticky':Tkinter.W,'row':0,'column':5}})
-        ifd.append({'widgetType':Tkinter.Radiobutton,
+                'gridcfg':{'sticky':tkinter.W,'row':0,'column':5}})
+        ifd.append({'widgetType':tkinter.Radiobutton,
                 'name':'style',
                 'listtext':styleNames,
                 'command': self.changeSampleOpt,
                 'defaultValue':self.styleVar.get(),
                 'wcfg':{'variable':self.styleVar},
-                'gridcfg':{'sticky':Tkinter.W,'row':0,'column':6}})
-        ifd.append({'widgetType':Tkinter.Entry,
+                'gridcfg':{'sticky':tkinter.W,'row':0,'column':6}})
+        ifd.append({'widgetType':tkinter.Entry,
                 'wcfg':{ 'textvariable':self.fontVar,
                         'width':60},
                 'defaultValue':self.getCurrentFont(),
                 'name':'ent',
-                'gridcfg':{'sticky':Tkinter.W,'row':11,'column':0,'columnspan':16}})
-        ifd.append({'widgetType':Tkinter.Label,
+                'gridcfg':{'sticky':tkinter.W,'row':11,'column':0,'columnspan':16}})
+        ifd.append({'widgetType':tkinter.Label,
                 'name':'sample',
                 'wcfg':{ 'text':"""This is a sample of this font 0123456789_!@#$%^&*()\nABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz""",
                         'width':60, 'relief':'ridge',
                          'borderwidth': 3},
-                'gridcfg':{'sticky':Tkinter.W,'row':11,'column':0,
+                'gridcfg':{'sticky':tkinter.W,'row':11,'column':0,
                            'columnspan':16}})
         self.ifd = ifd
         val=self.vf.getUserInput(ifd)
@@ -436,7 +435,7 @@ class showHideGUI(Command):
 
     def getWidget(self, name):
         if hasattr(self.vf.GUI, name): return eval('self.vf.GUI.'+name)
-        elif self.vf.GUI.menuBars.has_key(name): return self.vf.GUI.menuBars[name]
+        elif name in self.vf.GUI.menuBars: return self.vf.GUI.menuBars[name]
         else: return None
 
 
@@ -531,41 +530,41 @@ name: 'menuRoot', 'Toolbar', 'infoBar' 'MESSAGE_BOX', 'all', 'allAbove',
 'allBelow' or bars that appear in self.GUI.menuBars"""
 
         if name=='all' or name=='allAbove':
-                apply( self.doitWrapper, ('mBarFrame', onOff), kw )
+                self.doitWrapper(*('mBarFrame', onOff), **kw)
         if name=='all' or name=='allBelow':
-                apply( self.doitWrapper, ('MESSAGE_BOX', onOff), kw )
-                apply( self.doitWrapper, ('infoBar', onOff), kw )
+                self.doitWrapper(*('MESSAGE_BOX', onOff), **kw)
+                self.doitWrapper(*('infoBar', onOff), **kw)
         else:
-                apply( self.doitWrapper, (name, onOff), kw )
+                self.doitWrapper(*(name, onOff), **kw)
 
 
     def guiCallback(self):
         ifd=InputFormDescr(title='Show/Hide VFGUI components ')
         for name in ['infoBar', 'MESSAGE_BOX']:
             w = self.getWidget(name)
-            var = Tkinter.IntVar()
+            var = tkinter.IntVar()
             self.tkvarDict[name] = var
             cb = CallBackFunction( self.callback, name, var)
-            ifd.append({'widgetType':Tkinter.Checkbutton,
+            ifd.append({'widgetType':tkinter.Checkbutton,
                         'name':name,
                         'wcfg':{'text':name, 'command': cb, 'variable':var,},
                         'defaultValue': w.winfo_ismapped(),
-                        'gridcfg':{'sticky':Tkinter.W}})
+                        'gridcfg':{'sticky':tkinter.W}})
 
         posy = 0
-        for name in self.vf.GUI.menuBars.keys():
+        for name in list(self.vf.GUI.menuBars.keys()):
             w = self.getWidget(name)
-            var = Tkinter.IntVar()
+            var = tkinter.IntVar()
             self.tkvarDict[name] = var
             cb = CallBackFunction( self.callback, name, var)
-            ifd.append({'widgetType':Tkinter.Checkbutton,
+            ifd.append({'widgetType':tkinter.Checkbutton,
                         'name':name,
                         'wcfg':{'text':name, 'command': cb, 'variable':var,},
                         'defaultValue':w.winfo_ismapped(),
-                        'gridcfg':{'sticky':Tkinter.W,'column':1,'row':posy}})
+                        'gridcfg':{'sticky':tkinter.W,'column':1,'row':posy}})
             posy=posy+1
 
-        ifd.append({'widgetType':Tkinter.Button,
+        ifd.append({'widgetType':tkinter.Button,
                     'name':'dismiss',
                     'wcfg':{'text':'dismiss', 'command':self.dismiss_cb},
                     'gridcfg':{'columnspan':2},

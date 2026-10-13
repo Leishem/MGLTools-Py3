@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -42,7 +42,7 @@ import Image
 import ImageFilter
 import ImageChops
 
-import tkMessageBox
+import tkinter.messagebox
 
 from opengltk.OpenGL.GLU import gluPerspective, gluPickMatrix, gluUnProject, gluErrorString, gluLookAt
 from opengltk.extent import _gllib
@@ -120,21 +120,21 @@ except ImportError:
             glPopName()
             i = i + 1
         
-import Tkinter, os
-import numpy.oldnumeric as Numeric
+import tkinter, os
+import mglcompat.oldnumeric as Numeric
 import math
 import types
 import weakref
 
-import viewerConst, ViewerGUI, jitter
-from Geom import Geom
-from Transformable import Transformable
-import colorTool
-import viewerFns
-from Trackball import Trackball
-from EventHandler import EventManager
-from IndexedPolygons import IndexedPolygons
-from viewerFns import checkKeywords
+from . import viewerConst, ViewerGUI, jitter
+from .Geom import Geom
+from .Transformable import Transformable
+from . import colorTool
+from . import viewerFns
+from .Trackball import Trackball
+from .EventHandler import EventManager
+from .IndexedPolygons import IndexedPolygons
+from .viewerFns import checkKeywords
 
 import array
 matf = array.array('f', [0]*16)
@@ -143,7 +143,7 @@ matf = array.array('f', [0]*16)
 try:
     from opengltk.extent._glextlib import *
 except:
-    print "no _glextlib"
+    print("no _glextlib")
 #    DejaVu.enableSSAO = False
 
 class Fog:
@@ -216,7 +216,7 @@ This dictionary can be passed to the Set method to restore the object's state
 
         if __debug__:
             if check:
-                apply( checkKeywords, ("Fog",self.keywords), kw)
+                checkKeywords(*("Fog",self.keywords), **kw)
         
         val = kw.get( 'tagModified', True )
         assert val in [True, False]
@@ -243,7 +243,7 @@ This dictionary can be passed to the Set method to restore the object's state
             
         val = kw.get( 'start')
         if not val is None:
-            if kw.has_key('end'): end = kw.get('end')
+            if 'end' in kw: end = kw.get('end')
             else: end = self.end
             if val < end:
                 glFogf(GL_FOG_START, float(val) )
@@ -315,7 +315,7 @@ parents.
     def add(self, object=None, vertex=None, instance=0):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-        if self.hits.has_key(object):
+        if object in self.hits:
             self.hits[object].append( (vertex, instance) )
         else:
             self.hits[object] = [ (vertex, instance) ]
@@ -325,8 +325,8 @@ from math import sqrt, fabs
 import Pmw
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser
 import numpy
-from IndexedPolygons import IndexedPolygons
-from Spheres import Spheres
+from .IndexedPolygons import IndexedPolygons
+from .Spheres import Spheres
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 
 # sub class combobox to intercept _postList and populate list when the pull
@@ -1002,7 +1002,7 @@ class DynamicComboBox(Pmw.ComboBox):
 ##         import Image
 
 ##         depthImage = Image.fromstring('L', (self.width, self.height),
-##                                       zval1.astype('B').tostring())
+##                                       zval1.astype('B').tobytes())
 
 
 ##         return depthImage
@@ -1081,7 +1081,7 @@ class DynamicComboBox(Pmw.ComboBox):
 ## ##
 
 
-class StandardCamera(Transformable, Tkinter.Widget, Tkinter.Misc):
+class StandardCamera(Transformable, tkinter.Widget, tkinter.Misc):
     """Class for Opengl 3D drawing window"""
 
     initKeywords = [
@@ -1233,8 +1233,8 @@ This dictionary can be passed to the Set method to restore the object's state
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
         """brings the window containing the camera in front of others"""
         window = self.frame.master
-        if isinstance(window, Tkinter.Tk) or \
-           isinstance(window, Tkinter.Toplevel):
+        if isinstance(window, tkinter.Tk) or \
+           isinstance(window, tkinter.Toplevel):
             self.frame.master.lift()
         else:
             m = self.master
@@ -1323,7 +1323,7 @@ size camera.width*camera.height*3"""
 
         current_buffer = int(GL.glGetIntegerv(GL.GL_DRAW_BUFFER)[0])
         # tell OpenGL we want to read pixels from front buffer
-	glReadBuffer(buffer)
+        glReadBuffer(buffer)
 
         glFinish() #was glFlush()
         gllib.glReadPixels( 0, 0, width, height, GL.GL_RGB,
@@ -1344,7 +1344,7 @@ size camera.width*camera.height*3"""
 
         import Image
         image = Image.fromstring('RGB', (self.width, self.height),
-                                 nar.tostring())
+                                 nar.tobytes())
         #if sys.platform!='win32':
         image = image.transpose(Image.FLIP_TOP_BOTTOM)
         return image
@@ -1393,7 +1393,7 @@ size camera.width*camera.height*3"""
         import Image
 
         depthImage = Image.fromstring('L', (self.width, self.height),
-                                      zval1.astype('B').tostring())
+                                      zval1.astype('B').tobytes())
 
         #if sys.platform!='win32':
         if flipTopBottom is True:
@@ -1414,7 +1414,7 @@ Transparent background is only supported in 'png' format.
             errmsg = 'WARNING: transparent background is only supported with the png file format'
             name, ext = os.path.splitext(filename)
             if ext.lower != '.png':
-                print errmsg
+                print(errmsg)
                 filename += '.png'
             def BinaryImage(x):
                 if __debug__:
@@ -1746,7 +1746,7 @@ This only applies when the camera is in its own top level.
 
         if __debug__:
             if check:
-                apply( checkKeywords, (self.name,self.initKeywords), kw)
+                checkKeywords(*(self.name,self.initKeywords), **kw)
         
         self.initialized = 0
         self.swap = True
@@ -1782,11 +1782,11 @@ This only applies when the camera is in its own top level.
 # -sharecontext [NULL]
 # -ident [DEFAULT_IDENT = ""]
 
-        if not kw.has_key('double'): kw['double'] = 1
+        if 'double' not in kw: kw['double'] = 1
 #        if not kw.has_key('overlay'): kw['overlay'] = 1
-        if not kw.has_key('depth'): kw['depth'] = 1
+        if 'depth' not in kw: kw['depth'] = 1
 
-        if not kw.has_key('stencil'): kw['stencil'] = 1
+        if 'stencil' not in kw: kw['stencil'] = 1
 
         if hasattr(viewer, 'accumBuffersError') and viewer.accumBuffersError:
             # if we tried to create a context with accumulation buffers before
@@ -1794,21 +1794,21 @@ This only applies when the camera is in its own top level.
             kw['accum'] = 0
         else:
             # if the user did not specify accumulation we turn them on by defaut
-            if not kw.has_key('accum'):
+            if 'accum' not in kw:
                 kw['accum'] = 1
 
-        if not kw.has_key('stereo'): kw['stereo'] = 'none'
+        if 'stereo' not in kw: kw['stereo'] = 'none'
 
-        if not kw.has_key('ident'):
+        if 'ident' not in kw:
             kw['ident'] = self.uniqID
 #            kw['ident'] = 'camera%d' % num
 
-        if not kw.has_key('sharelist') and len(viewer.cameras):
+        if 'sharelist' not in kw and len(viewer.cameras):
             # share list with the default camera.
             cam = viewer.cameras[0]
             kw['sharelist'] = cam.uniqID
 
-        if not kw.has_key('sharecontext') and len(viewer.cameras):
+        if 'sharecontext' not in kw and len(viewer.cameras):
             # share context with the default camera.
             cam = viewer.cameras[0]
             kw['sharecontext'] = cam.uniqID
@@ -1825,42 +1825,42 @@ This only applies when the camera is in its own top level.
 ##             master.tk.call('package', 'require', 'Togl')
 
         self.frameBorderWidth = 3
-        self.frame = Tkinter.Frame(master, bd=self.frameBorderWidth)
+        self.frame = tkinter.Frame(master, bd=self.frameBorderWidth)
 
         #self.frame.master.protocol("WM_DELETE_WINDOW", self.hide)
 
         cfg = 0
 
-        if 'width' in cnf.keys():
+        if 'width' in list(cnf.keys()):
             self.width = cnf['width']
             cfg = 1
         else:
             cnf['width'] = self.width = 406
 
-        if 'height' in cnf.keys():
+        if 'height' in list(cnf.keys()):
             self.height = cnf['height']
             cfg = 1
         else:
             cnf['height'] = self.height = 406
 
         self.rootx = 320
-        if 'rootx' in cnf.keys():
+        if 'rootx' in list(cnf.keys()):
             self.rootx = cnf['rootx']
             del cnf['rootx']
             cfg = 1
         self.rooty = 180
-        if 'rooty' in cnf.keys():
+        if 'rooty' in list(cnf.keys()):
             self.rooty = cnf['rooty']
             del cnf['rooty']
             cfg = 1
         if cfg: self.Geometry()
 
-        if 'side' in cnf.keys():
+        if 'side' in list(cnf.keys()):
             side = cnf['side']
             del cnf['side']
         else: side = 'top'
 
-        self.frame.pack(fill=Tkinter.BOTH, expand=1, side=side)
+        self.frame.pack(fill=tkinter.BOTH, expand=1, side=side)
         self.defFrameBack = self.frame.config()['background'][3]
 
         self.ResetTransformation(redo=0)
@@ -1902,21 +1902,21 @@ This only applies when the camera is in its own top level.
                 kw['stereo'] = 1
 
         # after this line self.master will be set to self frame
-        from Tkinter import TclError
+        from tkinter import TclError
         from opengltk.exception import GLerror
         try:
-            Tkinter.Widget.__init__(self, self.frame, 'togl', cnf, kw)
+            tkinter.Widget.__init__(self, self.frame, 'togl', cnf, kw)
             try:
                 GL.glAccum(GL.GL_LOAD, 1.0)
                 viewer.accumBuffersError = False
             except GLerror:
                 viewer.accumBuffersError = True
                 #viewer.accumBuffersError = False
-        except Tkinter.TclError, e:
-            print "Warning: disabling accumulation buffers", e
+        except tkinter.TclError as e:
+            print("Warning: disabling accumulation buffers", e)
             kw.pop('accum')
             viewer.accumBuffersError = True
-            Tkinter.Widget.__init__(self, self.frame, 'togl', cnf, kw)
+            tkinter.Widget.__init__(self, self.frame, 'togl', cnf, kw)
 
         #currentcontext = self.tk.call(self._w, 'contexttag')
         #print "StandardCamera.__init__ currentcontext", currentcontext
@@ -2283,7 +2283,7 @@ This only applies when the camera is in its own top level.
             self.onButtonDownCBlist.remove(func)
         else:
             if not silent:
-                print 'WARNING: delButtonDownCB: function not found', func
+                print('WARNING: delButtonDownCB: function not found', func)
 
 
     def addButtonUpCB(self, func):
@@ -2301,7 +2301,7 @@ This only applies when the camera is in its own top level.
             self.onButtonUpCBlist.remove(func)
         else:
             if not silent:
-                print 'WARNING: delButtonUpCB: function not found', func
+                print('WARNING: delButtonUpCB: function not found', func)
 
     def reduceSSAOQuality(self, event):
         if self.ssao:
@@ -2328,7 +2328,7 @@ This only applies when the camera is in its own top level.
         #print "suspendAA"
         if self.antiAliased == False:
             self.antiAliased = 0
-        assert isinstance(self.antiAliased, types.IntType), self.antiAliased
+        assert isinstance(self.antiAliased, int), self.antiAliased
         if self._wasAntiAliased == 0 : # else it is already suspended
             if self.antiAliased <= DejaVu.allowedAntiAliasInMotion:
                 # save the state
@@ -2431,7 +2431,7 @@ This only applies when the camera is in its own top level.
             action = self.mouseButtonActions[xform][buttonNum]['None']
             
         #print 'AAAAAAAAAAAA', action#, modDict
-        if cursorsDict.has_key(action):
+        if action in cursorsDict:
             self.configure(cursor=cursorsDict[action])
 
 
@@ -2596,11 +2596,11 @@ button is pressed. buttonNum can be 1,2,3 or 0 to remove call backs
             return
         self.viewer.GUI.Xform.set(self.currentTransfMode)
         if self.currentTransfMode=='Object':
-            self.viewer.GUI.enableNormalizeButton(Tkinter.NORMAL)
-            self.viewer.GUI.enableCenterButton(Tkinter.NORMAL)
+            self.viewer.GUI.enableNormalizeButton(tkinter.NORMAL)
+            self.viewer.GUI.enableCenterButton(tkinter.NORMAL)
         else:
-            self.viewer.GUI.enableNormalizeButton(Tkinter.DISABLED)
-            self.viewer.GUI.enableCenterButton(Tkinter.DISABLED)
+            self.viewer.GUI.enableNormalizeButton(tkinter.DISABLED)
+            self.viewer.GUI.enableCenterButton(tkinter.DISABLED)
 
 
     def _setFov(self, fov):
@@ -2623,7 +2623,7 @@ button is pressed. buttonNum can be 1,2,3 or 0 to remove call backs
         #print "Camera.Set", redo
         if __debug__:
             if check:
-                apply( checkKeywords, (self.name,self.setKeywords), kw)
+                checkKeywords(*(self.name,self.setKeywords), **kw)
         
         val = kw.get( 'tagModified', True )
         assert val in [True, False]
@@ -2640,7 +2640,7 @@ button is pressed. buttonNum can be 1,2,3 or 0 to remove call backs
             
         w = kw.get( 'width')
         if not w is None:
-            assert type(w)==types.IntType
+            assert type(w)==int
             if w > 0:
                 self.width = w
             else:
@@ -2648,7 +2648,7 @@ button is pressed. buttonNum can be 1,2,3 or 0 to remove call backs
 
         h = kw.get( 'height')
         if not h is None:
-            assert type(h)==types.IntType
+            assert type(h)==int
             if h > 0:
                 # we disable redraw because autoRedraw could cause ReallyRedraw
                 # to set camera.width and camera.height BEFORE te window gets
@@ -2692,7 +2692,7 @@ button is pressed. buttonNum can be 1,2,3 or 0 to remove call backs
 
         near = kw.get( 'near')
         if not near is None:
-            if kw.has_key('far'): far = kw.get('far')
+            if 'far' in kw: far = kw.get('far')
             else: far = self.far
             if near >= far:
                 raise AttributeError('near sould be smaller than far')
@@ -2924,14 +2924,14 @@ ONLY, WITHOBJECT')
 
         val = kw.get( 'sideBySideRotAngle')
         if not val is None:
-            assert type(val)==types.FloatType
+            assert type(val)==float
             self.sideBySideRotAngle = val
             if self.viewer:
                 self.viewer.Redraw()
 
         val = kw.get( 'sideBySideTranslation')
         if not val is None:
-            assert type(val)==types.FloatType
+            assert type(val)==float
             self.sideBySideTranslation = val
             if self.viewer:
                 self.viewer.Redraw()
@@ -3669,13 +3669,13 @@ lines is used
                             warnings.warn("""DisplayFunction failed because the current context is the wrong one""")
                             #print "currentcontext != obj.pickDpyList[1]", currentcontext, obj.pickDpyList[1]
                         else:
-                            print '#%d'%obj.pickDpyList[0], currentcontext, "glCallList Camera"
+                            print('#%d'%obj.pickDpyList[0], currentcontext, "glCallList Camera")
                             glCallList(obj.pickDpyList[0])
                     else:
                         #print "displayFunction"
                         obj.DisplayFunction()
                 else:
-                    print 'Error: bad type for PickRedraw: ',type
+                    print('Error: bad type for PickRedraw: ',type)
             else: #Insert2d
                 obj.pickDraw()
 
@@ -4026,9 +4026,9 @@ lines is used
         g = Numeric.zeros( (3), 'f' )
         object = self.viewer.currentObject
         inv = object.GetMatrixInverse()
-        for obj, vertInd in pick.hits.items():
+        for obj, vertInd in list(pick.hits.items()):
             if len(vertInd)==0:
-                print 'WARNING: object',obj.name,' is not vertex pickable'
+                print('WARNING: object',obj.name,' is not vertex pickable')
             else:
                 m = Numeric.dot( inv, obj.GetMatrix() )
                 vert = obj.vertexSet.vertices * m
@@ -4395,7 +4395,7 @@ for all instances of obj
                     mi = mi + 1
                 glPushMatrix()
                 glMultMatrixf(m)
-                map ( self.Draw, obj.children)
+                list(map ( self.Draw, obj.children))
                 glPopMatrix()
 
         # Should be done in a function to setup GL properties that cannot
@@ -4491,7 +4491,7 @@ for all instances of obj
                     glPushMatrix()
                     glMultMatrixf(m)
                     #map( self.Draw, obj.children)
-                    map( self.Draw, self.viewer.noDpyListOpaque )
+                    list(map( self.Draw, self.viewer.noDpyListOpaque ))
                     glPopMatrix()
 
             # for "Continuity" (ucsd - nbcr) as we don't have vertexArrays yet
@@ -4535,7 +4535,7 @@ for all instances of obj
                 for m in obj.instanceMatricesFortran:
                     glPushMatrix()
                     glMultMatrixf(m)
-                    map( self.Draw, obj.children)
+                    list(map( self.Draw, obj.children))
                     glPopMatrix()
                     
                 if self.hasTransparentObjects:
@@ -4543,7 +4543,7 @@ for all instances of obj
                     for m in obj.instanceMatricesFortran:
                         glPushMatrix()
                         glMultMatrixf(m)
-                        map( self.Draw, obj.children)
+                        list(map( self.Draw, obj.children))
                         glPopMatrix()
 
                 if self.viewer.useMasterDpyList:
@@ -4569,7 +4569,7 @@ for all instances of obj
                     glPushMatrix()
                     glMultMatrixf(m)
                     #map( self.Draw, obj.children)
-                    map( self.Draw, self.viewer.noDpyListTransp )
+                    list(map( self.Draw, self.viewer.noDpyListTransp ))
                     glPopMatrix()
                 self.drawTransparentObjects = 0
 
@@ -4797,16 +4797,16 @@ for all instances of obj
         ## alternative adding numeric arrays seems slower
 ##         t1 = time()
 ##         c = im.filter(fstDeriveV1K)
-##         c = Numeric.fromstring(c.tostring(), Numeric.UInt8)
+##         c = Numeric.fromstring(c.tobytes(), Numeric.UInt8)
 
 ##         d = im.filter(fstDeriveV2K)
-##         d = Numeric.fromstring(d.tostring(), Numeric.UInt8)
+##         d = Numeric.fromstring(d.tobytes(), Numeric.UInt8)
 
 ##         e = im.filter(fstDeriveH1K)
-##         e = Numeric.fromstring(e.tostring(), Numeric.UInt8)
+##         e = Numeric.fromstring(e.tobytes(), Numeric.UInt8)
 
 ##         f = im.filter(fstDeriveH2K)
-##         f = Numeric.fromstring(f.tostring(), Numeric.UInt8)
+##         f = Numeric.fromstring(f.tobytes(), Numeric.UInt8)
         
 ##         result = Numeric.fabs(c) + Numeric.fabs(d) +\
 ##                  Numeric.fabs(e) + Numeric.fabs(f)
@@ -4825,7 +4825,7 @@ for all instances of obj
 
         if self.viewer.tileRender is False:
             zbuf = self.GrabZBuffer(lock=False, flipTopBottom=False)
-            #imageZbuf = Image.fromstring('L', (self.width, self.height), zbuf.tostring() )
+            #imageZbuf = Image.fromstring('L', (self.width, self.height), zbuf.tobytes() )
             #imageZbuf.save("zbuf.png")
         else:
             zbuf = self.GrabZBuffer(lock=False, flipTopBottom=False,
@@ -4869,10 +4869,10 @@ for all instances of obj
                 d1 = self.firstDerivative(zbuf, self.width, self.height)
 
             #d1.save('first.jpg')
-            #d1strong = Numeric.fromstring(d1.tostring(),Numeric.UInt8)
+            #d1strong = Numeric.fromstring(d1.tobytes(),Numeric.UInt8)
             #print 'first', min(d1.ravel()), max(d1.ravel()), Numeric.sum(d1.ravel())
             #print self.d1cut, self.d1off
-            d1 = Numeric.fromstring(d1.tostring(),Numeric.UInt8)
+            d1 = Numeric.fromstring(d1.tobytes(),Numeric.UInt8)
             #mini = min(d1)
             #maxi = max(d1)
             #print 'd1',mini, maxi
@@ -4903,7 +4903,7 @@ for all instances of obj
             #d2.save('second.jpg')
             #print 'second1', min(d2.ravel()), max(d2.ravel()), Numeric.sum(d2.ravel())
             #print self.d2cut, self.d2off
-            d2 = Numeric.fromstring(d2.tostring(),Numeric.UInt8)
+            d2 = Numeric.fromstring(d2.tobytes(),Numeric.UInt8)
             #mini = min(d2)
             #maxi = max(d2)
             #print 'd2',mini, maxi
@@ -5098,14 +5098,14 @@ for all instances of obj
                 DejaVu.enableSelectionContour = True
             except ImportError:
                 DejaVu.enableSelectionContour = False
-                print "could not import _glextlib"
+                print("could not import _glextlib")
 
         #import pdb;pdb.set_trace()
         if DejaVu.enableSelectionContour is True:
             extensionsList = glGetString(GL_EXTENSIONS)
             if extensionsList.find('GL_EXT_packed_depth_stencil') < 0:
                 DejaVu.enableSelectionContour = False
-                print "opengl extension GL_EXT_packed_depth_stencil is not present"
+                print("opengl extension GL_EXT_packed_depth_stencil is not present")
 
         if DejaVu.enableSelectionContour is True:
             f = _glextlib.glCreateShader(_glextlib.GL_FRAGMENT_SHADER)
@@ -5152,14 +5152,14 @@ void main(void)
             lStatus = 0x7FFFFFFF
             lStatus = _glextlib.glGetShaderiv(f, _glextlib.GL_COMPILE_STATUS, lStatus )
             if lStatus == 0:
-                print "compile status", lStatus
+                print("compile status", lStatus)
                 charsWritten  = 0
                 shaderInfoLog = '\0' * 2048
                 charsWritten, infoLog = _glextlib.glGetShaderInfoLog(f, len(shaderInfoLog), 
                                                                      charsWritten, shaderInfoLog)
-                print "shaderInfoLog", shaderInfoLog
+                print("shaderInfoLog", shaderInfoLog)
                 DejaVu.enableSelectionContour = False
-                print "selection contour shader didn't compile"
+                print("selection contour shader didn't compile")
             else:
                 self.shaderProgram = _glextlib.glCreateProgram()
                 _glextlib.glAttachShader(self.shaderProgram,f)
@@ -5169,9 +5169,9 @@ void main(void)
                                                    _glextlib.GL_LINK_STATUS,
                                                    lStatus )
                 if lStatus == 0:
-                    print "link status", lStatus
+                    print("link status", lStatus)
                     DejaVu.enableSelectionContour = False
-                    print "selection contour shader didn't link"
+                    print("selection contour shader didn't link")
                 else:
                     _glextlib.glValidateProgram(self.shaderProgram)
                     lStatus = 0x7FFFFFFF
@@ -5179,9 +5179,9 @@ void main(void)
                                                        _glextlib.GL_VALIDATE_STATUS,
                                                        lStatus )
                     if lStatus == 0:
-                        print "validate status", lStatus
+                        print("validate status", lStatus)
                         DejaVu.enableSelectionContour = False
-                        print "selection contour shader not validated"
+                        print("selection contour shader not validated")
                     else:
                         # Get location of the sampler uniform
                         self.texUnitLoc = int(_glextlib.glGetUniformLocation(self.shaderProgram, "texUnit"))
@@ -5200,7 +5200,7 @@ void main(void)
                         #print "self.fb", self.fb
                         lCheckMessage = _glextlib.glCheckFramebufferStatusEXT(_glextlib.GL_FRAMEBUFFER_EXT)
                         if lCheckMessage != _glextlib.GL_FRAMEBUFFER_COMPLETE_EXT: # 0x8CD5
-                            print 'glCheckFramebufferStatusEXT %x'%lCheckMessage
+                            print('glCheckFramebufferStatusEXT %x'%lCheckMessage)
                             DejaVu.enableSelectionContour = False
 
 
@@ -5214,10 +5214,10 @@ void main(void)
 #                             lStencil)
 #        print "lStencil", lStencil[0] # background is 254 # fill is 255
 #        lStencilImage = Image.fromstring('L', (self.width, self.height), 
-#                                       lStencil.astype('uint8').tostring() )
+#                                       lStencil.astype('uint8').tobytes() )
 #        lStencilImage.save("lStencil.png")
 #        zbuf = self.GrabZBuffer(lock=False, flipTopBottom=False)
-#        imageZbuf = Image.fromstring('L', (self.width, self.height), zbuf.tostring() )
+#        imageZbuf = Image.fromstring('L', (self.width, self.height), zbuf.tobytes() )
 #        imageZbuf.save("lZbuff.png")
 
         # to draw only the highlight zone from the stencil buffer
@@ -5298,10 +5298,10 @@ void main(void)
             ## verifying that everything gets attached to the FBO
             lCheckMessage = _glextlib.glCheckFramebufferStatusEXT(_glextlib.GL_FRAMEBUFFER_EXT)
             if lCheckMessage != _glextlib.GL_FRAMEBUFFER_COMPLETE_EXT: # 0x8CD5
-                print 'glCheckFramebufferStatusEXT %x'%lCheckMessage
+                print('glCheckFramebufferStatusEXT %x'%lCheckMessage)
                 DejaVu.enableSelectionContour = False
                 _glextlib.glBindFramebufferEXT(_glextlib.GL_FRAMEBUFFER_EXT, 0 )
-                print 'opengl frame buffer object not available, selection contour is now disabled.'
+                print('opengl frame buffer object not available, selection contour is now disabled.')
                 #print 'you may need to set enableSelectionContour to False in the following file:'
                 #print '~/.mgltools/(version numer)/DejaVu/_dejavurc'
             else:
@@ -5438,7 +5438,7 @@ void main(void)
             from opengltk.extent import _glextlib
         except ImportError:
             DejaVu.enableSSAO = False
-            print "could not import _glextlib, SSAO disable"  
+            print("could not import _glextlib, SSAO disable")  
         #import pdb;pdb.set_trace()
         if DejaVu.enableSSAO is True:
             vendor = glGetString(GL_VENDOR)
@@ -5446,19 +5446,19 @@ void main(void)
             extensionsList = glGetString(GL_EXTENSIONS)
             if extensionsList.find('GL_EXT_packed_depth_stencil') < 0:
                 DejaVu.enableSSAO = False
-                print "opengl extension not present, SSAO disable"
+                print("opengl extension not present, SSAO disable")
             if vendor.find("Mesa") !=-1 or vendor.find("MESA") != -1 :
-                print "MESA Driver found, SSAO disable"
+                print("MESA Driver found, SSAO disable")
                 DejaVu.enableSSAO = False
             if render.find("Mesa") !=-1 or render.find("MESA") != -1 :
-                print "MESA Driver found, SSAO disable"
+                print("MESA Driver found, SSAO disable")
                 DejaVu.enableSSAO = False          
         if DejaVu.enableSSAO is True:
             try :
                 self.setTextureSSAO()
             except :
                 DejaVu.enableSSAO = False
-                print "opengl / texture problem,SSAO disable"
+                print("opengl / texture problem,SSAO disable")
                 self.ssao = False
                 return
 #            self.setDefaultSSAO_OPTIONS()
@@ -5492,9 +5492,9 @@ void main(void)
                 shaderInfoLog = '\0' * 2048
                 charsWritten, infoLog = _glextlib.glGetShaderInfoLog(f, len(shaderInfoLog), 
                                                                      charsWritten, shaderInfoLog)
-                print "shaderInfoLog", shaderInfoLog
+                print("shaderInfoLog", shaderInfoLog)
                 DejaVu.enableSSAO = False
-                print "SSAO shader didn't compile"
+                print("SSAO shader didn't compile")
             else:
                 self.shaderSSAOProgram = _glextlib.glCreateProgram()
                 _glextlib.glAttachShader(self.shaderSSAOProgram,v)
@@ -5512,8 +5512,8 @@ void main(void)
                     charsWritten, infoLog = _glextlib.glGetProgramInfoLog(self.shaderSSAOProgram, len(progInfoLog), 
                                                                      charsWritten, progInfoLog)
                     DejaVu.enableSSAO = False
-                    print "SSAO shader didn't link"
-                    print "log ",progInfoLog
+                    print("SSAO shader didn't link")
+                    print("log ",progInfoLog)
     
                 else:
                     _glextlib.glValidateProgram(self.shaderSSAOProgram)
@@ -5522,9 +5522,9 @@ void main(void)
                                                        _glextlib.GL_VALIDATE_STATUS,
                                                        lStatus )
                     if lStatus == 0:
-                        print "SSAO shader did not validate, status:", lStatus
+                        print("SSAO shader did not validate, status:", lStatus)
                         DejaVu.enableSSAO = False
-                        print "enableSSAO not validated"
+                        print("enableSSAO not validated")
                     else:
                         # Get location 
                         self.SSAO_LOCATIONS = {
@@ -5548,10 +5548,10 @@ void main(void)
     def setDefaultSSAO_OPTIONS(self):
         try :
             from opengltk.extent import _glextlib
-	except :
+        except :
             DejaVu.enableSSAO = False
-            print "could not import _glextlib, SSAO disabled"  
-	
+            print("could not import _glextlib, SSAO disabled")  
+        
         self.SSAO_OPTIONS={'far': [300.0,0.,1000.,"float"],
                 'near': [self.near,0.,100.,"float"],
                 'method':[self.ssao_method,0,1,"int"],
@@ -5560,8 +5560,8 @@ void main(void)
                 'fog':[0,0,1,"int"],
                 'use_fog':[1,0,1,"int"],
                 'use_mask_depth':[self.use_mask_depth,0,1,"int"],
-		'only_depth':[0,0,1,"int"],
-		'mix_depth':[0,0,1,"int"],
+                'only_depth':[0,0,1,"int"],
+                'mix_depth':[0,0,1,"int"],
                 'only_ssao':[0,0,1,"int"],
                 'show_mask_depth':[0,0,1,"int"],
                 'scale':[1.0,1.0,100.0,"float"],
@@ -5572,7 +5572,7 @@ void main(void)
                 'depthTolerance': [0.0,0.0,1.0,"float"],
                 'aorange':[60.0,1.0,500.0,"float"],
                 'negative':[0,0,1,"int"],
-		'correction':[6.0,0.0,1000.0,"float"],
+                'correction':[6.0,0.0,1000.0,"float"],
                 #'force_real_far':[0,0,1,"int"],
                 }
 
@@ -5874,7 +5874,7 @@ void main(void)
             errCode = glGetError()
             if not errCode: break
             errString = gluErrorString(errCode)
-            print 'GL ERROR: %d %s' % (errCode, errString)
+            print('GL ERROR: %d %s' % (errCode, errString))
 
        
     def glError(self):
@@ -5884,7 +5884,7 @@ void main(void)
             errCode = glGetError()
             if not errCode: return
             errString = gluErrorString(errCode)
-            print 'GL ERROR: %d %s' % (errCode, errString)
+            print('GL ERROR: %d %s' % (errCode, errString))
             
 
     def SetupLights(self):
@@ -5928,10 +5928,10 @@ void main(void)
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
         try:
-            root = Tkinter.Tk()
+            root = tkinter.Tk()
             root.withdraw()
             loadTogl(root)
-            Tkinter.Widget(root, 'togl', (), {'stereo':'native'} )
+            tkinter.Widget(root, 'togl', (), {'stereo':'native'} )
             #currentcontext = self.tk.call(self._w, 'contexttag')
             #print "StandardCamera.activeStereoSupport currentcontext", currentcontext
 
@@ -5941,10 +5941,10 @@ void main(void)
                 #print 'Stereo buffering is not available'
                 lReturn = False
 
-            Tkinter.Widget(root, 'togl', (), {'stereo':'none'} )
+            tkinter.Widget(root, 'togl', (), {'stereo':'none'} )
             return lReturn
 
-        except Exception, e:
+        except Exception as e:
             if str(e)=="Togl: couldn't get visual":
                 #print 'Stereo buffering is not available:', e
                 lReturn = False
@@ -5952,9 +5952,9 @@ void main(void)
                 #print 'Stereo buffering is not available:', e
                 lReturn = False
             else:
-                print 'something else happend',e
+                print('something else happend',e)
                 lReturn = False
-            Tkinter.Widget(root, 'togl', (), {'stereo':'none'} )
+            tkinter.Widget(root, 'togl', (), {'stereo':'none'} )
             return lReturn
 
 
@@ -6058,7 +6058,7 @@ try:
 ##             if self.videoRecordingStatus=='autopaused':
 ##                 # add frames for pause
 ##                 #print 'adding %d pause frames --------------', self.pauseLength
-##                 imstr = self.lastFrame.tostring()
+##                 imstr = self.lastFrame.tobytes()
 ##                 for i in range(self.pauseLength):
 ##                     bmpFrame = vcodec.VFrame(
 ##                         vcodec.formats.PIX_FMT_RGB24, self.lastFrame.size,
@@ -6070,7 +6070,7 @@ try:
 
             if self.videoRecordingStatus=='recording' or force:
                 if self.pendingAutoPauseID:
-                    print 'auto pause id', self.pendingAutoPauseID
+                    print('auto pause id', self.pendingAutoPauseID)
                     root.after_cancel(self.pendingAutoPauseID)
                     self.pendingAutoPauseID = None
 #                if DejaVu.enableSSAO is True and self.ssao :#and self.vidimage is not None:
@@ -6083,7 +6083,7 @@ try:
                 self.lastFrame = image
                 bmpFrame = vcodec.VFrame(
                     vcodec.formats.PIX_FMT_RGB24, image.size,
-                    (self.lastFrame.tostring(), None, None))
+                    (self.lastFrame.tobytes(), None, None))
                 yuvFrame = bmpFrame.convert(vcodec.formats.PIX_FMT_YUV420P)
                 self.videoOutputFile.write(self.encoder.encode(yuvFrame).data)
                 #self.pendingAutoPauseID = root.after(self.autoPauseDelay*1000,

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -27,7 +27,7 @@ This Object parses the result of an AutoDock job and returns a dictionary.
 import os
 from string import find, join, replace, split, rfind, strip
 import re
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 from AutoDockTools.ResultParser import ResultParser
 
@@ -122,7 +122,7 @@ class DlgParser(ResultParser):
 
     def getReDict(self):
         if hasattr(self, 'reDict'):
-            for k, d in self.reDict.items():
+            for k, d in list(self.reDict.items()):
                 d['lines'] = []
             return
         self.reDict = {}
@@ -212,16 +212,16 @@ class DlgParser(ResultParser):
                 input_key = 'INPUT-PDBQ: '
                 if k==input_key:
                     if verbose and self.version<4.0:
-                        print "!!no lines found for key=", k, "!!"
+                        print("!!no lines found for key=", k, "!!")
                 else:
                     if verbose:
-                        print "!!no lines found for key=", k, "!!"
+                        print("!!no lines found for key=", k, "!!")
             else:
-                apply(d['func'], (lines,), {})
+                d['func'](*(lines,), **{})
 
 
     def setADVersion(self,lines):
-    	#May need to modify for next autodock version -Huameng
+        #May need to modify for next autodock version -Huameng
         if len(lines):
             for l in lines:
                 if find(l, 'AutoDock')>-1:
@@ -269,7 +269,7 @@ class DlgParser(ResultParser):
         x = len(lines)/2
         for j in range(x):
             energy = float(lines[2*j].strip().split()[-1])
-            clist = map(float, lines[2*j+1].strip().split())
+            clist = list(map(float, lines[2*j+1].strip().split()))
             self.initial_clist.append([energy, clist])
 
 
@@ -279,7 +279,7 @@ class DlgParser(ResultParser):
                 ll = split(l, '=')
                 str_pt = ll[1].strip()  #"(13.231, 56.852, 54.080)
                 #str_pt = ll[1]  #"(13.231, 56.852, 54.080)
-                self.center_pt = map(float, str_pt[2:-2].split(','))
+                self.center_pt = list(map(float, str_pt[2:-2].split(',')))
 
 
     def getTime(self, lines, echo=False):
@@ -311,28 +311,28 @@ class DlgParser(ResultParser):
     def getPopulations(self, lines, echo=False):
         currently_build_pop = True
         ind = self.allLines.index(lines[0])
-        if echo: print "found start of population at index=", ind
+        if echo: print("found start of population at index=", ind)
         found = False
         all_population_lines = []
         plist = []
         currently_building_pop = True
         for line in self.allLines[ind:]:
             if line.find("</pop")==0:
-                if echo: print 'found end of a population', ind
+                if echo: print('found end of a population', ind)
                 found = True
                 all_population_lines.append(plist)
-                if echo: print "added plist:", len(plist)
+                if echo: print("added plist:", len(plist))
                 currently_building_pop = False
                 plist = []
                 #break
             elif line.find("<pop")==0:
-                if echo: print 'found start of a population', ind
+                if echo: print('found start of a population', ind)
                 currently_building_pop = True
                 plist = []
             elif currently_building_pop:
                 plist.append(line)
         x = len(plist)
-        if echo: print x, 'lines in getInitialPopulation'
+        if echo: print(x, 'lines in getInitialPopulation')
         self.population_list = []
         #figure out number of torsions:
         num_values = len(all_population_lines[0][0].strip().split())
@@ -350,7 +350,7 @@ class DlgParser(ResultParser):
                 ll = line.strip().split()
                 ind_index = int(ll[0])
                 age  = int(ll[2])
-                clist = map(float, ll[3:])
+                clist = list(map(float, ll[3:]))
                 cdict = {}
                 cdict['binding_energy'] = float(ll[1])
                 cdict['age'] = int(ll[2])
@@ -377,7 +377,7 @@ class DlgParser(ResultParser):
         self.nb_array = Numeric.zeros((ct, ct))
         if echo:
             for l in nb_lines:
-                print l,
+                print(l, end=' ')
         for i in range(ct):
             l = nb_lines[i][10:-1]
             for j in range(ct):
@@ -385,9 +385,9 @@ class DlgParser(ResultParser):
                 if l[jind]=='X':
                     self.nb_array[i][j]=1
             if echo:
-                print
-                print l
-                print self.nb_array[i]
+                print()
+                print(l)
+                print(self.nb_array[i])
 
 
     def getSeedInfo(self, lines):
@@ -406,7 +406,7 @@ class DlgParser(ResultParser):
         if len(seeds)==len(self.clist):
             for i in range(len(seeds)):
                 conf = self.clist[i]
-                if conf.has_key('run') or self.version>=4.0:
+                if 'run' in conf or self.version>=4.0:
                     #outlev -1 prints States in order
                     s = seeds[i]
                     conf['rseed1'] = s[0]
@@ -461,13 +461,13 @@ class DlgParser(ResultParser):
             ll = split(l)
             #when built, newList is
             #[Rank,SubRank,Run,DockedEnergy,ClusterRMSD,RefREMSD]
-            newList = map(lambda x:int(x),ll[:3])
+            newList = [int(x) for x in ll[:3]]
             #3/29/05
             if self.wroteAll and self.version<4.0:
                 #print "setting run number to ", ctr
                 newList[2] = ctr
                 ctr = ctr + 1
-            newList2 = map(lambda x:float(x),ll[3:-1])
+            newList2 = [float(x) for x in ll[3:-1]]
             newList.extend(newList2)
             if newList[0]==curInd:
                 curList.append(newList)
@@ -554,7 +554,7 @@ class DlgParser(ResultParser):
     def processFlexResLinesV4(self, lines):
         #print "in processFlexResLinesV4: len(self.ligLines=)", len(self.ligLines)
         if self.version<4.0:
-            print "not version 4.0! RETURNING!!"
+            print("not version 4.0! RETURNING!!")
             return
         ligLINES = []
         foundRun = 0
@@ -585,7 +585,7 @@ class DlgParser(ResultParser):
     def processLigLinesV4(self, lines, verbose=False):
         #use this only for versions 4.0 and greater
         #hack to fix run-on INPUT-PDBQT: line from wcg 
-        if verbose: print " self.ligand_count =", self.ligand_count
+        if verbose: print(" self.ligand_count =", self.ligand_count)
         first_line = lines[0]
         if len(first_line)>100 and first_line.count("INPUT-PDBQT:")>2:
             lines = first_line.replace("INPUT-PDBQT:", "\nINPUT-PDBQT:").split('\n')
@@ -593,7 +593,7 @@ class DlgParser(ResultParser):
             lines = lines[1:-1]
             #print "replaced lines with ", len(lines), ' lines'
         if self.version<4.0:
-            print "ERROR in processLigLinesV4: self.version=", self.version, "<4.0"
+            print("ERROR in processLigLinesV4: self.version=", self.version, "<4.0")
             return
         ligLINES = []
         foundRun = 0
@@ -616,21 +616,21 @@ class DlgParser(ResultParser):
                 ligLINES.append(l[ind:lastChar])
                 l_index = lines.index(l)
                 if l_index==len(lines)-1 or self.ligand_count>1:
-                    if verbose: print "found TORSDOF on last line!"
+                    if verbose: print("found TORSDOF on last line!")
                     break
                 next_line = lines[l_index+1]
                 if find(next_line, 'BEGIN_RES')<0 and find(next_line, 'active torsions:')<0: #hack for multiple ligands
                     if self.recluster==0:
-                        print len(lines[l_index:]), ' lines left unparsed!!!'
+                        print(len(lines[l_index:]), ' lines left unparsed!!!')
                         break
                     else:   
-                        print "@@This dlg file is a RE-CLUSTERING file@@"
+                        print("@@This dlg file is a RE-CLUSTERING file@@")
             else:
                 #ligLINES.append(l[13:-1])
                 ligLINES.append(l[ind:-1])
          
         lig_ct = ligLINES.count("REMARK  status: ('A' for Active; 'I' for Inactive)")
-        if verbose: print '2: INPUT_LIGAND number from ligLINES = ', lig_ct
+        if verbose: print('2: INPUT_LIGAND number from ligLINES = ', lig_ct)
         #check here to remove lines of just spaces
         nl = []
         for l in ligLINES:
@@ -689,7 +689,7 @@ class DlgParser(ResultParser):
                         try:
                             nlines.append(l[ind:-1])
                         except:
-                            print 'cutting out 64+65 of ', l
+                            print('cutting out 64+65 of ', l)
                             nlines.append(l[ind:64]+ l[66:-1])
                     else:
                         nlines.append(l[ind:-1])
@@ -713,7 +713,7 @@ class DlgParser(ResultParser):
                 try:
                     modelList.append(self.run_models[i+1])
                 except:
-                    print "unable to load expected model number ", i+1
+                    print("unable to load expected model number ", i+1)
         self.modelList = modelList
         self.makeModels(modelList)
 
@@ -752,7 +752,7 @@ class DlgParser(ResultParser):
         if len(self.clist)==self.runs:
             for i in range(len(self.clist)):
                 cl = self.clist[i]
-                if not cl.has_key('run'):
+                if 'run' not in cl:
                     cl['run'] = i+1
             return
         else:
@@ -940,7 +940,7 @@ class DlgParser(ResultParser):
             d['vdw_energies'] = vdW
             d['estat_energies'] = Elec
             d['total_energies'] = Numeric.array(Numeric.array(vdW)+Numeric.array(Elec)).tolist()
-            if binding_energy2 and not d.has_key('binding_energy'):
+            if binding_energy2 and 'binding_energy' not in d:
                 d['binding_energy'] = binding_energy2
                 d['docking_energy'] = binding_energy2
         return d

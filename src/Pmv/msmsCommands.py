@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -15,7 +15,7 @@
 #
 
 import types, os
-import Tkinter, Pmw
+import tkinter, Pmw
 from math import sqrt
 import numpy
 
@@ -45,7 +45,7 @@ import Pmv
 if hasattr( Pmv, 'numOfSelectedVerticesToSelectTriangle') is False:
     Pmv.numOfSelectedVerticesToSelectTriangle = 1
 
-    print "LALALALA"
+    print("LALALALA")
     Pmv.vf.userpref.add('Sharp Color Boundaries for MSMS', 'yes', ('yes','no'),
                   doc="""specifie color boundaries for msms surface (blur or sharp)""",
                  )
@@ -73,7 +73,7 @@ class ReadMSMS(MVCommand):
     ###
     
     def onAddObjectToViewer(self, obj):
-        if self.cmdForms.has_key('readMSMS'):
+        if 'readMSMS' in self.cmdForms:
             ebn = self.cmdForms['readMSMS'].descr.entryByName
             w = ebn['molName']['widget']
             molNames = list(w.get())
@@ -120,7 +120,7 @@ you wish to parse or click on the BROWSE button to open a file browser",
 
             idf.append({'widgetType':LoadButton,
                         'name':'browseVert',
-                        'wcfg':{'buttonType':Tkinter.Button,
+                        'wcfg':{'buttonType':tkinter.Button,
                                 'title':'Load file describing msms vertices.',
                                 'types':[('MSMS Vert','*.vert')],
                                 'callback':self.setEntry_cb,
@@ -138,7 +138,7 @@ you wish to parse or click on the BROWSE button to open a file browser",
 
             idf.append({'widgetType':LoadButton,
                         'name':'browseVert',
-                        'wcfg':{'buttonType':Tkinter.Button,
+                        'wcfg':{'buttonType':tkinter.Button,
                                 'title':'Load file describing msms faces.',
                                 'types':[('MSMS Face','*.face')],
                                 'callback':self.setEntry_cb,
@@ -180,7 +180,7 @@ representing this msms surface',
         else:
             kw['molName'] = val['molName'][0]
         
-        apply(self.doitWrapper, (vertFilename, faceFilename), kw)
+        self.doitWrapper(*(vertFilename, faceFilename), **kw)
 
     
     def doit(self, vertFilename, faceFilename, molName=None):
@@ -212,7 +212,7 @@ representing this msms surface',
                 bindcmd = self.vf.bindGeomToMolecularFragment
                 selMols, selAtms = self.vf.getNodesByMolecule(self.vf.selection, Atom)
                 lMolSelectedAtmsDict = dict( zip( selMols, selAtms) )
-                if lMolSelectedAtmsDict.has_key(surf.mol):
+                if surf.mol in lMolSelectedAtmsDict:
                     lSelectedAtoms = lMolSelectedAtmsDict[surf.mol]
                     if len(lSelectedAtoms) > 0:
                         lAtomVerticesDict = bindcmd.data[surf.fullName]['atomVertices']
@@ -229,7 +229,7 @@ representing this msms surface',
         """
         kw['molName'] = molName
         kw['redraw'] = 1
-        apply(self.doitWrapper, (vertFilename, faceFilename), kw)
+        self.doitWrapper(*(vertFilename, faceFilename), **kw)
        
 ReadMSMSGUI = CommandGUI()
 ReadMSMSGUI.addMenuCommand('menuRoot', 'Compute', 'Read Molecular Surface',
@@ -317,10 +317,10 @@ class SaveMSMS(MVCommand):
     ### ##################################################################
     
     def setDial_cb(self, value):
-        if not self.cmdForms.has_key('saveMSMS'): return
+        if 'saveMSMS' not in self.cmdForms: return
         # need to get the right surface....
         molName, srfName = value.split('/')
-        mol = filter(lambda x: x.name == molName, self.vf.Mols)[0]
+        mol = [x for x in self.vf.Mols if x.name == molName][0]
         srf = mol.geomContainer.msms[srfName][0]
         maxComponent = srf.rsr.nb-1
         dW = self.cmdForms['saveMSMS'].descr.entryByName['component']['widget']
@@ -340,9 +340,9 @@ class SaveMSMS(MVCommand):
             molSrf = []
             for mol in self.vf.Mols:
                 if not hasattr(mol.geomContainer, 'msms') \
-                       or not mol.geomContainer.msms.keys():
+                       or not list(mol.geomContainer.msms.keys()):
                     continue
-                for surf in mol.geomContainer.msms.keys():
+                for surf in list(mol.geomContainer.msms.keys()):
                     molSrf.append(mol.name +'/'+surf)
             if not molSrf: return
             idf = InputFormDescr(title="Save MSMS")
@@ -390,9 +390,9 @@ MS_ASES_ASCII_AVS: Analytical surface in ASCII format with AVS header
 
             # Whether or not to write header.
             idf.append({'name':'withHeader',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'wcfg':{'text':'Write Header:',
-                                'variable':Tkinter.IntVar()},
+                                'variable':tkinter.IntVar()},
                         'gridcfg':{'sticky':'we'}
                         })
             
@@ -408,7 +408,7 @@ and filename.vert will be created.',
 
             idf.append({'widgetType':SaveButton,
                         'name':'filebrowse',
-                        'wcfg':{'buttonType':Tkinter.Button,
+                        'wcfg':{'buttonType':tkinter.Button,
                                 'title':'Save In File ...',
                                 'types':[('MSMS Face','*.face'),
                                          ('MSMS Vert', '*.vert')],
@@ -420,28 +420,28 @@ and filename.vert will be created.',
             
     def guiCallback(self):
         # 1- the surface to save
-        if self.cmdForms.has_key('saveMSMS'):
+        if 'saveMSMS' in self.cmdForms:
             w = self.cmdForms['saveMSMS'].descr.entryByName['molsrf']['widget']
             for mol in self.vf.Mols:
                 if not hasattr(mol.geomContainer, 'msms') or \
-                       not mol.geomContainer.msms.keys():
+                       not list(mol.geomContainer.msms.keys()):
                     continue
                 molsrf = []
-                for surf in mol.geomContainer.msms.keys():
+                for surf in list(mol.geomContainer.msms.keys()):
                     molsrf.append(mol.name +'/'+surf)
             w.setlist(molsrf)
             
         val = self.showForm('saveMSMS', force=1)
         kw = {}
         if not val: return
-        if val.has_key('filename'):
+        if 'filename' in val:
             filename = val['filename']
         kw['format'] = val['format'][0]
         kw['component'] = val['component']
         kw['withHeader'] = val['withHeader']
         molsrf = val['molsrf'][0]
         molname, surfName = molsrf.split('/')
-        apply(self.doitWrapper, (filename, molname, surfName), kw)
+        self.doitWrapper(*(filename, molname, surfName), **kw)
 
         
     def doit(self, filename, molName, surfName, withHeader=True, component=0,
@@ -449,7 +449,7 @@ and filename.vert will be created.',
         mol = self.vf.getMolFromName(molName)
         if mol is None: return
         gc = mol.geomContainer
-        if not gc.msms.has_key(surfName): return
+        if surfName not in gc.msms: return
         msmsSurf = gc.msms[surfName][0]
         msmsAtms = gc.msms[surfName]
         from mslib import msms
@@ -485,7 +485,7 @@ and filename.vert will be created.',
         kw['withHeader'] = withHeader
         kw['component'] = component
         kw['format'] = format
-        apply(self.doitWrapper, (filename, molName, surfName), kw)
+        self.doitWrapper(*(filename, molName, surfName), **kw)
         
 
 SaveMSMSGUI = CommandGUI()
@@ -536,7 +536,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
 
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('assignAtomsRadii'):
+        if 'assignAtomsRadii' not in self.vf.commands:
             self.vf.loadCommand('editCommands', ['assignAtomsRadii',],
                                 topCommand=0)
 
@@ -689,7 +689,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
         kw['hdensity'] = hdensity
         if type(nodes) is StringType:
             self.nodeLogString = "'" + nodes +"'"
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
             
 
     def fixValues(self, val):
@@ -705,7 +705,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
 
     
     def guiCallback(self):
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             self.updateCBB()
         val = self.showForm('default')
         if not val: return
@@ -718,7 +718,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
 
         val = self.fixValues(val)
 
-        apply(self.doitWrapper, (self.vf.getSelection(), surfName), val)
+        self.doitWrapper(*(self.vf.getSelection(), surfName), **val)
 
 
     def doit(self, nodes, surfName='MSMS-MOL', pRadius=1.5, density=1.0,
@@ -747,15 +747,15 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
         if nodes is None or not nodes:
             return
         # Check the validity of the input
-        if not type(density) in [types.IntType, types.FloatType] or \
+        if not type(density) in [int, float] or \
            density < 0: return 'ERROR'
-        if not type(pRadius) in [types.IntType, types.FloatType] or \
+        if not type(pRadius) in [int, float] or \
            pRadius <0: return 'ERROR'
 
         if hdset=='None':
             hdset=None
         if hdset:
-            if self.vf.sets.has_key(hdset[0]):
+            if hdset[0] in self.vf.sets:
                 hdset = self.vf.sets[hdset[0]].findType(Atom)
             else:
                 self.warningMsg("set %s not found"%hdset)
@@ -771,7 +771,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
             molecules, atmSets = self.vf.getNodesByMolecule(nodes, Atom)
 
         for mol, atms in map(None, molecules, atmSets):
-            if self.vf.hasGui and self.vf.commands.has_key('dashboard'):
+            if self.vf.hasGui and 'dashboard' in self.vf.commands:
                 self.vf.dashboard.resetColPercent(
                     mol, '_showMSMSStatus_%s'%surfName)
                 
@@ -785,7 +785,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
                 surfName = mol.name + '-MSMS'
             geomC = mol.geomContainer
 
-            if not geomC.msms.has_key(surfName):
+            if surfName not in geomC.msms:
                 # Create a new geometry
                 # be stored.
                 g = IndexedPolygons(surfName, pickableVertices=1, protected=True,)
@@ -850,7 +850,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
             srf.hdset = hdset
             srf.hdensity = hdensity
                 
-            if mol.geomContainer.msms.has_key(surfName):
+            if surfName in mol.geomContainer.msms:
                 #print "freeing MSMSC %s"%surfName
                 oldsrf = mol.geomContainer.msms[surfName][0]
                 del oldsrf
@@ -865,7 +865,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
                 del a.highDensity
 
         if display:
-            if not self.vf.commands.has_key('displayMSMS'):
+            if 'displayMSMS' not in self.vf.commands:
                 self.vf.loadCommand("msmsCommands", ['displayMSMS',],
                                     topCommand=0)
             if nodes.stringRepr is not None:
@@ -878,9 +878,9 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
             self.vf.displayMSMS(nodes, surfName=[surfName,], negate=0, only=1,
                                 nbVert=Pmv.numOfSelectedVerticesToSelectTriangle, log=0)
         redraw = False
-        if kw.has_key("redraw") : redraw=True
+        if "redraw" in kw : redraw=True
         event = EditGeomsEvent('msms_c', [nodes,[surfName, pRadius, density,
-						perMol, display, hdset, hdensity]])
+                                                perMol, display, hdset, hdensity]])
         self.vf.dispatchEvent(event)
 
 
@@ -926,7 +926,7 @@ class ComputeMSMS(MVCommand, MVAtomICOM):
 ##                                 },
 ##                         'gridcfg':{'sticky':'we'}})
             
-            names = ['None']+self.vf.sets.keys()
+            names = ['None']+list(self.vf.sets.keys())
             names.sort()
             idf.append({'widgetType':Pmw.ComboBox,
                         'name':'hdset',
@@ -955,16 +955,16 @@ that should be triangualte at high density""",
 
             idf.append({'name':'noHetatm',
                         'tooltip':"""When checked surfaces will be computed ignoring hetero atoms.""",
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue': defaultValues['noHetatm'],
                         'wcfg':{'text':'No Hetero Atoms',
-                                'variable':Tkinter.IntVar(),
+                                'variable':tkinter.IntVar(),
                                 },#'command':self.noHetatm_cb},
                         'gridcfg':{'sticky':'we'}
                         })
             
             idf.append({'name':'saveSel',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':"""This button allows the user to save the current selection as a set.
 The name of the msms surface will be used as the name of the set""",
                         'wcfg':{'text':'Save Current Selection As Set',
@@ -1048,8 +1048,8 @@ Right click on the widget to type a value manually""",
     def updateTexCoords(self, mol):
         lookup = mol.geomContainer.texCoordsLookup["msms"]
         g = mol.geomContainer.geoms['msms']
-        tx = map(lambda v, l=lookup: l[str(v[0])+str(v[1])+str(v[2])],
-                 g.vertexSet.vertices.array)
+        tx = list(map(lambda v, l=lookup: l[str(v[0])+str(v[1])+str(v[2])],
+                 g.vertexSet.vertices.array))
         tx = Numeric.array(tx)
         tx.shape = (-1,1)
         g.Set( textureCoords=tx, tagModified=False )
@@ -1095,7 +1095,7 @@ Right click on the widget to type a value manually""",
 ##             cbb.setlist(sNames)
 ##             cbb.selectitem(typein)
 
-        names = ['None']+self.vf.sets.keys()
+        names = ['None']+list(self.vf.sets.keys())
         names.sort()
         cbb = ebn['hdset']['widget']
         cbb.setlist(names)
@@ -1103,7 +1103,7 @@ Right click on the widget to type a value manually""",
             cbb.selectitem(str(defaultValues['hdset'][0])) #str(None)->"None"
 
     def perMol_cb(self, event=None):
-        if not self.cmdForms.has_key('default'):
+        if 'default' not in self.cmdForms:
             return
         ebn = self.cmdForms['default'].descr.entryByName
         perMol = ebn['perMol']['wcfg']['variable'].get()
@@ -1164,7 +1164,7 @@ upon atom deletion.
         # loop over molecules to update geometry objects
         for mol, atomSet in zip(molecules, ats):
             geomC = mol.geomContainer
-            for srfName, srfc in geomC.msms.items():
+            for srfName, srfc in list(geomC.msms.items()):
                 ats = geomC.atoms[srfName]
                 srf = srfc[0]
                 if len(ats & atomSet): #deleted atoms are in this surface
@@ -1199,7 +1199,7 @@ upon atom deletion.
             geomC = mol.geomContainer
 
             # loop over all surfaces
-            for name in geomC.msms.keys():
+            for name in list(geomC.msms.keys()):
                 g = geomC.geoms[name]
 
                 # get the atom indices
@@ -1223,7 +1223,7 @@ upon atom deletion.
                 updateNum = 1
                 i =msms.MS_update_surface(surfc, rs, mode, density, updateNum)
                 if i==msms.MS_ERR:
-                    print "ERROR while updating RS %d %s\n"%(updateNum, "Error")#msms.MS_err_msg) MS_err_msg not exposed
+                    print("ERROR while updating RS %d %s\n"%(updateNum, "Error"))#msms.MS_err_msg) MS_err_msg not exposed
                     return
                 #msms.MS_update_SES_area(surfc, rs.ses)
                 vf, vi, f = surfc.getTriangles()
@@ -1239,10 +1239,10 @@ upon atom deletion.
         molecules, atomSets = self.vf.getNodesByMolecule(nodes, Atom)
         for mol, atoms in map(None, molecules, atomSets):
             geomC = mol.geomContainer
-            surfNames = geomC.msms.keys()
+            surfNames = list(geomC.msms.keys())
             if surfName == 'all':
                 names = surfNames
-            elif not type(surfName) in [types.ListType, types.TupleType]:
+            elif not type(surfName) in [list, tuple]:
                 if not surfName in surfNames:
                     continue
                 else:
@@ -1259,7 +1259,7 @@ upon atom deletion.
                 if lastCmd=="" or lastCmd.find('displayMSMS')>-1:
                     #no previous geometry OR the geometry resulted from displayMSMS 
                     not_negate =  not negate
-                    if not geomC.atoms.has_key(n):
+                    if n not in geomC.atoms:
                         continue
                     ats = geomC.atoms[n]
                     if not len(ats):
@@ -1302,11 +1302,11 @@ upon atom deletion.
 
         for mol, atoms in zip(molecules, atomSets):
             geomC = mol.geomContainer
-            surfNames = geomC.msms.keys()
+            surfNames = list(geomC.msms.keys())
             if surfName == 'all':
                 names = surfNames
 
-            elif not type(surfName) in [types.ListType, types.TupleType]:
+            elif not type(surfName) in [list, tuple]:
                 if not surfName in surfNames:
                     return
                 else:
@@ -1343,7 +1343,7 @@ upon atom deletion.
                         setOn = lSet
 
                 if lSet is None:
-                    print "skipping ", sName
+                    print("skipping ", sName)
                     continue
                 if setOn: rsetOn += setOn
                 if setOff: rsetOff += setOff
@@ -1391,7 +1391,7 @@ upon atom deletion.
                     if atoms is not None:
                         lAtomSet = mol.geomContainer.msmsAtoms[sName]
                         if len(lAtomSet) > 0:
-                                lAtomSetDict = dict(zip(lAtomSet, range(len(lAtomSet))))
+                                lAtomSetDict = dict(zip(lAtomSet, list(range(len(lAtomSet)))))
                                 lAtomIndices = []
                                 for i in range(len(atoms)):
                                     lIndex = lAtomSetDict.get(atoms[i], None)
@@ -1408,7 +1408,7 @@ upon atom deletion.
                                 g.Set(highlight=highlight)
 
         redraw = False
-        if kw.has_key("redraw") : redraw=True
+        if "redraw" in kw : redraw=True
         if self.createEvents and len(rsetOn)+len(rsetOff):
             event = EditGeomsEvent('msms_ds',
                                    [nodes,[names, negate, only, nbVert]],
@@ -1450,7 +1450,7 @@ have to belong\nto a selected atom, for that face to be shown',
         mols = self.vf.getSelection().top.uniq()
         surfNames = []
         for mol in mols:
-            for name in mol.geomContainer.msms.keys():
+            for name in list(mol.geomContainer.msms.keys()):
                 if not name in surfNames:
                     surfNames.append(name)
         return surfNames
@@ -1458,7 +1458,7 @@ have to belong\nto a selected atom, for that face to be shown',
 
     def guiCallback(self):
         # Update the comboBox with the name of the surfaces
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             surfNames = self.getSurfNames()
             ebn = self.cmdForms['default'].descr.entryByName
             w = ebn['surfName']['widget']
@@ -1468,7 +1468,7 @@ have to belong\nto a selected atom, for that face to be shown',
         val = DisplayCommand.getFormValues(self)
         if val:
             val['nbVert'] = int(val['nbVert'][0])
-            apply( self.doitWrapper, (self.vf.getSelection(),), val)
+            self.doitWrapper(*(self.vf.getSelection(),), **val)
 
 
     def __call__(self, nodes, only=False, negate=False, surfName='all',
@@ -1482,18 +1482,18 @@ have to belong\nto a selected atom, for that face to be shown',
         surfName   --- name of the selection, default = 'all'\n
         nbVert --- Nb of vertices per triangle needed to select a triangle\n
         """
-        if not kw.has_key('redraw'): kw['redraw'] = 1
+        if 'redraw' not in kw: kw['redraw'] = 1
         kw['only'] = only
         kw['negate'] = negate
         kw['nbVert'] = nbVert
         kw['redraw'] = 1
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if surfName is None: kw['surfName'] = 'all'
         else:
             kw['surfName'] = surfName
-        apply( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
 
 DisplayMSMSGUI = CommandGUI()
 DisplayMSMSGUI.addMenuCommand('menuRoot', 'Display', 'Molecular Surface')
@@ -1514,7 +1514,7 @@ class UndisplayMSMS(DisplayCommand):
     
     def onAddCmdToViewer(self):
         #if not self.vf.hasGui: return 
-        if not self.vf.commands.has_key('displayMSMS'):
+        if 'displayMSMS' not in self.vf.commands:
             self.vf.loadCommand('msmsCommands', ['displayMSMS'], 'Pmv',
                                 topCommand=0)
 
@@ -1526,7 +1526,7 @@ class UndisplayMSMS(DisplayCommand):
         kw['redraw']=1
         if type(nodes) is StringType:
             self.nodeLogString = "'" + nodes +"'"
-        apply(self.vf.displayMSMS, (nodes,),kw)
+        self.vf.displayMSMS(*(nodes,), **kw)
 
 
 
@@ -1625,7 +1625,7 @@ class ComputeMSMSApprox(ComputeMSMS):
 
         if perMol:
             molecules = nodes.top.uniq()
-            resSets = map(lambda x: x.chains.residues, molecules)
+            resSets = [x.chains.residues for x in molecules]
         else:
             molecules, resSets = self.vf.getNodesByMolecule(nodes, Residue)
         
@@ -1645,7 +1645,7 @@ class ComputeMSMSApprox(ComputeMSMS):
             if surfName is None:
                 surfName = 'msmsApprox%d'%geomC.nbSurf
 
-            if surfName in geomC.atoms.keys():
+            if surfName in list(geomC.atoms.keys()):
                 # Update the old geom and all.
                 geomC.msmsAtoms[surfName] = atm
                 geomC.atoms[surfName] = atm 
@@ -1688,11 +1688,11 @@ class ComputeMSMSApprox(ComputeMSMS):
             vf,vi,f = srf.getTriangles()
             g = mol.geomContainer.geoms[surfName]
 
-	    col = geomC.getGeomColor(surfName)
+            col = geomC.getGeomColor(surfName)
             g.Set( vertices=vf[:,:3], vnormals=vf[:,3:6], faces=f[:,:3],
                    materials=col, inheritMaterial=False, tagModified=False )
             if display:
-                if not self.vf.commands.has_key('displayMSMS'):
+                if 'displayMSMS' not in self.vf.commands:
                     self.vf.loadCommand("msmsCommands", ['displayMSMS',],
                                     topCommand=0)
                 self.vf.displayMSMS(atm, surfName=[surfName,],negate=0, only=0,
@@ -1712,26 +1712,26 @@ class ComputeMSMSApprox(ComputeMSMS):
            perMol   --- when this flag is True a surface is computed for each molecule having at least one node in the current selection else the surface is computed for the current selection.(True)\n
            display  --- flag when set to 1 the displayMSMS will be executed with the surfName else not.\n
 """
-        if not kw.has_key('redraw'): kw['redraw'] = 1
+        if 'redraw' not in kw: kw['redraw'] = 1
         kw['pRadius'] = pRadius
         kw['density'] = density
         kw['surfName'] = surfName
         kw['nbSphPerRes'] = nbSphPerRes
         kw['perMol'] = perMol
         kw['display'] = display
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
-        apply( self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def guiCallback(self):
         val = self.showForm()
         if not val: return
-        if type(val['surfName']) is types.TupleType:
+        if type(val['surfName']) is tuple:
             val['surfName'] = val['surfName'][0]
         val['redraw'] = 1
-        apply( self.doitWrapper, (self.vf.getSelection(),), val)
+        self.doitWrapper(*(self.vf.getSelection(),), **val)
 
 ComputeMSMSApproxGUI = CommandGUI()
 ComputeMSMSApproxGUI.addMenuCommand('menuRoot', 'Compute', 'Molecular Surface Approx',
@@ -1741,7 +1741,7 @@ ComputeMSMSApproxGUI.addMenuCommand('menuRoot', 'Compute', 'Molecular Surface Ap
  
 from MolKit.molecule import Atom, AtomSet, Molecule, MoleculeSet
 from opengltk.OpenGL import GL
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 class MsmsNPR(MVCommand):
     """This command sets colors of MSMS surface to make it look NPR\n
@@ -1761,11 +1761,11 @@ class MsmsNPR(MVCommand):
 
 
     def setColors(self, mol):
-	if not hasattr(mol.geomContainer, 'msms'): #surface not computed
-	    return
+        if not hasattr(mol.geomContainer, 'msms'): #surface not computed
+            return
         g = mol.geomContainer
         geom = g.geoms['msms']
-	vf, vi, fa = g.msms.getTriangles()
+        vf, vi, fa = g.msms.getTriangles()
         # FIXME won't work with instance matrices
         mat = geom.GetMatrix()[ :3, :3 ]
         nt = Numeric.dot( vf[:, 3:6], Numeric.transpose(mat) )
@@ -1799,16 +1799,16 @@ class MsmsNPR(MVCommand):
         if not nodes: return 
         molecules = nodes.top.uniq()
         for mol in molecules:
-	    self.setColors(mol)
+            self.setColors(mol)
 
     def __call__(self, nodes, **kw):
          """None <--- msmsNPR(nodes, **kw)\n
             \nRequired Arguments :\n
             nodes: TreeNodeSet holding the current selection\n"""
-         if type(nodes) is types.StringType:
+         if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
          kw['redraw']=True
-         apply( self.doitWrapper, (nodes,), kw )
+         self.doitWrapper(*(nodes,), **kw)
 
     def guiCallback(self):
         self.doitWrapper(self.vf.getSelection(), redraw=True)
@@ -1900,7 +1900,7 @@ class IdentifyBuriedVertices(MVCommand):
         geomC = mol.geomContainer
         w = self.ifd.entryByName['Surface List']['widget']
         w.clear()
-        for n in geomC.msms.keys():
+        for n in list(geomC.msms.keys()):
             w.insert('end', n, None)
 
 
@@ -1911,7 +1911,7 @@ class IdentifyBuriedVertices(MVCommand):
     def buildFormDescr(self, formName):
         if formName == 'buriedSurf':
             ifd = self.ifd = InputFormDescr(title='Compute Buried surface')
-            entries = map(lambda x: (x, None), self.vf.Mols.name)
+            entries = [(x, None) for x in self.vf.Mols.name]
         
             ifd.append({'name': 'Molecule List',
                         'widgetType':ListChooser,
@@ -1922,7 +1922,7 @@ class IdentifyBuriedVertices(MVCommand):
                                  'command':self.selectMolecule_cb,
                                  'commandEvent':"<Double-Button-1>"
                                  },
-                        'gridcfg':{'sticky':Tkinter.E+Tkinter.W}
+                        'gridcfg':{'sticky':tkinter.E+tkinter.W}
                         })
             
             ifd.append({'name': 'Surface List',
@@ -1934,7 +1934,7 @@ class IdentifyBuriedVertices(MVCommand):
                 'command': self.OK_cb,
                 'commandEvent':"<Double-Button-1>"
                 },
-                        'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':0,
+                        'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':0,
                                    'column':1}
                         })
             return ifd
@@ -1966,7 +1966,7 @@ class IdentifyBuriedVertices(MVCommand):
         Return---a dictionary with 2 keys: 'ses' and 'sas'. The values are either
         lists of buried surface areas for all components considered.\n
         """
-        return apply( self.doitWrapper, (surfaceName, surfaceMol, nodes), kw )
+        return self.doitWrapper(*(surfaceName, surfaceMol, nodes), **kw)
 
 
 identifyBuriedVerticesGuiDescr = {'widgetType':'Menu',
@@ -2014,10 +2014,10 @@ class DisplayBuriedTriangles(DisplayCommand):
         molecules, atomSets = self.vf.getNodesByMolecule(nodes, Atom)
         for mol, atoms in map(None, molecules, atomSets):
             geomC = mol.geomContainer
-            surfNames = geomC.msms.keys()
+            surfNames = list(geomC.msms.keys())
             if surfaceName == 'all':
                 names = surfNames
-            elif not type(surfaceName) in [types.ListType, types.TupleType]:
+            elif not type(surfaceName) in [list, tuple]:
                 if not surfaceName in surfNames:
                     continue
                 else:
@@ -2074,8 +2074,8 @@ class DisplayBuriedTriangles(DisplayCommand):
         molecules, atomSets = self.vf.getNodesByMolecule(nodes, Atom)
         for mol, atoms in map(None, molecules, atomSets):
             geomC = mol.geomContainer
-            surfNames = geomC.msms.keys()
-            if not type(surfaceName) in [types.ListType, types.TupleType]:
+            surfNames = list(geomC.msms.keys())
+            if not type(surfaceName) in [list, tuple]:
                 if not surfaceName in surfNames:
                     continue
                     #return
@@ -2147,7 +2147,7 @@ class DisplayBuriedTriangles(DisplayCommand):
         geomC = mol.geomContainer
         w = ifd.entryByName['Surface List']['widget']
         w.clear()
-        for n in geomC.msms.keys():
+        for n in list(geomC.msms.keys()):
             w.insert('end', n, None)
 
 
@@ -2159,7 +2159,7 @@ class DisplayBuriedTriangles(DisplayCommand):
     def buildFormDescr(self, formName):
         if formName == 'displayBuried':
             ifd = InputFormDescr(title='Select Buried surface')
-            entries = map(lambda x: (x, None), self.vf.Mols.name)
+            entries = [(x, None) for x in self.vf.Mols.name]
             ifd.append({'name': 'Molecule List',
                         'widgetType':ListChooser,
                         'wcfg':{ 'title':'Choose a molecule (double click)',
@@ -2169,7 +2169,7 @@ class DisplayBuriedTriangles(DisplayCommand):
                                  'command':self.selectMolecule_cb,
                                  'commandEvent':"<Double-Button-1>"
                                  },
-                        'gridcfg':{'sticky':Tkinter.E+Tkinter.W}
+                        'gridcfg':{'sticky':tkinter.E+tkinter.W}
                         })
 
             ifd.append({'name': 'Surface List',
@@ -2180,7 +2180,7 @@ class DisplayBuriedTriangles(DisplayCommand):
                             'command': self.OK_cb,
                             'commandEvent':"<Double-Button-1>"
                             },
-                        'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':0,
+                        'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':0,
                                    'column':1}
                         })
 
@@ -2195,15 +2195,15 @@ class DisplayBuriedTriangles(DisplayCommand):
                          })
 
             ifd.append({'name':'negate',
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'wcfg':{'text':'display exposed surface',
-                            'variable':Tkinter.IntVar()},
+                            'variable':tkinter.IntVar()},
                     'gridcfg':{'sticky':'w', 'row':1, 'column':1}})
 
             ifd.append({'name':'only',
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'wcfg':{'text':'display only for these atoms',
-                            'variable':Tkinter.IntVar()},
+                            'variable':tkinter.IntVar()},
                     'gridcfg':{'sticky':'w', 'row':-1, 'column':2}})
             return ifd
 
@@ -2234,11 +2234,11 @@ class DisplayBuriedTriangles(DisplayCommand):
          negate-- specifies whether we want to display buried or exposed triangles\n
          only-- specifies whether we want to display only triangles for these nodes\n"""
         
-        if not kw.has_key('negate'): kw['negate'] = negate
-        if not kw.has_key('only'): kw['only'] = only
-        if not kw.has_key('cut'): kw['cut'] = cut
-        if not kw.has_key('redraw'): kw['redraw'] = 1
-        return apply( self.doitWrapper, (nodes, surfaceName), kw )
+        if 'negate' not in kw: kw['negate'] = negate
+        if 'only' not in kw: kw['only'] = only
+        if 'cut' not in kw: kw['cut'] = cut
+        if 'redraw' not in kw: kw['redraw'] = 1
+        return self.doitWrapper(*(nodes, surfaceName), **kw)
 
 
 displayBuriedTrianglesGuiDescr = {'widgetType':'Menu',
@@ -2290,13 +2290,13 @@ class DisplayIntermolecularBuriedTriangles(DisplayCommand):
             molecules, atomSets = self.vf.getNodesByMolecule(nodes, Atom)
             for mol, atoms in map(None, molecules, atomSets):
                 geomC = mol.geomContainer
-                surfNames = geomC.msms.keys()
+                surfNames = list(geomC.msms.keys())
                 if len(surfNames)==0:
                     surfNames = [surfaceName,]
 
                 if surfaceName == 'all':
                     names = surfNames
-                elif not type(surfaceName) in [types.ListType, types.TupleType]:
+                elif not type(surfaceName) in [list, tuple]:
                     if not surfaceName in surfNames:
                         continue
                     else:
@@ -2319,7 +2319,7 @@ class DisplayIntermolecularBuriedTriangles(DisplayCommand):
                         lastCmd = geomC.msmsCurrentDisplay.get(n, "")
                     if lastCmd=="" or lastCmd.find('displayMSMS')==-1:
                         #the geometry resulted from displayMSMS 
-                        if n in geomC.atoms.keys():
+                        if n in list(geomC.atoms.keys()):
                             ats = geomC.atoms[n]
                         else:
                             ats = atoms
@@ -2365,7 +2365,7 @@ class DisplayIntermolecularBuriedTriangles(DisplayCommand):
             for mol, atoms in map(None, molecules, atomSets):
                 geomC = mol.geomContainer
                 #print "doit: processing ", mol.name
-                surfNames = geomC.msms.keys()
+                surfNames = list(geomC.msms.keys())
                 if nodes==nodes1:
                     others = nodes2
                 else:
@@ -2373,7 +2373,7 @@ class DisplayIntermolecularBuriedTriangles(DisplayCommand):
                 if len(surfNames)==0:
                     self.vf.computeMSMS(mol.name, surfaceName, topCommand=0)
                     surfNames = [surfaceName,]
-                if not type(surfaceName) in [types.ListType, types.TupleType]:
+                if not type(surfaceName) in [list, tuple]:
                     if not surfaceName in surfNames:
                         continue
                         #return
@@ -2399,7 +2399,7 @@ class DisplayIntermolecularBuriedTriangles(DisplayCommand):
         geomC = mol.geomContainer
         w = ifd.entryByName['First Surface List']['widget']
         w.clear()
-        for n in geomC.msms.keys():
+        for n in list(geomC.msms.keys()):
             w.insert('end', n, None)
 
 
@@ -2410,22 +2410,22 @@ class DisplayIntermolecularBuriedTriangles(DisplayCommand):
         geomC = mol.geomContainer
         w = ifd.entryByName['Second Surface List']['widget']
         w.clear()
-        for n in geomC.msms.keys():
+        for n in list(geomC.msms.keys()):
             w.insert('end', n, None)
 
 
     def OK_cb(self, event=None):
         """call back for OK button"""
-        print "in OK_cb"
+        print("in OK_cb")
         #ifd = self.cmdForms['displayBuried'].descr
         #ifd.form.OK_cb(event)
 
 
     def guiCallback(self, event=None):
-        cutVar = Tkinter.StringVar()
+        cutVar = tkinter.StringVar()
         cutVar.set("number of buried vertices for display cutoff")
         cutDict = [ {'name':'cutLab',
-                          'widgetType': Tkinter.Label,
+                          'widgetType': tkinter.Label,
                           'textvariable':cutVar,
                            'wcfg':{'font':(ensureFontCase('helvetica'),9,) }},
                         {'name':'cut',
@@ -2455,7 +2455,7 @@ class DisplayIntermolecularBuriedTriangles(DisplayCommand):
             formName = firstMol.name + "SurfaceList"
             formTitle = "Choose " + firstMol.name + " msms surface"
             ifd = self.ifd = InputFormDescr(title=formTitle)
-            entries = map(lambda x: (x, None), gc.msms.keys())
+            entries = [(x, None) for x in list(gc.msms.keys())]
             ifd.append({'name': 'First Surface List',
                         'widgetType':ListChooser,
                         'wcfg':{ 'title':'Choose first msms surface (double click)',
@@ -2465,13 +2465,13 @@ class DisplayIntermolecularBuriedTriangles(DisplayCommand):
                                  'command':self.OK_cb,
                                  'commandEvent':"<Double-Button-1>"
                                  },
-                        'gridcfg':{'sticky':Tkinter.E+Tkinter.W}
+                        'gridcfg':{'sticky':tkinter.E+tkinter.W}
                         })
             val = self.vf.getUserInput(ifd)
             #val = self.showForm(formName, force=1)
             surfName1 = val['First Surface List']
         else:
-            surfName1 = gc.msms.keys()[0]
+            surfName1 = list(gc.msms.keys())[0]
         secondMol = mols[1]
         gc2 = secondMol.geomContainer
         if len(gc2.msms)==0:
@@ -2481,7 +2481,7 @@ class DisplayIntermolecularBuriedTriangles(DisplayCommand):
             formName = secondMol.name + "SurfaceList"
             formTitle = "Choose " + secondMol.name + " msms surface"
             ifd = self.ifd = InputFormDescr(title=formTitle)
-            entries = map(lambda x: (x, None), gc2.msms.keys())
+            entries = [(x, None) for x in list(gc2.msms.keys())]
             ifd.append({'name': 'Second Surface List',
                         'widgetType':ListChooser,
                         'wcfg':{ 'title':'Choose second msms surface (double click)',
@@ -2491,12 +2491,12 @@ class DisplayIntermolecularBuriedTriangles(DisplayCommand):
                                  'command':self.OK_cb,
                                  'commandEvent':"<Double-Button-1>"
                                  },
-                        'gridcfg':{'sticky':Tkinter.E+Tkinter.W}
+                        'gridcfg':{'sticky':tkinter.E+tkinter.W}
                         })
             val = self.vf.getUserInput(ifd)
             surfName2 = val['Second Surface List']
         else:
-            surfName2 = gc2.msms.keys()[0]
+            surfName2 = list(gc2.msms.keys())[0]
             
         if firstMol and surfName1 and secondMol and surfName2:
                 self.doitWrapper(firstMol, surfName1, 
@@ -2517,12 +2517,12 @@ class DisplayIntermolecularBuriedTriangles(DisplayCommand):
 
         """
         
-        if not kw.has_key('negate'): kw['negate'] = negate
-        if not kw.has_key('only'): kw['only'] = only
-        if not kw.has_key('cut'): kw['cut'] = cut
-        if not kw.has_key('redraw'): kw['redraw'] = 1
-        if not kw.has_key('setupUndo'): kw['setupUndo'] = 1
-        return apply( self.doitWrapper, (nodes1, surfaceName1, nodes2, surfaceName2), kw )
+        if 'negate' not in kw: kw['negate'] = negate
+        if 'only' not in kw: kw['only'] = only
+        if 'cut' not in kw: kw['cut'] = cut
+        if 'redraw' not in kw: kw['redraw'] = 1
+        if 'setupUndo' not in kw: kw['setupUndo'] = 1
+        return self.doitWrapper(*(nodes1, surfaceName1, nodes2, surfaceName2), **kw)
 
 
 displayBuriedIntermolecularTrianglesGuiDescr = {'widgetType':'Menu',
@@ -2591,7 +2591,7 @@ previousely\n
         d = {}
         for atInd, vfloat in map(None, bvi, bvf):
             ii = int(atInd)
-            if not d.has_key(ii):
+            if ii not in d:
                 d[ii] = [0.0, 0.0]
             d[ii][0] = d[ii][0] + vfloat[6]
             d[ii][1] = d[ii][1] + vfloat[7]
@@ -2602,7 +2602,7 @@ previousely\n
         for a in atoms:
             a.buriedSAS = a.buriedSES = 0.0
             
-        for atInd, values in d.items():
+        for atInd, values in list(d.items()):
             a = atoms[int(atInd-1)]
             a.buriedSES = values[0]
             a.buriedSAS = values[1]
@@ -2620,7 +2620,7 @@ previousely\n
         geomC = mol.geomContainer
         w = ifd.entryByName['Surface List']['widget']
         w.clear()
-        for n in geomC.msms.keys():
+        for n in list(geomC.msms.keys()):
             w.insert('end', n, None)
 
 
@@ -2632,7 +2632,7 @@ previousely\n
     def buildFormDescr(self, formName):
         if formName == 'buriedSurfaces':
             ifd = InputFormDescr(title='Compute Buried surface')
-            entries = map(lambda x: (x, None), self.vf.Mols.name)
+            entries = [(x, None) for x in self.vf.Mols.name]
         
             ifd.append({'name': 'Molecule List',
                         'widgetType':ListChooser,
@@ -2643,7 +2643,7 @@ previousely\n
                                  'command':self.selectMolecule_cb,
                                  'commandEvent':"<Double-Button-1>"
                                  },
-                        'gridcfg':{'sticky':Tkinter.E+Tkinter.W}
+                        'gridcfg':{'sticky':tkinter.E+tkinter.W}
                         })
 
             ifd.append({'name': 'Surface List',
@@ -2655,7 +2655,7 @@ previousely\n
                                 'command': self.OK_cb,
                                 'commandEvent':"<Double-Button-1>"
                                 },
-                        'gridcfg':{'sticky':Tkinter.E+Tkinter.W, 'row':0,
+                        'gridcfg':{'sticky':tkinter.E+tkinter.W, 'row':0,
                                    'column':1}
                         })
             return ifd
@@ -2681,7 +2681,7 @@ previousely\n
         attributes--- buriedSES and buriedSAS.\n
         """
 
-        return apply( self.doitWrapper, (surfaceName, surfaceMol), kw )
+        return self.doitWrapper(*(surfaceName, surfaceMol), **kw)
 
 
 assignBuriedSurfaceGuiDescr = {'widgetType':'Menu', 'menuBarName':'menuRoot',
@@ -2734,7 +2734,7 @@ class ComputeSESAndSASArea(MVCommand):
     Residue, Chain, and Molecule in ses_area and sas_area attributes.
     """
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('computeMSMS'):
+        if 'computeMSMS' not in self.vf.commands:
             self.vf.loadCommand('msmsCommands', ['ComputeMSMS',], topCommand=0)
 
     def guiCallback(self, event=None):
@@ -2762,7 +2762,7 @@ class ComputeSESAndSASArea(MVCommand):
         # get surface areas per atom
         ses_areas = []
         sas_areas = []
-        for i in xrange(srf.nbat):
+        for i in range(srf.nbat):
             atm = srf.get_atm(i)
             ses_areas.append(atm.get_ses_area(0))
             sas_areas.append(atm.get_sas_area(0))
@@ -2791,7 +2791,7 @@ class ComputeSESAndSASArea(MVCommand):
     Residue, Chain, and Molecule in ses_area and sas_area attributes.               
         """
         nodes=self.vf.expandNodes(molecule)
-        return apply( self.doitWrapper, (nodes), kw )
+        return self.doitWrapper(*(nodes), **kw)
           
 ComputeSESAndSASAreaGUI = CommandGUI()
 ComputeSESAndSASAreaGUI.addMenuCommand('menuRoot', 'Compute', 'Solvent Excluded & Accessible Areas',

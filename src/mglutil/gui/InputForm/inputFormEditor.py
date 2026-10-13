@@ -1,4 +1,4 @@
-import Tkinter, Pmw
+import tkinter, Pmw
 from mglutil.util.callback import CallbackManager, CallBackFunction
 from mglutil.gui.InputForm.Tk.moveTk import MovableWidget
 from mglutil.gui.BasicWidgets.Tk import customizedWidgets
@@ -13,7 +13,7 @@ pmwWidgets = [('ComboBox',), ( 'EntryField',), ( 'RadioSelect',),
 customizedWidgets = [('ListChooser',), ('ExtendedSliderWidget',),
                      ( 'SliderWidget',)]
               
-class InteractiveInputFormBuilder(Tkinter.Frame):
+class InteractiveInputFormBuilder(tkinter.Frame):
     """ This class implements an interactive inputform builder that provides:
     - a frame inside of which you can widgets and edit them.
     - a set of widgets that can be added to the frame
@@ -43,41 +43,41 @@ class InteractiveInputFormBuilder(Tkinter.Frame):
 ##              'onDeselectConnections' : CallbackManager(),
 ##              }
 
-        Tkinter.Frame.__init__(self, master)
-        Tkinter.Pack.config(self, expand=1, fill=Tkinter.BOTH)
+        tkinter.Frame.__init__(self, master)
+        tkinter.Pack.config(self, expand=1, fill=tkinter.BOTH)
 
-        mainFrame = Tkinter.Frame(bg='white',width=400, height=400)
+        mainFrame = tkinter.Frame(bg='white',width=400, height=400)
         self.containers['mainFrame'] = mainFrame
-        mainFrame.pack(side=Tkinter.LEFT)
+        mainFrame.pack(side=tkinter.LEFT)
 
         self.createMenus()
-        self.widgetArea = Tkinter.Frame(borderwidth=2, relief = 'sunken')
+        self.widgetArea = tkinter.Frame(borderwidth=2, relief = 'sunken')
 ##          self.widgetArea.pack(side=Tkinter.RIGHT, expand=1, fill ='both')
 
     def createMenus(self):
-        self.mBar = Tkinter.Frame(self, relief=Tkinter.RAISED, borderwidth=2)
-        self.mBar.pack(fill=Tkinter.X)
+        self.mBar = tkinter.Frame(self, relief=tkinter.RAISED, borderwidth=2)
+        self.mBar.pack(fill=tkinter.X)
         self.menuButtons = {}
         self.makeFileMenu()
         self.makeEditMenu()
-        apply( self.mBar.tk_menuBar, self.menuButtons.values() )
-	self.title = Tkinter.Label(self.mBar, text=self.name)
-	self.title.pack(side=Tkinter.RIGHT)
+        self.mBar.tk_menuBar(*list(self.menuButtons.values()))
+        self.title = tkinter.Label(self.mBar, text=self.name)
+        self.title.pack(side=tkinter.RIGHT)
 
     def makeFileMenu(self):
-        File_button = Tkinter.Menubutton(self.mBar, text='File', underline=0)
+        File_button = tkinter.Menubutton(self.mBar, text='File', underline=0)
         self.menuButtons['File'] = File_button
-        File_button.pack(side=Tkinter.LEFT, padx="1m")
-        File_button.menu = Tkinter.Menu(File_button)
+        File_button.pack(side=tkinter.LEFT, padx="1m")
+        File_button.menu = tkinter.Menu(File_button)
 ##          File_button.menu.add_command(label='New...', underline=0, 
 ##                                       command=self.loadFile)
         
         File_button.menu.add_command(label='Load...', underline=0, 
                                      command=self.loadFile)
-        File_button.menu.entryconfig(1, state=Tkinter.DISABLED)
+        File_button.menu.entryconfig(1, state=tkinter.DISABLED)
         File_button.menu.add_command(label='Save...', underline=0, 
                                      command=self.saveFile)
-        File_button.menu.entryconfig(2, state=Tkinter.DISABLED)
+        File_button.menu.entryconfig(2, state=tkinter.DISABLED)
         File_button.menu.add_command(label='Quit', underline=0, 
                                      command=self.exit)
         File_button['menu'] = File_button.menu
@@ -88,13 +88,13 @@ class InteractiveInputFormBuilder(Tkinter.Frame):
 
         
     def makeEditMenu(self):
-        Edit_button = Tkinter.Menubutton(self.mBar, text='Edit', underline=0)
+        Edit_button = tkinter.Menubutton(self.mBar, text='Edit', underline=0)
         self.menuButtons['Edit'] = Edit_button
-        Edit_button.pack(side=Tkinter.LEFT, padx="1m")
-        Edit_button.menu = Tkinter.Menu(Edit_button)
+        Edit_button.pack(side=tkinter.LEFT, padx="1m")
+        Edit_button.menu = tkinter.Menu(Edit_button)
 
         Edit_button.menu.add('command', label="Undo", command=self.undo)
-        Edit_button.menu.entryconfig(1, state=Tkinter.DISABLED)
+        Edit_button.menu.entryconfig(1, state=tkinter.DISABLED)
 
         Edit_button.menu.add('command', label="Add widget",
                              command=self.buildWidgetsFrame)
@@ -103,13 +103,13 @@ class InteractiveInputFormBuilder(Tkinter.Frame):
         
         # and these are just for show. No "command" callbacks attached.
         Edit_button.menu.add_command(label="Cut")
-        Edit_button.menu.entryconfig(3, state=Tkinter.DISABLED)
+        Edit_button.menu.entryconfig(3, state=tkinter.DISABLED)
         Edit_button.menu.add_command(label="Copy")
-        Edit_button.menu.entryconfig(4, state=Tkinter.DISABLED)
+        Edit_button.menu.entryconfig(4, state=tkinter.DISABLED)
         Edit_button.menu.add_command(label="Paste")
-        Edit_button.menu.entryconfig(5, state=Tkinter.DISABLED)
+        Edit_button.menu.entryconfig(5, state=tkinter.DISABLED)
         Edit_button.menu.add_command(label="Delete", command=self.delete)
-        Edit_button.menu.entryconfig(5, state=Tkinter.DISABLED)
+        Edit_button.menu.entryconfig(5, state=tkinter.DISABLED)
 
         # set up a pointer from the file menubutton back to the file menu
         Edit_button['menu'] = Edit_button.menu
@@ -117,12 +117,12 @@ class InteractiveInputFormBuilder(Tkinter.Frame):
     def addWidget(self,event=None):
         wtype = self.guiTK.get()+'.'+self.chosenWidgets.get()[0]
         container = self.containers[self.chosenContainers.get()[0]]
-        widget = apply( eval(wtype), (container,) )
+        widget = eval(wtype)(*(container,))
         b = MovableWidget(widget, 0, 0)
         self.widgets.append(b)
     
     def buildWidgetsFrame(self, event=None):
-        self.widgetsFrame = Tkinter.Frame(master = self.widgetArea)
+        self.widgetsFrame = tkinter.Frame(master = self.widgetArea)
         self.widgetsFrame.pack()
         self.choices = {'Tkinter':tkinterWidgets,'Pmw':pmwWidgets,
                    'customizedWidgets':customizedWidgets}
@@ -131,7 +131,7 @@ class InteractiveInputFormBuilder(Tkinter.Frame):
                                   label_text = 'Choose a Gui ToolKit',
                                   labelpos = 'nw',
                                   selectioncommand = self.guiType,
-                                  scrolledlist_items = self.choices.keys() )
+                                  scrolledlist_items = list(self.choices.keys()) )
         
         self.guiTK.grid(padx = 8, pady = 8)
         self.guiTK.selectitem('Tkinter', setentry=1)
@@ -145,7 +145,7 @@ class InteractiveInputFormBuilder(Tkinter.Frame):
         self.chosenWidgets.grid(row=2, column=0, padx = 8,
                         pady = 8)
         # ListChooser with the container already created
-        entries = map(lambda x: (x,), self.containers.keys())
+        entries = [(x,) for x in list(self.containers.keys())]
 
         self.chosenContainers = cw.ListChooser(self.widgetsFrame,
                                                mode='single',
@@ -172,24 +172,24 @@ class InteractiveInputFormBuilder(Tkinter.Frame):
 ##                          pady = 8)
                              
         # Add button to add the selected widget in the frame window.
-        add = Tkinter.Button(self.widgetsFrame,
+        add = tkinter.Button(self.widgetsFrame,
                              text = 'Add', command = self.addWidget)
         add.grid(row=4, column=0)
 
         # Edit button:
-        self.editVar = Tkinter.IntVar()
-        edit = Tkinter.Checkbutton(self.widgetsFrame,
+        self.editVar = tkinter.IntVar()
+        edit = tkinter.Checkbutton(self.widgetsFrame,
                                    text = 'Edit Widgets',
                                    variable=self.editVar)
         edit.bind('<ButtonPress>', self.edit_cb)
         edit.grid(row=4, column=1)
         
-        self.widgetArea.pack(side=Tkinter.RIGHT, expand=1, fill ='both')
+        self.widgetArea.pack(side=tkinter.RIGHT, expand=1, fill ='both')
         
         
 
     def edit_cb(self, event=None):
-        print self.editVar.get()
+        print(self.editVar.get())
         if self.editVar.get() == 0:
             for b in self.widgets:
                 b.widget.bind('<Right>', b.moveRight)
@@ -212,7 +212,7 @@ class InteractiveInputFormBuilder(Tkinter.Frame):
     
     def guiType(self, event=None):
         self.chosenWidgets.clear()
-        map(self.chosenWidgets.add, self.choices[self.guiTK.get()])
+        list(map(self.chosenWidgets.add, self.choices[self.guiTK.get()]))
         
 
     def loadFile(self, event=None):

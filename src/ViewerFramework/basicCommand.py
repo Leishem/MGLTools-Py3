@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
 #
@@ -32,12 +32,12 @@ from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser, \
 from mglutil.util.packageFilePath import findFilePath, \
      findModulesInPackage, getResourceFolderWithVersion
 
-import types, Tkinter, Pmw, os, sys, traceback
+import types, tkinter, Pmw, os, sys, traceback
 from string import join
-import tkMessageBox
+import tkinter.messagebox
 from ViewerFramework.VFCommand import Command, CommandGUI
 import warnings
-import string
+from mglcompat import pystring as string
 commandslist=[]
 cmd_docslist={}
 
@@ -57,9 +57,9 @@ def findAllVFPackages():
             
                 fptr =open("%s/__init__.py" %pdir)
                 Lines = fptr.readlines()
-                flagline =filter(lambda x:x.startswith("packageContainsVFCommands"),Lines)
+                flagline =[x for x in Lines if x.startswith("packageContainsVFCommands")]
                 if not flagline ==[]:
-                    if not packages.has_key(f):
+                    if f not in packages:
                         packages[f] = pdir
     return packages
 
@@ -100,7 +100,7 @@ class  UndoCommand(Command):
 """
         name = '_undoArg_%d'%len(self._undoArgs)
         i = 1
-        while self._undoArgs.has_key(name):
+        while name in self._undoArgs:
             name = '_undoArg_%d'%(self.get_ctr())
             i += 1
         self._undoArgs[name] = arg
@@ -182,7 +182,7 @@ class  UndoCommand(Command):
         if len(self.vf.undoCmdStack)==0:
             state = 'disabled'
             label = 'Undo '
-            if self.vf.GUI.menuBars.has_key('Toolbar'):
+            if 'Toolbar' in self.vf.GUI.menuBars:
                 TButton = self.vf.GUI.menuBars['Toolbar']._frame.toolbarButtonDict['Undo']
                 TButton.disable()
                 #if hasattr(self,'balloon'):
@@ -199,7 +199,7 @@ class  UndoCommand(Command):
         else:
             state='normal'
             label = 'Undo ' + self.vf.undoCmdStack[-1][1]
-            if self.vf.GUI.menuBars.has_key('Toolbar'):
+            if 'Toolbar' in self.vf.GUI.menuBars:
                 TButton = self.vf.GUI.menuBars['Toolbar']._frame.toolbarButtonDict['Undo']
                 TButton.enable()
                 #if hasattr(self,'balloon'):
@@ -222,15 +222,15 @@ class RemoveCommand(Command):
             try:
                 self.vf.browseCommands.doit(key, self.vf.removableCommands.settings[key][0],
                                    self.vf.removableCommands.settings[key][1])
-            except Exception, inst:
-                print __file__, inst 
+            except Exception as inst:
+                print(__file__, inst) 
             
             
     def guiCallback(self):
         idf = InputFormDescr(title='Remove Command')
         idf.append({'name':'cmd',
             'widgetType':kbScrolledListBox,
-            'wcfg':{'items':self.vf.removableCommands.settings.keys(),
+            'wcfg':{'items':list(self.vf.removableCommands.settings.keys()),
                     'listbox_exportselection':0,
                     'listbox_selectmode':'extended',
                     'labelpos':'nw',
@@ -247,7 +247,7 @@ class RemoveCommand(Command):
             
             txt = "You need to restart for the changes to take effect."
             
-            tkMessageBox.showinfo("Restart is Needed", txt)                
+            tkinter.messagebox.showinfo("Restart is Needed", txt)                
                         
 class  ResetUndoCommand(Command):
     """ Class to reset Undo()
@@ -270,7 +270,7 @@ class  ResetUndoCommand(Command):
     def __call__(self, **kw):
         """None<---resetUndo()
         """
-        apply( self.doitWrapper, (), kw )
+        self.doitWrapper(*(), **kw)
 
 
 class BrowseCommandsCommand(Command):
@@ -309,12 +309,12 @@ class BrowseCommandsCommand(Command):
             mod = __import__(importName, globals(), locals(),
                             [module])
         except:
-            if self.cmdForms.has_key('loadCmds') and \
+            if 'loadCmds' in self.cmdForms and \
                 self.cmdForms['loadCmds'].f.winfo_toplevel().wm_state() == \
                                                                        'normal':
                    self.vf.warningMsg("ERROR: Could not load module %s"%module,
                                         parent = self.cmdForms['loadCmds'].root)
-            elif self.vf.loadModule.cmdForms.has_key('loadModule') and \
+            elif 'loadModule' in self.vf.loadModule.cmdForms and \
                 self.vf.loadModule.cmdForms['loadModule'].f.winfo_toplevel().wm_state() == \
                                                                        'normal':
                    self.vf.warningMsg("ERROR: Could not load module %s"%module,
@@ -336,7 +336,7 @@ class BrowseCommandsCommand(Command):
                             d['cmd'] = d['cmd'].__class__()
                             #print "load all comands ", d['cmd'], d['name'], d['gui']
                             self.vf.addCommand( d['cmd'], d['name'], d['gui'])
-                    else : print mod
+                    else : print(mod)
                 if  hasattr(mod, 'commandList'):
                     for x in mod.commandList:
                         cmd=x['name']
@@ -359,12 +359,12 @@ class BrowseCommandsCommand(Command):
                 #print 'ZZZZZZZZZZZZ', mod
                         
             else:
-                if self.cmdForms.has_key('loadCmds') and \
+                if 'loadCmds' in self.cmdForms and \
                     self.cmdForms['loadCmds'].f.winfo_toplevel().wm_state() == \
                                                                            'normal':
                        self.vf.warningMsg("ERROR: Could not load module %s"%module,
                                             parent = self.cmdForms['loadCmds'].root)
-                elif self.vf.loadModule.cmdForms.has_key('loadModule') and \
+                elif 'loadModule' in self.vf.loadModule.cmdForms and \
                     self.vf.loadModule.cmdForms['loadModule'].f.winfo_toplevel().wm_state() == \
                                                                            'normal':
                        self.vf.warningMsg("ERROR: Could not load module %s"%module,
@@ -373,12 +373,12 @@ class BrowseCommandsCommand(Command):
                     self.vf.warningMsg("ERROR: Could not load module  %s"%module) 
                 return "ERROR"
         else:
-            if not type(commands) in [types.ListType, types.TupleType]:
+            if not type(commands) in [list, tuple]:
                 commands = [commands,]
             if not hasattr(mod, 'commandList'): 
                 return
             for cmd in commands:
-                d = filter(lambda x: x['name'] == cmd, mod.commandList)
+                d = [x for x in mod.commandList if x['name'] == cmd]
                 if len(d) == 0:
                     self.vf.warningMsg("Command %s not found in module %s.%s"%
                                        (cmd, package, module))
@@ -404,11 +404,11 @@ class BrowseCommandsCommand(Command):
         """
         kw['commands'] = commands
         kw['package'] = package
-        apply(self.doitWrapper, (module,), kw )
+        self.doitWrapper(*(module,), **kw)
     
 
     def buildFormDescr(self, formName):
-        import Tkinter
+        import tkinter
         if not formName == 'loadCmds': return
         idf = InputFormDescr(title='Load Modules and Commands')
         pname = self.vf.libraries
@@ -484,13 +484,13 @@ class BrowseCommandsCommand(Command):
                     'gridcfg':{'sticky':'wesn', 'columnspan':3}})
         
         idf.append({'name':'allPacks',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Show all packages',
                             'command':self.allPacks_cb},
                     'gridcfg':{'sticky':'ew'}})
 
         idf.append({'name':'loadMod',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Load selected module',
                             'command':self.loadMod_cb},
                     'gridcfg':{'sticky':'ew', 'row':-1}})
@@ -502,7 +502,7 @@ class BrowseCommandsCommand(Command):
 #                    'gridcfg':{'sticky':'ew', 'row':-1}})
 
         idf.append({'name':'dismiss',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Dismiss',
                             'command':self.dismiss_cb},
                     'gridcfg':{'sticky':'ew', 'row':-1}})
@@ -537,7 +537,7 @@ class BrowseCommandsCommand(Command):
         ebn = self.cmdForms['loadCmds'].descr.entryByName
         packW = ebn['packList']['widget']
         if not self.allPackFlag:
-            packName = self.allPack.keys()
+            packName = list(self.allPack.keys())
             packW.setlist(packName)
             ebn['allPacks']['widget'].configure(text='Show default packages')
             self.allPackFlag = True
@@ -585,15 +585,15 @@ class BrowseCommandsCommand(Command):
         if len(packs) == 0:
             return
         packName = packs[0]
-        if not self.packMod.has_key(packName):
+        if packName not in self.packMod:
             package = self.allPack[packName]
             self.packMod[packName] = findModulesInPackage(package,"^def initModule",fileNameFilters=['Command'])
         self.currentPack = packName
         modNames = []
-        for key, value in self.packMod[packName].items():
+        for key, value in list(self.packMod[packName].items()):
             pathPack = key.split(os.path.sep)
             if pathPack[-1] == packName:
-                newModName = map(lambda x: x[:-3], value)
+                newModName = [x[:-3] for x in value]
                 #for mname in newModName:
                    #if "Command" not in mname :
                        #ind = newModName.index(mname)
@@ -602,7 +602,7 @@ class BrowseCommandsCommand(Command):
             else:
                 pIndex = pathPack.index(packName)
                 prefix = join(pathPack[pIndex+1:], '.')
-                newModName = map(lambda x: "%s.%s"%(prefix, x[:-3]), value)
+                newModName = ["%s.%s"%(prefix, x[:-3]) for x in value]
                 #for mname in newModName:
                     #if "Command" not in mname :
                         #ind = newModName.index(mname)
@@ -677,13 +677,13 @@ class BrowseCommandsCommand(Command):
 
         if not hasattr(m, 'commandList'):
             return
-        cmdNames = map(lambda x: x['name'], m.commandList)
+        cmdNames = [x['name'] for x in m.commandList]
         cmdNames.sort()
         if modName:
             self.var=1
             d =[]
             docstring =m.__doc__
-            import string
+            from mglcompat import pystring as string
             docw = ebn['doclist']['widget']
             docw.clear()
             if docstring!=None :
@@ -741,13 +741,13 @@ class BrowseCommandsCommand(Command):
 
         if not hasattr(m, 'commandList'):
             return
-        cmdNames = map(lambda x: x['name'], m.commandList)
+        cmdNames = [x['name'] for x in m.commandList]
         cmdNames.sort()
         if modName:
             self.var=1
             d =[]
             docstring =m.__doc__
-            import string
+            from mglcompat import pystring as string
             docw = ebn['doclist']['widget']
             docw.clear()
             if docstring!=None :
@@ -786,9 +786,9 @@ class BrowseCommandsCommand(Command):
                 docstring=c.__doc__
                 docw = ebn['doclist']['widget']
                 docw.clear()
-                if CmdName[0] not in cmd_docslist.keys():
+                if CmdName[0] not in list(cmd_docslist.keys()):
                     cmd_docslist[CmdName[0]]=d
-                import string
+                from mglcompat import pystring as string
                 if docstring!=None :
                     if '\n' in docstring:
                         x = string.split(docstring,"\n")
@@ -821,12 +821,11 @@ class BrowseCommandsCommand(Command):
         if len(selMod)==0: return
         else:
             self.txtGUI = ""
-            apply(self.doitWrapper, ( selMod[0],),
-                  {'commands':None, 'package':self.currentPack, 'removable':True})
+            self.doitWrapper(*( selMod[0],), **{'commands':None, 'package':self.currentPack, 'removable':True})
             self.dismiss_cb(None)
             if self.txtGUI:
                 self.txtGUI = "\n Access this command via:\n"+self.txtGUI
-            tkMessageBox.showinfo("Load Module", selMod[0]+" loaded successfully!\n"+self.txtGUI)
+            tkinter.messagebox.showinfo("Load Module", selMod[0]+" loaded successfully!\n"+self.txtGUI)
 
 #    def loadCmd_cb(self, event=None):
 #        ebn = self.cmdForms['loadCmds'].descr.entryByName
@@ -890,10 +889,10 @@ class loadModuleCommand(Command):
         """
         if package==None:
             package=self.vf.libraries[0]
-        if not kw.has_key('redraw'):
+        if 'redraw' not in kw:
             kw['redraw'] = 0
         kw['package'] = package
-        apply(self.vf.browseCommands, (filename,), kw)
+        self.vf.browseCommands(*(filename,), **kw)
         #apply( self.doitWrapper, (filename, package), kw )
 
 
@@ -915,15 +914,15 @@ class loadModuleCommand(Command):
         self.allPack={}
         self.allPack=findAllVFPackages()
         if package is None: return [], []
-        if not self.filenames.has_key(package):
+        if package not in self.filenames:
             pack=self.allPack[package]
             #finding modules in a package
             self.filenames[pack] =findModulesInPackage(pack,"^def initModule",fileNameFilters=['Command'])
         # dictionary of files keys=widget, values = filename
-        for key, value in self.filenames[pack].items():
+        for key, value in list(self.filenames[pack].items()):
             pathPack = key.split(os.path.sep)
             if pathPack[-1] == package:
-                newModName = map(lambda x: x[:-3], value)
+                newModName = [x[:-3] for x in value]
                 #for mname in newModName:
                    #if not modulename has Command in it delete from the
                    #modules list  
@@ -940,7 +939,7 @@ class loadModuleCommand(Command):
             else:
                 pIndex = pathPack.index(package)
                 prefix = join(pathPack[pIndex+1:], '.')
-                newModName = map(lambda x: "%s.%s"%(prefix, x[:-3]), value)
+                newModName = ["%s.%s"%(prefix, x[:-3]) for x in value]
                 #for mname in newModName:
                    #if not modulename has Command in it delete from the
                    #modules list
@@ -970,7 +969,7 @@ class loadModuleCommand(Command):
         if not formName == 'loadModule':return
         ifd = InputFormDescr(title='Load command Modules')
         names, docs = self.loadModules(self.vf.libraries[0])
-        entries = map(lambda x: (x, None), names)
+        entries = [(x, None) for x in names]
         pname=self.vf.libraries
         for p in pname:
             if '.' in p:
@@ -996,21 +995,21 @@ class loadModuleCommand(Command):
                         'command':self.loadModule_cb,
                         'commandEvent':"<Double-Button-1>"
                         },
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W}
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W}
                     })
 
         ifd.append({'name': 'Load Module',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Load Module',
                             'command': self.loadModule_cb,
                             'bd':6},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W},
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W},
                     })
 
-        ifd.append({'widgetType':Tkinter.Button,
+        ifd.append({'widgetType':tkinter.Button,
                     'wcfg':{'text':'Dismiss',
                             'command': self.Dismiss_cb},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W}})
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W}})
         return ifd
 
     def Dismiss_cb(self):
@@ -1048,13 +1047,13 @@ class loadCommandCommand(loadModuleCommand):
         if package is None:
             package = self.vf.libraries[0]
             
-        if not type(commands)!=types.ListType:
+        if not type(commands)!=list:
             commands = [commands,]
         
         for command in commands:
             cmd, name, gui = self.getDefaults(package, module, command)
             if cmd is  None:
-                print 'Could not add %s.%s.%s'%(package, module, command)
+                print('Could not add %s.%s.%s'%(package, module, command))
                 continue
             self.vf.addCommand( cmd, name, gui )
 
@@ -1083,7 +1082,7 @@ class loadCommandCommand(loadModuleCommand):
                                   package=pack)
         if cmds==None:
            return
-        for cmd in map(lambda x: x[0],cmds):
+        for cmd in [x[0] for x in cmds]:
             cw.insert('end', cmd)
         
 
@@ -1106,7 +1105,7 @@ class loadCommandCommand(loadModuleCommand):
         #kw['gui'] = gui
         #apply(self.doitWrapper, (moduleName, commandsName), kw)
         kw['commands']=commandsName
-        apply(self.vf.browseCommands, (moduleName,), kw)
+        self.vf.browseCommands(*(moduleName,), **kw)
 
 
     def getDefaults(self, package, filename, commandName):
@@ -1116,16 +1115,16 @@ class loadCommandCommand(loadModuleCommand):
         mod = self.vf.tryto(__import__,_package, globals(), locals(),
                             [filename])
         if mod=='ERROR':
-            print '\nERROR: Could not load module %s.%s' % (_package,
-                                                            filename)
+            print('\nERROR: Could not load module %s.%s' % (_package,
+                                                            filename))
             return None,None,None
         
         for d in mod.commandList:
             if d['name']==commandName:
                 break
         if d['name']!=commandName:
-            print '\nERROR: command %s not found in module %s.%s\n' % \
-                  (commandName, package, filename)
+            print('\nERROR: command %s not found in module %s.%s\n' % \
+                  (commandName, package, filename))
             return None,None,None
             
         return d['cmd'], d['name'], d['gui']
@@ -1143,7 +1142,7 @@ class loadCommandCommand(loadModuleCommand):
             kw = {'package': package}
             #apply(self.doitWrapper, (module, commands), kw)
             kw['commands'] = commands
-            apply(self.vf.browseCommands, (module[0],), kw)
+            self.vf.browseCommands(*(module[0],), **kw)
             
 #        self.cmdForms['loadCommand'].mf.configure(cursor=c)
     def getModuleCmds(self, modName=None, package=None):
@@ -1167,9 +1166,9 @@ class loadCommandCommand(loadModuleCommand):
         if not hasattr(mod, 'commandList'):
             cmdEntries = []
         else:    
-            cmdsName = map(lambda x: x['name'], mod.commandList)
+            cmdsName = [x['name'] for x in mod.commandList]
             cmdsName.sort()
-            cmdEntries = map(lambda x: (x,None), cmdsName)
+            cmdEntries = [(x,None) for x in cmdsName]
         return cmdEntries
 
 
@@ -1187,7 +1186,7 @@ class loadCommandCommand(loadModuleCommand):
         #cmdEntries should be a list if there are no commands for a module then getModuleCmds returns None or Error  in that case  cmdEntries is made equal to emptylist 
         if cmdEntries=="ERROR" or cmdEntries==None:
             cmdEntries=[]    
-        map(cmdChooser.add, cmdEntries)
+        list(map(cmdChooser.add, cmdEntries))
         
 
     def buildFormDescr(self, formName):
@@ -1197,7 +1196,7 @@ class loadCommandCommand(loadModuleCommand):
         ifd = InputFormDescr(title='Load Individual Commands')
         moduleNames, docs = self.loadModules(self.vf.libraries[0])
         moduleNames.sort()
-        moduleEntries = map(lambda x: (x, None), moduleNames)
+        moduleEntries = [(x, None) for x in moduleNames]
         pname = self.vf.libraries
         for p in pname:
             if '.' in p:
@@ -1242,13 +1241,13 @@ class loadCommandCommand(loadModuleCommand):
                     } ) 
                             
         ifd.append({'name': 'Load Command',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Load Command',
                             'bd':6, 'command': self.loadCmd_cb},
                     'gridcfg':{'columnspan':2,'sticky':'ew'},
                     })
 
-        ifd.append({'widgetType':Tkinter.Button,
+        ifd.append({'widgetType':tkinter.Button,
                     'wcfg':{'text':'Dismiss',
                             'command': self.Dismiss_cb},
                     'gridcfg':{'columnspan':2,'sticky':'ew'}})
@@ -1282,7 +1281,7 @@ class loadMacroCommand(Command):
         #m.__dict__['self'] = self.vf
         setattr(m, 'self', self.vf)
         import types
-        for key, value in m.__dict__.items():
+        for key, value in list(m.__dict__.items()):
             if type(value) == types.FunctionType:
                 names.append(key)
                 macros.append(value)
@@ -1304,10 +1303,10 @@ class loadMacroCommand(Command):
         lc = ebn['macros']['widget']
         lc.clear()
         if len(names) == len(docs):
-            entries = map(lambda x, y: (x, y), names, docs)
+            entries = list(map(lambda x, y: (x, y), names, docs))
         else:
-            entries = map(lambda x: (x, None), names)
-        map(lc.add, entries)
+            entries = [(x, None) for x in names]
+        list(map(lc.add, entries))
         ebn['openMacLib']['widget'].button.configure(relief='raised')
 
         # set cascade name to libary Name - "mac"
@@ -1371,7 +1370,7 @@ class loadMacroCommand(Command):
         # 0
         ifd.append({'widgetType':LoadButton,
                     'name':'openMacLib',
-                    'wcfg':{'buttonType':Tkinter.Button,
+                    'wcfg':{'buttonType':tkinter.Button,
                             'title':'Open Macro Library...',
                             'types':[('Macro Module Library', '*Mac.py'),
                                      ('Any Python Function', '*.py')],
@@ -1387,48 +1386,48 @@ class loadMacroCommand(Command):
                     'wcfg':{'title':'Choose a macro',
                             'command':self.setDefaultEntryName,
                             'title':'Choose a macro'},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W}} )
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W}} )
         # 2
-        ifd.append({'widgetType':Tkinter.Entry,
+        ifd.append({'widgetType':tkinter.Entry,
                     'name':'menubar',
                     'defaultValue':'menuRoot',
                     'wcfg':{'label':'menu bar'}, 
-                    'gridcfg':{'sticky':Tkinter.E}
+                    'gridcfg':{'sticky':tkinter.E}
                     })
         # 3
-        ifd.append({'widgetType':Tkinter.Entry,
+        ifd.append({'widgetType':tkinter.Entry,
                     'name':'menubutton',
                     'defaultValue':'Macros',
                     'wcfg':{'label':'menu button'}, 
-                    'gridcfg':{'sticky':Tkinter.E}
+                    'gridcfg':{'sticky':tkinter.E}
                    })
 
         # 4
-        ifd.append({'widgetType':Tkinter.Entry,
+        ifd.append({'widgetType':tkinter.Entry,
                     'name':'menuentry',
                     'defaultValue':'',
                     'wcfg':{'label':'menu entry'}, 
-                    'gridcfg':{'sticky':Tkinter.E}
+                    'gridcfg':{'sticky':tkinter.E}
                     })
 
         # 5
-        ifd.append({'widgetType':Tkinter.Entry,
+        ifd.append({'widgetType':tkinter.Entry,
                     'name':'cascade',
                     'defaultValue':'',
                     'wcfg':{'label':'cascade'}, 
-                    'gridcfg':{'sticky':Tkinter.E}
+                    'gridcfg':{'sticky':tkinter.E}
                     })
 
         # 6
         ifd.append({'name': 'loadMacro',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Load Macro',
                             'bd':6,'command': self.loadMacro_cb},
-                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W},
+                    'gridcfg':{'sticky':tkinter.E+tkinter.W},
                     })
 
         # 7
-        ifd.append({'widgetType':Tkinter.Button,
+        ifd.append({'widgetType':tkinter.Button,
                     'wcfg':{'text':'Dismiss',
                             'command': self.dismiss_cb}})
 
@@ -1463,7 +1462,7 @@ class loadMacroCommand(Command):
         macIndex = names.index(macroName)
         macro = macros[macIndex]
         
-        from VFCommand import Command, CommandGUI
+        from .VFCommand import Command, CommandGUI
         c = Command(func=macro)
         g = CommandGUI()
         if cascade:
@@ -1809,7 +1808,7 @@ class ExitCommand(Command):
         log = []
         # FIXME won't work with instance matrices
         mat = object.GetMatrix(object)
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         log.append("self.transformObject('rotation', '%s', matrix=%s,log=0)"%(object.fullName,tuple(object.rotation)))
         log.append("self.transformObject('translation', '%s', matrix=%s, log=0 )"%(object.fullName, tuple(object.translation)))
         log.append("self.transformObject('scale', '%s', matrix=%s, log=0 )"%(object.fullName,tuple(object.scale)))
@@ -1964,7 +1963,7 @@ class ExitCommand(Command):
             rcFile = os.path.join(rcFolder, "ViewerFramework", "perspective")
         try:
             rcFile = open(rcFile, 'w')
-        except Exception, inst: #to avoid "IOError: [Errno 116] Stale NFS file handle" error message when running the tests 
+        except Exception as inst: #to avoid "IOError: [Errno 116] Stale NFS file handle" error message when running the tests 
             return
         
         if self.vf.GUI.floatCamVariable.get():
@@ -2005,7 +2004,7 @@ class ExitCommand(Command):
         kw['busyIdle'] = 0
         kw['setupUndo'] = 0
         
-        apply(self.doitWrapper, (ask,),kw)
+        self.doitWrapper(*(ask,), **kw)
 
     
     def doit(self, ask):
@@ -2015,7 +2014,7 @@ class ExitCommand(Command):
             if hasattr(self.vf.GUI,'pendingLog') and self.vf.GUI.pendingLog:
                 self.vf.log(self.vf.GUI.pendingLog[-1])
 
-        if self.vf.userpref.has_key('Save Perspective on Exit'):
+        if 'Save Perspective on Exit' in self.vf.userpref:
             logPerspective = self.vf.userpref['Save Perspective on Exit']['value']
             if logPerspective == 'yes':
                 self.savePerspective()
@@ -2069,13 +2068,13 @@ class ExitCommand(Command):
 
     def askquit(self):
         #print "ExitComand.askquit"
-            import tkMessageBox
-            ok = tkMessageBox.askokcancel("Quit?","Do you Wish to Quit?")
+            import tkinter.messagebox
+            ok = tkinter.messagebox.askokcancel("Quit?","Do you Wish to Quit?")
             if ok:
                 if hasattr(self.vf, 'openedSessions'):
                     import shutil
                     for folder in self.vf.openedSessions:
-                        print 'removing session directory', folder
+                        print('removing session directory', folder)
                         shutil.rmtree(folder)
                 self.afterDoit = None
                 self.vf.GUI.ROOT.after(10,self.vf.GUI.quit_cb)
@@ -2101,7 +2100,7 @@ class customAnimationCommand(Command):
         if add is None:
             add = 1
         else: assert add in (0, 1)
-        if self.vf.GUI.toolbarCheckbuttons.has_key('customAnimation'):
+        if 'customAnimation' in self.vf.GUI.toolbarCheckbuttons:
             self.vf.GUI.toolbarCheckbuttons['customAnimation']['Variable'].set(add)
         self.startCustomAnim_cb()
 
@@ -2111,7 +2110,7 @@ class customAnimationCommand(Command):
         if on:
             if not self.animNB:
                 from Pmv.scenarioInterface.animationGUI import AnimationNotebook
-                self.root = Tkinter.Toplevel()
+                self.root = tkinter.Toplevel()
                 self.root.title('Custom Animation')
                 self.root.protocol("WM_DELETE_WINDOW", self.hide_cb)
                 vi = self.vf.GUI.VIEWER

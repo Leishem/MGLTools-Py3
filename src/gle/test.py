@@ -1,10 +1,10 @@
-## Automatically adapted for numpy.oldnumeric Jul 30, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 30, 2007 by 
 
 
 #test.py - an example program, (rewritten in python from the GLE distribution demo).
 from opengltk.OpenGL import GL, GLU, GLUT
-import gle
-import numpy.oldnumeric as Numeric
+from . import gle
+import mglcompat.oldnumeric as Numeric
 import sys
 
 lastx=0
@@ -144,7 +144,7 @@ GL.glEnable (GL.GL_COLOR_MATERIAL)
 
 InitStuff ()
 GLUT.glutKeyboardFunc(keyboard)
-print "Type 'q' in the demo window to quit"
+print("Type 'q' in the demo window to quit")
 GLUT.glutMainLoop ()
 
 

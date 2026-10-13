@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -27,8 +27,8 @@ For example:
     by properties  of the current selection
 """
 import warnings
-import types,  string, Tkinter
-import numpy.oldnumeric as Numeric
+import types, tkinter; from mglcompat import pystring as string
+import mglcompat.oldnumeric as Numeric
 import Pmw
 
 from mglutil.gui.BasicWidgets.Tk.colorWidgets import ColorChooser
@@ -142,12 +142,12 @@ class LabelByProperties(MVCommand, MVAtomICOM):
             for atm in obj.allAtoms:
                 atm.colors[geomName] = (1.0, 1.0, 1.0)
                 atm.opacities[geomName] = 1.0
-            if not geomC.atoms.has_key(geomName):
+            if geomName not in geomC.atoms:
                 # DON'T KNOW HOW TO REPLACE THIS EVAL
                 geomC.atoms[geomName]=eval("%sSet()" %item)
                 geomC.atomPropToVertices[geomName] = self.atomPropToVertices
 
-            if not geomC.geoms.has_key(geomName):
+            if geomName not in geomC.geoms:
                 j = i + 1
                 g = GlfLabels(geomName, fontStyle='solid3d',
                       #inheritMaterial=0,
@@ -187,18 +187,17 @@ class LabelByProperties(MVCommand, MVAtomICOM):
     def updateChooser(self):
         if not hasattr(self, 'properties'): self.properties = []
         oldProp = self.properties
-        self.properties = filter(lambda x: isinstance(x[1], types.IntType) \
-                                 or isinstance(x[1], types.FloatType) or \
-                                 type(x[1]) is types.StringType,
-                                 self.selection[0].__dict__.items())
+        self.properties = [x for x in list(self.selection[0].__dict__.items()) if isinstance(x[1], int) \
+                                 or isinstance(x[1], float) or \
+                                 type(x[1]) is bytes]
         # Filter out the private members starting by __.
-        self.properties = filter(lambda x: x[0][:2]!='__', self.properties)
-        if not self.cmdForms.has_key('default'): return
+        self.properties = [x for x in self.properties if x[0][:2]!='__']
+        if 'default' not in self.cmdForms: return
         descr = self.cmdForms['default'].descr
         if oldProp != self.properties:
             # If the list of properties changed then need to update the listchooser
             widget = descr.entryByName['properties']['widget']
-            propertyNames = map(lambda x: (x[0],None), self.properties)
+            propertyNames = [(x[0],None) for x in self.properties]
             propertyNames.sort()
             widget.setlist(propertyNames)
 
@@ -219,7 +218,7 @@ class LabelByProperties(MVCommand, MVAtomICOM):
                                 'buttontype':'radiobutton'},
                         'gridcfg':{'sticky': 'we','columnspan':3}})
 
-            idf.append({'widgetType':Tkinter.Label,
+            idf.append({'widgetType':tkinter.Label,
                         'wcfg':{'text':'________________________________________________________',
                                 },
                         'gridcfg':{'columnspan':3}})
@@ -236,7 +235,7 @@ class LabelByProperties(MVCommand, MVAtomICOM):
                         'gridcfg':{'sticky':'we','columnspan':3}})
 
             if len(self.properties)>0:
-                propertyNames = map(lambda x: (x[0], None), self.properties)
+                propertyNames = [(x[0], None) for x in self.properties]
                 propertyNames.sort()
 
             idf.append({'name':'properties',
@@ -249,7 +248,7 @@ class LabelByProperties(MVCommand, MVAtomICOM):
                         'gridcfg':{'sticky':'we', 'rowspan':4, 'padx':5}})
 
             self.textColor = (1.,1.,1.)
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'name':'textcolor',
                         'wcfg':{'text':'Choose Label Color:',
                                 'command':self.chooseColor_cb, 
@@ -259,7 +258,7 @@ class LabelByProperties(MVCommand, MVAtomICOM):
                         'gridcfg':{'sticky':'w','row':3, 'column':1}})
 
             idf.append({'name':'Labels settings',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text': 'Labels settings',
                                 'command':self.labelsSettings_cb
                                 },
@@ -339,7 +338,7 @@ class LabelByProperties(MVCommand, MVAtomICOM):
         """Return dictionary of last used values
 """
         values = self.lastUsedValues[formName].copy()
-        if values.has_key("font"): values.pop('font')
+        if "font" in values: values.pop('font')
         return values
 
 
@@ -355,7 +354,7 @@ class LabelByProperties(MVCommand, MVAtomICOM):
         self.updateChooser()
 
         # Update the level if the form exists already.
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             descr = self.cmdForms['default'].descr
             levelwid = descr.entryByName['level']['widget']
             oldlevel =levelwid.getcurselection()
@@ -365,7 +364,7 @@ class LabelByProperties(MVCommand, MVAtomICOM):
                 levelwid.invoke(self.level)
 
         val = self.showForm('default', modal=0, blocking=1)
-        if self.cmdForms.has_key('chooser'):
+        if 'chooser' in self.cmdForms:
             self.cmdForms['chooser'].withdraw()
 
         if not val: return
@@ -396,13 +395,13 @@ class LabelByProperties(MVCommand, MVAtomICOM):
             val['only'] = 0
             del val['display']
         val['redraw'] = 1
-        if val.has_key('level'): del val['level']
+        if 'level' in val: del val['level']
         
         if self.lastGeomOwnGuiShown is not None:
             self.lastGeomOwnGuiShown.hideOwnGui()
         
         #apply(self.doitWrapper, (self.vf.getSelection(),), val)
-        apply(self.doitWrapper, (self.selection,), val)
+        self.doitWrapper(*(self.selection,), **val)
 
 
     def __call__(self, nodes, properties=['name',], textcolor='white',
@@ -426,12 +425,12 @@ class LabelByProperties(MVCommand, MVAtomICOM):
         kw['only']=only
         kw['negate']=negate
         kw['format']=format
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         self.vf.expandNodes(nodes)
-        if not kw.has_key('redraw'):
+        if 'redraw' not in kw:
             kw['redraw']=1
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes, properties=['name',], textcolor='white',
@@ -491,7 +490,7 @@ class LabelByProperties(MVCommand, MVAtomICOM):
             mol.geomContainer.atoms[geomName] = set
             propLabels = [""]*len(set)
             for property in properties:
-                if type(property) is types.StringType:
+                if type(property) is bytes:
                     try:
                         #newPropLabels = eval('set.%s'%property)
                         newPropLabels = getattr(set, property)
@@ -546,7 +545,7 @@ class LabelByProperties(MVCommand, MVAtomICOM):
             colors = (materials,)
 
             if isinstance(font, dict):
-                apply( GlfLabels.Set, (labelGeom, 1, 0), font)
+                GlfLabels.Set(*(labelGeom, 1, 0), **font)
             else:
                 labelGeom.Set(font=font, redo=0)
             labelGeom.Set(labels=propLabels,
@@ -560,11 +559,11 @@ class LabelByProperties(MVCommand, MVAtomICOM):
 
 
         #if len(nodes) == 0: return
-        if (type(textcolor) is types.TupleType or type(textcolor) is types.ListType)\
+        if (type(textcolor) is tuple or type(textcolor) is list)\
            and len(textcolor)==3:
             materials = textcolor
 
-        elif self.colorDict.has_key(textcolor):
+        elif textcolor in self.colorDict:
             materials = self.colorDict[textcolor]
         elif len(textcolor)>0 and textcolor[0]=='(':
             textlist=string.split(textcolor[1:-1],',')
@@ -655,7 +654,7 @@ the current selection:"""
 #\treturn values\n'
 
     def updateInfo_cb(self, value):
-        if not self.cmdForms.has_key('default'): return
+        if 'default' not in self.cmdForms: return
         widget = self.cmdForms['default'].descr.entryByName['function']['widget']
         changed = 0
         if value == 'lambda function':
@@ -696,7 +695,7 @@ the current selection:"""
                                 'buttontype':'radiobutton'},
                         'gridcfg':{'sticky': 'we','columnspan':3}})
 
-            idf.append({'widgetType':Tkinter.Label,
+            idf.append({'widgetType':tkinter.Label,
                         'wcfg':{'text':'________________________________________________________',
                                 },
                         'gridcfg':{'columnspan':3}})
@@ -737,12 +736,12 @@ the current selection:"""
                                 },
                         'gridcfg':{'sticky': 'we','rowspan':4, 'padx':5}})
 
-            idf.append({'widgetType':Tkinter.Label,
+            idf.append({'widgetType':tkinter.Label,
                         'wcfg':{'text':""},
                         'gridcfg':{'row':-1}})
 
             self.textColor = (1.,1.,1.)
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'name':'textcolor',
                         'wcfg':{'text':'Choose Label Color:',
                                 'command':self.chooseColor_cb,'borderwidth':4,
@@ -794,11 +793,11 @@ the current selection:"""
         if len(self.selection) == 0 : return
         self.level = self.nameDict[self.vf.selectionLevel]
         val = self.showForm('default')
-        if self.cmdForms.has_key('chooser'):
+        if 'chooser' in self.cmdForms:
             self.cmdForms['chooser'].withdraw()
 
         # Update the level if the form exists already.
-        if self.cmdForms.has_key('default'):
+        if 'default' in self.cmdForms:
             descr = self.cmdForms['default'].descr
             levelwid = descr.entryByName['level']['widget']
             oldlevel = levelwid.getcurselection()
@@ -842,9 +841,9 @@ the current selection:"""
             val['negate'] = 1
             val['only'] = 0
             del val['display']
-        if val.has_key('level'): del val['level']
+        if 'level' in val: del val['level']
         val['redraw'] = 1
-        apply(self.doitWrapper, (self.selection,), val)
+        self.doitWrapper(*(self.selection,), **val)
         #apply(self.doitWrapper, (self.vf.getSelection(),), val)
 
 
@@ -880,10 +879,10 @@ the current selection:"""
         kw['negate']=negate
         kw['format']=format
         kw['redraw'] = 1
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         self.vf.expandNodes(nodes)
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
         
 
     def doit(self, nodes, function='lambda x: x.full_name()', lambdaFunc=True,
@@ -926,7 +925,7 @@ the current selection:"""
                 return
             if lambdaFunc == 1:
                 try:
-                    newPropLabels = map(func, set)
+                    newPropLabels = list(map(func, set))
                 except KeyError:
                     msg= "all nodes do not have such a property"
                     self.warningMsg(msg)
@@ -989,10 +988,10 @@ the current selection:"""
 
         if len(nodes) == 0: return
 
-        if (type(textcolor) is types.TupleType or type(textcolor) is types.ListType)\
+        if (type(textcolor) is tuple or type(textcolor) is list)\
            and len(textcolor)==3:
             materials = textcolor
-        elif self.colorDict.has_key(textcolor):
+        elif textcolor in self.colorDict:
             materials = self.colorDict[textcolor]
         elif len(textcolor)>0 and textcolor[0]=='(':
             textlist=string.split(textcolor[1:-1],',')

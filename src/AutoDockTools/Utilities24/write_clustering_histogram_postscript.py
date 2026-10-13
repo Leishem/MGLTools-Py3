@@ -6,7 +6,7 @@
 #
 # $Id: write_clustering_histogram_postscript.py,v 1.3 2007/10/08 18:14:58 rhuey Exp $
 #
-import os, glob, Tkinter, numpy.oldnumeric as Numeric
+import os, glob, tkinter, mglcompat.oldnumeric as Numeric
 from MolKit import Read
 
 from AutoDockTools.Docking import Docking
@@ -24,23 +24,23 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: write_clustering_histogram_postscript.py -d directory"
-        print
-        print "    Description of command..."
-        print "         -d     directory"
-        print "    Optional parameters:"
-        print "        [-t]    rmsd tolerance (default is 1.0)"
-        print "        [-o]    output filename"
-        print "                      (default is 'directory.ps')"
-        print "        [-v]    verbose output"
-        print "                      (default is leave active)"
+        print("Usage: write_clustering_histogram_postscript.py -d directory")
+        print()
+        print("    Description of command...")
+        print("         -d     directory")
+        print("    Optional parameters:")
+        print("        [-t]    rmsd tolerance (default is 1.0)")
+        print("        [-o]    output filename")
+        print("                      (default is 'directory.ps')")
+        print("        [-v]    verbose output")
+        print("                      (default is leave active)")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'd:o:t:vh')
-    except getopt.GetoptError, msg:
-        print 'write_clustering_histogram_postscript.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('write_clustering_histogram_postscript.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -60,23 +60,23 @@ if __name__ == '__main__':
         #print "o=", o, " a=", a
         if o in ('-d', '--d'):
             directory = a
-            if verbose: print 'set directory to ', a
+            if verbose: print('set directory to ', a)
         if o in ('-o', '--o'):
             outputfilename = a
-            if verbose: print 'set outputfilename to ', a
+            if verbose: print('set outputfilename to ', a)
         if o in ('-t', '--t'):
             rms_tolerance = float(a)
-            if verbose: print 'set rms_tolerance to ', a
+            if verbose: print('set rms_tolerance to ', a)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
-    print 'directory=', directory
+    print('directory=', directory)
     if directory is None:
-        print 'write_clustering_histogram_postscript: directory must be specified.'
+        print('write_clustering_histogram_postscript: directory must be specified.')
         usage()
         sys.exit()
     if outputfilename=="":
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     for dlg in dlg_list:
         d.readDlg(dlg)
         if len(d.ch.conformations)>=50:
-            print 'stop reading dlgs at', len(d.ch.conformations)
+            print('stop reading dlgs at', len(d.ch.conformations))
             break
     mol = d.ligMol
     crds = mol.allAtoms.coords[:]
@@ -106,9 +106,9 @@ if __name__ == '__main__':
         elif c.energy: 
             elist.append(c.energy)
     if not len(elist): 
-        print 'No energies available for docking.ch.conformations'
+        print('No energies available for docking.ch.conformations')
         exit()
-    r = Tkinter.Tk()
+    r = tkinter.Tk()
     dataList = []
     reverseList = []
     rLctr = 0
@@ -117,15 +117,15 @@ if __name__ == '__main__':
     #for l in mol.cluSEQ:
     for l in d.clusterer.clustering_dict[rms_tolerance]:
         dataList.append([l[0].energy, len(l)])
-        reverseList.append(range(rLctr, rLctr+len(l)))
+        reverseList.append(list(range(rLctr, rLctr+len(l))))
     mol.elist = Numeric.array(elist)
     mol.r = [Numeric.minimum.reduce(mol.elist), 
                 Numeric.maximum.reduce(mol.elist)]
-    mol.nbins = Tkinter.IntVar()
+    mol.nbins = tkinter.IntVar()
     mol.nbins.set(10)
-    mol.min = Tkinter.StringVar()
+    mol.min = tkinter.StringVar()
     mol.min.set(str(mol.r[0]))
-    mol.max = Tkinter.StringVar()
+    mol.max = tkinter.StringVar()
     mol.max.set(str(mol.r[1]))
 
     r = (float(mol.min.get()), float(mol.max.get()))
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     mol.ehist.createReverseIndex()
     nodeList = mol.ehist.array
     tstr = mol.name + ' histogram'
-    top = Tkinter.Toplevel()
+    top = tkinter.Toplevel()
     top.title(tstr)
     mol.ehist
     #top = Tkinter.Toplevel()

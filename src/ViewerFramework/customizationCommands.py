@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -26,10 +26,10 @@ from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 from mglutil.util.packageFilePath import findResourceFile
 from mglutil.util.callback import CallBackFunction
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser
-import Pmw, Tkinter, types, os
+import Pmw, tkinter, types, os
 import sys
 import warnings
-import tkMessageBox
+import tkinter.messagebox
 
 ## class SetCmdParam(Command):
 ##     """ Command providing an GUI for the user to set the parameter to use
@@ -89,8 +89,8 @@ class SetUserPreference(Command):
         current session.
         """
         descr = self.form.descr
-        result = filter(lambda x, k  = key: x.has_key('name') \
-                        and x['name']== k, descr)
+        result = list(filter(lambda x, k  = key: 'name' in x \
+                        and x['name']== k, descr))
         assert len(result)==1
         value = result[0]['widget'].get()
         self.doitWrapper((key,value), redraw=0)
@@ -100,14 +100,14 @@ class SetUserPreference(Command):
         """ Method testing the type of the userpreference. the combobox
         returns a string"""
         
-        if type(value) is types.TupleType:
+        if type(value) is tuple:
             value = value[0]
-        if isinstance(self.vf.userpref[key]['value'], types.IntType):
+        if isinstance(self.vf.userpref[key]['value'], int):
             try:
                 value = int(value)
             except:
                 value = None
-        elif isinstance(self.vf.userpref[key]['value'], types.FloatType):
+        elif isinstance(self.vf.userpref[key]['value'], float):
             try:
                 value = float(value)
             except:
@@ -131,7 +131,7 @@ class SetUserPreference(Command):
             warnings.warn(item[0]+' user preference is deprecated. Please update your resource files.',
                           DeprecationWarning)
             return
-        assert type(item) is types.TupleType and len(item)==2
+        assert type(item) is tuple and len(item)==2
         logItems = []
         key ,value= item
         value = self.testType(value,key)
@@ -145,8 +145,8 @@ class SetUserPreference(Command):
     def __call__(self, item, **kw):
         """None <--- setUserPreference(item, kw**)
         """
-        assert type(item) is types.TupleType and len(item)==2
-        apply(self.doitWrapper, (item,), kw)
+        assert type(item) is tuple and len(item)==2
+        self.doitWrapper(*(item,), **kw)
 
     def dismissForm(self):
         self.form.destroy()
@@ -158,7 +158,7 @@ class SetUserPreference(Command):
     def info_cb(self, doc):
         """Method providing a gui to display the documentation describing the
         userpreference."""
-        tkMessageBox.showinfo("Documentation", doc, parent=self.form.root)
+        tkinter.messagebox.showinfo("Documentation", doc, parent=self.form.root)
 
             
     def default_cb(self, key):
@@ -170,8 +170,8 @@ class SetUserPreference(Command):
         # here should pop up a file browser to allow the user to save 
         self.set_cb(key)
         descr = self.form.descr
-        result = filter(lambda x, k  = key: x.has_key('name') \
-                        and x['name']== k, descr)
+        result = list(filter(lambda x, k  = key: 'name' in x \
+                        and x['name']== k, descr))
         assert len(result)==1
         value = result[0]['widget'].get()
         value = self.testType(value,key)
@@ -193,7 +193,7 @@ class SetUserPreference(Command):
         idf = InputFormDescr(title ="Set User Preferences")
 
         categoryList = ['General']
-        for value in self.vf.userpref.values():
+        for value in list(self.vf.userpref.values()):
             if not value['category'] in categoryList:
                 categoryList.append(value['category'])
         
@@ -217,18 +217,18 @@ class SetUserPreference(Command):
                         'wcfg':{'tag_text':item},
                         'gridcfg':{'sticky':'wne'}
                         })        
-        for key, value in self.vf.userpref.items():
+        for key, value in list(self.vf.userpref.items()):
             if not self.updateGUI in self.vf.userpref[key]['callbackFunc']:
                 self.vf.userpref.addCallback(key,self.updateGUI)
             # put a label to have more space between the widget Maybe
             # could replace it by using the options padx and pady.
             group =  value['category']+"Group"
-            idf.append({'widgetType':Tkinter.Label,
+            idf.append({'widgetType':tkinter.Label,
                         'parent':group,
                         'wcfg':{'text':''},
                         'gridcfg':{'sticky':'we','columnspan':3}})
 
-            if value.has_key('validValues') and value['validValues']:
+            if 'validValues' in value and value['validValues']:
                 idf.append({'widgetType':Pmw.ComboBox,
                             'parent':group,
                             'name':key,
@@ -240,7 +240,7 @@ class SetUserPreference(Command):
                             'gridcfg':{'sticky':'wens'}})
             else:
                              
-                if value.has_key('validateFunc') and value['validateFunc']:
+                if 'validateFunc' in value and value['validateFunc']:
                     def valid(value, func=value['validateFunc']):
                         test = func(value)
                         if test == 1:
@@ -266,7 +266,7 @@ class SetUserPreference(Command):
                     
                     
 
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'parent':group,
                         'wcfg':{'bitmap':'info',
                                 'width':50,
@@ -276,7 +276,7 @@ class SetUserPreference(Command):
                                                          value['doc'])},
                         'gridcfg':{'row':-1,'sticky':'wens'}})
 
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'parent':group,
                         'wcfg':{'text':'Make \nDefault',
                                 'padx':10,
@@ -284,7 +284,7 @@ class SetUserPreference(Command):
                                                            key)},
                         'gridcfg':{'row':-1,'sticky':'wens'}})
              
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'parent':group,
                         'wcfg':{'text':'Set',
                                 'padx':10,
@@ -294,7 +294,7 @@ class SetUserPreference(Command):
                                                            key)},
                         'gridcfg':{'row':-1,'sticky':'wens'}})
        
-        idf.append({'widgetType':Tkinter.Button,
+        idf.append({'widgetType':tkinter.Button,
                     'wcfg':{'text':'Dismiss',
                             'command':self.dismissForm},
                     'gridcfg':{'sticky':'we','columnspan':4}})
@@ -317,29 +317,29 @@ class SetOnAddObjectCmds(Command):
 
     def doit(self, cmds):
         """Method that add/remove the command from the onAddObjectCmds list"""
-        oldCmds = map(lambda x: x[0], self.vf.onAddObjectCmds)
-        newCmds = map(lambda x, vfcommands = self.vf.commands: vfcommands[x],
-                      cmds)
+        oldCmds = [x[0] for x in self.vf.onAddObjectCmds]
+        newCmds = list(map(lambda x, vfcommands = self.vf.commands: vfcommands[x],
+                      cmds))
         
-        map(self.vf.removeOnAddObjectCmd, oldCmds)
-        map(self.vf.addOnAddObjectCmd, newCmds)
+        list(map(self.vf.removeOnAddObjectCmd, oldCmds))
+        list(map(self.vf.addOnAddObjectCmd, newCmds))
 
 
     def buildFormDescr(self,formName):
         if formName == 'choosecmd':
-            cmdNames = filter(lambda x, self = self:
+            cmdNames = list(filter(lambda x, self = self:
                              self.vf.commands[x].flag & self.objArgOnly,
-                             self.vf.commands.keys())
+                             list(self.vf.commands.keys())))
             cmdNames.sort()
-            cmdEntries = map(lambda x: (x, None), cmdNames)
+            cmdEntries = [(x, None) for x in cmdNames]
 
-            onAddCmds = map(lambda x: x[0], self.vf.onAddObjectCmds)
+            onAddCmds = [x[0] for x in self.vf.onAddObjectCmds]
             cmdToApplyNames = []
-            cmdToApplyNames = filter(lambda x, vf=self.vf, onAddCmds=onAddCmds:
+            cmdToApplyNames = list(filter(lambda x, vf=self.vf, onAddCmds=onAddCmds:
                                      vf.commands[x] in onAddCmds,
-                                     cmdNames)
+                                     cmdNames))
 
-            cmdtoapply = map(lambda x: (x, None), cmdToApplyNames)
+            cmdtoapply = [(x, None) for x in cmdToApplyNames]
             idf = InputFormDescr(title ="Cmds called after adding an object")
             idf.append({'name':'cmdlist',
                         'widgetType':ListChooser,
@@ -354,7 +354,7 @@ when loaded in the application""",
                                    ,'rowspan':3}})
 
             idf.append({'name':'add',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':""" Add the selected command from to the list
 of commands to be applied to the object when loaded in the application""",
                         'wcfg':{'text':'>>','command':self.add_cb},
@@ -372,7 +372,7 @@ apply to the object when loaded in the application""",
                                    'row':0, 'column':2,'rowspan':3}})
 
             idf.append({'name':'remove',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':""" Remove the selected entry from the
 commands to be applied to the object when loaded in the application""",
                         'wcfg':{'text':'REMOVE','width':10,
@@ -380,14 +380,14 @@ commands to be applied to the object when loaded in the application""",
                         'gridcfg':{'sticky':'we','row':0, 'column':3}})
 
             idf.append({'name':'oneup',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':"""Move the selected entry up one entry""",
                         'wcfg':{'text':'Move up','width':10,
                                 'command':self.moveup_cb},
                         'gridcfg':{'sticky':'we','row':1,'column':3}})
 
             idf.append({'name':'onedown',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':"""Move the selected entry down one entry""",
                         'wcfg':{'text':'Move down','width':10,
                                 'command':self.movedown_cb},
@@ -436,19 +436,19 @@ commands to be applied to the object when loaded in the application""",
     
     def guiCallback(self):
         # Need to check if some new commands have been added...
-        if self.cmdForms.has_key('choosecmd'):
-            cmdNames = filter(lambda x, self = self:
+        if 'choosecmd' in self.cmdForms:
+            cmdNames = list(filter(lambda x, self = self:
                              self.vf.commands[x].flag & self.objArgOnly,
-                             self.vf.commands.keys())
+                             list(self.vf.commands.keys())))
             cmdNames.sort()
             ebn = self.cmdForms['choosecmd'].descr.entryByName
             w = ebn['cmdlist']['widget']
             w.clear()
-            w.setlist(map(lambda x: (x, None), cmdNames))
+            w.setlist([(x, None) for x in cmdNames])
 
         val = self.showForm('choosecmd', force=0)
         ebn = self.cmdForms['choosecmd'].descr.entryByName
-        cmds = map(lambda x: x[0], ebn['cmdtoapply']['widget'].entries)
+        cmds = [x[0] for x in ebn['cmdtoapply']['widget'].entries]
         self.doitWrapper(cmds)
 
 ##class SaveSessionCommand(Command):
@@ -530,8 +530,8 @@ class SourceCommand(Command):
         # visible in the main interpreter
 
         if filename in self.currentlySourcedFiles:
-            print 'WARNING: %s is already being sourced'%filename
-            print '         skipping to avoid endless loop'
+            print('WARNING: %s is already being sourced'%filename)
+            print('         skipping to avoid endless loop')
             return
 
         if filename.endswith('_pmvrc'):
@@ -557,8 +557,8 @@ class SourceCommand(Command):
         # do not build .. strang scope problem
 
         try:
-            execfile( filename, glob)#, localDict)
-        except Exception, e:
+            exec(compile(open( filename, "rb").read(), filename, 'exec'), glob)#, localDict)
+        except Exception as e:
             self.currentlySourcedFiles = self.currentlySourcedFiles[:-1]
             import warnings, traceback
             # print the exception
@@ -581,7 +581,7 @@ class SourceCommand(Command):
     def __call__(self, filename, **kw):
         """None<---source(filename,**kw)
         """
-        apply(self.doitWrapper, (filename,), kw)
+        self.doitWrapper(*(filename,), **kw)
 
 
     def guiCallback(self, event=None,):

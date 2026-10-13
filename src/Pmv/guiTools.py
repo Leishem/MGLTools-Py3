@@ -19,7 +19,7 @@ for example:
 """
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser, ObjectChooser
 #from Framework.gui import ListChooser
-import Tkinter
+import tkinter
 import Pmw
 from MolKit.molecule import Molecule, MoleculeSet
 from MolKit.tree import TreeNodeSet
@@ -45,14 +45,13 @@ class MoleculeListChooser(ObjectChooser):
         #self.entries = []
 
     def buildObject(self, molecules):
-        objects = map(lambda x: (x, x.name,
-                                 x.parser.getMoleculeInformation()),
-                      molecules)
+        objects = [(x, x.name,
+                                 x.parser.getMoleculeInformation()) for x in molecules]
         return objects
 
     def add(self, molecule):
         "Add an entry to the moleculelistchooser."
-        if not type(molecule)==types.TupleType:
+        if not type(molecule)==tuple:
             object  = self.buildEntry(molecule)
         else:
             object = molecule
@@ -128,7 +127,7 @@ B1 to selecting the molecule in the MoleculeChooser. """
                            'gridcfg':{'sticky':'wens'}})
 
         if not (modal or blocking):
-            self.ipf.append({'widgetType':Tkinter.Button,
+            self.ipf.append({'widgetType':tkinter.Button,
                              'wcfg':{'text':'Dismiss',
                                      'command': self.done_cb},
                              'gridcfg':{'sticky':'we'}})
@@ -190,7 +189,7 @@ B1 to selecting the molecule in the MoleculeChooser. """
                     tkListBox.select_clear(0,'end')
                     listChooser.select(i)
                     return
-            print "error: %s not in mv.Mols" %pickedMol.name
+            print("error: %s not in mv.Mols" %pickedMol.name)
 
     
 class AugmentedMoleculeChooser(MoleculeChooser):
@@ -242,7 +241,7 @@ B1 to selecting the molecule in the MoleculeChooser. """
                 ct = ct + 1
 
         if not (modal or blocking):
-            self.ipf.append({'widgetType':Tkinter.Button,
+            self.ipf.append({'widgetType':tkinter.Button,
                              'wcfg':{'text':'Dismiss',
                                      'command': self.done_cb},
                              'gridcfg':{'sticky':'we'}})
@@ -284,14 +283,14 @@ B1 to selecting the molecule in the MoleculeChooser. """
 
 # Tkinter interface to SYSV `ps' and `kill' commands.
 
-from Tkinter import *
+from tkinter import *
 
 if TkVersion < 4.0:
-    raise ImportError, "This version of svkill requires Tk 4.0 or later"
+    raise ImportError("This version of svkill requires Tk 4.0 or later")
 
 from string import splitfields
 from string import split
-import commands
+import subprocess
 import sys,os
 
 ## if sys.platform!='win32':
@@ -304,7 +303,7 @@ user = os.environ.get('LOGNAME', 'NoName')
 
 class BarButton(Menubutton):
     def __init__(self, master=None, **cnf):
-        apply(Menubutton.__init__, (self, master), cnf)
+        Menubutton.__init__(*(self, master), **cnf)
         self.pack(side=LEFT)
         self.menu = Menu(self, name='menu')
         self['menu'] = self.menu
@@ -334,7 +333,7 @@ class Kill(Frame):
     def do_update(self):
         format = self.format_list[self.format.get()][1]
         view = self.view_list[self.view.get()][1]
-        s = commands.getoutput('ps %s %s' % (view, format))
+        s = subprocess.getoutput('ps %s %s' % (view, format))
         list = splitfields(s, '\n')
         self.header.set(list[0] + '          ')
         del list[0]
@@ -349,7 +348,7 @@ class Kill(Frame):
     def do_1(self, e):
         self.kill(e.widget.get(e.widget.nearest(e.y)))
     def __init__(self, master=None, **cnf):
-        apply(Frame.__init__, (self, master), cnf)
+        Frame.__init__(*(self, master), **cnf)
         self.pack(expand=1, fill=BOTH)
         self.bar = Frame(self, name='bar', relief=RAISED,
                  borderwidth=2)
@@ -459,7 +458,7 @@ class CenterChooser:
                 val = self.ifd[0]['widget'].selection
                 if val == 'Type in Center':
                     val = 'Center on Molecule'
-                print 'In CenterChooser: val =',val
+                print('In CenterChooser: val =',val)
                 return val
             else:
                 val = [float(val['X']),float(val['Y']),float(val['Z'])]

@@ -3,11 +3,11 @@
 #$Id: splineGUI.py,v 1.21 2007/07/13 19:07:41 sowjanya Exp $
 
 
-import Tkinter
+import tkinter
 from math import sqrt
 from mglutil.util.callback import CallbackFunction
 from mglutil.util.misc import deepCopySeq
-from spline import Spline
+from .spline import Spline
 import copy
 
 class splineGUI:
@@ -25,7 +25,7 @@ rightClick to tie or untie normals.
         self.spline  =  spline
         self.uniqueId  =  uniqueId
         
-        assert isinstance(canvas, Tkinter.Canvas)
+        assert isinstance(canvas, tkinter.Canvas)
         self.canvas  =  canvas
 
         self.autoScale  =  False
@@ -588,7 +588,7 @@ rightClick to tie or untie normals.
             self.id = "left"
             if self.left_dic!={}:
                 
-                if sid in self.left_dic.keys():
+                if sid in list(self.left_dic.keys()):
                     
                     (px,py) = self.left_dic[sid]
                     self.left_dic.pop(sid)
@@ -865,7 +865,7 @@ rightClick to tie or untie normals.
             
             if self.right_dic!={}:
                 
-                if sid in self.right_dic.keys():
+                if sid in list(self.right_dic.keys()):
                     
                     (px,py) = self.right_dic[sid]
                     self.right_dic.pop(sid)
@@ -1172,7 +1172,7 @@ rightClick to tie or untie normals.
         pts = self.getControlPoints()
         slopes=copy.deepcopy(self.getSlopesVectors())
         cur_point = c.coords(id)
-        pts = map(lambda p: ((int(round(p[0])),int(round(p[1])))) ,pts)
+        pts = [((int(round(p[0])),int(round(p[1])))) for p in pts]
         pn = (round(cur_point[0]+2),round(cur_point[1]+2))
         if pn in pts:
                 p = pn
@@ -1223,7 +1223,7 @@ rightClick to tie or untie normals.
         #if cid is first or last cpts cannot be tied
         cs = c.find_withtag(tag1)
         if cid ==cs[0] or cid==cs[-1]:
-           print "cannot tie first and last coords of spline"
+           print("cannot tie first and last coords of spline")
            return
         for p in cpts:
             rounded_cpts.append((round(p[0]),round(p[1])))
@@ -1462,12 +1462,12 @@ rightClick to tie or untie normals.
 
 if __name__ == "__main__":
 
-    from spline import Spline
+    from .spline import Spline
     #sp  =  Spline( [0, .5, 1], [0, .7, 1], [ (None, (1,0)), ((1,1),(1,0)), ((1,0), None) ] )
     #sp = Spline([(0,0),(0.3,0.5),(.5,.7),(1,1)],[ (None, (1,-1)), ((1,-3),(1,-4)),((1,-2),(1,-1)), ((1,-3), None) ] )
     sp = Spline([(0.0,.5),(1.0,0.3)],[ (None, (1,-1)), ((1,-1), None) ] )
     #sp = Spline([(100,600),(200,400),(400,200),(600,100)],[ (None, (1,-4)),((1,-3),(1,-4)),((1,-2),(1,-1)),((2,3), None) ])
-    canvas  =  Tkinter.Canvas(width = 700, height = 700)
+    canvas  =  tkinter.Canvas(width = 700, height = 700)
     canvas.pack()
     #canvas.configure(cursor="cross")
     spg  =  splineGUI(sp, canvas, (100, 600, 500, 500), 'abc')

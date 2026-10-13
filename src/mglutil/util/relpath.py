@@ -98,5 +98,5 @@ if __name__ == "__main__" :
     expected = os.path.join("..", "..", "photos", "misc", "jewel.png")
     assert (relpath == expected)
     
-    print "done"
+    print("done")
     

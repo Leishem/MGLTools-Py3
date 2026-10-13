@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #########################################################################
 #
@@ -17,10 +17,10 @@
 # $Id: DataInput.py,v 1.16 2008/03/12 18:38:53 vareille Exp $
 #
 
-import string
+from mglcompat import pystring as string
 import os
 from struct import unpack
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 try:
     from geomutils.geomalgorithms import detectObjFileContent, readObjFileGroup
@@ -360,7 +360,7 @@ if __name__ == '__main__':
 #    vi.AddObject(geoms[0])
     #geoms = readOBJ('sample.obj')
     geoms = readAnySTL('test.stl')
-    print "len(geoms)", len(geoms)
+    print("len(geoms)", len(geoms))
     from DejaVu import Viewer
     vi = Viewer()
     for g in geoms:

@@ -2,7 +2,7 @@
 import os,sys,glob
 import re
 import time
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import tarfile
 import shutil
 COPY="cp"
@@ -23,18 +23,18 @@ def _reporthook(numblocks, blocksize, filesize, url=None, pb = None):
         pb.set(percent)
 
 def geturl(url, dst,pb=None):
-    print "get url '%s' to '%s'" % (url, dst)
+    print("get url '%s' to '%s'" % (url, dst))
     doit = True
     try :
         doit = sys.stdout.isatty()
     except:
         doit = False
     if doit:
-        urllib.urlretrieve(url, dst,
+        urllib.request.urlretrieve(url, dst,
                            lambda nb, bs, fs, url=url: _reporthook(nb,bs,fs,url,pb))
         sys.stdout.write('\n')
     else:
-       urllib.urlretrieve(url, dst)
+       urllib.request.urlretrieve(url, dst)
 
 if __name__ == '__main__':
     path = os.path.abspath(os.curdir)
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     else :
         os.chdir('../')
     mgltoolsDir=os.path.abspath(os.curdir)
-    print mgltoolsDir
+    print(mgltoolsDir)
     sys.path.append(mgltoolsDir)
     sys.path.append(mgltoolsDir+os.sep+'PIL')
     #import comput_util as util
@@ -61,8 +61,8 @@ if __name__ == '__main__':
         #check if we need to patch
         patch=os.path.isfile(mgltoolsDir+os.sep+"patched")
         if not patch :
-            print "Patching MGLToolsPckgs with python2.6 system dependant modules"
-            print mgltoolsDir+os.sep
+            print("Patching MGLToolsPckgs with python2.6 system dependant modules")
+            print(mgltoolsDir+os.sep)
             patchpath = mgltoolsDir+os.sep
             URI="http://mgldev.scripps.edu/projects/ePMV/patchs/depdtPckgs.tar"
             tmpFileName = mgltoolsDir+os.sep+"depdtPckgs.tar"
@@ -77,13 +77,13 @@ if __name__ == '__main__':
         COPY="xcopy /s"
 
 try:
-    from Tkinter import *
+    from tkinter import *
     import Image, ImageTk
-    from tkFileDialog   import askdirectory
+    from tkinter.filedialog   import askdirectory
     from mglutil.gui.BasicWidgets.Tk.progressBar import ProgressBar
     from mglutil.gui.BasicWidgets.Tk.multiButton import MultiRadiobuttons
 except:
-    print "noTK"
+    print("noTK")
 #utility
 from mglutil.util import packageFilePath
 
@@ -232,7 +232,7 @@ class Installer:
 
             
     def say_hi(self):
-        print "hi there, everyone!"
+        print("hi there, everyone!")
 
     def quit(self):
         self.frame.quit()
@@ -242,7 +242,7 @@ class Installer:
         for i,v in enumerate(self.v):
             val=v.get()
             if val : 
-                print "install epmv plug for ",self.MODES[i]
+                print("install epmv plug for ",self.MODES[i])
                 self.log+="\ninstall epmv plug for "+self.MODES[i]
                 self.msg.set(self.log)                
                 self.funcInstall[i]()
@@ -251,16 +251,16 @@ class Installer:
         f.close()
         self.makeExtensionfile()
         self.log+="\nSUCCESS YOU CAN QUIT !"
-        print self.log
+        print(self.log)
         self.msg.set(self.log)
 
     def DirCallback(self,widget, event=None):
         values =  widget.get()
-        print values
+        print(values)
         
     def quitDir(self):
         dir = self.choosenDir.get()
-        print "quitDir",dir
+        print("quitDir",dir)
         if self.plateform == "darwin":
             dir = dir.replace(" ","\ ")
         self.dir[self.curent].set(dir)
@@ -322,7 +322,7 @@ class Installer:
                 x = askdirectory(initialdir="", title="where is "+self.MODES[i]+" plugin/script directory")
                 if sys.platform != 'win32':
                     x = x.replace(" ","\ ")
-                print x 
+                print(x) 
                 self.softdir[i] = x
                 self.dir[i].set(x)
                 
@@ -333,7 +333,7 @@ class Installer:
         dirs=[]
         tocheck = self.listDir(where,sp=sp)
         for dir in tocheck:
-            print dir,dirname
+            print(dir,dirname)
             if dir.find(dirname) != -1:
                 dirs.append(dir)
         return dirs
@@ -349,7 +349,7 @@ class Installer:
         self.progressbar.set(self.pbval)
         #print where
         if dirname in os.listdir(where):
-            print "founded"
+            print("founded")
             self.progressbar.set(100)
             result=os.path.join(where,dirname)
         else :
@@ -435,8 +435,8 @@ class Installer:
                     #if dir is None:
                         dir="not Found"
                         return 
-            print "time to find", time.time()-t1
-            print dir
+            print("time to find", time.time()-t1)
+            print(dir)
             dir = dir.replace(" ","\ ")
             self.dir[0].set(dir)
             self.softdir[0] = dir
@@ -466,7 +466,7 @@ class Installer:
             if dir is None:
                     dir="not Found"
                     return
-            print "time to find", time.time()-t1
+            print("time to find", time.time()-t1)
             dir = dir.replace(" ","\ ")
             self.dir[1].set(dir)
             self.softdir[1] = dir
@@ -510,7 +510,7 @@ class Installer:
             if dir is None:
                     dir="not Found"
                     return
-            print "time to find", time.time()-t1
+            print("time to find", time.time()-t1)
             dir = dir.replace(" ","\ ")
             self.dir[2].set(dir)
             self.softdir[2] = dir
@@ -600,7 +600,7 @@ class Installer:
             shutil.copy (filename1, filename2)
         else :
             cmd="cp "+self.currDir+os.sep+"cinema4d"+os.sep+"plugin"+os.sep+"*.py "+self.softdir[1]+os.sep+"plugins"+os.sep+"epmv"+os.sep+"."
-            print cmd
+            print(cmd)
             os.system(cmd)
         #update the header changing the MGLTOOLS value
         files=[]
@@ -632,7 +632,7 @@ class Installer:
                  #resource\modules\python\res
                 name1="Python.win32.framework"
                 name2="Python.win32.framework.original"
-                print patchpath+name1
+                print(patchpath+name1)
                 if not os.path.exists(patchpath+name2):
                     os.rename(patchpath+name1,patchpath+name2)
                 #we simply Copy the C:\\Python26 directory....
@@ -695,7 +695,7 @@ class Installer:
                     f.close()                    
             elif self.plateform == "win32":
                 #then patch python framework but need the soft directory C:Program Files / MAXON / CINEMA4D
-                print self.progDirectory+"MAXON"+os.sep
+                print(self.progDirectory+"MAXON"+os.sep)
                 prog=self.findDirectoryFrom("CINEMA 4D R12",self.progDirectory+"MAXON"+os.sep)
                 if len(prog) ==0 :
                     x = askdirectory(initialdir=self.progDirectory, 
@@ -713,7 +713,7 @@ class Installer:
                      #resource\modules\python\res
                     name1="Python.win32.framework"
                     name2="Python.win32.framework.original"
-                    print patchpath+name1
+                    print(patchpath+name1)
                     if not os.path.exists(patchpath+name2):
                         os.rename(patchpath+name1,patchpath+name2)
                     #we simply Copy the C:\\Python26 directory....
@@ -731,7 +731,7 @@ class Installer:
                     f.close()
         else :
             cmd=COPY+" "+self.currDir+os.sep+"cinema4d_dev"+os.sep+"plugin"+os.sep+"*.py "+dir+os.sep+"plugins"+os.sep+"epmv"+os.sep+"."
-            print cmd
+            print(cmd)
             os.system(cmd)
         #update the header changing the MGLTOOLS value
         files=[]
@@ -853,13 +853,13 @@ shelfButton
             file2=self.sharedDirectory+"/Autodesk/maya/2011/plug-ins/ePMV.py"
         elif self.plateform == "win32":
             file2=self.softdir[3]+os.sep+"ePMV.py"
-            print file2
+            print(file2)
         else :#linux
             file2=self.sharedDirectory+"/Autodesk/maya/2011/plug-ins/ePMV.py"
         try :
             shutil.copy (file1, file2)
-        except IOError, e:
-            print "Unable to copy file. %s" % e
+        except IOError as e:
+            print("Unable to copy file. %s" % e)
         #cmd="cp "+self.currDir+"/autodeskmaya/plugin/mayaPMVui.py "+self.sharedDirectory+"/Autodesk/maya/2011/plug-ins/ePMV.py"
         #print cmd
         #os.system(cmd)
@@ -948,7 +948,7 @@ shelfButton
     def addExtension(self,string):
         self.getExtensionDirFromFile()
         elem = string.split(":")
-        print elem
+        print(elem)
         for i,soft in enumerate(self.extensions):
                 if elem[0].lower() == self.extensions[i].lower():
                     if self.extdir[i] is "":
@@ -985,5 +985,5 @@ if __name__ == '__main__':
         app = Installer(master=root)
         root.mainloop()
     except :
-        print "problem"
+        print("problem")
         pass

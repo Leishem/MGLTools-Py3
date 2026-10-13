@@ -5,8 +5,8 @@
 
 import logging as log
 import os, glob
-import numpy.oldnumeric as Numeric
-import string
+import mglcompat.oldnumeric as Numeric
+from mglcompat import pystring as string
 
 from MolKit import Read
 from AutoDockTools.Docking import Docking
@@ -18,26 +18,26 @@ if __name__ == '__main__':
 
     def usage():
         """Print helpful, accurate usage statement to stdout."""
-        print "Usage: summarize_docking_directory.py -d directory"
-        print
-        print "    Write docking result summary to stdout."
-        print
-        print "    Required parameters:"
-        print "         -d directory    docking directory"
-        print "    Optional parameters:"
-        print "        [-l filename]    reference_ligand_filename"
-        print "        [-t rmsd]        rmsd tolerance (default is 1.0)"
-        print "        [-f]             write to file (name derived from docking)"
-        print "        [-o filename]    write to filename"
-        print "        [-v]             verbose output"
-        print "        [-D]             debugging output"
+        print("Usage: summarize_docking_directory.py -d directory")
+        print()
+        print("    Write docking result summary to stdout.")
+        print()
+        print("    Required parameters:")
+        print("         -d directory    docking directory")
+        print("    Optional parameters:")
+        print("        [-l filename]    reference_ligand_filename")
+        print("        [-t rmsd]        rmsd tolerance (default is 1.0)")
+        print("        [-f]             write to file (name derived from docking)")
+        print("        [-o filename]    write to filename")
+        print("        [-v]             verbose output")
+        print("        [-D]             debugging output")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'd:l:fo:t:vhD')
-    except getopt.GetoptError, msg:
-        print 'summarize_docking_directory.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('summarize_docking_directory.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -93,7 +93,7 @@ if __name__ == '__main__':
     # make sure directory exists
     try:
         os.stat(directory)
-    except OSError, msg:
+    except OSError as msg:
         log.error("summarize_docking_directory: %s: %s",  msg.strerror, msg.filename)
         sys.exit()
 
@@ -225,7 +225,7 @@ if __name__ == '__main__':
     
     # initialize output header dictionary (same keys as od)
     oh = {}
-    for key in od.keys():
+    for key in list(od.keys()):
         oh[key] = "<%s header>" % key # init with generic values
     # now put in less-generic? values
     oh['num_conf_docking'] = "%7s" % ( "#conf")

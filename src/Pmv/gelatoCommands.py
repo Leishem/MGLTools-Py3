@@ -12,7 +12,7 @@
 # $Id: gelatoCommands.py,v 1.2 2009/08/25 22:12:40 autin Exp $
 #
 
-import Tkinter, os
+import tkinter, os
 from Pmv.mvCommand import MVCommand
 from ViewerFramework.VFCommand import CommandGUI
 ##  from ViewerFramework.gui import InputFormDescr, InputForm
@@ -28,11 +28,11 @@ import Pmw
 class Gelato(MVCommand): 
     def onAddCmdToViewer(self):
         self.form = None
-	self.formS = None
+        self.formS = None
         self.fileWritten = 0
-	self.shader_edited = False
+        self.shader_edited = False
         self.g=None
-	self.shadDic=Shader.ShaderDic
+        self.shadDic=Shader.ShaderDic
 
     def dismissCB(self):
         self.form.destroy()
@@ -70,8 +70,8 @@ class Gelato(MVCommand):
         g = self.form.descr.entryByName['selectedGeometries']['widget']
         geoms = g.get()
         sh = self.form.descr.entryByName['pigment']['widget'].get()
-	for g in geoms :
-		self.properties[g]['pigment']=sh
+        for g in geoms :
+                self.properties[g]['pigment']=sh
 
     def runGelato(self, event=None):
         if not self.fileWritten:
@@ -86,13 +86,13 @@ class Gelato(MVCommand):
         cmd = '%s %s %s' % (bin, args,self.filename)
         if outf!='':
             cmd = '%s -o %s'%(cmd, outf)
-        print cmd
+        print(cmd)
 
-        import thread
+        import _thread
         def renderIt(c, cmd):
             os.system(cmd)
             
-        thread.start_new_thread( renderIt, (c,cmd) )
+        _thread.start_new_thread( renderIt, (c,cmd) )
 
 
     def writeFile(self, event=None):
@@ -109,28 +109,28 @@ class Gelato(MVCommand):
 ##          br = float(self.form.descr.entryByName['bondRadius']['variable'].get())
         sl = float(self.form.descr.entryByName['scaleLight']['widget'].get())
         br = float(self.form.descr.entryByName['bondRadius']['widget'].get())
-	sh = self.form.descr.entryByName['pigment']['widget'].get()
+        sh = self.form.descr.entryByName['pigment']['widget'].get()
         G.addCamera(vi.cameras[0], sl)
-	G.addBackground(vi.cameras[0])
-	if sh == "occlusion" : G.addShader(sh)
-	#G.addLight()
+        G.addBackground(vi.cameras[0])
+        if sh == "occlusion" : G.addShader(sh)
+        #G.addLight()
 
         if wbg==1: vi.cameras[0].Set(color=col, tagModified=False)
 
-	self.updateProps()
+        self.updateProps()
         geoms = self.g.get()
-        print 'aaaaaaaa', geoms
-        print 'aaaaaaaa', self.properties
+        print('aaaaaaaa', geoms)
+        print('aaaaaaaa', self.properties)
         #geoms = vi.getVisibleGeoms()
 
-	#'catmull-clark'#'linear'
-	interpolate = 'linear'
-	if self.form.descr.entryByName['inter']['wcfg']['variable'].get() == 1 : interpolate = 'catmull-clark'
+        #'catmull-clark'#'linear'
+        interpolate = 'linear'
+        if self.form.descr.entryByName['inter']['wcfg']['variable'].get() == 1 : interpolate = 'catmull-clark'
         for ge in geoms:
-            print 
+            print() 
             G.addGeom(self.geomList[ge], self.properties[ge], br,interpolate)
-	#add the last line : Render()
-	G.addRender()
+        #add the last line : Render()
+        G.addRender()
         # get the file namer and write file
 ##          fw = self.form.descr.entryByName['fileName']['textvariable']
         fw = self.form.descr.entryByName['fileName']['widget']
@@ -148,73 +148,73 @@ class Gelato(MVCommand):
             self.fileWritten = 1
 
     def helpShader(self):
-		name=self.formS.descr.title
-		import webbrowser
-		dirG = os.environ.get('GELATOHOME')
-		#url = dirG+"/doc/shaders/index.html"
-		#webbrowser.open_new_tab(url)
-		if name == "soapbubble" : name = "glass"
-		url = dirG+"/doc/shaders/"+name+".html"
-		webbrowser.open_new_tab(url)		
+                name=self.formS.descr.title
+                import webbrowser
+                dirG = os.environ.get('GELATOHOME')
+                #url = dirG+"/doc/shaders/index.html"
+                #webbrowser.open_new_tab(url)
+                if name == "soapbubble" : name = "glass"
+                url = dirG+"/doc/shaders/"+name+".html"
+                webbrowser.open_new_tab(url)		
 
     def helpGelato(self):
-		import webbrowser
-		dirG = os.environ.get('GELATOHOME')
-		url = dirG+"/doc/index.html"
-		webbrowser.open_new_tab(url)
+                import webbrowser
+                dirG = os.environ.get('GELATOHOME')
+                url = dirG+"/doc/index.html"
+                webbrowser.open_new_tab(url)
 
     def editShader(self):
-		self.shader_edited= True
-		shname = self.form.descr.entryByName['pigment']['widget'].get()	
-		shaderP = self.shadDic[shname]
-		idf = InputFormDescr(title =shname)
-		k=0
-		for i in shaderP : 
-			W=4
-			tmp=i.replace("\"","").split(",")
-			P=tmp[0].split(" ")
-			V=tmp[1]
-			if P[0] == "string" : 
-				P[0]="str"
-				W=16
-			else :	V=eval(V)	
-			idf.append({	'name':P[1],
-                    			'widgetType':Pmw.EntryField,
-                    			'type':eval(P[0]),
-                    			'wcfg':{'labelpos':'w',
-                        		'label_text':tmp[0],
-                            		'validate':'real',
-                            		'value':V,
-                            		'entry_width':W},
-                    			'gridcfg':{'column':0, 'row':k, 'sticky':'w'}})
-			k=k+1
-      		idf.append({'name':'Set',
-                    'widgetType':Tkinter.Button,
+                self.shader_edited= True
+                shname = self.form.descr.entryByName['pigment']['widget'].get()	
+                shaderP = self.shadDic[shname]
+                idf = InputFormDescr(title =shname)
+                k=0
+                for i in shaderP : 
+                        W=4
+                        tmp=i.replace("\"","").split(",")
+                        P=tmp[0].split(" ")
+                        V=tmp[1]
+                        if P[0] == "string" : 
+                                P[0]="str"
+                                W=16
+                        else :	V=eval(V)	
+                        idf.append({	'name':P[1],
+                                        'widgetType':Pmw.EntryField,
+                                        'type':eval(P[0]),
+                                        'wcfg':{'labelpos':'w',
+                                        'label_text':tmp[0],
+                                        'validate':'real',
+                                        'value':V,
+                                        'entry_width':W},
+                                        'gridcfg':{'column':0, 'row':k, 'sticky':'w'}})
+                        k=k+1
+                idf.append({'name':'Set',
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'ApplyChange','command': self.SetShader},
                     'gridcfg':{'column':0,
                                'row':k,'sticky':'ew'}})
-	        idf.append({'name':'help',
-                    'widgetType':Tkinter.Button,
+                idf.append({'name':'help',
+                    'widgetType':tkinter.Button,
                     'defaultValue':0,
                     'wcfg':{'text':'Help','command': self.helpShader},
                     'gridcfg':{'column':1, 'row':k,'sticky':'ew'}})
 
-		self.formS = self.vf.getUserInput(idf, modal = 0, blocking = 0)
-		
+                self.formS = self.vf.getUserInput(idf, modal = 0, blocking = 0)
+                
     def SetShader(self):
-	name=self.formS.descr.title
-	shaderDesc = self.shadDic[name]
-	k=0
-	for i in shaderDesc :
-		tmp=i.replace("\"","").split(",")
-		P=tmp[0].split(" ")
-		V=tmp[1]
-		pname=P[1]
-		value=self.formS.descr.entryByName[P[1]]['widget'].get()
-		if P[0] == "string" : self.shadDic[name][k]="\""+P[0]+" "+P[1]+"\",\""+value+"\""
-		else : self.shadDic[name][k]="\""+P[0]+" "+P[1]+"\","+str(value)
-		print self.shadDic[name][k]
-		k=k+1
+        name=self.formS.descr.title
+        shaderDesc = self.shadDic[name]
+        k=0
+        for i in shaderDesc :
+                tmp=i.replace("\"","").split(",")
+                P=tmp[0].split(" ")
+                V=tmp[1]
+                pname=P[1]
+                value=self.formS.descr.entryByName[P[1]]['widget'].get()
+                if P[0] == "string" : self.shadDic[name][k]="\""+P[0]+" "+P[1]+"\",\""+value+"\""
+                else : self.shadDic[name][k]="\""+P[0]+" "+P[1]+"\","+str(value)
+                print(self.shadDic[name][k])
+                k=k+1
 
     def guiCallback(self):
 
@@ -225,7 +225,7 @@ class Gelato(MVCommand):
         self.geomList = {}
         self.properties = {}
         for m in self.vf.Mols:
-            for g in m.geomContainer.geoms.values():
+            for g in list(m.geomContainer.geoms.values()):
                 if g.visible and g.__class__.__name__ != 'Geom':
                     name = '%s_%s'%(m.name,g.name)
                     self.geomList[name] = g
@@ -241,7 +241,7 @@ class Gelato(MVCommand):
             
         idf = InputFormDescr(title ="Gelato")
 
-        geomsEntries = map(lambda x: (x,None),self.geomList.keys())
+        geomsEntries = [(x,None) for x in list(self.geomList.keys())]
         idf.append({'name':'selectedGeometries',
                     'widgetType':ListChooser,
                     'wcfg':{'title':'Selected geometries',
@@ -249,29 +249,29 @@ class Gelato(MVCommand):
                             'mode':'multiple',
                             'lbwcfg':{'height':5,'exportselection':0}},
                     'gridcfg':{'rowspan':4, 'column':0, 'row':0}})
-	from DejaVu.gelato import Shader
-	#shaderD = Shader.ShaderDic
-	#shaderEntries = map(lambda x: (x,None),Shader.ShaderDic.keys())
-	shaderEntries = Shader.ShaderDic.keys()
+        from DejaVu.gelato import Shader
+        #shaderD = Shader.ShaderDic
+        #shaderEntries = map(lambda x: (x,None),Shader.ShaderDic.keys())
+        shaderEntries = list(Shader.ShaderDic.keys())
 
         idf.append({'widgetType':Pmw.ComboBox,
                     'name':'pigment',
                     'wcfg':{'labelpos':'w',
                             'label_text':'Shader',
                             'scrolledlist_items' : shaderEntries,
-			    'scrolledlist_listbox_width':7,
-			    #'width':40
+                            'scrolledlist_listbox_width':7,
+                            #'width':40
                             },
                     'gridcfg':{'columnspan':2, 'column':0,
                                'row':4, 'sticky':'w'}})
         idf.append({'name':'Apply',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'ApplyToSelection','command': self.applyShader},
                     'gridcfg':{'column':1,
                                'row':4,'sticky':'w'}})
 
         idf.append({'name':'edit',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'defaultValue':0,
                     'wcfg':{'text':'Edit','command': self.editShader},
                     'gridcfg':{'column':2, 'row':4,'sticky':'w'}})
@@ -333,17 +333,17 @@ class Gelato(MVCommand):
                                'row':7,'sticky':'w'}})
 
         idf.append({'name':'wbg',
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'defaultValue':1,
                     'wcfg':{'text':'White Background',
-                            'variable': Tkinter.IntVar()},
+                            'variable': tkinter.IntVar()},
                     'gridcfg':{'column':3, 'row':7,'sticky':'e'}})
 
         idf.append({'name':'inter',
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'defaultValue':0,
                     'wcfg':{'text':'catmull-clark',
-                            'variable': Tkinter.IntVar()},
+                            'variable': tkinter.IntVar()},
                     'gridcfg':{'column':3, 'row':8,'sticky':'e'}})
 
 
@@ -365,26 +365,26 @@ class Gelato(MVCommand):
                                'row':9,'sticky':'w'}})
 
         idf.append({'name':'WriteFile',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'WriteFile','command': self.writeFile},
                     'gridcfg':{'column':0,
                                'row':10,'sticky':'ew'}})
 
         idf.append({'name':'Render',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Render',
                             'command': CallBackFunction( self.runGelato,
                                                          (idf))},
                     'gridcfg':{'column':1,
                                'row':10,'sticky':'ew'}})
-	idf.append({'name':'help',
-                    'widgetType':Tkinter.Button,
+        idf.append({'name':'help',
+                    'widgetType':tkinter.Button,
                     'defaultValue':0,
                     'wcfg':{'text':'Help','command': self.helpGelato},
                     'gridcfg':{'column':2, 'row':10,'sticky':'ew'}})
 
         idf.append({'name':'Dismiss',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Dismiss',
                             'command':self.dismissCB},
                     'gridcfg':{'column':3, 'row':10,'sticky':'ew'}})

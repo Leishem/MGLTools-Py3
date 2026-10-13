@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
 #
@@ -42,10 +42,10 @@ from DejaVu.Geom import Geom
 from DejaVu.Spheres import Spheres
 from DejaVu.Points import CrossSet
 
-from SimpleDialog import SimpleDialog
+from tkinter.simpledialog import SimpleDialog
 from Pmv.stringSelectorGUI import StringSelectorGUI
 
-import Tkinter, numpy.oldnumeric as Numeric, math, types, Pmw
+import tkinter, mglcompat.oldnumeric as Numeric, math, types, Pmw
 
 from DejaVu.glfLabels import GlfLabels
 
@@ -81,7 +81,7 @@ class CheckForMissingAtomsGUICommand(MVCommand):
 
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('labelByProperty'):
+        if 'labelByProperty' not in self.vf.commands:
             self.vf.loadCommand('labelCommands', 'labelByProperty','Pmv',
                                 topCommand=0)
         #self.vf.loadModule('labelCommands', 'Pmv')
@@ -91,27 +91,27 @@ class CheckForMissingAtomsGUICommand(MVCommand):
     def __call__(self, nodes, **kw):
         """dictOfMissingAts <--- checkForMissingAtomsGC(nodes, **kw)
         \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
         resSet = nodes.findType(Residue).uniq()
-        return apply( self.doitWrapper, (resSet,), kw )
+        return self.doitWrapper(*(resSet,), **kw)
 
 
     def doit(self, nodes):
         dict = self.vf.checkForMissingAtoms(nodes)
         resNames = []
-        resSet = ResidueSet(dict.keys())
+        resSet = ResidueSet(list(dict.keys()))
         for item in resSet:
             resNames.append(item.full_name())
             item.missing = str(dict[item])[1:-1]
         #put up a form here with button
         ifd = self.ifd=InputFormDescr(title = 'Check for MissingAtoms Results:')
         ifd.append({'name': 'numResErrsLabel',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'wcfg':{'text': str(len(resSet)) + ' Residues with missing atoms:'},
-            'gridcfg':{'sticky': Tkinter.W+Tkinter.E}})
+            'gridcfg':{'sticky': tkinter.W+tkinter.E}})
         ifd.append({'name': 'resLC',
             'widgetType':'ListChooser',
             'entries': resNames,
@@ -126,21 +126,21 @@ class CheckForMissingAtomsGUICommand(MVCommand):
                     'exportselection': 0,
                     'width': 30}})
         ifd.append({'name':'selAllBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Select All Residues',
                 'command': self.selectAllRes},
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E}})
         ifd.append({'name':'selCurrBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Select Current Residue',
                 'command': CallBackFunction(self.selectCurRes, dict)
                     },
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E}})
         ifd.append({'name':'closeBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Dismiss',
                 'command': self.dismiss_cb},
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E}})
         self.form  = self.vf.getUserInput(ifd, modal=0, blocking=0,
                 scrolledFrame=1, width=337, height=305)
         self.form.root.protocol('WM_DELETE_WINDOW',self.dismiss_cb)
@@ -181,7 +181,7 @@ class CheckForMissingAtomsGUICommand(MVCommand):
 
 
     def selectCurRes(self, dict, event=None):
-        resSet = ResidueSet(dict.keys())
+        resSet = ResidueSet(list(dict.keys()))
         lb = self.ifd.entryByName['resLC']['widget'].lb
         #unlabel anything from the previous time
         if self.oldNode is not None:
@@ -238,17 +238,17 @@ class CheckForMissingAtoms(MVCommand):
    """
     
     def onRemoveObjFromViewer(self, obj):
-        if obj in self.resAts.keys():
+        if obj in list(self.resAts.keys()):
             del self.resAts[obj]
 
 
     def onAddCmdToViewer(self):
         self.resAtomNum = {}
         self.resAts = {}
-        self.resKeys = q.keys()
+        self.resKeys = list(q.keys())
         for item in self.resKeys:
-            self.resAtomNum[item] = len(q[item].keys())
-            self.resAts[item] = q[item].keys()
+            self.resAtomNum[item] = len(list(q[item].keys()))
+            self.resAts[item] = list(q[item].keys())
 
 
     def doit(self, resSet):
@@ -271,12 +271,12 @@ class CheckForMissingAtoms(MVCommand):
     def __call__(self, nodes, **kw):
         """dictOfMissingAts <--- checkForMissingAtoms(nodes, **kw)
         \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
         resSet = nodes.findType(Residue).uniq()
-        return apply( self.doitWrapper, (resSet,), kw )
+        return self.doitWrapper(*(resSet,), **kw)
 
 
 
@@ -309,11 +309,11 @@ class CheckForCloseContactsGUICommand(MVCommand):
 
     def onAddCmdToViewer(self):
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('checkForCloseContacts'):
+        if 'checkForCloseContacts' not in self.vf.commands:
             self.vf.loadCommand('repairCommands', ['checkForCloseContacts'],
                                 package='Pmv', topCommand=0)
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('saveSet'):
+        if 'saveSet' not in self.vf.commands:
             self.vf.loadCommand('selectionCommands', ['saveSet'],
                                 package='Pmv', topCommand=0)
     
@@ -363,17 +363,17 @@ class CheckForCloseContactsGUICommand(MVCommand):
             \nconstant --- possible constant value to be added into selection
             \nfor vdw selectors ,close is defined as interatomic distance< percentCutoff*(key_radius+check_radius) where the radii depend on atom element.
 """
-        if type(keyNodes) is types.StringType:
+        if type(keyNodes) is bytes:
             self.nodeLogString = "'"+keyNodes+"'"
         keyNodes = self.vf.expandNodes(keyNodes)
         if not len(keyNodes): return 'ERROR'
-        if type(checkNodes) is types.StringType:
+        if type(checkNodes) is bytes:
             self.nodeLogString = "'"+checkNodes+"'"
         checkNodes = self.vf.expandNodes(checkNodes)
         if not len(checkNodes): return 'ERROR'
-        return apply( self.doitWrapper, (keyNodes, checkNodes, percentCutoff,
+        return self.doitWrapper(*(keyNodes, checkNodes, percentCutoff,
                                 distanceCutoff, distSelectorString,
-                                constant, showGUI), kw )
+                                constant, showGUI), **kw)
 
 
     def doit(self, keyNodes, checkNodes, percentCutoff, 
@@ -383,11 +383,11 @@ class CheckForCloseContactsGUICommand(MVCommand):
         t1 = time.time()
         distSelectorClass = self.distSelectorDict[distSelectorString]
         kw = {'constant':constant}
-        self.atDict, self.distDict = apply(self.vf.checkForCloseContacts,( keyNodes, 
+        self.atDict, self.distDict = self.vf.checkForCloseContacts(*( keyNodes, 
                                 checkNodes, percentCutoff, distanceCutoff,
-                                distSelectorClass), kw)
+                                distSelectorClass), **kw)
         t2 = time.time()
-        print 'Found them in ', t2-t1
+        print('Found them in ', t2-t1)
         atDict = self.atDict
         distDict = self.distDict
         if not showGUI:
@@ -396,12 +396,12 @@ class CheckForCloseContactsGUICommand(MVCommand):
         if hasattr(self, 'ifd_results'):
             #cleanup previous results here!?!
             self.dismiss_cb()
-        if not len(atDict.keys()):
+        if not len(list(atDict.keys())):
             self.warningMsg('no atoms with close contacts')
             return 
         atNames = []
         # to sort keys:
-        ats = AtomSet(atDict.keys())
+        ats = AtomSet(list(atDict.keys()))
         ats.sort()
         atNames = []
         for a in ats:
@@ -412,9 +412,9 @@ class CheckForCloseContactsGUICommand(MVCommand):
             result_height = 10
         ifd = self.ifd_results=InputFormDescr(title = 'Check for CloseContacts Results:')
         ifd.append({'name': 'closeContactLabel',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'wcfg':{'text': str(len(atNames)) + ' Atom(s) with Close Contacts:\nred:dist<criteria; green:dist<VDWsum*factor'},
-            'gridcfg':{'sticky': Tkinter.W+Tkinter.E,'columnspan':2}})
+            'gridcfg':{'sticky': tkinter.W+tkinter.E,'columnspan':2}})
         ifd.append({'name': 'atsLC',
             #'widgetType':'ListChooser',
             'widgetType':ListChooser,
@@ -432,19 +432,19 @@ class CheckForCloseContactsGUICommand(MVCommand):
                                 'columnspan':2, 'sticky':'ew'}})
                         #'sticky':Tkinter.W+Tkinter.E+Tkinter.N+Tkinter.S},
         ifd.append({'name':'showAllBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Show All ',
                 'command': CallBackFunction(self.showAllCloseContacts, \
                         atDict ,distDict)},
             'gridcfg':{'sticky':'wens'}})
         ifd.append({'name':'saveSetsBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Save as 2 sets',
                 'command': self.save_sets,},
             'gridcfg':{'sticky':'nesw',
                         'row':-1, 'column':1 }})
         ifd.append({'name':'closeBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Dismiss',
                 'command': self.dismiss_cb},
             'gridcfg':{'sticky':'nesw', 'columnspan':2}})
@@ -454,11 +454,11 @@ class CheckForCloseContactsGUICommand(MVCommand):
         #1/27: show all results
         self.showAllCloseContacts(atDict, distDict)
         t3 = time.time()
-        print 'displayed them in ', t3-t2
+        print('displayed them in ', t3-t2)
 
 
     def cleanupDicts(self, atDict, distDict):
-        for at in atDict.keys():
+        for at in list(atDict.keys()):
             closeAts = atDict[at]
             dists = distDict[at]
             bondedAts = AtomSet([])
@@ -500,10 +500,10 @@ class CheckForCloseContactsGUICommand(MVCommand):
 
 
     def save_sets(self, event=None):
-        keyAts = AtomSet(self.atDict.keys())
+        keyAts = AtomSet(list(self.atDict.keys()))
         #build an AtomSet of atoms close to any key
         closeAts = AtomSet([])
-        for v in self.atDict.values():
+        for v in list(self.atDict.values()):
             closeAts.extend(AtomSet(v))
         #there could be duplication here...
         #NOTE: THIS DISORDERS the atoms
@@ -522,7 +522,7 @@ class CheckForCloseContactsGUICommand(MVCommand):
         atCtr = 0
         colors = []
         colorCutOff = 1.0 # FIXME should be user setable
-        for at in atDict.keys():
+        for at in list(atDict.keys()):
             lineVerts.append(at.coords)
             c1 = Numeric.array(at.coords, 'f')
             r1 = at.vdwRadius
@@ -552,7 +552,7 @@ class CheckForCloseContactsGUICommand(MVCommand):
                 
 
     def showCloseContacts(self, atDict, distDict, event=None):
-        print "#############in SHOWCLOSECONTACTS#############"
+        print("#############in SHOWCLOSECONTACTS#############")
         lb = self.ifd_results.entryByName['atsLC']['widget'].lb
         if lb.curselection() == (): return
         atName = lb.get(lb.curselection())
@@ -589,13 +589,13 @@ class CheckForCloseContactsGUICommand(MVCommand):
     def buildForm(self):
         if hasattr(self, 'ifd0'):
             return
-        self.selType = Tkinter.StringVar()
+        self.selType = tkinter.StringVar()
         self.selType.set("CloserThanVDW")
         ifd = self.ifd0 = InputFormDescr(title = "Select Two Sets:")
         ifd.append({'name':'keyLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'Select Key Atoms:',
-                    'gridcfg':{'sticky':Tkinter.W, 'columnspan':4}})
+                    'gridcfg':{'sticky':tkinter.W, 'columnspan':4}})
         ifd.append({'name': 'keySelector',
             'wtype':StringSelectorGUI,
             'widgetType':StringSelectorGUI,
@@ -606,13 +606,13 @@ class CheckForCloseContactsGUICommand(MVCommand):
             },
             'gridcfg':{'sticky':'we' , 'columnspan':4}})
         ifd.append({'name':'interSelLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'_____________________________________________',
-                    'gridcfg':{'sticky':Tkinter.W, 'columnspan':4}})
+                    'gridcfg':{'sticky':tkinter.W, 'columnspan':4}})
         ifd.append({'name':'checkLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'Select Atoms to check vs Keys:',
-                    'gridcfg':{'sticky':Tkinter.W, 'columnspan':4}})
+                    'gridcfg':{'sticky':tkinter.W, 'columnspan':4}})
         ifd.append({'name': 'checkSelector',
             'wtype':StringSelectorGUI,
             'widgetType':StringSelectorGUI,
@@ -623,23 +623,23 @@ class CheckForCloseContactsGUICommand(MVCommand):
             },
             'gridcfg':{'sticky':'we', 'columnspan':4 }})
         ifd.append({'name':'noteLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'(empty form uses all atoms in viewer)',
                     'gridcfg':{'sticky':'we', 'columnspan':4}})
         ifd.append({'name':'interSelLab2',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'_____________________________________________',
-                    'gridcfg':{'sticky':Tkinter.W, 'columnspan':4}})
+                    'gridcfg':{'sticky':tkinter.W, 'columnspan':4}})
         ifd.append({'name':'selectorLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'text':'Select Selection Algorithm:',
-                    'gridcfg':{'sticky':Tkinter.W, 'columnspan':4}})
+                    'gridcfg':{'sticky':tkinter.W, 'columnspan':4}})
         #ifd.append({'name':'interSelLab3',
                     #'widgetType':Tkinter.Label,
                     #'text':'_____________________________________________',
                     #'gridcfg':{'sticky':Tkinter.W, 'columnspan':4}})
         ifd.append({'name':'VDWsel',
-                    'widgetType':Tkinter.Radiobutton,
+                    'widgetType':tkinter.Radiobutton,
                     'wcfg':{'text':"CloserThanVDW",
                             'variable':self.selType,
                             'value':"CloserThanVDWSelector",
@@ -657,7 +657,7 @@ class CheckForCloseContactsGUICommand(MVCommand):
                              'wheelPad':2, 'height':20},
                      'gridcfg':{'row':-1,'column':1, 'columnspan':3,'sticky':'we'}})
         ifd.append({'name':'VDWPlussel',
-                    'widgetType':Tkinter.Radiobutton,
+                    'widgetType':tkinter.Radiobutton,
                     'wcfg':{'text':"CloserThanVDWPlusConstant",
                             'variable':self.selType,
                             'value':"CloserThanVDWPlusConstant",
@@ -675,7 +675,7 @@ class CheckForCloseContactsGUICommand(MVCommand):
                              'wheelPad':2, 'height':20},
                      'gridcfg':{'row':-1,'column':1, 'columnspan':3,'sticky':'we'}})
         ifd.append({'name':'Distsel',
-                    'widgetType':Tkinter.Radiobutton,
+                    'widgetType':tkinter.Radiobutton,
                     'wcfg':{'text':"Distance",
                             'variable':self.selType,
                             'value':"DistanceSelector",
@@ -693,12 +693,12 @@ class CheckForCloseContactsGUICommand(MVCommand):
                              'wheelPad':2, 'height':20},
                      'gridcfg':{'row':-1,'column':1, 'columnspan':3,'sticky':'we'}})
         ifd.append({'name': 'ok',
-                    'widgetType': Tkinter.Button,
+                    'widgetType': tkinter.Button,
                     'wcfg':{ 'text': 'OK',
                         'command': self.ok_cb,},
                     'gridcfg': {'sticky':'we'}}),
         ifd.append({'name': 'cancel',
-                    'widgetType': Tkinter.Button,
+                    'widgetType': tkinter.Button,
                     'wcfg':{ 'text': 'Cancel',
                         'command': self.cancel_cb,},
                     'gridcfg': {'sticky':'we', 'row':-1, 'column':1,
@@ -831,13 +831,13 @@ class CheckForCloseContacts(MVCommand):
     def doit(self, keyAts, checkAts, percentCutoff, distanceCutoff, **kw):
         distSelectorClass = kw.get('distSelectorClass')
         if distSelectorClass is None:
-            print "using self.distSelector"
+            print("using self.distSelector")
             distSelector = self.distSelector
         else:
             dict = {}
-            if kw.has_key("constant"):
+            if "constant" in kw:
                 dict['constant'] = kw.get('constant')
-            distSelector = apply(distSelectorClass,(), dict)
+            distSelector = distSelectorClass(*(), **dict)
 
         pairDict, distDict = distSelector.select(keyAts, checkAts,
                         percentCutoff=percentCutoff, cutoff=distanceCutoff)
@@ -846,7 +846,7 @@ class CheckForCloseContacts(MVCommand):
 
 
     def cleanupDicts(self, atDict, distDict):
-        for at in atDict.keys():
+        for at in list(atDict.keys()):
             closeAts = atDict[at]
             dists = distDict[at]
             bondedAts = AtomSet([])
@@ -912,7 +912,7 @@ class CheckForCloseContacts(MVCommand):
         if not len(nodesToCheck): return 'ERROR'
         checkAts = nodesToCheck.findType(Atom)
         kw['distSelectorClass'] = distSelectorClass
-        return apply( self.doitWrapper, (keyAts, checkAts, percentCutoff, distanceCutoff), kw )
+        return self.doitWrapper(*(keyAts, checkAts, percentCutoff, distanceCutoff), **kw)
 
 
 class RepairMissingAtomsGUICommand(MVCommand):
@@ -944,20 +944,20 @@ class RepairMissingAtomsGUICommand(MVCommand):
         """closeContactDict<---repairMissingAtomsGC(nodes) 
         \nnodes --- molecule(s) to check for missing atoms
         """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
-        return apply(self.doitWrapper,(nodes,), kw)
+        return self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes):
         dict = self.vf.checkForMissingAtoms(nodes)
-        if not len(dict.keys()): 
+        if not len(list(dict.keys())): 
             self.warningMsg('no residues to repair')
             return 'ERROR'
         resNames = []
-        resSet = ResidueSet(dict.keys())
+        resSet = ResidueSet(list(dict.keys()))
         newAts = self.vf.repairMissingAtoms(resSet)
         mol = resSet[0].top
         self.vf.GUI.VIEWER.Redraw()
@@ -1001,7 +1001,7 @@ class RepairMissingAtoms(MVCommand):
     """
     
     def onRemoveObjFromViewer(self, obj):
-        if obj in self.resAts.keys():
+        if obj in list(self.resAts.keys()):
             del self.resAts[obj]
 
 
@@ -1025,7 +1025,7 @@ class RepairMissingAtoms(MVCommand):
         newAts = AtomSet([])
         for res in resSet:
             #print 'repairing ', res.name
-            if res.type not in self.resDict.keys():
+            if res.type not in list(self.resDict.keys()):
                 #print 'skipping ', res
                 continue
             mol = res.top
@@ -1053,7 +1053,7 @@ class RepairMissingAtoms(MVCommand):
                 #print 'building copy of ', at.full_name()
                 newAt = Atom(name=at.name, parent=res, 
                             elementType = at.elementType, top=mol)
-                for k in at.colors.keys():
+                for k in list(at.colors.keys()):
                     newAt.colors[k] = at.colors[k]
                 #for k in at._charges.keys():
                 #    newAt._charges[k] = at._charges[k]
@@ -1075,7 +1075,7 @@ class RepairMissingAtoms(MVCommand):
                     if at2.name in res.atoms.name:
                         atom2 = res.atoms.get(lambda x, at2=at2: x.name == at2.name)[0]
                         bond = Bond(newAt, atom2, origin = 'UserDefined')
-                for k in atom2._charges.keys():
+                for k in list(atom2._charges.keys()):
                     #can't use at_charges
                     newAt._charges[k] = 0.00
                 newAt.chargeSet = atom2.chargeSet
@@ -1098,12 +1098,12 @@ class RepairMissingAtoms(MVCommand):
     def __call__(self, nodes, **kw):
         """dictOfMissingAts <--- checkForMissingAtoms(nodes, **kw)
         \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
         resSet = nodes.findType(Residue).uniq()
-        return apply( self.doitWrapper, (resSet,), kw )
+        return self.doitWrapper(*(resSet,), **kw)
 
 
 
@@ -1145,7 +1145,7 @@ class EditHistHydrogensGUICommand(MVCommand):
         \nnodes --- TreeNodeSet holding the current selection
         \nresSet --- residueSet
            """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         kw['topCommand'] = 0
         nodes = self.vf.expandNodes(nodes)
@@ -1155,7 +1155,7 @@ class EditHistHydrogensGUICommand(MVCommand):
         if not resSet: 
             self.warningMsg('No Histidines in selection')
             return 'ERROR'
-        apply(self.doitWrapper,(resSet,), kw)
+        self.doitWrapper(*(resSet,), **kw)
 
 
     def doit(self, resSet):
@@ -1165,23 +1165,23 @@ class EditHistHydrogensGUICommand(MVCommand):
         #put up a form here with buttons
         ifd = self.ifd=InputFormDescr(title = 'Edit Histidine Hydrogens :')
         ifd.append({'name': 'histLabel1',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'wcfg':{'text': 'Histidine'},
             'gridcfg':{'sticky': 'nesw'}})
         ifd.append({'name': 'histLabel2',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'wcfg':{'text': ' 0, HD1 '},
             'gridcfg':{'sticky': 'nesw', 'row':-1, 'column':1}})
         ifd.append({'name': 'histLabel3',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'wcfg':{'text': ' 0, HE2 '},
             'gridcfg':{'sticky': 'nesw', 'row':-1, 'column':2}})
         ifd.append({'name': 'histLabel3',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'wcfg':{'text': '+1     '},
             'gridcfg':{'sticky': 'nesw', 'row':-1, 'column':3}})
         ifd.append({'name': 'histLabel4',
-            'widgetType': Tkinter.Label,
+            'widgetType': tkinter.Label,
             'wcfg':{'text': '_______________________________________________'},
             'gridcfg':{'sticky': 'nesw', 'columnspan':5}})
         #build the rest of it here
@@ -1194,7 +1194,7 @@ class EditHistHydrogensGUICommand(MVCommand):
             nameLab = name + 'lab'
             nameLabs.append(nameLab)
             cbNames = []
-            self.cbDict[name] = newvar = Tkinter.StringVar()
+            self.cbDict[name] = newvar = tkinter.StringVar()
             ratomnames = r.atoms.name
             hasHD1 = 'HD1' in ratomnames
             hasHE2 = 'HE2' in ratomnames
@@ -1205,24 +1205,24 @@ class EditHistHydrogensGUICommand(MVCommand):
             elif hasHE2 and not hasHD1:
                 newvar.set('HE2')
             ifd.append({'name': nameLab,
-                'widgetType': Tkinter.Label,
+                'widgetType': tkinter.Label,
                 'wcfg':{'text': name},
-                'gridcfg':{'sticky': Tkinter.W+Tkinter.E}})
+                'gridcfg':{'sticky': tkinter.W+tkinter.E}})
             for i in range(1,4):
                 newname = name + str(i)
                 cbNames.append(newname)
                 ifd.append({'name': newname,
-                    'widgetType': Tkinter.Radiobutton,
+                    'widgetType': tkinter.Radiobutton,
                     'variable': newvar,
                     'value': cbFuncs[i],
                     'gridcfg':{'sticky': 'we', 'row':-1, 'column':i}})
         ifd.append({'name':'applyBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Apply',
                 'command': self.apply_cb},
-            'gridcfg':{'sticky':Tkinter.W+Tkinter.E, 'columnspan':2}})
+            'gridcfg':{'sticky':tkinter.W+tkinter.E, 'columnspan':2}})
         ifd.append({'name':'closeBut',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Dismiss',
                 'command': self.dismiss_cb},
             'gridcfg':{'sticky':'we',  'columnspan':3,
@@ -1243,7 +1243,7 @@ class EditHistHydrogensGUICommand(MVCommand):
     def apply_cb(self, event=None):
         #FIX THIS: may not need any changes
         nodeDict = {}
-        for k, v in self.cbDict.items():
+        for k, v in list(self.cbDict.items()):
             nodeDict[k] = v.get()
         #print 'nodeDict=', nodeDict
 
@@ -1276,13 +1276,13 @@ class EditHistHydrogens(MVCommand):
 
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('typeAtoms'):
+        if 'typeAtoms' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'typeAtoms','Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('deleteAtomSet'):
+        if 'deleteAtomSet' not in self.vf.commands:
             self.vf.loadCommand('deleteCommands', 'deleteAtomSet','Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('computeGasteiger'):
+        if 'computeGasteiger' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'computeGasteiger','Pmv',
                                 topCommand=0)
         from PyBabel.addh import AddHydrogens, SP2_N_H_DIST
@@ -1296,7 +1296,7 @@ class EditHistHydrogens(MVCommand):
         #nodeDict keys had better be full_names
         #values can be the name of the function to do it
         theseNodes = ResidueSet([])
-        for name in nodeDict.keys():
+        for name in list(nodeDict.keys()):
             newNodes = self.vf.expandNodes(name)
             if len(newNodes):
                 theseNodes = theseNodes + self.vf.expandNodes(name)
@@ -1305,7 +1305,7 @@ class EditHistHydrogens(MVCommand):
             mols = theseNodes.top.uniq()
             for mol in mols:
                 self.vf.typeAtoms(mol, topCommand=0)
-            return apply(self.doitWrapper,(nodeDict,), kw)
+            return self.doitWrapper(*(nodeDict,), **kw)
         else: return 'ERROR'
 
 
@@ -1316,7 +1316,7 @@ class EditHistHydrogens(MVCommand):
         newHydrogens = AtomSet([])
         self.hasKollman = 0
         self.hasgasteiger = 0
-        for node, value in nodeDict.items():
+        for node, value in list(nodeDict.items()):
             res = self.vf.expandNodes(node)[0]
             badHs, newHs = self.editHIS(res, value)
             if badHs: 
@@ -1451,11 +1451,11 @@ class EditHistHydrogens(MVCommand):
         atom.babel_type = hat[0][3]
         atom.babel_organic = 1
         bond = Bond( a, atom )
-        for key, value in a.colors.items():
+        for key, value in list(a.colors.items()):
             atom.colors[key] = (1.0, 1.0, 1.0)
             atom.opacities[key] = 1.0
         #also add whatever kinds of charges a._charges has
-        chargeKeys = a._charges.keys()
+        chargeKeys = list(a._charges.keys())
         if 'Kollman' in chargeKeys:
             self.hasKollman = 1
         if 'gasteiger' in chargeKeys:
@@ -1486,7 +1486,7 @@ terminal carbon atom.
 
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('add_oxt'):
+        if 'add_oxt' not in self.vf.commands:
             self.vf.loadCommand('repairCommands', 'add_oxt','Pmv',
                                 topCommand=0)
         if self.vf.hasGui and not hasattr(self.vf, 'setICOM'):
@@ -1498,11 +1498,11 @@ terminal carbon atom.
         \natoms  --- atom(s)
         \noxt --- the new oxt atom
         """
-        if type(atoms) is types.StringType:
+        if type(atoms) is bytes:
             self.nodeLogString = "'"+atoms+"'"
         ats = self.vf.expandNodes(atoms)
         if not len(ats): return 'ERROR'
-        return apply(self.doitWrapper, (ats,), kw)
+        return self.doitWrapper(*(ats,), **kw)
 
 
     def doit(self, ats):
@@ -1585,13 +1585,13 @@ class AddOXT(MVCommand):
     """
     
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('typeAtoms'):
+        if 'typeAtoms' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'typeAtoms','Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('typeBonds'):
+        if 'typeBonds' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'typeBonds','Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('deleteAtomSet'):
+        if 'deleteAtomSet' not in self.vf.commands:
             self.vf.loadCommand('deleteCommands', 'deleteAtomSet','Pmv',
                                 topCommand=0)
         #self.addh = AddHydrogens()
@@ -1604,7 +1604,7 @@ class AddOXT(MVCommand):
         \ncatom --- carbon atom to get new oxt oxygen atom.
         \noxt --- the new oxygen atom
         """
-        return apply(self.doitWrapper,(catom,), kw)
+        return self.doitWrapper(*(catom,), **kw)
 
 
     def doit(self, catom):
@@ -1665,7 +1665,7 @@ class AddOXT(MVCommand):
         # available for the other oxygen atom attached to 'C'
         oatom = res.atoms.get(lambda x: x.name=='O')[0]
         if oatom is not None:
-            for key, value in oatom.colors.items():
+            for key, value in list(oatom.colors.items()):
                 atom.colors[key] = value
                 #atom.opacities[key] = oatom.opacities[key]
                 
@@ -1673,7 +1673,7 @@ class AddOXT(MVCommand):
         mol.allAtoms = mol.chains.residues.atoms
 
         fst = mol.allAtoms[0].number
-        mol.allAtoms.number = range(fst, len(mol.allAtoms)+fst)
+        mol.allAtoms.number = list(range(fst, len(mol.allAtoms)+fst))
 
         res.assignUniqIndex()
 
@@ -1705,13 +1705,13 @@ An internal c-terminus occurs when residues are missing from a chain.
     """
     
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('typeAtoms'):
+        if 'typeAtoms' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'typeAtoms','Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('typeBonds'):
+        if 'typeBonds' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'typeBonds','Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('deleteAtomSet'):
+        if 'deleteAtomSet' not in self.vf.commands:
             self.vf.loadCommand('deleteCommands', 'deleteAtomSet','Pmv',
                                 topCommand=0)
         self.addh = AddHydrogens()
@@ -1721,7 +1721,7 @@ An internal c-terminus occurs when residues are missing from a chain.
         """None<---modifyCTerminus(resSet,**kw)
         \nresSet --- residues which are inside a chain and not bonded to a next residue in chain
         """
-        return apply(self.doitWrapper,(resSet,), kw)
+        return self.doitWrapper(*(resSet,), **kw)
 
 
     def doit(self, resSet):
@@ -1766,13 +1766,13 @@ would have in an intact chain.
     """
     
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('typeAtoms'):
+        if 'typeAtoms' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'typeAtoms','Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('typeBonds'):
+        if 'typeBonds' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'typeBonds','Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('deleteAtomSet'):
+        if 'deleteAtomSet' not in self.vf.commands:
             self.vf.loadCommand('deleteCommands', 'deleteAtomSet','Pmv',
                                 topCommand=0)
         self.addh = AddHydrogens()
@@ -1782,7 +1782,7 @@ would have in an intact chain.
         """None<---modifyNTerminus(res,**kw)        
         \nresSet --- set of residues which are inside a chain and not bonded to a previous residue
         """
-        return apply(self.doitWrapper,(resSet, renumber,), kw)
+        return self.doitWrapper(*(resSet, renumber,), **kw)
 
 
     def doit(self, resSet, renumber):
@@ -1811,9 +1811,9 @@ would have in an intact chain.
             NHs = hs.get(lambda x:(x.bonds[0].atom1.name=='N' or \
                                     x.bonds[0].atom2.name=='N') and \
                                     x.name!='HN')
-            print 'NHs==None', NHs==None
+            print('NHs==None', NHs==None)
             if NHs:
-                print 'deleting ', NHs
+                print('deleting ', NHs)
                 self.vf.deleteAtomSet(NHs)
 
         for at in resATS:
@@ -1824,7 +1824,7 @@ would have in an intact chain.
                 self.vf.typeAtoms(at, topCommand=0)
                 break
         resBONDS = resATS.bonds[0]
-        untypedBonds = filter(lambda x:x.bondOrder==None, resBONDS)
+        untypedBonds = [x for x in resBONDS if x.bondOrder==None]
         #don't do this if it is not necessary
         if len(untypedBonds):
             for m in mols:
@@ -1832,7 +1832,7 @@ would have in an intact chain.
 
         natoms.babel_type = 'Npl'
         for n in natoms:
-            print 'processing n=', n.full_name()
+            print('processing n=', n.full_name())
             if n.parent.type!='PRO':
                 hat = self.addh.add_vinyl_hydrogens(n, 1.02)
             else:
@@ -1866,7 +1866,7 @@ would have in an intact chain.
 
             # create the color entries for all geoemtries
             # available for the heavyAtom
-            for key, value in n.colors.items():
+            for key, value in list(n.colors.items()):
                 atom.colors[key]=(0.0, 1.0, 1.0)
                 atom.opacities[key]=1.0
             if hasattr(n, 'chargeSet') and n.chargeSet=='Kollman':
@@ -1879,7 +1879,7 @@ would have in an intact chain.
             mol.allAtoms = mol.chains.residues.atoms
             if renumber:
                 fst = mol.allAtoms[0].number
-                mol.allAtoms.number = range(fst, len(mol.allAtoms)+fst)
+                mol.allAtoms.number = list(range(fst, len(mol.allAtoms)+fst))
         self.vf.allAtoms = self.vf.Mols.chains.residues.atoms
 
 
@@ -1920,9 +1920,9 @@ would have in an intact chain.
         cH1 = [ c[0]+v[0], c[1]+v[1], c[2]+v[2] ]
 
 
-        print 'c4==None', c4==None
+        print('c4==None', c4==None)
         if c4 is not None:
-            print 'c4=', c4.full_name()
+            print('c4=', c4.full_name())
             v = Numeric.array(vec3(c3.coords, c2.coords, b_length))
             #v1 = Numeric.array(vec3(cH1, c, b_length ))
             v1 = Numeric.array(vec3(c4.coords, c2.coords, b_length))
@@ -1954,7 +1954,7 @@ would have in an intact chain.
 
         ch1 = [round(cH1[0],4), round(cH1[1],4), round(cH1[2],4)]
         ch2 = [round(cH2[0],4), round(cH2[1],4), round(cH2[2],4)]
-        print 'returning :', [[ch1], [ch2]]
+        print('returning :', [[ch1], [ch2]])
         return [[ch1], [ch2]]
         
 
@@ -1978,13 +1978,13 @@ atom of the first kind of residue  and ModifyCTerminus to edit hydrogens bonded 
 
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('modifyCTerminus'):
+        if 'modifyCTerminus' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'modifyCTerminus','Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('modifyNTerminus'):
+        if 'modifyNTerminus' not in self.vf.commands:
             self.vf.loadCommand('editCommands', 'modifyNTerminus','Pmv',
                                 topCommand=0)
-        self.resKeys = q.keys()
+        self.resKeys = list(q.keys())
 
 
     def __call__(self, nodes, check=1, **kw):
@@ -1992,7 +1992,7 @@ atom of the first kind of residue  and ModifyCTerminus to edit hydrogens bonded 
         \nnodes to be checked for intrachain deletions. 
         \ncheck --- if check, each molecule in nodes.top is checked to be sure that each of its residues is a standard type. If not, looking for peptide connection breaks doesn't make sense so command exits with an error.If the user's molecule has non-standard residues, he can call this with check=0... 
         """
-        return apply(self.doitWrapper,(nodes,check,), kw)
+        return self.doitWrapper(*(nodes,check,), **kw)
 
 
     def doit(self, nodes, check):
@@ -2007,9 +2007,9 @@ atom of the first kind of residue  and ModifyCTerminus to edit hydrogens bonded 
             for m in resSet.top:
                 for r in m.chains.residues:
                     dict[r.type] = 0
-                for t in dict.keys():
+                for t in list(dict.keys()):
                     if t not in self.resKeys:
-                        print res.top.name, ' has non-standard residue types'
+                        print(res.top.name, ' has non-standard residue types')
                         return 'ERROR'
                         
         defectiveCs = ResidueSet()
@@ -2019,7 +2019,7 @@ atom of the first kind of residue  and ModifyCTerminus to edit hydrogens bonded 
             if res!=res.parent.children[-1]:
                 catoms = res.atoms.get(lambda x: x.name=='C')
                 if not catoms:
-                    print res.name, ' missing C atom'
+                    print(res.name, ' missing C atom')
                     continue
                 catom = catoms[0]
                 needToFix = 1
@@ -2038,7 +2038,7 @@ atom of the first kind of residue  and ModifyCTerminus to edit hydrogens bonded 
             if res!=res.parent.children[0]:
                 natoms = res.atoms.get(lambda x: x.name=='N')
                 if not natoms:
-                    print res.name, ' missing N atom'
+                    print(res.name, ' missing N atom')
                     continue
                 natom = natoms[0]
                 needToFix = 1

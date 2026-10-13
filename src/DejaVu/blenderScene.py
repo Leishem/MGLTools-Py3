@@ -2,7 +2,7 @@ from opengltk.OpenGL import GL
 #from opengltk.extent.utillib import glTriangleNormals
 from geomutils.geomalgorithms import  TriangleNormals
 
-import numpy.oldnumeric as Numeric, math, string, warnings
+import mglcompat.oldnumeric as Numeric, math, warnings; from mglcompat import pystring as string
 from mglutil.math import rotax
 from mglutil.util.misc import ensureFontCase
 from DejaVu.Geom import Geom
@@ -18,7 +18,7 @@ from DejaVu.GleObjects import GleExtrude
 from DejaVu.glfLabels import GlfLabels
 from DejaVu.DataOutput import *
 from DejaVu import colorTool
-import Tkinter, Pmw
+import tkinter, Pmw
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr, InputForm
 
 class OutputBlender(OutputNode):
@@ -211,7 +211,7 @@ class OutputBlender(OutputNode):
     def getFileHeader1(self):
         blender=[]
         blender.append("#!BPY\n")
-	blender.append("""import sys, os, os.path, struct, math, string
+        blender.append("""import sys, os, os.path, struct, math, string
 import Blender
 import bpy
 from Blender import *
@@ -222,34 +222,34 @@ from Blender import Window, Scene, Draw
 import BPyMesh
 
 def createsNmesh(name,vertices,vnormals,faces,mat=None):
-	vlist = []
-	me=bpy.data.meshes.new(name)
-	me.verts.extend(vertices)	# add vertices to mesh
-	me.faces.extend(faces)          # add faces to the mesh (also adds edges)
-	#smooth face : the vertex normals are averaged to make this face look smooth
-	for face in me.faces:
-		face.smooth=1
-	me.calcNormals()
-	if mat == None :
-		mat = Material.New('test')
-		mat.R = 0.8
-		mat.G = 1.0
-		mat.B = 1.0
-	me.materials=[mat]
-	ob = Blender.Object.New("Mesh")
-	ob.link(me)
-	return ob,me
+        vlist = []
+        me=bpy.data.meshes.new(name)
+        me.verts.extend(vertices)	# add vertices to mesh
+        me.faces.extend(faces)          # add faces to the mesh (also adds edges)
+        #smooth face : the vertex normals are averaged to make this face look smooth
+        for face in me.faces:
+                face.smooth=1
+        me.calcNormals()
+        if mat == None :
+                mat = Material.New('test')
+                mat.R = 0.8
+                mat.G = 1.0
+                mat.B = 1.0
+        me.materials=[mat]
+        ob = Blender.Object.New("Mesh")
+        ob.link(me)
+        return ob,me
 
 sc=Blender.Scene.GetCurrent()
 
 """)
-	blender.append("\n")
+        blender.append("\n")
         return blender
 
 
     def getCopyright(self):
         blender=[]
-	blender.append("""
+        blender.append("""
 #############################################################################
 #Blender Scene Export v1.1 by Ludovic Autin
 # Date: August 2009   Author: Ludovic Autin
@@ -265,7 +265,7 @@ sc=Blender.Scene.GetCurrent()
 #
 #############################################################################
 """)   
-	blender.append("\n")
+        blender.append("\n")
         return blender
 
 
@@ -282,7 +282,7 @@ sc=Blender.Scene.GetCurrent()
                    string.strip(str(g.instanceMatricesIndex))+ '_'
             g = g.parent
         name=string.replace(name,"-","_")
-	return name
+        return name
 
 
     def getGeomHeader(self, geom):
@@ -291,13 +291,13 @@ sc=Blender.Scene.GetCurrent()
         g = geom
         name = self.getGeomName(geom)
         blender.append("#Geom "+name+"\nname=\""+name+"\"\n")
-	blender.append("mat=None\n")
+        blender.append("mat=None\n")
         return blender
 
 
     def getMaterial(self, geom):
         blender=[]
-	name = self.getGeomName(geom)
+        name = self.getGeomName(geom)
         mat = geom.materials[GL.GL_FRONT].prop[:]
         geom.materials[GL.GL_FRONT].colorIndex = None # will be used later on
         colors = None
@@ -375,14 +375,14 @@ sc=Blender.Scene.GetCurrent()
         specCol = '%.5f'%mat[3][0][0]+" "+'%.5f'%mat[3][0][1]+" "+\
                   '%.5f'%mat[3][0][2]
         shin =    '%.5f'%mat[4][0]
-        trans =    `1-mat[5][0]`
+        trans =    repr(1-mat[5][0])
 
-	blender.append("mat = Material.New('mat"+name+"')")
-	blender.append("mat.R = '%.5f'n" %mat[1][0][0])
-	blender.append("mat.G = '%.5f'n" %mat[1][0][1])
-	blender.append("mat.B = '%.5f'n" %mat[1][0][2])
+        blender.append("mat = Material.New('mat"+name+"')")
+        blender.append("mat.R = '%.5f'n" %mat[1][0][0])
+        blender.append("mat.G = '%.5f'n" %mat[1][0][1])
+        blender.append("mat.B = '%.5f'n" %mat[1][0][2])
 
-	#vrml2.append("          material        Material {\n")
+        #vrml2.append("          material        Material {\n")
         #vrml2.append("            ambientIntensity      "+ambInt+"\n")
         #vrml2.append("            diffuseColor          "+difCol+"\n")
         #vrml2.append("            emissiveColor         "+emCol+"\n")
@@ -395,20 +395,20 @@ sc=Blender.Scene.GetCurrent()
 
     def getGeomDescr(self, geom):
         blender = []
-	name = self.getGeomName(geom)
+        name = self.getGeomName(geom)
         if isinstance(geom, IndexedPolygons):
-	    #blender.append("vertices=\n")
+            #blender.append("vertices=\n")
             # add vertices
             blender.extend( self.getCoords(geom) )
             # add face indices
             blender.extend( self.getFaces(geom) )
-	    blender.extend( self.getNormals(geom) )
-		
+            blender.extend( self.getNormals(geom) )
+                
             # add color indices if applicable
             #if geom.materials[GL.GL_FRONT].colorIndex is not None and len(geom.materials[GL.GL_FRONT].colorIndex):
             #    vrml2.extend( self.getColorIndex(geom) )
             blender.append(""+name+",mesh"+name+"=createsNmesh(name,vertices,vnormals,faces,mat=mat)\n")
-	    blender.append("sc.link("+name+")\n")
+            blender.append("sc.link("+name+")\n")
         #elif isinstance(geom, IndexedPolylines):
         #    vrml2.append("        geometry        IndexedLineSet {\n")
         #    # add vertices
@@ -462,7 +462,7 @@ sc=Blender.Scene.GetCurrent()
             height = 1
             num_byte = dims[1]
             
-        vrml2.append("          image "+`width`+" "+`height`+" "+`num_byte`+"\n")
+        vrml2.append("          image "+repr(width)+" "+repr(height)+" "+repr(num_byte)+"\n")
 
         if len(dims) == 3:
             # we have a 2D texture (image)
@@ -524,8 +524,8 @@ sc=Blender.Scene.GetCurrent()
         for vert in vertices:
             vstring = "[%.5f,%.5f,%.5f]," % (vert[0],vert[1],vert[2])
             blender.append(vstring)
-	blender[-1][-1].replace(",","")
-	blender.append("]\n")
+        blender[-1][-1].replace(",","")
+        blender.append("]\n")
         return blender
 
     def getFaces(self, geom):
@@ -546,11 +546,11 @@ sc=Blender.Scene.GetCurrent()
         #    else:
         #        for f in face:
         #            facestring = facestring + `f` + ", "#
-	#
+        #
         #    facestring = facestring + "-1,\n"
         #    blender.append(facestring)
-	blender[-1][-1].replace(",","")
-	blender.append("]\n")
+        blender[-1][-1].replace(",","")
+        blender.append("]\n")
         return blender
 
     def getColorIndex(self, geom):
@@ -561,7 +561,7 @@ sc=Blender.Scene.GetCurrent()
         for cI in colorIndex:
             cIstring = "         "
             for c in cI:
-                cIstring = cIstring + `c` +", "
+                cIstring = cIstring + repr(c) +", "
             cIstring = cIstring + "-1,\n"
             vrml2.append(cIstring)
         vrml2.append("	                ]\n")
@@ -573,16 +573,16 @@ sc=Blender.Scene.GetCurrent()
     def getNormals(self, geom):
         if geom.invertNormals:
             fn = -1.0 * geom.normals
-	    vn = -1.0 * geom.getVNormals()
+            vn = -1.0 * geom.getVNormals()
         else:
             fn = geom.normals
-	    vn = geom.getVNormals()
+            vn = geom.getVNormals()
         blender=[]
         blender.append("vnormals=[")
         for n in vn:
             blender.append("[%d,%d,%d]," % (n[0],n[1],n[2]))
-	blender[-1][-1].replace(",","")
-	blender.append("]\n")
+        blender[-1][-1].replace(",","")
+        blender.append("]\n")
         return blender
 
     def getTexCoords(self, geom):
@@ -592,9 +592,9 @@ sc=Blender.Scene.GetCurrent()
         vrml2.append("        point [\n")
         for p in geom.vertexSet.texCoords.array:
             if len(p) == 1: # one dimension array
-                vrml2.append("          "+`p[0]`+" 0,\n")
+                vrml2.append("          "+repr(p[0])+" 0,\n")
             else:
-                vrml2.append("          "+`p[0]`+" "+`p[1]`+",\n")
+                vrml2.append("          "+repr(p[0])+" "+repr(p[1])+",\n")
         vrml2.append("          ]\n")
         vrml2.append("        }\n")
         return vrml2
@@ -607,7 +607,7 @@ sc=Blender.Scene.GetCurrent()
         for face in texCoordsIndex:
             indexstring = "                          "
             for i in face:
-                indexstring = indexstring + `i` + ", "
+                indexstring = indexstring + repr(i) + ", "
 
             indexstring = indexstring + "-1,\n"
             vrml2.append(indexstring)
@@ -615,31 +615,31 @@ sc=Blender.Scene.GetCurrent()
         return vrml2
 
     def blenderColor(self,col):
-	    if max(col)<=1.0: col = map( lambda x: x*255, col)
-	    return col
+            if max(col)<=1.0: col = [x*255 for x in col]
+            return col
 
     def getColors(self, geom, colors):
-	name = self.getGeomName(geom)
+        name = self.getGeomName(geom)
         blender=[]
         blender.append("\n")
-	
+        
 
         blender.append("colors=[") #color foreach vertices
         for c in colors:
-	    c=self.blenderColor(c)
+            c=self.blenderColor(c)
             cstring = "[%d,%d,%d]," % (c[0],c[1],c[2])
             blender.append(cstring)
-	blender[-1][-1].replace(",","")
-	blender.append("]\n\n")
-	
-	blender.append("mesh"+name+".vertexColors = 1  # enable vertex colors \n")
-	blender.append("for f in mesh"+name+".faces:\n")
+        blender[-1][-1].replace(",","")
+        blender.append("]\n\n")
+        
+        blender.append("mesh"+name+".vertexColors = 1  # enable vertex colors \n")
+        blender.append("for f in mesh"+name+".faces:\n")
         blender.append("       for i, v in enumerate(f):\n")
         blender.append("               col= f.col[i]\n")
         blender.append("               col.r= colors[v.index][0]\n")
         blender.append("               col.g= colors[v.index][1]\n")
         blender.append("               col.b= colors[v.index][2]\n")
-	blender.append("mesh"+name+".materials[0].setMode(\"VColPaint\")\n")
+        blender.append("mesh"+name+".materials[0].setMode(\"VColPaint\")\n")
         return blender	
 
 
@@ -655,12 +655,12 @@ sc=Blender.Scene.GetCurrent()
         r[1] = round(r[1],6)
         r[2] = round(r[2],6)
         r[3] = round(r[3],6)
-        vrml2.append("      translation "+`trans[0]`+" "+`trans[1]`+" "+\
-                           `trans[2]`+"\n")
-        vrml2.append("      rotation "+`r[0]`+" "+`r[1]`+" "+\
-                           `r[2]`+" "+`r[3]`+"\n")
-        vrml2.append("      scale "+`scale[0]`+" "+`scale[1]`+" "+\
-                               `scale[2]`+"\n")
+        vrml2.append("      translation "+repr(trans[0])+" "+repr(trans[1])+" "+\
+                           repr(trans[2])+"\n")
+        vrml2.append("      rotation "+repr(r[0])+" "+repr(r[1])+" "+\
+                           repr(r[2])+" "+repr(r[3])+"\n")
+        vrml2.append("      scale "+repr(scale[0])+" "+repr(scale[1])+" "+\
+                               repr(scale[2])+"\n")
         return vrml2
 
     def write(self,entries, filename):
@@ -699,17 +699,17 @@ class BlenderGUI(DatGUI):
     def __init__(self, master=None, title=None):
         DatGUI.__init__(self, master, title)
 
-        self.saveNormals    = Tkinter.IntVar()
-        self.colorPerVertex = Tkinter.IntVar()
+        self.saveNormals    = tkinter.IntVar()
+        self.colorPerVertex = tkinter.IntVar()
         self.colorPerVertex.set(1) # on by default
-        self.usePROTO         = Tkinter.IntVar()
+        self.usePROTO         = tkinter.IntVar()
 
         self.createForm()
 
     def createForm(self):
         row = 0
         self.idf.append({'name':'savNormals',
-                         'widgetType':Tkinter.Checkbutton,
+                         'widgetType':tkinter.Checkbutton,
                          'wcfg':{'text':'Save Normals            ',
                                  'variable':self.saveNormals,
                                  'command':self.saveNormals_cb},
@@ -717,14 +717,14 @@ class BlenderGUI(DatGUI):
                                     'columnspan':2, 'row':row, 'column':0}
                          })
         row+= 1
-        self.idf.append({'widgetType':Tkinter.Frame,
+        self.idf.append({'widgetType':tkinter.Frame,
                  'wcfg':{'relief':'sunken','borderwidth':2,'height':2},
                  'gridcfg':{'columnspan':2, 'row':row, 'column':0},
                  })
 
         row += 1
         self.idf.append({'name':'colorPerVertex',
-                         'widgetType':Tkinter.Checkbutton,
+                         'widgetType':tkinter.Checkbutton,
                          'wcfg':{'text':'color per vertex',
                                  'variable':self.colorPerVertex,
                                  'command':self.colorPerVertex_cb},
@@ -733,14 +733,14 @@ class BlenderGUI(DatGUI):
                          })
         
         row+= 1
-        self.idf.append({'widgetType':Tkinter.Frame,
+        self.idf.append({'widgetType':tkinter.Frame,
                  'wcfg':{'relief':'sunken','borderwidth':2,'height':2},
                  'gridcfg':{'columnspan':2, 'row':row, 'column':0},
                  })
 
         row+= 1
         self.idf.append({'name':'usePROTO',
-                         'widgetType':Tkinter.Checkbutton,
+                         'widgetType':tkinter.Checkbutton,
                          'wcfg':{'text':'Use PROTO for instance\n'+\
                                  'matrices to lower file size',
                                  'variable':self.usePROTO,
@@ -749,20 +749,20 @@ class BlenderGUI(DatGUI):
                                     'columnspan':2, 'row':row, 'column':0}
                          })
         row+= 1
-        self.idf.append({'widgetType':Tkinter.Frame,
+        self.idf.append({'widgetType':tkinter.Frame,
                  'wcfg':{'relief':'sunken','borderwidth':2,'height':2},
                  'gridcfg':{'columnspan':2, 'row':row, 'column':0},
                  })
 
         row+= 1
-        self.idf.append({'widgetType':Tkinter.Label,
+        self.idf.append({'widgetType':tkinter.Label,
                  'wcfg':{'text':'Sphere quality'},
                  'gridcfg':{'sticky':'w','columnspan':2, 'row':row,
                             'column':0},
                  })
         
         self.idf.append({'name':'inpSphQual',
-                         'widgetType':Tkinter.Entry,
+                         'widgetType':tkinter.Entry,
                          'defaultValue':'2',
                          'wcfg':{'font':(ensureFontCase('Courier'),10),
                                  'width':5,'textvariable':self.sphInput,
@@ -772,14 +772,14 @@ class BlenderGUI(DatGUI):
                                     'columnspan':2, 'row':row, 'column':1 }
                          })
         row+= 1
-        self.idf.append({'widgetType':Tkinter.Label,
+        self.idf.append({'widgetType':tkinter.Label,
                  'wcfg':{'text':'Cylinder quality'},
                  'gridcfg':{'sticky':'w','columnspan':2, 'row':row,
                             'column':0},
                  })
 
         self.idf.append({'name':'inpCylQual',
-                         'widgetType':Tkinter.Entry,
+                         'widgetType':tkinter.Entry,
                          'defaultValue':'10',
                          'wcfg':{'font':(ensureFontCase('Courier'),10),
                                  'width':5,'textvariable':self.cylInput,
@@ -790,7 +790,7 @@ class BlenderGUI(DatGUI):
                          })
 
         row+= 1
-	self.idf.append({'widgetType':Tkinter.Button,
+        self.idf.append({'widgetType':tkinter.Button,
                          'text':'OK',
                          'wcfg':{},
                          'gridcfg':{'sticky':'wens',
@@ -798,7 +798,7 @@ class BlenderGUI(DatGUI):
                          'command': self.OK_cb})
 
 
-	self.idf.append({'widgetType':Tkinter.Button,
+        self.idf.append({'widgetType':tkinter.Button,
                          'text':'Cancel',
                          'wcfg':{},
                          'gridcfg':{'sticky':'wens',

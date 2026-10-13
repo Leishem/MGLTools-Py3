@@ -9,7 +9,7 @@
 ##
 import numpy
 import os, sys
-import Tkinter, tkMessageBox
+import tkinter, tkinter.messagebox
 import Pmw, ImageTk
 
 from Pmv.mvCommand import MVCommand
@@ -75,10 +75,10 @@ class BeadedRibbonsCommand(MVCommand):
 
     def onRemoveObjectFromViewer(self, mol):
         if self.master:
-            if self.molFrames.has_key(mol.name):
+            if mol.name in self.molFrames:
                 f = self.molFrames.pop(mol.name)
                 f.destroy()
-            if self.molModeVars.has_key(mol.name):
+            if mol.name in self.molModeVars:
                 self.molModeVars.pop(mol.name)
             self.hide()
 
@@ -231,7 +231,7 @@ class BeadedRibbonsCommand(MVCommand):
         for mol in nodes.top.uniq():
           if not hasattr(self.vf, 'secondarystructureset'):
             # FIXME use self.molModVars to use PROSS or file info for SS
-            if not self.molModeVars.has_key(mol.name):
+            if mol.name not in self.molModeVars:
                 if mol.parser.hasSsDataInFile():
                     mod = "From File"
                 else:
@@ -251,8 +251,8 @@ class BeadedRibbonsCommand(MVCommand):
                   if createStrandVar is False:
                       for SS in enumerate(chain.secondarystructureset):
                           if SS.__class__.__name__ == 'Strand':
-                              print SS, mol.strandVar.has_key('%s%s%s' % (mol.name, chain.id, SS.name))
-                              if not mol.strandVar.has_key('%s%s%s' % (mol.name, chain.id, SS.name)):
+                              print(SS, '%s%s%s' % (mol.name, chain.id, SS.name) in mol.strandVar)
+                              if '%s%s%s' % (mol.name, chain.id, SS.name) not in mol.strandVar:
                                   mol.strandVar = {}
                                   createStrandVar = True
                                   break
@@ -270,7 +270,7 @@ class BeadedRibbonsCommand(MVCommand):
             vi.AddObject(molMaster, parent=mol.geomContainer.geoms['master'])
 
             if not hasattr(chain, 'sheet2D') or \
-               not chain.sheet2D.has_key('beadedRibbonSheet'):
+               'beadedRibbonSheet' not in chain.sheet2D:
                 self.vf.computeSheet2D(chain, 'beadedRibbonSheet', 'CA', 'O',
                                    buildIsHelix=1, nbrib=2,
                                    nbchords=quality, width=1.0, offset=1.2,
@@ -303,7 +303,7 @@ class BeadedRibbonsCommand(MVCommand):
             # set variable used to find portions of path 3d and 2D faces
             chords = sheet.chords
             lastResIndex = len(sheet.resInSheet) - 1
-            sheet.resInSheet.resIndInSheet = range(lastResIndex + 1)
+            sheet.resInSheet.resIndInSheet = list(range(lastResIndex + 1))
             lengthPath = len(sheet.path)
 
             # set length of taper in number of points along the path
@@ -548,15 +548,15 @@ class BeadedRibbonsCommand(MVCommand):
                             a = min(polf[0][0], polf[0][-1])
                             b = max(polf[-1][0], polf[-1][-1])
                             if dbase > dend:
-                                polf31 = [ [i, i + l1, i + l1 + 1, i + 1] for i in xrange(a, b)]
+                                polf31 = [ [i, i + l1, i + l1 + 1, i + 1] for i in range(a, b)]
                             else:
-                                polf31 = [ [i, i + 1, i + l1 + 1, i + l1] for i in xrange(a, b)]
+                                polf31 = [ [i, i + 1, i + l1 + 1, i + l1] for i in range(a, b)]
                             a = min(polf[0][1], polf[0][2])
                             b = max(polf[-1][1], polf[-1][2])
                             if dbase > dend:
-                                polf32 = [ [i, i + 1, i + l1 + 1, i + l1] for i in xrange(a, b)]
+                                polf32 = [ [i, i + 1, i + l1 + 1, i + l1] for i in range(a, b)]
                             else:
-                                polf32 = [ [i, i + l1, i + l1 + 1, i + 1] for i in xrange(a, b)]
+                                polf32 = [ [i, i + l1, i + l1 + 1, i + 1] for i in range(a, b)]
                                 
                             pol3 = IndexedPolygons(
                                     SS.name + '_sides', vertices=polv3,
@@ -603,10 +603,10 @@ class BeadedRibbonsCommand(MVCommand):
                             l1 = len(polv1)
                             a = min(polf[0][0], polf[0][-1])
                             b = max(polf[-1][0], polf[-1][-1])
-                            polf31 = [ [i, i + 1, i + l1 + 1, i + l1] for i in xrange(a, b)]
+                            polf31 = [ [i, i + 1, i + l1 + 1, i + l1] for i in range(a, b)]
                             a = min(polf[0][1], polf[0][2])
                             b = max(polf[-1][1], polf[-1][2])
-                            polf32 = [ [i, i + l1, i + l1 + 1, i + 1] for i in xrange(a, b)]
+                            polf32 = [ [i, i + l1, i + l1 + 1, i + 1] for i in range(a, b)]
                                 
                             pol3 = IndexedPolygons(
                                     SS.name + '_sides', vertices=polv3,
@@ -634,7 +634,7 @@ class BeadedRibbonsCommand(MVCommand):
                     if SS.__class__.__name__ == 'Strand':
                         # create widget to flip color for strand
                         if createStrandVar:
-                            v = Tkinter.IntVar()
+                            v = tkinter.IntVar()
                             if hasattr(mol, 'strandVarValue'):
                                 v.set(mol.strandVarValue['%s%s%s' % (mol.name, chain.id, SS.name)])
                             else:
@@ -650,7 +650,7 @@ class BeadedRibbonsCommand(MVCommand):
                         if hasattr(self, 'notebook'):
                             page = self.notebook.page('Strand Edit')
                             #print 'FUGUO widget',  '%s_%s_%s'%(mol.name, chain.id, SS.name)
-                            w = Tkinter.Checkbutton(
+                            w = tkinter.Checkbutton(
                                 page, variable=v, text='%s_%s_%s' % (
                                     mol.name, chain.id, SS.name),
                                 command=cb)
@@ -808,13 +808,13 @@ class BeadedRibbonsCommand(MVCommand):
         if selection != self.lastNodes:
             lenSheets = self.doitWrapper(selection)
             if not lenSheets:
-                tkMessageBox.showwarning("Beaded Ribbons",  "Found no chain with secondary structure.")
+                tkinter.messagebox.showwarning("Beaded Ribbons",  "Found no chain with secondary structure.")
                 return
             self.lastNodes = selection
 
 
         if self.master == None:
-            self.master = Tkinter.Toplevel()
+            self.master = tkinter.Toplevel()
             self.master.protocol('WM_DELETE_WINDOW', self.hide)
             self.balloon = Pmw.Balloon(self.vf.GUI.ROOT)
             # create NoteBook widget
@@ -828,7 +828,7 @@ class BeadedRibbonsCommand(MVCommand):
             # add widgets to "General" page:
 
             # frame containing quality and taper length thumbwheels
-            self.frame1 = frame1 = Tkinter.Frame(general, bd=2, relief='groove',)
+            self.frame1 = frame1 = tkinter.Frame(general, bd=2, relief='groove',)
             frame1.pack(expand=1, fill='both', side='top')
             
             self.qualityw = qualityw = ThumbWheel(frame1,
@@ -877,7 +877,7 @@ class BeadedRibbonsCommand(MVCommand):
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
             cb = CallbackFunction(self.setColor, "coilColor", 'Coil Color')
-            b = Tkinter.Button(parent, command=cb, image=photo)
+            b = tkinter.Button(parent, command=cb, image=photo)
             b.photo = photo
             b.grid(row=0, column=1, sticky='w')
             
@@ -895,7 +895,7 @@ class BeadedRibbonsCommand(MVCommand):
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
             cb = CallbackFunction(self.setColor, "turnColor", "Turn color")
-            b = Tkinter.Button(parent, command=cb, image=photo)
+            b = tkinter.Button(parent, command=cb, image=photo)
             b.photo = photo
             b.grid(row=0, column=1, sticky='w')
 
@@ -906,7 +906,7 @@ class BeadedRibbonsCommand(MVCommand):
             # add widgets to "Helix" page:
             
             # frame containing width thumbwheel , front/back faces colors
-            frame2 = Tkinter.Frame(helix)
+            frame2 = tkinter.Frame(helix)
             frame2.pack(side='top', anchor='nw', fill='both')#, expand=1)
             
             self.helixWidthw = ThumbWheel(frame2,
@@ -916,33 +916,33 @@ class BeadedRibbonsCommand(MVCommand):
             self.helixWidthw.grid(row=0, column=0, sticky='nw')
             
             # helix color icons: 
-            lab1 = Tkinter.Label(frame2, text="Outside:", anchor="w",
-                                 justify=Tkinter.LEFT)
+            lab1 = tkinter.Label(frame2, text="Outside:", anchor="w",
+                                 justify=tkinter.LEFT)
             lab1.grid(row=0, column=2, sticky='nw')
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
             cb = CallbackFunction(self.setColor, "helixColor1",
                                   'Helix Outside Color')
-            b = Tkinter.Button(frame2, command=cb, image=photo)
+            b = tkinter.Button(frame2, command=cb, image=photo)
             b.photo = photo
             b.grid(row=0, column=3, sticky='nw')
 
-            lab2 = Tkinter.Label(frame2, text="inside:", anchor="w",
-                                 justify=Tkinter.LEFT)
+            lab2 = tkinter.Label(frame2, text="inside:", anchor="w",
+                                 justify=tkinter.LEFT)
             lab2.grid(row=0, column=4, sticky='nw')
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
             cb = CallbackFunction(self.setColor, "helixColor2",
                                   'Helix Inside Color')
-            b = Tkinter.Button(frame2, command=cb, image=photo)
+            b = tkinter.Button(frame2, command=cb, image=photo)
             b.photo = photo
             b.grid(row=0, column=5, sticky='nw')
                                   
             # Beads group:
-            self.helixBeadedvar = Tkinter.IntVar()
+            self.helixBeadedvar = tkinter.IntVar()
             self.helixBeadedvar.set(1)
             self.helixBeadsGroup = w = Pmw.Group(helix, tag_text='Beads',
-                                  tag_pyclass=Tkinter.Checkbutton,
+                                  tag_pyclass=tkinter.Checkbutton,
                                   tag_variable=self.helixBeadedvar,
                                   collapsedsize=2,
                                   tag_command=self.helixBeaded_cb) 
@@ -962,7 +962,7 @@ class BeadedRibbonsCommand(MVCommand):
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
             cb = CallbackFunction(self.setColor, "helixBeadColor1",
                                   'Helix Bead Color1')
-            b = Tkinter.Button(parent, command=cb, image=photo)
+            b = tkinter.Button(parent, command=cb, image=photo)
             b.photo = photo
             b.grid(row=0, column=2, sticky='w')
 
@@ -973,15 +973,15 @@ class BeadedRibbonsCommand(MVCommand):
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
             cb = CallbackFunction(self.setColor, "helixBeadColor2",
                                   'Helix Bead Color2')
-            b = Tkinter.Button(parent, command=cb, image=photo)
+            b = tkinter.Button(parent, command=cb, image=photo)
             b.photo = photo
             b.grid(row=0, column=3, sticky='w')
 
             # Thick group
-            self.helixThickvar = Tkinter.IntVar()
+            self.helixThickvar = tkinter.IntVar()
             self.helixThickvar.set(1)
             self.helixThickGroup = w = Pmw.Group(helix, tag_text='Thickness',
-                                  tag_pyclass=Tkinter.Checkbutton,
+                                  tag_pyclass=tkinter.Checkbutton,
                                   tag_variable=self.helixThickvar,
                                   tag_command=self.helixThick_cb) #self.rebuild ) 
             parent = w.interior()
@@ -999,7 +999,7 @@ class BeadedRibbonsCommand(MVCommand):
             sheet = notebook.add("Sheet")
             # add widgets to "Sheet" page
             # frame containing width thumbwheel, BodyStartScale thumbwheel and inside/outside colors: 
-            frame3 = Tkinter.Frame(sheet)
+            frame3 = tkinter.Frame(sheet)
             frame3.pack(side='top', anchor='nw', fill='both', expand=1)
             
             self.sheetBodyStartScalew = ThumbWheel(frame3,
@@ -1021,7 +1021,7 @@ class BeadedRibbonsCommand(MVCommand):
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
             cb = CallbackFunction(self.setColor, "sheetColor1",
                                   'Sheet Color 1')
-            b = Tkinter.Button(frame3, command=cb, image=photo)
+            b = tkinter.Button(frame3, command=cb, image=photo)
             b.photo = photo
             b.grid(row=0, column=4, sticky='nw')
 
@@ -1032,18 +1032,18 @@ class BeadedRibbonsCommand(MVCommand):
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
             cb = CallbackFunction(self.setColor, "sheetColor2",
                                   'Sheet Color 2')
-            b = Tkinter.Button(frame3, command=cb, image=photo)
+            b = tkinter.Button(frame3, command=cb, image=photo)
             b.photo = photo
             b.grid(row=0, column=5, sticky='nw')
             # frame containing Beads and Thick groups
-            frame4 = Tkinter.Frame(sheet)
+            frame4 = tkinter.Frame(sheet)
             frame4.pack(side='top', anchor='nw', fill='both', expand=1)
             
             # Beads group:            
-            self.sheetBeadedvar = Tkinter.IntVar()
+            self.sheetBeadedvar = tkinter.IntVar()
             self.sheetBeadedvar.set(1)
             self.sheetBeadGroup = w = Pmw.Group(frame4, tag_text='Beads',
-                                  tag_pyclass=Tkinter.Checkbutton,
+                                  tag_pyclass=tkinter.Checkbutton,
                                   tag_variable=self.sheetBeadedvar,
                                   tag_command=self.sheetBeaded_cb)#self.rebuild ) 
             parent = w.interior()
@@ -1062,7 +1062,7 @@ class BeadedRibbonsCommand(MVCommand):
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
             cb = CallbackFunction(self.setColor, "sheetBeadColor1",
                                   'Sheet Bead Color 1')
-            b = Tkinter.Button(parent, command=cb, image=photo)
+            b = tkinter.Button(parent, command=cb, image=photo)
             b.photo = photo
             b.grid(row=0, column=1, sticky='w')
 
@@ -1073,15 +1073,15 @@ class BeadedRibbonsCommand(MVCommand):
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
             cb = CallbackFunction(self.setColor, "sheetBeadColor2",
                                   'Sheet Bead Color 2')                     
-            b = Tkinter.Button(parent, command=cb, image=photo)
+            b = tkinter.Button(parent, command=cb, image=photo)
             b.photo = photo
             b.grid(row=0, column=2, sticky='w')
 
             # Thick group
-            self.sheetThickvar = Tkinter.IntVar()
+            self.sheetThickvar = tkinter.IntVar()
             self.sheetThickvar.set(1)
             self.sheetThickGroup = w = Pmw.Group(frame4, tag_text='Thickness',
-                                  tag_pyclass=Tkinter.Checkbutton,
+                                  tag_pyclass=tkinter.Checkbutton,
                                   tag_variable=self.sheetThickvar,
                                   tag_command=self.sheetThick_cb) 
             parent = w.interior()
@@ -1095,10 +1095,10 @@ class BeadedRibbonsCommand(MVCommand):
             self.sheetThicknessw.grid(row=0, column=0, sticky='w')
 
             #ArrowHead Group:
-            self.sheetArrowheadvar = Tkinter.IntVar()
+            self.sheetArrowheadvar = tkinter.IntVar()
             self.sheetArrowheadvar.set(1)
             self.sheetArrowheadGroup = w = Pmw.Group(sheet, tag_text='Arrowhead',
-                                  tag_pyclass=Tkinter.Checkbutton,
+                                  tag_pyclass=tkinter.Checkbutton,
                                   tag_variable=self.sheetArrowheadvar,
                                   tag_command=self.sheetArrowhead_cb) 
             parent = w.interior()
@@ -1131,17 +1131,17 @@ class BeadedRibbonsCommand(MVCommand):
         self.master.withdraw()
 
     def addFileProssRadioButtons(self, molname):
-        f = Tkinter.Frame(self.frame1)
-        v = Tkinter.StringVar()
+        f = tkinter.Frame(self.frame1)
+        v = tkinter.StringVar()
         v.set("From File")
-        l = Tkinter.Label(f, text="%s: " % molname)
+        l = tkinter.Label(f, text="%s: " % molname)
         l.grid(row=0, column=0, sticky='w')
-        r1 = Tkinter.Radiobutton(f, text="From File", variable=v,
+        r1 = tkinter.Radiobutton(f, text="From File", variable=v,
                                  value="From File", # indicatoron=0,
                                  command=self.filePross_cb)
         r1.grid(row=0, column=1, sticky='w')
         self.balloon.bind(r1, "get the information from the file")
-        r2 = Tkinter.Radiobutton(f, text="From PROSS", variable=v,
+        r2 = tkinter.Radiobutton(f, text="From PROSS", variable=v,
                                  value="From Pross", #indicatoron=0,
                                  command=self.filePross_cb)
         r2.grid(row=0, column=2, sticky='w')
@@ -1302,7 +1302,7 @@ class DisplayBeadedRibbonsCommand(DisplayCommand):
         kw['negate'] = negate
 
         self.vf.beadedRibbons.clearStrandVar()
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def setVisible(self, obj, value):
@@ -1328,7 +1328,7 @@ class UndisplayBeadedRibbonsCommand(DisplayCommand):
     """
     
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('displayBeadedRibbons'):
+        if 'displayBeadedRibbons' not in self.vf.commands:
             self.vf.loadCommand('beadedRibbonsCommands',
                                 ['displayBeadedRibbons'], 'Pmv',
                                 topCommand=0)
@@ -1343,7 +1343,7 @@ class UndisplayBeadedRibbonsCommand(DisplayCommand):
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return
         kw['negate'] = 1
-        apply(self.vf.displayBeadedRibbons, (nodes,), kw)
+        self.vf.displayBeadedRibbons(*(nodes,), **kw)
 
 
 displayBeadedRibbonsGuiDescr = {'widgetType':'Menu', 'menuBarName':'menuRoot',

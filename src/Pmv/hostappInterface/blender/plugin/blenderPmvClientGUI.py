@@ -160,103 +160,103 @@ gnameString = ["none","coarseMolSurface","MSMS-MOL","cpk","sticks","secstruc"]
 mols=self.Mols.full_name().split(',')
 tmp="Mols %t|"
 for i in range(len(mols)) :
-	tmp+=mols[i]+'%x'+str(i)+'|'
+        tmp+=mols[i]+'%x'+str(i)+'|'
 name = tmp[:-1]
 
 def getName():
-	mols=self.Mols.full_name().split(',')
-	tmp="Mols %t|"
-	for i in range(len(mols)) :
-		tmp+=mols[i]+'%x'+str(i)+'|'
-	name = tmp[:-1]
-	return name
+        mols=self.Mols.full_name().split(',')
+        tmp="Mols %t|"
+        for i in range(len(mols)) :
+                tmp+=mols[i]+'%x'+str(i)+'|'
+        name = tmp[:-1]
+        return name
 
 def applyArmature():
-	print "applyArmature to:"
-	molList=self.Mols.full_name().split(',')
-	print molList[Shapepreset.val-1]
-	molName=molList[Shapepreset.val-1]
-	mol=self.getMolFromName(molName)
-	print mol
-	string=stringName.val
-	if string != "" : 
-	    select=self.select(string,negate=False, only=True, xor=False, log=0, intersect=False)
-	else : 
-	    select=mol
-	sel=select.findType(Atom)
-	state=string.split(":")	
-	#print len(atoms)
-	if len(state) < 4 or state[3] == 'CA' : 
-		    atoms=sel.get("CA")
-	elif len(state[3]) == 1 :
-		    atoms=sel.get(state[3])
-	else : 
-		    print atoms.bonds
-		    print atoms
-		    print "didnt find the solution yet!"
-		    #atoms=sel#.get(state[3])
-		    atoms.sort()			
-	armObj=armature("Armature_obj",atoms,sc)
-	print """* select the model, then shift select the rig
+        print "applyArmature to:"
+        molList=self.Mols.full_name().split(',')
+        print molList[Shapepreset.val-1]
+        molName=molList[Shapepreset.val-1]
+        mol=self.getMolFromName(molName)
+        print mol
+        string=stringName.val
+        if string != "" : 
+            select=self.select(string,negate=False, only=True, xor=False, log=0, intersect=False)
+        else : 
+            select=mol
+        sel=select.findType(Atom)
+        state=string.split(":")	
+        #print len(atoms)
+        if len(state) < 4 or state[3] == 'CA' : 
+                    atoms=sel.get("CA")
+        elif len(state[3]) == 1 :
+                    atoms=sel.get(state[3])
+        else : 
+                    print atoms.bonds
+                    print atoms
+                    print "didnt find the solution yet!"
+                    #atoms=sel#.get(state[3])
+                    atoms.sort()			
+        armObj=armature("Armature_obj",atoms,sc)
+        print """* select the model, then shift select the rig
 * press "control + P", to parent the rig to the model
 * choose "Armature" from the pop up
 * choose "Create from Bone Heat" from the next pop up
 * play with your new rigged model
 """
-	"""gname=gnameString[Geompreset.val-1]
-	print "skin :"
-	print gname
-	if gname == "secstruc" : 
-		for n,g in mol.geomContainer.geoms.items():
-			if n[:4] in ['Heli', 'Shee', 'Coil', 'Turn', 'Stra']:
-				obj=mol.geomContainer.geoms[n].obj
-				print obj
-				add_armature(self.armObj,obj)
-	elif gname == "none" : pass
-	else : 
-		obj=mol.geomContainer.geoms[gname].obj
-		add_armature(self.armObj,obj)
-		print obj
-	"""
+        """gname=gnameString[Geompreset.val-1]
+        print "skin :"
+        print gname
+        if gname == "secstruc" : 
+                for n,g in mol.geomContainer.geoms.items():
+                        if n[:4] in ['Heli', 'Shee', 'Coil', 'Turn', 'Stra']:
+                                obj=mol.geomContainer.geoms[n].obj
+                                print obj
+                                add_armature(self.armObj,obj)
+        elif gname == "none" : pass
+        else : 
+                obj=mol.geomContainer.geoms[gname].obj
+                add_armature(self.armObj,obj)
+                print obj
+        """
 def draw_gui():
         global host,port,Shapepreset,Geompreset,mesh,molname,stringName
-	mols=self.Mols.full_name().split(',')
-	tmp="Mols %t|"
-	for i in range(len(mols)) :
-		tmp+=mols[i]+'%x'+str(i)+'|'
-	name = tmp[:-1]
-	#print name
-	#Draw.Toggle("Armature", EV_TG_ARMATURE, 5, line[1], 60, 25,ARMATURE, "Armature")
-	BGL.glRasterPos2i(5,line[8])
-	Draw.Text("Options:")
-	Draw.Toggle("Join geometry", EV_TG_JOIN, 5, line[7], 60, 25,JOIN, "Join")
+        mols=self.Mols.full_name().split(',')
+        tmp="Mols %t|"
+        for i in range(len(mols)) :
+                tmp+=mols[i]+'%x'+str(i)+'|'
+        name = tmp[:-1]
+        #print name
+        #Draw.Toggle("Armature", EV_TG_ARMATURE, 5, line[1], 60, 25,ARMATURE, "Armature")
+        BGL.glRasterPos2i(5,line[8])
+        Draw.Text("Options:")
+        Draw.Toggle("Join geometry", EV_TG_JOIN, 5, line[7], 60, 25,JOIN, "Join")
 
-	Draw.PushButton("Delete Mol", EV_TG_DEL, 5, line[6], 90, 25, "DeleteMol")
-	Shapepreset=Draw.Menu(name,EV_ME_MOL, 100, line[6], 90, 25, Shapepreset.val,'ON')
+        Draw.PushButton("Delete Mol", EV_TG_DEL, 5, line[6], 90, 25, "DeleteMol")
+        Shapepreset=Draw.Menu(name,EV_ME_MOL, 100, line[6], 90, 25, Shapepreset.val,'ON')
 
-	Draw.PushButton("Add Armature", EV_TG_ARMATURE, 5, line[5], 90, 25, "Armature")
-	Shapepreset=Draw.Menu(name,EV_ME_MOL, 100, line[5], 90, 25, Shapepreset.val,'ON')
+        Draw.PushButton("Add Armature", EV_TG_ARMATURE, 5, line[5], 90, 25, "Armature")
+        Shapepreset=Draw.Menu(name,EV_ME_MOL, 100, line[5], 90, 25, Shapepreset.val,'ON')
 
-	#gname = "Geoms %t|none %x1|MSMS-MOL %x2	|cpk %x3|sticks %x4|secstruc %x5|coarseSurf %x6"
-	#Geompreset=Draw.Menu(gname,EV_ME_GEO, 195, line[5], 90, 25, Geompreset.val,'ON')
+        #gname = "Geoms %t|none %x1|MSMS-MOL %x2	|cpk %x3|sticks %x4|secstruc %x5|coarseSurf %x6"
+        #Geompreset=Draw.Menu(gname,EV_ME_GEO, 195, line[5], 90, 25, Geompreset.val,'ON')
 
-	stringName = Draw.String("sel:", EV_ST_PDBNAME, 220, line[5], 235, 25,stringName.val, 100,"selection level")
+        stringName = Draw.String("sel:", EV_ST_PDBNAME, 220, line[5], 235, 25,stringName.val, 100,"selection level")
 
-	BGL.glRasterPos2i(5,line[4])
-	Draw.Text("Send Mesh to Server:")
-	mesh = Draw.String("Mesh: ", EV_TX_SEND1, 5, line[3], 90, 25,mesh.val, 32, "Mesh")
-	#molname= Draw.String("Mol: ", EV_TX_SEND2, 100, line[3], 90, 25,molname.val, 32, "Mol")
-	Shapepreset=Draw.Menu(name,EV_ME_MOL, 100, line[3], 90, 25, Shapepreset.val,'ON')
-	Draw.PushButton("SendToServer", EV_BT_SEND, 195, line[3], 90, 25, "SendGeom")
+        BGL.glRasterPos2i(5,line[4])
+        Draw.Text("Send Mesh to Server:")
+        mesh = Draw.String("Mesh: ", EV_TX_SEND1, 5, line[3], 90, 25,mesh.val, 32, "Mesh")
+        #molname= Draw.String("Mol: ", EV_TX_SEND2, 100, line[3], 90, 25,molname.val, 32, "Mol")
+        Shapepreset=Draw.Menu(name,EV_ME_MOL, 100, line[3], 90, 25, Shapepreset.val,'ON')
+        Draw.PushButton("SendToServer", EV_BT_SEND, 195, line[3], 90, 25, "SendGeom")
 
-	BGL.glRasterPos2i(5,line[2])
-	Draw.Text("Server:")
-	host = Draw.String("Host: ", EV_BT_HOST1, 5, line[1], 90, 25,host.val, 32, "Name")
-	port = Draw.String("Port: ", EV_BT_HOST2, 100, line[1], 90, 25,port.val, 32, "Portid")
+        BGL.glRasterPos2i(5,line[2])
+        Draw.Text("Server:")
+        host = Draw.String("Host: ", EV_BT_HOST1, 5, line[1], 90, 25,host.val, 32, "Name")
+        port = Draw.String("Port: ", EV_BT_HOST2, 100, line[1], 90, 25,port.val, 32, "Portid")
 
-	Draw.PushButton("StartCom", EV_BT_OK, 5, line[0], 90, 25, "StartThread")
-	Draw.PushButton("StopCom", EV_BT_CANCEL, 100, line[0], 90, 25, "StopThread")
-	Draw.PushButton("Refresh", EV_BT_REFRESH, 195, line[0], 90, 25, "Refresh")
+        Draw.PushButton("StartCom", EV_BT_OK, 5, line[0], 90, 25, "StartThread")
+        Draw.PushButton("StopCom", EV_BT_CANCEL, 100, line[0], 90, 25, "StopThread")
+        Draw.PushButton("Refresh", EV_BT_REFRESH, 195, line[0], 90, 25, "Refresh")
 
 def event(event, val) :
     if event == Draw.ESCKEY or event == Draw.QKEY:
@@ -264,50 +264,50 @@ def event(event, val) :
        if stop == 1:
               Draw.Exit()
     #elif event == Draw.REDRAW :
-	#print "Redraw"
-       	#getName()
-	#Draw.Redraw(1)
+        #print "Redraw"
+        #getName()
+        #Draw.Redraw(1)
 
 def button_event(evt) :
-	global name,SURF,VDW,BKBONE,ARMATURE,CAT,TUBE,BSTICK,SS,COLOR1,COLOR2,JOIN
-	if evt==EV_BT_OK:
-		self.hostApp.setServer(host.val,eval(port.val))
-		self.hostApp.start()
-	elif evt==EV_BT_HOST1 or evt==EV_BT_HOST2:
-		self.hostApp.setServer(host.val,eval(port.val))
-	elif evt==EV_BT_CANCEL:
-		self.hostApp.stop()
-	elif evt==EV_TG_ARMATURE:
-		#ARMATURE = 1 - ARMATURE
-		applyArmature()
-	elif evt==EV_BT_REFRESH:
-		name = getName()
-		self.runServerCommands()
-		#print name
-		update_Registry()
-		Draw.Redraw()
-		Draw.Redraw(1)
-	elif evt==EV_TG_JOIN:
-		JOIN = 1 - JOIN
-		self.hostApp.driver.SetJoins(JOIN)
-	elif evt==EV_TG_DEL:
-		molList=self.Mols.full_name().split(',')
-		print molList[Shapepreset.val-1]
-		molName=molList[Shapepreset.val-1]
-		mol=self.getMolFromName(molName)
-		#self.deleteMol(mol,log=1)
-	elif evt==EV_BT_SEND:
-		molList=self.Mols.full_name().split(',')
-		print molList[Shapepreset.val-1]
-		molName=molList[Shapepreset.val-1]
-		me=Blender.Mesh.Get(mesh.val)
-		print me
-		#if molName != '' :
-		#	print molName
-		#	msg=prepareMesh2Pmv(me,molname=molName)
-		#else :  msg=prepareMesh2Pmv(me)
-		msg=prepareMesh2Pmv(me)
-		self.socketComm.sendToClients(msg)
+        global name,SURF,VDW,BKBONE,ARMATURE,CAT,TUBE,BSTICK,SS,COLOR1,COLOR2,JOIN
+        if evt==EV_BT_OK:
+                self.hostApp.setServer(host.val,eval(port.val))
+                self.hostApp.start()
+        elif evt==EV_BT_HOST1 or evt==EV_BT_HOST2:
+                self.hostApp.setServer(host.val,eval(port.val))
+        elif evt==EV_BT_CANCEL:
+                self.hostApp.stop()
+        elif evt==EV_TG_ARMATURE:
+                #ARMATURE = 1 - ARMATURE
+                applyArmature()
+        elif evt==EV_BT_REFRESH:
+                name = getName()
+                self.runServerCommands()
+                #print name
+                update_Registry()
+                Draw.Redraw()
+                Draw.Redraw(1)
+        elif evt==EV_TG_JOIN:
+                JOIN = 1 - JOIN
+                self.hostApp.driver.SetJoins(JOIN)
+        elif evt==EV_TG_DEL:
+                molList=self.Mols.full_name().split(',')
+                print molList[Shapepreset.val-1]
+                molName=molList[Shapepreset.val-1]
+                mol=self.getMolFromName(molName)
+                #self.deleteMol(mol,log=1)
+        elif evt==EV_BT_SEND:
+                molList=self.Mols.full_name().split(',')
+                print molList[Shapepreset.val-1]
+                molName=molList[Shapepreset.val-1]
+                me=Blender.Mesh.Get(mesh.val)
+                print me
+                #if molName != '' :
+                #	print molName
+                #	msg=prepareMesh2Pmv(me,molname=molName)
+                #else :  msg=prepareMesh2Pmv(me)
+                msg=prepareMesh2Pmv(me)
+                self.socketComm.sendToClients(msg)
 
 #print "draw.register"		
 Draw.Register(draw_gui, event, button_event)

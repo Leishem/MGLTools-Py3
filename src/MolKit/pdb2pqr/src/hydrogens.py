@@ -1,11 +1,11 @@
 import os
-import string
+from mglcompat import pystring as string
 import math
 
-from definitions import *
-from utilities import *
-from quatfit import *
-from routines import *
+from .definitions import *
+from .utilities import *
+from .quatfit import *
+from .routines import *
 
 __date__ = "16 May 2006"
 __author__ = "Todd Dolinsky, Jens Erik Nielsen"
@@ -55,7 +55,7 @@ class HydrogenHandler(sax.ContentHandler):
         if name == "class": # Complete Residue object
             obj = self.curholder
             if not isinstance(obj, OptimizationHolder):
-                raise ValueError, "Internal error parsing XML!"
+                raise ValueError("Internal error parsing XML!")
           
             self.map[obj.name] = obj
             self.curholder = None
@@ -65,10 +65,10 @@ class HydrogenHandler(sax.ContentHandler):
         elif name == "atom": # Complete atom object
             atom = self.curatom
             if not isinstance(atom, DefinitionAtom):
-                raise ValueError, "Internal error parsing XML!"
+                raise ValueError("Internal error parsing XML!")
             atomname = atom.name
             if atomname == "":
-                raise ValueError, "Atom name not set in XML!"
+                raise ValueError("Atom name not set in XML!")
             else:
                 self.curholder.map[atomname] = atom
                 self.curatom = None
@@ -146,7 +146,7 @@ class Optimize:
         """
             Easy way to turn on/off debugging
         """
-        if HDEBUG: print txt
+        if HDEBUG: print(txt)
 
     def getHbondangle(self, atom1, atom2, atom3):
         """
@@ -741,7 +741,7 @@ class Flip(Optimize):
 
         anglenum = residue.reference.dihedrals.index(dihedral)
         if anglenum == -1:
-            raise ValueError, "Unable to find dihedral angle!"
+            raise ValueError("Unable to find dihedral angle!")
 
         newangle = 180.0 + residue.dihedrals[anglenum]
         self.routines.setDihedralAngle(residue, anglenum, newangle) 
@@ -956,7 +956,7 @@ class Alcoholic(Optimize):
         self.atomlist = []
         self.hbonds = []
 
-        name = optinstance.map.keys()[0]
+        name = list(optinstance.map.keys())[0]
         self.hname = name
         
         bondname = residue.reference.getAtom(name).bonds[0]
@@ -1184,7 +1184,7 @@ class Water(Optimize):
 
         oxatom = residue.getAtom("O")
         if oxatom == None:
-            raise ValueError, "Unable to find oxygen atom in %s!" % residue
+            raise ValueError("Unable to find oxygen atom in %s!" % residue)
 
         oxatom.hdonor = 1
         oxatom.hacceptor = 1
@@ -1500,7 +1500,7 @@ class Carboxylic(Optimize):
 
         hname2 = ""
         hname = ""
-        for name in optinstance.map.keys():
+        for name in list(optinstance.map.keys()):
             if residue.hasAtom(name): hname2 = name
             else: hname = name
         bondatom1 = residue.getAtom(optinstance.map[hname].bond)
@@ -1550,7 +1550,7 @@ class Carboxylic(Optimize):
 
         anglenum = residue.reference.dihedrals.index(di)
         if anglenum == -1:
-            raise ValueError, "Unable to find dihedral angle!"
+            raise ValueError("Unable to find dihedral angle!")
 
         newangle = 180.0 + residue.dihedrals[anglenum]
         self.routines.setDihedralAngle(residue, anglenum, newangle) 
@@ -1590,7 +1590,7 @@ class Carboxylic(Optimize):
 
         anglenum = residue.reference.dihedrals.index(optinstance.optangle)
         if anglenum == -1:
-            raise ValueError, "Unable to find dihedral angle!"
+            raise ValueError("Unable to find dihedral angle!")
 
         newangle = 180.0 + residue.dihedrals[anglenum]
         self.routines.setDihedralAngle(residue, anglenum, newangle)
@@ -1884,7 +1884,7 @@ class hydrogenRoutines:
 
         defpath = getDatFile(HYDPATH)
         if defpath == "":
-            raise ValueError, "Could not find %s!" % HYDPATH 
+            raise ValueError("Could not find %s!" % HYDPATH) 
      
         file = open(defpath)
         sax.parseString(file.read(), handler)
@@ -1899,7 +1899,7 @@ class hydrogenRoutines:
             Parameters
                 text:  The text to output (string)
         """
-        if HDEBUG: print text  
+        if HDEBUG: print(text)  
 
     def isOptimizeable(self, residue):
         """
@@ -1936,7 +1936,7 @@ class hydrogenRoutines:
 
         if optinstance != None:
             if optinstance.opttype == "Alcoholic":
-                atomname = optinstance.map.keys()[0]
+                atomname = list(optinstance.map.keys())[0]
                 if not residue.reference.hasAtom(atomname):
                     optinstance = None
                    

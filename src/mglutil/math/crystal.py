@@ -1,6 +1,6 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import numpy.oldnumeric as Numeric, types
+import mglcompat.oldnumeric as Numeric, types
 
 def EulerAnglesToMat( angles ):
     """Builds a rotation matrix from Euler angles given in degrees"""
@@ -34,9 +34,9 @@ class Crystal:
 
         self.ctof = None # transpose of Xformation to go from cart. to fract.
         self.ftoc = None # transpose of Xformation to go from fract. to cart.
-        assert len(length)==3 and type(length[0])==types.FloatType
+        assert len(length)==3 and type(length[0])==float
         self.length = length
-        assert len(angles)==3 and type(angles[0])==types.FloatType
+        assert len(angles)==3 and type(angles[0])==float
         self.angles = angles
         self.ctof = self._orthog( self.length, self.angles) # build ctof
         self.ftoc = self._uinv( Numeric.transpose(self.ctof) ) # build ftoc
@@ -153,7 +153,7 @@ class Crystal:
         """Apply rotation to the coordinates. Rotation can be a 3x3 matrix or
         3 Euler angles"""
 
-        if isinstance(rot[0], types.FloatType):
+        if isinstance(rot[0], float):
             rot = EulerAnglesToMat(rot)
         return Numeric.dot(coords, Numeric.transpose(rot)) 
 

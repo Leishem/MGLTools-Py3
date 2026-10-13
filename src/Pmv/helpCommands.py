@@ -16,7 +16,7 @@ Module implementing classes to provide documentation on the application
 #
 
 
-import Tkinter, Pmw,re, os
+import tkinter, Pmw,re, os
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser, \
      kbScrolledListBox
@@ -24,7 +24,7 @@ from ViewerFramework.VFCommand import Command,CommandGUI
 from string import join
 global commandslist
 import webbrowser,os,sys
-from Tkinter import *
+from tkinter import *
 from types import StringType
 import pickle
 from mglutil.util.packageFilePath import getResourceFolder
@@ -87,7 +87,7 @@ class mailingListsCommand(Command):
             return "ERROR: Invalid page name"
         if pack not in ["Pmv","Vision"]: 
             return "ERROR: Invalid pack name"
-        apply(self.doitWrapper,(pack,page,),{})
+        self.doitWrapper(*(pack,page,), **{})
         
     def buildFormDescr(self, formName):
         
@@ -119,7 +119,7 @@ class mailingListsCommand(Command):
                             },
                     'gridcfg':{'sticky':'wesn','columnspan':1}})
         idf.append({'name':'dismiss',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'DISMISS',
                             'command':self.dismiss_cb,
                             },
@@ -151,13 +151,13 @@ class mailingListsCommand(Command):
             if CmdName1[0] == 'Login Page':
                 page = "Login Page"
                 pack ="Pmv"
-                apply( self.doitWrapper,(pack, page,),{})
+                self.doitWrapper(*(pack, page,), **{})
         
             if CmdName1[0] == 'Archive Page':
          
                 page = "Archive Page"
                 pack ="Pmv"
-                apply( self.doitWrapper,(pack, page,),{})
+                self.doitWrapper(*(pack, page,), **{})
             CmdName1 =() 
             
         if  len(CmdName2) != 0:
@@ -165,12 +165,12 @@ class mailingListsCommand(Command):
             if CmdName2[0] == 'Login Page':
                 page = "Login Page"
                 pack = "Vision"
-                apply( self.doitWrapper,(pack, page,),{})
+                self.doitWrapper(*(pack, page,), **{})
          
             if CmdName2[0] == 'Archive Page':
                 page = "Archive Page"
                 pack = "Vision"
-                apply( self.doitWrapper,(pack, page,),{})
+                self.doitWrapper(*(pack, page,), **{})
             CmdName2 =()
 mailingListsCommandGUI = CommandGUI()
 mailingListsCommandGUI.addMenuCommand('menuRoot', 'Help',
@@ -192,7 +192,7 @@ class orderModelsCommand(Command):
     
 orderModelsGUI = CommandGUI()
 msg = 'Opens http://models.scripps.edu\n 3D Molecular Model Printing Service.'
-from moleculeViewer import ICONPATH
+from .moleculeViewer import ICONPATH
 orderModelsGUI.addToolBar('orderModels', icon1='handmolecule.gif',
                           balloonhelp=msg, index=14.,
                           type = 'ToolBarButton', icon_dir=ICONPATH)
@@ -211,7 +211,7 @@ class BugReportCommand(Command):
         self.show_upload_page()    
             
     def __call__(self):
-        apply(self.doitWrapper,(),{})
+        self.doitWrapper(*(), **{})
     
     
     def buildFormDescr(self, formName):
@@ -219,13 +219,13 @@ class BugReportCommand(Command):
         if not formName == 'BugReport': 
             return
         
-        email = Tkinter.StringVar()
+        email = tkinter.StringVar()
         try:#get email from .registration
             old_rc = getResourceFolder()
             regfile = os.path.join(old_rc, ".registration")
             if os.path.exists(regfile):
                 form_dict =  pickle.load(open(regfile, 'rb'))
-                if form_dict.has_key("Email"):
+                if "Email" in form_dict:
                     email.set(form_dict['Email'])                
         except:
             pass
@@ -237,7 +237,7 @@ class BugReportCommand(Command):
         
        
         idf.append({'name':'shortdesclabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Summary (one line description)',
                                },
                         'gridcfg':{'sticky':'nw','columnspan':3}})
@@ -254,7 +254,7 @@ class BugReportCommand(Command):
                     'wcfg':{},
                     'gridcfg':{'sticky':'wesn', 'columnspan':3}})
         idf.append({'name':'desclabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'Description',
                                },
                         'gridcfg':{'sticky':'nw','columnspan':3}})
@@ -277,7 +277,7 @@ other information that would help us in fixing this bug.""",
                         
                        # 'labelpos':'n',
                         'container':{'PMVLOGGROUP':"w.interior()"},
-                        'wcfg':{'tag_text':'Check to attach Pmv Log','tag_pyclass':Tkinter.Checkbutton,'tag_variable':Tkinter.IntVar(),'tag_command':self.showpmvlog_cb},
+                        'wcfg':{'tag_text':'Check to attach Pmv Log','tag_pyclass':tkinter.Checkbutton,'tag_variable':tkinter.IntVar(),'tag_command':self.showpmvlog_cb},
                         'collapsedsize':0,
                         'gridcfg':{'sticky':'wnse', 'columnspan':3}})
         idf.append({'name':'pmvlogtext',
@@ -304,7 +304,7 @@ other information that would help us in fixing this bug.""",
                     })
         
         idf.append({'name':'DeleteSelected',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'defaultValue':0,
                     'parent':'PDBFILEGROUP',
                     'wcfg':{'text':'Delete Selected Files',
@@ -314,7 +314,7 @@ other information that would help us in fixing this bug.""",
                                },
                         'gridcfg':{'sticky':'nw','row':2,'column':0,'columnspan':2}})
         idf.append({'name':'AttachMore',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'defaultValue':0,
                     'parent':'PDBFILEGROUP',
                     'wcfg':{'text':'Attach File ..',
@@ -323,20 +323,20 @@ other information that would help us in fixing this bug.""",
                                },
                         'gridcfg':{'sticky':'ne','row':2,'column':1,'columnspan':2,}})
         idf.append({'name':'emailentrylab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     
                     'wcfg':{'text':"Email Address (optional). Used to notify important updates about this bug.\n"+
                             "Please register your email at http://mgldev.scripps.edu/bugs before using this form."
                             },
                     'gridcfg':{'sticky':'nw', 'columnspan':3}})
         idf.append({'name':'emailentry',
-                    'widgetType':Tkinter.Entry,
+                    'widgetType':tkinter.Entry,
                     
                     'wcfg':{'textvariable':email
                             },
                     'gridcfg':{'sticky':'wesn', 'columnspan':3}})
         idf.append({'name':'uploadbutton',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'defaultValue':0,
                     'wcfg':{'text':'Submit Bug Report',
                               'width':37, 
@@ -344,7 +344,7 @@ other information that would help us in fixing this bug.""",
                                },
                         'gridcfg':{'sticky':'nw','columnspan':2,'row':9,'column':0,}})
         idf.append({'name':'dismiss',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'DISMISS',
                             'width':38,
                             'command':self.dismiss_cb,
@@ -464,7 +464,7 @@ other information that would help us in fixing this bug.""",
          
         sumcont = VarDict['shortdesc_text']
         
-        if VarDict.has_key('pmvlog') and len(VarDict['pmvlog'])>0:
+        if 'pmvlog' in VarDict and len(VarDict['pmvlog'])>0:
             
             fulldesc = VarDict['desc_text']+"\n"+"PMV LOG:"+"\n"+VarDict['pmvlog']
         else:
@@ -475,11 +475,11 @@ other information that would help us in fixing this bug.""",
         else:
             desccont = fulldesc
         if len(sumcont)<=1 or len(desccont)<=1:
-            import tkMessageBox
-            ok = tkMessageBox.askokcancel("Input","Please enter summary and description")
+            import tkinter.messagebox
+            ok = tkinter.messagebox.askokcancel("Input","Please enter summary and description")
             return
         from mglutil.TestUtil import BugReport
-        if VarDict.has_key('attachfile'):
+        if 'attachfile' in VarDict:
             upfile = VarDict['attachfile']
         else:
             upfile=""

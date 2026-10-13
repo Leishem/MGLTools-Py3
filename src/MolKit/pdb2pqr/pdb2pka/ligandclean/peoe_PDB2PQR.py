@@ -18,7 +18,7 @@
 
 
 ground_states = {\
-				#      Eg     Ig
+                                #      Eg     Ig
 'H' : (0.747, 13.595),
 'B' : (0.330,  8.296),   
 'C' : (1.120, 11.256),
@@ -84,8 +84,8 @@ def PEOE( atoms, damp=0.778, k=1.56):
     abs_qges = 0.0
     counter = 0
     for a in atoms.atoms:
-        if not Chargeterms.has_key(a.sybylType):
-            raise KeyError, 'PEOE Error: Atomtype <%s> not known, treating atom %s as dummy' % (a.sybylType, a.name)
+        if a.sybylType not in Chargeterms:
+            raise KeyError('PEOE Error: Atomtype <%s> not known, treating atom %s as dummy' % (a.sybylType, a.name))
         if a.sybylType == 'O.3':
             a.chi   = Chargeterms['O.OH'][0]
             a.abc   = Chargeterms['O.OH']

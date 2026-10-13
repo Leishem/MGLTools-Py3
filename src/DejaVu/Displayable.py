@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -19,10 +19,10 @@ from time import time
 from opengltk.OpenGL import GL
 import types
 import numpy
-import numpy.oldnumeric as Numeric
-import Materials, viewerConst
-from viewerFns import getkw
-from colorTool import OneColor, glMaterialWithCheck, resetMaterialMemory
+import mglcompat.oldnumeric as Numeric
+from . import Materials, viewerConst
+from .viewerFns import getkw
+from .colorTool import OneColor, glMaterialWithCheck, resetMaterialMemory
 from mglutil.util.callback import CallbackFunction
 
 import DejaVu
@@ -33,59 +33,59 @@ class OutLine:
     def Reset(self):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Reset members to default values"""
+        """Reset members to default values"""
 
-	self.factor = 1.5
-	self.unit = 0.000001
-	self.lineWidth = 1
-	self.color = [0., 0., 0., .3]
+        self.factor = 1.5
+        self.unit = 0.000001
+        self.lineWidth = 1
+        self.color = [0., 0., 0., .3]
         self.colorAsMaterial = False # set to True to use Object's material
                                      # to color lines
-	self.dpyList = None
+        self.dpyList = None
         self.lighting = False
 
         
     def Set(self, redo=0,**kw):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Set members"""
+        """Set members"""
 
-	val = getkw(kw, 'factor')
-	if val is not None:
-	    assert type(val).__name__ == 'float'
-	    self.factor = val
+        val = getkw(kw, 'factor')
+        if val is not None:
+            assert type(val).__name__ == 'float'
+            self.factor = val
 
-	val = getkw(kw, 'unit')
-	if val is not None:
-	    assert type(val).__name__ == 'float'
-	    self.unit = val
+        val = getkw(kw, 'unit')
+        if val is not None:
+            assert type(val).__name__ == 'float'
+            self.unit = val
 
-	val = getkw(kw, 'lineWidth')
-	if val is not None:
-	    assert val >= 1
-	    self.lineWidth = int(val)
+        val = getkw(kw, 'lineWidth')
+        if val is not None:
+            assert val >= 1
+            self.lineWidth = int(val)
 
-	val = getkw(kw, 'color')
-	if val is not None:
-	    color = OneColor( val )
-	    if color: self.color = color
+        val = getkw(kw, 'color')
+        if val is not None:
+            color = OneColor( val )
+            if color: self.color = color
 
-	val = getkw(kw, 'lighting')
-	if val is not None:
-	    assert val in [False, True]
-	    self.lighting = val
+        val = getkw(kw, 'lighting')
+        if val is not None:
+            assert val in [False, True]
+            self.lighting = val
 
-	val = getkw(kw, 'colorAsMaterial')
-	if val is not None:
-	    assert val in [False,True]
-	    self.colorAsMaterial = val
+        val = getkw(kw, 'colorAsMaterial')
+        if val is not None:
+            assert val in [False,True]
+            self.colorAsMaterial = val
 
         if self.geom.viewer is not None:
             #self.geom.RedoDisplayList()
             self.geom.viewer.deleteOpenglList()
         
-	if len(kw):
-	    print 'WARNING2: Keyword(s) %s not used' % kw.keys()
+        if len(kw):
+            print('WARNING2: Keyword(s) %s not used' % list(kw.keys()))
 
 
     def __init__(self, geom, **kw):
@@ -93,22 +93,22 @@ class OutLine:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
 
         self.geom = geom
-	self.Reset()
-	self.Set( factor = getkw(kw, 'factor'),
-		  unit = getkw(kw, 'unit'),
-		  lineWidth = getkw(kw, 'lineWidth'),
-		  color = getkw(kw, 'color') )
+        self.Reset()
+        self.Set( factor = getkw(kw, 'factor'),
+                  unit = getkw(kw, 'unit'),
+                  lineWidth = getkw(kw, 'lineWidth'),
+                  color = getkw(kw, 'color') )
 
-	if len(kw):
-	    print 'WARNING3: Keyword(s) %s not used' % kw.keys()
+        if len(kw):
+            print('WARNING3: Keyword(s) %s not used' % list(kw.keys()))
 
 
     def __repr__(self):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	return '<%s> factor=%5.2f unit=%5.2f lineWidth=%5.2f color=%s' % \
-	       (self.__class__, self.factor, self.unit, self.lineWidth,
-		str(self.color) )
+        return '<%s> factor=%5.2f unit=%5.2f lineWidth=%5.2f color=%s' % \
+               (self.__class__, self.factor, self.unit, self.lineWidth,
+                str(self.color) )
 
 
 class LineStipple:
@@ -117,48 +117,48 @@ class LineStipple:
     def Reset(self):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Reset members to default values"""
+        """Reset members to default values"""
 
-	self.factor = 1
-	self.pattern = 0x7878
+        self.factor = 1
+        self.pattern = 0x7878
 
     
     def Set(self, **kw):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Set members"""
+        """Set members"""
 
-	val = getkw(kw, 'factor')
-	if val:
-	    assert type(val).__name__ == 'int' and val > 0
-	    self.factor = val
+        val = getkw(kw, 'factor')
+        if val:
+            assert type(val).__name__ == 'int' and val > 0
+            self.factor = val
 
-	val = getkw(kw, 'pattern')
-	if val:
-	    assert val > 0x0000 and val < 0xFFFF
-	    self.pattern = val
+        val = getkw(kw, 'pattern')
+        if val:
+            assert val > 0x0000 and val < 0xFFFF
+            self.pattern = val
 
-	if len(kw):
-	    print 'WARNING4: Keyword(s) %s not used' % kw.keys()
+        if len(kw):
+            print('WARNING4: Keyword(s) %s not used' % list(kw.keys()))
 
 
     def __init__(self, **kw):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
 
-	self.Reset()
-	self.Set( factor = getkw(kw, 'factor'),
-		  pattern = getkw(kw, 'pattern'))
+        self.Reset()
+        self.Set( factor = getkw(kw, 'factor'),
+                  pattern = getkw(kw, 'pattern'))
 
-	if len(kw):
-	    print 'WARNING5: Keyword(s) %s not used' % kw.keys()
+        if len(kw):
+            print('WARNING5: Keyword(s) %s not used' % list(kw.keys()))
 
 
     def __repr__(self):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	return '<%s> factor=%f pattern=%s' % ( self.__class__,
-		self.factor, hex(self.pattern) )
+        return '<%s> factor=%f pattern=%s' % ( self.__class__,
+                self.factor, hex(self.pattern) )
 
 
 class PolygonStipple:
@@ -167,42 +167,42 @@ class PolygonStipple:
     def Reset(self):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Reset members to default values"""
+        """Reset members to default values"""
 
-	self.pattern = Numeric.ones( (128,)) * 0xFF
-	self.pattern = self.pattern.astype('B')
+        self.pattern = Numeric.ones( (128,)) * 0xFF
+        self.pattern = self.pattern.astype('B')
     
     def Set(self, **kw):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Set members"""
+        """Set members"""
 
-	val = getkw(kw, 'pattern')
-	if val is not None:
-	    assert type(val).__name__ == 'ndarray'
-	    assert val.shape[0] == 128
-	    assert val.dtype.char == 'B'
-	    self.pattern = val
+        val = getkw(kw, 'pattern')
+        if val is not None:
+            assert type(val).__name__ == 'ndarray'
+            assert val.shape[0] == 128
+            assert val.dtype.char == 'B'
+            self.pattern = val
 
-	if len(kw):
-	    print 'WARNING6: Keyword(s) %s not used' % kw.keys()
+        if len(kw):
+            print('WARNING6: Keyword(s) %s not used' % list(kw.keys()))
 
 
     def __init__(self, **kw):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
 
-	self.Reset()
-	self.Set( pattern = getkw(kw, 'pattern'))
+        self.Reset()
+        self.Set( pattern = getkw(kw, 'pattern'))
 
-	if len(kw):
-	    print 'WARNING7: Keyword(s) %s not used' % kw.keys()
+        if len(kw):
+            print('WARNING7: Keyword(s) %s not used' % list(kw.keys()))
 
 
     def __repr__(self):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	return '<%s>\n pattern=%s' % ( self.__class__, map(hex,self.pattern) )
+        return '<%s>\n pattern=%s' % ( self.__class__, list(map(hex,self.pattern)) )
 
 
 class Displayable:
@@ -223,7 +223,7 @@ class Displayable:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
 
         self.materials = { GL.GL_FRONT:Materials.Materials(),
-        		   GL.GL_BACK:Materials.Materials() }
+                           GL.GL_BACK:Materials.Materials() }
         self.texture = None
         
         self.frontPolyMode = GL.GL_FILL
@@ -253,12 +253,12 @@ class Displayable:
 
         from DejaVu.Transformable import Transformable
         if isinstance(self, Transformable):
-        	self.drawOutline = (False, False)
-        	self.outline = OutLine(self)
-        	self.linestipple = LineStipple()
-        	self.stippleLines = viewerConst.NO
-        	self.polygonstipple = PolygonStipple()
-        	self.stipplePolygons = viewerConst.NO
+                self.drawOutline = (False, False)
+                self.outline = OutLine(self)
+                self.linestipple = LineStipple()
+                self.stippleLines = viewerConst.NO
+                self.polygonstipple = PolygonStipple()
+                self.stipplePolygons = viewerConst.NO
 
         self.transparent = viewerConst.NO
 
@@ -281,7 +281,7 @@ class Displayable:
         dtime = time() - self.flashStartTime
         fraction = min(1.0, dtime/self.flashOutDuration)
         val =  exp(1.)/exp(1.+2*fraction)
-        print fraction, val
+        print(fraction, val)
         self.Set(opacity=val)
         self._setTransparent('implicit')
         vi = self.viewer
@@ -400,7 +400,7 @@ class Displayable:
     def InitMaterial(self, num=0):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Setup GL material
+        """Setup GL material
 only sets the material if binding mode is OVERALL or PER_INSTANCE (i.e. per
 instance matrix) which are the 2 only material bindngs for which the material
 is not set in the display list"""
@@ -408,68 +408,68 @@ is not set in the display list"""
         #import traceback
         #traceback.print_stack()
         #print 'InitMaterial', self.name
-	prop = self.materials[GL.GL_FRONT]
-	if self.frontAndBack: f = GL.GL_FRONT_AND_BACK
-	else: f = GL.GL_FRONT
+        prop = self.materials[GL.GL_FRONT]
+        if self.frontAndBack: f = GL.GL_FRONT_AND_BACK
+        else: f = GL.GL_FRONT
         resetMaterialMemory()
         
         b, p = prop.GetProperty(0)
         if prop.binding[0] == viewerConst.OVERALL:
-	    glMaterialWithCheck(f, GL.GL_AMBIENT, p[0])
+            glMaterialWithCheck(f, GL.GL_AMBIENT, p[0])
         elif prop.binding[0] == viewerConst.PER_INSTANCE:
-	    glMaterialWithCheck(f, GL.GL_AMBIENT, p[num])
+            glMaterialWithCheck(f, GL.GL_AMBIENT, p[num])
 
         b, p = prop.GetProperty(1)
-	if prop.binding[1] == viewerConst.OVERALL:
-	    glMaterialWithCheck(f, GL.GL_DIFFUSE, p[0])
+        if prop.binding[1] == viewerConst.OVERALL:
+            glMaterialWithCheck(f, GL.GL_DIFFUSE, p[0])
         elif prop.binding[1] == viewerConst.PER_INSTANCE:
-	    glMaterialWithCheck(f, GL.GL_DIFFUSE, p[num])
-		
+            glMaterialWithCheck(f, GL.GL_DIFFUSE, p[num])
+                
         b, p = prop.GetProperty(2)
-	if prop.binding[2] == viewerConst.OVERALL:
-	    glMaterialWithCheck(f, GL.GL_EMISSION, p[0])
+        if prop.binding[2] == viewerConst.OVERALL:
+            glMaterialWithCheck(f, GL.GL_EMISSION, p[0])
         elif prop.binding[3] == viewerConst.PER_INSTANCE:
-	    glMaterialWithCheck(f, GL.GL_EMISSION, p[num])
+            glMaterialWithCheck(f, GL.GL_EMISSION, p[num])
 
         b, p = prop.GetProperty(3)
-	if prop.binding[2] == viewerConst.OVERALL:
-	    glMaterialWithCheck(f, GL.GL_SPECULAR, p[0])
-	elif prop.binding[2] == viewerConst.PER_INSTANCE:
-	    glMaterialWithCheck(f, GL.GL_SPECULAR, p[num])
+        if prop.binding[2] == viewerConst.OVERALL:
+            glMaterialWithCheck(f, GL.GL_SPECULAR, p[0])
+        elif prop.binding[2] == viewerConst.PER_INSTANCE:
+            glMaterialWithCheck(f, GL.GL_SPECULAR, p[num])
 
-	if prop.binding[4] == viewerConst.OVERALL:
-	    glMaterialWithCheck(f, GL.GL_SHININESS, float(prop.prop[4][0]))
-	    #GL.glMaterialf(f, GL.GL_SHININESS, float(prop.prop[4][0]))
+        if prop.binding[4] == viewerConst.OVERALL:
+            glMaterialWithCheck(f, GL.GL_SHININESS, float(prop.prop[4][0]))
+            #GL.glMaterialf(f, GL.GL_SHININESS, float(prop.prop[4][0]))
         elif prop.binding[4] == viewerConst.PER_INSTANCE:
-	    glMaterialWithCheck(f, GL.GL_SHININESS, float(prop.prop[4][num]))
-	    #GL.glMaterialf(f, GL.GL_SHININESS, float(prop.prop[4][num]))
+            glMaterialWithCheck(f, GL.GL_SHININESS, float(prop.prop[4][num]))
+            #GL.glMaterialf(f, GL.GL_SHININESS, float(prop.prop[4][num]))
             
-	if not self.frontAndBack:
-	    prop = self.materials[GL.GL_BACK]
-	    f = GL.GL_BACK
+        if not self.frontAndBack:
+            prop = self.materials[GL.GL_BACK]
+            f = GL.GL_BACK
             if prop.binding[0] == viewerConst.OVERALL:
-		glMaterialWithCheck(f, GL.GL_AMBIENT, prop.prop[0][0])
+                glMaterialWithCheck(f, GL.GL_AMBIENT, prop.prop[0][0])
             elif prop.binding[0] == viewerConst.PER_INSTANCE:
-		glMaterialWithCheck(f, GL.GL_AMBIENT, prop.prop[0][num])
+                glMaterialWithCheck(f, GL.GL_AMBIENT, prop.prop[0][num])
                 
-	    if prop.binding[1] == viewerConst.OVERALL:
-		glMaterialWithCheck(f, GL.GL_DIFFUSE, prop.prop[1][0])
+            if prop.binding[1] == viewerConst.OVERALL:
+                glMaterialWithCheck(f, GL.GL_DIFFUSE, prop.prop[1][0])
             elif prop.binding[1] == viewerConst.PER_INSTANCE:
-		glMaterialWithCheck(f, GL.GL_DIFFUSE, prop.prop[1][num])
+                glMaterialWithCheck(f, GL.GL_DIFFUSE, prop.prop[1][num])
                 
-	    if prop.binding[2] == viewerConst.OVERALL:
-		glMaterialWithCheck(f, GL.GL_SPECULAR, prop.prop[3][0])
+            if prop.binding[2] == viewerConst.OVERALL:
+                glMaterialWithCheck(f, GL.GL_SPECULAR, prop.prop[3][0])
             elif prop.binding[2] == viewerConst.PER_INSTANCE:
-		glMaterialWithCheck(f, GL.GL_SPECULAR, prop.prop[3][num])
+                glMaterialWithCheck(f, GL.GL_SPECULAR, prop.prop[3][num])
 
             if prop.binding[3] == viewerConst.OVERALL:
-		glMaterialWithCheck(f, GL.GL_EMISSION, prop.prop[2][0])
+                glMaterialWithCheck(f, GL.GL_EMISSION, prop.prop[2][0])
             elif prop.binding[3] == viewerConst.PER_INSTANCE:
-		glMaterialWithCheck(f, GL.GL_EMISSION, prop.prop[2][num])
+                glMaterialWithCheck(f, GL.GL_EMISSION, prop.prop[2][num])
 
-	    if prop.binding[4] == viewerConst.OVERALL:
-		glMaterialWithCheck(f, GL.GL_SHININESS, float(prop.prop[4][0]))
-		#GL.glMaterialf(f, GL.GL_SHININESS, float(prop.prop[4][0]))
+            if prop.binding[4] == viewerConst.OVERALL:
+                glMaterialWithCheck(f, GL.GL_SHININESS, float(prop.prop[4][0]))
+                #GL.glMaterialf(f, GL.GL_SHININESS, float(prop.prop[4][0]))
             elif prop.binding[4] == viewerConst.PER_INSTANCE:
                 glMaterialWithCheck(f, GL.GL_SHININESS, float(prop.prop[4][num]))
                 #GL.glMaterialf(f, GL.GL_SHININESS, float(prop.prop[4][num]))
@@ -477,7 +477,7 @@ is not set in the display list"""
     def InitColor(self, num=0):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Setup GL color (used when lighting is turned off)
+        """Setup GL color (used when lighting is turned off)
 only sets the color if binding mode is OVERALL or PER_INSTANCE (i.e. per
 instance matrix) which are the 2 only colors which are not set in the
 display list"""
@@ -618,7 +618,7 @@ display list"""
 
             shading = self.GetShading()
 
-	    if shading != GL.GL_NONE:
+            if shading != GL.GL_NONE:
                 if self.normals is not None:
                     if (shading==GL.GL_SMOOTH and \
                         len(self.normals)!=len(self.vertexSet)) or \
@@ -627,34 +627,34 @@ display list"""
                         self.GetNormals()
                         self.viewer.objectsNeedingRedo[self] = None
 
-		GL.glShadeModel(shading)
+                GL.glShadeModel(shading)
 
-	else: # no lighting
-	    GL.glDisable(GL.GL_LIGHTING)
+        else: # no lighting
+            GL.glDisable(GL.GL_LIGHTING)
 
-	if not self.inheritCulling:
-	    if self.culling in (GL.GL_BACK, GL.GL_FRONT, GL.GL_FRONT_AND_BACK):
-		GL.glCullFace(self.culling)
-		GL.glEnable(GL.GL_CULL_FACE)
-	    else: GL.glDisable(GL.GL_CULL_FACE)
+        if not self.inheritCulling:
+            if self.culling in (GL.GL_BACK, GL.GL_FRONT, GL.GL_FRONT_AND_BACK):
+                GL.glCullFace(self.culling)
+                GL.glEnable(GL.GL_CULL_FACE)
+            else: GL.glDisable(GL.GL_CULL_FACE)
 
-	if not self.inheritFrontPolyMode:
+        if not self.inheritFrontPolyMode:
             mode =self.frontPolyMode
             if self.frontPolyMode==viewerConst.OUTLINED:
                 mode = GL.GL_FILL
-	    if self.frontAndBack:
-		GL.glPolygonMode(GL.GL_FRONT_AND_BACK, mode)
-	    else:
-		GL.glPolygonMode(GL.GL_FRONT, mode)
+            if self.frontAndBack:
+                GL.glPolygonMode(GL.GL_FRONT_AND_BACK, mode)
+            else:
+                GL.glPolygonMode(GL.GL_FRONT, mode)
 
-	if not self.inheritBackPolyMode:
+        if not self.inheritBackPolyMode:
             mode = self.backPolyMode
             if self.backPolyMode==viewerConst.OUTLINED:
                 mode = GL.GL_FILL
-	    GL.glPolygonMode(GL.GL_BACK, mode)
+            GL.glPolygonMode(GL.GL_BACK, mode)
 
-	#self._AntiAliasing()
-	self._WidthAndStipple()
+        #self._AntiAliasing()
+        self._WidthAndStipple()
 
 
     def showOwnGui(self):

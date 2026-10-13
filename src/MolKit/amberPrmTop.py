@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
 #
@@ -17,7 +17,7 @@
 #from MolKit.molecule import Atom, AtomSet, Bond
 from sff.amber import AmberParm
 
-import numpy.oldnumeric as Numeric, types
+import mglcompat.oldnumeric as Numeric, types
 from math import pi, sqrt, ceil, fabs
 from string import split, strip, join
 from os.path import basename
@@ -38,11 +38,11 @@ class Parm:
             allDict = all_amino94_dat
         else:
             allDict = allDictList[0]
-            if type(allDict)==types.StringType:
+            if type(allDict)==bytes:
                 allDict = self.getDictObj(allDict)
         if len(allDictList)>1:
             for d in allDictList:
-                if type(d)== types.StringType:
+                if type(d)== bytes:
                     d = self.getDictObj(d)
                 allDict.update(d)
                 #allDict.extend(d)
@@ -51,11 +51,11 @@ class Parm:
             ntDict = all_aminont94_dat
         else:
             ntDict = ntDictList[0]
-            if type(ntDict)==types.StringType:
+            if type(ntDict)==bytes:
                 ntDict = self.getDictObj(ntDict)
         if len(ntDictList)>1:
             for d in ntDictList:
-                if type(d)== types.StringType:
+                if type(d)== bytes:
                     d = self.getDictObj(d)
                 ntDict.update(d)
                 #ntDict.extend(d)
@@ -64,11 +64,11 @@ class Parm:
             ctDict = all_aminoct94_dat
         else:
             ctDict = ctDictList[0]
-            if type(ctDict)==types.StringType:
+            if type(ctDict)==bytes:
                 ctDict = self.getDictObj(ctDict)
         if len(ctDictList)>1:
             for d in ctDictList:
-                if type(d)== types.StringType:
+                if type(d)== bytes:
                     d = self.getDictObj(d)
                 ctDict.update(d)
                 #ctDict.extend(d)
@@ -118,7 +118,7 @@ class Parm:
         if atoms:
             self.build(atoms, parmDict, reorder)
         self.createSffCdataStruct(self.prmDict)
-        print 'after call to createSffCdataStruct'
+        print('after call to createSffCdataStruct')
 
 
     def checkSanity(self):
@@ -227,9 +227,9 @@ class Parm:
 
     def createSffCdataStruct(self, dict):
         """Create a C prm data structure"""
-        print 'in createSffCdataStruct'
+        print('in createSffCdataStruct')
         self.ambPrm = AmberParm('test1', parmdict=dict)
-        print 'after call to init'
+        print('after call to init')
 
 
     def build(self, allAtoms, parmDict, reorder):
@@ -250,17 +250,17 @@ class Parm:
         self.atoms = self.residues.atoms
 
         # renumber them
-        self.atoms.number = range(1, len(allAtoms)+1)
-        print 'after call to checkRes'
+        self.atoms.number = list(range(1, len(allAtoms)+1))
+        print('after call to checkRes')
 
         self.getTopology(self.atoms, parmDict)
-        print 'after call to getTopology'
+        print('after call to getTopology')
 
         if reorder:
             self.checkSanity()
-            print 'passed sanity check'
+            print('passed sanity check')
         else:
-            print 'skipping sanity check'
+            print('skipping sanity check')
         return
                 
 
@@ -268,9 +268,9 @@ class Parm:
         ats = []
         rlen = len(res.atoms)
         if rlen!=len(atList):
-            print "atoms missing in residue", res
-            print "expected:", atList
-            print "found     :", res.atoms.name
+            print("atoms missing in residue", res)
+            print("expected:", atList)
+            print("found     :", res.atoms.name)
         for i in range(rlen):
             a = atList[i]
             for j in range(rlen):
@@ -344,7 +344,7 @@ class Parm:
                 elif (not hasHD1) and (hasHE1 and hasHD2 and hasHE2):
                     amberResType = 'HIE'
                 else:
-                    print 'unknown HISTIDINE config'
+                    print('unknown HISTIDINE config')
                     raise ValueError
 
             residue.amber_type = amberResType
@@ -412,7 +412,7 @@ class Parm:
                 allTypeList.append(newtype)
                 atSym = atSym+'%-4s'%newtype
                 symb = newtype[0]
-                if symb in parmDict.AtomEquiv.keys():
+                if symb in list(parmDict.AtomEquiv.keys()):
                     if newtype in parmDict.AtomEquiv[symb]:
                         newsym = symb + ' '
                         uniqTypes[symb+' '] = 0
@@ -451,7 +451,7 @@ class Parm:
         dict['Ntypes'] = ntypes
 
         aL = self.atypList
-        for t in atypTypes.keys():
+        for t in list(atypTypes.keys()):
             if t not in aL:
                 aL.append(t)
         self.atypList = aL
@@ -516,7 +516,7 @@ class Parm:
                 bat2.append(n2)
 
         dict['Numbnd'] = len(bndTypes)
-        btlist = bndTypes.keys()
+        btlist = list(bndTypes.keys())
 
         for bt in btlist:
             rk.append( btDict[bt][0] )
@@ -594,10 +594,10 @@ class Parm:
                         aa3.append( nn3 )
                         anum.append(newtype)
 
-        atlist = angTypes.keys()
+        atlist = list(angTypes.keys())
 
         torad = pi / 180.0
-        atKeys = atdict.keys()
+        atKeys = list(atdict.keys())
         for t in atlist:
             tk.append( atdict[t][0] )
             teq.append( atdict[t][1]*torad )
@@ -623,30 +623,30 @@ class Parm:
     def checkDiheType(self, t, t2, t3, t4, dict):
         #zero X
         newtype = '%-2.2s-%-2.2s-%-2.2s-%-2.2s'%(t,t2,t3,t4)
-        if dict.has_key(newtype): return newtype
+        if newtype in dict: return newtype
 
         newtype = '%-2.2s-%-2.2s-%-2.2s-%-2.2s'%(t4,t3,t2,t)
-        if dict.has_key(newtype): return newtype
+        if newtype in dict: return newtype
 
         #X
         newtype = '%-2.2s-%-2.2s-%-2.2s-%-2.2s'%('X',t2,t3,t4)
-        if dict.has_key(newtype): return newtype
+        if newtype in dict: return newtype
 
         newtype = '%-2.2s-%-2.2s-%-2.2s-%-2.2s'%('X',t3,t2,t)
-        if dict.has_key(newtype): return newtype
+        if newtype in dict: return newtype
 
         #2X
         newtype = '%-2.2s-%-2.2s-%-2.2s-%-2.2s'%('X',t2,t3,'X')
-        if dict.has_key(newtype): return newtype
+        if newtype in dict: return newtype
 
         newtype = '%-2.2s-%-2.2s-%-2.2s-%-2.2s'%('X',t3,t2,'X')
-        if dict.has_key(newtype): return newtype
+        if newtype in dict: return newtype
 
         newtype = '%-2.2s-%-2.2s-%-2.2s-%-2.2s'%('X','X',t3,t4)
-        if dict.has_key(newtype): return newtype
+        if newtype in dict: return newtype
 
         newtype = '%-2.2s-%-2.2s-%-2.2s-%-2.2s'%('X','X',t2,t)
-        if dict.has_key(newtype): return newtype
+        if newtype in dict: return newtype
 
         raise RuntimeError('dihedral type not in dictionary')
 
@@ -817,7 +817,7 @@ class Parm:
         pn = dict['Pn']
         pk = dict['Pk']
         phase = dict['Phase']
-        dtlist = foundDihedTypes.keys()
+        dtlist = list(foundDihedTypes.keys())
         torad = pi/180.
         for t in dtlist:
             index = int(t[-1])
@@ -827,7 +827,7 @@ class Parm:
             pn.append(fabs(val[3]))
 
         dihedTypes = parmDict.improperDihed
-        dtlist1 = foundImproperDihedTypes.keys()
+        dtlist1 = list(foundImproperDihedTypes.keys())
 
         for t in dtlist1:
             val = dihedTypes[t]
@@ -979,7 +979,7 @@ class Parm:
         # since no bonds are constrined, Nbona==Mbona
         dict['Nbona'] = dict['Mbona']
 
-        print 'after call to processChain'
+        print('after call to processChain')
 
         # new process bond info
         dict['BondAt1'] = []
@@ -991,7 +991,7 @@ class Parm:
         dict['Rk'] = []
         dict['Req'] = []
         self.processBonds(bonds, parmDict)
-        print 'after call to processBonds'
+        print('after call to processBonds')
 
         # now process the angles
         dict['AngleAt1'] = []
@@ -1005,7 +1005,7 @@ class Parm:
         dict['Tk'] = []
         dict['Teq'] = []
         self.processAngles(allAtoms, parmDict)
-        print 'after call to processAngles'
+        print('after call to processAngles')
         
         # now handle the torsions
         dict['Nhparm'] = 0
@@ -1041,13 +1041,13 @@ class Parm:
             'HIP':['CG', 'ND1', 'CE1', 'NE2', 'CD2']
         }
         self.processTorsions(allAtoms, parmDict)
-        print 'after call to processTorsions'
+        print('after call to processTorsions')
 
         # some unused values
         dict['Nspm'] = 1
         dict['Box'] = [0., 0., 0.]
         dict['Boundary'] = [natom]
-        dict['TreeJoin'] = range(natom)
+        dict['TreeJoin'] = list(range(natom))
         dict['Nphb'] = 0
         dict['HB12'] = []
         dict['HB10'] = []
@@ -1446,25 +1446,25 @@ class Parm:
             else:
                 self.writeList(fptr, item, f[0], f[1])
         #next write bnds angs and dihe
-        allHBnds = zip(dict['BondHAt1'], dict['BondHAt2'], 
-                dict['BondHNum'])
+        allHBnds = list(zip(dict['BondHAt1'], dict['BondHAt2'], 
+                dict['BondHNum']))
         self.writeTupleList(fptr, allHBnds, "%6d", 12, 3)
-        allBnds = zip(dict['BondAt1'], dict['BondAt2'], 
-                dict['BondNum'])
+        allBnds = list(zip(dict['BondAt1'], dict['BondAt2'], 
+                dict['BondNum']))
         self.writeTupleList(fptr, allBnds, "%6d", 12, 3)
 
-        allHAngs = zip(dict['AngleHAt1'], dict['AngleHAt2'],
-                dict['AngleHAt3'], dict['AngleHNum'])
+        allHAngs = list(zip(dict['AngleHAt1'], dict['AngleHAt2'],
+                dict['AngleHAt3'], dict['AngleHNum']))
         self.writeTupleList(fptr, allHAngs, "%6d", 12,4)
-        allAngs = zip(dict['AngleAt1'], dict['AngleAt2'],
-                dict['AngleAt3'], dict['AngleNum'])
+        allAngs = list(zip(dict['AngleAt1'], dict['AngleAt2'],
+                dict['AngleAt3'], dict['AngleNum']))
         self.writeTupleList(fptr, allAngs, "%6d", 12, 4)
 
-        allHDiHe = zip(dict['DihHAt1'], dict['DihHAt2'],
-                dict['DihHAt3'], dict['DihHAt4'], dict['DihHNum'])
+        allHDiHe = list(zip(dict['DihHAt1'], dict['DihHAt2'],
+                dict['DihHAt3'], dict['DihHAt4'], dict['DihHNum']))
         self.writeTupleList(fptr, allHDiHe, "%6d", 12,5)
-        allDiHe = zip(dict['DihAt1'], dict['DihAt2'],
-                dict['DihAt3'], dict['DihAt4'], dict['DihNum'])
+        allDiHe = list(zip(dict['DihAt1'], dict['DihAt2'],
+                dict['DihAt3'], dict['DihAt4'], dict['DihNum']))
         self.writeTupleList(fptr, allDiHe, "%6d", 12, 5)
         self.writeList(fptr, dict['ExclAt'], '%6d', 12)
         fptr.write('\n')

@@ -12,7 +12,7 @@
 #
 #########################################################################
 
-import Tkinter
+import tkinter
 import types
 import inspect
 
@@ -61,40 +61,40 @@ browser = ObjectBrowser( __builtins__ )
         
 
     def buildGUI(self):
-        self.root = Tkinter.Toplevel()
+        self.root = tkinter.Toplevel()
         self.root.title(self.title)
         self.root.protocol('WM_DELETE_WINDOW', self.hide )
-        self.topFrame = Tkinter.Frame(self.root, relief='raised',
+        self.topFrame = tkinter.Frame(self.root, relief='raised',
                            bd=4)
         self.topFrame.pack(fill="x", side='top', )
 
         choices = ['All', 'Attributes', 'Methods']
-        self.choicesVarTk = Tkinter.StringVar()
+        self.choicesVarTk = tkinter.StringVar()
         self.choicesVarTk.set('Attributes')
         for c in choices:
-            b = Tkinter.Radiobutton(
+            b = tkinter.Radiobutton(
                 self.topFrame,
                 variable = self.choicesVarTk,
                 text=c, value=c, command=self.rebuild)
             b.pack(side='left', expand=1, fill='x')
 
-        self.frame = Tkinter.Frame(self.root)
+        self.frame = tkinter.Frame(self.root)
         self.frame.pack(expand=1, fill="both")#, side='bottom')
 
-        frame = Tkinter.Frame(self.root, bd=3)
+        frame = tkinter.Frame(self.root, bd=3)
         frame.pack(fill="x", side='bottom')
 
         # add Refresh button if specified
         if self.refresh is not None:
-            button1 = Tkinter.Button(frame, text='Refresh',
+            button1 = tkinter.Button(frame, text='Refresh',
                                      command=self.refresh_cb)
             button1.pack(expand=1, fill="x", side='left')
 
-            button2 = Tkinter.Button(frame, text='Dismiss', command=self.hide)
+            button2 = tkinter.Button(frame, text='Dismiss', command=self.hide)
             button2.pack(expand=1, fill="x", side='left')
 
         else:
-            button2 = Tkinter.Button(frame, text='Dismiss', command=self.hide)
+            button2 = tkinter.Button(frame, text='Dismiss', command=self.hide)
             button2.pack(expand=1, fill="x")
         
         # add root node        
@@ -133,21 +133,21 @@ browser = ObjectBrowser( __builtins__ )
     def expandTreeNode_cb(self, node=None, object=None):
         """expand the given object by 1 level (i.e. all its children)"""
 
-        if type(object) in [types.ListType, types.TupleType]:
+        if type(object) in [list, tuple]:
             children = []
             i = 0
             for o in object:
                 children.append( (str(i), o) )
                 i = i + 1
                 
-        elif type(object) == types.DictType:
+        elif type(object) == dict:
             children = []
-            for k, v in object.items():
+            for k, v in list(object.items()):
                 children.append( (k, v) )
 
-        elif type(object) in [ types.BooleanType, types.FloatType,
-                               types.IntType, types.LongType, types.NoneType,
-                               types.StringType ]:
+        elif type(object) in [ bool, float,
+                               int, int, type(None),
+                               bytes ]:
             children = []
 
         else:
@@ -187,10 +187,10 @@ browser = ObjectBrowser( __builtins__ )
         (e.g., int, float, boolean, etc)"""
         
         if type(x) in [
-            types.BooleanType, types.FloatType, types.IntType,
-            types.LongType, types.NoneType, types.StringType]:
+            bool, float, int,
+            int, type(None), bytes]:
             return True
-        elif type(x) in [types.DictionaryType, types.ListType] and \
+        elif type(x) in [dict, list] and \
              len(x)==0:
             return True
         else:

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -16,16 +16,16 @@
 
 import sys, os
 import Image
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 import warnings
 
 from opengltk.OpenGL import GL
-import viewerConst
+from . import viewerConst
 import math
-from colorTool import OneColor
-from Transformable import Transformable
-from Geom import Geom
-from viewerFns import checkKeywords, getkw
+from .colorTool import OneColor
+from .Transformable import Transformable
+from .Geom import Geom
+from .viewerFns import checkKeywords, getkw
 
 class Texture(Transformable):
     """Base class for textures"""
@@ -56,7 +56,7 @@ class Texture(Transformable):
         
         if __debug__:
             if check:
-                apply( checkKeywords, ('texture',self.keywords), kw)
+                checkKeywords(*('texture',self.keywords), **kw)
 
         Transformable.__init__(self, viewer)
 
@@ -86,11 +86,11 @@ class Texture(Transformable):
         # this allow to recompute texture coordinate after
         self.resizeRatio = (1, 1)
 
-        apply( self.Set, (0,), kw)
+        self.Set(*(0,), **kw)
 
 
     def Set(self, check=1, **kw):
-	"""Set various parameters for texture objects:
+        """Set various parameters for texture objects:
 - image=im  set an image as the texture to be used. im can be either a Numeric
 array of bytes with shape (n x m x d) where d can be either 3 or 4.
 Im can also be a PIL Image object. If thes image is not of type 'RGB' or
@@ -101,86 +101,86 @@ are powers of 2." (has been tested for Image but not for Numeric array yet - gui
 """
         if __debug__:
             if check:
-                apply( checkKeywords, (self.name,self.keywords), kw)
+                checkKeywords(*(self.name,self.keywords), **kw)
 
-	val = getkw(kw, 'enable')
-	if not val is None:
-	    assert val in (viewerConst.YES, viewerConst.NO), "enable can only be YES or NO"
-	    self.enabled = val
+        val = getkw(kw, 'enable')
+        if not val is None:
+            assert val in (viewerConst.YES, viewerConst.NO), "enable can only be YES or NO"
+            self.enabled = val
 
-	val = getkw(kw, 'wrapS')
-	if not val is None:
-	    assert val in (GL.GL_REPEAT, GL.GL_CLAMP)
-	    self.wrap[0] = val
+        val = getkw(kw, 'wrapS')
+        if not val is None:
+            assert val in (GL.GL_REPEAT, GL.GL_CLAMP)
+            self.wrap[0] = val
 
-	val = getkw(kw, 'wrapT')
-	if not val is None:
-	    assert val in (GL.GL_REPEAT, GL.GL_CLAMP)
-	    self.wrap[1] = val
+        val = getkw(kw, 'wrapT')
+        if not val is None:
+            assert val in (GL.GL_REPEAT, GL.GL_CLAMP)
+            self.wrap[1] = val
 
-	val = getkw(kw, 'magFilter')
-	if not val is None:
-	    assert val in (GL.GL_NEAREST, GL.GL_LINEAR)
-	    self.magFilter = val
+        val = getkw(kw, 'magFilter')
+        if not val is None:
+            assert val in (GL.GL_NEAREST, GL.GL_LINEAR)
+            self.magFilter = val
 
-	val = getkw(kw, 'minFilter')
-	if not val is None:
-	    assert val in (GL.GL_NEAREST, GL.GL_LINEAR)
-	    self.minFilter = val
+        val = getkw(kw, 'minFilter')
+        if not val is None:
+            assert val in (GL.GL_NEAREST, GL.GL_LINEAR)
+            self.minFilter = val
 
-	val = getkw(kw, 'genModS')
-	if not val is None:
-	    assert val in (GL.GL_OBJECT_LINEAR, GL.GL_EYE_LINEAR, GL.GL_SPHERE_MAP)
-	    self.genMod[0] = val
+        val = getkw(kw, 'genModS')
+        if not val is None:
+            assert val in (GL.GL_OBJECT_LINEAR, GL.GL_EYE_LINEAR, GL.GL_SPHERE_MAP)
+            self.genMod[0] = val
 
-	val = getkw(kw, 'genModT')
-	if not val is None:
-	    assert val in (GL.GL_OBJECT_LINEAR, GL.GL_EYE_LINEAR, GL.GL_SPHERE_MAP)
-	    self.genMod[1] = val
+        val = getkw(kw, 'genModT')
+        if not val is None:
+            assert val in (GL.GL_OBJECT_LINEAR, GL.GL_EYE_LINEAR, GL.GL_SPHERE_MAP)
+            self.genMod[1] = val
 
-	val = getkw(kw, 'genPlaneS')
-	if not val is None:
-	    assert val in (GL.GL_OBJECT_PLANE, GL.GL_EYE_PLANE)
-	    self.genPlane[0] = val
+        val = getkw(kw, 'genPlaneS')
+        if not val is None:
+            assert val in (GL.GL_OBJECT_PLANE, GL.GL_EYE_PLANE)
+            self.genPlane[0] = val
 
-	val = getkw(kw, 'genPlaneT')
-	if not val is None:
-	    assert val in (GL.GL_OBJECT_PLANE, GL.GL_EYE_PLANE)
-	    self.genPlane[1] = val
+        val = getkw(kw, 'genPlaneT')
+        if not val is None:
+            assert val in (GL.GL_OBJECT_PLANE, GL.GL_EYE_PLANE)
+            self.genPlane[1] = val
 
-	val = getkw(kw, 'planeS')
-	if not val is None:
-	    assert len(val)==4 and type(val[0])==type(0.0), "Plane has to be 4Float vector"
-	    self.plane[0] = val
+        val = getkw(kw, 'planeS')
+        if not val is None:
+            assert len(val)==4 and type(val[0])==type(0.0), "Plane has to be 4Float vector"
+            self.plane[0] = val
 
-	val = getkw(kw, 'planeT')
-	if not val is None:
-	    assert len(val)==4 and type(val[0])==type(0.0), "Plane has to be 4Float vector"
-	    self.plane[1] = val
+        val = getkw(kw, 'planeT')
+        if not val is None:
+            assert len(val)==4 and type(val[0])==type(0.0), "Plane has to be 4Float vector"
+            self.plane[1] = val
 
-	val = getkw(kw, 'level')
-	if not val is None:
-	    assert type(val)==type(0) and val >=0
-	    self.level = val
+        val = getkw(kw, 'level')
+        if not val is None:
+            assert type(val)==type(0) and val >=0
+            self.level = val
 
-	val = getkw(kw, 'auto')
-	if not val is None:
-	    assert val in (viewerConst.YES,viewerConst.NO), "auto can only be YES or NO"
-	    self.auto = val
+        val = getkw(kw, 'auto')
+        if not val is None:
+            assert val in (viewerConst.YES,viewerConst.NO), "auto can only be YES or NO"
+            self.auto = val
 
-	val = getkw(kw, 'envMode')
-	if not val is None:
-	    assert val in (GL.GL_MODULATE, GL.GL_REPLACE, GL.GL_DECAL, GL.GL_BLEND ), "envMode can only be GL_MODULATE, GL_DECAL, or GL_BLEND"
-	    self.envMode = val
-	val = getkw(kw, 'envColor')
-	if val:
-	    col = OneColor(val)
-	    if col: self.envColor = col
+        val = getkw(kw, 'envMode')
+        if not val is None:
+            assert val in (GL.GL_MODULATE, GL.GL_REPLACE, GL.GL_DECAL, GL.GL_BLEND ), "envMode can only be GL_MODULATE, GL_DECAL, or GL_BLEND"
+            self.envMode = val
+        val = getkw(kw, 'envColor')
+        if val:
+            col = OneColor(val)
+            if col: self.envColor = col
 
-	b = getkw(kw, 'border')
-	f = getkw(kw, 'format')
-	im = getkw(kw, 'image')
-	if im is not None:
+        b = getkw(kw, 'border')
+        f = getkw(kw, 'format')
+        im = getkw(kw, 'image')
+        if im is not None:
 
             if isinstance(im, Image.Image):
                 lImInstaceImage = True
@@ -214,7 +214,7 @@ are powers of 2." (has been tested for Image but not for Numeric array yet - gui
                 if im.mode !='RGB' and im.mode !='RGBA':
                     im = im.convert('RGB')
                 im = im.transpose(Image.FLIP_TOP_BOTTOM)
-                imstr = im.tostring()
+                imstr = im.tobytes()
                 imarr = Numeric.fromstring( imstr, 'B')
                 if im.mode=='RGB':
                     imarr.shape = (height, width, 3)
@@ -232,22 +232,22 @@ are powers of 2." (has been tested for Image but not for Numeric array yet - gui
                         newArray[i][j] = im[i][j]
                 im = newArray.astype('B')
 
-	    if b:
-		assert type(b)==type(0)
-	    else: b = 0
-	    self.border = b
+            if b:
+                assert type(b)==type(0)
+            else: b = 0
+            self.border = b
 
-	    if f:
-		assert f in (GL.GL_RGB, GL.GL_RGBA), "format can only be GL_RGB or GL_RGBA"
+            if f:
+                assert f in (GL.GL_RGB, GL.GL_RGBA), "format can only be GL_RGB or GL_RGBA"
 
-	    assert type(im).__name__ == 'ndarray'
-	    assert im.dtype.char == 'B'
-	    if im.shape[-1] == 3:
-		if f and f != GL.GL_RGB: raise ValueError("bad image format")
-	        self.format = GL.GL_RGB
-	    elif im.shape[-1] == 4:
-		if f and f != GL.GL_RGBA: raise ValueError("bad image format")
-	        self.format = GL.GL_RGBA
+            assert type(im).__name__ == 'ndarray'
+            assert im.dtype.char == 'B'
+            if im.shape[-1] == 3:
+                if f and f != GL.GL_RGB: raise ValueError("bad image format")
+                self.format = GL.GL_RGB
+            elif im.shape[-1] == 4:
+                if f and f != GL.GL_RGBA: raise ValueError("bad image format")
+                self.format = GL.GL_RGBA
 
                 for o in self.objects:
                     o.transparent=1
@@ -255,32 +255,32 @@ are powers of 2." (has been tested for Image but not for Numeric array yet - gui
                     if self.viewer:
                         self.viewer.objectsNeedingRedo[o] = None
                     
-	    l = len(im.shape)
-	    if l==2:
-		w=im.shape[0] - 2*b
-		q, r  = divmod(math.log(w)/math.log(2), 1)
-		if r != 0.0:
-		    raise ValueError("Image width must be 2**m +2b")
-		self.dim = GL.GL_TEXTURE_1D
-		self.image = im
-		self.width = im.shape[0]
+            l = len(im.shape)
+            if l==2:
+                w=im.shape[0] - 2*b
+                q, r  = divmod(math.log(w)/math.log(2), 1)
+                if r != 0.0:
+                    raise ValueError("Image width must be 2**m +2b")
+                self.dim = GL.GL_TEXTURE_1D
+                self.image = im
+                self.width = im.shape[0]
 
-	    elif l==3:
-		w=im.shape[0] - 2*b
-		q, r  = divmod(math.log(w)/math.log(2), 1)
-		if r != 0.0:
-		    raise ValueError("Image width must be 2**m +2b")
-		h=im.shape[1] -2*b
-		q, r  = divmod(math.log(h)/math.log(2), 1)
-		if r != 0.0:
-		    raise ValueError("Image height must be 2**m +2b")
-		self.dim = GL.GL_TEXTURE_2D
-		self.image = im
-		self.width = im.shape[1]
-		self.height = im.shape[0]
+            elif l==3:
+                w=im.shape[0] - 2*b
+                q, r  = divmod(math.log(w)/math.log(2), 1)
+                if r != 0.0:
+                    raise ValueError("Image width must be 2**m +2b")
+                h=im.shape[1] -2*b
+                q, r  = divmod(math.log(h)/math.log(2), 1)
+                if r != 0.0:
+                    raise ValueError("Image height must be 2**m +2b")
+                self.dim = GL.GL_TEXTURE_2D
+                self.image = im
+                self.width = im.shape[1]
+                self.height = im.shape[0]
 
-	    else:
-		raise ValueError("Bad shape for image")
+            else:
+                raise ValueError("Bad shape for image")
 
         if self.viewer:
             self.viewer.deleteOpenglList()
@@ -317,71 +317,71 @@ are powers of 2." (has been tested for Image but not for Numeric array yet - gui
 
 
     def dump(self):
-	print  '\nenabled: ', self.enabled, \
-	       '\ndim: ', self.dim, \
-	       '\nwrap: ', self.wrap, \
-	       '\nmagFilter: ', self.magFilter, \
-	       '\nminFilter: ', self.minFilter, \
-	       '\nborder: ', self.border, \
-	       '\ngenMod: ', self.genMod, \
-	       '\ngenPlane: ', self.genPlane, \
-	       '\nplane: ', self.plane, \
-	       '\nimage: ', self.image.shape, \
-	       '\nwidth: ', self.width, \
-	       '\nheight: ', self.height, \
-	       '\nlevel: ', self.level, \
-	       '\nformat: ', self.format, \
-	       '\nauto: ', self.auto, \
-	       '\nenvMode: ', self.envMode, \
-	       '\nenvColor: ', self.envColor
+        print('\nenabled: ', self.enabled, \
+               '\ndim: ', self.dim, \
+               '\nwrap: ', self.wrap, \
+               '\nmagFilter: ', self.magFilter, \
+               '\nminFilter: ', self.minFilter, \
+               '\nborder: ', self.border, \
+               '\ngenMod: ', self.genMod, \
+               '\ngenPlane: ', self.genPlane, \
+               '\nplane: ', self.plane, \
+               '\nimage: ', self.image.shape, \
+               '\nwidth: ', self.width, \
+               '\nheight: ', self.height, \
+               '\nlevel: ', self.level, \
+               '\nformat: ', self.format, \
+               '\nauto: ', self.auto, \
+               '\nenvMode: ', self.envMode, \
+               '\nenvColor: ', self.envColor)
 
 
     def Setup(self):
-	"""Setup texture mapping"""
-	
-	t = self
-	if not t.enabled:
-	    GL.glDisable(t.dim)
-	    return
+        """Setup texture mapping"""
+        
+        t = self
+        if not t.enabled:
+            GL.glDisable(t.dim)
+            return
 
-	t.MakeMatrix()
+        t.MakeMatrix()
 
-	GL.glTexEnvf(GL.GL_TEXTURE_ENV,
-		     GL.GL_TEXTURE_ENV_MODE, t.envMode)
-	if t.envMode==GL.GL_BLEND:
-	    GL.glTexEnvf(GL.GL_TEXTURE_ENV,
-			 GL.GL_TEXTURE_ENV_COLOR, t.envColor)
+        GL.glTexEnvf(GL.GL_TEXTURE_ENV,
+                     GL.GL_TEXTURE_ENV_MODE, t.envMode)
+        if t.envMode==GL.GL_BLEND:
+            GL.glTexEnvf(GL.GL_TEXTURE_ENV,
+                         GL.GL_TEXTURE_ENV_COLOR, t.envColor)
 
-	GL.glTexParameterf(t.dim, GL.GL_TEXTURE_WRAP_S, t.wrap[0])
-	GL.glTexParameterf(t.dim, GL.GL_TEXTURE_MAG_FILTER, 
-			   t.magFilter)
-	GL.glTexParameterf(t.dim, GL.GL_TEXTURE_MIN_FILTER, 
-			   t.minFilter)
-	if t.auto:
- 	    GL.glTexGeni(GL.GL_S, GL.GL_TEXTURE_GEN_MODE,
- 			 t.genMod[0])
- 	    GL.glTexGenfv(GL.GL_S, t.genPlane[0], t.plane[0])
-	    GL.glEnable(GL.GL_TEXTURE_GEN_S)
+        GL.glTexParameterf(t.dim, GL.GL_TEXTURE_WRAP_S, t.wrap[0])
+        GL.glTexParameterf(t.dim, GL.GL_TEXTURE_MAG_FILTER, 
+                           t.magFilter)
+        GL.glTexParameterf(t.dim, GL.GL_TEXTURE_MIN_FILTER, 
+                           t.minFilter)
+        if t.auto:
+            GL.glTexGeni(GL.GL_S, GL.GL_TEXTURE_GEN_MODE,
+                         t.genMod[0])
+            GL.glTexGenfv(GL.GL_S, t.genPlane[0], t.plane[0])
+            GL.glEnable(GL.GL_TEXTURE_GEN_S)
         else:
-	    GL.glDisable(GL.GL_TEXTURE_GEN_S)
+            GL.glDisable(GL.GL_TEXTURE_GEN_S)
 
-	if t.dim==GL.GL_TEXTURE_1D:
+        if t.dim==GL.GL_TEXTURE_1D:
             from opengltk.extent import _gllib
-	    _gllib.glTexImage1D(t.dim, t.level, t.format,
-			    t.width, 0, t.format,
-			    GL.GL_UNSIGNED_BYTE, t.image)
+            _gllib.glTexImage1D(t.dim, t.level, t.format,
+                            t.width, 0, t.format,
+                            GL.GL_UNSIGNED_BYTE, t.image)
 
-	elif t.dim==GL.GL_TEXTURE_2D:
-	    GL.glTexParameterf(t.dim, GL.GL_TEXTURE_WRAP_T, t.wrap[1])
+        elif t.dim==GL.GL_TEXTURE_2D:
+            GL.glTexParameterf(t.dim, GL.GL_TEXTURE_WRAP_T, t.wrap[1])
             from opengltk.extent import _gllib
             # directly call the C function to not have to transform the
             # t.image into a bufarray
             
             #print "t.width, t.height", t.width, t.height
             
-	    _gllib.glTexImage2D(t.dim, t.level, t.format,
-			    t.width, t.height, t.border!=0, t.format,
-			    GL.GL_UNSIGNED_BYTE, t.image)
+            _gllib.glTexImage2D(t.dim, t.level, t.format,
+                            t.width, t.height, t.border!=0, t.format,
+                            GL.GL_UNSIGNED_BYTE, t.image)
 ##             import bufarray
 ##             bimage = bufarray.Bufarray(im, bufarray.ubyteCtype)
 ## 	    GL.glTexImage2D(t.dim, t.level,GL.GL_UNSIGNED_BYTE,
@@ -392,15 +392,15 @@ are powers of 2." (has been tested for Image but not for Numeric array yet - gui
 ## 			    t.width, t.height, t.border!=0, t.format,
 ## 			    GL.GL_UNSIGNED_BYTE, t.image)
             
-	    if t.auto:
- 		GL.glTexGeni(GL.GL_T, GL.GL_TEXTURE_GEN_MODE,
- 			     t.genMod[1])
- 		GL.glTexGenfv(GL.GL_T, t.genPlane[1], t.plane[1])
-		GL.glEnable(GL.GL_TEXTURE_GEN_T)
+            if t.auto:
+                GL.glTexGeni(GL.GL_T, GL.GL_TEXTURE_GEN_MODE,
+                             t.genMod[1])
+                GL.glTexGenfv(GL.GL_T, t.genPlane[1], t.plane[1])
+                GL.glEnable(GL.GL_TEXTURE_GEN_T)
             else:
                 GL.glDisable(GL.GL_TEXTURE_GEN_T)
 
- 	GL.glEnable(t.dim)
+        GL.glEnable(t.dim)
 
 
 if __name__ == '__main__':

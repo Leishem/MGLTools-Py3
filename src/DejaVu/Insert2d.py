@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -22,7 +22,7 @@
 # $Id$
 #
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from copy import deepcopy
 from opengltk.OpenGL import GL
 from DejaVu.Common2d3dObject import Common2d3dObject
@@ -53,7 +53,7 @@ class Insert2d(Common2d3dObject):
         self.isMoving = None # tells what is the current behavior 
                              # the legend can be move (True) or resize (False) or nothing (None)
 
-        apply( Common2d3dObject.__init__, (self, name, check), kw)
+        Common2d3dObject.__init__(*(self, name, check), **kw)
 
         self.initialAnchor = deepcopy(self.anchor)
         self.initialPosition = deepcopy(self.position)
@@ -67,7 +67,7 @@ redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
         #print "Insert2d.Set"
-        redoFlags = apply( Common2d3dObject.Set, (self, check, 0), kw)
+        redoFlags = Common2d3dObject.Set(*(self, check, 0), **kw)
 
         val = kw.pop( 'transparent', None)
         if not val is None:
@@ -300,7 +300,7 @@ otherwise tile rendering and stereo won't work
         #print "pick.event.time",pick.event.time
         #print "pick.hits",pick.hits
 
-        if ( len(pick.hits) == 1) and  pick.hits.has_key(self):
+        if ( len(pick.hits) == 1) and  self in pick.hits:
             if self.viewer.currentObject != self:
                     # if the only hit is the legend, 
                     # it becomes the current object

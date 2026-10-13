@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -22,23 +22,23 @@
 # $Id: MaterialEditor.py,v 1.57.4.3 2012/11/09 18:57:14 annao Exp $
 #
 
-import Tkinter, os, math
-import numpy.oldnumeric as Numeric
+import tkinter, os, math
+import mglcompat.oldnumeric as Numeric
 import Pmw
-import tkFileDialog
+import tkinter.filedialog
 
 from opengltk.OpenGL import GL
 from opengltk.extent.utillib import extractedGlutSolidSphere
-from colorTool import ToHSV, ToRGB, OneColor, TkColor
+from .colorTool import ToHSV, ToRGB, OneColor, TkColor
 from DejaVu.extendedSlider import ExtendedSlider
 from DejaVu.Materials import Materials
 from DejaVu import loadTogl
-from numpy.oldnumeric import array
+from mglcompat.oldnumeric import array
 import DejaVu
 
 
 
-class OGLWidget(Tkinter.Widget, Tkinter.Misc):
+class OGLWidget(tkinter.Widget, tkinter.Misc):
     """This class implements an OpenGL widget in a Tk Frame used to display 
 color scales in the color editor.
 """
@@ -47,18 +47,18 @@ color scales in the color editor.
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
 
-        if not kw.has_key('width'):
+        if 'width' not in kw:
             kw['width']=150
-        if not kw.has_key('height'):
+        if 'height' not in kw:
             kw['height']=150
-        if not kw.has_key('double'):
+        if 'double' not in kw:
             kw['double']=1
-        if not kw.has_key('depth'):
+        if 'depth' not in kw:
             kw['depth']=1
 
-		# for unexplained reason anti-aliasing doesn't work
-		# on mesa if we don't set the accumulation buffer
-        if not kw.has_key('accum'):
+                # for unexplained reason anti-aliasing doesn't work
+                # on mesa if we don't set the accumulation buffer
+        if 'accum' not in kw:
             kw['accum'] = 1
 
         self.width = kw['width']
@@ -68,18 +68,18 @@ color scales in the color editor.
 
         # create an Tk-OpenGL widget
         from opengltk.exception import GLerror
-        from Tkinter import TclError
+        from tkinter import TclError
         try:
-            Tkinter.Widget.__init__(self, master, 'togl', cnf, kw)
+            tkinter.Widget.__init__(self, master, 'togl', cnf, kw)
             try:
                 GL.glAccum(GL.GL_LOAD, 1.0)
                 self.accumBuffersError = False
             except GLerror:
                 self.accumBuffersError = True
-        except TclError, e:
+        except TclError as e:
             self.accumBuffersError = True
             kw.pop('accum')
-            Tkinter.Widget.__init__(self, master, 'togl', cnf, kw)
+            tkinter.Widget.__init__(self, master, 'togl', cnf, kw)
 
         #currentcontext = self.tk.call(self._w, 'contexttag')
         #print "OGLWidget.__init__ currentcontext", currentcontext, title
@@ -323,7 +323,7 @@ of the modifications
 
         self.ownsMaster = False
         if master is None:
-            master = Tkinter.Toplevel(viewer.master)#screenName=screenName)
+            master = tkinter.Toplevel(viewer.master)#screenName=screenName)
             master.title(title)
             master.protocol('WM_DELETE_WINDOW', self.dismiss )
             self.ownsMaster = True
@@ -332,13 +332,13 @@ of the modifications
         # self.master as a Frame
         self.root = master
         
-        if not kw.has_key('width'):
+        if 'width' not in kw:
             kw['width'] = 200
 
-        if not kw.has_key('height'):
+        if 'height' not in kw:
             kw['height'] = 200
             
-        self.frame = Tkinter.Frame(self.root, borderwidth=3, relief='ridge')
+        self.frame = tkinter.Frame(self.root, borderwidth=3, relief='ridge')
 
         self.halfSize = 2
         self.material = [
@@ -350,7 +350,7 @@ of the modifications
             Numeric.array([1.0],'f'),
         ]
 
-        apply( OGLWidget.__init__, (self, self.frame, title, cnf), kw )
+        OGLWidget.__init__(*(self, self.frame, title, cnf), **kw)
 #        self.frame.pack(pady=5, padx=10)
         self.frame.grid(row=0, column=0, padx=5, pady=5)
 
@@ -359,7 +359,7 @@ of the modifications
 
         #self.redraw = self.redraw
 
-        f = self.peFrame = Tkinter.Frame(self.root)
+        f = self.peFrame = tkinter.Frame(self.root)
         self.ambipe = MaterialPropertyEditor(f, self, 'Ambi: ')
         self.ambipe.setRGB(self.material[self.ambi][0])
         self.ambipe.setCallback(self.setAmbient)
@@ -394,7 +394,7 @@ of the modifications
         self.paletteNum = 0
         self.lastDir = './'
         
-        f = Tkinter.Frame(self.root)
+        f = tkinter.Frame(self.root)
 
 
 
@@ -415,7 +415,7 @@ of the modifications
 
 
 
-        f1 = Tkinter.Frame(f, borderwidth=3, relief = 'ridge')
+        f1 = tkinter.Frame(f, borderwidth=3, relief = 'ridge')
         
         l = ['artdeco','autumn','glass','metal','neon','rococo','santafe',
              'sheen','silky','spring','summer','tropical','winter']
@@ -434,32 +434,32 @@ of the modifications
                                            'min' : 0, 'max' : 34} )
         self.paletteNumBt.grid(row=0, column=1, padx=2, pady=2)
 
-        l = Tkinter.Button(f1, text="Load ",command=self.loadPaletteMaterial)
+        l = tkinter.Button(f1, text="Load ",command=self.loadPaletteMaterial)
         l.grid(row=1, column=0, padx=2, pady=2, sticky='ew')
 
-        l = Tkinter.Button(f1, text="Apply ", command=self.broadcast)
+        l = tkinter.Button(f1, text="Apply ", command=self.broadcast)
         l.grid(row=1, column=1, padx=2, pady=2, sticky='ew')
 
         f1.pack(padx=2, pady=2)
 
-        f1 = Tkinter.Frame(f, borderwidth=3, relief = 'ridge')
+        f1 = tkinter.Frame(f, borderwidth=3, relief = 'ridge')
 
-        l = Tkinter.Button(f1, text="Read ...",command=self.readMaterial)
+        l = tkinter.Button(f1, text="Read ...",command=self.readMaterial)
         l.grid(row=0, column=0, padx=2, pady=2, sticky='ew')
 
-        l = Tkinter.Button(f1, text="Write ..", command=self.writeMaterial)
+        l = tkinter.Button(f1, text="Write ..", command=self.writeMaterial)
         l.grid(row=0, column=1, padx=2, pady=2, sticky='ew')
         
         f1.pack(padx=2, pady=2)
 
         f.grid(row=0, column=1)
         
-        f = self.ccFrame = Tkinter.Frame(self.root)
+        f = self.ccFrame = tkinter.Frame(self.root)
         self.cc = ColorChooser(f, title=None)
         f.grid(row=1, column=1)
 #        f.pack(pady=5)
         
-        self.dismissTk = Tkinter.Button(self.root, text='DISMISS',
+        self.dismissTk = tkinter.Button(self.root, text='DISMISS',
                                         command=self.dismiss)
         self.dismissTk.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
 
@@ -479,14 +479,14 @@ of the modifications
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
         types = [('materials', '*_prop.py'), ('all files', '*.*')]
         title = "Read material definition"
-        file = tkFileDialog.askopenfilename(
+        file = tkinter.filedialog.askopenfilename(
             filetypes=types, initialdir=self.lastDir, initialfile=None,
             title=title)
         
         if len(file)==0: return
         d = {}
-        execfile(file, d)
-        for k,v in d.items():
+        exec(compile(open(file, "rb").read(), file, 'exec'), d)
+        for k,v in list(d.items()):
             if k=='__builtins__': continue
             break
         self.defineMaterial(v)
@@ -497,7 +497,7 @@ of the modifications
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
         types = [('materials', '*_prop.py'), ('all files', '*.*')]
         title = "Save material definition"
-        file = tkFileDialog.asksaveasfilename(
+        file = tkinter.filedialog.asksaveasfilename(
             filetypes=types, initialdir=self.lastDir,
             initialfile=None, title=title)
         if len(file)==0: return
@@ -738,30 +738,30 @@ class MaterialPropertyEditor(OGLWidget):
         self.callback = None
         self.editor = editor
 
-        tf = self.topFrame = Tkinter.Frame(master, borderwidth=3,
+        tf = self.topFrame = tkinter.Frame(master, borderwidth=3,
                                            relief='ridge')
-        self.frame = Tkinter.Frame(tf, borderwidth=3, relief='sunken')
+        self.frame = tkinter.Frame(tf, borderwidth=3, relief='sunken')
         
-        apply( OGLWidget.__init__, (self, self.frame, title, cnf, 0), kw )
+        OGLWidget.__init__(*(self, self.frame, title, cnf, 0), **kw)
 
         self.forget()
         self.pack(side='left')
-        self.valueTk = Tkinter.StringVar()
-        self.setVal = Tkinter.Entry(self.frame, textvariable=self.valueTk,
+        self.valueTk = tkinter.StringVar()
+        self.setVal = tkinter.Entry(self.frame, textvariable=self.valueTk,
                                    width=5, bg='#CC9999')
         self.setVal.bind('<Return>', self.setVal_cb)
         self.setVal.pack(side='left')
 
-        f = Tkinter.Frame(tf)
-        self.onTk = Tkinter.IntVar()
-        cb = Tkinter.Checkbutton(f, text=label, variable=self.onTk,
+        f = tkinter.Frame(tf)
+        self.onTk = tkinter.IntVar()
+        cb = tkinter.Checkbutton(f, text=label, variable=self.onTk,
                                  command=self.on_cb)
         self.onTk.set(1)
-        self.editTk = Tkinter.IntVar()
-        self.edit = Tkinter.Checkbutton(f, variable=self.editTk,
+        self.editTk = tkinter.IntVar()
+        self.edit = tkinter.Checkbutton(f, variable=self.editTk,
                                         text='Edit', command=self.edit_cb)
-        self.setcwTk = Tkinter.IntVar()
-        self.setcw = Tkinter.Button(f, text='SetCW', pady=0,
+        self.setcwTk = tkinter.IntVar()
+        self.setcw = tkinter.Button(f, text='SetCW', pady=0,
                                     command=self.setcw_cb)
 
         cb.pack(side='left', padx=3)
@@ -904,21 +904,21 @@ class ColorWheel:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
 
         if not master:
-            master = Tkinter.Toplevel()#screenName=screenName)
+            master = tkinter.Toplevel()#screenName=screenName)
 
         if title is not None:
             master.title(title)
 
-        f = self.frame = Tkinter.Frame(master)
+        f = self.frame = tkinter.Frame(master)
 
         path = __import__('DejaVu').__path__
         iconfile = os.path.join(path[0],'cw.ppm')
-        self.cwim = Tkinter.PhotoImage(master=master, file=iconfile)
+        self.cwim = tkinter.PhotoImage(master=master, file=iconfile)
         self.width = self.cwim.width()
         self.height = self.cwim.height()
-        self.cwcanvas = Tkinter.Canvas(f, width=self.width,
+        self.cwcanvas = tkinter.Canvas(f, width=self.width,
                        height=self.height, relief='sunken', borderwidth=3 )
-        self.cwcanvas.create_image(3, 3, anchor=Tkinter.NW, image=self.cwim)
+        self.cwcanvas.create_image(3, 3, anchor=tkinter.NW, image=self.cwim)
         self.cwcanvas.pack()
         self.frame.pack()
 
@@ -942,32 +942,32 @@ class ColorWheel:
     def _MoveCursor(self, x, y):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	# find the saturation based on distance
-	s = math.sqrt(x*x + y*y) / self.radius
-	if s > 1.0:
-	    x = x / s
-	    y = y / s
-	    s = 1.0
+        # find the saturation based on distance
+        s = math.sqrt(x*x + y*y) / self.radius
+        if s > 1.0:
+            x = x / s
+            y = y / s
+            s = 1.0
 
-	# now find the hue based on the angle 
-	if x or y:
-	    angle = math.atan2(y, x)
-	    if angle < 0.0:
+        # now find the hue based on the angle 
+        if x or y:
+            angle = math.atan2(y, x)
+            if angle < 0.0:
                 angle = angle + (2.*math.pi)
-	    h = 1. - angle / (2.0 * math.pi)
-	else:
-	    h = 0
+            h = 1. - angle / (2.0 * math.pi)
+        else:
+            h = 0
 
-	# check if redraw and callback are needed
-	if self.hsvColor[0] != h or self.hsvColor[1] != s:
-	    self.hsvColor[0] = h
-	    self.hsvColor[1] = s
+        # check if redraw and callback are needed
+        if self.hsvColor[0] != h or self.hsvColor[1] != s:
+            self.hsvColor[0] = h
+            self.hsvColor[1] = s
             cx = self.cx+x
             cy = self.cy+y
             self.cwcanvas.coords( self.cursor, cx-3, cy-3, cx-3, cy+3,
                                   cx+3,cy+3, cx+3, cy-3, cx-3, cy-3 )
 
-	    if self.immediate and self.callback:
+            if self.immediate and self.callback:
                 self.callback(self.Get('RGB'))
 
 
@@ -996,35 +996,35 @@ class ColorWheel:
     def Get(self, mode='HSV'):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Get the current color"""
-	if mode == 'RGB':
-	    rgb = ToRGB(self.hsvColor)
-	    return OneColor(rgb)
-	elif mode == 'HSV':
-	    return OneColor(self.hsvColor)
-	elif mode == 'TkRGB':
-	    col = Numeric.array(ToRGB(self.hsvColor[:3]), 'f') * 255
-	    return TkColor(col)
+        """Get the current color"""
+        if mode == 'RGB':
+            rgb = ToRGB(self.hsvColor)
+            return OneColor(rgb)
+        elif mode == 'HSV':
+            return OneColor(self.hsvColor)
+        elif mode == 'TkRGB':
+            col = Numeric.array(ToRGB(self.hsvColor[:3]), 'f') * 255
+            return TkColor(col)
 
 
     def Set(self, color, mode='HSV'):
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
-	"""Set the current color"""
-	assert len(color) in (3,4)
-	color = OneColor(color)
-	if mode=='RGB': color[:3] = ToHSV(color[:3])
-	self.hsvColor = color[:3]
+        """Set the current color"""
+        assert len(color) in (3,4)
+        color = OneColor(color)
+        if mode=='RGB': color[:3] = ToHSV(color[:3])
+        self.hsvColor = color[:3]
 
         # update cursor
-	rad = self.hsvColor[1] * self.radius
-	angle = 2.0 * math.pi * (1. - self.hsvColor[0])
-	cx = self.cx + int(rad * math.cos(angle))
-	cy = self.cy + int(rad * math.sin(angle))
+        rad = self.hsvColor[1] * self.radius
+        angle = 2.0 * math.pi * (1. - self.hsvColor[0])
+        cx = self.cx + int(rad * math.cos(angle))
+        cy = self.cy + int(rad * math.sin(angle))
         self.cwcanvas.coords( self.cursor, cx-3, cy-3, cx-3, cy+3,
                               cx+3,cy+3, cx+3, cy-3, cx-3, cy-3 )
         
-	if self.immediate and self.callback:
+        if self.immediate and self.callback:
             self.callback(self.Get('RGB'))
 
 
@@ -1035,30 +1035,30 @@ class ColorChooser:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
 
         if not master:
-            master = Tkinter.Toplevel()#screenName=screenName)
+            master = tkinter.Toplevel()#screenName=screenName)
 
         if title is not None:
             master.title(title)
 
-        self.frame = Tkinter.Frame(master, borderwidth=3, relief='ridge')
+        self.frame = tkinter.Frame(master, borderwidth=3, relief='ridge')
 
-        self.wheelFrame = Tkinter.Frame(self.frame)
+        self.wheelFrame = tkinter.Frame(self.frame)
         self.cw = ColorWheel(self.wheelFrame)
         self.wheelFrame.pack(pady=5, padx=10)
 
-        f = self.chipFrame = Tkinter.Frame(self.frame, relief='ridge')
-        self.chip1 = Tkinter.Frame(f, relief='sunken', borderwidth=3,
+        f = self.chipFrame = tkinter.Frame(self.frame, relief='ridge')
+        self.chip1 = tkinter.Frame(f, relief='sunken', borderwidth=3,
                                    width=60, height=30, bg='white')
-        self.chip2 = Tkinter.Frame(f, relief='sunken', borderwidth=3,
+        self.chip2 = tkinter.Frame(f, relief='sunken', borderwidth=3,
                                    width=60, height=30, bg='white')
         self.chip1.pack(side='left', anchor='e')
         self.chip2.pack(side='right', anchor='w')
         f.pack(pady=2)
 
-        f = self.btFrame = Tkinter.Frame(self.frame, relief='ridge')
-        self.saveBt = Tkinter.Button(f, text='->', command=self.save)
-        self.swapBt = Tkinter.Button(f, text='<->', command=self.swap)
-        self.restoreBt = Tkinter.Button(f, text='<-', command=self.restore)
+        f = self.btFrame = tkinter.Frame(self.frame, relief='ridge')
+        self.saveBt = tkinter.Button(f, text='->', command=self.save)
+        self.swapBt = tkinter.Button(f, text='<->', command=self.swap)
+        self.restoreBt = tkinter.Button(f, text='<-', command=self.restore)
 
         self.saveBt.pack(side='left')
         self.swapBt.pack(side='left')
@@ -1117,8 +1117,8 @@ class ColorChooser:
 
 
 if __name__=='__main__':
-    import Tkinter
-    master = Tkinter.Toplevel()
+    import tkinter
+    master = tkinter.Toplevel()
 
     from DejaVu import Viewer
     vi = Viewer()

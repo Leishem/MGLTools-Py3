@@ -53,7 +53,7 @@ def get_best_energy_info(d, rms_tolerance, build_hydrogen_bonds=False, \
     c = clust0[0]
     #find the filename of the best result
     dlo_filename = get_filename(d, c)
-    if verbose: print "set dlo_filename to ", dlo_filename
+    if verbose: print("set dlo_filename to ", dlo_filename)
     ostr = dlo_filename + ", "
     de = c.docking_energy
     if refCoords:
@@ -64,7 +64,7 @@ def get_best_energy_info(d, rms_tolerance, build_hydrogen_bonds=False, \
     receptor = None
     if build_hydrogen_bonds:
         if not receptor_filename:
-            print "receptor_filename must be specified in order to build_hydrogen_bonds"
+            print("receptor_filename must be specified in order to build_hydrogen_bonds")
             return 
         receptor = Read(receptor_filename)[0] 
         receptor.buildBondsByDistance()
@@ -72,7 +72,7 @@ def get_best_energy_info(d, rms_tolerance, build_hydrogen_bonds=False, \
         ostr += construct_hydrogen_bonds(receptor.allAtoms, d.ligMol.allAtoms)
     if report_energy_breakdown:
         if not receptor_filename:
-            print "receptor_filename must be specified in order to build_hydrogen_bonds"
+            print("receptor_filename must be specified in order to build_hydrogen_bonds")
         if not receptor:
             receptor = Read(receptor_filename)[0] 
             receptor.buildBondsByDistance()
@@ -88,11 +88,11 @@ def get_largest_cluster_info(d, rms_tolerance, build_hydrogen_bonds=False, \
                                     report_energy_breakdown=False,
                                     receptor_filename=None, refCoords=None):
     largest = d.clusterer.clustering_dict[rms_tolerance][0]
-    if verbose: print "set largest to ", len(largest)
+    if verbose: print("set largest to ", len(largest))
     for clust in d.clusterer.clustering_dict[rms_tolerance]:
-        if verbose: print "current largest cluster len= ", len(clust)
+        if verbose: print("current largest cluster len= ", len(clust))
         if len(clust)>len(largest): 
-            if verbose: print "resetting largest clust: now len=", len(clust)
+            if verbose: print("resetting largest clust: now len=", len(clust))
             largest = clust
     c = largest[0]   #print info about the lowest energy member of this cluster
     ostr = " "
@@ -103,20 +103,20 @@ def get_largest_cluster_info(d, rms_tolerance, build_hydrogen_bonds=False, \
         ostr += "%3d,%3d,%3d,% 8.4f,% 8.4f," %(len(d.clusterer.data), num_clusters, len(largest),  de, c.getRMSD(refCoords=refCoords))
     else:
         ostr += "%3d,%3d,%3d,% 8.4f,% 8.4f," %(len(d.clusterer.data), num_clusters, len(largest),  de, c.getRMSD())
-    if verbose: print "set dlo_filename to ", dlo_filename
+    if verbose: print("set dlo_filename to ", dlo_filename)
     #update the coords only if you need to?
     d.ch.set_conformation(c)
     receptor = None
     if build_hydrogen_bonds:
         if not receptor_filename:
-            print "receptor_filename must be specified in order to build_hydrogen_bonds"
+            print("receptor_filename must be specified in order to build_hydrogen_bonds")
             return 
         receptor = Read(receptor_filename)[0] 
         receptor.buildBondsByDistance()
         ostr += construct_hydrogen_bonds(receptor.allAtoms, d.ligMol.allAtoms)
     if report_energy_breakdown:
         if not receptor_filename:
-            print "receptor_filename must be specified in order to build_hydrogen_bonds"
+            print("receptor_filename must be specified in order to build_hydrogen_bonds")
             return 
         if not receptor:
             receptor = Read(receptor_filename)[0] 
@@ -133,33 +133,33 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: summarize_results.py -d directory"
-        print
-        print "    Description of command..."
-        print "         -d     directory"
-        print "    Optional parameters:"
-        print "        [-t]    rmsd tolerance (default is 1.0)"
-        print "        [-f]    rmsd reference filename "
-        print "        (default is to use input ligand coordinates from docking log)"
-        print "        [-b]    print best docking info only (default is print all)"
-        print "        [-L]    print largest cluster info only (default is print all)"
-        print "        [-B]    print best docking and largest cluster info only (default is print all)"
-        print "        [-o]    output filename"
-        print "                      (default is 'summary_of_results')"
-        print "        [-a]    append to  output filename"
-        print "                      (default is to open output filename 'w')"
-        print "        [-k]    build hydrogen bonds"
-        print "        [-r]    receptor filename"
-        print "        [-e]    report energy breakdown"
-        print "        [-v]    verbose output"
-        print "                      (default is leave active)"
+        print("Usage: summarize_results.py -d directory")
+        print()
+        print("    Description of command...")
+        print("         -d     directory")
+        print("    Optional parameters:")
+        print("        [-t]    rmsd tolerance (default is 1.0)")
+        print("        [-f]    rmsd reference filename ")
+        print("        (default is to use input ligand coordinates from docking log)")
+        print("        [-b]    print best docking info only (default is print all)")
+        print("        [-L]    print largest cluster info only (default is print all)")
+        print("        [-B]    print best docking and largest cluster info only (default is print all)")
+        print("        [-o]    output filename")
+        print("                      (default is 'summary_of_results')")
+        print("        [-a]    append to  output filename")
+        print("                      (default is to open output filename 'w')")
+        print("        [-k]    build hydrogen bonds")
+        print("        [-r]    receptor filename")
+        print("        [-e]    report energy breakdown")
+        print("        [-v]    verbose output")
+        print("                      (default is leave active)")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'd:o:t:f:r:bLBkaevh')
-    except getopt.GetoptError, msg:
-        print 'summarize_results.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('summarize_results.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -195,42 +195,42 @@ if __name__ == '__main__':
         #print "o=", o, " a=", a
         if o in ('-d', '--d'):
             directory = a
-            if verbose: print 'set directory to ', a
+            if verbose: print('set directory to ', a)
         if o in ('-o', '--o'):
             outputfilename = a
-            if verbose: print 'set outputfilename to ', a
+            if verbose: print('set outputfilename to ', a)
         if o in ('-t', '--t'):
             rms_tolerance = float(a)
-            if verbose: print 'set rms_tolerance to ', a
+            if verbose: print('set rms_tolerance to ', a)
         if o in ('-f', '--f'):
             rms_reference = a
-            if verbose: print 'set rms_reference to ', a
+            if verbose: print('set rms_reference to ', a)
         if o in ('-r', '--r'):
             receptor_filename = a
-            if verbose: print 'set receptor_filename to ', a
+            if verbose: print('set receptor_filename to ', a)
         if o in ('-b', '--b'):
             print_best_only = True
-            if verbose: print 'set print_best_only to ', True
+            if verbose: print('set print_best_only to ', True)
         if o in ('-L', '--L'):
             print_Largest_only = True
-            if verbose: print 'set print_Largest_only to ', True
+            if verbose: print('set print_Largest_only to ', True)
         if o in ('-B', '--B'):
             print_best_and_Largest_only = True
             print_best_only = True
             print_Largest_only = True
-            if verbose: print 'set print_best_and_Largest_only to ', True
+            if verbose: print('set print_best_and_Largest_only to ', True)
         if o in ('-k', '--k'):
             build_hydrogen_bonds = True
-            if verbose: print 'set build_hydrogen_bonds to ', True
+            if verbose: print('set build_hydrogen_bonds to ', True)
         if o in ('-a', '--a'):
             append_to_outputfile = True
-            if verbose: print 'set append_to_outputfile to ', True
+            if verbose: print('set append_to_outputfile to ', True)
         if o in ('-e', '--e'):
             report_energy_breakdown = True
-            if verbose: print 'set report_energy_breakdown to ', True
+            if verbose: print('set report_energy_breakdown to ', True)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
@@ -238,13 +238,13 @@ if __name__ == '__main__':
     if outputfilename=='summary_of_results':
         outputfilename = outputfilename + '_' + str(rms_tolerance)
     if build_hydrogen_bonds is True and receptor_filename is None:
-        print 'to build hydrogen bonds, receptor filename must be specified'
+        print('to build hydrogen bonds, receptor filename must be specified')
         sys.exit()
     if report_energy_breakdown is True and receptor_filename is None:
-        print 'to report energy breakdown, receptor filename must be specified'
+        print('to report energy breakdown, receptor filename must be specified')
         sys.exit()
     if not  directory:
-        print 'summarize_results: directory must be specified.'
+        print('summarize_results: directory must be specified.')
         usage()
         sys.exit()
 
@@ -261,7 +261,7 @@ if __name__ == '__main__':
         file = directory + '/' + rms_reference
         ref = Read(file)
         if not len(ref): 
-            print "unable to read ", rms_reference
+            print("unable to read ", rms_reference)
         else:
             ref = ref[0]
             coords = ref.allAtoms.coords
@@ -300,7 +300,7 @@ if __name__ == '__main__':
     fptr = open(outputfilename, mode)
     num_clusters = len(d.clusterer.clustering_dict[rms_tolerance])
     #output a header if file opened with mode 'w' or if this is first use of outputfile...
-    if verbose: print "first is ", first
+    if verbose: print("first is ", first)
     if first:
         tstr = ""
         if print_best_only:
@@ -326,10 +326,10 @@ if __name__ == '__main__':
     ostr = ""
     if print_best_only or print_Largest_only:
         if print_best_only:
-            if verbose: print 'print_best_only is True'
+            if verbose: print('print_best_only is True')
             ostr += get_best_energy_info(d, rms_tolerance, build_hydrogen_bonds, report_energy_breakdown,  receptor_filename, refCoords=refCoords)
         if print_Largest_only:
-            if verbose: print 'print_Largest_only is True'
+            if verbose: print('print_Largest_only is True')
             ostr += get_largest_cluster_info(d, rms_tolerance, build_hydrogen_bonds, report_energy_breakdown, receptor_filename, refCoords=refCoords)
         #add number of atoms and number of torsions to output string
         ostr += "%4d,%2d" %(len(d.ligMol.allAtoms), d.ligMol.parser.keys.count('BRANCH'))
@@ -337,7 +337,7 @@ if __name__ == '__main__':
         try:
             fptr.write(ostr)
         except:
-            print 'except'
+            print('except')
             fptr.write("\n")
     else:
         receptor = None
@@ -347,18 +347,18 @@ if __name__ == '__main__':
             receptor.buildBondsByDistance()
         for clust in d.clusterer.clustering_dict[rms_tolerance]:
             if verbose:
-                print "len(d.clusterer.clustering_dict)=", len(d.clusterer.clustering_dict[rms_tolerance])
-                print "len(clust)=", len(clust)
+                print("len(d.clusterer.clustering_dict)=", len(d.clusterer.clustering_dict[rms_tolerance]))
+                print("len(clust)=", len(clust))
             #for each cluster in the clustering at this rms_tolerance:
             #output length of cluster and energies of the lowest energy result
             c = clust[0]
-            if verbose: print "setting c to clust[0]", id(c)
+            if verbose: print("setting c to clust[0]", id(c))
             #write the dlg filename for the best in this cluster
             dlo_filename = get_filename(d, c)
             ostr = dlo_filename + ", " 
             fptr.write(ostr)
             if build_hydrogen_bonds or report_energy_breakdown:
-                if verbose: print "setting conf to ", id(c)
+                if verbose: print("setting conf to ", id(c))
                 d.ch.set_conformation(c)
             de = c.docking_energy
             ostr = "%3d,% 8.4f,% 8.4f" %(len(clust), de, c.getRMSD(refCoords=refCoords))

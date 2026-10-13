@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -23,12 +23,12 @@
 #
 
 import warnings
-import thread, threading
+import _thread, threading
 import os
 import numpy
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 import math
-import string
+from mglcompat import pystring as string
 import types
 import sys
 from time import time, sleep
@@ -38,8 +38,8 @@ try:
 except:
     pass
 
-import Tkinter
-import tkMessageBox
+import tkinter
+import tkinter.messagebox
 
 
 from opengltk.OpenGL import GL
@@ -102,7 +102,7 @@ class  ReparentObjectEvent(Event):
 
 
 
-class Viewer(Tkinter.Widget, Tkinter.Misc, EventHandler):
+class Viewer(tkinter.Widget, tkinter.Misc, EventHandler):
     """A viewer holds a bunch of object that inherit from Geom and displays
        them in cameras"""
 
@@ -227,11 +227,11 @@ viewerName is the name of the Viewer object in the source code generated.
     
 
     def AddCamera(self, master=None, screenName=None, classCamera=None,
-				  stereo='none', num=None, cnf={}, **kw):
-	"""Add one more camera to this viewer"""
+                                  stereo='none', num=None, cnf={}, **kw):
+        """Add one more camera to this viewer"""
 
         if num is None:
-			num = len(self.cameras) 
+                        num = len(self.cameras) 
 
         if classCamera is None:
             classCamera = Camera
@@ -240,7 +240,7 @@ viewerName is the name of the Viewer object in the source code generated.
             name = classCamera.__name__+str(num)
             
         cameraOwnsMaster = False
-	if not master:
+        if not master:
 ##             if screenName is None:
 ##                 if os.environ.has_key("DISPLAY"):
 ##                     screenName = os.environ["DISPLAY"]
@@ -248,7 +248,7 @@ viewerName is the name of the Viewer object in the source code generated.
 ##                     master = Tk(screenName=screenName)
 ##                 else:
 ##                     master = Tk()
-            master = Tkinter.Toplevel(self.master)
+            master = tkinter.Toplevel(self.master)
             master.title(name)
             cameraOwnsMaster = True
             
@@ -308,21 +308,21 @@ viewerName is the name of the Viewer object in the source code generated.
         if self.GUI is not None:
             self.GUI.bindModifersToTransformInfo(master)
 
-	self.cameras.append( c )
-	if len(self.cameras)==1:
-	    self.currentCamera = c
+        self.cameras.append( c )
+        if len(self.cameras)==1:
+            self.currentCamera = c
             c.hasBeenCurrent = 1
-	    #self.trackball = c.trackball
-	    c.frame.config( background = "#900000" )
+            #self.trackball = c.trackball
+            c.frame.config( background = "#900000" )
 
-	# make the trackball transform the current object
+        # make the trackball transform the current object
         if self.rootObject:
             self.BindTrackballToObject(self.rootObject)
 
         c.firstRedraw = True
         c.Activate()
 
-	return c
+        return c
 
 
     def dialog(self):
@@ -333,7 +333,7 @@ viewerName is the name of the Viewer object in the source code generated.
 #                                     default=0, title="Quit?")
 #        
 #        ok=d.go()
-        ok = tkMessageBox.askokcancel("Quit?","Do you Wish to Quit?")
+        ok = tkinter.messagebox.askokcancel("Quit?","Do you Wish to Quit?")
         if ok:
             self.quit_cb()
         else:
@@ -402,7 +402,7 @@ viewerName is the name of the Viewer object in the source code generated.
 
 
     def InitLighting(self, camera):
-	"""Set up some basic lighting (single infinite light source)
+        """Set up some basic lighting (single infinite light source)
 """
         #print "InitLighting"
         camera.Activate()
@@ -461,7 +461,7 @@ see also: FindObjectByName"""
             for c in object.children:
                 if match.search(c.name):
                     result[c] = 1
-        return result.keys()
+        return list(result.keys())
 
 
 
@@ -469,7 +469,7 @@ see also: FindObjectByName"""
     def __init__(self, master=None, nogui=0, screenName=None,
                  guiMaster=None, classCamera=None,
                  autoRedraw=True, verbose=True, cnf={}, **kw):
-	"""Viewer's constructor
+        """Viewer's constructor
 """
         EventHandler.__init__(self)
         
@@ -485,11 +485,11 @@ see also: FindObjectByName"""
             #while not isinstance(master, Tk) or isinstance(master, Toplevel):
             #    master = master.master
             master = master.winfo_toplevel()
-            master = Tkinter.Toplevel(master)
+            master = tkinter.Toplevel(master)
             self.ownMaster = True
             
             
-        withdrawDefaultRoot = Tkinter._default_root is None
+        withdrawDefaultRoot = tkinter._default_root is None
         if not master:
             # DISABLE DISPLAY handling as it would require creating a new
             # Tk, and this creates many problems, including that Pmw uses
@@ -505,17 +505,17 @@ see also: FindObjectByName"""
             #    self.ownMaster = True
                 #print 'new Tk', repr(master)
                 
-            master = Tkinter.Toplevel()
+            master = tkinter.Toplevel()
             self.ownMaster = True
 
             if guiMaster is None and self.ownMaster:
-                guiMaster = Tkinter.Toplevel(master)
+                guiMaster = tkinter.Toplevel(master)
             master.title(name)
         else:
-            assert isinstance(master, Tkinter.BaseWidget) or isinstance(master, Tkinter.Tk)
+            assert isinstance(master, tkinter.BaseWidget) or isinstance(master, tkinter.Tk)
 
         if withdrawDefaultRoot:
-            Tkinter._default_root.withdraw()
+            tkinter._default_root.withdraw()
             
         #print 'master', repr(master)
         #print 'guiMaster', repr(guiMaster)
@@ -552,12 +552,12 @@ see also: FindObjectByName"""
         
         self.rootObject = None
         self.currentObject = self.rootObject
-	self.lastObjectNumber = 1
-	self.lastPick = None
-	self.lastPickedCamera = None
-	self.currentLight = None
-	self.lights = []
-	self.GUI = None
+        self.lastObjectNumber = 1
+        self.lastPick = None
+        self.lastPickedCamera = None
+        self.currentLight = None
+        self.lights = []
+        self.GUI = None
         self.redirectTransformToRoot = 0
 
         self.Reset_cb = self.ResetCurrentObject
@@ -565,33 +565,33 @@ see also: FindObjectByName"""
         self.Center_cb = self.CenterCurrentObject
         self.Delete_cb = self.DeleteCurrentObject
 
-        self.redrawLock = thread.allocate_lock()
+        self.redrawLock = _thread.allocate_lock()
         self.objectsNeedingRedo = {}
         
         self.materialEditor = None
 
-        self.spinVar = Tkinter.IntVar()
+        self.spinVar = tkinter.IntVar()
         self.spinVar.set(DejaVu.defaultSpinningMode)
         self.spinCallBack = None
 
-	# create a first camera
-	self.cameras = [ ]
+        # create a first camera
+        self.cameras = [ ]
 
-	c = Viewer.AddCamera(self, master, screenName, classCamera, num=0,
+        c = Viewer.AddCamera(self, master, screenName, classCamera, num=0,
                              cnf=cnf, **kw)
 
         #self.GLextensions = string.split(GL.glGetString(GL.GL_EXTENSIONS))
         #self.GLversion = GL.glGetString(GL.GL_VERSION)
         #self.GLvendor = GL.glGetString(GL.GL_VENDOR)
         if verbose:
-            print 'OpenGL-based graphics'
-            print ' GL_VENDOR', GL.glGetString(GL.GL_VENDOR)
-            print ' GL_RENDERER', GL.glGetString(GL.GL_RENDERER)
-            print ' GL_VERSION', GL.glGetString(GL.GL_VERSION)
+            print('OpenGL-based graphics')
+            print(' GL_VENDOR', GL.glGetString(GL.GL_VENDOR))
+            print(' GL_RENDERER', GL.glGetString(GL.GL_RENDERER))
+            print(' GL_VERSION', GL.glGetString(GL.GL_VERSION))
         
         #self.hasOffsetExt = "GL_EXT_polygon_offset" in self.GLextensions
 
-	# Find out how many clipping planes OpenGL defines
+        # Find out how many clipping planes OpenGL defines
         maxClipP = 0
         for i in range(6):
             try:
@@ -601,25 +601,25 @@ see also: FindObjectByName"""
             except AttributeError:
                 break
 
-	# Find out how many clipping planes OpenGL "thinks" it supports
-	#maxClipP = min(int(GL.glGetDoublev(GL.GL_MAX_CLIP_PLANES)[0]), 6)
+        # Find out how many clipping planes OpenGL "thinks" it supports
+        #maxClipP = min(int(GL.glGetDoublev(GL.GL_MAX_CLIP_PLANES)[0]), 6)
 
-	# Find out how many light sources
-	maxLights = int(GL.glGetDoublev(GL.GL_MAX_LIGHTS)[0])
+        # Find out how many light sources
+        maxLights = int(GL.glGetDoublev(GL.GL_MAX_LIGHTS)[0])
         if maxLights > 8:
-            print 'WARNING: Reducing number of light sources from %d to 8' % \
-                  maxLights
+            print('WARNING: Reducing number of light sources from %d to 8' % \
+                  maxLights)
             maxLights = 8
 
         # Decides if the call to enable GL_LIGHTNING will be considered 
-        self.OverAllLightingIsOn = Tkinter.IntVar()
+        self.OverAllLightingIsOn = tkinter.IntVar()
         self.OverAllLightingIsOn.set(1)
 
-	# create the array of clipping plane objects
+        # create the array of clipping plane objects
         # these objects can be added to the list of active clippign planes
         # for each geometry on a given side
-	self.maxClipP = maxClipP
-	self.clipP = []
+        self.maxClipP = maxClipP
+        self.clipP = []
         self.activeClippingPlanes = 0 # number of active clipping planes
 
         self.cappedGeoms = [] # will hold a list of (geom, clipp) pairs
@@ -653,7 +653,7 @@ see also: FindObjectByName"""
         self.noDpyListOpaque = []
         self.noDpyListTransp = []
 
-	# create the root objects
+        # create the root objects
         root = Geom('root', protected=True, shape=(0,0),
                     inheritPointWidth=0,
                     inheritLighting=0,
@@ -669,18 +669,18 @@ see also: FindObjectByName"""
         self.rootObject = root
         self.rootObject.viewer = self
         
-	root.materials[GL.GL_FRONT].InitDefault()
-	root.materials[GL.GL_BACK].InitDefault()
-	root.inheritMaterial = viewerConst.NO
-	root.inheritFrontPolyMode = viewerConst.NO
-	root.inheritBackPolyMode = viewerConst.NO
+        root.materials[GL.GL_FRONT].InitDefault()
+        root.materials[GL.GL_BACK].InitDefault()
+        root.inheritMaterial = viewerConst.NO
+        root.inheritFrontPolyMode = viewerConst.NO
+        root.inheritBackPolyMode = viewerConst.NO
         root.inheritShading = viewerConst.NO
         root.inheritLighting = viewerConst.NO
         root.inheritSharpColorBoundaries = viewerConst.NO
-	root.inheritCulling = viewerConst.NO
+        root.inheritCulling = viewerConst.NO
         self.rootObject = root
         self.currentObject = root
-	root.clipSide = [1]*self.maxClipP
+        root.clipSide = [1]*self.maxClipP
         root.hasBeenCurrent = 1
 
         for i in range(self.maxClipP):
@@ -689,10 +689,10 @@ see also: FindObjectByName"""
             cp = ClippingPlane(self.rootObject, i, self)
             self.clipP.append(cp)
 
-	if self.maxClipP:
-	    self.currentClip = self.clipP[0]
-	else:
-	    self.currentClip = None
+        if self.maxClipP:
+            self.currentClip = self.clipP[0]
+        else:
+            self.currentClip = None
 
 #        # add geometry for picking visual feedback
 #        from DejaVu.Spheres import Spheres 
@@ -747,7 +747,7 @@ see also: FindObjectByName"""
         self.GUI.bindDeleteButton( self.Delete_cb)
 ##         self.GUI.Exit = self.__del__
 
-        if nogui and isinstance(self.GUI.root, Tkinter.Toplevel):
+        if nogui and isinstance(self.GUI.root, tkinter.Toplevel):
             self.GUI.withdraw()
 
         #self.GUI.addObject(self.pickVerticesSpheres, None)
@@ -812,7 +812,7 @@ see also: FindObjectByName"""
         fake = IndexedPolygons('test', vertexArrayFlag=True, vertices=((0,0,0),))
 
         if verbose:
-            print 'Enable VBO:', DejaVu.enableVBO
+            print('Enable VBO:', DejaVu.enableVBO)
 
         self.suspendRedraw = False # set to True to Prevent redrawing
         
@@ -827,7 +827,7 @@ Cameras, Fog, LightModel, Lights, Clipping Planes and rootObject
 """
         code = self.getViewerStateDefinitionCode('vi')
         f = open(filename, 'w')
-        dum = map(lambda x, f=f: f.write("%s"%x), code)
+        dum = list(map(lambda x, f=f: f.write("%s"%x), code))
         f.close()
 
 
@@ -837,7 +837,7 @@ viewer except for rootObject.
 """
         code = self.getObjectsStateDefinitionCode('vi')
         f = open(filename, 'w')
-        dum = map(lambda x, f=f: f.write("%s"%x), code)
+        dum = list(map(lambda x, f=f: f.write("%s"%x), code))
         f.close()
 
             
@@ -846,9 +846,9 @@ viewer except for rootObject.
 Viewer's"""
         f = open(filename, 'w')
         code = self.getViewerStateDefinitionCode('vi')
-        dum = map(lambda x, f=f: f.write("%s"%x), code)
+        dum = list(map(lambda x, f=f: f.write("%s"%x), code))
         code = self.getObjectsStateDefinitionCode('vi')
-        dum = map(lambda x, f=f: f.write("%s"%x), code)
+        dum = list(map(lambda x, f=f: f.write("%s"%x), code))
         f.close()
 
 
@@ -893,8 +893,8 @@ Viewer's"""
 ##         else:
 ##             for object, items in pick.hits.items():
 ##                 print "Object", object.name, pick.type, items
-        for object, items in pick.hits.items():
-            print "Object", object.name, pick.type, items
+        for object, items in list(pick.hits.items()):
+            print("Object", object.name, pick.type, items)
                 
             
     def isShift(self):
@@ -987,29 +987,29 @@ Viewer's"""
             
 
     def AddPickingCallback(self, func):
-	"""Add function func to the list of picking callback fucntions"""
+        """Add function func to the list of picking callback fucntions"""
         if func not in self.pickingFunctions:
             self.pickingFunctions.append(func)
 
 
     def RemovePickingCallback(self, func, modifier=None):
-	"""Delete function func from the list of picking callbacks"""
-        if type(func)==types.StringType:
+        """Delete function func from the list of picking callbacks"""
+        if type(func)==bytes:
             findFunc = self.currentCamera.eventManager.FindFunctionByName
-	    func = findFunc(func, self.pickingFunctions)
+            func = findFunc(func, self.pickingFunctions)
         if not func:
             return
 
-	self.pickingFunctions.remove(func)
+        self.pickingFunctions.remove(func)
 
 
     def SetPickingCallback(self, func):
-	"""Replace the functions to be called after a picking event.
+        """Replace the functions to be called after a picking event.
         Return the list of functions that got replaced"""
 
         save = self.pickingFunctions
         # used to restore save callbacks sent back earlier
-        if type(func)==types.ListType:
+        if type(func)==list:
             self.pickingFunctions = func
         else:
             self.pickingFunctions = [func]
@@ -1095,19 +1095,19 @@ Viewer's"""
 
 
     def ResetCurrentObject(self):
-	"""Reset the current's object transformation
+        """Reset the current's object transformation
 """
-	#self.trackball.autospin = 0
+        #self.trackball.autospin = 0
         if self.redirectTransformToRoot:
             self.rootObject.ResetTransformation()
         else:
             self.currentObject.ResetTransformation()
-	self.Redraw()
+        self.Redraw()
 
 
     def Reset_cb_arg(self, event):
-	"""Function to be bound to the GUI's reset widget"""
-	self.Reset_cb()
+        """Function to be bound to the GUI's reset widget"""
+        self.Reset_cb()
 
 
     def AutoDepthCue(self, nearOffset=0.0, farOffset=0.0):
@@ -1216,8 +1216,8 @@ in "redirect transform to root" mode, root is recentered on the selected geometr
 
 
     def Center_cb_arg(self, event):
-	"""Function to be bound to the GUI's center widget"""
-	self.Center_cb()
+        """Function to be bound to the GUI's center widget"""
+        self.Center_cb()
 
     def _FocusCameraBB(self):
         cam = self.currentCamera
@@ -1286,7 +1286,7 @@ in "redirect transform to root" mode, root is recentered on the selected geometr
         #self.update()
         g = ( (0.5*(mini[0]+maxi[0])), (0.5*(mini[1]+maxi[1])),
               (0.5*(mini[2]+maxi[2])) )
-        print 'after focus set pivot ', g
+        print('after focus set pivot ', g)
         obj.SetPivot(g)
 
 
@@ -1435,7 +1435,7 @@ in "redirect transform to root" mode, root is recentered on the selected geometr
 
 
     def Depth_cb_arg(self, event):
-	"""Function to be bound to the GUI's center widget
+        """Function to be bound to the GUI's center widget
 """
         #print "Depth_cb_arg"
         self.GUI.depthcued.set( not self.GUI.depthcued.get() )
@@ -1443,7 +1443,7 @@ in "redirect transform to root" mode, root is recentered on the selected geometr
 
     def SSAO_cb_arg(self,event):
         if not DejaVu.enableSSAO : 
-            print "SSAO unavailable"
+            print("SSAO unavailable")
             return
         self.currentCamera.ssao = not self.currentCamera.ssao
         if self.GUI is not None:
@@ -1451,13 +1451,13 @@ in "redirect transform to root" mode, root is recentered on the selected geometr
         self.Redraw()
 
     def CurrentCameraBackgroundColor(self, col):
-	"""Method to be bound to a GUI widget"""
+        """Method to be bound to a GUI widget"""
 
-	if col:
+        if col:
 #	    col = OneColor(col)
-	    self.currentCamera.Set(color = col)
-	    self.currentCamera.fog.Set( color= col )
-	    self.currentCamera.Redraw()
+            self.currentCamera.Set(color = col)
+            self.currentCamera.fog.Set( color= col )
+            self.currentCamera.Redraw()
 
 
     def FindObjectByName(self, fullName):
@@ -1590,7 +1590,7 @@ local specifies if the names will be locally or globaly unique.
            when false, if a sibling has the same name the new geom is renamed
            Defaults to True
 """
-		# obj refers to the geom
+                # obj refers to the geom
 
         #assert obj.viewer == None , "ERROR: object already has a viewer"
 
@@ -1605,7 +1605,7 @@ local specifies if the names will be locally or globaly unique.
 #        if replace is None:
 #            replace = True
                         
-		#we verify that the full path name is unique
+                #we verify that the full path name is unique
         #if ( replace is None ) or ( replace == False ) :
         #    for child in parent.children :
         #        if child.name == obj.name : 
@@ -1623,7 +1623,7 @@ local specifies if the names will be locally or globaly unique.
 
     def _AddObject(self, obj, parent, #replace, 
                    redo=False):
-	"""Add an object to the viewer
+        """Add an object to the viewer
 - parent:  geometry under which obj will be added
 - replace: when True, if a sibling has the same name the sibling is replaced
            when false, if a sibling has the same name the new geom is renamed
@@ -1773,11 +1773,11 @@ local specifies if the names will be locally or globaly unique.
                 self.noDpyListOpaque.remove(obj)
             elif obj in self.noDpyListTransp:
                 self.noDpyListTransp.remove(obj)
-            if obj in self.objectsNeedingRedo.keys():
+            if obj in list(self.objectsNeedingRedo.keys()):
                 del self.objectsNeedingRedo[obj]
 
             for func in self.pickingFunctions[:]:
-                if func.im_self == obj:
+                if func.__self__ == obj:
                     self.pickingFunctions.remove(func)
                     break
         else:
@@ -1816,7 +1816,7 @@ local specifies if the names will be locally or globaly unique.
 
 
     def ReparentObject(self, obj, newparent, objectRetainsCurrentPosition=False):
-	"""Reparent an object
+        """Reparent an object
 An AssertionError will be raised if ...
 """
         #print "ReparentObject", obj, newparent
@@ -1876,7 +1876,7 @@ An AssertionError will be raised if ...
         
         if objectRetainsCurrentPosition in (0, False) \
           and obj.immediateRendering is False:
-            if obj not in self.objectsNeedingRedo.keys():
+            if obj not in list(self.objectsNeedingRedo.keys()):
                 self.objectsNeedingRedo[obj] = None
             self.deleteOpenglList() #to allow instance matrices of new parent to be shawn
             self.Redraw()
@@ -1950,7 +1950,7 @@ An AssertionError will be raised if ...
                 # do regular tile rendering
                 c.lift()
                 tr = self.tileRenderCtx
-                print 'tile size', c.width, c.height, self.tileRenderBorder
+                print('tile size', c.width, c.height, self.tileRenderBorder)
                 tr.tileSize(c.width, c.height, self.tileRenderBorder)
                 w = self.tileRenderFinalWidth 
                 h = self.tileRenderFinalHeight
@@ -1983,13 +1983,13 @@ An AssertionError will be raised if ...
                         else:
                             c.imageRendered = 'RIGHT_EYE'
 
-                    print 'New tileRenderBuffer'
+                    print('New tileRenderBuffer')
                     self.tileRenderBuffer[i] = Numeric.zeros( self.tileRenderFinalWidth * h * 3,
                                                            Numeric.UnsignedInt8)
                     tr.oneTileRenderBuffer = Numeric.zeros(
                         c.width * c.height * 3, Numeric.UnsignedInt8)
 
-                    print 'image size', self.tileRenderFinalWidth, self.tileRenderFinalHeight
+                    print('image size', self.tileRenderFinalWidth, self.tileRenderFinalHeight)
                     tr.imageSize(self.tileRenderFinalWidth,
                                  self.tileRenderFinalHeight)
 
@@ -2021,7 +2021,7 @@ An AssertionError will be raised if ...
                     GL.glPushMatrix()
                     GL.glMatrixMode(GL.GL_MODELVIEW)
                     tr.setup()
-                    print tr.Columns,tr.Rows
+                    print(tr.Columns,tr.Rows)
                     if tr.checkeredBackground:
                         col =  0.0
                         colIncr = 1.0/(tr.Columns*tr.Rows)
@@ -2039,13 +2039,13 @@ An AssertionError will be raised if ...
                         self.tileCount+=1
                         #sleep(0.2)
                         moreTiles = tr.endTile()
-                        print 'rendered tile %d'%self.tileCount
+                        print('rendered tile %d'%self.tileCount)
                         #raw_input("hit enter")
                     c.swap = True
                     if tr.checkeredBackground:
                         c.Set(color = originalBackground)
 
-                    print "%d tiles drawn"%self.tileCount
+                    print("%d tiles drawn"%self.tileCount)
                     # restore projection matrix
                     GL.glMatrixMode(GL.GL_PROJECTION)
                     GL.glPopMatrix()
@@ -2090,11 +2090,11 @@ An AssertionError will be raised if ...
                       c.SSAO_OPTIONS['only_ssao'][0] = old
                   else:
                       tileRenderedImage.save(self.tileRenderOutput)
-                except KeyError, e:
-                  print "saving failed: unknown extension", e
+                except KeyError as e:
+                  print("saving failed: unknown extension", e)
 
                 self.stopTileRendering()
-                print 'done rendering tiles'
+                print('done rendering tiles')
 
             # redraw full scenes
             c.InitGL()
@@ -2107,7 +2107,7 @@ An AssertionError will be raised if ...
         
 
     def ReallyRedraw(self):
-	"""Redraw the scene"""
+        """Redraw the scene"""
 
         if self.suspendRedraw:
             self.master.after(10, self.postNextRedrawCheck)
@@ -2145,7 +2145,7 @@ An AssertionError will be raised if ...
                 self.beforeRebuildDpyLists()
                 self.redrawLock.acquire()
 
-                for o in self.objectsNeedingRedo.keys():
+                for o in list(self.objectsNeedingRedo.keys()):
                     if hasattr(o, 'justGotRedone'):
                         continue
                     o.justGotRedone = True
@@ -2174,7 +2174,7 @@ An AssertionError will be raised if ...
                         
                         o.RedoDisplayList()
 
-                for o in self.objectsNeedingRedo.keys():
+                for o in list(self.objectsNeedingRedo.keys()):
                     # test because if object is more than once in list
                     # we only have to delete attribute once
                     if hasattr(o, 'justGotRedone'):
@@ -2262,9 +2262,9 @@ An AssertionError will be raised if ...
             
         
     def Redraw(self):
-	"""Redraw the scene"""
+        """Redraw the scene"""
         #print 'Redraw'
-	#for c in self.cameras: c.Redraw()
+        #for c in self.cameras: c.Redraw()
         self.redrawLock.acquire()
         self.needsRedraw = True
         self.hasRedrawn = False
@@ -2288,15 +2288,15 @@ An AssertionError will be raised if ...
     
         # update GUI here
         if obj.protected is True or obj.protected == 1:
-            self.GUI.enableDeleteButton(Tkinter.DISABLED)
+            self.GUI.enableDeleteButton(tkinter.DISABLED)
         else:
-            self.GUI.enableDeleteButton(Tkinter.NORMAL)        
+            self.GUI.enableDeleteButton(tkinter.NORMAL)        
 
         if hasattr(obj, 'createOwnGui'):
             self.GUI.bindOwnGuiButton(obj.showOwnGui)
-            self.GUI.enableOwnGuiButton(Tkinter.NORMAL)
+            self.GUI.enableOwnGuiButton(tkinter.NORMAL)
         else:
-            self.GUI.enableOwnGuiButton(Tkinter.DISABLED)
+            self.GUI.enableOwnGuiButton(tkinter.DISABLED)
 
         self.GUI.SetCurrentObject(obj)
 
@@ -2314,66 +2314,66 @@ An AssertionError will be raised if ...
 
 
     def SetCurrentTexture(self, obj):
-	"""Select a texture to be the current one"""
+        """Select a texture to be the current one"""
 
-	# build R, Ri and Si
-	obj.FrameTransform(self.currentCamera)
-	self.currentTexture = obj
+        # build R, Ri and Si
+        obj.FrameTransform(self.currentCamera)
+        self.currentTexture = obj
 
 
     def SetCurrentClip(self, obj):
-	"""Select an Clipping plane to be the current one"""
+        """Select an Clipping plane to be the current one"""
 
         obj.hasBeenCurrent = 1
-	# build R, Ri and Si
-	obj.object.FrameTransform(self.currentCamera)
-	obj.FrameTransform(self.currentCamera)
-	oldcp = self.currentClip
-	self.currentClip = obj
-	self.GUI.SetCurrentClip(oldcp)
+        # build R, Ri and Si
+        obj.object.FrameTransform(self.currentCamera)
+        obj.FrameTransform(self.currentCamera)
+        oldcp = self.currentClip
+        self.currentClip = obj
+        self.GUI.SetCurrentClip(oldcp)
         # generate an event
         self.dispatchEvent(SetCurrentClipEvent(obj))
 
 
     def SetCurrentCamera(self, obj):
-	"""Select a Camera to be the current one"""
+        """Select a Camera to be the current one"""
 
         obj.hasBeenCurrent = 1
-	if obj == self.currentCamera: return
-	self.currentCamera = obj
+        if obj == self.currentCamera: return
+        self.currentCamera = obj
 
-	self.GUI.SetCurrentCamera()
+        self.GUI.SetCurrentCamera()
         # generate an event
         self.dispatchEvent(SetCurrentCameraEvent(obj))
 
 
     def SetCurrentLight(self, obj):
-	"""Select a Light to be the current one"""
+        """Select a Light to be the current one"""
 
         obj.hasBeenCurrent = 1
         obj.FrameTransform(self.currentCamera)
-	if obj == self.currentLight: return
-	self.currentLight = obj
+        if obj == self.currentLight: return
+        self.currentLight = obj
 
-	# update GUI here
-	self.GUI.SetCurrentLight(obj)
+        # update GUI here
+        self.GUI.SetCurrentLight(obj)
         # generate an event
         self.dispatchEvent(SetCurrentLightEvent(obj))
 
 
     def BindTrackballToObject(self, obj, allCameras=None):
-	"""Bind trackball to the current object"""
+        """Bind trackball to the current object"""
 
         self.useMasterDpyList = self.oldUseMasterDpyList
 
-	if not isinstance(obj, Common2d3dObject):
-	    raise AttributeError('first parameter has to be an instance of \
+        if not isinstance(obj, Common2d3dObject):
+            raise AttributeError('first parameter has to be an instance of \
 Comon2d3dObject')
 
-	self.SetCurrentObject(obj)
+        self.SetCurrentObject(obj)
 
-	if allCameras:
-	    for c in self.cameras:
+        if allCameras:
+            for c in self.cameras:
                 if isinstance(obj, Geom):
                     c.bindAllActions('Object')
                 elif isinstance(obj, Insert2d):
@@ -2382,13 +2382,13 @@ Comon2d3dObject')
 ##  		c.trackball.B3motion = self.TranslateCurrentObjectXY
 ##  		c.trackball.ShiftB3motion = self.TranslateCurrentObjectZ
 ##  		c.trackball.ShiftB2motion = self.ScaleCurrentObject
-		self.Reset_cb = self.ResetCurrentObject
+                self.Reset_cb = self.ResetCurrentObject
                 self.GUI.bindResetButton( self.Reset_cb)
-                self.GUI.enableNormalizeButton(Tkinter.NORMAL)
-                self.GUI.enableCenterButton(Tkinter.NORMAL)
-		c.currentTransfMode = 'Object'
-	else:
-	    c = self.currentCamera
+                self.GUI.enableNormalizeButton(tkinter.NORMAL)
+                self.GUI.enableCenterButton(tkinter.NORMAL)
+                c.currentTransfMode = 'Object'
+        else:
+            c = self.currentCamera
             if isinstance(obj, Geom):
                 c.bindAllActions('Object')
             elif isinstance(obj, Insert2d):
@@ -2397,11 +2397,11 @@ Comon2d3dObject')
 ##  	    c.trackball.B3motion = self.TranslateCurrentObjectXY
 ##  	    c.trackball.ShiftB3motion = self.TranslateCurrentObjectZ
 ##  	    c.trackball.ShiftB2motion = self.ScaleCurrentObject
-	    self.Reset_cb = self.ResetCurrentObject
+            self.Reset_cb = self.ResetCurrentObject
             self.GUI.bindResetButton( self.Reset_cb)
-            self.GUI.enableNormalizeButton(Tkinter.NORMAL)
-            self.GUI.enableCenterButton(Tkinter.NORMAL)
-	    c.currentTransfMode = 'Object'
+            self.GUI.enableNormalizeButton(tkinter.NORMAL)
+            self.GUI.enableCenterButton(tkinter.NORMAL)
+            c.currentTransfMode = 'Object'
             
         self.GUI.Xform.set(c.currentTransfMode)
 
@@ -2498,71 +2498,71 @@ Comon2d3dObject')
 
 
     def ScaleCurrentObject(self, event, matrix, transXY, transZ):
-	"""Scale the current object"""
+        """Scale the current object"""
         scaleFactor = max(0.001, 1.0 + transZ*0.01)
         if scaleFactor < 0.001: scaleFactor = 0.001
-	self.currentObject.ConcatScale(scaleFactor)
-	self.Redraw()
+        self.currentObject.ConcatScale(scaleFactor)
+        self.Redraw()
 
 
     def CurrentObjectFrontColor(self, prop, value):
-	"""Method to be bound to a GUI widget"""
+        """Method to be bound to a GUI widget"""
 
-	if value:
-	    self.currentObject.Set( materials = (value,), propName=prop )
+        if value:
+            self.currentObject.Set( materials = (value,), propName=prop )
 
 
     def CurrentObjectBackColor(self, prop, value):
-	"""Method to be bound to a GUI widget"""
+        """Method to be bound to a GUI widget"""
 
-	if value:
-	    self.currentObject.Set( materials = (value,), propName=prop,
+        if value:
+            self.currentObject.Set( materials = (value,), propName=prop,
                                     polyFace=GL.GL_BACK)
 
 
     def CurrentObjectOpacity(self, val):
-	"""Method to be bound to a GUI widget"""
+        """Method to be bound to a GUI widget"""
 
-	if val:
-	    self.currentObject.Set( opacity = val )
+        if val:
+            self.currentObject.Set( opacity = val )
 
 
     def BindTrackballToClip(self, c, allCameras=None):
-	"""Bind trackball to the current clipping plane"""
+        """Bind trackball to the current clipping plane"""
 
         self.useMasterDpyList = self.oldUseMasterDpyList
 
-	if c is None: return
-	if not isinstance(c, ClippingPlane):
-	    raise AttributeError ('first parameter has to be an instance\
+        if c is None: return
+        if not isinstance(c, ClippingPlane):
+            raise AttributeError ('first parameter has to be an instance\
  of ClippingPlane')
 
-	self.SetCurrentClip(c)
+        self.SetCurrentClip(c)
 
-	if allCameras:
-	    for c in self.cameras:
+        if allCameras:
+            for c in self.cameras:
                 c.bindAllActions('Clip')
 ##  		c.trackball.B2motion = self.RotateCurrentClipPlane
 ##  		c.trackball.B3motion = self.TranslateCurrentClipPlane
 ##  		c.trackball.ShiftB3motion = c.trackball.NoFunc
 ##  		c.trackball.ShiftB2motion = self.ScaleCurrentClipPlane
-		self.Reset_cb = self.ResetCurrentClipPlane
+                self.Reset_cb = self.ResetCurrentClipPlane
                 self.GUI.bindResetButton( self.Reset_cb)
-                self.GUI.enableNormalizeButton(Tkinter.DISABLED)
-                self.GUI.enableCenterButton(Tkinter.DISABLED)
-		c.currentTransfMode = 'Clip'
-	else:
-	    c = self.currentCamera
+                self.GUI.enableNormalizeButton(tkinter.DISABLED)
+                self.GUI.enableCenterButton(tkinter.DISABLED)
+                c.currentTransfMode = 'Clip'
+        else:
+            c = self.currentCamera
             c.bindAllActions('Clip')
 ##  	    c.trackball.B2motion = self.RotateCurrentClipPlane
 ##  	    c.trackball.B3motion = self.TranslateCurrentClipPlane
 ##  	    c.trackball.ShiftB3motion = c.trackball.NoFunc
 ##  	    c.trackball.ShiftB2motion = self.ScaleCurrentClipPlane
-	    self.Reset_cb = self.ResetCurrentClipPlane
+            self.Reset_cb = self.ResetCurrentClipPlane
             self.GUI.bindResetButton( self.Reset_cb)
-            self.GUI.enableNormalizeButton(Tkinter.DISABLED)
-            self.GUI.enableCenterButton(Tkinter.DISABLED)
-	    c.currentTransfMode = 'Clip'
+            self.GUI.enableNormalizeButton(tkinter.DISABLED)
+            self.GUI.enableCenterButton(tkinter.DISABLED)
+            c.currentTransfMode = 'Clip'
 
         self.GUI.Xform.set(c.currentTransfMode)
 
@@ -2570,16 +2570,16 @@ Comon2d3dObject')
 
 
     def ResetCurrentClipPlane(self):
-	"""Reset the current clipping plane's transformation"""
-	self.currentClip.ResetTransformation()
-	self.Redraw()
+        """Reset the current clipping plane's transformation"""
+        self.currentClip.ResetTransformation()
+        self.Redraw()
 
 
     def RotateCurrentClipPlane(self, event, matrix, transXY, transZ):
-	"""Apply rotation matrix to the current clipping plane"""
-	c = self.currentClip
-	c.ConcatRotation(matrix)
-	self.Redraw()
+        """Apply rotation matrix to the current clipping plane"""
+        c = self.currentClip
+        c.ConcatRotation(matrix)
+        self.Redraw()
 
 
 #    def TranslateCurrentClipPlane(self, event, matrix, transXY, transZ):
@@ -2603,53 +2603,53 @@ Comon2d3dObject')
 
 
     def ScaleCurrentClipPlane(self, event, matrix, transXY, transZ):
-	"""Scale clipping plane representation"""
+        """Scale clipping plane representation"""
         scaleFactor = max(0.001, 1.0 + transZ*0.01)
         if scaleFactor < 0.001: scaleFactor = 0.001
-	self.currentClip.ConcatScale(scaleFactor)
-	self.Redraw()
+        self.currentClip.ConcatScale(scaleFactor)
+        self.Redraw()
 
 
     def CurrentClipColor(self, col):
-	"""Method to be bound to a GUI widget"""
+        """Method to be bound to a GUI widget"""
 
-	if col:
-	    self.currentClip.Set( color = col )
-	    self.currentCamera.Redraw()
+        if col:
+            self.currentClip.Set( color = col )
+            self.currentCamera.Redraw()
 
 
     def BindTrackballToCamera(self, c, allCameras=None):
-	"""Bind the trackball to the current camera"""
+        """Bind the trackball to the current camera"""
 
         self.useMasterDpyList = self.oldUseMasterDpyList
 
-	if not isinstance(c, Camera):
-	    raise AttributeError('first parameter has to be an instance of \
+        if not isinstance(c, Camera):
+            raise AttributeError('first parameter has to be an instance of \
 Camera')
         self.SetCurrentCamera(c)
-	if allCameras:
-	    for c in self.cameras:
+        if allCameras:
+            for c in self.cameras:
                 c.bindAllActions('Camera')
 ##  		c.trackball.B2motion = self.RotateCurrentCamera
 ##  		c.trackball.B3motion = self.TranslateCurrentCamera
 ##  		c.trackball.ShiftB3motion = c.trackball.NoFunc
 ##                  c.trackball.ShiftB2motion = self.ScaleCurrentCamera
-		self.Reset_cb = self.ResetCurrentCamera
+                self.Reset_cb = self.ResetCurrentCamera
                 self.GUI.bindResetButton( self.Reset_cb )
-                self.GUI.enableNormalizeButton(Tkinter.DISABLED)
-                self.GUI.enableCenterButton(Tkinter.DISABLED)
-		c.currentTransfMode = 'Camera'
-	else:
+                self.GUI.enableNormalizeButton(tkinter.DISABLED)
+                self.GUI.enableCenterButton(tkinter.DISABLED)
+                c.currentTransfMode = 'Camera'
+        else:
             c.bindAllActions('Camera')
 ##  	    c.trackball.B2motion = self.RotateCurrentCamera
 ##  	    c.trackball.B3motion = self.TranslateCurrentCamera
 ##  	    c.trackball.ShiftB3motion = c.trackball.NoFunc
 ##  	    c.trackball.ShiftB2motion = self.ScaleCurrentCamera
-	    self.Reset_cb = self.ResetCurrentCamera
+            self.Reset_cb = self.ResetCurrentCamera
             self.GUI.bindResetButton( self.Reset_cb )
-            self.GUI.enableNormalizeButton(Tkinter.DISABLED)
-            self.GUI.enableCenterButton(Tkinter.DISABLED)
-	    c.currentTransfMode = 'Camera'
+            self.GUI.enableNormalizeButton(tkinter.DISABLED)
+            self.GUI.enableCenterButton(tkinter.DISABLED)
+            c.currentTransfMode = 'Camera'
 
         self.GUI.Xform.set(c.currentTransfMode)
 
@@ -2675,14 +2675,14 @@ Camera')
         
 
     def RotateCurrentCamera(self, event, matrix, transXY, transZ):
-	"""Apply the rotation matrix to camera.  If lights, the flag is set
+        """Apply the rotation matrix to camera.  If lights, the flag is set
         to redraw the lights in a new position."""
-	#self.currentCamera.ConcatLookFromRot(matrix)
+        #self.currentCamera.ConcatLookFromRot(matrix)
         #rot = Numeric.transpose(Numeric.reshape(matrix, (4,4)))
         #rot = Numeric.reshape(rot, (16,))
         self.currentCamera.ConcatRotation(matrix)
-	for l in self.lights:
-	    if self.currentCamera.renderMode == GL.GL_SELECT:
+        for l in self.lights:
+            if self.currentCamera.renderMode == GL.GL_SELECT:
                 continue
             if l.positional==viewerConst.YES:
                 l.posFlag = 1
@@ -2693,7 +2693,7 @@ Camera')
             #l.ConcatRotationDir(rot)
 ##              for type in ('dir', 'pos', 'spot'):
 ##                  setattr(l, '%sFlag'%type, 1)
-	self.Redraw()
+        self.Redraw()
 
 
     def TranslateCurrentCamera(self, event, matrix, transXY, transZ):
@@ -2726,7 +2726,7 @@ Camera')
 
 
     def ScaleCurrentCamera(self, event, matrix, transXY, transZ):
-	"""Scale the current object
+        """Scale the current object
 """
         #print "ScaleCurrentCamera", event, matrix, transXY, transZ
         c = self.currentCamera
@@ -2761,57 +2761,57 @@ Camera')
 
 
     def ResetCurrentCamera(self):
-	"""Reset the current camera's transformation"""
-	self.currentCamera.ResetTransformation()
-	for l in self.lights:
-	    if self.currentCamera.renderMode == GL.GL_SELECT:
+        """Reset the current camera's transformation"""
+        self.currentCamera.ResetTransformation()
+        for l in self.lights:
+            if self.currentCamera.renderMode == GL.GL_SELECT:
                 continue
             if l.positional==viewerConst.YES:
                 l.posFlag = 1
                 l.spotFlag = 1
             else:
                 l.dirFlag = 1
- 	self.Redraw()
+        self.Redraw()
 
 
     def BindTrackballToLight(self, light, allCameras=None):
-	"""Bind the trackball to the current ligth source"""
-	
+        """Bind the trackball to the current ligth source"""
+        
         self.useMasterDpyList = self.oldUseMasterDpyList
 
-	if not isinstance(light, Light):
-	    raise AttributeError('first parameter has to be an instance of \
+        if not isinstance(light, Light):
+            raise AttributeError('first parameter has to be an instance of \
 Light')
         self.SetCurrentLight(light)
 
-	if light.positional==viewerConst.NO:  # directional light
-	    if allCameras:
-		for c in self.cameras:
+        if light.positional==viewerConst.NO:  # directional light
+            if allCameras:
+                for c in self.cameras:
                     c.bindAllActions('Light')
 ##  		    c.trackball.B2motion = self.RotateCurrentDLight
 ##  		    c.trackball.B3motion = c.trackball.NoFunc
 ##  		    c.trackball.ShiftB3motion = c.trackball.NoFunc
 ##  		    c.trackball.ShiftB2motion = c.trackball.NoFunc
-		    self.Reset_cb = self.ResetCurrentDLight
+                    self.Reset_cb = self.ResetCurrentDLight
                     self.GUI.bindResetButton( self.Reset_cb)
-                    self.GUI.enableNormalizeButton(Tkinter.DISABLED)
-                    self.GUI.enableCenterButton(Tkinter.DISABLED)
-		    c.currentTransfMode = 'Light'
-	    else:
-		c = self.currentCamera
+                    self.GUI.enableNormalizeButton(tkinter.DISABLED)
+                    self.GUI.enableCenterButton(tkinter.DISABLED)
+                    c.currentTransfMode = 'Light'
+            else:
+                c = self.currentCamera
                 c.bindAllActions('Light')
 ##  		c.trackball.B2motion = self.RotateCurrentDLight
 ##  		c.trackball.B3motion = c.trackball.NoFunc
 ##  		c.trackball.ShiftB3motion = c.trackball.NoFunc
 ##  		c.trackball.ShiftB2motion = c.trackball.NoFunc
-		self.Reset_cb = self.ResetCurrentDLight
+                self.Reset_cb = self.ResetCurrentDLight
                 self.GUI.bindResetButton( self.Reset_cb)
-                self.GUI.enableNormalizeButton(Tkinter.DISABLED)
-                self.GUI.enableCenterButton(Tkinter.DISABLED)
-		c.currentTransfMode = 'Light'
+                self.GUI.enableNormalizeButton(tkinter.DISABLED)
+                self.GUI.enableCenterButton(tkinter.DISABLED)
+                c.currentTransfMode = 'Light'
 
-	else:  # positional light
-	    light.FrameTransform(self.currentCamera)
+        else:  # positional light
+            light.FrameTransform(self.currentCamera)
 
         self.GUI.Xform.set(c.currentTransfMode)
 
@@ -2819,31 +2819,31 @@ Light')
 
 
     def RotateCurrentDLight(self, event, matrix, transXY, transZ):
-	self.currentLight.ConcatRotationDir(matrix)
-	self.Redraw()
+        self.currentLight.ConcatRotationDir(matrix)
+        self.Redraw()
 
 
     def ResetCurrentDLight(self):
-	self.currentLight.Set(direction = (1,1,1,1))
-	self.Redraw()
+        self.currentLight.Set(direction = (1,1,1,1))
+        self.Redraw()
 
 
     def CurrentLightColor(self, prop, value):
-	"""Method to be bound to a GUI widget"""
+        """Method to be bound to a GUI widget"""
 
-	if value:
-	    if prop=='ambient': self.currentLight.Set( ambient = value )
-	    elif prop=='diffuse': self.currentLight.Set( diffuse = value )
-	    elif prop=='specular': self.currentLight.Set( specular = value )
-	    self.currentCamera.Redraw()
+        if value:
+            if prop=='ambient': self.currentLight.Set( ambient = value )
+            elif prop=='diffuse': self.currentLight.Set( diffuse = value )
+            elif prop=='specular': self.currentLight.Set( specular = value )
+            self.currentCamera.Redraw()
 
 
     def LMColor(self, col):
-	"""Method to be bound to a GUI widget"""
+        """Method to be bound to a GUI widget"""
 
-	if col:
-	    self.lightModel.Set( ambient=col, tagModified=False )
-	    self.currentCamera.Redraw()
+        if col:
+            self.lightModel.Set( ambient=col, tagModified=False )
+            self.currentCamera.Redraw()
 
 
     def BindTrackballToTexture(self, o, allCameras=None):
@@ -2874,8 +2874,8 @@ Light')
                 #c.trackball.ShiftB2motion = self.ScaleCurrentTexture
                 self.Reset_cb = self.ResetCurrentTexture
                 self.GUI.bindResetButton( self.Reset_cb)
-                self.GUI.enableNormalizeButton(Tkinter.DISABLED)
-                self.GUI.enableCenterButton(Tkinter.DISABLED)
+                self.GUI.enableNormalizeButton(tkinter.DISABLED)
+                self.GUI.enableCenterButton(tkinter.DISABLED)
                 c.currentTransfMode = 'Texture'
         else:
             c = self.currentCamera
@@ -2886,8 +2886,8 @@ Light')
             #c.trackball.ShiftB2motion = self.ScaleCurrentTexture
             self.Reset_cb = self.ResetCurrentTexture
             self.GUI.bindResetButton( self.Reset_cb)
-            self.GUI.enableNormalizeButton(Tkinter.DISABLED)
-            self.GUI.enableCenterButton(Tkinter.DISABLED)
+            self.GUI.enableNormalizeButton(tkinter.DISABLED)
+            self.GUI.enableCenterButton(tkinter.DISABLED)
             c.currentTransfMode = 'Texture'
 
         self.GUI.Xform.set(c.currentTransfMode)
@@ -2896,37 +2896,37 @@ Light')
 
 
     def ResetCurrentTexture(self):
-	"""Reset the current tesxture's transformation"""
-	self.currentTexture.ResetTransformation()
-	self.Redraw()
+        """Reset the current tesxture's transformation"""
+        self.currentTexture.ResetTransformation()
+        self.Redraw()
 
 
     def ScaleCurrentTexture(self, event, matrix, transXY, transZ):
-	"""Scale the current object"""
+        """Scale the current object"""
         scaleFactor = max(0.001, 1.0 + transZ*0.01)
         if scaleFactor < 0.001: scaleFactor = 0.001
-	self.currentTexture.ConcatScale(1.0/scaleFactor)
-	self.Redraw()
+        self.currentTexture.ConcatScale(1.0/scaleFactor)
+        self.Redraw()
 
 
     def RotateCurrentTexture(self, event, matrix, transXY, transZ):
-	"""Apply the rotation matrix"""
-	self.currentTexture.ConcatRotation(matrix)
-	self.Redraw()
+        """Apply the rotation matrix"""
+        self.currentTexture.ConcatRotation(matrix)
+        self.Redraw()
 
 
     def TranslateCurrentTextureXY(self, event, matrix, transXY, transZ):
-	"""Add the translation trans to the current Texture"""
+        """Add the translation trans to the current Texture"""
         t =  (-transXY[0]*0.05, -transXY[1]*0.05, 0.0 )
-	self.currentTexture.ConcatTranslation(t)
-	self.Redraw()
+        self.currentTexture.ConcatTranslation(t)
+        self.Redraw()
 
 
     def TranslateCurrentTextureZ(self, event, matrix, transXY, transZ):
-	"""Add the translation trans to the current Texture"""
+        """Add the translation trans to the current Texture"""
         t =  (0.0, 0.0, -transZ*0.05)
-	self.currentTexture.ConcatTranslation(t)
-	self.Redraw()
+        self.currentTexture.ConcatTranslation(t)
+        self.Redraw()
 
 
     def BindTrackballToScissor(self, o, allCameras=None):
@@ -2943,7 +2943,7 @@ Light')
 
         self.useMasterDpyList = self.oldUseMasterDpyList
         self.currentScissor = o
-	
+        
         if allCameras:
             for c in self.cameras:
                 c.bindAllActions('Scissor')
@@ -2953,8 +2953,8 @@ Light')
                 #c.trackball.ShiftB2motion = self.ScaleCurrentScissor
                 self.Reset_cb = self.ResetCurrentScissor
                 self.GUI.bindResetButton( self.Reset_cb )
-                self.GUI.enableNormalizeButton(Tkinter.DISABLED)
-                self.GUI.enableCenterButton(Tkinter.DISABLED)
+                self.GUI.enableNormalizeButton(tkinter.DISABLED)
+                self.GUI.enableCenterButton(tkinter.DISABLED)
                 c.currentTransfMode = 'Scissor'
         else:
             c = self.currentCamera
@@ -2965,8 +2965,8 @@ Light')
             #c.trackball.ShiftB2motion = self.ScaleCurrentScissor
             self.Reset_cb = self.ResetCurrentScissor
             self.GUI.bindResetButton( self.Reset_cb )
-            self.GUI.enableNormalizeButton(Tkinter.DISABLED)
-            self.GUI.enableCenterButton(Tkinter.DISABLED)
+            self.GUI.enableNormalizeButton(tkinter.DISABLED)
+            self.GUI.enableCenterButton(tkinter.DISABLED)
             c.currentTransfMode = 'Scissor'
 
         self.GUI.Xform.set(c.currentTransfMode)
@@ -2975,10 +2975,10 @@ Light')
 
 
     def ResetCurrentScissor(self):
-	"""Reset the current tesxture's transformation"""
-	self.currentScissor.Set( scissorX=0, scissorY=0,
+        """Reset the current tesxture's transformation"""
+        self.currentScissor.Set( scissorX=0, scissorY=0,
                                  scissorW=200, scissorH=200 )
-	self.Redraw()
+        self.Redraw()
 
 
     def AspectRatioScissor(self, event, matrix, transXY, transZ):
@@ -2986,25 +2986,25 @@ Light')
         scale = max(0.001, 1.0 + transZ*0.01)
         sc = self.currentScissor
         sc.Set(scissorAspectRatio = sc.scissorAspectRatio*scale)
-	self.Redraw()
+        self.Redraw()
 
         
     def ScaleCurrentScissor(self, event, matrix, transXY, transZ):
-	"""Scale the current object"""
+        """Scale the current object"""
         scaleFactor = max(0.001, 1.0 + transZ*0.01)
         if scaleFactor < 0.001: scaleFactor = 0.001
         sc = self.currentScissor
-	sc.Set( scissorW=int(sc.scissorW*scaleFactor),
+        sc.Set( scissorW=int(sc.scissorW*scaleFactor),
                 scissorH=int(sc.scissorH*scaleFactor) )
-	self.Redraw()
+        self.Redraw()
 
 
     def TranslateCurrentScissor(self, event, matrix, transXY, transZ):
-	"""Add the translation trans to the current Scissor"""
+        """Add the translation trans to the current Scissor"""
         sc = self.currentScissor
-	sc.Set( scissorX=int(sc.scissorX+transXY[0]),
+        sc.Set( scissorX=int(sc.scissorX+transXY[0]),
                 scissorY=int(sc.scissorY+transXY[1]) )
-	self.Redraw()
+        self.Redraw()
 
 
     def deleteOpenglList(self):
@@ -3063,7 +3063,7 @@ This function will use the instance information to return a list of transformed
 coordinates
 """
         vt = []
-        for geom, values in hits.items():
+        for geom, values in list(hits.items()):
             coords = geom.vertexSet.vertices.array
             for vert, instance in values:
                 M = geom.GetMatrix(geom.LastParentBeforeRoot(), instance[1:])

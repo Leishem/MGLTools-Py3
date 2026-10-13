@@ -13,14 +13,14 @@
 #########################################################################
 #$Id: Forms.py,v 1.32 2008/02/08 23:37:12 mgltools Exp $
 
-import Tkinter, Pmw
+import tkinter, Pmw
 import sys, re, os
-import string
+from mglcompat import pystring as string
 import webbrowser
 from string import join
-from Tkinter import *
+from tkinter import *
 from types import StringType
-import tkFileDialog
+import tkinter.filedialog
 
 from NetworkEditor.customizedWidgets import kbScrolledCanvas
 from mglutil.util.callback import CallBackFunction
@@ -55,14 +55,14 @@ class Dialog:
             self.panel.show()
             return
         
-        root = self.panel = Tkinter.Toplevel()
-        self.frame = Tkinter.Frame(root, borderwidth=2,
+        root = self.panel = tkinter.Toplevel()
+        self.frame = tkinter.Frame(root, borderwidth=2,
                                    relief='sunken', padx=5, pady=5)
         self.frame.pack(side='top', expand=1, fill='both')
 
-        txtFrame = Tkinter.Frame(self.frame)
+        txtFrame = tkinter.Frame(self.frame)
 
-        self.textFrame = Tkinter.Text(txtFrame, background=self.bg,
+        self.textFrame = tkinter.Text(txtFrame, background=self.bg,
                                       exportselection=1, padx=10, pady=10,)
         
         self.textFrame.tag_configure('big', font=(ensureFontCase('Courier'), 24, 'bold'),
@@ -89,15 +89,15 @@ class Dialog:
         self.textFrame.pack(side='left', expand=1, fill='both')
 
         # provide a scrollbar
-        self.scroll = Tkinter.Scrollbar(txtFrame, command=self.textFrame.yview)
+        self.scroll = tkinter.Scrollbar(txtFrame, command=self.textFrame.yview)
         self.textFrame.configure(yscrollcommand = self.scroll.set)
         self.scroll.pack(side='right', fill='y')
         txtFrame.pack(expand=1, fill='both')
         
         # proved an OK button
-        buttonFrame = Tkinter.Frame(self.frame)
+        buttonFrame = tkinter.Frame(self.frame)
         buttonFrame.pack(side='bottom', fill='x')
-        self.buttonOk = Tkinter.Button(buttonFrame, text='  Ok  ',
+        self.buttonOk = tkinter.Button(buttonFrame, text='  Ok  ',
                                        command=self.Ok)
         self.buttonOk.pack(padx=6, pady=6)
 
@@ -156,7 +156,7 @@ class AboutDialog(Dialog):
 
         # handle weird tk version num in windoze python >= 1.6 (?!?)
         # Credits for this code go to the people who brought us idlelib!
-        tkVer = `Tkinter.TkVersion`.split('.')
+        tkVer = repr(tkinter.TkVersion).split('.')
         tkVer[len(tkVer)-1] = str('%.3g'%(
             float('.'+tkVer[len(tkVer)-1])))[2:]
         if tkVer[len(tkVer)-1] == '':
@@ -264,8 +264,8 @@ class ChangeFonts:
             self.panel.show()
             return
         
-        root = self.panel = Tkinter.Toplevel()
-        frame = Tkinter.Frame(root, borderwidth=2,
+        root = self.panel = tkinter.Toplevel()
+        frame = tkinter.Frame(root, borderwidth=2,
                                    relief='sunken')#, padx=5, pady=5)
         frame.pack(side='top', expand=1, fill='both')
 
@@ -273,9 +273,9 @@ class ChangeFonts:
         fontGroup = Pmw.Group(frame, tag_text='Font Chooser')
         fontGroup.pack(fill='both', expand=1, padx=6, pady=6)
 
-        f1 = Tkinter.Frame(fontGroup.interior())
+        f1 = tkinter.Frame(fontGroup.interior())
         f1.pack(side='top', fill='both', expand=1)
-        f2 = Tkinter.Frame(fontGroup.interior())
+        f2 = tkinter.Frame(fontGroup.interior())
         f2.pack(side='bottom', fill='both', expand=1)
         
         familyNames=list(root.tk.splitlist(root.tk.call('font','families')))
@@ -304,9 +304,9 @@ class ChangeFonts:
         
         
         styles = ['normal', 'bold', 'italic', 'bold italic']
-        self.styleVarTk = Tkinter.StringVar()
+        self.styleVarTk = tkinter.StringVar()
         for i in range(len(styles)):
-            b = Tkinter.Radiobutton(
+            b = tkinter.Radiobutton(
                 f2,
                 variable = self.styleVarTk,
                 text=styles[i], value=styles[i])
@@ -320,34 +320,34 @@ class ChangeFonts:
         guiGroup.pack(fill='both', expand=1, padx=6, pady=6)
         group1 = ['All', 'Menus', 'LibTabs', 'Categories']
         group2 = ['LibNodes', 'NetTabs', 'Nodes', 'Root']
-        self.groupVarTk = Tkinter.StringVar()
-        frame1 = Tkinter.Frame(guiGroup.interior())
-        frame2 = Tkinter.Frame(guiGroup.interior())
+        self.groupVarTk = tkinter.StringVar()
+        frame1 = tkinter.Frame(guiGroup.interior())
+        frame2 = tkinter.Frame(guiGroup.interior())
         frame1.pack(side='top', fill='both', expand=1)
         frame2.pack(side='bottom', fill='both', expand=1)
 
         for i in range(len(group1)):
-            b = Tkinter.Radiobutton(
+            b = tkinter.Radiobutton(
                 frame1,
                 variable = self.groupVarTk,
                 text=group1[i], value=group1[i])
             b.grid(row=0, column=i, pady=6)
             
         for i in range(len(group2)):
-            b = Tkinter.Radiobutton(
+            b = tkinter.Radiobutton(
                 frame2,
                 variable = self.groupVarTk,
                 text=group2[i], value=group2[i])
             b.grid(row=0, column=i, pady=6)
  
-        buttonFrame = Tkinter.Frame(root, borderwidth=2,
+        buttonFrame = tkinter.Frame(root, borderwidth=2,
                                    relief='sunken', padx=5, pady=5)
         buttonFrame.pack(side='top', expand=1, fill='both')
-        self.buttonOk = Tkinter.Button(buttonFrame, text='  Ok  ',
+        self.buttonOk = tkinter.Button(buttonFrame, text='  Ok  ',
                                        command=self.Ok_cb)
-        self.buttonApply = Tkinter.Button(buttonFrame, text='  Apply  ',
+        self.buttonApply = tkinter.Button(buttonFrame, text='  Apply  ',
                                        command=self.Apply_cb)
-        self.buttonCancel = Tkinter.Button(buttonFrame, text='  Cancel  ',
+        self.buttonCancel = tkinter.Button(buttonFrame, text='  Cancel  ',
                                        command=self.Cancel_cb)
                 
         self.buttonOk.grid(row=0, column=0, padx=6, pady=6)
@@ -408,9 +408,9 @@ A new search clears the previously found nodes"""
     def __init__(self, editor=None):
         self.panel = None
         self.editor = editor      # instance of VPE
-        self.entryVarTk = Tkinter.StringVar()  # Entry var
-        self.cbVarTk = Tkinter.IntVar()        # checkbutton var
-        self.choicesVarTk = Tkinter.StringVar()# radiobutton choices var
+        self.entryVarTk = tkinter.StringVar()  # Entry var
+        self.cbVarTk = tkinter.IntVar()        # checkbutton var
+        self.choicesVarTk = tkinter.StringVar()# radiobutton choices var
         self.choices = ['Search current lib only', 'Search all loaded libs',
                         'Search all packages\non system path (slower)']
         
@@ -430,22 +430,22 @@ A new search clears the previously found nodes"""
             self.panel.show()
             return
         
-        root = self.panel = Tkinter.Toplevel()
+        root = self.panel = tkinter.Toplevel()
 
         # add menu bar
-        self.menuBar = Tkinter.Menu(root)
-        self.optionsMenu = Tkinter.Menu(self.menuBar, tearoff=0)
+        self.menuBar = tkinter.Menu(root)
+        self.optionsMenu = tkinter.Menu(self.menuBar, tearoff=0)
         self.optionsMenu.add_command(label="Hide Search Options",
                                      command=self.showHideOptions_cb)
 
         self.menuBar.add_cascade(label="Options", menu=self.optionsMenu)
         root.config(menu=self.menuBar)
                 
-        frame = Tkinter.Frame(root, borderwidth=2, relief='sunken')
+        frame = tkinter.Frame(root, borderwidth=2, relief='sunken')
         frame.pack(side='top', expand=1, fill='both')
 
         # build infrastructure for search panes with scrolled canvas
-        sFrame = Tkinter.Frame(frame)
+        sFrame = tkinter.Frame(frame)
         sFrame.pack(expand=1, fill='both')
         # add panes
         self.searchPane = Pmw.PanedWidget(sFrame, orient='horizontal',
@@ -487,22 +487,22 @@ A new search clears the previously found nodes"""
         self.editor.idToNodes[self.libCanvas] = {}
 
         
-        lowerFrame = Tkinter.Frame(frame)
+        lowerFrame = tkinter.Frame(frame)
         lowerFrame.pack() # no expand
         
         # add options buttons
         self.optionsGroup = Pmw.Group(lowerFrame, tag_text="Search Options")
         self.optionsGroup.grid(row=0,column=0, sticky='we',padx=6, pady=6)
 
-        cb = Tkinter.Checkbutton(self.optionsGroup.interior(),
+        cb = tkinter.Checkbutton(self.optionsGroup.interior(),
                                  text="Case sensitive", variable=self.cbVarTk)
         cb.grid(row=0, column=0, columnspan=2, sticky='we')
 
         for i in range(len(self.choices)):
-            b = Tkinter.Radiobutton(
+            b = tkinter.Radiobutton(
                 self.optionsGroup.interior(),
                 variable = self.choicesVarTk, value=self.choices[i])
-            l = Tkinter.Label(self.optionsGroup.interior(),
+            l = tkinter.Label(self.optionsGroup.interior(),
                               text=self.choices[i])
             b.grid(row=i+1, column=0, sticky='we')
             l.grid(row=i+1, column=1, sticky='w')
@@ -510,20 +510,20 @@ A new search clears the previously found nodes"""
         self.choicesVarTk.set(self.choices[1])
 
         # add Entry
-        eFrame = Tkinter.Frame(lowerFrame)
+        eFrame = tkinter.Frame(lowerFrame)
         eFrame.grid(row=1, column=0, sticky='we')
-        eLabel = Tkinter.Label(eFrame, text='Search string:')
+        eLabel = tkinter.Label(eFrame, text='Search string:')
         eLabel.pack(side='left', expand=1, fill='x')
-        entry = Tkinter.Entry(eFrame, textvariable=self.entryVarTk)
+        entry = tkinter.Entry(eFrame, textvariable=self.entryVarTk)
         entry.bind('<Return>', self.search)
         entry.pack(side='right', expand=1, fill='x')
         
         # add buttons
-        bFrame = Tkinter.Frame(lowerFrame)
+        bFrame = tkinter.Frame(lowerFrame)
         bFrame.grid(row=2, column=0, sticky='we')
-        button1 = Tkinter.Button(bFrame, text="Search", relief="raised",
+        button1 = tkinter.Button(bFrame, text="Search", relief="raised",
                                  command=self.Apply_cb)
-        button2 = Tkinter.Button(bFrame, text="Dismiss", relief="raised",
+        button2 = tkinter.Button(bFrame, text="Dismiss", relief="raised",
                                  command=self.Cancel_cb)
         button1.pack(side='left', expand=1, fill='x')
         button2.pack(side='right', expand=1, fill='x')
@@ -587,7 +587,7 @@ A new search clears the previously found nodes"""
             libraries = [ (lib, self.editor.libraries[lib]) ]
             
         elif choice == self.choices[1]: # all loaded libs
-            libraries = self.editor.libraries.items()
+            libraries = list(self.editor.libraries.items())
 
         else: # all packages on disk
             libraries = self.searchDisk()
@@ -595,7 +595,7 @@ A new search clears the previously found nodes"""
 
         for libInd in range(len(libraries)):        
             libName, lib = libraries[libInd]
-            categories = lib.libraryDescr.values()
+            categories = list(lib.libraryDescr.values())
             # loop over categories
             for catInd in range(len(lib.libraryDescr)):
                 cat = categories[catInd]
@@ -733,7 +733,7 @@ A new search clears the previously found nodes"""
     def searchDisk(self):
         libraries = []
         packages = findAllPackages()
-        for packName, packNameWithPath in packages.items():
+        for packName, packNameWithPath in list(packages.items()):
             modNames = self.getModules(packName, packNameWithPath)
             if len(modNames):
                 for modName in modNames:
@@ -743,12 +743,12 @@ A new search clears the previously found nodes"""
                             moduleName, globals(), locals(),
                             modName.split('.')[-1])
                         libs = self.getLibraries(mod)
-                        for name,lib in libs.items():
+                        for name,lib in list(libs.items()):
                             lib.modName = moduleName
                             libraries.append( (name,lib) )
                     except:
-                        print "Could not import module %s from %s!"%(
-                            modName, os.getcwd() )
+                        print("Could not import module %s from %s!"%(
+                            modName, os.getcwd() ))
                         
         return libraries
     
@@ -756,15 +756,15 @@ A new search clears the previously found nodes"""
     def getModules(self, packName, packNameWithPath):
         modules = findModulesInPackage(packNameWithPath, 'NodeLibrary')
         modNames = []
-        for key, value in modules.items():
+        for key, value in list(modules.items()):
             pathPack = key.split(os.path.sep)
             if pathPack[-1] == packName:
-                newModName = map(lambda x: x[:-3], value)
+                newModName = [x[:-3] for x in value]
                 modNames = modNames + newModName
             else:
                 pIndex = pathPack.index(packName)
                 prefix = string.join(pathPack[pIndex+1:], '.')
-                newModName = map(lambda x: "%s.%s"%(prefix, x[:-3]), value)
+                newModName = ["%s.%s"%(prefix, x[:-3]) for x in value]
                 modNames = modNames + newModName
         modNames.sort()
         return modNames
@@ -808,14 +808,14 @@ class HelpDialog:
             self.panel.show()
             return
 
-        root = self.panel = Tkinter.Toplevel()
-        self.frame = Tkinter.Frame(
+        root = self.panel = tkinter.Toplevel()
+        self.frame = tkinter.Frame(
             root, borderwidth=2, relief='sunken', padx=5, pady=5)
         self.frame.pack(side='top', expand=1, fill='both')
 
-        txtFrame = Tkinter.Frame(self.frame)
+        txtFrame = tkinter.Frame(self.frame)
 
-        self.textFrame = Tkinter.Text(
+        self.textFrame = tkinter.Text(
             txtFrame, exportselection=1, padx=10, pady=10,)
 
         if self.bg is not None:
@@ -832,15 +832,15 @@ class HelpDialog:
 
 
         # provide a scrollbar
-        self.scroll = Tkinter.Scrollbar(txtFrame, command=self.textFrame.yview)
+        self.scroll = tkinter.Scrollbar(txtFrame, command=self.textFrame.yview)
         self.textFrame.configure(yscrollcommand = self.scroll.set)
         self.scroll.pack(side='right', fill='y')
         txtFrame.pack(expand=1, fill='both')
         
         # proved an OK button
-        buttonFrame = Tkinter.Frame(self.frame)
+        buttonFrame = tkinter.Frame(self.frame)
         buttonFrame.pack(side='bottom', fill='x')
-        self.buttonOk = Tkinter.Button(buttonFrame, text='  Ok  ',
+        self.buttonOk = tkinter.Button(buttonFrame, text='  Ok  ',
                                        command=self.Ok)
         self.buttonOk.pack(padx=6, pady=6)
 
@@ -885,14 +885,14 @@ class BugReport:
             
     def __call__(self):
         
-        apply(self.doitWrapper,(),{})
+        self.doitWrapper(*(), **{})
     
     
     def buildPanel(self):
          
         
-        root = self.panel = Tkinter.Toplevel()    
-        self.frame = Tkinter.Frame(root, background='white',borderwidth=2, relief='sunken', padx=5, pady=5)
+        root = self.panel = tkinter.Toplevel()    
+        self.frame = tkinter.Frame(root, background='white',borderwidth=2, relief='sunken', padx=5, pady=5)
         self.frame.pack(side='top', expand=1, fill='both')    
         ##### short desc################
                
@@ -912,7 +912,7 @@ class BugReport:
         self.desctext.pack(side='left', expand=1, fill='both')
         self.desctext.grid(sticky='nw',row=1,column=0,columnspan=2)
         #pdb file button
-        self.pdbvar  = Tkinter.IntVar()
+        self.pdbvar  = tkinter.IntVar()
         
         
         
@@ -920,26 +920,26 @@ class BugReport:
         self.pdbGroup = Pmw.Group(self.frame,tag_text="AttachFile")
         self.pdbGroup.pack(side='left',fill='both', expand=1, padx=1, pady=1)
         
-        f1 = Tkinter.Frame(self.pdbGroup.interior())
+        f1 = tkinter.Frame(self.pdbGroup.interior())
         f1.pack(side='top', fill='both', expand=1)
         self.pdbGroup.grid(row=3,column=0,columnspan=2,sticky="nesw")
         self.pdbfileadd= kbScrolledListBox(f1,items=[],listbox_exportselection=0,listbox_height=1,listbox_width=85)
         self.pdbfileadd.pack(expand=1, fill='both')
         self.pdbfileadd.grid(sticky='nw',row=0)
-        self.deletefilebutton=Tkinter.Button(f1,text='Delete Selected',     
+        self.deletefilebutton=tkinter.Button(f1,text='Delete Selected',     
                                command=self.delete_selected,state="disabled",width=40)
         self.deletefilebutton.pack(side='left', expand=1,fill='both')
         self.deletefilebutton.grid(sticky='nw',row=1,column=0,columnspan=1)
-        self.attachmorebutton=Tkinter.Button(f1,text='Attach File ..',     
+        self.attachmorebutton=tkinter.Button(f1,text='Attach File ..',     
                                command=self.attach_more,width=40)
         self.attachmorebutton.pack(side='left', expand=1,fill='both')
         self.attachmorebutton.grid(sticky='ne',row=1,columnspan=2)
         #email-entry
-        self.email_entrylab=Tkinter.Label(self.frame,text="Enter your email address(optional:to recieve information about submitted bug)")
+        self.email_entrylab=tkinter.Label(self.frame,text="Enter your email address(optional:to recieve information about submitted bug)")
         self.email_entrylab.pack(side='top', fill='both', expand=1)
         self.email_entrylab.grid(sticky='nw',row=4,column=0)
-        self.email_entryvar = Tkinter.StringVar()
-        self.email_entry=Tkinter.Entry(self.frame,textvariable=self.email_entryvar)
+        self.email_entryvar = tkinter.StringVar()
+        self.email_entry=tkinter.Entry(self.frame,textvariable=self.email_entryvar)
         
         self.email_entry.pack(side='top', fill='both', expand=1)
         self.email_entry.grid(sticky='nesw',row=5,column=0,columnspan=2)
@@ -947,11 +947,11 @@ class BugReport:
         
         
         ###############upload,dismiss buttons################
-        self.uploadbutton=Tkinter.Button(self.frame,text='UpLoad Bug Report',     
+        self.uploadbutton=tkinter.Button(self.frame,text='UpLoad Bug Report',     
                                command=self.show_upload_page,width=40)
         self.uploadbutton.pack(side='left', expand=1,fill='both')
         self.uploadbutton.grid(sticky='nw',row=6,column=0,columnspan=1)
-        self.dismiss=Tkinter.Button(self.frame,text='DISMISS',
+        self.dismiss=tkinter.Button(self.frame,text='DISMISS',
                             command=self.Ok,width=37)
         self.dismiss.pack( expand=1,fill='both')
         self.dismiss.grid(sticky='ne',row=6,columnspan=2)
@@ -980,7 +980,7 @@ class BugReport:
         pdb_addw=self.pdbfileadd
         pdb_delw=self.deletefilebutton
         
-        Filename = tkFileDialog.askopenfilename(filetypes=[('all files','*')],title="ADDFile")
+        Filename = tkinter.filedialog.askopenfilename(filetypes=[('all files','*')],title="ADDFile")
         if Filename:
             inputfilename = os.path.abspath(Filename)
             files=pdb_addw.get()
@@ -1026,10 +1026,10 @@ class BugReport:
     #checking validity of email address
     def validateEmail(self,email):
 
-	        if len(email) > 7:
-		        if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) != None:
-			        return 1
-	        return 0
+                if len(email) > 7:
+                        if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) != None:
+                                return 1
+                return 0
     def show_upload_page(self):
         self.get_description()
          
@@ -1039,11 +1039,11 @@ class BugReport:
         
         desccont = fulldesc
         if len(sumcont)<=1 or len(desccont)<=1:
-            import tkMessageBox
-            ok = tkMessageBox.askokcancel("Input","Please enter summary and description")
+            import tkinter.messagebox
+            ok = tkinter.messagebox.askokcancel("Input","Please enter summary and description")
             return
         from mglutil.TestUtil import BugReport
-        if VarDict.has_key('attachfile'):
+        if 'attachfile' in VarDict:
             upfile = VarDict['attachfile']
         else:
             upfile=[]

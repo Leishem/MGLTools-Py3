@@ -14,7 +14,7 @@
 ##  from ViewerFramework.gui import InputFormDescr
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 from ViewerFramework.picker import Picker
-import Tkinter, Pmw
+import tkinter, Pmw
 from MolKit.molecule import AtomSet, BondSet
 
 class AtomPicker(Picker):
@@ -47,19 +47,19 @@ defined number of atoms have been selected
     def buildInputFormDescr(self):
         """to be implemented by sub-class"""
         
-	ifd=InputFormDescr()
+        ifd=InputFormDescr()
         ifd.title = "atom picker"
-        ifd.append({'widgetType':Tkinter.Label,
+        ifd.append({'widgetType':tkinter.Label,
                          'name':'event',
                          'wcfg':{'text':'last atom: '},
-                         'gridcfg':{'sticky':Tkinter.W} })
+                         'gridcfg':{'sticky':tkinter.W} })
         ifd.append({'widgetType':Pmw.EntryField,
                          'name':'Atom',
                          'wcfg':{'labelpos':'w',
                                  'label_text':'Atom: ', 'validate':None},
                          'gridcfg':{'sticky':'we'}})
         if self.numberOfObjects==None:
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                              'wcfg':{'text':'Done'},
                              'command': self.stop})
 
@@ -101,12 +101,12 @@ class BondPicker(Picker):
     def buildInputFormDescr(self):
         """to be implemented by sub-class"""
 
-	ifd=InputFormDescr()
+        ifd=InputFormDescr()
         ifd.title = "bond picker"
-        ifd.append({'widgetType':Tkinter.Label,
+        ifd.append({'widgetType':tkinter.Label,
                     'name':'event',
                     'wcfg':{'text':'event: '+self.event},
-                    'gridcfg':{'sticky':Tkinter.W} })
+                    'gridcfg':{'sticky':tkinter.W} })
         
         ifd.append({'widgetType':Pmw.EntryField,
                     'name':'Atom1',
@@ -128,7 +128,7 @@ class BondPicker(Picker):
                     'gridcfg':{'sticky':'we'}})
 
         if self.numberOfObjects==None:
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                              'wcfg':{'text':'Done'},
                              'command': self.stop})
 
@@ -142,7 +142,7 @@ class MsmsPicker(Picker):
     def getObjects(self, pick):
         """to be implemented by sub-class"""
         result = []
-        for o in pick.hits.keys():
+        for o in list(pick.hits.keys()):
             if isinstance(o, IndexedPolygons):
                 if hasattr(o, 'mol'):
                     if hasattr(o,'userName'):
@@ -158,12 +158,12 @@ class MsmsPicker(Picker):
     def buildInputFormDescr(self):
         """to be implemented by sub-class"""
         
-	ifd=InputFormDescr()
+        ifd=InputFormDescr()
         ifd.title = "MSMSsel picker"
-        ifd.append({'widgetType':Tkinter.Label,
+        ifd.append({'widgetType':tkinter.Label,
                          'name':'event',
                          'wcfg':{'text':'event: '+self.event},
-                         'gridcfg':{'sticky':Tkinter.W} })
+                         'gridcfg':{'sticky':tkinter.W} })
         ifd.append({'widgetType':Pmw.EntryField,
                          'name':'Surface',
                          'wcfg':{'labelpos':'w',
@@ -171,7 +171,7 @@ class MsmsPicker(Picker):
                                  'validate':None},
                          'gridcfg':{'sticky':'we'}})
         if self.numberOfObjects==None:
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                              'wcfg':{'text':'Done'},
                              'command': self.stop})
         return ifd
@@ -181,7 +181,7 @@ class NewMsmsPicker(MsmsPicker):
 
     def getObjects(self, pick):
         """to be implemented by sub-class"""
-        for o in pick.hits.keys():
+        for o in list(pick.hits.keys()):
             if o:
                 if isinstance(o, IndexedPolygons):
                     if hasattr(o, 'mol'):
@@ -192,7 +192,7 @@ class NewMsmsPicker(MsmsPicker):
                                 result.append(o)
             return result
         else:
-            if self.ifd.entryByName.has_key('AllObjects'):
+            if 'AllObjects' in self.ifd.entryByName:
                 widget = self.ifd.entryByName['AllObjects']['widget']
                 if len(widget.lb.curselection()):
                     return widget.entries(int(widget.lb.curselection()[0]))
@@ -203,7 +203,7 @@ class NewMsmsPicker(MsmsPicker):
         choices = []
         for mol in self.vf.Mols:
             geoms = mol.geomContainer.geoms
-            for geomname in geoms.keys():
+            for geomname in list(geoms.keys()):
                 if hasattr(geoms[geomname], 'userName') or \
                    (geomname=='msms' and geoms[geomname].vertexSet):
                     choices.append(mol.geomContainer.geoms[geomname])
@@ -221,19 +221,19 @@ class NewMsmsPicker(MsmsPicker):
     def buildInputFormDescr(self):
         """to be implemented by sub-class"""
         
-	ifd=InputFormDescr()
+        ifd=InputFormDescr()
         ifd.title = "MSMSsel picker"
-        ifd.append({'widgetType':Tkinter.Label,
+        ifd.append({'widgetType':tkinter.Label,
                          'name':'event',
                          'wcfg':{'text':'event: '+self.event},
-                         'gridcfg':{'sticky':Tkinter.W} })
+                         'gridcfg':{'sticky':tkinter.W} })
         ifd.append({'widgetType':Pmw.EntryField,
                          'name':'Surface',
                          'wcfg':{'labelpos':'w',
                                  'label_text':'Surface name: ',
                                  'validate':None},
                          'gridcfg':{'sticky':'we'}})
-        ifd.append({'widgetType':Tkinter.Button,
+        ifd.append({'widgetType':tkinter.Button,
                          'name':'Cancel',
                          'wcfg':{'text':'Cancel',
                                 'command':self.Cancel
@@ -241,7 +241,7 @@ class NewMsmsPicker(MsmsPicker):
                          })
 
         if self.numberOfObjects==None:
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                              'wcfg':{'text':'Done'},
                              'command': self.stop})
         return ifd

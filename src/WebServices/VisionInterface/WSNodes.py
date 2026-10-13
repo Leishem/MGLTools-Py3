@@ -2,15 +2,15 @@
 #
 # $Id: WSNodes.py,v 1.64.2.11 2011/08/04 20:56:37 jren Exp $
 
-import os, os.path, time, urllib, tkMessageBox, webbrowser
+import os, os.path, time, urllib.request, urllib.parse, urllib.error, tkinter.messagebox, webbrowser
 import xml.dom.minidom
 import shutil
 from NetworkEditor.items import NetworkNode, FunctionNode
 from Vision import UserLibBuild
-from urlparse import urlparse
+from urllib.parse import urlparse
 from WebServices.OpalCache import OpalCache
 from mglutil.util.packageFilePath import getResourceFolderWithVersion
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from time import strftime
 from datetime import datetime
@@ -21,13 +21,13 @@ Retruns the list of available Opal Web Services
 output - list of Opal Web Services
 """
     if not url:
-        tkMessageBox.showerror("Error!","No URL was provided")
+        tkinter.messagebox.showerror("Error!","No URL was provided")
         return
     services = []
     if  url.find("/opal2") != -1:
         #this is opal2 let's use the registry
         url = url + "/opalServices.xml"
-        opener = urllib.FancyURLopener({}) 
+        opener = urllib.request.FancyURLopener({}) 
         socket = opener.open(url)
         text = socket.read()
         feed = xml.dom.minidom.parseString(text)
@@ -40,7 +40,7 @@ output - list of Opal Web Services
         #this is opal1
         url = url + '/servlet/AxisServlet'
         #print "url", url
-        opener = urllib.FancyURLopener({}) 
+        opener = urllib.request.FancyURLopener({}) 
         servlet = opener.open(url)
         text = servlet.read()
         text = text.split('<ul>')
@@ -64,7 +64,7 @@ def isOpalService(wsdl_url):
 Given a wsdl_url which point to a wsdl it return true 
 if the wsdl pointed by the url is a Opal Service
     """
-    filehandle = urllib.urlopen(wsdl_url)
+    filehandle = urllib.request.urlopen(wsdl_url)
     string = filehandle.read()
     if ( string.find("wsdl:service name=\"AppService\"") != -1 ):
         return True
@@ -99,7 +99,7 @@ def addOpalServerAsCategory(host, replace=True):
 Adds Category named `host` to Web Services Libary. 
 replace=True: If the Nodes in `host` Category already exist, this function updates them.
 """
-    if replace is False and wslib.libraryDescr.has_key(host):
+    if replace is False and host in wslib.libraryDescr:
         # this category is already loaded
         return
 
@@ -156,9 +156,9 @@ replace=True: If the Nodes in `host` Category already exist, this function updat
         new_inactives = os.listdir(inactivehostdir)
 
         for s in new_inactives:
-            print "*** [WARNING]: " + host + '/services/' + s + " IS NO LONGER AVAILBLE ON THE SERVER!"
+            print("*** [WARNING]: " + host + '/services/' + s + " IS NO LONGER AVAILBLE ON THE SERVER!")
     except: # no internet connection?
-        print "WARNING: Loading services for " + host + " from cache"
+        print("WARNING: Loading services for " + host + " from cache")
         services = oc.getServicesFromCache(host, mglwsdir)
 
     for s in services:
@@ -170,7 +170,7 @@ replace=True: If the Nodes in `host` Category already exist, this function updat
             pass
 
     if not services:
-        print "No Opal web service is found on ", host
+        print("No Opal web service is found on ", host)
         return
     #print "services ", services
     #short_name = host.split('http://')[-1]
@@ -185,7 +185,7 @@ replace=True: If the Nodes in `host` Category already exist, this function updat
         serverName = serverName.split(':')[0]
         serviceOpalWrap = serviceName + "_" + serverName
         #print serviceOpalWrap
-        if wslib.libraryDescr.has_key(host):
+        if host in wslib.libraryDescr:
             for node in wslib.libraryDescr[host]['nodes']:
                 if node.name == serviceOpalWrap:
                     wslib.deleteNodeFromCategoryFrame(host, FunctionNode, nodeName=serviceOpalWrap)
@@ -257,7 +257,7 @@ Change to host as needed to load additional web services.
 """
     def __init__(self, name='WS_List', host=None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
         self.widgetDescr['host'] = {
             'class':'NEComboBox', 'master':'node',
@@ -286,7 +286,7 @@ and impliments common functionalty among Opal Web Service Nodes.
     http://nbcr.net/services/opal
     """
     def __init__(self, service=None, **kw):
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
         from mglutil.web.services.AppService_client import AppServiceLocator, launchJobRequest, \
 getOutputsRequest, queryStatusRequest
@@ -302,7 +302,7 @@ getOutputsRequest, queryStatusRequest
         self.inputPortsDescr.append(datatype='boolean', name='outputURL')            
         self.outputPortsDescr.append(datatype='string', name='URL')    
         if service:   
-            self.constrkw['service'] = `service`
+            self.constrkw['service'] = repr(service)
             self.service = service
             self.host =  self.service[:7+self.service[7:].find('/')] #to get rid of part after http://ws.nbcr.net:8080
             
@@ -317,16 +317,16 @@ getOutputsRequest, queryStatusRequest
             self.resp = appServicePort.launchJob(self.req)
             jobID = self.resp._jobID
             self.resp = appServicePort.queryStatus(queryStatusRequest(jobID))
-        except Exception, inst:
+        except Exception as inst:
             from ZSI import FaultException
             if isinstance(inst, FaultException):
                 tmp_str = inst.fault.AsSOAP()
                 tmp_str = tmp_str.split('<message>')
                 tmp_str = tmp_str[1].split('</message>')
                 if len(tmp_str[0]) > 500:
-                    print tmp_str[0]
+                    print(tmp_str[0])
                     tmp_str[0] = tmp_str[0][0:500] + '...'
-                tkMessageBox.showerror("ERROR: ",tmp_str[0])
+                tkinter.messagebox.showerror("ERROR: ",tmp_str[0])
                 self.resp = None
                 return
 
@@ -334,10 +334,10 @@ getOutputsRequest, queryStatusRequest
             time.sleep(1)
             self.resp = appServicePort.queryStatus(queryStatusRequest(jobID))
             if self.resp._code == 4:
-                print "jobID:",jobID, 'failed on', self.resp._baseURL
-                opener = urllib.FancyURLopener({}) 
+                print("jobID:",jobID, 'failed on', self.resp._baseURL)
+                opener = urllib.request.FancyURLopener({}) 
                 errorMsg = opener.open(self.resp._baseURL+"/std.err").read()
-                tkMessageBox.showerror("Error!",errorMsg)
+                tkinter.messagebox.showerror("Error!",errorMsg)
                 webbrowser.open(self.host + '/' + jobID)
                 return ""
         self.outurl = self.host + '/' + jobID
@@ -451,7 +451,7 @@ Output Ports
 """
     def __init__(self, name='Download', host = None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         
         self.widgetDescr['url'] = {'class':'NEEntry', 'master':'node',
@@ -509,7 +509,7 @@ Output Ports
 """
     def __init__(self, name='DownloadToFile', host = None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         
         self.widgetDescr['url'] = {'class':'NEEntry', 'master':'node',
             'width':16, 'labelCfg':{'text':'URL'},
@@ -594,7 +594,7 @@ Output Ports
 """
     def __init__(self, name='DownloadSaveDir', host = None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['url'] = {'class':'NEEntry', 'master':'node',
             'labelCfg':{'text':'URL'},
@@ -664,7 +664,7 @@ Output Ports
 """
     def __init__(self, name='Download', host = None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['url'] = {'class':'NEEntry', 'master':'node',
             'labelCfg':{'text':'URL'},
@@ -692,7 +692,7 @@ Output Ports
 """
     def __init__(self, name='Download', host = None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['url'] = {'class':'NEEntry', 'master':'node',
             'labelCfg':{'text':'URL'},
@@ -722,7 +722,7 @@ Output Ports
 """
     def __init__(self, name='GetURLFromList', host = None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['ext'] = {'class':'NEEntry', 'master':'node',
             'width':8,
@@ -763,7 +763,7 @@ Output Ports
 """
     def __init__(self, name='Download', host = None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['url'] = {'class':'NEEntry', 'master':'node',
             'labelCfg':{'text':'URL'},
@@ -797,7 +797,7 @@ Output Ports
 """
     def __init__(self, name='Download', host = None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['url'] = {'class':'NEEntry', 'master':'node',
             'labelCfg':{'text':'URL'},
@@ -824,7 +824,7 @@ Input Ports
 """
     def __init__(self, name='Download', host = None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         
         self.widgetDescr['url'] = {'class':'NEEntry', 'master':'node',
             'labelCfg':{'text':'URL'},

@@ -74,10 +74,10 @@ else :
     f.write(MGL_ROOT)
     f.close()
 
-print MGL_ROOT
+print(MGL_ROOT)
 ICONSDIR=MGL_ROOT+os.sep+"MGLToolsPckgs"+os.sep+"Pmv"+os.sep+"hostappInterface"+os.sep+\
             "images"+os.sep+"icons"+os.sep
-print ICONSDIR
+print(ICONSDIR)
 #register plugin dir
 #this is handle by the user
 #plugpath=os.environ["MAYA_PLUG_IN_PATH"].split(":")
@@ -101,7 +101,7 @@ def _reporthook(numblocks, blocksize, filesize, url=None, pb = None):
     if pb is not None:
         cmds.progressWindow( edit=True, 
                             progress=percent, 
-                            status=('Downloading: ' + `amount` + '%' ) )
+                            status=('Downloading: ' + repr(amount) + '%' ) )
 
 #is MGLTools Pacthed ie windows
 if sys.platform == 'win32':
@@ -118,16 +118,16 @@ if sys.platform == 'win32':
         #                                status='Sleeping: 0%',
         #                                isInterruptable=True )
 
-        import urllib
+        import urllib.request, urllib.parse, urllib.error
         import tarfile 
 #        c4d.gui.MessageDialog("Patching MGLToolsPckgs with python2.6 system dependant modules")
-        print mgltoolsDir+os.sep
+        print(mgltoolsDir+os.sep)
         patchpath = mgltoolsDir+os.sep
         URI="http://mgldev.scripps.edu/projects/ePMV/patchs/depdtPckgs.tar"
         tmpFileName = mgltoolsDir+os.sep+"depdtPckgs.tar"
         if not os.path.isfile(tmpFileName):
 #            urllib.urlretrieve(URI, tmpFileName)
-            urllib.urlretrieve(URI, tmpFileName,
+            urllib.request.urlretrieve(URI, tmpFileName,
                            lambda nb, bs, fs, url=URI: _reporthook(nb,bs,fs,url,pb=False))
             #geturl(URI, tmpFileName)
         TF=tarfile.TarFile(tmpFileName)
@@ -177,7 +177,7 @@ from Pmv.hostappInterface import epmvGui
 from Pmv.hostappInterface import comput_util as C
 
 kPluginCmdName = "ePMV"
-print kPluginCmdName
+print(kPluginCmdName)
 #pdb.set_trace()
 
 #TODO
@@ -189,11 +189,11 @@ print kPluginCmdName
 #test session reading from PMV
 
 def myfunc(inst=None, thing=None, arg=None):
-    print 'arg: ', arg
-    print 'inst: ', inst
-    print 'thing: ', thing
+    print('arg: ', arg)
+    print('inst: ', inst)
+    print('thing: ', thing)
     data = cmds.button(inst.btnA, query=True, label=True)
-    print data
+    print(data)
 
 
 class ePMVsynchro:
@@ -319,14 +319,14 @@ class ParameterScoring(epmvGui.ParameterScoringGui):
     def getScorerAvailable(self):
         self.scoreravailable = []
         if hasattr(self.epmv.mv,'energy'):
-            self.scoreravailable = self.epmv.mv.energy.data.keys()
+            self.scoreravailable = list(self.epmv.mv.energy.data.keys())
             
     def setup(self,val):
         rname = cmds.textField(self.TXT['rec']['id'],q=1,tx=1)
         #get Lig
-        print rname
+        print(rname)
         lname = cmds.textField(self.TXT['lig']['id'],q=1,tx=1)
-        print lname
+        print(lname)
         recSet=self.epmv.mv.expandNodes(str(rname))
         rec = recSet[0].top
         #=self.epmv.mv.getMolFromName(rname)
@@ -498,7 +498,7 @@ class epmvUI():
                          "action":self.execPmvComds}
         
         self.keywords = ['keywords:','  backbone','  sidechain','  chain','  picked']
-        kw=map(lambda x:"  "+x,ResidueSetSelector.residueList.keys())
+        kw=["  "+x for x in list(ResidueSetSelector.residueList.keys())]
         self.keywords.extend(kw)
 
         self.scriptliste = ['Load','pymol_demo','interactive_docking','colorbyAPBS','demo1','user_script']
@@ -517,9 +517,9 @@ class epmvUI():
             for elem in menu[1]:
                 if elem["name"] == "Options" : checkBox=True
                 else : checkBox=False
-                if elem.has_key("sub"):
+                if "sub" in elem:
                     elem['id']=cmds.menuItem(subMenu=True, label=elem["name"])
-                    for sub in elem['sub'].keys():
+                    for sub in list(elem['sub'].keys()):
                         if elem['sub'][sub]["action"] is not None :
                             elem['sub'][sub]['id']=cmds.menuItem( label=elem['sub'][sub]["name"],
                                                             checkBox=checkBox,
@@ -527,7 +527,7 @@ class epmvUI():
                         else :
                             elem['sub'][sub]['id']=cmds.menuItem( label=elem['sub'][sub]["name"],
                                                             checkBox=checkBox,)
-                        if checkBox and elem['sub'][sub].has_key("var"):
+                        if checkBox and "var" in elem['sub'][sub]:
                             cmds.menuItem(elem['sub'][sub]['id'],e=1,checkBox=bool(elem['sub'][sub]['var']))
                     cmds.setParent( '..', menu=True )
                 else:
@@ -847,29 +847,29 @@ print 'with self = PMV instance, and epmv as ePMV'
                 self._modeller = True
                 #self._useModeller = True
             except:
-                print "noModeller"
+                print("noModeller")
         if not self._AF:
             try :
                 import AutoFill
                 self._AF = True
             except:
-                print "noModeller"
+                print("noModeller")
         if not self._AR:
             try :
                 import ARViewer
                 self._AR = True
             except:
-                print "noModeller"
+                print("noModeller")
 
 
     def getMolName(self,forupdate=False):
         selname = cmds.text(self.mol,q=1,l=1)
-        if selname in self.mv.molDispl.keys(): 
+        if selname in list(self.mv.molDispl.keys()): 
             mname = selname
         else :
             mname=""
-            for mname in self.mv.selections.keys():
-                for sname in self.mv.selections[mname].keys():
+            for mname in list(self.mv.selections.keys()):
+                for sname in list(self.mv.selections[mname].keys()):
                     if selname == sname :
                         break
             if mname=="":
@@ -950,7 +950,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         if molname == None :
             self.mv.readAny(file)
             sys.stderr.write('DObe')
-            name = self.mv.grids3D.keys()[-1] #the last read data
+            name = list(self.mv.grids3D.keys())[-1] #the last read data
             mname,mol=self.getMolName()
             self.mv.cmol = mol
             sys.stderr.write('before Select and isoContour')            
@@ -959,7 +959,7 @@ print 'with self = PMV instance, and epmv as ePMV'
                         isovalue=25.)#self.mv.grids3D[name].mean)  
             trajname=name#os.path.basename(filename)
             #print trajname
-            if mname == "" and "IsoSurface" not in self.mv.iMolData.keys():
+            if mname == "" and "IsoSurface" not in list(self.mv.iMolData.keys()):
                 self.mv.iMolData["IsoSurface"]=[]
                 mname = "IsoSurface"
             self.mv.iMolData[mname].append(file)
@@ -982,7 +982,7 @@ print 'with self = PMV instance, and epmv as ePMV'
                 self.modelData(molname=molname,adt=adt)
                 return True
             filename = cmds.fileDialog()
-            print filename
+            print(filename)
             if filename is None or len(filename) == 0:
                 return
             #else :
@@ -992,7 +992,7 @@ print 'with self = PMV instance, and epmv as ePMV'
             #elif extension == '.map' : self.gridData_1(file=filename)
 
     def updateTraj(self,val,arg):
-        print val,arg
+        print(val,arg)
         self.current_traj=self.mv.iTraj[val]
         mini,maxi,default,step = self.epmv.updateTraj(self.current_traj)
         cmds.floatSliderGrp(self.dataSlider,e=1,minValue=float(mini), maxValue=float(maxi), 
@@ -1002,7 +1002,7 @@ print 'with self = PMV instance, and epmv as ePMV'
     def _applyState(self,val):
         #frame=self.GetLong(self.slider)
         mname,mol=self.getMolName()
-        print self.current_traj
+        print(self.current_traj)
         traj = self.current_traj
         if traj is not None : 
             if traj[1] in ["model" ,"traj"]:
@@ -1079,7 +1079,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         else :
             type = "PDB"
         if len(name) == 4 or len(name.split(".")[0]) == 4 :
-            print "PDB id, webdownload"
+            print("PDB id, webdownload")
             molname=name.upper()
             if molname in self.mv.Mols.name : self.mv.hostApp.driver.duplicatemol=True
             self.mv.fetch.db = type
@@ -1108,7 +1108,7 @@ print 'with self = PMV instance, and epmv as ePMV'
 
     def _displayBS(self,val):
         mname,mol=self.getMolName()
-        print "BS", mname
+        print("BS", mname)
         scale = cmds.floatSliderGrp(self.bs_slider,q=1,v=1)
         ratio = cmds.floatSliderGrp(self.bs_ratio,q=1,v=1)
         #val = self.get(self._box)
@@ -1159,7 +1159,7 @@ print 'with self = PMV instance, and epmv as ePMV'
     def _displaySurf(self,private):
        #c4d.set_mouse_pointer(c4d.MOUSE_BUSY)
        mname,mol=self.getMolName()
-       print "SURF", mname 
+       print("SURF", mname) 
        name='MSMS-MOL'+str(mol.name)
        sel=self.getSelectionLevel(mol)
        selname=self.getSelectionName(sel,mol)
@@ -1172,7 +1172,7 @@ print 'with self = PMV instance, and epmv as ePMV'
        display = cmds.iconTextCheckBox(self.msms,q=1,v=1)               
        pRadius = cmds.floatSliderGrp(self.msms_slider,q=1,v=1)
        if name in mol.geomContainer.geoms :
-            print name           
+            print(name)           
             self.mv.displayMSMS(mol, negate=(not display), only=False, log=1, 
                                 surfName=name, nbVert=1)
        else : 
@@ -1180,7 +1180,7 @@ print 'with self = PMV instance, and epmv as ePMV'
             if pRadius == 0.0 : pRadius = 0.01
             self.mv.computeMSMS(mol, log=1, display=display, 
                                 perMol=permol,surfName=name)
-            print name        
+            print(name)        
             #obj=mol.geomContainer.geoms[name].obj
             #obj.set_name(name)
             self.mv.colorByAtomType(mol, [name], log=1)
@@ -1203,7 +1203,7 @@ print 'with self = PMV instance, and epmv as ePMV'
        display = cmds.iconTextCheckBox(self.cms,q=1,v=1)
        option = cmds.floatSliderGrp(self.cms_slider,q=1,v=1)
        if option == 0.0 : option = 0.001
-       if name in mol.geomContainer.geoms.keys():
+       if name in list(mol.geomContainer.geoms.keys()):
             g = mol.geomContainer.geoms[name]
             obj = g.obj
             mesh = g.mesh
@@ -1236,7 +1236,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         display = cmds.iconTextCheckBox(self.cms,q=1,v=1)
         option = cmds.floatSliderGrp(self.cms_slider,q=1,v=1)
         if option == 0.0 : option = 0.001
-        if name not in mol.geomContainer.geoms.keys():
+        if name not in list(mol.geomContainer.geoms.keys()):
             #self.mv.coarseMolSurface(bindGeom=True, gridSize=32, surfName='CoarseMolSurface', isovalue='fast approximation', immediate=False, padding=0.0, perMol=True, nodes="1CRN", resolution=-0.3, log=0)
             #print "self.displayExtrudedSS('"+mname+"',log=1,negate=",(not self.get(self.ss)),")" 
             #g=hmaya.coarseMolSurface(self.mv,mol,[32,32,32],isovalue=option,resolution=-0.3,name=name)
@@ -1278,7 +1278,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         self.updateViewer()
         
     def _displayMeta(self,val):
-        print "displayMetaB"
+        print("displayMetaB")
         #change particle render Type to Blobby surface
         #setAttr metaballs1TIMtrShape.particleRenderType 7;
         #setAttr "metaballs1TIMtrShape.radius" 1.437909;
@@ -1335,7 +1335,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         doc=self.epmv._getCurrentScene()
         name=mol.name+'_armature'
         sp=self.epmv._getObject(name,doit=True)
-        print sp
+        print(sp)
         if sp != None : 
             self.epmv.helper.toggleDisplay(sp,doit)
             self.updateViewer()
@@ -1363,7 +1363,7 @@ print 'with self = PMV instance, and epmv as ePMV'
             #get the color from the color choose
             color= [0.,0.,0.]
             color = cmds.colorSliderButtonGrp(self.unic_col,q=1,rgb=1)
-            print color
+            print(color)
             self.funcColor[index](mol,[color], lGeoms)
         elif index == 2 :
             self.mv.colorByProperty.level='Atom'
@@ -1393,9 +1393,9 @@ print 'with self = PMV instance, and epmv as ePMV'
 
     def restoreMolMenu(self):
         #call this after flushing the pop up menu
-        for mname in self.mv.MolSelection.keys():
+        for mname in list(self.mv.MolSelection.keys()):
             cmds.menuItem(p=self.pmol,l=mname,c=partial(self.setCurMol,str(mname)))
-            for selname in self.mv.MolSelection[mname].keys():
+            for selname in list(self.mv.MolSelection[mname].keys()):
                 cmds.menuItem(p=self.pmol,l=selname,c=partial(self.setCurMol,str(selname)))
                 
     def setCurMol(self,var,args):
@@ -1404,7 +1404,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         #apply save selection from molDisplay dictionary
     
     def getSelectionName(self,sel,mol):
-        for selname in self.mv.MolSelection[mol.name].keys() : 
+        for selname in list(self.mv.MolSelection[mol.name].keys()) : 
             if sel == self.mv.MolSelection[mol.name][selname] : return selname         
         return mol.name+"_Selection"+str(len(self.mv.MolSelection[mol.name]))
 
@@ -1418,9 +1418,9 @@ print 'with self = PMV instance, and epmv as ePMV'
             sel=mol.name+":::N,CA,C"
         elif selection.upper() == 'SIDECHAIN':              
             sel=mol.name+":::sidechain"
-        elif selection.upper() in AtomElements.keys(): sel=mol.name+':::'+selection
-        elif selection.upper() in RasmolAmino.keys(): sel=mol.name+'::'+self.ResidueSelector.r_keyD[selection]+':'
-        elif selection.lower() in ResidueSetSelector.residueList.keys() : sel=mol.name+'::'+selection+':'
+        elif selection.upper() in list(AtomElements.keys()): sel=mol.name+':::'+selection
+        elif selection.upper() in list(RasmolAmino.keys()): sel=mol.name+'::'+self.ResidueSelector.r_keyD[selection]+':'
+        elif selection.lower() in list(ResidueSetSelector.residueList.keys()) : sel=mol.name+'::'+selection+':'
         elif selection.split(':')[0] == mol.name : sel = selection
         elif selection.split(' ')[0].lower() == "chain" : sel = mol.name+':'+selection.split(' ')[1]+'::'
         elif selection == 'picked' :
@@ -1439,7 +1439,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         return str(sel)        
 
     def setKeywordSel(self,val,arg):
-        print val,arg
+        print(val,arg)
         cmds.textField(self.selection,e=1,tx=str(val).strip())
 
     def delete_selection(self,var):
@@ -1487,9 +1487,9 @@ print 'with self = PMV instance, and epmv as ePMV'
         self.restoreMolMenu()
 
     def add_selection(self,val,n=None):
-        print "add_selection"
+        print("add_selection")
         if n is not None:
-            for selname in self.mv.selections[n].keys():
+            for selname in list(self.mv.selections[n].keys()):
                 #add a new menuItem to the main menu
                 cmds.menuItem(p=self.pmol,label=selname,c=partial(self.setCurMol,str(selname)))
                 #self.AddChild(self._box,self.indice_mol,selname)
@@ -1498,10 +1498,10 @@ print 'with self = PMV instance, and epmv as ePMV'
             return True
         mname,mol=self.getMolName()   
         sel=self.getSelectionLevel(mol)       
-        print mname
-        print sel
+        print(mname)
+        print(sel)
         selname=mname+"_Selection"+str(len(self.mv.selections[mname]))
-        print selname
+        print(selname)
         self.mv.MolSelection[mname][selname]=sel
         self.mv.selections[mname][selname]=sel
         self.mv.molDispl[selname]=[cmds.iconTextCheckBox(self.cpk,q=1,v=1),
@@ -1525,10 +1525,10 @@ print 'with self = PMV instance, and epmv as ePMV'
         #first delete all geom associated
         for g in mol.geomContainer.geoms:
             if hasattr(g,'obj'):
-                print "delete"
+                print("delete")
                 del g.obj 
             if hasattr(g,'mesh'):
-                print "delete"
+                print("delete")
                 del g.mesh
         #then delete the molecule this ensure the dejavugeom to be deleted too
         self.mv.deleteMol(mname)
@@ -1560,7 +1560,7 @@ print 'with self = PMV instance, and epmv as ePMV'
         
     def execPmvComds(self,val):
         pmvcmds=cmds.cmdScrollFieldExecuter(self.pmvcmds,q=1,t=1)
-        print len(pmvcmds),pmvcmds
+        print(len(pmvcmds),pmvcmds)
         exec(pmvcmds,{'self':self.mv,'epmv':self.epmv})   
 
     def SetPreferences(self,val):
@@ -1639,12 +1639,12 @@ Develloped in the Molecular Graphics Laboratory directed by Arthur Olson.
     def check_update(self,val):
         ask = False
         #get the update file
-        import urllib
+        import urllib.request, urllib.parse, urllib.error
         URL=__url__[1]
         import WebServices
         test = WebServices.checkURL(URL)
         if test :
-            fURL=urllib.urlopen(URL)
+            fURL=urllib.request.urlopen(URL)
             note=fURL.read()
             fURL.close()
             fields=note.split()
@@ -1707,7 +1707,7 @@ Develloped in the Molecular Graphics Laboratory directed by Arthur Olson.
         #    cmds.window(self._mod.gui,e=1,vis=True)
         
     def do_modeller(self,arg,val):
-        print arg,val
+        print(arg,val)
         res=arg
         #res=cmds.layoutDialog(t="Modeller",ui=self.modellerGUI)
         if res != 'Cancel':
@@ -1757,7 +1757,7 @@ def createShelf():
     shelfTopLevel = maya.mel.eval("global string $gShelfTopLevel;$temp = $gShelfTopLevel")
     shelf = "%s|Custom|Start_ePMV" % shelfTopLevel
     res=cmds.shelfButton(shelf,ex=1)
-    print res,shelf
+    print(res,shelf)
     if not res and not hasattr(maya,'epmvshelf'):
         #assume ePMV already loaded
         com = 'import maya\nmaya.cmds.ePMV()\nepmv = maya.epmvui.epmv\nself = epmv.mv\n'

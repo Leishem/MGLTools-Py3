@@ -146,20 +146,20 @@ here is an example of how to use this:
 
 import sys, os
 import warnings
-import Tkinter, Pmw, tkFileDialog
+import tkinter, Pmw, tkinter.filedialog
 import traceback
-import string
+from mglcompat import pystring as string
 import re
-import thread
+import _thread
 import weakref
 import user
 
 from mglutil.util.idleUtil import getShell
 from mglutil.events import EventHandler
 
-from tkSimpleDialog import askstring
-from tkMessageBox import askokcancel, showwarning
-from SimpleDialog import SimpleDialog
+from tkinter.simpledialog import askstring
+from tkinter.messagebox import askokcancel, showwarning
+from tkinter.simpledialog import SimpleDialog
 
 from mglutil.util.callback import CallBackFunction
 from mglutil.util.callback import CallbackManager
@@ -178,6 +178,7 @@ from mglutil.util.packageFilePath import getResourceFolder, getResourceFolderWit
 from mglutil.util.misc import suppressMultipleQuotes
 
 from Vision.gantt import Gantt
+from functools import reduce
 
 class NoGuiNetworkBuilder(EventHandler):
     """Class used to replace the VPE when running without a GUI.
@@ -204,7 +205,7 @@ adds a Network object to the editor
 ##              network.rename(name)
 
         # rename network if it already exists
-        while network.name in self.networks.keys():
+        while network.name in list(self.networks.keys()):
             if isinstance(network, MacroNetwork):
                 macnode = network.macroNode
                 macnode.rename(macnode.name+str(self.uniqNetworkNumber))
@@ -226,12 +227,12 @@ adds a Network object to the editor
         from NetworkEditor.net import Network
         masterNet = Network(name)
         self.addNetwork(masterNet)
-        execfile(filename)
+        exec(compile(open(filename, "rb").read(), filename, 'exec'))
         return masterNet
 
 
 
-class NetworkBuilder(Tkinter.Frame, NoGuiNetworkBuilder):
+class NetworkBuilder(tkinter.Frame, NoGuiNetworkBuilder):
     """
   This class implements a simple network builder that provides a Canvas
 to which NetworkNodes can be added. These nodes can be connected by
@@ -259,31 +260,31 @@ instance of either the node or the connection.
         self.resourceFolder = getResourceFolder()
         self.resourceFolderWithVersion = getResourceFolderWithVersion()
 
-        if kw.has_key('visibleWidth'):   # size of scrollable Canvas
+        if 'visibleWidth' in kw:   # size of scrollable Canvas
             self.visibleWidth = kw['visibleWidth']
             del kw['visibleWidth']
         else:
             self.visibleWidth = 400
 
-        if kw.has_key('visibleHeight'):  # size of scrollable Canvas
+        if 'visibleHeight' in kw:  # size of scrollable Canvas
             self.visibleHeight = kw['visibleHeight']
             del kw['visibleHeight']
         else:
             self.visibleHeight= 400     
 
-        if kw.has_key('totalWidth'):     # Total size of Canvas
+        if 'totalWidth' in kw:     # Total size of Canvas
             self.totalWidth = kw['totalWidth']
             del kw['totalWidth']
         else:
             self.totalWidth = 4000
 
-        if kw.has_key('totalHeight'):    # Total size of Canvas
+        if 'totalHeight' in kw:    # Total size of Canvas
             self.totalHeight = kw['totalHeight']
             del kw['totalHeight']
         else:
             self.totalHeight = 4000     
 
-        Tkinter.Frame.__init__(self, master)
+        tkinter.Frame.__init__(self, master)
 
         # FIXME we should catch whatever exception is thrown if self has no
         # option_readfile method and say something meaningful
@@ -318,12 +319,12 @@ instance of either the node or the connection.
                 sty = font[2]
 
             fontList = (ft, sz, sty)
-            for k in self.font.keys():
+            for k in list(self.font.keys()):
                 self.font[k] = fontList
 
         # define self.root as the toplevel in which the editor is
         root = self.master
-        while not isinstance(root, Tkinter.Toplevel) and not isinstance(root, Tkinter.Tk):
+        while not isinstance(root, tkinter.Toplevel) and not isinstance(root, tkinter.Tk):
             root = root.master
         self.root = root
 
@@ -347,21 +348,21 @@ instance of either the node or the connection.
            
         threads = 0 # default is 0: do not run multi-threaded scheduling
         self.withThreads = threads
-        self.withThreadsTk = Tkinter.IntVar()
+        self.withThreadsTk = tkinter.IntVar()
         self.withThreadsTk.set(threads)
 
-        self.mainThread = thread.get_ident() #used for idle shell
+        self.mainThread = _thread.get_ident() #used for idle shell
 
         self.colorNodeByLibrary = 0
-        self.colorNodeByLibraryTk = Tkinter.IntVar()
+        self.colorNodeByLibraryTk = tkinter.IntVar()
         self.colorNodeByLibraryTk.set(self.colorNodeByLibrary)
 
         self.flashNodesWhenRun = 1
-        self.flashNodesWhenRunTk = Tkinter.IntVar()
+        self.flashNodesWhenRunTk = tkinter.IntVar()
         self.flashNodesWhenRunTk.set(self.flashNodesWhenRun)
         
         self.splineConnections = 0
-        self.splineConnectionsTk = Tkinter.IntVar()
+        self.splineConnectionsTk = tkinter.IntVar()
         self.splineConnectionsTk.set(self.splineConnections)
                              
         ## USED TO FLASH NETWORK ONCE ONLY
@@ -370,11 +371,11 @@ instance of either the node or the connection.
 ##          self.flashNetworkWhenRunTk.set(self.flashNetworkWhenRun)
 
         self.verbose = 0 # when set to 1 to see prints in stdout
-        self.verboseTk = Tkinter.IntVar()
+        self.verboseTk = tkinter.IntVar()
         self.verboseTk.set(self.verbose)
         
         self.glyph = 0 # when set to 1 displays glyph widgets 
-        self.glyphTk = Tkinter.IntVar()
+        self.glyphTk = tkinter.IntVar()
         self.glyphTk.set(self.glyph)
 
         self.balloons = Pmw.Balloon(master, yoffset=0)
@@ -383,7 +384,7 @@ instance of either the node or the connection.
         self.undoStack = []
         self.currentNetwork = None
         
-	Tkinter.Pack.config(self, expand=1, fill='both')
+        tkinter.Pack.config(self, expand=1, fill='both')
 
         # register callback to keep track of window width
         # so that we can resize the module libraries
@@ -424,22 +425,22 @@ instance of either the node or the connection.
             self.pyshell.top.withdraw()
             self.pyshell.begin()
             ### ???? what is this ?
-            Tkinter._default_root = self.root
+            tkinter._default_root = self.root
             self.pyshell.top.protocol('WM_DELETE_WINDOW',
                                       self.togglePythonShell)
 
         # add a default network
-	net = Network('Network 0')
+        net = Network('Network 0')
         self.addNetwork( net )
         # make it the current one
         self.setNetwork( net )
-	#net.buildIcons()
+        #net.buildIcons()
         
         self.nbPaste = 1
         self.resizeNetworkArea()
 
         # create GUI for GANTT plotting of execution time
-        self.GANTTmaster = Tkinter.Toplevel(master)
+        self.GANTTmaster = tkinter.Toplevel(master)
         self.GANTT = Gantt( [ ], root=self.GANTTmaster )
         self.GANTTmaster.protocol('WM_DELETE_WINDOW', self.hideGantt)
         self.hideGantt()
@@ -449,9 +450,9 @@ instance of either the node or the connection.
 
 
     def createUserPanel_cb(self, event=None):
-        defaultName = 'Panel_%d'%len(self.currentNetwork.userPanels.keys())
+        defaultName = 'Panel_%d'%len(list(self.currentNetwork.userPanels.keys()))
         name = askstring('Panel Name', "Panel Name", initialvalue=defaultName)
-        while name in self.currentNetwork.userPanels.keys():
+        while name in list(self.currentNetwork.userPanels.keys()):
             name = askstring('Panel Name alread used, New value', "Panel Name",
                              initialvalue=defaultName)
         if name is None or len(name) == 0:
@@ -460,7 +461,7 @@ instance of either the node or the connection.
 
 
     def createUserPanel(self, name, **kw):
-        apply(self.currentNetwork.createUserPanel, (name,), kw)
+        self.currentNetwork.createUserPanel(*(name,), **kw)
 
 
     def deleteUserPanel_cb(self):
@@ -473,10 +474,10 @@ instance of either the node or the connection.
             self.funcCB()
 
         if len(self.currentNetwork.userPanels) > 0:
-            master = Tkinter.Toplevel()
+            master = tkinter.Toplevel()
             master.title('Panel deletion')
 
-            name = self.currentNetwork.userPanels.keys()[0]
+            name = list(self.currentNetwork.userPanels.keys())[0]
             self.funcCB = CallBackFunction(self.currentNetwork.deleteUserPanel, name)
 
             lComboBoxPanels = Pmw.ComboBox(
@@ -484,17 +485,17 @@ instance of either the node or the connection.
                        label_text='Choose the panel to delete',
                        labelpos='n',
                        entryfield_value=name,
-                       scrolledlist_items=self.currentNetwork.userPanels.keys(),
+                       scrolledlist_items=list(self.currentNetwork.userPanels.keys()),
                        selectioncommand=internal_cb
                       )
             lComboBoxPanels.pack(side='top', fill='x')
 
-            buttonsFrame = Tkinter.Frame(master)
-            buttonOk = Tkinter.Button( buttonsFrame,
+            buttonsFrame = tkinter.Frame(master)
+            buttonOk = tkinter.Button( buttonsFrame,
                                        text='OK',
                                        command=external_cb)
             buttonOk.pack(side='left', expand=1, fill='x')
-            buttonCancel = Tkinter.Button( buttonsFrame, text='Cancel', command=master.destroy)
+            buttonCancel = tkinter.Button( buttonsFrame, text='Cancel', command=master.destroy)
             buttonCancel.pack(side='left', expand=1, fill='x')
             buttonsFrame.pack(side='top', fill='x')
 
@@ -506,7 +507,7 @@ Return all the network who's name match the name regular expression
         nets = []
         import re
         reg = re.compile(name)
-        for netName, net in self.networks.items():
+        for netName, net in list(self.networks.items()):
             if reg.match(netName):
                 nets.append(net)
         return nets
@@ -543,12 +544,12 @@ regular expression
 
 
     def createCallbackManager(self, event):
-        assert not self.eventHandler.has_key(event)
+        assert event not in self.eventHandler
         self.eventHandler[event] = CallbackManager()
         
 
     def addCallbackManager(self, event, func, doc, **kw):
-        assert self.eventHandler.has_key(event)
+        assert event in self.eventHandler
         assert callable(func)
         
         self.eventHandler[event].AddCallback(func)
@@ -590,7 +591,7 @@ Legal itemnames: 'All'
 
         if tag == 'Menus' or tag == 'All':
             self.font['Menus'] = font
-            for menu in self.menuButtons.keys():
+            for menu in list(self.menuButtons.keys()):
                 # set menu button font
                 self.menuButtons[menu].configure(font=font)
                 # set cascading menu font
@@ -600,7 +601,7 @@ Legal itemnames: 'All'
             self.font['Nodes'] = font
             # set balloon for ports:
             self.balloons.component('label').configure(font=font)
-            for net in self.networks.values():
+            for net in list(self.networks.values()):
                 for node in net.nodes:
                     node.iconMaster.itemconfigure(node.textId, font=font)
                     
@@ -636,7 +637,7 @@ Legal itemnames: 'All'
         # Note: do not name this method 'exit', else Tkinter will call it
         # too and the you get red ink upon exiting!
         from NetworkEditor.macros import MacroNetwork
-        for net in self.networks.values():
+        for net in list(self.networks.values()):
             if not isinstance(net, MacroNetwork):
                 self.deleteNetwork(net)
 
@@ -653,7 +654,7 @@ Legal itemnames: 'All'
             sys.exit(0)
         else:
             import Vision
-            if Vision.__dict__.has_key('ed'):
+            if 'ed' in Vision.__dict__:
                 Vision.__dict__.pop('ed')
             sys.stdin.__exit__() # hack to really exit code.interact
 
@@ -666,18 +667,18 @@ Legal itemnames: 'All'
         menu = self.menuButtons['Edit'].menu
 
         if len(net.selectedNodes):
-            menu.entryconfig("Cut", state=Tkinter.NORMAL)
-            menu.entryconfig("Copy", state=Tkinter.NORMAL)
+            menu.entryconfig("Cut", state=tkinter.NORMAL)
+            menu.entryconfig("Copy", state=tkinter.NORMAL)
             #menu.entryconfig("Delete", state=Tkinter.NORMAL)
         else:
-            menu.entryconfig("Cut", state=Tkinter.DISABLED)
-            menu.entryconfig("Copy", state=Tkinter.DISABLED)
+            menu.entryconfig("Cut", state=tkinter.DISABLED)
+            menu.entryconfig("Copy", state=tkinter.DISABLED)
             #menu.entryconfig("Delete", state=Tkinter.DISABLED)
 
         if self.private_pasteBuffer:
-            menu.entryconfig("Paste", state=Tkinter.NORMAL)
+            menu.entryconfig("Paste", state=tkinter.NORMAL)
         else:
-            menu.entryconfig("Paste", state=Tkinter.DISABLED)
+            menu.entryconfig("Paste", state=tkinter.DISABLED)
 
 
     def handleAddNetwork(self):
@@ -688,25 +689,25 @@ Legal itemnames: 'All'
         menuE = self.menuButtons['Edit'].menu
         menuN = self.menuButtons['Networks'].menu
        
-        menuF.entryconfig("New...", state=Tkinter.NORMAL)
-        menuF.entryconfig("Open...", state=Tkinter.NORMAL)
-        menuF.entryconfig("Merge...", state=Tkinter.NORMAL)
-        menuF.entryconfig("Close...", state=Tkinter.NORMAL)
-        menuF.entryconfig("Save...", state=Tkinter.NORMAL)
-        menuF.entryconfig("Print", state=Tkinter.NORMAL)
-        menuF.entryconfig("Quit", state=Tkinter.NORMAL)
+        menuF.entryconfig("New...", state=tkinter.NORMAL)
+        menuF.entryconfig("Open...", state=tkinter.NORMAL)
+        menuF.entryconfig("Merge...", state=tkinter.NORMAL)
+        menuF.entryconfig("Close...", state=tkinter.NORMAL)
+        menuF.entryconfig("Save...", state=tkinter.NORMAL)
+        menuF.entryconfig("Print", state=tkinter.NORMAL)
+        menuF.entryconfig("Quit", state=tkinter.NORMAL)
 
-        menuE.entryconfig("Select all", state=Tkinter.NORMAL)
-        menuE.entryconfig("Create macro", state=Tkinter.NORMAL)
-        menuE.entryconfig("Create user panel", state=Tkinter.NORMAL)
-        menuE.entryconfig("Delete user panel", state=Tkinter.NORMAL)
+        menuE.entryconfig("Select all", state=tkinter.NORMAL)
+        menuE.entryconfig("Create macro", state=tkinter.NORMAL)
+        menuE.entryconfig("Create user panel", state=tkinter.NORMAL)
+        menuE.entryconfig("Delete user panel", state=tkinter.NORMAL)
 
-        menuN.entryconfig("Rename...", state=Tkinter.NORMAL)
-        menuN.entryconfig("Close...", state=Tkinter.NORMAL)
-        menuN.entryconfig("Soft run", state=Tkinter.NORMAL)
-        menuN.entryconfig("Hard run", state=Tkinter.NORMAL)
-        menuN.entryconfig("Refresh", state=Tkinter.NORMAL)
-        menuN.entryconfig("Reset cache", state=Tkinter.NORMAL)
+        menuN.entryconfig("Rename...", state=tkinter.NORMAL)
+        menuN.entryconfig("Close...", state=tkinter.NORMAL)
+        menuN.entryconfig("Soft run", state=tkinter.NORMAL)
+        menuN.entryconfig("Hard run", state=tkinter.NORMAL)
+        menuN.entryconfig("Refresh", state=tkinter.NORMAL)
+        menuN.entryconfig("Reset cache", state=tkinter.NORMAL)
         
 
     def handleDeleteNetwork(self, **kw):
@@ -717,24 +718,24 @@ Legal itemnames: 'All'
         menuN = self.menuButtons['Networks'].menu
 
         if self.currentNetwork is None:
-            menuF.entryconfig("New...", state=Tkinter.NORMAL)
-            menuF.entryconfig("Open...", state=Tkinter.NORMAL)
-            menuF.entryconfig("Merge...", state=Tkinter.DISABLED)
-            menuF.entryconfig("Close...", state=Tkinter.DISABLED)
-            menuF.entryconfig("Save...", state=Tkinter.DISABLED)
-            menuF.entryconfig("Print", state=Tkinter.DISABLED)
-            menuF.entryconfig("Quit", state=Tkinter.NORMAL)
+            menuF.entryconfig("New...", state=tkinter.NORMAL)
+            menuF.entryconfig("Open...", state=tkinter.NORMAL)
+            menuF.entryconfig("Merge...", state=tkinter.DISABLED)
+            menuF.entryconfig("Close...", state=tkinter.DISABLED)
+            menuF.entryconfig("Save...", state=tkinter.DISABLED)
+            menuF.entryconfig("Print", state=tkinter.DISABLED)
+            menuF.entryconfig("Quit", state=tkinter.NORMAL)
 
-            menuE.entryconfig("Select all", state=Tkinter.DISABLED)
-            menuE.entryconfig("Create macro", state=Tkinter.DISABLED)
-            menuE.entryconfig("Create user panel", state=Tkinter.DISABLED)
-            menuE.entryconfig("Delete user panel", state=Tkinter.DISABLED)
+            menuE.entryconfig("Select all", state=tkinter.DISABLED)
+            menuE.entryconfig("Create macro", state=tkinter.DISABLED)
+            menuE.entryconfig("Create user panel", state=tkinter.DISABLED)
+            menuE.entryconfig("Delete user panel", state=tkinter.DISABLED)
 
-            menuN.entryconfig("Rename...", state=Tkinter.DISABLED)
-            menuN.entryconfig("Soft run", state=Tkinter.DISABLED)
-            menuN.entryconfig("Hard run", state=Tkinter.DISABLED)
-            menuN.entryconfig("Refresh", state=Tkinter.DISABLED)
-            menuN.entryconfig("Reset cache", state=Tkinter.DISABLED)
+            menuN.entryconfig("Rename...", state=tkinter.DISABLED)
+            menuN.entryconfig("Soft run", state=tkinter.DISABLED)
+            menuN.entryconfig("Hard run", state=tkinter.DISABLED)
+            menuN.entryconfig("Refresh", state=tkinter.DISABLED)
+            menuN.entryconfig("Reset cache", state=tkinter.DISABLED)
 
 
     def copyNetwork_cb(self, event=None):
@@ -760,7 +761,7 @@ Legal itemnames: 'All'
         curNet = self.currentNetwork
         # prevent cut/copy of macroinput and macrooutput node
         # by deselecting them 
-        from macros import MacroNetwork
+        from .macros import MacroNetwork
         if isinstance(curNet, MacroNetwork):
             curNet.deselectNodes([curNet.ipNode, curNet.opNode])
 
@@ -810,12 +811,12 @@ Legal itemnames: 'All'
         
             #if len(self.currentNetwork.userPanels) > 0:
             #    os.chmod(filename, 0777)
-            os.chmod(filename, 0777)
+            os.chmod(filename, 0o777)
             
             if temporary is False:
                 self.currentNetwork._modified = False
 
-        except Exception, e:
+        except Exception as e:
             warnings.warn('save Network failed ! %s'%e)
 
 
@@ -831,7 +832,7 @@ Legal itemnames: 'All'
             self.currentNetwork.modifierUp(event)
 
         # save network
-        from macros import MacroNetwork
+        from .macros import MacroNetwork
         if isinstance(self.currentNetwork, MacroNetwork):
             ans = showwarning('Warning', 'This network is inside a macro!')
             return
@@ -843,15 +844,15 @@ Legal itemnames: 'All'
             from Vision import networkDefaultDirectory
             lNetworkDir = networkDefaultDirectory
 
-        if self.libraries.has_key('Pmv'):
-            file = tkFileDialog.asksaveasfilename(parent = self,
+        if 'Pmv' in self.libraries:
+            file = tkinter.filedialog.asksaveasfilename(parent = self,
                 initialdir = lNetworkDir, 
                 filetypes=[('network', '*_pmvnet.py *_net.py'),
                            ('all', '*')],
                 title='Save Network',
                 initialfile=name+"_pmvnet.py")
         else:
-            file = tkFileDialog.asksaveasfilename(parent = self,
+            file = tkinter.filedialog.asksaveasfilename(parent = self,
                 initialdir = lNetworkDir,
                 filetypes=[('network', '*_pmvnet.py *_net.py'),
                            ('all', '*')],
@@ -954,7 +955,7 @@ Legal itemnames: 'All'
             lNetworkDir = networkDefaultDirectory
 
         # load network
-        file = tkFileDialog.askopenfilename(parent = self,
+        file = tkinter.filedialog.askopenfilename(parent = self,
             initialdir = lNetworkDir,
             title='Load Network',
             filetypes=[('any network', '*_pmvnet.py *_net.py'),
@@ -976,7 +977,7 @@ Legal itemnames: 'All'
             from Vision import networkDefaultDirectory
             lNetworkDir = networkDefaultDirectory
 
-        file = tkFileDialog.askopenfilename(parent = self,
+        file = tkinter.filedialog.askopenfilename(parent = self,
                 initialdir = lNetworkDir, 
                 filetypes=[('network', '*_pmvnet.py *_net.py'), 
                            ('all', '*')], 
@@ -1042,7 +1043,7 @@ Legal itemnames: 'All'
         #os.chdir(lNetworkDir)
         #execfile(lFileNameWithoutPath, {}, {'self':self, 'masterNet':network})
         #os.chdir(lCurrentDir)
-        execfile(filename, {}, {'self':self, 'masterNet':network})
+        exec(compile(open(filename, "rb").read(), filename, 'exec'), {}, {'self':self, 'masterNet':network})
 
         # we allow the calling function to set some widget values		
         if ins is not None:
@@ -1140,7 +1141,7 @@ deletes a Network object from the editor
         network.delete(saveValues=saveValues)
         
         if self.currentNetwork == network:
-            keys = self.networks.keys()
+            keys = list(self.networks.keys())
             if len(keys):
                 self.setNetwork(self.networks[keys[0]])
             else:
@@ -1154,7 +1155,7 @@ deletes a Network object from the editor
 """
         
         network = None
-        for n in self.networks.values():
+        for n in list(self.networks.values()):
             if n.origName == name:
                 network = n
                 break
@@ -1193,14 +1194,14 @@ deletes a Network object from the editor
 
         
     def makeNetworksMenu(self):
-        Networks_button = Tkinter.Menubutton(self.mBar,
+        Networks_button = tkinter.Menubutton(self.mBar,
                                              text='Networks',
                                              underline=0)
         self.menuButtons['Networks'] = Networks_button
-        Networks_button.pack(side=Tkinter.LEFT, padx="1m")
+        Networks_button.pack(side=tkinter.LEFT, padx="1m")
 
         # re-set tearoff
-        Networks_button.menu = Tkinter.Menu(Networks_button)#, tearoff=False)
+        Networks_button.menu = tkinter.Menu(Networks_button)#, tearoff=False)
         #Networks_button.menu.add_separator()
 
         Networks_button.menu.bind("<Any-Button>", self.myButtonPress, '+')
@@ -1231,8 +1232,8 @@ deletes a Network object from the editor
 
         if hasattr(self, 'buttonVariables') is False:
             self.buttonVariables = {}
-        if self.buttonVariables.has_key('runOnNewData') is False:
-            self.buttonVariables['runOnNewData'] = Tkinter.IntVar()
+        if ('runOnNewData' in self.buttonVariables) is False:
+            self.buttonVariables['runOnNewData'] = tkinter.IntVar()
         Networks_button.menu.add_checkbutton(label="Immediate run",
                                            variable=self.buttonVariables['runOnNewData'],
                                            command=self.setRunOnNewData_cb,
@@ -1265,12 +1266,12 @@ deletes a Network object from the editor
 
         def buildhostCascadeMenu():
             Networks_button.menu.cascadeMenu.delete(0, 'end')
-            if self.libraries.has_key('Web Services'):
-              for lKey in self.libraries['Web Services'].libraryDescr.keys():
+            if 'Web Services' in self.libraries:
+              for lKey in list(self.libraries['Web Services'].libraryDescr.keys()):
                 if lKey.startswith('http://'):
                     cb = CallBackFunction( self.replaceSelectedNodesWithHost, host=lKey)
                     Networks_button.menu.cascadeMenu.add_command(label=lKey, command=cb)
-        Networks_button.menu.cascadeMenu = Tkinter.Menu(Networks_button.menu, tearoff=0, postcommand=buildhostCascadeMenu)
+        Networks_button.menu.cascadeMenu = tkinter.Menu(Networks_button.menu, tearoff=0, postcommand=buildhostCascadeMenu)
         Networks_button.menu.add_cascade(label='Replace with nodes from', menu=Networks_button.menu.cascadeMenu)
 
 
@@ -1281,7 +1282,7 @@ deletes a Network object from the editor
             lNodeList = self.currentNetwork.nodes[:]
 
         for lNode in lNodeList:
-            if    lNode.constrkw.has_key('host') \
+            if    'host' in lNode.constrkw \
               and host != suppressMultipleQuotes(lNode.constrkw['host']):
                 lNode.replaceWithHost(host=host)
 
@@ -1299,12 +1300,12 @@ deletes a Network object from the editor
 
 
     def makeFileMenu(self):
-        File_button = Tkinter.Menubutton(self.mBar, text='File', underline=0)
+        File_button = tkinter.Menubutton(self.mBar, text='File', underline=0)
         self.menuButtons['File'] = File_button
-        File_button.pack(side=Tkinter.LEFT, padx="1m")
+        File_button.pack(side=tkinter.LEFT, padx="1m")
 
-		# re-set tearoff
-        File_button.menu = Tkinter.Menu(File_button)#, tearoff=False)
+                # re-set tearoff
+        File_button.menu = tkinter.Menu(File_button)#, tearoff=False)
         #File_button.menu.add_separator()
 
         File_button.menu.add_command(label='New...', underline=0,
@@ -1340,19 +1341,19 @@ deletes a Network object from the editor
 
 
     def makeEditMenu(self):
-        Edit_button = Tkinter.Menubutton(self.mBar, text='Edit', underline=0)
+        Edit_button = tkinter.Menubutton(self.mBar, text='Edit', underline=0)
         self.menuButtons['Edit'] = Edit_button
-        Edit_button.pack(side=Tkinter.LEFT, padx="1m")
+        Edit_button.pack(side=tkinter.LEFT, padx="1m")
 
         # got rid of useless tearoff
-        Edit_button.menu = Tkinter.Menu(Edit_button, tearoff=False)
+        Edit_button.menu = tkinter.Menu(Edit_button, tearoff=False)
         Edit_button.menu.add_separator()
 
         #Edit_button.menu.add('command', label="Undo", command=self.undo)
         #Edit_button.menu.entryconfig(1, state=Tkinter.DISABLED)
         Edit_button.menu.add_command(label="Undo", accelerator="ctrl-z",
                                      command=self.undo,
-                                     state=Tkinter.DISABLED, underline=0)
+                                     state=tkinter.DISABLED, underline=0)
         Edit_button.menu.add_separator()
 
         # Please note: accelerators such as Ctrl-a are just for visuals,
@@ -1360,13 +1361,13 @@ deletes a Network object from the editor
 
         Edit_button.menu.add_command(label="Cut", accelerator="ctrl-x",
                                      command=self.cutNetwork_cb, underline=2)
-        Edit_button.menu.entryconfig("Cut", state=Tkinter.DISABLED)
+        Edit_button.menu.entryconfig("Cut", state=tkinter.DISABLED)
         Edit_button.menu.add_command(label="Copy", accelerator="ctrl-c",
                                      command=self.copyNetwork_cb, underline=0)
-        Edit_button.menu.entryconfig("Copy", state=Tkinter.DISABLED)
+        Edit_button.menu.entryconfig("Copy", state=tkinter.DISABLED)
         Edit_button.menu.add_command(label="Paste",  accelerator="ctrl-v",
                                      command=self.pasteNetwork_cb, underline=0)
-        Edit_button.menu.entryconfig("Paste", state=Tkinter.DISABLED)
+        Edit_button.menu.entryconfig("Paste", state=tkinter.DISABLED)
         Edit_button.menu.add_separator()
 
         #Edit_button.menu.add_checkbutton(label="Options", command=self.options)
@@ -1433,26 +1434,26 @@ deletes a Network object from the editor
 
 
     def createMenus(self, parent):
-        self.mBar = Tkinter.Frame(parent, relief=Tkinter.RAISED, borderwidth=2)
-        self.mBar.pack(side='top',fill=Tkinter.X)
+        self.mBar = tkinter.Frame(parent, relief=tkinter.RAISED, borderwidth=2)
+        self.mBar.pack(side='top',fill=tkinter.X)
         self.menuButtons = {}
         self.makeFileMenu()
         self.makeEditMenu()
         self.makeNetworksMenu()
-        apply( self.mBar.tk_menuBar, self.menuButtons.values() )
-	self.title = Tkinter.Label(self.mBar, text=self.name)
-	self.title.pack(side=Tkinter.RIGHT)
+        self.mBar.tk_menuBar(*list(self.menuButtons.values()))
+        self.title = tkinter.Label(self.mBar, text=self.name)
+        self.title.pack(side=tkinter.RIGHT)
 
        
     def setUndoLabel(self):
         b = self.menuButtons['Edit']
         if len(self.undoStack)==0:
-            b.menu.entryconfig(1, label='Undo',state=Tkinter.DISABLED)
+            b.menu.entryconfig(1, label='Undo',state=tkinter.DISABLED)
             return
         else:
             l = self.undoStack[-1][1]
             # FIXME!!! since undo is broken, the entry remains disabled
-            b.menu.entryconfig(1, label='Undo: '+l,state=Tkinter.DISABLED)
+            b.menu.entryconfig(1, label='Undo: '+l,state=tkinter.DISABLED)
 
 
     def undo(self, event=None):
@@ -1506,11 +1507,11 @@ deletes a Network object from the editor
             
         macName = 'macro0'
         i=1
-        while macName in self.networks.keys():
+        while macName in list(self.networks.keys()):
             macName = 'macro'+str(i)
             i = i + 1
         macName = askstring('Macro Name', "Macro Name", initialvalue=macName)
-        while macName in self.networks.keys():
+        while macName in list(self.networks.keys()):
             macName = askstring('Macro Name already in use', "Macro Name",
                                 initialvalue='macro')
         if macName is None or len(macName) == 0:
@@ -1562,7 +1563,7 @@ deletes a Network object from the editor
 
     def toggleColorNodeByLibrary(self, event=None):
         self.menuOption_cb('colorNodeByLibrary')
-        for net in self.networks.values():
+        for net in list(self.networks.values()):
             for node in net.nodes:
 
                 # if color by library is ON:
@@ -1614,13 +1615,13 @@ deletes a Network object from the editor
         index = 0
         while 1:
             initialvalue = 'Network %d'%index
-            if initialvalue not in self.networks.keys():
+            if initialvalue not in list(self.networks.keys()):
                 break
             index += 1
         name = askstring("Network name", "Network name",
                          initialvalue=initialvalue, 
                          parent = self)
-        while name in self.networks.keys():
+        while name in list(self.networks.keys()):
             name = askstring("Network name already used", "Network name",
                              initialvalue=name, parent = self)
         if name is None or len(name) == 0:
@@ -1636,7 +1637,7 @@ deletes a Network object from the editor
         while 1:
             name = askstring("Network name already used", "Network name",
                              initialvalue=self.currentNetwork.name)
-            if name not in self.networks.keys(): break
+            if name not in list(self.networks.keys()): break
         
         if name is None or len(name) == 0:
             return
@@ -1686,7 +1687,7 @@ deletes a Network object from the editor
 
             
     def stopCurrentNet_cb(self, event=None):
-        print '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
         net = self.currentNetwork
         net.stop()
 
@@ -1741,12 +1742,12 @@ deletes a Network object from the editor
             # w has to be instance of Port widgets
             assert issubclass(w, PortWidget)
             # w.__name__ must be different from predefined widgets 
-            if w.__name__ not in widgetsTable.keys():
+            if w.__name__ not in list(widgetsTable.keys()):
                 widgetsTable[w.__name__] = w
 
 
     def configure(self, **kw):
-        if len( kw.items() ) == 0: # we return a dict with the current config
+        if len( list(kw.items()) ) == 0: # we return a dict with the current config
             dict = {}
             dict['visibleWidth'] = self.visibleWidth
             dict['visibleHeight'] = self.visibleHeight
@@ -1757,7 +1758,7 @@ deletes a Network object from the editor
             dict['flashNodesWhenRun'] = self.flashNodesWhenRunTk.get()
             return dict
             
-        for key,value in kw.items():
+        for key,value in list(kw.items()):
             if key=='visibleWidth':
                 self.visibleWidth = value
                 self.resizeNetworkArea()
@@ -1799,15 +1800,15 @@ deletes a Network object from the editor
         if resourceFileLocation is None or resourceFileLocation == '':
             return
         
-        if resourceFileLocation.has_key('currentdir') and \
+        if 'currentdir' in resourceFileLocation and \
            not resourceFileLocation['currentdir'] is None:
             path = resourceFileLocation['currentdir']
 
-        elif resourceFileLocation.has_key('home') and \
+        elif 'home' in resourceFileLocation and \
              not resourceFileLocation['home'] is None:
             path = resourceFileLocation['home']
 
-        elif resourceFileLocation.has_key('package') and \
+        elif 'package' in resourceFileLocation and \
              not resourceFileLocation['package'] is None:
             path = resourceFileLocation['package']
         else:
@@ -1820,13 +1821,13 @@ deletes a Network object from the editor
         localDict = sys.modules['__main__'].__dict__
         # save self entry in local dict if it exists
         oldself = None
-        if localDict.has_key('self'):
+        if 'self' in localDict:
             oldself = localDict['self']
 
         localDict['self'] = self
         globalDict = self.__dict__
 
-        execfile( path, globalDict, localDict)
+        exec(compile(open( path, "rb").read(), path, 'exec'), globalDict, localDict)
 
         # restore old self on local dict
         if oldself is not None:
@@ -1864,7 +1865,7 @@ deletes a Network object from the editor
 
 if __name__=='__main__':
     ed = NetworkBuilder("test builder")
-    top = Tkinter.Toplevel()
+    top = tkinter.Toplevel()
     ed1 = NetworkBuilder("test builder1", master=top,
                          visibleWidth=600, totalWidth=3000)
     node1 = NetworkNode(name='node1')
@@ -1901,8 +1902,8 @@ if __name__=='__main__':
     conn4 = ed.connectNodes(node1, node5, mode='angles')
   
     def connectCB(connection):
-        print 'connecting %s with %s'%(connection.port1.node.name,
-                                       connection.port2.node.name)
+        print('connecting %s with %s'%(connection.port1.node.name,
+                                       connection.port2.node.name))
     ed.actionCallback['onAddConnection'].AddCallback(connectCB)
     conn4 = ed.connectNodes(node2, node5)
     

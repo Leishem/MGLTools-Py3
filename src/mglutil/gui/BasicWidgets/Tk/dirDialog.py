@@ -8,7 +8,7 @@
 # Fredrik Lundh but only available for Python2.2 and higher.
 #########################################################################
 
-from tkCommonDialog import Dialog
+from tkinter.commondialog import Dialog
 
 class Directory(Dialog):
     "Ask for a directory"

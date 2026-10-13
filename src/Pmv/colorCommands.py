@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 
 #############################################################################
@@ -27,8 +27,8 @@ from mglutil.util.colorUtil import ToHEX
 from Pmv.colorPalette import ColorPalette, ColorPaletteNG, \
      ColorPaletteFunction, ColorPaletteFunctionNG
 from Pmv.moleculeViewer import DeleteGeomsEvent, AddGeomsEvent, EditGeomsEvent
-import types, string, Tkinter, Pmw, os, traceback
-import numpy.oldnumeric as Numeric
+import types, tkinter, Pmw, os, traceback; from mglcompat import pystring as string
+import mglcompat.oldnumeric as Numeric
 from ViewerFramework.VFCommand import CommandGUI
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr, evalString
 from DejaVu.colorTool import Map, RGBARamp, RedWhiteARamp, WhiteBlueARamp,\
@@ -108,18 +108,18 @@ class ColorCommand(MVCommand):
         for g in geomsToColor:
             if len(colors)==1 or len(colors)!=len(atms):
                 for a in atms:
-                    if not a.colors.has_key(g): continue
+                    if g not in a.colors: continue
                     a.colors[g] = tuple( colors[0] )
             else:
                 for a, c in map(None, atms, colors):
-                    if not a.colors.has_key(g): continue
+                    if g not in a.colors: continue
                     #a.colors[g] = tuple(c[:3])
                     a.colors[g] = tuple(c)
 
         updatedGeomsToColor = []
         for mol in nodes.top.uniq():
             for gName in geomsToColor:
-                if not mol.geomContainer.geoms.has_key(gName): continue
+                if gName not in mol.geomContainer.geoms: continue
                 geom = mol.geomContainer.geoms[gName]
                 # turn off texturemapping:
                 if geom.texture is not None:
@@ -132,7 +132,7 @@ class ColorCommand(MVCommand):
 
                 if geom.children != []:
                     # get geom Name:
-                    childrenNames = map(lambda x: x.name, geom.children)
+                    childrenNames = [x.name for x in geom.children]
                     updatedGeomsToColor = updatedGeomsToColor + childrenNames
                     for childGeom in geom.children:
                         childGeom.Set(inheritMaterial=0, redo=0,
@@ -152,7 +152,7 @@ class ColorCommand(MVCommand):
         \ngeomsToColor---list of the name of geometries to color,default is 'all'
         """
         if not nodes: return 'ERROR'
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return 'ERROR'
@@ -161,13 +161,13 @@ class ColorCommand(MVCommand):
             geomsToColor = self.getAvailableGeoms(nodes)
         if geomsToColor in ['*'] or '*' in geomsToColor:
             geomsToColor = self.getAvailableGeoms(nodes, showUndisplay=1)
-        if not type(geomsToColor) in [types.ListType, types.TupleType]:
+        if not type(geomsToColor) in [list, tuple]:
 
             return 'ERROR'
-        geomsToColor = filter(lambda x: x not in [' ', ''], geomsToColor)
+        geomsToColor = [x for x in geomsToColor if x not in [' ', '']]
         if not len(geomsToColor):
             return 'ERROR'
-        status = apply( self.doitWrapper, (nodes, colors, geomsToColor), kw)
+        status = self.doitWrapper(*(nodes, colors, geomsToColor), **kw)
         return status
 
 
@@ -192,23 +192,23 @@ class ColorCommand(MVCommand):
                                                     showUndisplay=0)
             if geomsAvailable is None: return None
 
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'wcfg':{'text':'All Geometries','height':1,
                                 'command':self.selectall_cb},
                         'gridcfg':{'sticky':'we'}})
 
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'wcfg':{'text':'No Geometries','height':1,
                                 'command':self.deselectall_cb},
                         'gridcfg':{'row':-1,'sticky':'we'}})
 
-            idf.append({'widgetType':Tkinter.Checkbutton,
+            idf.append({'widgetType':tkinter.Checkbutton,
                         'name':'showUndis',
                         'defaultValue':0,
                         'wcfg':{'text':'Show Undisplayed',
                                 'command':self.showUndisplayed_cb,
                                 'indicatoron':0,'height':1,'pady':5,'padx':5,
-                                'variable':Tkinter.IntVar()},
+                                'variable':tkinter.IntVar()},
                         'gridcfg':{'row':-1,'sticky':'we'}})
 
             idf.append({'widgetType':Pmw.RadioSelect,
@@ -231,7 +231,7 @@ class ColorCommand(MVCommand):
                                 'immediate':0, 'exitFunction':self.dismiss_cb},
                         'gridcfg':{'sticky':'wens', 'columnspan':3}
                         })
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'name':'dismiss',
                         'wcfg':{'text':'DISMISS', 'command':self.dismiss_cb},
                         'gridcfg':{'sticky':'we', 'columnspan':3}})
@@ -329,7 +329,7 @@ that is potentially expensive
             # all the atom don't have the entry g in their color dictionary.
             # Ca-trace, spline and secondary structure create the color
             # entry for their geometry when computed only
-            atmsWithGeom = atms.get(lambda x, geom=g: x.colors.has_key(geom))
+            atmsWithGeom = atms.get(lambda x, geom=g: geom in x.colors)
 
             if atmsWithGeom is None or not len(atmsWithGeom):
                 continue
@@ -367,11 +367,10 @@ that is potentially expensive
         # We assume that the geometry name is the same than the key in
         # the geoms dictionary.
         childGeomsName = []
-        for geomName in geomC.geoms.keys():
+        for geomName in list(geomC.geoms.keys()):
             if geomName in ['master','selectionSpheres']:continue
             if geomC.geoms[geomName].children != []:
-                names = map(lambda x: x.name,
-                            geomC.geoms[geomName].children)
+                names = [x.name for x in geomC.geoms[geomName].children]
                 childGeomsName = childGeomsName + names
         return childGeomsName
 
@@ -391,15 +390,15 @@ that is potentially expensive
             
             # We only put the one we are interested in in the list
             # of geomsAvailable 
-            for geomName in geomC.geoms.keys():
+            for geomName in list(geomC.geoms.keys()):
                 if geomName in ['master','selectionSpheres','selectionCrosses'] :
                     continue
-                if geomC.atoms.has_key(geomName):
+                if geomName in geomC.atoms:
                     if geomName in childGeomsName and geomC.geoms[geomName].children==[]:
                         continue
                     childgnames=[]
                     if geomC.geoms[geomName].children != []:
-                        childnames = map(lambda x: x.name,geomC.geoms[geomName].children)
+                        childnames = [x.name for x in geomC.geoms[geomName].children]
                         childgnames=childgnames+childnames
                         
                         for child in childgnames:
@@ -453,7 +452,7 @@ that is potentially expensive
 
 
     def dismiss_cb(self):
-        if self.cmdForms.has_key('chooseColor'):
+        if 'chooseColor' in self.cmdForms:
             self.cmdForms['chooseColor'].withdraw()
             
     def color_cb(self, colors):
@@ -524,7 +523,7 @@ class ColorFromPalette(ColorCommand, MVAtomICOM):
             'Color palette', ChooseColor, readonly=0, info=c,
             sortedkeys=ChooseColorSortedKeys )
             
-        if not self.vf.commands.has_key('color'):
+        if 'color' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'color', 'Pmv',
                                 topCommand=0)
         self.undoCmdsString= self.vf.color.name
@@ -555,14 +554,14 @@ class ColorFromPalette(ColorCommand, MVAtomICOM):
            \nnodes --- TreeNodeSet holding the current selection
            \ngeomsToColor --- list of the name of geometries to color,
                          default is 'all'"""
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
 
         nodes = self.vf.expandNodes(nodes)
         nodes = nodes.findType(Atom)
         if not nodes:
             return 'ERROR'
-        geomsToColor = filter(lambda x: x not in [' ', ''], geomsToColor)
+        geomsToColor = [x for x in geomsToColor if x not in [' ', '']]
         if not len(geomsToColor):
             return 'ERROR'
         if geomsToColor in ['all'] or 'all' in geomsToColor:
@@ -575,8 +574,8 @@ class ColorFromPalette(ColorCommand, MVAtomICOM):
             self.cleanup()
             return 'ERROR'
 
-        if not kw.has_key('redraw'): kw['redraw'] = 1
-        status = apply( self.doitWrapper, (nodes, geomsToColor), kw)
+        if 'redraw' not in kw: kw['redraw'] = 1
+        status = self.doitWrapper(*(nodes, geomsToColor), **kw)
         return status
 
 
@@ -609,7 +608,7 @@ class ColorByAtomType(ColorFromPalette):
         self.palette = paletteClass('Atom Elements', colorDict=AtomElements,
                                     readonly=0, info=c,
                                     lookupMember='element')
-        if not self.vf.commands.has_key('color'):
+        if 'color' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'color', 'Pmv',
                                 topCommand=0)
         self.undoCmdsString= self.vf.color.name
@@ -655,7 +654,7 @@ class ColorByDG(ColorFromPalette):
         self.palette = paletteClass(
             'DavidGoodsell', DavidGoodsell, readonly=0, info=c,
             sortedkeys=DavidGoodsellSortedKeys, lookupFunction=self.lookupFunc)
-        if not self.vf.commands.has_key('color'):
+        if 'color' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'color', 'Pmv',
                                 topCommand=0)
         self.undoCmdsString= self.vf.color.name
@@ -703,7 +702,7 @@ class ColorByResidueType(ColorFromPalette):
         self.palette = paletteClass(
             'RasmolAmino', RasmolAmino, readonly=0, info=c,
             sortedkeys = RasmolAminoSortedKeys, lookupMember='type')
-        if not self.vf.commands.has_key('color'):
+        if 'color' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'color', 'Pmv',
                                 topCommand=0)
         self.undoCmdsString= self.vf.color.name
@@ -736,7 +735,7 @@ class ColorShapely(ColorFromPalette):
         c = 'Color palette for shapely residues types'
         self.palette = paletteClass('Shapely', Shapely, readonly=0, info=c,
                                     lookupMember='type')
-        if not self.vf.commands.has_key('color'):
+        if 'color' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'color', 'Pmv',
                                 topCommand=0)
         self.undoCmdsString= self.vf.color.name
@@ -811,7 +810,7 @@ class ColorByChain(ColorFromPalette):
     def onAddObjectToViewer(self, obj):
         for c in obj.chains:
             c.number = self.vf.Mols.chains.index(c)
-        if not self.vf.commands.has_key('color'):
+        if 'color' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'color', 'Pmv',
                                 topCommand=0)
         self.cleanup()
@@ -819,7 +818,7 @@ class ColorByChain(ColorFromPalette):
 
     def onAddCmdToViewer(self):
         if self.vf.hasGui:
-            self.carbons = Tkinter.IntVar()
+            self.carbons = tkinter.IntVar()
         else:
             self.carbons = Checkbutton()
         self.carbons.set(0)
@@ -837,7 +836,7 @@ class ColorByChain(ColorFromPalette):
             lookupFunction = lambda x, length = len(RainbowSortedKey):\
             x.number%length, sortedkeys = RainbowSortedKey)
 
-        if not self.vf.commands.has_key('color'):
+        if 'color' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'color', 'Pmv',
                                 topCommand=0)
         self.undoCmdsString= self.vf.color.name
@@ -850,7 +849,7 @@ class ColorByChain(ColorFromPalette):
     
     def buildFormDescr(self, formName):
         idf = ColorFromPalette.buildFormDescr(self, formName)
-        idf.insert(2, {'widgetType':Tkinter.Checkbutton,
+        idf.insert(2, {'widgetType':tkinter.Checkbutton,
                     'name':'Carbons',
                     'defaultValue':0,
                     'wcfg':{'text':'Carbons Only',
@@ -901,7 +900,7 @@ class ColorByMolecule(ColorFromPalette):
     def onAddObjectToViewer(self, obj):
 
         obj.number = self.vf.Mols.index(obj)
-        if not self.vf.commands.has_key('color'):
+        if 'color' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'color', 'Pmv',
                                 topCommand=0)
         self.cleanup()
@@ -913,7 +912,7 @@ class ColorByMolecule(ColorFromPalette):
 
     def onAddCmdToViewer(self):
         if self.vf.hasGui:
-            self.carbons = Tkinter.IntVar()
+            self.carbons = tkinter.IntVar()
         else:
             self.carbons = Checkbutton()
         self.carbons.set(1)
@@ -930,7 +929,7 @@ class ColorByMolecule(ColorFromPalette):
             lookupFunction = lambda x, length=len(RainbowSortedKey): \
             x.number%length, sortedkeys=RainbowSortedKey)
 
-        if not self.vf.commands.has_key('color'):
+        if 'color' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'color', 'Pmv',
                                 topCommand=0)
         self.undoCmdsString= self.vf.color.name
@@ -942,7 +941,7 @@ class ColorByMolecule(ColorFromPalette):
     
     def buildFormDescr(self, formName):
         idf = ColorFromPalette.buildFormDescr(self, formName)
-        idf.insert(2, {'widgetType':Tkinter.Checkbutton,
+        idf.insert(2, {'widgetType':tkinter.Checkbutton,
                     'name':'Carbons',
                     'defaultValue':1,
                     'tooltip':"Color by molecule assigns a different color to each molecule.\nWhen this button is checked, only carbon atoms will be assigned that color.",
@@ -977,7 +976,7 @@ class ColorByInstance(ColorFromPalette):
 
     def onAddObjectToViewer(self, obj):
         obj.number = self.vf.Mols.index(obj)
-        if not self.vf.commands.has_key('color'):
+        if 'color' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'color', 'Pmv',
                                 topCommand=0)
         self.cleanup()
@@ -996,7 +995,7 @@ class ColorByInstance(ColorFromPalette):
             lookupFunction = lambda x, length=len(RainbowSortedKey): \
             x%length, sortedkeys=RainbowSortedKey)
 
-        if not self.vf.commands.has_key('color'):
+        if 'color' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'color', 'Pmv',
                                 topCommand=0)
         self.undoCmdsString= self.vf.color.name
@@ -1014,7 +1013,7 @@ class ColorByInstance(ColorFromPalette):
             #for g in geomsToColor+moreGeoms:
             for g in geomsToColor:
                 ge = geomc.geoms[g]
-                colors = self.palette.lookup(range(len(ge.instanceMatricesFortran)))
+                colors = self.palette.lookup(list(range(len(ge.instanceMatricesFortran))))
                 ge.Set(materials=colors, inheritMaterial=0, tagModified=False)
                 ge.SetForChildren(inheritMaterial=True, recursive=True)
                 
@@ -1051,21 +1050,21 @@ class ColorByProperties(ColorCommand):
 
     def onAddCmdToViewer(self):
         if self.vf.hasGui:
-            self.carbons = Tkinter.IntVar()
+            self.carbons = tkinter.IntVar()
         else:
             self.carbons = Checkbutton()
             
         # Load the color maps commands
-        if not self.vf.commands.has_key('loadColorMap'):
+        if 'loadColorMap' not in self.vf.commands:
             self.vf.loadCommand("dejaVuCommands",'loadColorMap',
                                 'ViewerFramework', log=0)
 
         if self.vf.hasGui:
-            if not self.vf.commands.has_key('editColorMap'):
+            if 'editColorMap' not in self.vf.commands:
                 self.vf.loadCommand("dejaVuCommands","editColorMap",
                                     "ViewerFramework", log=0)
         
-                if not self.vf.commands.has_key('showCMGUI'):
+                if 'showCMGUI' not in self.vf.commands:
                     self.vf.loadCommand("dejaVuCommands","showCMGUI",
                                         "ViewerFramework", log=0)
         
@@ -1073,10 +1072,10 @@ class ColorByProperties(ColorCommand):
         # these commands use a color command to undo their effect
         # so we make sure it is loaded and we place its name into
         # undoCmdsString
-        if not self.vf.commands.has_key('color'):
+        if 'color' not in self.vf.commands:
             self.vf.loadCommand('colorCommands', 'color', 'Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('saveSet'):
+        if 'saveSet' not in self.vf.commands:
             self.vf.loadCommand('selectionCommands', 'saveSet', 'Pmv',
                                 topCommand=0)
         self.undoCmdsString = self.vf.color.name
@@ -1151,7 +1150,7 @@ current selection cannot be colored using this function."
         # save the one selected.
         selcm = cbb.get()
         cbb.clear()
-        cbb._list.setlist(self.vf.colorMaps.keys())
+        cbb._list.setlist(list(self.vf.colorMaps.keys()))
         cbb.selectitem(selcm)
 
 
@@ -1198,7 +1197,7 @@ current selection cannot be colored using this function."
 
 
     def entryValidate(self, text):
-        if not text in self.vf.colorMaps.keys():
+        if not text in list(self.vf.colorMaps.keys()):
             return Pmw.PARTIAL
         else:
             return 1
@@ -1207,7 +1206,7 @@ current selection cannot be colored using this function."
     def buildFormDescr(self, formName):
         if formName == 'default':
             idf = ColorCommand.buildFormDescr(self, formName)
-            idf.insert(2, {'widgetType':Tkinter.Checkbutton,
+            idf.insert(2, {'widgetType':tkinter.Checkbutton,
                         'name':'Carbons',
                         'defaultValue':0,
                         'wcfg':{'text':'Carbons Only',
@@ -1245,7 +1244,7 @@ current selection cannot be colored using this function."
                                     },
                             'gridcfg':{'sticky':'we','columnspan':2}})
 
-                propertyNames = map(lambda x: (x[0],None), self.properties)
+                propertyNames = [(x[0],None) for x in self.properties]
                 propertyNames.sort()
                 idf.append({'name':'properties',
                             'widgetType':ListChooser,
@@ -1267,12 +1266,12 @@ current selection cannot be colored using this function."
                 # Edit map
                 idf.append({'name':'editmap',
                             'parent':'cmGroup',
-                            'widgetType':Tkinter.Checkbutton,
+                            'widgetType':tkinter.Checkbutton,
                             'wcfg':{'text':'Edit',
-                                    'variable':Tkinter.IntVar()},
+                                    'variable':tkinter.IntVar()},
                             'gridcfg':{'sticky':'we'}})
 
-                cmNames = self.vf.colorMaps.keys()
+                cmNames = list(self.vf.colorMaps.keys())
                 if len(cmNames): 
                     idf.append({'name':'colormap',
                                 'parent':'cmGroup',
@@ -1326,7 +1325,7 @@ below.",
 
                 idf.append({'name':'updateCM',
                             'parent':'minMax',
-                            'widgetType':Tkinter.Button,
+                            'widgetType':tkinter.Button,
                             'tooltip':"Update the ColorMap mini and maxi values \n with the property values mini\
  and maxi",
                             'wcfg':{'text':">>", 'command':self.updateCM},
@@ -1394,18 +1393,17 @@ below.",
     def updateChooser(self, selection):
         if not hasattr(self, 'properties'): self.properties = []
         oldProp = self.properties
-        self.properties = filter(lambda x: isinstance(x[1], types.IntType) \
-                                 or isinstance(x[1], types.FloatType),
-                                 selection[0].__dict__.items())
+        self.properties = [x for x in list(selection[0].__dict__.items()) if isinstance(x[1], int) \
+                                 or isinstance(x[1], float)]
 
         # Filter out the private members starting by __.
-        self.properties = filter(lambda x: x[0][:2]!='__', self.properties)
+        self.properties = [x for x in self.properties if x[0][:2]!='__']
         
-        if self.cmdForms.has_key('byProp'):
+        if 'byProp' in self.cmdForms:
             # If the list of properties changed then need to update the listbox
             ebn = self.cmdForms['byProp'].descr.entryByName
             widget = ebn['properties']['widget']
-            propertyNames = map(lambda x: (x[0],None), self.properties)
+            propertyNames = [(x[0],None) for x in self.properties]
             propertyNames.sort()
             oldsel = widget.get()
             widget.setlist(propertyNames)
@@ -1432,7 +1430,7 @@ below.",
         
         self.updateChooser(self.selection)
         # Update the inputForm if it exists:
-        if self.cmdForms.has_key('byProp'):
+        if 'byProp' in self.cmdForms:
             # Check if the level is the same than the one on the menu bar
             ebn = self.cmdForms['byProp'].descr.entryByName
             levelwid = ebn['level']['widget']
@@ -1445,7 +1443,7 @@ below.",
             # Update the colormaps combobox
             cbb = ebn['colormap']['widget']
             cbb.clear()
-            cms = self.vf.colorMaps.keys()
+            cms = list(self.vf.colorMaps.keys())
             cbb._list.setlist(cms)
             cbb.selectitem(cms[0])
             self.updateValMinMax()
@@ -1488,10 +1486,10 @@ below.",
         del val['valMin']
         del val['editmap']
         val['log']=1
-        if val.has_key('level'): del val['level']
+        if 'level' in val: del val['level']
         val['redraw']=1
         val['propertyLevel'] = self.propertyLevel
-        apply(self.doitWrapper, (self.selection, geomsToColor, property), val)
+        self.doitWrapper(*(self.selection, geomsToColor, property), **val)
 
 
     def cmGUI_cb(self, geomsToColor, property, colormap, propertyLevel=None):
@@ -1519,7 +1517,7 @@ below.",
         self.undoCmds = ''
         sameColor = 1
         for g in geomsToColor:
-            atmsWithGeom = atms.get(lambda x, geom=g: x.colors.has_key(geom))
+            atmsWithGeom = atms.get(lambda x, geom=g: geom in x.colors)
             if len(atmsWithGeom) > 0:
                     oldColors = []
                     firstCol = atmsWithGeom[0].colors[g]
@@ -1547,8 +1545,8 @@ below.",
 
         if colormap is None:
             colormap = RGBARamp
-        elif type(colormap) is types.StringType \
-          and self.vf.colorMaps.has_key(colormap):
+        elif type(colormap) is bytes \
+          and colormap in self.vf.colorMaps:
             colormap = self.vf.colorMaps[colormap]
         if not isinstance(colormap, ColorMap):
             return 'ERROR'
@@ -1559,7 +1557,7 @@ below.",
             self.getPropValues(nodes, property, propertyLevel)
         if self.propValues is None:
             return 'ERROR'
-		# build the color ramp.
+                # build the color ramp.
         selectioncol = colormap.Map(self.propValues, mini=mini, maxi=maxi)
         # Call the colorProp method
         self.colorProp(nodes, geomsToColor, selectioncol, propertyLevel)
@@ -1610,9 +1608,9 @@ below.",
                 i = 0
                 for n in nodes:
                     if not carbonsOnly or n.chemElem == "C":
-                        if n.colors.has_key(gName):
+                        if gName in n.colors:
                             n.colors[gName] = tuple(selectioncol[i][:3])
-                        if n.opacities.has_key(gName):
+                        if gName in n.opacities:
                             newOpac = selectioncol[i][3]
                             deltaOpac = deltaOpac + (n.opacities[gName]-newOpac)
                             n.opacities[gName] = newOpac
@@ -1625,9 +1623,9 @@ below.",
                     allAtoms.append(atms)
                     for a in atms:
                         if not carbonsOnly or a.chemElem == "C":
-                            if a.colors.has_key(gName):
+                            if gName in a.colors:
                                 a.colors[gName] = tuple(selectioncol[i][:3])
-                            if a.opacities.has_key(gName):
+                            if gName in a.opacities:
                                 newOpac = selectioncol[i][3]
                                 deltaOpac = deltaOpac + (a.opacities[gName]-
                                                          newOpac)
@@ -1636,11 +1634,11 @@ below.",
         updatedGeomsToColor = []
         for mol in molecules:
             for gName in geomsToColor:
-                if not mol.geomContainer.geoms.has_key(gName): continue
+                if gName not in mol.geomContainer.geoms: continue
                 geom = mol.geomContainer.geoms[gName]
                 if geom.children != []:
                     # get geom Name:
-                    childrenNames = map(lambda x: x.name, geom.children)
+                    childrenNames = [x.name for x in geom.children]
                     updatedGeomsToColor = updatedGeomsToColor + childrenNames
                     for childGeom in geom.children:
                         childGeom.Set(inheritMaterial=0, redo=0, tagModified=False)
@@ -1662,11 +1660,11 @@ below.",
         \nproperty ---   property name of type integer or float or property defined by a function returning a list of float or int.
         \ncolormap--- either a string representing a colormap or a DejaVu.ColorMap instance.
         """
-        if not kw.has_key('redraw'): kw['redraw'] = 1
+        if 'redraw' not in kw: kw['redraw'] = 1
         kw['colormap'] = colormap
         kw['mini'] = mini
         kw['maxi'] = maxi
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
 
         nodes = self.vf.expandNodes(nodes)
@@ -1676,13 +1674,13 @@ below.",
             geomsToColor = self.getAvailableGeoms(nodes)
         if geomsToColor in ['*'] or '*' in geomsToColor:
             geomsToColor = self.getAvailableGeoms(nodes, showUndisplay=1)
-        if not type(geomsToColor) in [types.ListType, types.TupleType]:
+        if not type(geomsToColor) in [list, tuple]:
             return 'ERROR'
-        geomsToColor = filter(lambda x: x not in [' ', ''], geomsToColor)
+        geomsToColor = [x for x in geomsToColor if x not in [' ', '']]
         if not len(geomsToColor):
             return'ERROR'
         kw['propertyLevel'] = propertyLevel
-        status = apply( self.doitWrapper, (nodes, geomsToColor, property), kw)
+        status = self.doitWrapper(*(nodes, geomsToColor, property), **kw)
         return status
     
 from Pmv.colorCommandsGUI import ColorByPropertiesGUI
@@ -1744,7 +1742,7 @@ the current selection:"""
         ebn = self.cmdForms['byExpr'].descr.entryByName
         cbb = ebn['colormap']['widget']
         cbb.clear()
-        cbb._list.setlist(self.vf.colorMaps.keys())
+        cbb._list.setlist(list(self.vf.colorMaps.keys()))
         cbb.selectitem(cm.name)
 
     def updateCM(self, event=None):
@@ -1813,7 +1811,7 @@ the current selection:"""
                         'gridcfg':{'sticky': 'we'}})
 
             idf.append({'name':'eval',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text': 'Eval expression',
                                 'command':self.eval_cb,
                                 },
@@ -1829,12 +1827,12 @@ the current selection:"""
             # Edit map
             idf.append({'name':'editmap',
                         'parent':'cmGroup',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'wcfg':{'text':'Edit',
-                                'variable':Tkinter.IntVar()},
+                                'variable':tkinter.IntVar()},
                         'gridcfg':{'sticky':'we'}})
             
-            cmNames = self.vf.colorMaps.keys()
+            cmNames = list(self.vf.colorMaps.keys())
             if len(cmNames):
                 idf.append({'name':'colormap',
                             'parent':'cmGroup',
@@ -1859,7 +1857,7 @@ the current selection:"""
                 
             idf.append({'name':'loadCM',
                         'parent':'cmGroup',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'wcfg':{'text':'Load',
                                 'command':self.loadCM_cb,
                                 },
@@ -1881,7 +1879,7 @@ the current selection:"""
             
             idf.append({'name':'updateCM',
                         'parent':'minMax',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':"Update the ColorMap mini and maxi values \n with the property values mini\
 and maxi",
                         'wcfg':{'text':">>", 'command':self.updateCM},
@@ -1987,7 +1985,7 @@ and maxi",
         sameColor = 1
 
         for g in geomsToColor:
-            atmsWithGeom = atms.get(lambda x, geom=g: x.colors.has_key(geom))
+            atmsWithGeom = atms.get(lambda x, geom=g: geom in x.colors)
             oldColors = []
             firstCol = atmsWithGeom[0].colors[g]
             
@@ -2042,7 +2040,7 @@ and maxi",
             return 'ERROR'
 
         # Update the level if the form exists already.
-        if self.cmdForms.has_key('byExpr'):
+        if 'byExpr' in self.cmdForms:
             ebn = self.cmdForms['byExpr'].descr.entryByName
             levelwid = ebn['level']['widget']
             oldlevel = levelwid.getcurselection()
@@ -2053,7 +2051,7 @@ and maxi",
             # Update the colormaps combobox
             cbb = ebn['colormap']['widget']
             cbb.clear()
-            cms = self.vf.colorMaps.keys()
+            cms = list(self.vf.colorMaps.keys())
             cbb._list.setlist(cms)
             cbb.selectitem(cms[0])
             
@@ -2088,8 +2086,8 @@ and maxi",
         del val['editmap']
 
         val['redraw'] = 1
-        if val.has_key('level'): del val['level']
-        apply(self.doitWrapper, (self.selection,geomsToColor), val)
+        if 'level' in val: del val['level']
+        self.doitWrapper(*(self.selection,geomsToColor), **val)
 
 
     def __call__(self, nodes,  geomsToColor='all',
@@ -2107,7 +2105,7 @@ and maxi",
         kw['lambdaFunc'] = lambdaFunc
         kw['colormap'] = colormap
         kw['redraw'] = 1
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = nodes
         nodes = self.vf.expandNodes(nodes)
         if not nodes:
@@ -2117,11 +2115,11 @@ and maxi",
             geomsToColor = self.getAvailableGeoms(nodes)
         if geomsToColor in ['*'] or '*' in geomsToColor:
             geomsToColor = self.getAvailableGeoms(nodes, showUndisplay=1)
-        if not type(geomsToColor) in [types.ListType, types.TupleType]:
+        if not type(geomsToColor) in [list, tuple]:
             return "ERROR"
-        geomsToColor = filter(lambda x: x not in [' ', ''], geomsToColor)
+        geomsToColor = [x for x in geomsToColor if x not in [' ', '']]
         if not len(geomsToColor): return "ERROR"
-        status = apply(self.doitWrapper, (nodes, geomsToColor), kw)
+        status = self.doitWrapper(*(nodes, geomsToColor), **kw)
         return status
     
     def getPropValues(self, nodes, function):
@@ -2149,8 +2147,8 @@ and maxi",
         if atms is None:
             return "ERROR"
         # Get the colormap
-        if type(colormap) is types.StringType and \
-           self.vf.colorMaps.has_key(colormap):
+        if type(colormap) is bytes and \
+           colormap in self.vf.colorMaps:
             colormap = self.vf.colorMaps[colormap]
         elif not isinstance(colormap, ColorMap):
             return "ERROR"
@@ -2202,7 +2200,7 @@ class RainbowColor(ColorFromPalette):
     def doit(self, nodes, geomsToColor='all', propertyLevel=None,
              colormap='rgb256',mini=None, maxi=None):
         atoms = nodes.findType(Atom)
-        atoms._uniqNumber = range(1, len(atoms)+1)  
+        atoms._uniqNumber = list(range(1, len(atoms)+1))  
         self.vf.colorByProperty(
             atoms, geomsToColor, '_uniqNumber', propertyLevel='Atom',
             mini=1., maxi=len(atoms), 
@@ -2226,7 +2224,7 @@ class RainbowColorByChain(RainbowColor):
         chains = nodes.findType(Chain)
         for chain in chains:
             atoms = chain.findType(Atom)
-            atoms._uniqNumber = range(1, len(atoms)+1)
+            atoms._uniqNumber = list(range(1, len(atoms)+1))
             self.vf.colorByProperty(
                 atoms, geomsToColor, '_uniqNumber', propertyLevel='Atom',
                 mini=1., maxi=len(atoms), 

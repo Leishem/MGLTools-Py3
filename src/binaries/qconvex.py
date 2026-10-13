@@ -1,5 +1,5 @@
 from binaries import findExecModule
-import os, string, sys
+import os, sys; from mglcompat import pystring as string
 from DejaVu.IndexedPolygons import IndexedPolygons
 
 class QConvex:
@@ -35,7 +35,7 @@ Input a filename and [x,y,z]-coordinates, save this in QConvex format."""
             f.writelines(data)
             f.close()
         except:
-            print 'QCONVEX ERROR! Cannot write into %s'%self.tmpPath
+            print('QCONVEX ERROR! Cannot write into %s'%self.tmpPath)
 
 
     def readQConvex(self, filename):
@@ -55,7 +55,7 @@ facet."""
             data = f.readlines()
             f.close()
         except:
-            print 'QCONVEX ERROR! Temp. file not found in %s'%self.tmpPath
+            print('QCONVEX ERROR! Temp. file not found in %s'%self.tmpPath)
             return
         
         # get more header info
@@ -71,7 +71,7 @@ facet."""
             vertices.append( [float(spl[0]), float(spl[1]), float(spl[2])] )
 
         for d in data[lenVerts+2:]: # offset of 2 because of file header
-            spl = map( int, string.split(d) )
+            spl = list(map( int, string.split(d) ))
 
             for i in range(3, len(spl)):
                 faces.append( [spl[1], spl[i], spl[i-1]] )
@@ -89,10 +89,10 @@ facet."""
             path = os.path.abspath("./")
             
         if not os.path.exists(path):
-            print 'QCONVEX ERROR! Path %s does not exist!'%path
+            print('QCONVEX ERROR! Path %s does not exist!'%path)
             # use path where we started Python process
             self.tmpPath = os.path.join( os.path.abspath('./'), '')
-            print 'Trying to save temp. file in: %s'%self.tmpPath
+            print('Trying to save temp. file in: %s'%self.tmpPath)
 
         else:
             self.tmpPath = os.path.join( os.path.abspath(path), '')
@@ -147,9 +147,9 @@ facet."""
         try:
             os.remove( os.path.join(self.tmpPath, 'tmp_qconvex_input') )
         except:
-            print 'Cannot delete temporary input file'
+            print('Cannot delete temporary input file')
         try:
             os.remove( os.path.join(self.tmpPath, 'tmp_qconvex_output') )
         except:
-            print 'Cannot delete temporary output file'
+            print('Cannot delete temporary output file')
 

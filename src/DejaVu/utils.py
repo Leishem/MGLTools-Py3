@@ -11,7 +11,7 @@ they share vertices
         
     for i,v in enumerate(vertices):
         key = '%f%f%f'%tuple(v)
-        if not vl.has_key(key):
+        if key not in vl:
             vl[key] = nvert
             vrl[i] = nvert
             nvert +=1
@@ -30,7 +30,7 @@ they share vertices
 
     faceList = []
     for f in faces:
-        faceList.append( map( lambda x, l=vrl: vrl[x],  f ) )
+        faceList.append( list(map( lambda x, l=vrl: vrl[x],  f )) )
     if vnorms is not None:
         return vertList, faceList, normList
     return vertList, faceList

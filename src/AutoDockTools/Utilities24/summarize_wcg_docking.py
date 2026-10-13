@@ -4,7 +4,7 @@
 #
 # $Header: /opt/cvs/python/packages/share1.5/AutoDockTools/Utilities24/summarize_wcg_docking.py,v 1.3 2007/10/08 18:14:32 rhuey Exp $
 #
-import os, glob, numpy.oldnumeric as Numeric
+import os, glob, mglcompat.oldnumeric as Numeric
 from string import split, join
 
 from MolKit import Read
@@ -24,29 +24,29 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: summarize_wcg_docking.py -d directory"
-        print
-        print "    Description of command..."
-        print "         -d     directory"
-        print "    Optional parameters:"
-        print "        [-t]    rmsd tolerance (default is 1.0)"
-        print "        [-b]    print best docking info only (default is print all)"
-        print "        [-o]    output filename"
-        print "                      (default is directory.txt)"
-        print "        [-a]    append to  output filename"
-        print "                      (default is to open output filename 'w')"
-        print "        [-k]    build hydrogen bonds"
-        print "        [-r]    receptor filename"
-        print "        [-e]    report energy breakdown"
-        print "        [-v]    verbose output"
-        print "                      (default is leave active)"
+        print("Usage: summarize_wcg_docking.py -d directory")
+        print()
+        print("    Description of command...")
+        print("         -d     directory")
+        print("    Optional parameters:")
+        print("        [-t]    rmsd tolerance (default is 1.0)")
+        print("        [-b]    print best docking info only (default is print all)")
+        print("        [-o]    output filename")
+        print("                      (default is directory.txt)")
+        print("        [-a]    append to  output filename")
+        print("                      (default is to open output filename 'w')")
+        print("        [-k]    build hydrogen bonds")
+        print("        [-r]    receptor filename")
+        print("        [-e]    report energy breakdown")
+        print("        [-v]    verbose output")
+        print("                      (default is leave active)")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'd:o:t:r:bkaevh')
-    except getopt.GetoptError, msg:
-        print 'summarize_wcg_docking.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('summarize_wcg_docking.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -76,7 +76,7 @@ if __name__ == '__main__':
         #print "o=", o, " a=", a
         if o in ('-d', '--d'):
             directory = a   #faah001....
-            if verbose: print 'set directory to ', a
+            if verbose: print('set directory to ', a)
             #CAUTION: THIS IS NOT GENERAL!!!
             #faah001_diversity0001_masterpr_ref...faah0001_xtpv_masterpr_ref
             ll = directory.split('_')
@@ -91,54 +91,54 @@ if __name__ == '__main__':
             receptor_filename = join(ll[2:],'_') + ".pdbqt"
             #dpf_fn 
             dpf_fn = directory  + ".dpf"
-            print "dpf_fn =", dpf_fn
+            print("dpf_fn =", dpf_fn)
             #dpf_fn = directory + "/" + directory + ".dpf"
             #SET the default outputfilename to directory + .txt here
             if outputfilename=='results.txt':
                 outputfilename = directory + '.txt'
         if o in ('-o', '--o'):
             outputfilename = a
-            if verbose: print 'set outputfilename to ', a
+            if verbose: print('set outputfilename to ', a)
         if o in ('-t', '--t'):
             rms_tolerance = float(a)
-            if verbose: print 'set rms_tolerance to ', a
+            if verbose: print('set rms_tolerance to ', a)
         if o in ('-r', '--r'):
             #THIS IS SUPERFLUOUS
             receptor_filename = a
-            print "warning! setting receptor_filename to ", a
+            print("warning! setting receptor_filename to ", a)
             #if verbose: print 'set receptor_filename to ', a
         if o in ('-b', '--b'):
             print_best_only = True
-            if verbose: print 'set print_best_only to ', True
+            if verbose: print('set print_best_only to ', True)
         if o in ('-k', '--k'):
             build_hydrogen_bonds = True
-            if verbose: print 'set build_hydrogen_bonds to ', True
+            if verbose: print('set build_hydrogen_bonds to ', True)
         if o in ('-a', '--a'):
             append_to_outputfile = True
-            if verbose: print 'set append_to_outputfile to ', True
+            if verbose: print('set append_to_outputfile to ', True)
         if o in ('-e', '--e'):
             report_energy_breakdown = True
-            if verbose: print 'set report_energy_breakdown to ', True
+            if verbose: print('set report_energy_breakdown to ', True)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
     if not  directory:
-        print 'summarize_wcg_docking: directory must be specified.'
+        print('summarize_wcg_docking: directory must be specified.')
         usage()
         sys.exit()
 
     #read all the xml docking logs in as one Docking
     
     xml_list = glob.glob('*.xml')
-    print "xml_list =", xml_list
+    print("xml_list =", xml_list)
     p = XMLParser()
     d = Docking(parser=p)
     for xml_file in xml_list:
-        print "calling readXMLResults with", xml_file
+        print("calling readXMLResults with", xml_file)
         d.readXMLResults(xml_file, dpf = dpf_fn)
     ligMol = d.ligMol
     ligAts = ligMol.allAtoms

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -18,7 +18,7 @@
 from mglutil.math.rotax import rotax
 from mglutil.math.transformation import Transformation
 import numpy
-import numpy.oldnumeric as Numeric, math, string
+import mglcompat.oldnumeric as Numeric, math; from mglcompat import pystring as string
 
 
 class SymNFold:
@@ -456,7 +456,7 @@ class SymSuperHelix(SymHelix):
                      hrise=hrise, copies=copies)
             
         if vector2 is not None:
-            print vector2
+            print(vector2)
             assert len(vector2)==3
             self.vector2 = self.normalize(vector2)
 
@@ -602,7 +602,7 @@ class SymMultiply:
         matrixOut = []
 
         #now the actual multiplication
-	if len(matInA) == 1:
+        if len(matInA) == 1:
             for i in range(len(matInB)): #loop over node's incoming matrices
                 matrixOut.append(Numeric.dot(matInA[0],
                                                            matInB[i]))
@@ -685,7 +685,7 @@ additional ports are created by using the ';' character.
                     for c in item:
                         if c == '-' or c == ':':
                             s=string.split(item,c)
-                            newList=range(int(s[0]),int(s[1])+1)
+                            newList=list(range(int(s[0]),int(s[1])+1))
                             for i in range(len(newList)):
                                 ll.append(newList[i])
 
@@ -696,13 +696,13 @@ additional ports are created by using the ';' character.
 
     def getMatrices(self):
         outMatrices=[]
-        indicesComp = range(len(self.inMatrices))
+        indicesComp = list(range(len(self.inMatrices)))
         if self.indices[0] == []:
             self.indices[0] = indicesComp
             fullList = []
         else:
             fullList = Numeric.concatenate(self.indices)
-            map( indicesComp.remove, fullList )
+            list(map( indicesComp.remove, fullList ))
             self.indices.insert(0,indicesComp)
 
         for i in range(len(self.indices)):
@@ -921,7 +921,7 @@ class SymInverse:
         outMatrices: list of 4x4 matrices
         """
 
-        import numpy.oldnumeric.linear_algebra as LinearAlgebra 
+        import mglcompat.oldnumeric.linear_algebra as LinearAlgebra 
 
         if not inMatrices:
             inMatrices = [Numeric.identity(4).astype('f')]

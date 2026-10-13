@@ -20,23 +20,23 @@ if __name__ == '__main__':
 
 
     def usage():
-        print "Usage: write_largest_cluster_ligand.py "
-        print "    This script does the following: "
-        print "         (1) read all the files with extension '.dlg' into one Docking"
-        print "         (2) compute a clustering at the specified rms tolerance "
-        print "         (3) write the ligand with the coordinates of the "
-        print "             lowest-energy conformation in each cluster to a separate file" 
-        print "    "
-        print "    Optional parameters:"
-        print "        [-t]    rms_tolerance (default 2.0)"
-        print "        [-o pdbqt_filename] (default ligandstem_clust#.pdbqt)"
-        print "        [-v]    verbose output"
+        print("Usage: write_largest_cluster_ligand.py ")
+        print("    This script does the following: ")
+        print("         (1) read all the files with extension '.dlg' into one Docking")
+        print("         (2) compute a clustering at the specified rms tolerance ")
+        print("         (3) write the ligand with the coordinates of the ")
+        print("             lowest-energy conformation in each cluster to a separate file") 
+        print("    ")
+        print("    Optional parameters:")
+        print("        [-t]    rms_tolerance (default 2.0)")
+        print("        [-o pdbqt_filename] (default ligandstem_clust#.pdbqt)")
+        print("        [-v]    verbose output")
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 't:o:vh')
-    except getopt.GetoptError, msg:
-        print 'write_each_cluster_LE_conf.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('write_each_cluster_LE_conf.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -53,13 +53,13 @@ if __name__ == '__main__':
         #print "o=", o, " a=", a
         if o in ('-o', '--o'):
             outputfilestem = a
-            if verbose: print 'set stem for outputfile to ', a
+            if verbose: print('set stem for outputfile to ', a)
         if o in ('-t', '--t'):
             rms_tolerance = float(a)
-            if verbose: print 'set rms_tolerance to ', a
+            if verbose: print('set rms_tolerance to ', a)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
@@ -73,7 +73,7 @@ if __name__ == '__main__':
     clustering = d.clusterer.clustering_dict[rms_tolerance]
     for clust in clustering:
         clustStr = str(clustering.index(clust))
-        if verbose: print "processing clust number ", clustStr
+        if verbose: print("processing clust number ", clustStr)
         #update the coordinates to those of conf with lowest energy in current cluster
         d.ch.set_conformation(clust[0])
         parser = d.ligMol.parser
@@ -89,7 +89,7 @@ if __name__ == '__main__':
             parser.write_with_new_coords(coords, d.ligMol.name  + "_LE_clust"+clustStr +'.pdbqt') 
         else:
             parser.write_with_new_coords(coords, outputfilestem  + clustStr +'.pdbqt')
-        if verbose: print 'wrote %s' %outputfilestem
+        if verbose: print('wrote %s' %outputfilestem)
 
 
 # To execute this command type:

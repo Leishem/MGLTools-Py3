@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # Last modified on Thu Sep  6 12:14:22 PDT 2001 by lindy
@@ -11,8 +11,8 @@
 
 from mglutil.math.statetocoords import StateToCoords
 import unittest, math
-import numpy.oldnumeric as Numeric, numpy.oldnumeric.random_array as RandomArray
-from UserList import UserList
+import mglcompat.oldnumeric as Numeric, mglcompat.oldnumeric.random_array as RandomArray
+from collections import UserList
 
 
 
@@ -79,7 +79,7 @@ class StateToCoordsTest(unittest.TestCase):
         else:
             d = self.decimals
 
-        for point in xrange(len(a1)):
+        for point in range(len(a1)):
             for axis in [0, 1, 2]:
                 self.assertEqual(round(a1[point][axis],d),
                                  round(a2[point][axis],d))
@@ -210,7 +210,7 @@ class ComputedValues(StateToCoordsTest):
         """applyQuaternion05  -- random pts 3*120 about x-axis"""
         state = StateToCoords(self.random_points, tolist=1)
         q = (0.0, 0.0, 1.0, 120.0)
-        for n in xrange(3):
+        for n in range(3):
             result = state.applyQuaternion(q)
         self.assertArrayEqual(self.random_points, result,0)
 
@@ -220,7 +220,7 @@ class ComputedValues(StateToCoordsTest):
         state = StateToCoords(self.random_points, tolist=1)
         q = RandomArray.uniform(self.min, self.max, (4,))
         q[3] = 180.0
-        for n in xrange(2):
+        for n in range(2):
             result = state.applyQuaternion(q)
         self.assertArrayEqual(self.random_points, result)
 

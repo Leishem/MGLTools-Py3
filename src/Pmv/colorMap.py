@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -13,9 +13,9 @@
 #
 # $Id: colorMap.py,v 1.2 2007/07/24 17:30:39 vareille Exp $
 #
-from Tkinter import *
+from tkinter import *
 from DejaVu.colorTool import RGBRamp, ToRGB, ToHSV
-import types, numpy.oldnumeric as Numeric
+import types, mglcompat.oldnumeric as Numeric
 
 class ColorMapGUI(Frame):
 
@@ -75,15 +75,15 @@ class ColorMapGUI(Frame):
         self.canvas = {}
         self.canvas['Hue'] = Canvas(self, relief=SUNKEN, borderwidth=3,
                                     width="200", height="256")
-	self.canvas['Hue'].pack(side=TOP)
+        self.canvas['Hue'].pack(side=TOP)
        
-	self.canvas['Sat'] = Canvas(self, relief=SUNKEN, borderwidth=3,
+        self.canvas['Sat'] = Canvas(self, relief=SUNKEN, borderwidth=3,
                                     width="200", height="256")
 
-	self.canvas['Val'] = Canvas(self, relief=SUNKEN, borderwidth=3,
+        self.canvas['Val'] = Canvas(self, relief=SUNKEN, borderwidth=3,
                                     width="200", height="256")
 
-	self.canvas['Opa'] = Canvas(self, relief=SUNKEN, borderwidth=3,
+        self.canvas['Opa'] = Canvas(self, relief=SUNKEN, borderwidth=3,
                                     width="200", height="256")
 
         # create frame for min max
@@ -113,29 +113,29 @@ class ColorMapGUI(Frame):
         # create radio buttons to switch between canvas
         self.buttonFrame1 = f = Frame(self.buttonFrame)
         self.currentCanvasVar = StringVar()
-	self.buttonHue = Radiobutton(f, text='Hue', value = 'Hue',
+        self.buttonHue = Radiobutton(f, text='Hue', value = 'Hue',
                                      indicatoron = 0, width=15,
                                      variable = self.currentCanvasVar,
                                      command=self.button_cb)
-	self.buttonHue.grid(column=0, row=0, sticky='w')
+        self.buttonHue.grid(column=0, row=0, sticky='w')
 
         self.buttonSat = Radiobutton(f, text='Saturation', value = 'Sat',
                                      indicatoron = 0, width=15,
                                      variable = self.currentCanvasVar,
                                      command=self.button_cb)
-	self.buttonSat.grid(column=0, row=1, sticky='w')
+        self.buttonSat.grid(column=0, row=1, sticky='w')
 
-	self.buttonVal = Radiobutton(f, text='Brightness', value = 'Val',
+        self.buttonVal = Radiobutton(f, text='Brightness', value = 'Val',
                                      indicatoron = 0, width=15,
                                      variable = self.currentCanvasVar,
                                      command=self.button_cb)
-	self.buttonVal.grid(column=0, row=2, sticky='w')
+        self.buttonVal.grid(column=0, row=2, sticky='w')
 
-	self.buttonOpa = Radiobutton(f, text='Opacity', value = 'Opa',
+        self.buttonOpa = Radiobutton(f, text='Opacity', value = 'Opa',
                                      indicatoron = 0, width=15,
                                      variable = self.currentCanvasVar,
                                      command=self.button_cb)
-	self.buttonOpa.grid(column=0, row=3, sticky='w')
+        self.buttonOpa.grid(column=0, row=3, sticky='w')
         f.pack(side=LEFT)
         
         self.currentCanvas = self.canvas['Hue']
@@ -143,11 +143,11 @@ class ColorMapGUI(Frame):
 
         # create radio buttons to switch between canvas
         self.buttonFrame2 = f = Frame(self.buttonFrame)
-	self.reset = Button(f, text='Reset', width=10, command=self.reset_cb)
+        self.reset = Button(f, text='Reset', width=10, command=self.reset_cb)
         self.reset.grid(column=0, row=1, sticky='w')
-	self.read = Button(f, text='Read', width=10, command=self.read_cb)
+        self.read = Button(f, text='Read', width=10, command=self.read_cb)
         self.read.grid(column=0, row=2, sticky='w')
-	self.write = Button(f, text='Write', width=10, command=self.write_cb)
+        self.write = Button(f, text='Write', width=10, command=self.write_cb)
         self.write.grid(column=0, row=3, sticky='w')
         f.pack(side=LEFT)
         self.buttonFrame.pack(side=BOTTOM)
@@ -198,11 +198,11 @@ class ColorMapGUI(Frame):
         
 
     def read_cb(self):
-        print 'read'
+        print('read')
 
 
     def write_cb(self):
-        print 'write'
+        print('write')
         
 
     def clear(self, name):
@@ -219,7 +219,7 @@ class ColorMapGUI(Frame):
 
     def rampHue(self):
         ramp = RGBRamp(176)
-        self.hueFromRGB = map( lambda x, conv=ToHSV: conv(x)[0], ramp )
+        self.hueFromRGB = list(map( lambda x, conv=ToHSV: conv(x)[0], ramp ))
         ramp = (ramp*255).astype('i')
         for i in range(176):
             r = hex(int(ramp[i][0]))[2:]
@@ -319,15 +319,15 @@ class ColorMapGUI(Frame):
 
         
     def buildRamp(self):
-        h = map( lambda x, table=self.hueFromRGB: table[x-25],
-                 self.values['Hue'] )
+        h = list(map( lambda x, table=self.hueFromRGB: table[x-25],
+                 self.values['Hue'] ))
         h = Numeric.array(h)
         #h = (Numeric.array(self.values['Hue'])-25)/175.0
         s = (Numeric.array(self.values['Sat'])-25)/175.0
         v = (Numeric.array(self.values['Val'])-25)/175.0
         a = (Numeric.array(self.values['Opa'])-25)/175.0
         self.hsva = map( None, h,s,v,a )
-        self.rgbMap = map( ToRGB, self.hsva)
+        self.rgbMap = list(map( ToRGB, self.hsva))
 
 
     def callCallbacks(self):
@@ -341,8 +341,8 @@ class ColorMapGUI(Frame):
 
                           
     def mouseDown(self, event):
-	# canvas x and y take the screen coords from the event and translate
-	# them into the coordinate system of the canvas object
+        # canvas x and y take the screen coords from the event and translate
+        # them into the coordinate system of the canvas object
         x = min(199, event.x)
         y = min(255, event.y)
         x = max(25, x)
@@ -360,12 +360,12 @@ class ColorMapGUI(Frame):
         
 
     def mouseMotion(self, event):
-	# canvas x and y take the screen coords from the event and translate
-	# them into the coordinate system of the canvas object
+        # canvas x and y take the screen coords from the event and translate
+        # them into the coordinate system of the canvas object
 
         # x,y are float
-	#x = self.canvasHue.canvasx(event.x)
-	#y = self.canvasHue.canvasy(event.y)
+        #x = self.canvasHue.canvasx(event.x)
+        #y = self.canvasHue.canvasy(event.y)
 
         # event.x, event.y are same as x,y but int
         x = min(199, event.x)
@@ -373,7 +373,7 @@ class ColorMapGUI(Frame):
         x = max(25, x)
         y = max(0, y)
         c = self.currentCanvas
-	if self.starty == y:
+        if self.starty == y:
             line = self.currentLines[y]
             col = self.getColor(x)
             newline = c.create_line( 0, y, x, y, fill=col)
@@ -406,17 +406,17 @@ class ColorMapGUI(Frame):
             self.starty = y
             self.startx = x
 
-	    # this flushes the output, making sure that 
-	    # the rectangle makes it to the screen 
-	    # before the next event is handled
-	    self.update_idletasks()
+            # this flushes the output, making sure that 
+            # the rectangle makes it to the screen 
+            # before the next event is handled
+            self.update_idletasks()
 
 
     def __init__(self, master=None, min=0.0, max=255.0):
         if master == None:
             master = Toplevel()
-	Frame.__init__(self, master)
-	Pack.config(self)
+        Frame.__init__(self, master)
+        Pack.config(self)
 
         self.min=min
         self.max=max
@@ -442,7 +442,7 @@ class ColorMapGUI(Frame):
         self.callbacks = []
         self.hueFromRGB = []
         
-	self.createWidgets()
+        self.createWidgets()
         self.rampHue()
         self.drawHue()
         self.constantSaturation(200)
@@ -458,24 +458,24 @@ class ColorMapGUI(Frame):
         self.currentLines = self.lines['Hue']
         self.currentValues = self.values['Hue']
 
-	Widget.bind(self.canvas['Hue'], "<ButtonPress-1>", self.mouseDown)
-	Widget.bind(self.canvas['Hue'], "<Button1-Motion>", self.mouseMotion)
-	Widget.bind(self.canvas['Hue'], "<ButtonRelease-1>", self.mouseUp)
-	Widget.bind(self.canvas['Sat'], "<ButtonPress-1>", self.mouseDown)
-	Widget.bind(self.canvas['Sat'], "<Button1-Motion>", self.mouseMotion)
-	Widget.bind(self.canvas['Sat'], "<ButtonRelease-1>", self.mouseUp)
-	Widget.bind(self.canvas['Val'], "<ButtonPress-1>", self.mouseDown)
-	Widget.bind(self.canvas['Val'], "<Button1-Motion>", self.mouseMotion)
-	Widget.bind(self.canvas['Val'], "<ButtonRelease-1>", self.mouseUp)
-	Widget.bind(self.canvas['Opa'], "<ButtonPress-1>", self.mouseDown)
-	Widget.bind(self.canvas['Opa'], "<Button1-Motion>", self.mouseMotion)
-	Widget.bind(self.canvas['Opa'], "<ButtonRelease-1>", self.mouseUp)
-	
+        Widget.bind(self.canvas['Hue'], "<ButtonPress-1>", self.mouseDown)
+        Widget.bind(self.canvas['Hue'], "<Button1-Motion>", self.mouseMotion)
+        Widget.bind(self.canvas['Hue'], "<ButtonRelease-1>", self.mouseUp)
+        Widget.bind(self.canvas['Sat'], "<ButtonPress-1>", self.mouseDown)
+        Widget.bind(self.canvas['Sat'], "<Button1-Motion>", self.mouseMotion)
+        Widget.bind(self.canvas['Sat'], "<ButtonRelease-1>", self.mouseUp)
+        Widget.bind(self.canvas['Val'], "<ButtonPress-1>", self.mouseDown)
+        Widget.bind(self.canvas['Val'], "<Button1-Motion>", self.mouseMotion)
+        Widget.bind(self.canvas['Val'], "<ButtonRelease-1>", self.mouseUp)
+        Widget.bind(self.canvas['Opa'], "<ButtonPress-1>", self.mouseDown)
+        Widget.bind(self.canvas['Opa'], "<Button1-Motion>", self.mouseMotion)
+        Widget.bind(self.canvas['Opa'], "<ButtonRelease-1>", self.mouseUp)
+        
 
 if __name__ == '__main__':
     import pdb
     test = ColorMapGUI()
     def cb(ramp, min, max):
-        print len(ramp), min, max
+        print(len(ramp), min, max)
     test.addCallback(cb)
 #test.mainloop()

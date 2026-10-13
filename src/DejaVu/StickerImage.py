@@ -37,7 +37,7 @@ class StickerQuad(Insert2d):
 
         self.color = [1,1,1,1]
 
-        apply(Insert2d.__init__, (self, name, check), kw)
+        Insert2d.__init__(*(self, name, check), **kw)
 
         self.needsRedoDpyListOnResize = True
 
@@ -49,7 +49,7 @@ redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
         #print "Insert2d.Set"
-        redoFlags = apply( Insert2d.Set, (self, check, 0), kw)
+        redoFlags = Insert2d.Set(*(self, check, 0), **kw)
 
         val = kw.pop( 'transparent', None)
         if not val is None:
@@ -74,9 +74,9 @@ updateOwnGui=True : allow to update owngui at the end this func
 
         color = kw.get( 'color')
         if color:
-            print color
+            print(color)
             self.color = color
-            print self.color
+            print(self.color)
             redoFlags |= self._redoFlags['redoDisplayListFlag']
 
         return self.redoNow(redo, updateOwnGui, redoFlags)
@@ -146,7 +146,7 @@ class StickerImage(Insert2d):
 
         self.image =  None
 
-        apply(Insert2d.__init__, (self, name, check), kw)
+        Insert2d.__init__(*(self, name, check), **kw)
 
         self.needsRedoDpyListOnResize = True
 
@@ -158,7 +158,7 @@ redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
         #print "StickerImage.Set"
-        redoFlags = apply( Insert2d.Set, (self, check, 0), kw)
+        redoFlags = Insert2d.Set(*(self, check, 0), **kw)
 
         image = kw.get('image')
         if image is not None:
@@ -214,15 +214,15 @@ updateOwnGui=True : allow to update owngui at the end this func
         if self.image.mode == 'RGBA':
                 _gllib.glDrawPixels(self.image.size[0], self.image.size[1], 
                                     GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, 
-                                    self.image.tostring() )
+                                    self.image.tobytes() )
         elif self.image.mode == 'RGB':
                 _gllib.glDrawPixels(self.image.size[0], self.image.size[1], 
                                     GL.GL_RGB, GL.GL_UNSIGNED_BYTE, 
-                                    self.image.tostring() )
+                                    self.image.tobytes() )
         elif self.image.mode == 'L':
                 _gllib.glDrawPixels(self.image.size[0], self.image.size[1], 
                                     GL.GL_LUMINANCE, GL.GL_UNSIGNED_BYTE, 
-                                    self.image.tostring() )
+                                    self.image.tobytes() )
 
         GL.glMatrixMode(GL.GL_PROJECTION)
         GL.glPopMatrix()

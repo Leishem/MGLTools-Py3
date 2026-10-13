@@ -18,23 +18,23 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: pdbqs_to_pdbqt.py -s filename"
-        print
-        print "    Description of command..."
-        print "        [-s]    receptor_filename_stem"
-        print "    Optional parameters:"
-        print "        [-C]    preserve input charges, (default is addition of gasteiger charges)"   
-        print "        [-p]    preserve input charges on atom type, eg -p Zn"
-        print "        [-o]    alternative pdbqt_filename"
-        print "        [-v]    verbose output"
+        print("Usage: pdbqs_to_pdbqt.py -s filename")
+        print()
+        print("    Description of command...")
+        print("        [-s]    receptor_filename_stem")
+        print("    Optional parameters:")
+        print("        [-C]    preserve input charges, (default is addition of gasteiger charges)")   
+        print("        [-p]    preserve input charges on atom type, eg -p Zn")
+        print("        [-o]    alternative pdbqt_filename")
+        print("        [-v]    verbose output")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 's:Cp:o:v')
 
-    except getopt.GetoptError, msg:
-        print 'pdbqs_to_pdbqt.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('pdbqs_to_pdbqt.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -54,43 +54,43 @@ if __name__ == '__main__':
         if o in ('-s', '--s'):
             pdbqs_filename = a + ".pdbqs"
             pdbqt_filename = a + ".pdbqt"
-            if verbose: print 'set receptor_filename to ', pdbqs_filename
+            if verbose: print('set receptor_filename to ', pdbqs_filename)
         if o in ('-C', '--C'):
             charges_to_add = None
-            if verbose: print 'do not add charges'
+            if verbose: print('do not add charges')
         if o in ('-p', '--p'):
             preserve_charge_types+=a
             preserve_charge_types+=','
-            if verbose: print 'preserve initial charges on ', preserve_charge_types
+            if verbose: print('preserve initial charges on ', preserve_charge_types)
         if o in ('-o', '--o'):
             pdbqt_filename = a 
             if verbose: 
-                print 'set pdbqt_filename to ', a
+                print('set pdbqt_filename to ', a)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
 
     if not pdbqs_filename:
-        print 'pdbqs_to_pdbqt: pdbqs_filename_stem must be specified.'
+        print('pdbqs_to_pdbqt: pdbqs_filename_stem must be specified.')
         usage()
         sys.exit()
 
     #what about nucleic acids???
     mols = Read(pdbqs_filename)
-    if verbose: print 'read ', pdbqs_filename
+    if verbose: print('read ', pdbqs_filename)
     mol = mols[0]
     #fix number for problem files with alternative positions
-    mol.allAtoms.number = range(1, len(mol.allAtoms)+1)
+    mol.allAtoms.number = list(range(1, len(mol.allAtoms)+1))
     #possible clean-up???
     #need to type atoms + assign babel_types
     AD4_typer = AutoDock4_AtomTyper(set_aromatic_carbons=False)
     AD4_typer.setAutoDockElements(mol)
     if verbose:
-        print "set autodock4 autodock_element for ", mol.name
+        print("set autodock4 autodock_element for ", mol.name)
     if charges_to_add is not None:
         preserved = {}
         preserved_types = preserve_charge_types.split(',') 
@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
     if charges_to_add is not None:
         #restore any previous charges
-        for atom, chargeList in preserved.items():
+        for atom, chargeList in list(preserved.items()):
             atom._charges[chargeList[0]] = chargeList[1]
             atom.chargeSet = chargeList[0]
 
@@ -123,7 +123,7 @@ if __name__ == '__main__':
             ctr = ctr + 1
     fptr.close()
     if verbose:
-        print "wrote ", ctr, " atoms to", pdbqt_filename
+        print("wrote ", ctr, " atoms to", pdbqt_filename)
     
 
 # To execute this command type:

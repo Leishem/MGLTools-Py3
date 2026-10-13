@@ -3,12 +3,12 @@
 # PC 2005/09/23
 # Get ligand topologies
 #
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
     
 from sets import Set
-from ligandclean.trial_templates import *
-from ligandclean.lookuptable import *
-from substruct import Algorithms
+from .ligandclean.trial_templates import *
+from .ligandclean.lookuptable import *
+from .substruct import Algorithms
 from types import *
 
 def length(vector):
@@ -36,7 +36,7 @@ class get_ligand_topology:
         #
         if MOL2FLAG == False:
             self.atoms={}
-            import string
+            from mglcompat import pystring as string
             for line in lines:
                 split=string.split(line)
                 name=split[0]
@@ -46,7 +46,7 @@ class get_ligand_topology:
             # Get the likely types from names
             #
             trivial_types=['N','O','C','H']
-            for atom in self.atoms.keys():
+            for atom in list(self.atoms.keys()):
                 if atom[0] in trivial_types:
                     if atom[0]!='H': # Get rid of all the hydrogens
                         self.atoms[atom]['type']=atom[0]
@@ -56,9 +56,9 @@ class get_ligand_topology:
             # First approximation: Anything closer than 2.0 A is bonded
             #
             self.dists={}
-            for atom1 in self.atoms.keys():
+            for atom1 in list(self.atoms.keys()):
                 self.dists[atom1]={}
-                for atom2 in self.atoms.keys():
+                for atom2 in list(self.atoms.keys()):
                     if atom1==atom2:
                         continue
                     #
@@ -74,7 +74,7 @@ class get_ligand_topology:
             #
             # Get the torsion angles
             #
-            atoms=self.atoms.keys()
+            atoms=list(self.atoms.keys())
             atoms.sort()
             for atom in atoms:
                 self.atoms[atom]['torsions']=self.get_torsions(atom)
@@ -123,7 +123,7 @@ class get_ligand_topology:
             #
             # Get the torsion angles
             #
-            atoms=self.atoms.keys()
+            atoms=list(self.atoms.keys())
             atoms.sort()
             for atom in atoms:
                 self.atoms[atom]['torsions']=self.get_torsions(atom)
@@ -144,7 +144,7 @@ class get_ligand_topology:
         # + determine their likely order (e.g. single, double, or triple)
         #
         ambs={}
-        atoms=self.atoms.keys()
+        atoms=list(self.atoms.keys())
         for atom_name in atoms:
             bonds=self.atoms[atom_name]['bonds']
             atype=self.atoms[atom_name]['type']
@@ -167,13 +167,13 @@ class get_ligand_topology:
         #
         valences={'C':4,'O':2,'N':3}
         for atom in self.atoms:
-            print atom, self.atoms[atom]
+            print(atom, self.atoms[atom])
         #
         # ok, now it gets hairy
         #
-        print
-        print 'Guessing sybyl atom types'
-        for atom in self.atoms.keys():
+        print()
+        print('Guessing sybyl atom types')
+        for atom in list(self.atoms.keys()):
             stype=None
             at=self.atoms[atom]
             #
@@ -213,7 +213,7 @@ class get_ligand_topology:
         # Do some postchecks
         # - right now only for Carboxylic acids
         #
-        for atom in self.atoms.keys():
+        for atom in list(self.atoms.keys()):
             at=self.atoms[atom]
             if at['sybylType']=='C.2':
                 #
@@ -234,11 +234,11 @@ class get_ligand_topology:
         #
         # All Done
         #
-        atoms=self.atoms.keys()
+        atoms=list(self.atoms.keys())
         atoms.sort()
-        print '\nFinal Sybyl type results'
+        print('\nFinal Sybyl type results')
         for atom in atoms:
-            print atom,self.atoms[atom]['sybylType']
+            print(atom,self.atoms[atom]['sybylType'])
         return
 
     #
@@ -268,7 +268,7 @@ class get_ligand_topology:
         tps.sort() # To agree with dictionary layout
         best_fit=2.00
         best_type=None
-        for bond in bond_props.keys():
+        for bond in list(bond_props.keys()):
             if bond[0]==tps[0] and bond[-1]==tps[1]:
                 if abs(dist-bond_props[bond][0])<best_fit:
                     best_fit=abs(dist-bond_props[bond][0])
@@ -317,7 +317,7 @@ class get_ligand_topology:
         # Make the lines for the pdb2pqr definition
         #
         self.numbers={}
-        atoms=self.atoms.keys()
+        atoms=list(self.atoms.keys())
         atoms.sort()
         number=0
         for atom in atoms:
@@ -424,12 +424,12 @@ class get_ligand_topology:
         #
         # Look for simple substructures that would be titratable groups in the ligand
         #
-        atoms=self.atoms.keys()
+        atoms=list(self.atoms.keys())
         #
         # ring detection (including deleting redundancies & sorting issues)
         ring_list = []
         tmp=[]
-        for atom in self.atoms.keys():
+        for atom in list(self.atoms.keys()):
             temp_ring_list = []
             tmp.append(self.ring_detection(atom))
         #
@@ -457,7 +457,7 @@ class get_ligand_topology:
         #
         #
         # assigning ring attribute for every ring atom
-        for at in self.atoms.keys():
+        for at in list(self.atoms.keys()):
             self.atoms[at]['in_ring'] = 0
         for rring in sorted_ring_list:
             for current_atom in rring:
@@ -547,7 +547,7 @@ class get_ligand_topology:
         dictCounter = 0
         dict_of_matched_lig_fragments = {}
         matched_lig_template = []
-        for current_template in templates.keys():
+        for current_template in list(templates.keys()):
             #print "MATCHING", current_template
             #print "######## ########"
             output = match(templates[current_template],atoms)
@@ -562,7 +562,7 @@ class get_ligand_topology:
                 temp_templateList = list(Set(templateList))
                 matchedLigAtoms =[]
                 temptemp = []
-                if len(temp_templateList) == len(ligList) and (len(ee) == len(templates[current_template].keys())):
+                if len(temp_templateList) == len(ligList) and (len(ee) == len(list(templates[current_template].keys()))):
                     for xxee in ee:
                         # output[1][xxee] => maching pair of ligand and template atoms
                         # temporary depostion
@@ -594,8 +594,8 @@ class get_ligand_topology:
                     dict_of_matched_lig_fragments[dictCounter]['titratableatoms']=deposit_list
                     dict_of_matched_lig_fragments[dictCounter]['matching_atoms']=dict
                     dictCounter += 1
-        print
-        print
+        print()
+        print()
         
         #if len(AllCliqueList) == 0:
         #    print
@@ -624,10 +624,10 @@ class get_ligand_topology:
                                         # loop over all entries
                                         for possiblyredundantentries in NonRedundantCliques:
                                             if Set(possiblyredundantentries).issubset(Set(xxxx)):
-                                                print NonRedundantCliques
+                                                print(NonRedundantCliques)
                                                 NonRedundantCliques.remove(possiblyredundantentries)
                                                 NonRedundantCliques.append(xxxx)
-                                                print NonRedundantCliques
+                                                print(NonRedundantCliques)
                                             elif Set(xxxx).issubset(Set(possiblyredundantentries)):
                                                 #print "found subset which is not added to the list"
                                                 pass
@@ -658,17 +658,17 @@ class get_ligand_topology:
          
         for allCl in dict_of_matched_lig_fragments:
             if dict_of_matched_lig_fragments[allCl]['matchedligatoms'] == NonRedundantCliques[0]:
-                print "WE MATCHED", dict_of_matched_lig_fragments[allCl]['templatename']
-                print "matchedligatoms            : ", dict_of_matched_lig_fragments[allCl]['matchedligatoms']
-                print "type                       : ", dict_of_matched_lig_fragments[allCl]['type']
-                print "modelpka                   : ", dict_of_matched_lig_fragments[allCl]['modelpka']
-                print "titratableatoms            : ", dict_of_matched_lig_fragments[allCl]['titratableatoms']
-                print "matching atoms             : ", dict_of_matched_lig_fragments[allCl]['matching_atoms']
+                print("WE MATCHED", dict_of_matched_lig_fragments[allCl]['templatename'])
+                print("matchedligatoms            : ", dict_of_matched_lig_fragments[allCl]['matchedligatoms'])
+                print("type                       : ", dict_of_matched_lig_fragments[allCl]['type'])
+                print("modelpka                   : ", dict_of_matched_lig_fragments[allCl]['modelpka'])
+                print("titratableatoms            : ", dict_of_matched_lig_fragments[allCl]['titratableatoms'])
+                print("matching atoms             : ", dict_of_matched_lig_fragments[allCl]['matching_atoms'])
         # re-run matching to get mutiple titratable sites?
         
         # TJD: This is to resolve the bug fix when allCl is None
         if dict_of_matched_lig_fragments != {}:
-            print dict_of_matched_lig_fragments[allCl]
+            print(dict_of_matched_lig_fragments[allCl])
             return dict_of_matched_lig_fragments[allCl]
         else:
             return {}

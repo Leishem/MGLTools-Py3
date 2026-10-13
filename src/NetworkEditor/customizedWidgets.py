@@ -13,7 +13,7 @@
 
 import sys, os
 import Pmw
-import Tkinter
+import tkinter
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import KeySelectableScrolledCanvas
 from mglutil.gui import widgetsOnBackWindowsCanGrabFocus
 
@@ -23,23 +23,23 @@ scroll the canvas to the requested item.
 """
     
     def __init__(self, *args, **kw):
-        if kw.has_key('itemNames'):
+        if 'itemNames' in kw:
             itemNames = kw['itemNames']
             del kw['itemNames']
         else:
             itemNames = ['']
 
         # Pmw widgets are very delicate when it comes to subclassing!
-        apply( Pmw.ScrolledCanvas.__init__, (self,)+args, kw)
+        Pmw.ScrolledCanvas.__init__(*(self,)+args, **kw)
 
         # now remove the initialization only keywords and configure the widget
-        if kw.has_key('borderframe'):
+        if 'borderframe' in kw:
             del kw['borderframe']
-        if kw.has_key('labelpos'):
+        if 'labelpos' in kw:
             del kw['labelpos']
-        if kw.has_key('usehullsize'):
+        if 'usehullsize' in kw:
             del kw['usehullsize']
-        apply( self.configure, (self,), kw)
+        self.configure(*(self,), **kw)
 
         myWidget = self
         KeySelectableScrolledCanvas.__init__(self, myWidget, itemNames)
@@ -84,7 +84,7 @@ show/hide notebook pages without destroying them."""
 
     def __init__(self, *args, **kw):
         # Pmw widgets are very delicate when it comes to subclassing!
-        apply( Pmw.NoteBook.__init__, (self,)+args, kw)
+        Pmw.NoteBook.__init__(*(self,)+args, **kw)
 
 
     def hidepage(self, pageName):
@@ -218,18 +218,18 @@ show/hide notebook pages without destroying them."""
             self.tabBottom = canvasBorder
         oldTabBottom = self.tabBottom
 
-        if self._pending.has_key('borderColor'):
+        if 'borderColor' in self._pending:
             self._lightBorderColor, self._darkBorderColor = \
                     Pmw.Color.bordercolors(self, self['hull_background'])
 
         # Draw all the tabs.
-        if self._withTabs and (self._pending.has_key('tabs') or
-                self._pending.has_key('size')):
+        if self._withTabs and ('tabs' in self._pending or
+                'size' in self._pending):
             # Find total requested width and maximum requested height
             # of tabs.
             sumTabReqWidth = 0
             maxTabHeight = 0
-            for pageInfo in self._pageAttrs.values():
+            for pageInfo in list(self._pageAttrs.values()):
                 sumTabReqWidth = sumTabReqWidth + pageInfo['tabreqwidth']
                 if maxTabHeight < pageInfo['tabreqheight']:
                     maxTabHeight = pageInfo['tabreqheight']
@@ -245,7 +245,7 @@ show/hide notebook pages without destroying them."""
             tabBottom = self.tabBottom + borderWidth
 
             numTabs = 0
-            for v in self._pageAttrs.values():
+            for v in list(self._pageAttrs.values()):
                 if v['visible'] == 1:
                     numTabs = numTabs + 1
             availableWidth = hullWidth - 2 * canvasBorder - \
@@ -306,8 +306,8 @@ show/hide notebook pages without destroying them."""
 
         # Redraw shadow under tabs so that it appears that tab for old
         # top page is lowered and that tab for new top page is raised.
-        if self._withTabs and (self._pending.has_key('topPage') or
-                self._pending.has_key('tabs') or self._pending.has_key('size')):
+        if self._withTabs and ('topPage' in self._pending or
+                'tabs' in self._pending or 'size' in self._pending):
 
             if self.getcurselection() is None:
                 # No pages, so draw line across top of page area.
@@ -348,7 +348,7 @@ show/hide notebook pages without destroying them."""
             self.tag_raise(self._pageTop2Border)
 
         # Position the page border shadows.
-        if self._pending.has_key('size') or oldTabBottom != self.tabBottom:
+        if 'size' in self._pending or oldTabBottom != self.tabBottom:
 
             self.coords(self._pageLeftBorder,
                 canvasBorder, self.tabBottom,
@@ -381,7 +381,7 @@ show/hide notebook pages without destroying them."""
                     )
 
         # Color borders.
-        if self._pending.has_key('borderColor'):
+        if 'borderColor' in self._pending:
             self.itemconfigure('lighttag', fill = self._lightBorderColor)
             self.itemconfigure('darktag', fill = self._darkBorderColor)
 
@@ -408,7 +408,7 @@ show/hide notebook pages without destroying them."""
         #      page (eg:  initially or when all pages deleted).
         #   3) tab height has changed, due to difference in the height of a tab
         if (newTopPage is not None or \
-                self._pending.has_key('size') and self._topPageName is not None
+                'size' in self._pending and self._topPageName is not None
                 or oldTabBottom != self.tabBottom):
             self.itemconfigure(self._topPageItem,
                 width = hullWidth - 2 * canvasBorder - pageBorder * 2,
@@ -421,12 +421,12 @@ show/hide notebook pages without destroying them."""
 
     def insert(self, pageName, before = 0, **kw):
         """overwrite original method"""
-	if self._pageAttrs.has_key(pageName):
-	    msg = 'Page "%s" already exists.' % pageName
-	    raise ValueError, msg
+        if pageName in self._pageAttrs:
+            msg = 'Page "%s" already exists.' % pageName
+            raise ValueError(msg)
 
         # Do this early to catch bad <before> spec before creating any items.
-	beforeIndex = self.index(before, 1)
+        beforeIndex = self.index(before, 1)
 
         pageOptions = {}
         if self._withTabs:
@@ -437,7 +437,7 @@ show/hide notebook pages without destroying them."""
             }
 
         # Divide the keyword options into the 'page_' and 'tab_' options.
-        for key in kw.keys():
+        for key in list(kw.keys()):
             if key[:5] == 'page_':
                 pageOptions[key[5:]] = kw[key]
                 del kw[key]
@@ -445,12 +445,12 @@ show/hide notebook pages without destroying them."""
                 tabOptions[key[4:]] = kw[key]
                 del kw[key]
             else:
-		raise KeyError, 'Unknown option "' + key + '"'
+                raise KeyError('Unknown option "' + key + '"')
 
         # Create the frame to contain the page.
-	page = apply(self.createcomponent, (pageName,
-		(), 'Page',
-		Tkinter.Frame, self._hull), pageOptions)
+        page = self.createcomponent(*(pageName,
+                (), 'Page',
+                tkinter.Frame, self._hull), **pageOptions)
 
         attributes = {}
         attributes['page'] = page
@@ -462,9 +462,9 @@ show/hide notebook pages without destroying them."""
             def raiseThisPage(self = self, pageName = pageName):
                 self.selectpage(pageName)
             tabOptions['command'] = raiseThisPage
-            tab = apply(self.createcomponent, (pageName + '-tab',
+            tab = self.createcomponent(*(pageName + '-tab',
                     (), 'Tab',
-                    Tkinter.Button, self._hull), tabOptions)
+                    tkinter.Button, self._hull), **tabOptions)
 
             if self['arrownavigation']:
                 # Allow the use of the arrow keys for Tab navigation:
@@ -490,7 +490,7 @@ show/hide notebook pages without destroying them."""
             self._pending['tabs'] = 1
 
         self._pageAttrs[pageName] = attributes
-	self._pageNames.insert(beforeIndex, pageName)
+        self._pageNames.insert(beforeIndex, pageName)
 
         # If this is the first page added, make it the new top page
         # and call the create and raise callbacks.

@@ -14,25 +14,25 @@ if __name__ == '__main__':
 
     def usage():
         """Print helpful, accurate usage statement to stdout."""
-        print "Usage: write_vs_hits.py -s summary_filename -d path_to_dockings"
-        print
-        print "    Write result file of top conformations from VS."
-        print
-        print "    Required parameters:"
-        print "         -s name of summary file, eg 'summary_2.0.sort', produced in exercise10 of VS"
-        print "         -p path_to_dockings containing files listed in summary file"
-        print "    Optional parameters:"
-        print "        [-f pdbqt_filename] file to create. Default is 'vs_results.pdbqt'"
-        print "        [-A]             output ATOM and HETATM records only "
-        print "        [-v]             verbose output"
-        print "        [-D]             debugging output"
+        print("Usage: write_vs_hits.py -s summary_filename -d path_to_dockings")
+        print()
+        print("    Write result file of top conformations from VS.")
+        print()
+        print("    Required parameters:")
+        print("         -s name of summary file, eg 'summary_2.0.sort', produced in exercise10 of VS")
+        print("         -p path_to_dockings containing files listed in summary file")
+        print("    Optional parameters:")
+        print("        [-f pdbqt_filename] file to create. Default is 'vs_results.pdbqt'")
+        print("        [-A]             output ATOM and HETATM records only ")
+        print("        [-v]             verbose output")
+        print("        [-D]             debugging output")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 's:p:f:Avh')
-    except getopt.GetoptError, msg:
-        print 'write_vs_hits.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('write_vs_hits.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -51,28 +51,28 @@ if __name__ == '__main__':
     for o, a in opt_list:
         if o in ('-s', '--s'):
             summary_filename = a
-            if verbose: print "set summary_filename  %s" % summary_filename
+            if verbose: print("set summary_filename  %s" % summary_filename)
         if o in ('-p', '--p'):
             path_to_dockings = a
-            if verbose: print "set path_to_dockings  %s" % path_to_dockings
+            if verbose: print("set path_to_dockings  %s" % path_to_dockings)
         if o in ('-f', '--f'):
             pdbqt_filename = a
-            if verbose: print "set pdbqt_filename to  %s" % pdbqt_filename
+            if verbose: print("set pdbqt_filename to  %s" % pdbqt_filename)
         if o in ('-A', '--A'):
             atom_records_only = True
-            if verbose: print "set print ATOM and HETATM records only to %s" % atom_records_only
+            if verbose: print("set print ATOM and HETATM records only to %s" % atom_records_only)
         if o in ('-v', '--v'):
-            if verbose: print "set verbose to  %s" % verbose
+            if verbose: print("set verbose to  %s" % verbose)
         if o in ('-h', '--'):
             usage()
             sys.exit(2)
 
     # make sure summary_filename and path_to_dockings were specified
     if not summary_filename:
-        print 'write_vs_hits: summary_filename must be specified.'
+        print('write_vs_hits: summary_filename must be specified.')
         usage()
     if not path_to_dockings:
-        print 'write_vs_hits: path_to_dockings must be specified.'
+        print('write_vs_hits: path_to_dockings must be specified.')
         usage()
         sys.exit(2)
 
@@ -80,15 +80,15 @@ if __name__ == '__main__':
     # make sure summary_filename exists
     try:
         os.stat(summary_filename)
-    except OSError, msg:
-        print "write_vs_hits: %s: %s",  msg.strerror, msg.filename
+    except OSError as msg:
+        print("write_vs_hits: %s: %s",  msg.strerror, msg.filename)
         sys.exit()
 
     fileptr = open(summary_filename, 'r')
     all_lines = fileptr.readlines()
     fileptr.close()
     if not len(all_lines): 
-        print "write_vs_hits: no useable lines in %s", summary_filename
+        print("write_vs_hits: no useable lines in %s", summary_filename)
         sys.exit()
     #ctr will be recorded in the residue field (18-20, 1-based)
     ctr = 1
@@ -112,7 +112,7 @@ if __name__ == '__main__':
         d.readDlg(dlgFN)
         #set ligand to lowest energy conformation LE
         cluD = d.clusterer.clustering_dict
-        rms_tol = cluD.keys()[0]
+        rms_tol = list(cluD.keys())[0]
         LE = cluD[rms_tol][0][0]
         d.ch.set_conformation(LE)
         #get coordinates of LE conformation
@@ -130,7 +130,7 @@ if __name__ == '__main__':
             #replace the RES field with current count
             nl = nl[:17] + "%3s"%ctr + nl[20:]
             optr.write(nl)
-        if verbose: print "onto next vs hit line"
+        if verbose: print("onto next vs hit line")
         ctr+=1
     optr.close()
 # To execute this command type:

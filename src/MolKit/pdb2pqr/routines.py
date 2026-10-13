@@ -39,13 +39,13 @@ NAS = ["A","A5","A3","C","C5","C3","G","G5","G3","T","T5","T3","U",\
        
 
 import random
-from pdb import *
-from utilities import *
-from quatfit import *
-from forcefield import *
-from structures import *
-from protein import *
-from definitions import *
+from .pdb import *
+from .utilities import *
+from .quatfit import *
+from .forcefield import *
+from .structures import *
+from .protein import *
+from .definitions import *
 
 class Routines:
     def __init__(self, protein, verbose, definition=None):
@@ -169,14 +169,14 @@ class Routines:
                                  (num, name)
                         error += "This should not occur - please contact the "
                         error += "author to report this bug."
-                        raise ValueError, error
+                        raise ValueError(error)
                 
                 else:
-                    raise ValueError, "CYS %i unresolved!" % res1.get("resSeq")
+                    raise ValueError("CYS %i unresolved!" % res1.get("resSeq"))
             elif len(SGpartners[i]) > 1:
                 error = "CYS %i has multiple potential " % res1.get("resSeq")
                 error += "SS-bridge partners - PDB2PQR is unable to continue."
-                raise ValueError, error
+                raise ValueError(error)
             elif len(SGpartners[i]) == 0:
                 self.write("CYS %4d is a free cysteine\n" % res1.get("resSeq"), 1)
         self.write("Done.\n")
@@ -219,7 +219,7 @@ class Routines:
                     if residue.get("type") != 2:
                         error = "Unable to find Amino Acid definition for "
                         error += "%s!" % name
-                        raise ValueError, error
+                        raise ValueError(error)
         self.write("Done.\n")
 
     def updateExtraBonds(self):
@@ -298,7 +298,7 @@ class Routines:
                 if defresidue == None:
                     error = "Could not find definition for %s " % name
                     error += "even though it is type %i!" % type
-                    raise ValueError, error
+                    raise ValueError(error)
                 residue.updateIntraBonds(defresidue)
 
     def correctNames(self):
@@ -364,7 +364,7 @@ class Routines:
                         error = "\tCannot Repair Water when " \
                                 "Oxygen is missing!: See %s %i\n" % \
                                 (resname, resnum)
-                        raise ValueError, error
+                        raise ValueError(error)
 
                 elif residue.get("type") == 4:
                     id = ""
@@ -408,14 +408,14 @@ class Routines:
                     else:
                         text = "Nucleic Acid %s %i" % (name, residue.resSeq)
                         text += "was found to be both DNA and RNA!"
-                        raise ValueError, text
+                        raise ValueError(text)
                     id += name[0]
                     if residue.get("is3term"): id += "3"
                     elif residue.get("is5term"): id += "5"
                     residue.set("naname",id)
                             
                 else:   #residue is an unknown type
-                    raise ValueError, "Unknown residue type!"
+                    raise ValueError("Unknown residue type!")
 
         self.write("Done.\n")
 
@@ -435,7 +435,7 @@ class Routines:
                     if defresidue == None:
                         error = "Could not find definition for %s " % name
                         error += "even though it is an amino acid!"
-                        raise ValueError, error
+                        raise ValueError(error)
                     
                     # Check for Missing Heavy Atoms
                     
@@ -481,7 +481,7 @@ class Routines:
                     if defresidue == None:
                         error = "Could not find definition for %s " % name
                         error += "even though it is a nucleic acid!"
-                        raise ValueError, error
+                        raise ValueError(error)
                     
                     # Check for Missing Heavy Atoms
                     
@@ -518,7 +518,7 @@ class Routines:
             error += "%i, %i%%) heavy atoms to accurately repair the file.  " % \
                      ((numatoms + misscount), int(misspct*100))
             error += "The current repair limit is set at %i%%." % REPAIR_LIMIT
-            raise ValueError, error
+            raise ValueError(error)
         elif misscount > 0:
             self.write("Missing %i out of %i heavy atoms (%.2f percent) - " %\
                        (misscount, (numatoms + misscount), (misspct*100)),1)
@@ -656,7 +656,7 @@ class Routines:
                             if len(bonds) < REFATOM_SIZE:
                                 error = "Not enough bonds to remake hydrogen in %s %i" % \
                                         (name, residue.get("resSeq"))
-                                raise ValueError, error
+                                raise ValueError(error)
                             for i in range(REFATOM_SIZE):
                                 refcoords.append(residue.getAtom(bonds[i]).getCoords())
                                 defcoords.append(defresidue.getAtom(bonds[i]).getCoords())
@@ -740,7 +740,7 @@ class Routines:
                         if len(bonds) < REFATOM_SIZE:
                             error = "Not enough bonds to remake hydrogen in %s %i" % \
                                     (name, residue.get("resSeq"))
-                            raise ValueError, error
+                            raise ValueError(error)
                         for i in range(REFATOM_SIZE):
                             refcoords.append(residue.getAtom(bonds[i]).getCoords())
                             defcoords.append(defresidue.getAtom(bonds[i]).getCoords())
@@ -800,7 +800,7 @@ class Routines:
                         N = nextres.getAtom("N")
                 except IndexError:
                     text = "\tUnable to repair %s %i %s\n" % (resname, resSeq, atomname)
-                    raise ValueError, text
+                    raise ValueError(text)
                 for i in range(len(bonds)):
                     refcoords.append(residue.getAtom(bonds[i]).getCoords())
                     defcoords.append(defresidue.getAtom(bonds[i]).getCoords())
@@ -815,7 +815,7 @@ class Routines:
                     prevres = residues[resnum - 1]
                 except IndexError:
                     text = "\tUnable to repair %s %i\n" % (resname, resSeq)
-                    raise ValueError, text
+                    raise ValueError(text)
                 if prevres.getAtom("C") != None:
                     bonds.append("C")
                     refcoords.append(prevres.getAtom("C").getCoords())
@@ -859,7 +859,7 @@ class Routines:
                     missing.append(atomname)
                 else:
                     text = "\tUnable to repair %s %i\n" % (resname, resSeq)
-                    raise ValueError, text
+                    raise ValueError(text)
             else:
                 newcoords = findCoordinates(REFATOM_SIZE, refcoords, defcoords, defatomcoords)
                 residue.createAtom(atomname, newcoords,"ATOM")
@@ -911,7 +911,7 @@ class Routines:
                     missing.append(atomname)
                 else:
                     text = "\tUnable to repair %s %i\n" % (resname, resSeq)
-                    raise ValueError, text
+                    raise ValueError(text)
             else:
                 newcoords = findCoordinates(REFATOM_SIZE, refcoords, defcoords, defatomcoords)
                 residue.createAtom(atomname, newcoords,"ATOM")
@@ -1219,7 +1219,7 @@ class Routines:
         
         oldchi = residue.get("chiangles")[chinum]
         if oldchi > 180.0:
-            raise ValueError,"Invalid dihedral angle size %.3f!" % oldchi
+            raise ValueError("Invalid dihedral angle size %.3f!" % oldchi)
 
         difchi = chiangle - oldchi
         
@@ -1231,7 +1231,7 @@ class Routines:
                 if i == POINT:
                     rootname = defatomname
             else:
-                raise ValueError, "Error occurred while trying to debump!"
+                raise ValueError("Error occurred while trying to debump!")
 
         initcoords = subtract(torsatoms[POINT], torsatoms[BASIS])
 
@@ -1264,7 +1264,7 @@ class Routines:
             if atom != None:
                 torsatoms.append(atom.getCoords())
             else:
-                raise ValueError, "Error occurred while trying to set chiangle!"
+                raise ValueError("Error occurred while trying to set chiangle!")
         
         di = getDihedral(torsatoms[0], torsatoms[1], torsatoms[2], torsatoms[3])
         #print "New Chiangle: %5.3f" % di
@@ -1357,7 +1357,7 @@ class Routines:
             the Hyd-Donor-Accepor angle is less than 20 degrees.
         """
         self.write("Printing hydrogen bond list...\n")
-        from hydrogens import hydrogenRoutines
+        from .hydrogens import hydrogenRoutines
         hydRoutines = hydrogenRoutines(self)
         dlist = []
         alist = []
@@ -1380,9 +1380,9 @@ class Routines:
                     if dist > 3.3: continue
                     angle = hydRoutines.getHbondangle(acc, donor, donorhatom)
                     if angle <= 20.0:
-                        print "Donor: %s %s %i  \tAcceptor: %s %s %i\tHdist: %.2f\tAngle: %.2f" % \
+                        print("Donor: %s %s %i  \tAcceptor: %s %s %i\tHdist: %.2f\tAngle: %.2f" % \
                               (donor.resName, donor.name, donor.residue.resSeq, acc.resName, \
-                               acc.name, acc.residue.resSeq, dist, angle)
+                               acc.name, acc.residue.resSeq, dist, angle))
                         
     def optimizeHydrogens(self):
         """
@@ -1390,7 +1390,7 @@ class Routines:
             were too extensive to properly fit within this file.
         """
         self.write("Beginning to optimize hydrogens...\n")
-        from hydrogens import hydrogenRoutines
+        from .hydrogens import hydrogenRoutines
         self.updateIntraBonds()
         self.calculateChiangles()
         myhydRoutines = hydrogenRoutines(self)
@@ -1410,7 +1410,7 @@ class Routines:
                     run = 1
                     break
         if run == 0: return
-        from hydrogens import hydrogenRoutines
+        from .hydrogens import hydrogenRoutines
         self.write("Optimizing water hydrogens.\n")
         mywatRoutines = hydrogenRoutines(self)
         mywatRoutines.readHydrogenDefinition()
@@ -1431,7 +1431,7 @@ class Routines:
                     run = 1
                     break
         if run == 0: return
-        from hydrogens import hydrogenRoutines
+        from .hydrogens import hydrogenRoutines
         self.write("Randomizing water hydrogens.\n")
         myrandRoutines = hydrogenRoutines(self)
         myrandRoutines.readHydrogenDefinition()

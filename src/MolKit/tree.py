@@ -37,8 +37,9 @@ specified criterion which is either a function to be applied to each object of t
 or a string which forms the basis for a subselect.
 """
 
-import string, types, re
+import types, re; from mglcompat import pystring as string
 from MolKit.listSet import ListSet
+from functools import cmp_to_key
 
 verbose = False
 
@@ -193,7 +194,7 @@ sets
         #first detect callable objects:
         if callable(item):
             #print "is callable"
-            result = filter(item, nodes.data)
+            result = list(filter(item, nodes.data))
             if len(result)==len(nodes.data):
                 return nodes
             else: 
@@ -202,7 +203,7 @@ sets
             try:
                 func = evalString(item)
                 if callable(func):
-                    result = filter(func, nodes.data)
+                    result = list(filter(func, nodes.data))
                     if len(result)==len(nodes.data):
                         return nodes
                     else:
@@ -218,7 +219,7 @@ sets
             return newNodes
 
         # handle sets
-        if sets and item in sets.keys():
+        if sets and item in list(sets.keys()):
             return sets[item]
 
         # handle relative numbers
@@ -284,7 +285,7 @@ sets
 
     def processStringcIWEC(self,someString):
         # COMMENT
-        import string
+        from mglcompat import pystring as string
         strList = string.split(someString, ',')
         retExp = ''
         specialList = ['?','*','.','$','#', ':', '-']
@@ -331,7 +332,7 @@ sets
 
 
     def processStringcI(self, someString):
-        import string
+        from mglcompat import pystring as string
         someString = string.replace(someString, '?', '.')
         #if there are any commas, preceed them by (?i)
         someString = string.replace(someString, ',','(?i),')
@@ -341,9 +342,9 @@ sets
 
 
     def processStringcS(self, someString):
-        import string
+        from mglcompat import pystring as string
         #in all cases do these things:
-        if type(someString)==types.StringType:
+        if type(someString)==bytes:
             #protect [A-Z]
             if someString.find(']')==-1:
                 someString = string.replace(someString, '-', ':')
@@ -367,15 +368,15 @@ sets
                 if index<len(nodes):
                     return nodes[index:index+1]
                 else:
-                    print "invalid index:", item, " for ", len(nodes), " parentless nodes"
+                    print("invalid index:", item, " for ", len(nodes), " parentless nodes")
                     return  self.level([])
             except:
-                print "invalid index:", item, " for parentless nodes"
+                print("invalid index:", item, " for parentless nodes")
                 return  self.level([])
 
         number = int(item)
         if number==0:
-            print "0 is not a valid relative index: valid relative indices start at 1"
+            print("0 is not a valid relative index: valid relative indices start at 1")
             return self.level([])
 
         l=[]
@@ -440,7 +441,7 @@ are built.
         if result is None or len(result)==0:
             return self.__class__([])
         if len(result) > 0:
-            from molecule import BondSet
+            from .molecule import BondSet
             if isinstance(result[0], TreeNode):
                 return result[0].setClass( result )
             
@@ -477,7 +478,7 @@ are built.
     def __getattr__(self, member):
         #if len(self.data)==0: return self.ReturnType([])
         if member[:2]=='__':
-            if self.__dict__.has_key(member):
+            if member in self.__dict__:
                 return self.__dict__[member]
             else:
                 raise AttributeError('member %s not found'%member)
@@ -506,7 +507,7 @@ are built.
             res.stringRepr = stringRepr
 
         elif member=='children' or \
-                 (self.data[0].__dict__.has_key(member) and \
+                 (member in self.data[0].__dict__ and \
                   self.data[0].children is self.data[0].__dict__[member]):
             ## if we take all children of all elements in the set we want to
             ## optimize the stringRepr
@@ -520,7 +521,7 @@ are built.
             elif verbose:
                 import traceback
                 traceback.print_stack()
-                print 'TreeNodeSet getattr on sets with no stringRepr:', repr(self), member
+                print('TreeNodeSet getattr on sets with no stringRepr:', repr(self), member)
                 res.stringRepr = None
             
         return res
@@ -608,7 +609,7 @@ module is caseSensitive.  This is changed by setting caseSensitive to False.
 By default, no message is returned. 
 """
         selector = self.getSelector()
-        if type(selectionString) in types.StringTypes:
+        if type(selectionString) in (str,):
             result, msg = selector.select(self, selectionString, sets=sets,
                         caseSensitive=caseSensitive,
                         escapeCharacters=escapeCharacters)
@@ -619,7 +620,7 @@ By default, no message is returned.
                 result = (result, msg)
             return result
         elif callable(selectionString):
-            result = filter(selectionString, self.data)
+            result = list(filter(selectionString, self.data))
             if len(result)==len(self.data):
                 return self
             else:
@@ -931,9 +932,9 @@ range specified using the '-' character
         if len(self.data)==0: return
         
         if func is None:
-            self.data.sort(self.data[0].compare)
+            self.data.sort(key=cmp_to_key(self.data[0].compare))
         else:
-            self.data.sort(func)
+            self.data.sort(key=cmp_to_key(func))
 
 
 ##      def compare(self, tn1, tn2):
@@ -1031,7 +1032,7 @@ class TreeNode:
         if levelsToDelete:
             for lev in levelsToDelete:
                 levelNodes = self.findType(lev)
-                for i in xrange(len(levelNodes)):
+                for i in range(len(levelNodes)):
                     while len(levelNodes[i].children)!=0:
                         levelNodes[i].children[0].__dict__.clear()
                         del(levelNodes[i].children[0])
@@ -1269,18 +1270,18 @@ class TreeNode:
 
     def dump(self):
         """print out all members and their values"""
-        for item in self.__dict__.items():
-            if type(item[1])==types.ListType and len(repr(item[1]))>60:
+        for item in list(self.__dict__.items()):
+            if type(item[1])==list and len(repr(item[1]))>60:
                 st = repr(item[1][0])
                 s = "List of %d %s " % (len(item[1]), type(item[1][0]))
                 s = s + st[:min(len(st), 56-len(s))] + ' ...'
-            elif type(item[1])==types.TupleType and len(str(item[1]))>60:
+            elif type(item[1])==tuple and len(str(item[1]))>60:
                 st = repr(item[1][0])
                 s = "Tuple of %d %s " % (len(item[1]), type(item[1][0]))
                 s = s + st[:min(len(st), 56-len(s))] + ' ...'
             else:
                 s = repr(item[1])
-            print "%-20s %-59s" % (item[0], s)
+            print("%-20s %-59s" % (item[0], s))
 
 
     def full_name(self):
@@ -1352,7 +1353,7 @@ class TreeNode:
 
     def _copyNode(self, node, copyDict, nameExt):
         import copy
-        if node not in copyDict.keys():
+        if node not in list(copyDict.keys()):
             newcopy = copy.copy(node)
             newcopy.name = node.name + nameExt
             #set children of newcopy to []
@@ -1377,7 +1378,7 @@ class TreeNode:
                 newcopy.top = newcopy
                 #if node==self:
                 #    print 'top got newcopy'
-        cDkeys = copyDict.keys()
+        cDkeys = list(copyDict.keys())
         for item in node.children:
             if item in cDkeys:
                 itemcopy = copyDict[item]

@@ -4,7 +4,7 @@ import os
 from MolKit import Read
 from MolKit.pdbWriter import PdbWriter, PdbqsWriter, PdbqWriter, PdbqtWriter
 from mglutil.math.rotax import rotax
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 
 if __name__ == '__main__':
@@ -14,30 +14,30 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: rotate_molecule.py -f filename"
-        print
-        print "    Description of command..."
-        print "        [-f]    filename"
-        print "    Optional parameters:"
-        print "        [-o]    alternative output filename"
-        print "        (default is 'rotated_' +filename)"
-        print "        [-y]    rotate around the y axis"
-        print "        (default is rotation around the z axis)"
-        print "        [-x]    rotate around the x axis"
-        print "        (default is rotation around the z axis)"
-        print "        [-u]    user-defined axis of rotation '1.0,2.0,-6.2'"
-        print "        (default is rotation around the z axis)"
-        print "        [-a]    angle for rotation about axis "
-        print "        (default is rotation around the z axis)"
-        print "        [-v]    verbose output"
+        print("Usage: rotate_molecule.py -f filename")
+        print()
+        print("    Description of command...")
+        print("        [-f]    filename")
+        print("    Optional parameters:")
+        print("        [-o]    alternative output filename")
+        print("        (default is 'rotated_' +filename)")
+        print("        [-y]    rotate around the y axis")
+        print("        (default is rotation around the z axis)")
+        print("        [-x]    rotate around the x axis")
+        print("        (default is rotation around the z axis)")
+        print("        [-u]    user-defined axis of rotation '1.0,2.0,-6.2'")
+        print("        (default is rotation around the z axis)")
+        print("        [-a]    angle for rotation about axis ")
+        print("        (default is rotation around the z axis)")
+        print("        [-v]    verbose output")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'f:o:xyu:a:v')
 
-    except getopt.GetoptError, msg:
-        print 'rotate_molecule.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('rotate_molecule.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -55,44 +55,44 @@ if __name__ == '__main__':
 
     #'f:o:v'
     for o, a in opt_list:
-        print "o=", o, " a=",a
+        print("o=", o, " a=",a)
         if o in ('-f', '--f'):
             filename = a
-            if verbose: print 'set filename to ', filename
+            if verbose: print('set filename to ', filename)
             outputfilename =  'rotated_' + filename
         if o in ('-o', '--o'):
             outputfilename = a 
             if verbose: 
-                print 'set output outputfilename to ', a
+                print('set output outputfilename to ', a)
         if o in ('-x', '--x'):
             rotation = 'x'
-            if verbose: print 'set rotation to ', rotation
+            if verbose: print('set rotation to ', rotation)
         if o in ('-y', '--y'):
             rotation = 'y'
-            if verbose: print 'set rotation to ', rotation
+            if verbose: print('set rotation to ', rotation)
         if o in ('-u', '--u'):
             axis = a
-            if verbose: print 'set user-defined axis to ', axis
+            if verbose: print('set user-defined axis to ', axis)
         if o in ('-a', '--a'):
             angle = a
-            if verbose: print 'set angle for rotation to ', angle
+            if verbose: print('set angle for rotation to ', angle)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
 
     if not filename:
-        print 'rotate_molecule: filename must be specified.'
+        print('rotate_molecule: filename must be specified.')
         usage()
         sys.exit()
 
     mol = Read(filename)[0]
-    if verbose: print 'read ', filename
+    if verbose: print('read ', filename)
     filetype = os.path.splitext(os.path.basename(filename))[1]
-    if verbose: print "filetype=", filetype
+    if verbose: print("filetype=", filetype)
     writer = None
     if filetype=='.pdbqt':
         writer = PdbqtWriter()
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     elif filetype=='.pdb':
         writer = PdbWriter()
     else:
-        print 'Sorry! Unable to write this filetype->', filetype
+        print('Sorry! Unable to write this filetype->', filetype)
 
     center = Numeric.add.reduce(mol.allAtoms.coords)/len(mol.allAtoms)
     crds = Numeric.array(mol.allAtoms.coords)
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     if axis is not None and angle is not None:
         rot = (float(angle)* 3.14159/180.)%(2 * Numeric.pi)
         x = Numeric.array([0.,0.,0.])
-        y = Numeric.array(map(float,axis.split(',')))
+        y = Numeric.array(list(map(float,axis.split(','))))
         matrix = rotax(x,y, rot)
         _ones = Numeric.ones(lenCoords, 'f')
         _ones.shape = (lenCoords,1)

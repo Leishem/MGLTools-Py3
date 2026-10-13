@@ -17,8 +17,8 @@
 # $Id: Editor.py,v 1.84 2009/07/29 16:48:58 sanner Exp $
 #
 
-import Tkinter, Pmw
-import string, types
+import tkinter, Pmw
+import types; from mglcompat import pystring as string
 
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import kbComboBox
 from mglutil.util.callback import CallBackFunction
@@ -54,7 +54,7 @@ the editor will appear in its own top level.
         self.obj = object # obejct to be edited (node or port)
         self.type = type
         if master is None:
-            master = Tkinter.Toplevel()
+            master = tkinter.Toplevel()
         self.createForm(master)
         self.values = {} # dict of values describing state of the form
         self.modal = 0
@@ -66,13 +66,13 @@ an Entry allowing to change the edited-object's name.
 Every editor also has Ok, Apply, Cancel buttons as the bottom of the form.
 These buttons are in a frame called okFrame which is a child of top.
 """
-        self.top = Tkinter.Frame(master)
+        self.top = tkinter.Frame(master)
         self.top.master.title(self.type+' Editor: '+self.obj.name)
         self.top.master.protocol('WM_DELETE_WINDOW',self.Dismiss)
         # node name
         self.nameGroup = w = Pmw.Group(self.top, tag_text=self.type+' Name')
-        self.nameTk = Tkinter.StringVar()
-        self.nameEntry = Tkinter.Entry( w.interior(), textvariable=self.nameTk)
+        self.nameTk = tkinter.StringVar()
+        self.nameEntry = tkinter.Entry( w.interior(), textvariable=self.nameTk)
         self.nameEntry.bind('<Return>', self.nameEntryChange_cb)
         self.nameTk.set(self.obj.name)
         self.nameEntry.pack(padx = 6, pady = 6, expand='yes', fill='x')
@@ -83,13 +83,13 @@ These buttons are in a frame called okFrame which is a child of top.
     def addOkApplyCancel(self):
         """Add the Ok, Apply and Cancel buttons
 """
-        self.okFrame = f = Tkinter.Frame(self.top)
-        self.okButton = Tkinter.Button(f, text='OK', command=self.OK)
+        self.okFrame = f = tkinter.Frame(self.top)
+        self.okButton = tkinter.Button(f, text='OK', command=self.OK)
         self.okButton.pack(side='left', expand=1, fill='x')
-        self.applyButton = Tkinter.Button(f, text='Apply',
+        self.applyButton = tkinter.Button(f, text='Apply',
                                           command=self.Apply)
         self.applyButton.pack(side='left', expand=1, fill='x')
-        self.cancelButton = Tkinter.Button(f, text='Cancel',
+        self.cancelButton = tkinter.Button(f, text='Cancel',
                                            command=self.Cancel)
         self.cancelButton.pack(side='right', expand=1, fill='x')
         f.pack(side='bottom', expand=1, fill='x')
@@ -193,16 +193,16 @@ one for output ports and a check button for viewing the source node's code.
         ObjectEditor.createForm(self, master)
 
         # input Ports
-        w = Pmw.Group(self.top, tag_pyclass=Tkinter.Button,
+        w = Pmw.Group(self.top, tag_pyclass=tkinter.Button,
                       tag_command=self.newInputPort,
                       tag_text='Add Input Port')
-        ipf = self.ipFrame = Tkinter.Frame(w.interior(),)
-        Tkinter.Label(ipf, text='port #').grid(row=0, column=0, sticky='ew')
-        Tkinter.Label(ipf, text='name').grid(row=0, column=1, sticky='ew')
-        Tkinter.Label(ipf, text='edit\nport').grid(row=0, column=2, sticky='ew')
-        Tkinter.Label(ipf, text='edit\nwidget').grid(row=0, column=3,
+        ipf = self.ipFrame = tkinter.Frame(w.interior(),)
+        tkinter.Label(ipf, text='port #').grid(row=0, column=0, sticky='ew')
+        tkinter.Label(ipf, text='name').grid(row=0, column=1, sticky='ew')
+        tkinter.Label(ipf, text='edit\nport').grid(row=0, column=2, sticky='ew')
+        tkinter.Label(ipf, text='edit\nwidget').grid(row=0, column=3,
                                                     sticky='ew')
-        Tkinter.Label(ipf, text='del.\nport').grid(row=0, column=4,
+        tkinter.Label(ipf, text='del.\nport').grid(row=0, column=4,
                                                     sticky='ew')
 
         for p in self.obj.inputPorts:
@@ -212,14 +212,14 @@ one for output ports and a check button for viewing the source node's code.
         w.pack(padx=6, pady=6, expand='yes', fill='both')
 
         # output Ports
-        w = Pmw.Group(self.top, tag_pyclass=Tkinter.Button,
+        w = Pmw.Group(self.top, tag_pyclass=tkinter.Button,
                       tag_command=self.newOutputPort,
                       tag_text='Add Output Port')
-        opf = self.opFrame = Tkinter.Frame(w.interior(),)
-        Tkinter.Label(opf, text='port #').grid(row=0, column=0, sticky='ew')
-        Tkinter.Label(opf, text='name').grid(row=0, column=1, sticky='ew')
-        Tkinter.Label(opf, text='edit\nport').grid(row=0, column=2,sticky='ew')
-        Tkinter.Label(opf, text='del.\nport').grid(row=0, column=4,
+        opf = self.opFrame = tkinter.Frame(w.interior(),)
+        tkinter.Label(opf, text='port #').grid(row=0, column=0, sticky='ew')
+        tkinter.Label(opf, text='name').grid(row=0, column=1, sticky='ew')
+        tkinter.Label(opf, text='edit\nport').grid(row=0, column=2,sticky='ew')
+        tkinter.Label(opf, text='del.\nport').grid(row=0, column=4,
                                                    sticky='ew')
 
         for p in self.obj.outputPorts:
@@ -230,8 +230,8 @@ one for output ports and a check button for viewing the source node's code.
 
         # widget grid editor
         w = Pmw.Group(self.top, tag_text='widgets grid config')
-        self.editGridVarTk = Tkinter.IntVar()
-        self.editGridButton = Tkinter.Checkbutton(
+        self.editGridVarTk = tkinter.IntVar()
+        self.editGridButton = tkinter.Checkbutton(
             w.interior(), text='Edit ...', var=self.editGridVarTk,
             command=self.editGrid_cb )
         self.editGridButton.pack(expand='yes', fill='x', padx=3, pady=3)
@@ -239,8 +239,8 @@ one for output ports and a check button for viewing the source node's code.
         
         # compute function
         w = Pmw.Group(self.top, tag_text='compute function')
-        self.editButtonVarTk = Tkinter.IntVar()
-        self.editButton = Tkinter.Checkbutton(
+        self.editButtonVarTk = tkinter.IntVar()
+        self.editButton = tkinter.Checkbutton(
             w.interior(), text='Edit ...', var=self.editButtonVarTk,
             command=self.editFunction_cb )
         self.editButton.pack(expand='yes', fill='x', padx=3, pady=3)
@@ -252,27 +252,27 @@ one for output ports and a check button for viewing the source node's code.
         """create a new line of widgets for a new port in the node editor"""
         line = port.number+1
 
-        port.portLabelTk = Tkinter.Label(frame, text=str(port.number))
+        port.portLabelTk = tkinter.Label(frame, text=str(port.number))
         port.portLabelTk.grid(row=line, column=0,  sticky='ew')
 
-        port.portNameTk = Tkinter.Label(frame, text=str(port.name))
+        port.portNameTk = tkinter.Label(frame, text=str(port.name))
         port.portNameTk.grid(row=line, column=1, sticky='w')
         
         cb1 = CallBackFunction( self.editPort, port)
         cb2 = CallBackFunction( self.deletePort, port)
-        cbvar = Tkinter.IntVar()
+        cbvar = tkinter.IntVar()
         if port.objEditor is not None:
             self.nbEditorWindows += 1
         cbvar.set(int(not port.objEditor==None))
-        port.portEditCB = Tkinter.Checkbutton(frame, command=cb1,
+        port.portEditCB = tkinter.Checkbutton(frame, command=cb1,
                                               variable=cbvar)
         port.portEditCB.var = cbvar
         port.portEditCB.grid(row=line, column=2, sticky='ew')
-        port.portDelCB = Tkinter.Checkbutton(frame, command=cb2)
+        port.portDelCB = tkinter.Checkbutton(frame, command=cb2)
         port.portDelCB.grid(row=line, column=4, sticky='ew')
         if port.widget:
             cb = CallBackFunction( self.editWidget, port)
-            port.editWtk = Tkinter.Checkbutton(self.ipFrame,command=cb)
+            port.editWtk = tkinter.Checkbutton(self.ipFrame,command=cb)
             port.editWtk.grid(row=port.number+1, column=3, sticky='ew')
             
             
@@ -281,7 +281,7 @@ one for output ports and a check button for viewing the source node's code.
 
         self.obj.addSaveNodeMenuEntries()
 
-        port = apply( self.obj.addInputPort, (), {} )
+        port = self.obj.addInputPort(*(), **{})
         port._setModified(True)
         
         port.editWtk = None
@@ -298,7 +298,7 @@ one for output ports and a check button for viewing the source node's code.
         # create a new output port with a default name
         self.obj.addSaveNodeMenuEntries()
 
-        port = apply( self.obj.addOutputPort, (), {} )
+        port = self.obj.addOutputPort(*(), **{})
         port._setModified(True)
 
         # add port to node edition form
@@ -479,7 +479,7 @@ start the widget editor, set the required, singleConnection and toolTip
 
         # datatype
         vpe = port.getEditor()
-        l = vpe.typeManager.portTypeInstances.keys()
+        l = list(vpe.typeManager.portTypeInstances.keys())
         l.sort()
         self.dataType = kbComboBox( w.interior(), label_text='data type:',
             labelpos='w', entryfield_entry_width=14,
@@ -504,9 +504,9 @@ start the widget editor, set the required, singleConnection and toolTip
         w1 = None
         if isinstance(port, InputPort):
             # required
-            var = Tkinter.IntVar()
+            var = tkinter.IntVar()
             var.set(port.required)
-            tk = Tkinter.Checkbutton( w.interior(), text='required',
+            tk = tkinter.Checkbutton( w.interior(), text='required',
                                       indicatoron=1, variable=var)
             tk.var = var
             tk.grid()
@@ -550,7 +550,7 @@ start the widget editor, set the required, singleConnection and toolTip
                 widgetList.append('Unbind')
             if port._previousWidgetDescr:
                 widgetList.append('Rebind')
-            widgetList = widgetList + widgetsTable.keys()
+            widgetList = widgetList + list(widgetsTable.keys())
             widgetList.sort()
 
             # widget
@@ -564,8 +564,8 @@ start the widget editor, set the required, singleConnection and toolTip
             self.widgetType.grid(row=0, column=0, padx=6, pady=6)
 
             masterList = ['ParamPanel', 'Node']
-            if len(self.obj.network.userPanels.keys()):
-                masterList += self.obj.network.userPanels.keys()
+            if len(list(self.obj.network.userPanels.keys())):
+                masterList += list(self.obj.network.userPanels.keys())
                 
             self.widgetMaster = kbComboBox(
                 w1.interior(), label_text='Place in:', labelpos='w',
@@ -581,11 +581,11 @@ start the widget editor, set the required, singleConnection and toolTip
                 if port.widget.inNode is True:
                     self.widgetMaster.selectitem('Node')
                 else:
-                    if port.widget.master in self.obj.network.userPanels.keys():
+                    if port.widget.master in list(self.obj.network.userPanels.keys()):
                         self.widgetMaster.selectitem(port.widget.master)
                         
-            self.editWidgetVarTk = Tkinter.IntVar()
-            self.editWidgetButton = Tkinter.Checkbutton(
+            self.editWidgetVarTk = tkinter.IntVar()
+            self.editWidgetButton = tkinter.Checkbutton(
                 w1.interior(), text='Edit Widget...',
                 var=self.editWidgetVarTk, command=self.toggleWidgetEditor)
 
@@ -623,7 +623,7 @@ start the widget editor, set the required, singleConnection and toolTip
 
     def editCallback(self, event=None):
         mode = self.chooseCallback.get()
-        if mode in self.obj.callbacks.keys():
+        if mode in list(self.obj.callbacks.keys()):
             self.displayCallbackSourceCode(mode)
 
         
@@ -687,14 +687,14 @@ start the widget editor, set the required, singleConnection and toolTip
 
             if widgetName == 'Rebind':
                 port.rebindWidget()
-                widgetList = ['Unbind'] +  widgetsTable.keys()
+                widgetList = ['Unbind'] +  list(widgetsTable.keys())
                 widgetList.sort()
                 self.widgetType.setlist(widgetList)
                 self.widgetType.set('Unbind')
 
             elif widgetName == 'Unbind':
                 port.unbindWidget()
-                widgetList = ['Rebind'] +  widgetsTable.keys()
+                widgetList = ['Rebind'] +  list(widgetsTable.keys())
                 widgetList.sort()
                 self.widgetType.setlist(widgetList)
                 self.widgetType.set('Rebind')
@@ -743,7 +743,7 @@ start the widget editor, set the required, singleConnection and toolTip
                port.node.objEditor is not None:
                 nodeEditor = port.node.objEditor
                 cb = CallBackFunction( nodeEditor.editWidget, port)
-                port.editWtk = Tkinter.Checkbutton(
+                port.editWtk = tkinter.Checkbutton(
                     nodeEditor.ipFrame,command=cb)
                 port.editWtk.grid(row=port.number+1, column=3, sticky='ew')
 
@@ -756,7 +756,7 @@ start the widget editor, set the required, singleConnection and toolTip
             opts['balloon'] = tt
             
         if len(opts):
-            apply( port.configure, (), opts)
+            port.configure(*(), **opts)
             port.node.addSaveNodeMenuEntries()
 
 
@@ -818,12 +818,12 @@ start the widget editor, set the required, singleConnection and toolTip
 
         if widgetName=='Unbind':
             w = 'Unbind'
-            widgetList = ['Rebind'] +  widgetsTable.keys()
+            widgetList = ['Rebind'] +  list(widgetsTable.keys())
             self.widgetType.setlist(widgetList)
 
         elif widgetName=='Rebind':
             w = 'Rebind'
-            widgetList = ['Unbind'] +  widgetsTable.keys()
+            widgetList = ['Unbind'] +  list(widgetsTable.keys())
             self.widgetType.setlist(widgetList)
 
         else:
@@ -839,7 +839,7 @@ start the widget editor, set the required, singleConnection and toolTip
                 widgetList = ['Unbind']
             if port.widget: # current will become previous so
                 widgetList.append('Rebind')
-            widgetList = widgetList +  widgetsTable.keys()
+            widgetList = widgetList +  list(widgetsTable.keys())
             self.widgetType.setlist(widgetList)
 
         port.setWidget(w)
@@ -855,14 +855,14 @@ start the widget editor, set the required, singleConnection and toolTip
         else:
             mMaster = wmaster
         # if we unbind, the node has no widgetDescr so we have to test here
-        if node.widgetDescr.has_key(port.name):
+        if port.name in node.widgetDescr:
             node.widgetDescr[port.name]['master'] = mMaster
 
         # add/remove edit widget button if not there yet
         if w is not None and port.editWtk is None: # widget but no button
             nodeEd = node.objEditor
             cb = CallBackFunction( nodeEd.editWidget, port)
-            port.editWtk = Tkinter.Checkbutton(nodeEd.ipFrame,command=cb)
+            port.editWtk = tkinter.Checkbutton(nodeEd.ipFrame,command=cb)
             port.editWtk.grid(row=port.number+1, column=3, sticky='ew')
         elif w is None and port.editWtk is not None:
             port.editWtk.destroy()
@@ -1006,8 +1006,8 @@ start the widget editor, set the required, singleConnection and toolTip
         
         # find if master is a Macro node
         masterlist = ['node', 'ParamPanel']
-        if len(self.obj.network.userPanels.keys()):
-            masterlist += self.obj.network.userPanels.keys()
+        if len(list(self.obj.network.userPanels.keys())):
+            masterlist += list(self.obj.network.userPanels.keys())
         if masterName not in masterlist: # ok, this is a macro
 
             # Note: simply changing the master of a widget does NOT work:
@@ -1044,7 +1044,7 @@ start the widget editor, set the required, singleConnection and toolTip
                 c = net.connectNodes(ipnode, macroNode, 0, portNumber)
                 opt = c.deselectOptions
                 opt['stipple'] = 'gray25'
-                apply (c.iconMaster.itemconfigure, (c.iconTag,), opt)
+                c.iconMaster.itemconfigure(*(c.iconTag,), **opt)
                 macroNode = net.macroNode
                 portNumber = c.port1.number-1 # macroNodes have port#-1
                 if macroNode.name == masterName:
@@ -1079,7 +1079,7 @@ start the widget editor, set the required, singleConnection and toolTip
         
 
         changeMaster=1
-        if wdescr.has_key('master') and wdescr['master'] == masterName:
+        if 'master' in wdescr and wdescr['master'] == masterName:
             changeMaster = 0
             
         # update the port description in the node
@@ -1174,7 +1174,7 @@ class CodeEditorPmw:
         if height > 300:
             height = 300
 
-        width = (max(map(len, lines)) + 1) * 10
+        width = (max(list(map(len, lines))) + 1) * 10
         if width > 600:
             width = 600
         elif width < 120:
@@ -1193,7 +1193,7 @@ class CodeEditorPmw:
         self.settext(code)
 
         # add frame
-        frame = Tkinter.Frame(self.widget.interior())
+        frame = tkinter.Frame(self.widget.interior())
         frame.pack(side='bottom', expand=1, fill='both')
         self.widget.status_bar = frame
         # add top
@@ -1228,7 +1228,7 @@ class CodeEditorIdle:
         if height > 24:
             height = 24
 
-        width = max(map(len, lines)) + 15
+        width = max(list(map(len, lines))) + 15
         if width > 80:
             width = 80
         elif width < 40:
@@ -1305,7 +1305,7 @@ class CodeEditorIdle_python24(CodeEditorIdle):
         if height > 40:
             height = 40
         
-        width = max(map(len, lines))
+        width = max(list(map(len, lines)))
         if width > 80:
             width = 80
         elif width < 40:
@@ -1415,14 +1415,14 @@ class SourceCodeEditor(CodeEditor):
 
         # add OK and APPLY Button if code if modifiable
         if node and not node.readOnly:
-            b=Tkinter.Button(master=ed.status_bar,
+            b=tkinter.Button(master=ed.status_bar,
                              text='Ok', command=self.okCmd)
             b.pack(side='left')
-            b=Tkinter.Button(master=ed.status_bar,
+            b=tkinter.Button(master=ed.status_bar,
                              text='Apply', command=self.applyCmd)
             b.pack(side='left')
         # cancel is always accesible
-        b=Tkinter.Button(master=ed.status_bar,
+        b=tkinter.Button(master=ed.status_bar,
                          text='Cancel', command=self.cancelCmd)
         b.pack(side='left')
 
@@ -1472,7 +1472,7 @@ class CallbackEditor(CodeEditor):
     
     def __init__(self, master=None, title='untitled', port=None, mode=None):
 
-        if mode not in port.callbacks.keys():
+        if mode not in list(port.callbacks.keys()):
             return
         self.master = master
         self.port = port        # node's port
@@ -1486,14 +1486,14 @@ class CallbackEditor(CodeEditor):
 
         ed = self.widget
         # add OK and APPLY Button 
-        b=Tkinter.Button(master=ed.status_bar,
+        b=tkinter.Button(master=ed.status_bar,
                              text='Ok', command=self.okCmd)
         b.pack(side='left')
-        b=Tkinter.Button(master=ed.status_bar,
+        b=tkinter.Button(master=ed.status_bar,
                          text='Apply', command=self.applyCmd)
         b.pack(side='left')
         # cancel is always accesible
-        b=Tkinter.Button(master=ed.status_bar,
+        b=tkinter.Button(master=ed.status_bar,
                          text='Cancel', command=self.cancelCmd)
         b.pack(side='left')
 
@@ -1526,7 +1526,7 @@ class CallbackEditor(CodeEditor):
 
     def applyCmd(self, event=None):
         code = self.gettext()
-        apply(self.port.configure, (), {self.mode:code} )
+        self.port.configure(*(), **{self.mode:code})
         
 
     def cancelCmd(self, event=None):

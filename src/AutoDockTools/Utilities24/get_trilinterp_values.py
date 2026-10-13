@@ -17,32 +17,32 @@ if __name__ == '__main__':
     import getopt
 
     def usage():
-        print "Usage: get_trilinterp_energies.py -r receptor_filename -l ligand_filename -n atom_indicies"
-        print "    Given filenames for receptor and ligand and a list of atom indicies"
-        print "      this script: "
-        print "         (1) determines atom types + coordinates to interpolate"
-        print "         (2) reads corresponding autogrid maps "
-        print "         (3) calculates interpolated energy from appropriate autogrid map "
-        print "         OPTIONS: "
-        print "         (4) write output to a file"
-        print "         (5) output indices and energies of 8 gridpts used by trilinear interpolation for each atom  "
-        print "    "
-        print "    -r receptor_filename"
-        print "    -l ligand_filename"
-        print "    -i comma-separated list of indicies of atoms in ligand"
-        print "    -s autogrid map stem"
-        print "    "
-        print "    Optional parameters:"
-        print "        [-o output filename] (default output to screen)"
-        print "        [-t output total] (default output per atom index )"
-        print "        [-c output 8pts] (default not to do this)"
-        print "        [-v]    verbose output"
+        print("Usage: get_trilinterp_energies.py -r receptor_filename -l ligand_filename -n atom_indicies")
+        print("    Given filenames for receptor and ligand and a list of atom indicies")
+        print("      this script: ")
+        print("         (1) determines atom types + coordinates to interpolate")
+        print("         (2) reads corresponding autogrid maps ")
+        print("         (3) calculates interpolated energy from appropriate autogrid map ")
+        print("         OPTIONS: ")
+        print("         (4) write output to a file")
+        print("         (5) output indices and energies of 8 gridpts used by trilinear interpolation for each atom  ")
+        print("    ")
+        print("    -r receptor_filename")
+        print("    -l ligand_filename")
+        print("    -i comma-separated list of indicies of atoms in ligand")
+        print("    -s autogrid map stem")
+        print("    ")
+        print("    Optional parameters:")
+        print("        [-o output filename] (default output to screen)")
+        print("        [-t output total] (default output per atom index )")
+        print("        [-c output 8pts] (default not to do this)")
+        print("        [-v]    verbose output")
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'r:l:i:s:o:tcvh')
-    except getopt.GetoptError, msg:
-        print 'get_trilinterp_energies.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('get_trilinterp_energies.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -67,53 +67,53 @@ if __name__ == '__main__':
     verbose = False
 
     #'r:l:i:s:o:tvh'
-    if verbose: print "opt_list=", opt_list
+    if verbose: print("opt_list=", opt_list)
     for o, a in opt_list:
-        if verbose: print "o=", o, " a=", a
+        if verbose: print("o=", o, " a=", a)
         if o in ('-r', '--r'):
             receptorfilename = a
-            if verbose: print 'set receptorfilename to ', a
+            if verbose: print('set receptorfilename to ', a)
         if o in ('-l', '--l'):
             ligandfilename = a
-            if verbose: print 'set ligandfilename to ', a
+            if verbose: print('set ligandfilename to ', a)
         if o in ('-i', '--i'):
             indicies = a
-            if verbose: print 'set indicies to ', a
+            if verbose: print('set indicies to ', a)
         if o in ('-s', '--s'):
             mapstem = a
-            if verbose: print 'set mapstem to ', a
+            if verbose: print('set mapstem to ', a)
         if o in ('-o', '--o'):
             outputfilename = a
-            if verbose: print 'write output to file:', a
+            if verbose: print('write output to file:', a)
         if o in ('-t', '--t'):
             output_total = True
-            if verbose: print 'set output_total to ', True
+            if verbose: print('set output_total to ', True)
         if o in ('-c', '--c'):
             output_8pts = True
-            if verbose: print 'set output_8pts to ', True
+            if verbose: print('set output_8pts to ', True)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
-    if verbose: print "receptorfilename=", receptorfilename
+    if verbose: print("receptorfilename=", receptorfilename)
     if receptorfilename is None:
-        print "trilinterp_atoms.py: receptor filename must be specified."
+        print("trilinterp_atoms.py: receptor filename must be specified.")
         usage()
         sys.exit()
     if ligandfilename is None:
-        print "trilinterp_atoms.py: ligand filename must be specified."
+        print("trilinterp_atoms.py: ligand filename must be specified.")
         usage()
         sys.exit()
     #OPTIONAL:
     if mapstem is None and verbose:
-        print "trilinterp_atoms.py: map stem set from receptorfilename"
+        print("trilinterp_atoms.py: map stem set from receptorfilename")
     if outputfilename is None: 
-        if verbose: print "trilinterp_atoms.py: output to screen"
+        if verbose: print("trilinterp_atoms.py: output to screen")
     else:
-        print 'writing output to %s' %outputfilename
+        print('writing output to %s' %outputfilename)
 
     #Start to work:
     rec = Read(receptorfilename)[0]
@@ -126,10 +126,10 @@ if __name__ == '__main__':
     lig.buildBondsByDistance()
     #get atoms for trilinterp
     if indicies is None or indicies=='':
-        indicies = range(len(lig.allAtoms))
+        indicies = list(range(len(lig.allAtoms)))
     else:
-        indicies = map(int, indicies.split(','))
-    if verbose: print "now indicies=", indicies
+        indicies = list(map(int, indicies.split(',')))
+    if verbose: print("now indicies=", indicies)
 
     total = 0
     pts = []
@@ -140,7 +140,7 @@ if __name__ == '__main__':
         at = lig.allAtoms[IND]
         pts= [(at.coords)]
         mapname = "%s.%s.map"%(mapstem,at.autodock_element)
-        if at.autodock_element not in maps.keys():
+        if at.autodock_element not in list(maps.keys()):
             reader = ReadAutoGrid()
             maps[at.autodock_element] = reader.read(mapname,normalize=True) #@@ CHECK THIS!!
         grid3D = maps[at.autodock_element]
@@ -150,17 +150,17 @@ if __name__ == '__main__':
             try:
                 vals = trilinterp(pts, grid3D.data, inv_spacing, grid3D.getOriginReal(), output_8pts=1)
             except:
-                print "IGNORING output_8pts: NOT supported in current Volume/Operators/trilinterp.py"
+                print("IGNORING output_8pts: NOT supported in current Volume/Operators/trilinterp.py")
                 vals = trilinterp(pts, grid3D.data, inv_spacing, grid3D.getOriginReal())
         else:
             vals = trilinterp(pts, grid3D.data, inv_spacing, grid3D.getOriginReal())
         for i in range(len(vals)):
-            print at.full_name(), ':', pts[i], '--', vals[i]
+            print(at.full_name(), ':', pts[i], '--', vals[i])
             if outputfilename:
                 fptr.write("%s : [%6.3f, %6.3f, %6.3f] -- %14.11f\n" %(at.full_name(), pts[i][0],pts[i][1],pts[i][2], vals[i]))
             total += float(vals[i])
     if output_total or verbose:
-        print "Total energy =", total
+        print("Total energy =", total)
 
 # To execute this command type:
 # get_trilinterp_energies.py  [-r receptorfilename -l ligandfilename -n indicies -o outputfilename] -v

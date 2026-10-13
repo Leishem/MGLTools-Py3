@@ -1,6 +1,6 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from Volume.Grid3D import Grid3DF
 
 class UHBDReaderASCII:
@@ -16,13 +16,13 @@ class UHBDReaderASCII:
         line = f.readline()
         scale = float(line[:12])
         dum2 = float(line[12:25])
-        grdflg, idum2, km, one, km = map( int, line[24:].split() )
+        grdflg, idum2, km, one, km = list(map( int, line[24:].split() ))
         #
         h['grdflg'] =  grdflg
         h['idum2'] = idum2
         h['km'] = km  
         line = f.readline()
-        dims = map(int, line[:21].split() )
+        dims = list(map(int, line[:21].split() ))
         scaling = float(line[21:33])
         origin =  (float(line[33:45]), float(line[45:57]), float(line[57:69]))
         h['dims'] =  dims
@@ -44,20 +44,20 @@ class UHBDReaderASCII:
         dimyz = dimy*dimz
         curline = 0
         curdata = 0
-        for i in xrange(dims[0]):
-            ii, ij, ik = map( int, lines[curline].split() )
+        for i in range(dims[0]):
+            ii, ij, ik = list(map( int, lines[curline].split() ))
             assert (ii-1)==i
             nblines = dimyz/6
             curline += 1
-            for j in xrange(nblines):
-                data.flat[curdata:curdata+6] = map( float,
-                                                    lines[curline].split() )
+            for j in range(nblines):
+                data.flat[curdata:curdata+6] = list(map( float,
+                                                    lines[curline].split() ))
                 curdata += 6
                 curline += 1
             # handle last line
             nbvalleft = dimyz-(nblines*6)
-            data.flat[curdata:curdata+nbvalleft] = map( float,
-                                                       lines[curline].split())
+            data.flat[curdata:curdata+nbvalleft] = list(map( float,
+                                                       lines[curline].split()))
             curdata += nbvalleft
             curline += 1
 
@@ -67,17 +67,17 @@ class UHBDReaderASCII:
 
     
     def describe(self):
-        print "UHBD GridDX file: ", self.filename
-        print "nx= ", self.header['dims'][0]
-        print "ny= ", self.header['dims'][1]
-        print "nz= ", self.header['dims'][2]
-        print "xlen= ", self.header['scaling']
-        print "ylen= ", self.header['scaling']
-        print "zlen= ", self.header['scaling']
-        print "min= ", min(self.data.ravel())
-        print "max= ", max(self.data.ravel())
-        print "origin= ", self.header['origin'] 
-        print "stepSize= ", self.header['stepSize'] 
+        print("UHBD GridDX file: ", self.filename)
+        print("nx= ", self.header['dims'][0])
+        print("ny= ", self.header['dims'][1])
+        print("nz= ", self.header['dims'][2])
+        print("xlen= ", self.header['scaling'])
+        print("ylen= ", self.header['scaling'])
+        print("zlen= ", self.header['scaling'])
+        print("min= ", min(self.data.ravel()))
+        print("max= ", max(self.data.ravel()))
+        print("origin= ", self.header['origin']) 
+        print("stepSize= ", self.header['stepSize']) 
 
 
 if __name__=='__main__':

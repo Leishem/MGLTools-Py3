@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #########################################################################
 #
@@ -38,19 +38,19 @@ the mgltools 64 bit linux binaries need openssl version 0.9.8
 you can have both openssl versions (0.9.7 and 0.9.8) installed on your computer.
 """, stacklevel=2)
         
-import Tkinter
+import tkinter
 import types
 import weakref
 import Pmw,math,os, sys
 
-from numpy.oldnumeric import array
+from mglcompat.oldnumeric import array
 from matplotlib.colors import cnames
 from matplotlib.lines import Line2D,lineStyles,TICKLEFT, TICKRIGHT, TICKUP, TICKDOWN
 #from matplotlib.transforms import Value
 from matplotlib import rcParams
 
 #mplversion = int(matplotlib.__version__.split(".")[2])
-mplversion = map(int, matplotlib.__version__.split("."))
+mplversion = list(map(int, matplotlib.__version__.split(".")))
 #print "mplversion:", mplversion
 
 
@@ -87,7 +87,7 @@ Methods:
 
     def setFigure(self, figure):
     # This method place the node's axes object into the right Figure
-	   
+           
 
     def beforeRemovingFromNetwork(self):
     # this method is called when a node is deleted from a network.  Its job is
@@ -204,30 +204,30 @@ colors={
         }          
 
 markers= {
-		'square'         :  's',
-		'circle'	 :  'o',
-		'triangle up'    :  '^',
-		'triangle right' :  '>',
-		'triangle down'  :  'v',
-		'triangle left'  :  '<',
-		'diamond'	 :  'd',
-		'pentagram'	 :  'p',
-		'hexagon'	 :  'h',
-		'octagon'	 :  '8',
-		}
+                'square'         :  's',
+                'circle'	 :  'o',
+                'triangle up'    :  '^',
+                'triangle right' :  '>',
+                'triangle down'  :  'v',
+                'triangle left'  :  '<',
+                'diamond'	 :  'd',
+                'pentagram'	 :  'p',
+                'hexagon'	 :  'h',
+                'octagon'	 :  '8',
+                }
  
 cmaps=['autumn','bone', 'cool','copper','flag','gray','hot','hsv','jet','pink', 'prism', 'spring', 'summer', 'winter']
 
 def get_styles():
     styles={}
-    for ls in Line2D._lineStyles.keys():
+    for ls in list(Line2D._lineStyles.keys()):
         styles[Line2D._lineStyles[ls][6:]]=ls
-        for ls in Line2D._markers.keys():
+        for ls in list(Line2D._markers.keys()):
             styles[Line2D._markers[ls][6:]]=ls
-	        #these styles are not recognized
-            if styles.has_key('steps'):
+                #these styles are not recognized
+            if 'steps' in styles:
                 del styles['steps']
-            for s in  styles.keys():
+            for s in  list(styles.keys()):
                 if s =="nothing":
                     del styles['nothing']
                 if s[:4]=='tick':
@@ -238,47 +238,47 @@ class Figure(OriginalFigure):
 
     # sub class Figure to override add_axes
     def add_axes(self, *args, **kwargs):
-	"""hack to circumvent the issue of not adding an axes if the constructor
+        """hack to circumvent the issue of not adding an axes if the constructor
 params have already been seen"""
         
-        if kwargs.has_key('force'):
-	    force = kwargs['force']
-	    del kwargs['force']
+        if 'force' in kwargs:
+            force = kwargs['force']
+            del kwargs['force']
         else:
-	    force = False
+            force = False
 
-	if iterable(args[0]):
-	    key = tuple(args[0]), tuple(kwargs.items())
+        if iterable(args[0]):
+            key = tuple(args[0]), tuple(kwargs.items())
         else:
-	    key = args[0], tuple(kwargs.items())            
-	    
-	if not force and self._seen.has_key(key):
-	    ax = self._seen[key]
-	    self.sca(ax)
-	    return ax
+            key = args[0], tuple(kwargs.items())            
+            
+        if not force and key in self._seen:
+            ax = self._seen[key]
+            self.sca(ax)
+            return ax
 
         if not len(args): return        
-	if isinstance(args[0], Axes):
-	    a = args[0]
-	    # this is too early, if done here bbox is 0->1
-	    #a.set_figure(self)
-	    a.figure = self
+        if isinstance(args[0], Axes):
+            a = args[0]
+            # this is too early, if done here bbox is 0->1
+            #a.set_figure(self)
+            a.figure = self
         else:
-	    rect = args[0]
-	    #ispolar = popd(kwargs, 'polar', False)
+            rect = args[0]
+            #ispolar = popd(kwargs, 'polar', False)
             ispolar = kwargs.get('polar', False)
             if ispolar != False:
                 del kwargs['polar']
-	    if ispolar:
-	        a = PolarAxes(self, rect, **kwargs)
-	    else:
+            if ispolar:
+                a = PolarAxes(self, rect, **kwargs)
+            else:
                 a = Axes(self, rect, **kwargs)            
 
-	self.axes.append(a)
-	self._axstack.push(a)
-	self.sca(a)
-	self._seen[key] = a
-	return a
+        self.axes.append(a)
+        self._axstack.push(a)
+        self.sca(a)
+        self._seen[key] = a
+        return a
 
 
 
@@ -288,65 +288,65 @@ class MPLBaseNE(NetworkNode):
 """
     def __init__(self, name='MPLBase', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.figure = None  # matplotlib Figure instance belonging to this node
         self.axes = None    # matplotlib Axes instance
 
-	# this is true for Figures who create the Tk Toplevel
-	# or plotting nodes that have no figure parent node
-	# it is used to decide when the Toplevel should be destroyed
+        # this is true for Figures who create the Tk Toplevel
+        # or plotting nodes that have no figure parent node
+        # it is used to decide when the Toplevel should be destroyed
         self.ownsMaster = False
 
 
     def setDrawArea(self, kw):
         ax = self.axes
         #ax.clear()
-        if kw.has_key('left'):
+        if 'left' in kw:
             rect = [kw['left'], kw['bottom'], kw['width'], kw['height']]
             ax.set_position(rect)
-        if kw.has_key('frameon'):    
+        if 'frameon' in kw:    
             ax.set_frame_on(kw['frameon'])
 
-        if kw.has_key("title"):    
-            if type(kw['title'])==types.StringType:
+        if "title" in kw:    
+            if type(kw['title'])==bytes:
                 ax.set_title(kw['title'])
             else:
-                print 'Set title as Object'
-        if kw.has_key("xlabel"):        
+                print('Set title as Object')
+        if "xlabel" in kw:        
             ax.set_xlabel(kw['xlabel'])
-        if kw.has_key("ylabel"):    
+        if "ylabel" in kw:    
             ax.set_ylabel(kw['ylabel'])
-        if kw.has_key("xlimit"): 
+        if "xlimit" in kw: 
             if kw['xlimit']!='':
                 ax.set_xlim(eval(kw['xlimit']))
-        if kw.has_key("ylimit"):    
+        if "ylimit" in kw:    
             if kw['ylimit']!='':
                 ax.set_ylim(eval(kw['ylimit']))
-        if kw.has_key("xticklabels"):        
+        if "xticklabels" in kw:        
             if not kw['xticklabels']:
                 ax.set_xticklabels([])
-        if kw.has_key("yticklabels"):    
+        if "yticklabels" in kw:    
             if not kw['yticklabels']:
                 ax.set_yticklabels([])
-        if kw.has_key("axison"):
+        if "axison" in kw:
             if kw['axison']:
                 ax.set_axis_on()
             else:
                 ax.set_axis_off()	
-        if kw.has_key("autoscaleon"):
+        if "autoscaleon" in kw:
             if kw['autoscaleon']:
                 ax.set_autoscale_on(True)
             else:
                 ax.set_autoscale_on(False)
-        if kw.has_key("adjustable"):
+        if "adjustable" in kw:
             ax.set_adjustable(kw['adjustable'])
-        if kw.has_key("aspect"):
+        if "aspect" in kw:
             ax.set_aspect(kw['aspect'])
-        if kw.has_key("anchor"):
+        if "anchor" in kw:
             ax.set_anchor(kw['anchor'])
             
-        if kw.has_key("axisbelow"):
+        if "axisbelow" in kw:
             if kw['axisbelow']==1:
                val=True
             else:
@@ -354,23 +354,23 @@ class MPLBaseNE(NetworkNode):
             rcParams['axes.axisbelow']=val
             ax.set_axisbelow(val)
         #grid properties
-        if kw.has_key("gridOn"):
+        if "gridOn" in kw:
             if kw['gridOn']==1:
                 ax._gridOn=True
                 val=True
-                if kw.has_key('gridcolor'):
+                if 'gridcolor' in kw:
                     gcolor=kw['gridcolor']
                 else:
                     gcolor=rcParams['grid.color']
-                if  kw.has_key('gridlinestyle'):
+                if  'gridlinestyle' in kw:
                     glinestyle=kw['gridlinestyle']
                 else:
                     glinestyle=rcParams['grid.linestyle']
-                if  kw.has_key('gridlinewidth'):
+                if  'gridlinewidth' in kw:
                     glinewidth=kw['gridlinewidth']
                 else:
                     glinewidth=rcParams['grid.linewidth']
-                if kw.has_key('whichgrid'):
+                if 'whichgrid' in kw:
                     whichgrid=kw['whichgrid']
                 else:
                     whichgrid='major'
@@ -379,9 +379,9 @@ class MPLBaseNE(NetworkNode):
             val=False
             ax.grid(val)
           
-        if kw.has_key("facecolor"):
+        if "facecolor" in kw:
             ax.set_axis_bgcolor(kw['facecolor'])
-        if kw.has_key("edgecolor"):
+        if "edgecolor" in kw:
             if hasattr(ax, "axesFrame"):
                 ax.axesFrame.set_edgecolor(kw['edgecolor'])
             elif hasattr(ax, "axesPatch"):
@@ -394,64 +394,64 @@ class MPLBaseNE(NetworkNode):
 #            #Zoom in on the x xaxis numsteps (plus for zoom in, minus for zoom out)
 #            ax.zoomy(kw['zoomy'])
              
-        if kw.has_key("xtick.color"):
+        if "xtick.color" in kw:
                 for i in ax.xaxis.get_ticklabels():
                     i.set_color(kw['xtick.color'])    
-        if kw.has_key("ytick.color"):        
+        if "ytick.color" in kw:        
             for i in ax.yaxis.get_ticklabels():
                     i.set_color(kw['ytick.color'])
-	    
-        if kw.has_key('xtick.labelrotation'):
+            
+        if 'xtick.labelrotation' in kw:
             for i in ax.xaxis.get_ticklabels():
                     i.set_rotation(float(kw['xtick.labelrotation']))    
-        if kw.has_key('ytick.labelrotation'):
+        if 'ytick.labelrotation' in kw:
             for i in ax.yaxis.get_ticklabels():
                     i.set_rotation(float(kw['ytick.labelrotation']))
-        if kw.has_key("xtick.labelsize"):
+        if "xtick.labelsize" in kw:
            for i in ax.xaxis.get_ticklabels():
                     i.set_size(float(kw['xtick.labelsize']))
-        if kw.has_key("ytick.labelsize"):    
+        if "ytick.labelsize" in kw:    
             for i in ax.yaxis.get_ticklabels():
                     i.set_size(float(kw['ytick.labelsize']))
-        if kw.has_key("linewidth"):
+        if "linewidth" in kw:
             if hasattr(ax, "axesFrame"):
                 ax.axesFrame.set_linewidth(float(kw['linewidth']))
             elif hasattr(ax, "axesPatch"):
                 ax.axesPatch.set_linewidth(float(kw['linewidth']))
                     
         #marker
-        if  kw.has_key("markeredgewidth"):
+        if  "markeredgewidth" in kw:
             for i in ax.get_xticklines():
                 i.set_markeredgewidth(kw['markeredgewidth'])
             for i in ax.get_yticklines():
                 i.set_markeredgewidth(kw['markeredgewidth'])
             
-        if kw.has_key("markeredgecolor"):
+        if "markeredgecolor" in kw:
             for i in ax.get_xticklines():
                 i.set_markeredgecolor(kw['markeredgecolor'])
             for i in ax.get_yticklines():
                 i.set_markeredgecolor(kw['markeredgecolor'])
             
-        if kw.has_key("markerfacecolor"):
+        if "markerfacecolor" in kw:
             for i in ax.get_xticklines():
                 i.set_markerfacecolor(kw['markerfacecolor'])
             for i in ax.get_yticklines():
                 i.set_markerfacecolor(kw['markerfacecolor'])
             
         #figure_patch properties 
-        if  kw.has_key("figpatch_linewidth"):
+        if  "figpatch_linewidth" in kw:
             ax.figure.figurePatch.set_linewidth(kw['figpatch_linewidth'])
-        if kw.has_key("figpatch_facecolor"):    
+        if "figpatch_facecolor" in kw:    
             ax.figure.figurePatch.set_facecolor(kw['figpatch_facecolor'])
-        if kw.has_key("figpatch_edgecolor"):    
+        if "figpatch_edgecolor" in kw:    
             ax.figure.figurePatch.set_edgecolor(kw['figpatch_edgecolor'])
-        if kw.has_key("figpatch_antialiased"):    
+        if "figpatch_antialiased" in kw:    
             ax.figure.figurePatch.set_antialiased(kw['figpatch_antialiased'])    
         
         #Text properties
-        if kw.has_key('text'):
+        if 'text' in kw:
             for i in kw['text']:
-              if type(i)==types.DictType:  
+              if type(i)==dict:  
                 tlab=i['textlabel']
                 posx=i['posx']
                 posy=i['posy']
@@ -459,93 +459,93 @@ class MPLBaseNE(NetworkNode):
                 verticalalignment=i['verticalalignment']
                 rotation=i['rotation']
                 ax.text(x=posx,y=posy,s=tlab,horizontalalignment=horizontalalignment,verticalalignment=verticalalignment,rotation=rotation,transform = ax.transAxes)
-        if kw.has_key("text.color"):
+        if "text.color" in kw:
             for t in ax.texts:
                 t.set_color(kw['text.color'])
-        if kw.has_key("text.usetex"):
+        if "text.usetex" in kw:
             rcParams['text.usetex']=kw['text.usetex']
-        if kw.has_key("text.dvipnghack"):
+        if "text.dvipnghack" in kw:
             rcParams['text.dvipnghack']=kw['text.dvipnghack']
-        if kw.has_key("text.fontstyle"):
+        if "text.fontstyle" in kw:
             for t in ax.texts:
                 t.set_fontstyle(kw['text.fontstyle'])
-        if kw.has_key("text.fontangle"):
+        if "text.fontangle" in kw:
             for t in ax.texts:
                 t.set_fontangle(kw['text.fontangle'])
-        if kw.has_key("text.fontvariant"):
+        if "text.fontvariant" in kw:
             for t in ax.texts:
                 t.set_fontvariant(kw['text.fontvariant'])
-        if kw.has_key("text.fontweight"):
+        if "text.fontweight" in kw:
             for t in ax.texts:
                 t.set_fontweight(kw['text.fontweight'])
-        if kw.has_key("text.fontsize"):
+        if "text.fontsize" in kw:
             for t in ax.texts:
                 t.set_fontsize(kw['text.fontsize'])
             
         #Font
-        if kw.has_key("Font.fontfamily"):
+        if "Font.fontfamily" in kw:
             for t in ax.texts:
                 t.set_family(kw['Font.fontfamily'])
-        if kw.has_key("Font.fontstyle"):
+        if "Font.fontstyle" in kw:
             for t in ax.texts:
                 t.set_fontstyle(kw['Font.fontstyle'])
-        if kw.has_key("Font.fontangle"):
+        if "Font.fontangle" in kw:
             for t in ax.texts:
                 t.set_fontangle(kw['Font.fontangle'])
-        if kw.has_key("Font.fontvariant"):
+        if "Font.fontvariant" in kw:
             for t in ax.texts:
                 t.set_fontvariant(kw['Font.fontvariant'])
-        if kw.has_key("Font.fontweight"):
+        if "Font.fontweight" in kw:
             for t in ax.texts:
                 t.set_fontweight(kw['Font.fontweight'])
-        if kw.has_key("Font.fontsize"):
+        if "Font.fontsize" in kw:
             for t in ax.texts:
                 t.set_fontsize(kw['Font.fontsize'])
         
         #Legend Properties
         
         if mplversion[0]==0 and mplversion[2]<=3 :
-            if kw.has_key('legendlabel'):
+            if 'legendlabel' in kw:
                 if ',' in kw['legendlabel']:
                     x=kw['legendlabel'].split(",")
                 else:
                     x=(kw['legendlabel'],)
-                if kw.has_key('legend.isaxes'):
+                if 'legend.isaxes' in kw:
                     isaxes=kw['legend.isaxes']
                 else:    
                     isaxes=rcParams['legend.isaxes']
 
-                if kw.has_key('legend.numpoints'):
+                if 'legend.numpoints' in kw:
                     numpoints=kw['legend.numpoints']
                 else:    
                     numpoints=rcParams['legend.numpoints'] 
 
-                if kw.has_key('legend.pad'):
+                if 'legend.pad' in kw:
                     borderpad=kw['legend.pad']
                 else:    
                     borderpad=rcParams['legend.pad'] 
 
-                if kw.has_key('legend.markerscale'):
+                if 'legend.markerscale' in kw:
                     markerscale=kw['legend.markerscale']
                 else:
                     markerscale=rcParams['legend.markerscale']
-                if kw.has_key('legend.labelsep'):
+                if 'legend.labelsep' in kw:
                     labelspacing=kw['legend.labelsep']
                 else:    
                     labelspacing=rcParams['legend.labelsep']
-                if kw.has_key('legend.handlelen'):
+                if 'legend.handlelen' in kw:
                     handlelength=kw['legend.handlelen']
                 else:    
                     handlelength=rcParams['legend.handlelen']
-                if kw.has_key('legend.handletextsep'):
+                if 'legend.handletextsep' in kw:
                     handletextpad=kw['legend.handletextsep']
                 else:    
                     handletextpad=rcParams['legend.handletextsep'] 
-                if kw.has_key('legend.axespad'):
+                if 'legend.axespad' in kw:
                     borderaxespad=kw['legend.axespad']
                 else:    
                     borderaxespad=rcParams['legend.axespad']
-                if kw.has_key('legend.shadow'):
+                if 'legend.shadow' in kw:
                     shadow=kw['legend.shadow']
                 else:    
                     shadow=rcParams['legend.shadow']
@@ -560,50 +560,50 @@ class MPLBaseNE(NetworkNode):
                                      axespad=borderaxespad,
                                      shadow=shadow,
                                      markerscale=markerscale)
-                if kw.has_key('legend.fontsize'):
+                if 'legend.fontsize' in kw:
                    setp(ax.get_legend().get_texts(),fontsize=kw['legend.fontsize'])
         elif mplversion[0] > 0:
-            if kw.has_key('legendlabel'):
+            if 'legendlabel' in kw:
                 if ',' in kw['legendlabel']:
                     x=kw['legendlabel'].split(",")
                 else:
                     x=(kw['legendlabel'],)
-                if kw.has_key('legend.isaxes'):
+                if 'legend.isaxes' in kw:
                     isaxes=kw['legend.isaxes']
                 else:    
                     isaxes=rcParams['legend.isaxes']
 
-                if kw.has_key('legend.numpoints'):
+                if 'legend.numpoints' in kw:
                     numpoints=kw['legend.numpoints']
                 else:    
                     numpoints=rcParams['legend.numpoints'] 
 
-                if kw.has_key('legend.borderpad'):
+                if 'legend.borderpad' in kw:
                     borderpad=kw['legend.borderpad']
                 else:    
                     borderpad=rcParams['legend.borderpad'] 
 
-                if kw.has_key('legend.markerscale'):
+                if 'legend.markerscale' in kw:
                     markerscale=kw['legend.markerscale']
                 else:
                     markerscale=rcParams['legend.markerscale']
-                if kw.has_key('legend.labelspacing'):
+                if 'legend.labelspacing' in kw:
                     labelspacing=kw['legend.labelspacing']
                 else:    
                     labelspacing=rcParams['legend.labelspacing']
-                if kw.has_key('legend.handlelength'):
+                if 'legend.handlelength' in kw:
                     handlelength=kw['legend.handlelength']
                 else:    
                     handlelength=rcParams['legend.handlelength']
-                if kw.has_key('legend.handletextpad'):
+                if 'legend.handletextpad' in kw:
                     handletextpad=kw['legend.handletextpad']
                 else:    
                     handletextpad=rcParams['legend.handletextpad'] 
-                if kw.has_key('legend.borderaxespad'):
+                if 'legend.borderaxespad' in kw:
                     borderaxespad=kw['legend.borderaxespad']
                 else:    
                     borderaxespad=rcParams['legend.borderaxespad']
-                if kw.has_key('legend.shadow'):
+                if 'legend.shadow' in kw:
                     shadow=kw['legend.shadow']
                 else:    
                     shadow=rcParams['legend.shadow']
@@ -618,33 +618,33 @@ class MPLBaseNE(NetworkNode):
                                      borderaxespad=borderaxespad,
                                      shadow=shadow,
                                      markerscale=markerscale)
-                if kw.has_key('legend.fontsize'):
+                if 'legend.fontsize' in kw:
                    setp(ax.get_legend().get_texts(),fontsize=kw['legend.fontsize'])
 
         #Tick Options
-        if kw.has_key('xtick.major.pad'):
+        if 'xtick.major.pad' in kw:
             for i in ax.xaxis.majorTicks:
                 i.set_pad(kw['xtick.major.pad'])
-        if kw.has_key('xtick.minor.pad'):
+        if 'xtick.minor.pad' in kw:
             for i in ax.xaxis.minorTicks:
                 i.set_pad(kw['xtick.minor.pad'])
-        if kw.has_key('ytick.major.pad'):
+        if 'ytick.major.pad' in kw:
             for i in ax.yaxis.majorTicks:
                 i.set_pad(kw['ytick.major.pad'])
-        if kw.has_key('ytick.minor.pad'):
+        if 'ytick.minor.pad' in kw:
             for i in ax.yaxis.minorTicks:
                 i.set_pad(kw['ytick.minor.pad'])        
-        if kw.has_key('xtick.major.size'):
+        if 'xtick.major.size' in kw:
             rcParams['xtick.major.size']=kw['xtick.major.size']
-        if kw.has_key('xtick.minor.size'):
+        if 'xtick.minor.size' in kw:
             rcParams['xtick.minor.size']=kw['xtick.minor.size']
-        if kw.has_key('xtick.direction'):
+        if 'xtick.direction' in kw:
            rcParams['xtick.direction']=kw['xtick.direction']
-        if kw.has_key('ytick.major.size'):
+        if 'ytick.major.size' in kw:
             rcParams['ytick.major.size']=kw['ytick.major.size']    
-        if kw.has_key('ytick.minor.size'):
+        if 'ytick.minor.size' in kw:
             rcParams['ytick.minor.size']=kw['ytick.minor.size']
-        if kw.has_key('ytick.direction'):
+        if 'ytick.direction' in kw:
             rcParams['ytick.direction']=kw['ytick.direction']  
              
         
@@ -652,8 +652,8 @@ class MPLBaseNE(NetworkNode):
     def beforeRemovingFromNetwork(self):
         #print 'remove'
         NetworkNode.beforeRemovingFromNetwork(self)
-	# this happens for drawing nodes with no axes specified
-	if self.axes:
+        # this happens for drawing nodes with no axes specified
+        if self.axes:
                 
                 self.axes.figure.delaxes(self.axes) # feel a little strange !
                 self.canvas._tkcanvas.master.destroy()
@@ -664,17 +664,17 @@ class MPLBaseNE(NetworkNode):
     def onlyDataChanged(self, data):
         """returns true if only he first port (i.e. data) has new data.
 """
-	# This can be used to accelerate redraw by only updating the data
-	# rather than redrawing the whole figure
-	# see examples/animation_blit_tk.py
+        # This can be used to accelerate redraw by only updating the data
+        # rather than redrawing the whole figure
+        # see examples/animation_blit_tk.py
         ports = self.inputPorts
-	if not ports[0].hasNewValidData():
-	    return False
+        if not ports[0].hasNewValidData():
+            return False
         for p in self.inputPorts:
-	    if p.hasNewValidData():
-	        return False
+            if p.hasNewValidData():
+                return False
 
-	return True
+        return True
 
 
 
@@ -710,7 +710,7 @@ Todo:
     def afterAddingToNetwork(self):
         self.figure = Figure()
 
-        master = Tkinter.Toplevel()
+        master = tkinter.Toplevel()
         master.title(self.name)
         self.canvas = FigureCanvasTkAgg(self.figure, master)
         self.figure.set_canvas(self.canvas)
@@ -723,7 +723,7 @@ Todo:
 
     def __init__(self, name='Figure2', **kw):
         kw['name'] = name
-        apply( MPLBaseNE.__init__, (self,), kw )
+        MPLBaseNE.__init__(*(self,), **kw)
 
         codeBeforeDisconnect = """def beforeDisconnect(self, c):
     node1 = c.port1.node
@@ -752,7 +752,7 @@ Todo:
         ip.append(datatype='boolean', required=False, name='toolbar')
         ip.append(datatype='None', required=False, name='packOpts')
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='MPLFigure', name='figure')
 
         self.widgetDescr['width'] = {
@@ -887,7 +887,7 @@ Todo:
 
     def __init__(self, name='imageFigure', **kw):
         kw['name'] = name
-        apply( MPLBaseNE.__init__, (self,), kw )
+        MPLBaseNE.__init__(*(self,), **kw)
 
         codeBeforeDisconnect = """def beforeDisconnect(self, c):
     node1 = c.port1.node
@@ -1046,7 +1046,7 @@ class MPLDrawAreaNE(NetworkNode):
 
     def __init__(self, name='Draw Area', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='float', required=False, name='left', defaultValue=.1)
@@ -1142,7 +1142,7 @@ class MPLDrawAreaNE(NetworkNode):
         self.widgetDescr['autoscaleon'] = {
             'class':'NECheckButton', 'master':'ParamPanel','labelGridCfg':{'sticky':'w'},
             'initialValue':1, 'labelCfg':{'text':'autoscale on'} }
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='MPLDrawArea', name='drawAreaDef')
         
         code = """def doit(self, left, bottom, width, height, frameon, hold, title,
@@ -1163,7 +1163,7 @@ class MPLMergeTextNE(NetworkNode):
     """
     def __init__(self, name='MergeText', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='MPLDrawArea', required=False,name='textlist',singleConnection=False)
         op = self.outputPortsDescr
@@ -1183,7 +1183,7 @@ class MPLPlottingNode(MPLBaseNE):
         self.axes = self.figure.add_subplot( 111 )
         self.axes.node = weakref.ref(self)
 
-        master = Tkinter.Toplevel()
+        master = tkinter.Toplevel()
         master.title(self.name)
         self.canvas = FigureCanvasTkAgg(self.figure, master)
         self.figure.set_canvas(self.canvas)
@@ -1203,8 +1203,8 @@ class MPLPlottingNode(MPLBaseNE):
             newdrawAreaDef = drawAreaDef[0]
          elif len(drawAreaDef)>1:
             for dAD in drawAreaDef:
-                if type(dAD)== types.DictType:
-                    for j in dAD.keys():
+                if type(dAD)== dict:
+                    for j in list(dAD.keys()):
                         newdrawAreaDef[j]=dAD[j]
         self.setDrawArea(newdrawAreaDef)
     
@@ -1228,7 +1228,7 @@ fillcolor - color
     
     def __init__(self, name='Fill', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='list', name='x',beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='list',name='y',beforeDisconnect=self.codeBeforeDisconnect)
@@ -1236,7 +1236,7 @@ fillcolor - color
         ip.append(datatype='MPLDrawArea', required=False,name='drawAreaDef',singleConnection=False)
         self.widgetDescr['fillcolor'] = {
             'class':'NEComboBox', 'master':'node',
-            'choices':cnames.keys(),
+            'choices':list(cnames.keys()),
             'fixedChoices':True,
             'initialValue':'white',
             'entryfield_entry_width':7,
@@ -1274,15 +1274,15 @@ Adjustable parameters:
     def __init__(self, name='PolarAxes', **kw):
         
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         self.styles={}
-        for ls in Line2D._lineStyles.keys():
+        for ls in list(Line2D._lineStyles.keys()):
            self.styles[Line2D._lineStyles[ls][6:]]=ls
-        for ls in Line2D._markers.keys():
+        for ls in list(Line2D._markers.keys()):
            self.styles[Line2D._markers[ls][6:]]=ls
-	    #these styles are not recognized
+            #these styles are not recognized
         #del self.styles['steps']
-        for s in  self.styles.keys():
+        for s in  list(self.styles.keys()):
            
            if s =="nothing":
                del self.styles['nothing']
@@ -1313,7 +1313,7 @@ Adjustable parameters:
             'widgetGridCfg':{'sticky':'w'},}
         self.widgetDescr['lineStyle'] = {
             'class':'NEComboBox', 'master':'node',
-            'choices':self.styles.keys(),
+            'choices':list(self.styles.keys()),
             'fixedChoices':True,
             'initialValue':'solid',
             'entryfield_entry_width':7,
@@ -1322,7 +1322,7 @@ Adjustable parameters:
             'labelCfg':{'text':'line style:'}}
         self.widgetDescr['color'] = {
             'class':'NEComboBox', 'master':'node',
-            'choices':self.colors.keys(),
+            'choices':list(self.colors.keys()),
             'fixedChoices':True,
             'initialValue':'black',
             'entryfield_entry_width':7,
@@ -1331,7 +1331,7 @@ Adjustable parameters:
             'labelCfg':{'text':'color:'}}
         self.widgetDescr['gridlineStyle'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':lineStyles.keys(),
+            'choices':list(lineStyles.keys()),
             'fixedChoices':True,
             'initialValue':'--',
             'entryfield_entry_width':7,
@@ -1340,7 +1340,7 @@ Adjustable parameters:
             'labelCfg':{'text':'gridlinestyle:'}}  
         self.widgetDescr['gridcolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':cnames.keys(),
+            'choices':list(cnames.keys()),
             'fixedChoices':True,
             'initialValue':'gray',
             'entryfield_entry_width':7,
@@ -1356,7 +1356,7 @@ Adjustable parameters:
             'widgetGridCfg':{'sticky':'w'}}
         self.widgetDescr['axisbg'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':cnames.keys(),
+            'choices':list(cnames.keys()),
             'fixedChoices':True,
             'initialValue':'white',
             'entryfield_entry_width':7,
@@ -1365,7 +1365,7 @@ Adjustable parameters:
             'labelCfg':{'text':'axisbg:'}}
         self.widgetDescr['xtickcolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':cnames.keys(),
+            'choices':list(cnames.keys()),
             'fixedChoices':True,
             'initialValue':'black',
             'entryfield_entry_width':7,
@@ -1374,7 +1374,7 @@ Adjustable parameters:
             'labelCfg':{'text':'xtickcolor:'}}
         self.widgetDescr['ytickcolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':cnames.keys(),
+            'choices':list(cnames.keys()),
             'fixedChoices':True,
             'initialValue':'black',
             'entryfield_entry_width':7,
@@ -1427,7 +1427,7 @@ Return value is (markerline, stemlines, baseline) .
 """    
     def __init__(self, name='Stem', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,),kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='list',required=True, name='x',beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='list',required=True, name='y',beforeDisconnect=self.codeBeforeDisconnect)
@@ -1449,7 +1449,7 @@ Return value is (markerline, stemlines, baseline) .
             'labelCfg':{'text':'stemlinestyle:'}}
         self.widgetDescr['stemlinecolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':colors.values(),
+            'choices':list(colors.values()),
             'fixedChoices':True,
             'initialValue':'b',
             'entryfield_entry_width':7,
@@ -1458,7 +1458,7 @@ Return value is (markerline, stemlines, baseline) .
             'labelCfg':{'text':'stemlinecolor:'}}
         self.widgetDescr['markerstyle'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':Line2D._markers.keys(),
+            'choices':list(Line2D._markers.keys()),
             'fixedChoices':True,
             'initialValue':'o',
             'entryfield_entry_width':7,
@@ -1467,7 +1467,7 @@ Return value is (markerline, stemlines, baseline) .
             'labelCfg':{'text':'markerstyle:'}}
         self.widgetDescr['markerfacecolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':colors.values(),
+            'choices':list(colors.values()),
             'fixedChoices':True,
             'initialValue':'k',
             'entryfield_entry_width':7,
@@ -1485,7 +1485,7 @@ Return value is (markerline, stemlines, baseline) .
             'labelCfg':{'text':'baselinestyle:'}}
         self.widgetDescr['baselinecolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':colors.values(),
+            'choices':list(colors.values()),
             'fixedChoices':True,
             'initialValue':'k',
             'entryfield_entry_width':7,
@@ -1514,7 +1514,7 @@ input: axes instances
     """        
     def __init__(self, name='MultiPlot', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,),kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='MPLAxes', required=True, name='multiplot', singleConnection=False,beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='MPLDrawArea', required=False, name='drawAreaDef', singleConnection=False)   
@@ -1568,9 +1568,9 @@ location - location where the table to be placed.
         Adds a table to the current axes and plots bars.  
         """
         kw['name'] = name
-        locs=locations.keys()
+        locs=list(locations.keys())
         locs.append("bottom")
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='list',required=True, name='values',singleConnection="auto",beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='list',required=True, name='rowLabels',beforeDisconnect=self.codeBeforeDisconnect)
@@ -1653,7 +1653,7 @@ Output:
     def __init__(self, name='Histogram', **kw):
         kw['name'] = name
 
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         self.colors=cnames
         ip = self.inputPortsDescr
         ip.append(datatype='None', name='values',beforeDisconnect=self.codeBeforeDisconnect)
@@ -1685,7 +1685,7 @@ Output:
             'initialValue':1,}
         self.widgetDescr['patch_edgecolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':self.colors.keys(),
+            'choices':list(self.colors.keys()),
             'fixedChoices':True,
             'initialValue':'black',
             'entryfield_entry_width':7,
@@ -1694,14 +1694,14 @@ Output:
             'labelCfg':{'text':'edgecolor:'}}
         self.widgetDescr['patch_facecolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':self.colors.keys(),
+            'choices':list(self.colors.keys()),
             'fixedChoices':True,
             'initialValue':'blue',
             'entryfield_entry_width':7,
             'labelGridCfg':{'sticky':'w'},
             'widgetGridCfg':{'sticky':'w'},
             'labelCfg':{'text':'facecolor:'}}
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='MPLAxes', name='plot')
 
         code = """def doit(self, values, bins, normed, patch_antialiased,
@@ -1737,10 +1737,10 @@ Output:
     
     def __init__(self, name='Plot', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         self.styles=get_styles()
         self.colors=colors        
-	self.joinstyles = Line2D.validJoin
+        self.joinstyles = Line2D.validJoin
         self.capstyles = Line2D.validCap 
         ip = self.inputPortsDescr
         ip.append(datatype='list', name='y',beforeDisconnect=self.codeBeforeDisconnect)
@@ -1755,9 +1755,9 @@ Output:
         ip.append(datatype='string', required=False, name='dash_joinstyle', defaultValue='miter')
         ip.append(datatype='MPLDrawArea', required=False,name='drawAreaDef',singleConnection=False)
         
-	self.widgetDescr['lineStyle'] = {
+        self.widgetDescr['lineStyle'] = {
             'class':'NEComboBox', 'master':'node',
-            'choices':self.styles.keys(),
+            'choices':list(self.styles.keys()),
             'fixedChoices':True,
             'initialValue':'solid',
             'entryfield_entry_width':7,
@@ -1765,9 +1765,9 @@ Output:
             'widgetGridCfg':{'sticky':'w'},
             'labelCfg':{'text':'line style:'}}
 
-	self.widgetDescr['color'] = {
+        self.widgetDescr['color'] = {
             'class':'NEComboBox', 'master':'node',
-            'choices':self.colors.keys(),
+            'choices':list(self.colors.keys()),
             'fixedChoices':True,
             'initialValue':'black',
             'entryfield_entry_width':7,
@@ -1871,10 +1871,10 @@ checks for pytz module and returns if not
 """   
     def __init__(self, name='PlotDate', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         self.styles=get_styles()
         self.colors=colors        
-	self.joinstyles = Line2D.validJoin
+        self.joinstyles = Line2D.validJoin
         timezones=common_timezones
         self.capstyles = Line2D.validCap 
         ip = self.inputPortsDescr
@@ -1893,9 +1893,9 @@ checks for pytz module and returns if not
         ip.append(datatype='string', required=False, name='dash_joinstyle', defaultValue='miter')
         ip.append(datatype='MPLDrawArea', required=False,name='drawAreaDef',singleConnection=False)
         
-	self.widgetDescr['lineStyle'] = {
+        self.widgetDescr['lineStyle'] = {
             'class':'NEComboBox', 'master':'node',
-            'choices':self.styles.keys(),
+            'choices':list(self.styles.keys()),
             'fixedChoices':True,
             'initialValue':'circle',
             'entryfield_entry_width':7,
@@ -1903,9 +1903,9 @@ checks for pytz module and returns if not
             'widgetGridCfg':{'sticky':'w'},
             'labelCfg':{'text':'line style:'}}
 
-	self.widgetDescr['color'] = {
+        self.widgetDescr['color'] = {
             'class':'NEComboBox', 'master':'node',
-            'choices':self.colors.keys(),
+            'choices':list(self.colors.keys()),
             'fixedChoices':True,
             'initialValue':'blue',
             'entryfield_entry_width':7,
@@ -2022,7 +2022,7 @@ Input:
     labels    - None; sequence of labels (has to match length of factions
     explode   - None; float or sequence of values which specifies the
                 fraction of the radius to offset that wedge.
-		if a single float is given the list is generated automatically
+                if a single float is given the list is generated automatically
     shadow    - True; if True, will draw a shadow beneath the pie.
     format    - None; fromat string used to label the wedges with their
                 numeric value
@@ -2036,7 +2036,7 @@ Output:
     
     def __init__(self, name='Pie', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='list', name='fractions',beforeDisconnect=self.codeBeforeDisconnect)
@@ -2061,7 +2061,7 @@ Output:
             'labelCfg':{'text':'format:'},
             'initialValue':'%1.1f%%'}
         
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='MPLAxes', name='plot')
         op.append(datatype='None', name='patches')
         op.append(datatype='None', name='texts')
@@ -2077,7 +2077,7 @@ drawAreaDef):
                   autopct=format, shadow=shadow)
     if format is None:
         patches, texts = res
-	autotextsline = None
+        autotextsline = None
     else:
         patches, texts, autotextsline = res
     self.canvas.draw()
@@ -2100,7 +2100,7 @@ optional arguements:
 
     def __init__(self, name='Spy', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='None',name = 'Z',beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='string', required=False, name='marker', defaultValue='s')
@@ -2108,7 +2108,7 @@ optional arguements:
         ip.append(datatype='MPLDrawArea', required=False, name='drawAreaDef',singleConnection=False)
         self.widgetDescr['marker'] = {
             'class':'NEComboBox', 'master':'node',
-            'choices':markers.values(),
+            'choices':list(markers.values()),
             'fixedChoices':True,
             'initialValue':'s',
             'entryfield_entry_width':7,
@@ -2139,7 +2139,7 @@ The image instance is returned
 """
     def __init__(self, name='Spy2', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='None',name = 'Z',beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='MPLDrawArea', required=False, name='drawAreaDef',singleConnection=False)
@@ -2167,7 +2167,7 @@ Returns a list of lines that were added
 """    
     def __init__(self, name='Vline', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='list',name = 'x',beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='list',name = 'ymin',beforeDisconnect=self.codeBeforeDisconnect)
@@ -2177,7 +2177,7 @@ Returns a list of lines that were added
         ip.append(datatype='MPLDrawArea', required=False, name='drawAreaDef',singleConnection=False)
         self.widgetDescr['color'] = {
             'class':'NEComboBox', 'master':'node',
-            'choices':colors.values(),
+            'choices':list(colors.values()),
             'fixedChoices':True,
             'initialValue':'k',
             'entryfield_entry_width':7,
@@ -2271,12 +2271,12 @@ Output:
                 #print v,  x - d1[v], epsx, y - d2[v], epsy
 
             if len(result):
-                print 'point:', result, x, d1[result[0]], y, d2[result[0]]
+                print('point:', result, x, d1[result[0]], y, d2[result[0]])
                 self.outputData(pick=result)
                 self.scheduleChildren([self.outputPorts[2]])
                 return result
             else:
-                print "NO POINT"
+                print("NO POINT")
                 return None
 
 
@@ -2287,7 +2287,7 @@ Output:
 
     def __init__(self, name='Scatter', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
 
         self.cutoff = 10.0
         self.joinstyles = Line2D.validJoin
@@ -2302,7 +2302,7 @@ Output:
 
         self.widgetDescr['c'] = {
             'class':'NEComboBox', 'master':'node',
-            'choices':self.colors.values(),
+            'choices':list(self.colors.values()),
             'fixedChoices':True,
             'initialValue':'k',
             'entryfield_entry_width':7,
@@ -2311,9 +2311,9 @@ Output:
             'labelCfg':{'text':'color:'}}
         
 
-	self.widgetDescr['marker'] = {
+        self.widgetDescr['marker'] = {
             'class':'NEComboBox', 'master':'node',
-            'choices':self.markers.keys(),
+            'choices':list(self.markers.keys()),
             'fixedChoices':True,
             'initialValue':'circle',
             'entryfield_entry_width':7,
@@ -2383,7 +2383,7 @@ Output:
         ip.append(datatype='string', required=False, name='dash_capstyle', defaultValue='butt')
         ip.append(datatype='string', required=False, name='dash_joinstyle', defaultValue='miter')
         ip.append(datatype='MPLDrawArea', required=False,name='drawAreaDef',singleConnection=False) 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='MPLAxes', name='plot')
         op.append(datatype='None', name='patches')
         op.append(datatype='int', name='pick')
@@ -2425,7 +2425,7 @@ Output:
     
     def __init__(self, name='ScatterClassic', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         
         self.joinstyles = Line2D.validJoin
         self.capstyles = Line2D.validCap
@@ -2439,7 +2439,7 @@ Output:
 
         self.widgetDescr['c'] = {
             'class':'NEComboBox', 'master':'node',
-            'choices':self.colors.values(),
+            'choices':list(self.colors.values()),
             'fixedChoices':True,
             'initialValue':'k',
             'entryfield_entry_width':7,
@@ -2539,7 +2539,7 @@ Output:
     
     def __init__(self, name='Figimage', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='None', name='data',beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='string',required=False, name='cmap', defaultValue='jet')
@@ -2589,11 +2589,11 @@ Output:
         self.widgetDescr['alpha'] = {
             'class':'NEThumbWheel','master':'ParamPanel',
             'width':75, 'height':21, 'oneTurn':1, 'type':'float', 
-	    'initialValue':1.0, 'wheelPad':2, 
+            'initialValue':1.0, 'wheelPad':2, 
             'labelCfg':{'text':'alpha'} }
             
             
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='MPLAxes', name='plot')
         op.append(datatype='None', name='image')
         
@@ -2640,7 +2640,7 @@ optional arguements:
     def __init__(self, name='PcolorMesh', **kw):
         
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )   
+        MPLPlottingNode.__init__(*(self,), **kw)   
         ip = self.inputPortsDescr
         ip.append(datatype='None', required=False,name='arraylistx')
         ip.append(datatype='None', required=False,name='arraylisty')
@@ -2670,7 +2670,7 @@ optional arguements:
         self.widgetDescr['alpha'] = {
             'class':'NEThumbWheel','master':'ParamPanel',
             'width':61, 'height':21, 'oneTurn':1, 'type':'float', 
-	    'initialValue':1.0, 'wheelPad':2, 
+            'initialValue':1.0, 'wheelPad':2, 
             'labelCfg':{'text':'alpha'} }
         op = self.outputPortsDescr
         op.append(datatype='MPLAxes', name='axes')
@@ -2715,7 +2715,7 @@ optional arguements:
     def __init__(self, name='Pcolor', **kw):
         
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )   
+        MPLPlottingNode.__init__(*(self,), **kw)   
         ip = self.inputPortsDescr
         ip.append(datatype='None', required=False,name='arraylistx')
         ip.append(datatype='None', required=False,name='arraylisty')
@@ -2745,7 +2745,7 @@ optional arguements:
         self.widgetDescr['alpha'] = {
             'class':'NEThumbWheel','master':'ParamPanel',
             'width':61, 'height':21, 'oneTurn':1, 'type':'float', 
-	    'initialValue':1.0, 'wheelPad':2, 
+            'initialValue':1.0, 'wheelPad':2, 
             'labelCfg':{'text':'alpha'} }
         op = self.outputPortsDescr
         op.append(datatype='MPLAxes', name='axes')
@@ -2790,7 +2790,7 @@ optional arguements:
     def __init__(self, name='PcolorClassic', **kw):
         
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )   
+        MPLPlottingNode.__init__(*(self,), **kw)   
         ip = self.inputPortsDescr
         ip.append(datatype='None', required=False,name='arraylistx')
         ip.append(datatype='None', required=False,name='arraylisty')
@@ -2820,7 +2820,7 @@ optional arguements:
         self.widgetDescr['alpha'] = {
             'class':'NEThumbWheel','master':'ParamPanel',
             'width':61, 'height':21, 'oneTurn':1, 'type':'float', 
-	    'initialValue':0.75, 'wheelPad':2, 
+            'initialValue':0.75, 'wheelPad':2, 
             'labelCfg':{'text':'alpha'} }
         op = self.outputPortsDescr
         op.append(datatype='MPLAxes', name='axes')
@@ -2863,7 +2863,7 @@ optional arguements:
     
     def __init__(self, name='Contour', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='None', required=False, name='arraylistx')
         ip.append(datatype='None', required=False,name='arraylisty')
@@ -2900,7 +2900,7 @@ optional arguements:
             'labelCfg':{'text':'cmap:'}}
         self.widgetDescr['colors'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':cnames.keys(),
+            'choices':list(cnames.keys()),
             'fixedChoices':True,
             'initialValue':'black',
             'entryfield_entry_width':7,
@@ -2910,7 +2910,7 @@ optional arguements:
         self.widgetDescr['linewidth'] = {
             'class':'NEThumbWheel','master':'ParamPanel',
             'width':61, 'height':21, 'oneTurn':4, 'type':'int', 
-	        'initialValue':1, 'wheelPad':2,
+                'initialValue':1, 'wheelPad':2,
             'labelCfg':{'text':'linewidth'} }    
         self.widgetDescr['origin'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
@@ -2978,7 +2978,7 @@ im is a matplotlib.image.AxesImage
     def __init__(self, name='Specgram', **kw):
        
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='list', name='arraylistx',singleConnection='auto',beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='int', name='NFFT', defaultValue=256)
@@ -3036,7 +3036,7 @@ nOverlap-   the amount of overlap of each segment.
     def __init__(self, name='CSD', **kw):
         
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype=None, name='arraylistx',singleConnection='auto',beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype=None, name='arraylisty',singleConnection='auto',beforeDisconnect=self.codeBeforeDisconnect)
@@ -3084,7 +3084,7 @@ nOverlap-   the amount of overlap of each segment.
 """
     def __init__(self, name='PSD', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype=None, name='arraylistx',singleConnection='auto',beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='int', required=False,name='NFFT', defaultValue=256)
@@ -3134,7 +3134,7 @@ basey  - base of the y logarithm
     def __init__(self, name='LogCurve', **kw):
         
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='list', name='x',beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='list', name='y',beforeDisconnect=self.codeBeforeDisconnect)
@@ -3186,7 +3186,7 @@ input:
     def __init__(self, name='Semilogx', **kw):
         
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='list', name='x',beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='list', name='y',beforeDisconnect=self.codeBeforeDisconnect)
@@ -3219,7 +3219,7 @@ input:
     def __init__(self, name='Semilogy', **kw):
         
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='list', name='x',beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='list', name='y',beforeDisconnect=self.codeBeforeDisconnect)
@@ -3273,7 +3273,7 @@ Returns a list of the lines added
     def __init__(self, name='BoxPlot', **kw):
         
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='list', name='x',singleConnection='auto',beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='list', required=False, name='positions')
@@ -3296,7 +3296,7 @@ Returns a list of the lines added
             'initialValue':0,}
         self.widgetDescr['color'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':colors.values(), 
+            'choices':list(colors.values()), 
             'fixedChoices':True,
             'initialValue':'b',          
             'entryfield_entry_width':7,
@@ -3305,7 +3305,7 @@ Returns a list of the lines added
             'labelCfg':{'text':'color:'}}
         self.widgetDescr['linestyle'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':get_styles().values(),
+            'choices':list(get_styles().values()),
             'fixedChoices':True,
             'initialValue':'-',          
             'entryfield_entry_width':7,
@@ -3358,7 +3358,7 @@ Return value is a list of Rectangle patch instances
 """
     def __init__(self, name='Bar', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='None',  name='left',beforeDisconnect=self.codeBeforeDisconnect)
         ip.append(datatype='None',  name='height',beforeDisconnect=self.codeBeforeDisconnect)
@@ -3394,7 +3394,7 @@ Return value is a list of Rectangle patch instances
             'labelCfg':{'text':'orientation:'}}
         self.widgetDescr['edgecolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':colors.values(), 
+            'choices':list(colors.values()), 
             'fixedChoices':True,
             'initialValue':'b',          
             'entryfield_entry_width':7,
@@ -3403,7 +3403,7 @@ Return value is a list of Rectangle patch instances
             'labelCfg':{'text':'edgecolor:'}}
         self.widgetDescr['ecolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':colors.values(), 
+            'choices':list(colors.values()), 
             'fixedChoices':True,
             'initialValue':'b',          
             'entryfield_entry_width':7,
@@ -3412,7 +3412,7 @@ Return value is a list of Rectangle patch instances
             'labelCfg':{'text':'ecolor:'}}
         self.widgetDescr['color'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':colors.values(), 
+            'choices':list(colors.values()), 
             'fixedChoices':True,
             'initialValue':'b',          
             'entryfield_entry_width':7,
@@ -3465,7 +3465,7 @@ Return value is a list of Rectangle patch instances
 """
     def __init__(self, name='BarH', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='None', name='bottom',beforeDisconnect=self.codeBeforeDisconnect)    
         ip.append(datatype='None', name='width',beforeDisconnect=self.codeBeforeDisconnect)
@@ -3491,7 +3491,7 @@ Return value is a list of Rectangle patch instances
             'labelCfg':{'text':'align:'}}
         self.widgetDescr['edgecolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':colors.values(), 
+            'choices':list(colors.values()), 
             'fixedChoices':True,
             'initialValue':'b',          
             'entryfield_entry_width':7,
@@ -3500,7 +3500,7 @@ Return value is a list of Rectangle patch instances
             'labelCfg':{'text':'edgecolor:'}}
         self.widgetDescr['ecolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':colors.values(), 
+            'choices':list(colors.values()), 
             'fixedChoices':True,
             'initialValue':'b',          
             'entryfield_entry_width':7,
@@ -3509,7 +3509,7 @@ Return value is a list of Rectangle patch instances
             'labelCfg':{'text':'ecolor:'}}
         self.widgetDescr['color'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':colors.values(), 
+            'choices':list(colors.values()), 
             'fixedChoices':True,
             'initialValue':'b',          
             'entryfield_entry_width':7,
@@ -3549,7 +3549,7 @@ width  - a scalar that controls the width of the arrows
 """
     def __init__(self, name='Quiver', **kw):
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         
         ip.append(datatype='None', name='u',beforeDisconnect=self.codeBeforeDisconnect)    
@@ -3564,7 +3564,7 @@ width  - a scalar that controls the width of the arrows
         ip.append(datatype='MPLDrawArea', required=False, name='drawAreaDef',singleConnection=False)
         self.widgetDescr['color'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':colors.values(), 
+            'choices':list(colors.values()), 
             'fixedChoices':True,
             'initialValue':'b',          
             'entryfield_entry_width':7,
@@ -3643,7 +3643,7 @@ optional arguements:
     def __init__(self, name='ErrorBar', **kw):
         
         kw['name'] = name
-        apply( MPLPlottingNode.__init__, (self,), kw )
+        MPLPlottingNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='None', name='x',beforeDisconnect=self.codeBeforeDisconnect)    
         ip.append(datatype='None', name='y',beforeDisconnect=self.codeBeforeDisconnect)
@@ -3657,7 +3657,7 @@ optional arguements:
         ip.append(datatype='MPLDrawArea', required=False, name='drawAreaDef',singleConnection=False)
         self.widgetDescr['format'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':get_styles().values(),
+            'choices':list(get_styles().values()),
             'fixedChoices':True,
             'initialValue':'-',          
             'entryfield_entry_width':7,
@@ -3667,7 +3667,7 @@ optional arguements:
         
         self.widgetDescr['ecolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':colors.values(), 
+            'choices':list(colors.values()), 
             'fixedChoices':True,
             'initialValue':'b',          
             'entryfield_entry_width':7,
@@ -3767,7 +3767,7 @@ Output:
 """
     def __init__(self, name='RandNormDist', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='float', name='mu')
@@ -3792,13 +3792,13 @@ Output:
             'wheelPad':2, 'initialValue':10000,
             'labelCfg':{'text':'nb. points'} }
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='list', name='data')
         op.append(datatype='float', name='mu')
         op.append(datatype='float', name='sigma')
 
         code = """def doit(self, mu, sigma, npts):
-    from numpy.oldnumeric.mlab import randn
+    from mglcompat.oldnumeric.mlab import randn
     self.outputData( data=mu+sigma*randn(npts), mu=mu, sigma=sigma )
 """
         self.setFunction(code)
@@ -3820,7 +3820,7 @@ Output:
 """
     def __init__(self, name='SinFunc', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='float', name='x0')
@@ -3845,7 +3845,7 @@ Output:
             'wheelPad':2, 'initialValue':0.01,
             'labelCfg':{'text':'nb. points'} }
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='list', name='x')
         op.append(datatype='list', name='y')
 
@@ -3871,7 +3871,7 @@ Output:
 """
     def __init__(self, name='SinFuncSerie', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
 ##         ip = self.inputPortsDescr
 ##         ip.append(datatype='float', name='x0')
@@ -3897,7 +3897,7 @@ Output:
 ##             'wheelPad':2, 'initialValue':0.01,
 ##             'labelCfg':{'text':'nb. points'} }
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='list', name='X')
 
         code = """def doit(self):
@@ -3925,14 +3925,14 @@ class MatPlotLibOptions(NetworkNode):
     """
     def __init__(self, name='Set Matplotlib Options', canvas=None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(name='matplotlibOptions', datatype='dict')
 
         self.widgetDescr['matplotlibOptions'] = {
             'class':'NEMatPlotLibOptions', 'lockedOnPort':True}      
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='dict', name='matplotlibOptions')
 
         code = """def doit(self, matplotlibOptions):
@@ -3953,7 +3953,7 @@ class NEMatPlotLibOptions(PortWidget):
     def __init__(self, port, **kw):
         
         # call base class constructor
-        apply( PortWidget.__init__, (self, port), kw)
+        PortWidget.__init__(*(self, port), **kw)
         
         colors=cnames
         self.styles=lineStyles
@@ -4016,7 +4016,7 @@ class NEMatPlotLibOptions(PortWidget):
         }
         
 
-        self.frame = Tkinter.Frame(self.widgetFrame, borderwidth=3,
+        self.frame = tkinter.Frame(self.widgetFrame, borderwidth=3,
                                    relief = 'ridge')
 
         self.propWidgets = {} # will hold handle to widgets created
@@ -4063,9 +4063,9 @@ class NEMatPlotLibOptions(PortWidget):
             w.interior(), label_text='', labelpos='w',
             entryfield_entry_width=20, scrolledlist_items=items,selectioncommand=cb)
         self.chooser.pack(padx=2, pady=2, expand='yes', fill='both')
- 	w.pack(fill = 'x', expand = 1, side='top')
+        w.pack(fill = 'x', expand = 1, side='top')
         # configure without rebuilding to avoid enless loop
-        apply( self.configure, (False,), kw)
+        self.configure(*(False,), **kw)
         self.frame.pack(expand='yes', fill='both')
         w1 = Pmw.Group(self.frame, tag_text='choose a Property')
         self.propWidgetMaster = w1.interior()
@@ -4140,17 +4140,17 @@ class NEMatPlotLibOptions(PortWidget):
 
     def addProp(self, prop):
         
-        if self.propWidgets.has_key(prop):
+        if prop in self.propWidgets:
             return
         
-        labwidget = Tkinter.Label(self.propWidgetMaster, text=prop)
+        labwidget = tkinter.Label(self.propWidgetMaster, text=prop)
         
         rown=self.propWidgetMaster.size()[1]
         labwidget.grid(padx=2, pady=2, row=rown, column=0,
                sticky='w')
         self.labels[prop]=labwidget
         #Right Click Menu
-        popup = Tkinter.Menu(labwidget, tearoff=0)
+        popup = tkinter.Menu(labwidget, tearoff=0)
         #popup.add_command(label="ToolTip")
         #popup.add_separator()
         popup.add_command(label="Ignore",command=self.deleteProp)
@@ -4164,10 +4164,10 @@ class NEMatPlotLibOptions(PortWidget):
         labwidget.bind("<Button-3>", do_popup)
      
         if prop in self.booleanProps:
-            var = Tkinter.IntVar()
+            var = tkinter.IntVar()
             var.set(self.initialvalues[prop])
             cb = CallBackFunction( self.setBoolean, (prop, var))
-            widget = Tkinter.Checkbutton(self.propWidgetMaster,
+            widget = tkinter.Checkbutton(self.propWidgetMaster,
                                          variable=var, command=cb)
             if prop not in self.propWidgets:
                 self.propWidgets[prop] = (widget, var.get())
@@ -4225,7 +4225,7 @@ class NEMatPlotLibOptions(PortWidget):
 
     def set(self, valueDict, run=1):
         self._setModified(True)
-        for k,v in valueDict.items():
+        for k,v in list(valueDict.items()):
             self.addProp(k)
             if k in self.booleanProps:
                 self.setBoolean( (k, v) )
@@ -4243,7 +4243,7 @@ class NEMatPlotLibOptions(PortWidget):
         
         
     def configure(self, rebuild=True, **kw):
-        action, rebuildDescr = apply( PortWidget.configure, (self, 0), kw)
+        action, rebuildDescr = PortWidget.configure(*(self, 0), **kw)
             
         #  this methods just creates a resize action if width changes
         if self.widget is not None:
@@ -4290,7 +4290,7 @@ Output:
     def __init__(self, name='Legend', **kw):
         kw['name'] = name
         
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         codeBeforeDisconnect = """def beforeDisconnect(self, c):
     
     node1 = c.port1.node
@@ -4308,7 +4308,7 @@ Output:
 
         self.widgetDescr['location'] = {
         'class':'NEComboBox', 'master':'node',
-            'choices':locations.keys(),
+            'choices':list(locations.keys()),
             'fixedChoices':True,
             'initialValue':'upper right',
             'entryfield_entry_width':7,
@@ -4339,7 +4339,7 @@ input :
 
     def __init__(self, name='ColorBar', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='MPLAxes', required=True, name='plot')
         ip.append(datatype='None', required=True, name='current_image')
@@ -4423,7 +4423,7 @@ vertical alignment:   ['center', 'right', 'left']
 """
     def __init__(self, name='Text', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         
         ip = self.inputPortsDescr
         ip.append(datatype='float', required=False, name='posx', defaultValue=.1)
@@ -4505,7 +4505,7 @@ format      - one of 'pdf', 'png', 'ps', 'svg'. It is used to specify the
 """
     def __init__(self, name='saveFig', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='MPLFigure', required=False, name='figure')    
         ip.append(datatype=None, required=False, name='fname')
@@ -4531,7 +4531,7 @@ format      - one of 'pdf', 'png', 'ps', 'svg'. It is used to specify the
             
         self.widgetDescr['facecolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':cnames.keys(),
+            'choices':list(cnames.keys()),
             'fixedChoices':True,
             'initialValue':'w',
             'entryfield_entry_width':7,
@@ -4541,7 +4541,7 @@ format      - one of 'pdf', 'png', 'ps', 'svg'. It is used to specify the
         
         self.widgetDescr['edgecolor'] = {
             'class':'NEComboBox', 'master':'ParamPanel',
-            'choices':cnames.keys(),
+            'choices':list(cnames.keys()),
             'fixedChoices':True,
             'initialValue':'w',
             'entryfield_entry_width':7,
@@ -4594,7 +4594,7 @@ and y repeated to fill the matrix
     """
     def __init__(self, name='MeshGrid', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='list',required=False, name='x')
         ip.append(datatype='list',required=False, name='y')
@@ -4611,7 +4611,7 @@ class BivariateNormal(NetworkNode):
     """Bivariate gaussan distribution for equal shape X, Y"""
     def __init__(self, name='BivariateNormal', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         ip = self.inputPortsDescr
         ip.append(datatype='None', name='arraylist1')
         ip.append(datatype='None', name='arraylist2')

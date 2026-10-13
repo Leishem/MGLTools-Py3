@@ -39,7 +39,7 @@ try:
     Pmv_0 = PmvNode(vf=masterNet.editor.vf, constrkw = {'vf': 'masterNet.editor.vf'}, name='Pmv', library=pmvlib)
     masterNet.addNode(Pmv_0,22,13)
 except:
-    print "WARNING: failed to restore PmvNode named Pmv in network masterNet"
+    print("WARNING: failed to restore PmvNode named Pmv in network masterNet")
     print_exc()
     Pmv_0=None
 
@@ -49,7 +49,7 @@ try:
     Get_Selection_1 = PmvGetSelection(constrkw = {}, name='Get Selection', library=pmvlib)
     masterNet.addNode(Get_Selection_1,22,58)
 except:
-    print "WARNING: failed to restore PmvGetSelection named Get Selection in network masterNet"
+    print("WARNING: failed to restore PmvGetSelection named Get Selection in network masterNet")
     print_exc()
     Get_Selection_1=None
 
@@ -58,9 +58,9 @@ try:
     from Volume.VisionInterface.VolumeNodes import UTBlurring
     UT_Blur_2 = UTBlurring(constrkw = {}, name='UT Blur', library=vollib)
     masterNet.addNode(UT_Blur_2,4,142)
-    apply(UT_Blur_2.inputPortByName['Xdim'].configure, (), {'color': 'yellow', 'cast': True, 'shape': 'circle'})
-    apply(UT_Blur_2.inputPortByName['Ydim'].configure, (), {'color': 'yellow', 'cast': True, 'shape': 'circle'})
-    apply(UT_Blur_2.inputPortByName['Zdim'].configure, (), {'color': 'yellow', 'cast': True, 'shape': 'circle'})
+    UT_Blur_2.inputPortByName['Xdim'].configure(*(), **{'color': 'yellow', 'cast': True, 'shape': 'circle'})
+    UT_Blur_2.inputPortByName['Ydim'].configure(*(), **{'color': 'yellow', 'cast': True, 'shape': 'circle'})
+    UT_Blur_2.inputPortByName['Zdim'].configure(*(), **{'color': 'yellow', 'cast': True, 'shape': 'circle'})
     UT_Blur_2.inputPortByName['Xdim'].widget.set(32, run=False)
     UT_Blur_2.inputPortByName['Xdim'].unbindWidget()
     UT_Blur_2.inputPortByName['Ydim'].widget.set(32, run=False)
@@ -68,9 +68,9 @@ try:
     UT_Blur_2.inputPortByName['Zdim'].widget.set(32, run=False)
     UT_Blur_2.inputPortByName['Zdim'].unbindWidget()
     UT_Blur_2.inputPortByName['blobbyness'].widget.set(-0.2, run=False)
-    apply(UT_Blur_2.configure, (), {'expanded': True})
+    UT_Blur_2.configure(*(), **{'expanded': True})
 except:
-    print "WARNING: failed to restore UTBlurring named UT Blur in network masterNet"
+    print("WARNING: failed to restore UTBlurring named UT Blur in network masterNet")
     print_exc()
     UT_Blur_2=None
 
@@ -81,7 +81,7 @@ try:
     masterNet.addNode(UT_Isocontour_3,16,330)
     UT_Isocontour_3.inputPortByName['isovalue'].widget.set(16.85935, run=False)
 except:
-    print "WARNING: failed to restore Isocontour named UT-Isocontour in network masterNet"
+    print("WARNING: failed to restore Isocontour named UT-Isocontour in network masterNet")
     print_exc()
     UT_Isocontour_3=None
 
@@ -92,7 +92,7 @@ try:
     masterNet.addNode(IndexedPolygons_4,17,370)
     IndexedPolygons_4.inputPortByName['name'].widget.set("", run=False)
 except:
-    print "WARNING: failed to restore IndexedPolygonsNE named IndexedPolygons in network masterNet"
+    print("WARNING: failed to restore IndexedPolygonsNE named IndexedPolygons in network masterNet")
     print_exc()
     IndexedPolygons_4=None
 
@@ -111,7 +111,7 @@ try:
     ## End Clipping Planes for root
 
 except:
-    print "WARNING: failed to restore PmvViewer named Pmv Viewer in network masterNet"
+    print("WARNING: failed to restore PmvViewer named Pmv Viewer in network masterNet")
     print_exc()
     Pmv_Viewer_5=None
 
@@ -120,12 +120,12 @@ try:
     from Vision.StandardNodes import DialNE
     Dial_6 = DialNE(constrkw = {}, name='Dial', library=stdlib)
     masterNet.addNode(Dial_6,210,8)
-    apply(Dial_6.inputPortByName['mini'].configure, (), {'datatype': 'int', 'cast': True, 'shape': 'circle', 'color': 'yellow'})
-    apply(Dial_6.inputPortByName['maxi'].configure, (), {'datatype': 'int', 'cast': True, 'shape': 'circle', 'color': 'yellow'})
-    apply(Dial_6.inputPortByName['dial'].widget.configure, (), {'continuous': None, 'type': 'int'})
+    Dial_6.inputPortByName['mini'].configure(*(), **{'datatype': 'int', 'cast': True, 'shape': 'circle', 'color': 'yellow'})
+    Dial_6.inputPortByName['maxi'].configure(*(), **{'datatype': 'int', 'cast': True, 'shape': 'circle', 'color': 'yellow'})
+    Dial_6.inputPortByName['dial'].widget.configure(*(), **{'continuous': None, 'type': 'int'})
     Dial_6.inputPortByName['dial'].widget.set(32, run=False)
 except:
-    print "WARNING: failed to restore DialNE named Dial in network masterNet"
+    print("WARNING: failed to restore DialNE named Dial in network masterNet")
     print_exc()
     Dial_6=None
 
@@ -137,7 +137,7 @@ try:
     ConnectedComponents_7.inputPortByName['onegeom'].widget.set(1, run=False)
     #apply(ConnectedComponents_7.configure, (), {'expanded': True})
 except:
-    print "WARNING: failed to restore ConnectedComponents named ConnectedComponents in network masterNet"
+    print("WARNING: failed to restore ConnectedComponents named ConnectedComponents in network masterNet")
     print_exc()
     ConnectedComponents_7=None
 
@@ -149,61 +149,61 @@ if Pmv_0 is not None and Get_Selection_1 is not None:
         masterNet.connectNodes(
             Pmv_0, Get_Selection_1, "PMV", "Pmv", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Pmv_0 and Get_Selection_1 in network masterNet"
+        print("WARNING: failed to restore connection between Pmv_0 and Get_Selection_1 in network masterNet")
 if UT_Blur_2 is not None and UT_Isocontour_3 is not None:
     try:
         masterNet.connectNodes(
             UT_Blur_2, UT_Isocontour_3, "maskGrid", "grid3D", blocking=True)
     except:
-        print "WARNING: failed to restore connection between UT_Blur_2 and UT_Isocontour_3 in network masterNet"
+        print("WARNING: failed to restore connection between UT_Blur_2 and UT_Isocontour_3 in network masterNet")
 if UT_Isocontour_3 is not None and IndexedPolygons_4 is not None:
     try:
         masterNet.connectNodes(
             UT_Isocontour_3, IndexedPolygons_4, "coords", "coords", blocking=True)
     except:
-        print "WARNING: failed to restore connection between UT_Isocontour_3 and IndexedPolygons_4 in network masterNet"
+        print("WARNING: failed to restore connection between UT_Isocontour_3 and IndexedPolygons_4 in network masterNet")
 if UT_Isocontour_3 is not None and IndexedPolygons_4 is not None:
     try:
         masterNet.connectNodes(
             UT_Isocontour_3, IndexedPolygons_4, "indices", "indices", blocking=True)
     except:
-        print "WARNING: failed to restore connection between UT_Isocontour_3 and IndexedPolygons_4 in network masterNet"
+        print("WARNING: failed to restore connection between UT_Isocontour_3 and IndexedPolygons_4 in network masterNet")
 if UT_Isocontour_3 is not None and IndexedPolygons_4 is not None:
     try:
         masterNet.connectNodes(
             UT_Isocontour_3, IndexedPolygons_4, "normals", "vnormals", blocking=True)
     except:
-        print "WARNING: failed to restore connection between UT_Isocontour_3 and IndexedPolygons_4 in network masterNet"
+        print("WARNING: failed to restore connection between UT_Isocontour_3 and IndexedPolygons_4 in network masterNet")
 if IndexedPolygons_4 is not None and Pmv_Viewer_5 is not None:
     try:
         masterNet.connectNodes(
             IndexedPolygons_4, Pmv_Viewer_5, "indexedPolygons", "geometries", blocking=True)
     except:
-        print "WARNING: failed to restore connection between IndexedPolygons_4 and Pmv_Viewer_5 in network masterNet"
+        print("WARNING: failed to restore connection between IndexedPolygons_4 and Pmv_Viewer_5 in network masterNet")
 if Get_Selection_1 is not None and UT_Blur_2 is not None:
     try:
         masterNet.connectNodes(
             Get_Selection_1, UT_Blur_2, "nodes", "molFrag", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Get_Selection_1 and UT_Blur_2 in network masterNet"
+        print("WARNING: failed to restore connection between Get_Selection_1 and UT_Blur_2 in network masterNet")
 if Dial_6 is not None and UT_Blur_2 is not None:
     try:
         masterNet.connectNodes(
             Dial_6, UT_Blur_2, "value", "Xdim", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Dial_6 and UT_Blur_2 in network masterNet"
+        print("WARNING: failed to restore connection between Dial_6 and UT_Blur_2 in network masterNet")
 if Dial_6 is not None and UT_Blur_2 is not None:
     try:
         masterNet.connectNodes(
             Dial_6, UT_Blur_2, "value", "Ydim", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Dial_6 and UT_Blur_2 in network masterNet"
+        print("WARNING: failed to restore connection between Dial_6 and UT_Blur_2 in network masterNet")
 if Dial_6 is not None and UT_Blur_2 is not None:
     try:
         masterNet.connectNodes(
             Dial_6, UT_Blur_2, "value", "Zdim", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Dial_6 and UT_Blur_2 in network masterNet"
+        print("WARNING: failed to restore connection between Dial_6 and UT_Blur_2 in network masterNet")
 masterNet.unfreeze()
 if Dial_6:
     Dial_6.run()

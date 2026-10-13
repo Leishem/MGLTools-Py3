@@ -106,7 +106,7 @@ while 1:
         print handlerObj.getLocation()
         self.handler.getForces(None)
         #IIMD_send_forces       ( &N_forces, (const int* ) atoms_list, 
-	#		       (const float *) forces_list );
+        #		       (const float *) forces_list );
         #print self.handler.N_forces, self.handler.atoms_list, self.handler.forces_list
         self.imd.imd_send_mdcomm(self.handler.N_forces, self.handler.atoms_list, self.handler.forces_list)
     i=i+1"""

@@ -39,9 +39,9 @@ class TreeNode:
         args[0] = self
         a = tuple([f] + args)
 
-        apply(f, args, kw)
+        f(*args, **kw)
         for c in self.children:
-            apply(c.pre_traverse, a, kw)
+            c.pre_traverse(*a, **kw)
 
 
     def post_traverse(self, f, *args, **kw):
@@ -52,8 +52,8 @@ class TreeNode:
         args[0] = self
         a = tuple([f] + args)
         for c in self.children:
-            apply(c.post_traverse, a, kw)
-        apply(f, args, kw)
+            c.post_traverse(*a, **kw)
+        f(*args, **kw)
 
 
 
@@ -90,7 +90,7 @@ class TreeIterator:
         self.currentNode = self.iterRoot
 
 
-    def next(self):
+    def __next__(self):
         """Move currentNode on to the next item in the traversal.
 
         Over-ride this method to provide a specific type of traversal
@@ -111,7 +111,7 @@ class PostTreeIterator(TreeIterator):
         self.currentIx = 0
 
 
-    def next(self):
+    def __next__(self):
         self.currentNode = self.nodeList[self.currentIx]
         self.currentIx = self.currentIx + 1
         if self.currentIx == len(self.nodeList):
@@ -129,7 +129,7 @@ class PreTreeIterator(TreeIterator):
         self.currentIx = 0
 
 
-    def next(self):
+    def __next__(self):
         self.currentNode = self.nodeList[self.currentIx]
         self.currentIx = self.currentIx + 1
         if self.currentIx == len(self.nodeList):

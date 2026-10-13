@@ -1,6 +1,6 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from string import split
 from  Volume.Grid3D import Grid3DF, Grid3DSI, Grid3DUC
 
@@ -48,14 +48,14 @@ class ReadDX:
         h['stepz'] = sz = float(w[3])
 
         self.data = array = Numeric.zeros( (nx,ny,nz), Numeric.Float32)
-        values = map(split, data[11:-5])
+        values = list(map(split, data[11:-5]))
         ind=0
         size = nx*ny*nz
         for line in values:
             if ind>=size:
                 break
             l = len(line)
-            array.flat[ind:ind+l] = map(float, line)
+            array.flat[ind:ind+l] = list(map(float, line))
             ind = ind + l
 
         stepSize = [h['stepx'], h['stepy'], h['stepz']]
@@ -64,17 +64,17 @@ class ReadDX:
 
 
     def describe(self):
-        print "DX file: ", self.filename
-        print "nx= ", self.header['nx']
-        print "ny= ", self.header['ny'] 
-        print "nz= ", self.header['nz'] 
+        print("DX file: ", self.filename)
+        print("nx= ", self.header['nx'])
+        print("ny= ", self.header['ny']) 
+        print("nz= ", self.header['nz']) 
         #print "xlen= ", self.header['xlen'] 
         #print "ylen= ", self.header['ylen'] 
         #print "zlen= ", self.header['zlen']
-        print "min= ", min(self.data.ravel())
-        print "max= ", max(self.data.ravel())
+        print("min= ", min(self.data.ravel()))
+        print("max= ", max(self.data.ravel()))
         #print "mean= ", self.header['amean']
-        print "origin= ", self.header['origin'] 
+        print("origin= ", self.header['origin']) 
 
 
 if __name__=='__main__':

@@ -19,12 +19,12 @@ except:
     #
     # We need apbslib.so, apbslib.so and apbslib.py
     #
-    print
-    print 'Missing libraries for interfacing with APBS'
-    print
-    print 'You need to find apbslib.so, _apbslib.so and apbslib.py and symlink into the pdb2pqr/pKa source code directory'
-    print 'The files can be found in the tools/python dir of your apbs installation'
-    print
+    print()
+    print('Missing libraries for interfacing with APBS')
+    print()
+    print('You need to find apbslib.so, _apbslib.so and apbslib.py and symlink into the pdb2pqr/pKa source code directory')
+    print('The files can be found in the tools/python dir of your apbs installation')
+    print()
     sys.exit(0)
 
 Python_kb = 1.3806581e-23
@@ -52,7 +52,7 @@ class APBSError(Exception):
         """
             Return the error message
         """
-        return `self.value`
+        return repr(self.value)
 
 def getUnitConversion():
     """
@@ -117,7 +117,7 @@ def runAPBS(protein, inputpath):
     sys.stdout.write("Parsing input file %s...\n" % inputpath)
     if NOsh_parseFile(nosh, inputpath) != 1:
         sys.stderr.write("main:  Error while parsing input file.\n")
-        raise APBSError, "Error while parsing input file!"
+        raise APBSError("Error while parsing input file!")
 
     # Load the molecules using Valist_load routine
 
@@ -151,32 +151,32 @@ def runAPBS(protein, inputpath):
   
     if loadDielMaps(nosh, dielXMap, dielYMap, dielZMap) != 1:
         sys.stderr.write("Error reading dielectric maps!\n")
-        raise APBSError, "Error reading dielectric maps!"
+        raise APBSError("Error reading dielectric maps!")
  
     # Load the kappa maps
     kappaMap = new_gridlist(NOSH_MAXMOL)
     if loadKappaMaps(nosh, kappaMap) != 1:
         sys.stderr.write("Error reading kappa maps!\n")
-        raise APBSError, "Error reading kappa maps!"
+        raise APBSError("Error reading kappa maps!")
 
     # Load the charge maps
     chargeMap = new_gridlist(NOSH_MAXMOL)
     if loadChargeMaps(nosh, chargeMap) != 1:
         sys.stderr.write("Error reading charge maps!\n")
-        raise APBSError, "Error reading charge maps!"
+        raise APBSError("Error reading charge maps!")
     
     # Do the calculations
  
     sys.stdout.write("Preparing to run %d PBE calculations. \n" % nosh.ncalc)
    
-    for icalc in xrange(nosh.ncalc):
+    for icalc in range(nosh.ncalc):
         sys.stdout.write("---------------------------------------------\n")
         calc = NOsh_getCalc(nosh, icalc)
         mgparm = calc.mgparm
         pbeparm = calc.pbeparm
         if calc.calctype != 0:
             sys.stderr.write("main:  Only multigrid calculations supported!\n")
-            raise APBSError, "Only multigrid calculations supported!"
+            raise APBSError("Only multigrid calculations supported!")
 
         for k in range(0, nosh.nelec):
             if NOsh_elec2calc(nosh,k) >= icalc:
@@ -188,46 +188,46 @@ def runAPBS(protein, inputpath):
         else:
             sys.stdout.write("CALCULATION #%d (%s): MULTIGRID\n" % ((icalc+1),name))
         sys.stdout.write("Setting up problem...\n")
-	
+        
         # Routine initMG
-	
+        
         if initMG(icalc, nosh, mgparm, pbeparm, realCenter, pbe, 
               alist, dielXMap, dielYMap, dielZMap, kappaMap, chargeMap, 
               pmgp, pmg) != 1:
             sys.stderr.write("Error setting up MG calculation!\n")
-            raise APBSError, "Error setting up MG calculation!"
-	
+            raise APBSError("Error setting up MG calculation!")
+        
         # Print problem parameters 
-	
+        
         printMGPARM(mgparm, realCenter)
         printPBEPARM(pbeparm)
-	
+        
         # Solve the problem : Routine solveMG
-	
+        
         thispmg = get_Vpmg(pmg,icalc)
 
         if solveMG(nosh, thispmg, mgparm.type) != 1:
             stderr.write("Error solving PDE! \n")
-            raise APBSError, "Error Solving PDE!"
+            raise APBSError("Error Solving PDE!")
 
         # Set partition information : Routine setPartMG
 
         if setPartMG(nosh, mgparm, thispmg) != 1:
             sys.stderr.write("Error setting partition info!\n")
-            raise APBSError, "Error setting partition info!"
-	
+            raise APBSError("Error setting partition info!")
+        
         ret, totEnergy[icalc] = energyMG(nosh, icalc, thispmg, 0,
                                          totEnergy[icalc], 0.0, 0.0, 0.0)
-	
+        
         # Set partition information
 
         #aforce = get_AtomForce(atomforce, icalc)
         #forceMG(mem, nosh, pbeparm, mgparm, thispmg, nfor, aforce, alist)
         #ptrset(nforce,ptrvalue(nfor), icalc)
-	
+        
         # Write out data from MG calculations : Routine writedataMG	
         writedataMG(rank, nosh, pbeparm, thispmg)
-	
+        
         # Write out matrix from MG calculations	
         writematMG(rank, nosh, pbeparm, thispmg)
 
@@ -242,7 +242,7 @@ def runAPBS(protein, inputpath):
     if nosh.nprint > 0:
         sys.stdout.write("---------------------------------------------\n")
         sys.stdout.write("PRINT STATEMENTS\n")
-    for iprint in xrange(nosh.nprint):
+    for iprint in range(nosh.nprint):
         if NOsh_printWhat(nosh, iprint) == NPT_ENERGY:
             printEnergy(com, nosh, totEnergy, iprint)
         elif NOsh_printWhat(nosh, iprint) == NPT_FORCE:

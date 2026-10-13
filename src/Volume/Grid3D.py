@@ -1,6 +1,6 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 import numpy
 
 class Grid3D:
@@ -114,9 +114,9 @@ data attribute is used as data
         data = self.data
 
         mymin, mymax, mymean, mystdev = self.stats()
-        for i in xrange(data.shape[0]):
-            for j in xrange(data.shape[1]):
-                for k in xrange(data.shape[2]):
+        for i in range(data.shape[0]):
+            for j in range(data.shape[1]):
+                for k in range(data.shape[2]):
                     data[i][j][k] = (data[i][j][k]-mymean)/mystdev
         self.header['amean'] = mymean
         self.header['arms'] = mystdev

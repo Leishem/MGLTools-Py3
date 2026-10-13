@@ -18,31 +18,31 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: write_random_state_ligand.py -l filename"
-        print "    Description of command..."
-        print "        [-l]    ligand filename"
-        print "    Optional parameters:"
-        print "        [-o]    alternative output filename"
-        print "        (default is filename_stem+'_random_.pdbqt')"
-        print "        [-t]    translation scale"
-        print "                 (default is 10)"
-        print "        [-x]    axis scale"
-        print "                 (default is 2)"
-        print "        [-a]    angle scale"
-        print "                 (default is 360)"
-        print "        [-d]    torsion scale"
-        print "                 (default is 90)"
-        print "        [-n]    number of tries"
-        print "                 (default is 20)"
-        print "        [-v]    verbose output"
-        print
+        print("Usage: write_random_state_ligand.py -l filename")
+        print("    Description of command...")
+        print("        [-l]    ligand filename")
+        print("    Optional parameters:")
+        print("        [-o]    alternative output filename")
+        print("        (default is filename_stem+'_random_.pdbqt')")
+        print("        [-t]    translation scale")
+        print("                 (default is 10)")
+        print("        [-x]    axis scale")
+        print("                 (default is 2)")
+        print("        [-a]    angle scale")
+        print("                 (default is 360)")
+        print("        [-d]    torsion scale")
+        print("                 (default is 90)")
+        print("        [-n]    number of tries")
+        print("                 (default is 20)")
+        print("        [-v]    verbose output")
+        print()
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'l:o:t:x:a:d:n:vh')
 
-    except getopt.GetoptError, msg:
-        print 'write_random_state_ligand.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('write_random_state_ligand.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -63,47 +63,47 @@ if __name__ == '__main__':
     for o, a in opt_list:
         if o in ('-l', '--l'):
             filename = a
-            if verbose: print 'set filename to ', filename
+            if verbose: print('set filename to ', filename)
             stem, ext = os.path.splitext(filename)
             stem =stem.split('_')[0]
             outputfilename =  stem + '_random' + ext
-            if verbose: print " default outputfilename is ", outputfilename
+            if verbose: print(" default outputfilename is ", outputfilename)
         if o in ('-t', '--t'):
             tscale = float(a)
-            if verbose: print 'set translation scale factor to ', tscale
+            if verbose: print('set translation scale factor to ', tscale)
         if o in ('-x', '--x'):
             xscale = a
-            if verbose: print 'set axis scale factor  to ', xscale
+            if verbose: print('set axis scale factor  to ', xscale)
         if o in ('-a', '--a'):
             ascale = float(a)
-            if verbose: print 'set angle scale factor to ', ascale
+            if verbose: print('set angle scale factor to ', ascale)
         if o in ('-d', '--d'):
             dscale = float(a)
-            if verbose: print 'set torsions scale factor to ', dscale
+            if verbose: print('set torsions scale factor to ', dscale)
         if o in ('-n', '--n'):
             ntries = int(a)
-            if verbose: print 'set number of tries to ', ntries
+            if verbose: print('set number of tries to ', ntries)
         if o in ('-o', '--o'):
             outputfilename = a 
-            if verbose: print 'set output outputfilename to ', a
+            if verbose: print('set output outputfilename to ', a)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
     if not filename:
-        print 'write_random_state_ligand: filename must be specified.'
+        print('write_random_state_ligand: filename must be specified.')
         usage()
         sys.exit()
 
     m = Read(filename)[0]
-    if verbose: print 'read ', filename
+    if verbose: print('read ', filename)
     #validate specified ligand file
     assert hasattr(m, 'torTree'), "specified ligand does not have a torsion tree"
     ndihe = m.parser.keys.count('BRANCH')
-    if verbose: print m.name, ' has ', ndihe, ' torsions'
+    if verbose: print(m.name, ' has ', ndihe, ' torsions')
 
     #1. prepare molecule 
     m.buildBondsByDistance()
@@ -127,7 +127,7 @@ if __name__ == '__main__':
             #do not subtract origin here, i don't understand why not
             #TRANS.append((random.uniform(-1,1)*tscale)-origin[i])
             TRANS.append(random.uniform(-1,1)*tscale)
-        if verbose: print 'translation=', TRANS
+        if verbose: print('translation=', TRANS)
         #rot = [1,0,0,180]
         #for the rotation axis, use xscale
         rot = []
@@ -135,12 +135,12 @@ if __name__ == '__main__':
             rot.append(random.uniform(-1,1)*xscale)
         #for the rotation angle
         rot.append(random.uniform(-1,1)*ascale)
-        if verbose: print 'axis=', rot[:3], ' and angle=', rot[-1]
+        if verbose: print('axis=', rot[:3], ' and angle=', rot[-1])
         #torsions:
         dihe = []
         for ind in range(ndihe):
             dihe.append(dscale * random.uniform(-1,1))
-        if verbose: print 'dihe=', dihe
+        if verbose: print('dihe=', dihe)
         conf = Conformation(m, origin, TRANS, rot, dihe)
         new_coords = conf.getCoords()
         #verify that no new bonds would be formed for this conformation
@@ -155,7 +155,7 @@ if __name__ == '__main__':
             a.hasBonds = 0
         m.buildBondsByDistance()
         newLen = len(m.allAtoms.bonds[0])
-        if verbose: print "originally %d bonds form; after transformation %d bonds form" %(orig, newLen)
+        if verbose: print("originally %d bonds form; after transformation %d bonds form" %(orig, newLen))
         new_d = {}
         for a in m.allAtoms: new_d[a]=set(a.bonds.getAtoms())
         ok = True
@@ -163,28 +163,28 @@ if __name__ == '__main__':
             if orig_d[a]!=new_d[a]:
                 ok = False
                 if verbose: 
-                    print "bonds differ for %s: %d v %d" %(a.full_name(), len(orig_d[a]), len(new_d[a]))
+                    print("bonds differ for %s: %d v %d" %(a.full_name(), len(orig_d[a]), len(new_d[a])))
         #for a in m.allAtoms:
         #    assert orig_d[a]==new_d[a], '%s bonds differ: %d v %d' %(a.full_name(), len(orig_d[a]), len(new_d[a]))
-        if verbose: print "end of try ", new_try+1
+        if verbose: print("end of try ", new_try+1)
         if ok: 
-            print "new conformation found in",
+            print("new conformation found in", end=' ')
             if new_try==0:
-                print "1 try" 
+                print("1 try") 
             else:
-                print "%d tries" %(new_try+1)
+                print("%d tries" %(new_try+1))
             break
     if ok:
         if verbose: 
-            print 'no new contacts formed so writing file after ', new_try+1,
+            print('no new contacts formed so writing file after ', new_try+1, end=' ')
             if new_try==0:
-                print ' try...'
+                print(' try...')
             else:
-                print ' tries...'
+                print(' tries...')
         m.parser.write_with_new_coords(new_coords, outputfilename)
-        if verbose: print "wrote new conformation in ", outputfilename
+        if verbose: print("wrote new conformation in ", outputfilename)
     else:
-        print "FAILED! no new conformation found in %d attempts!!!" %ntries
+        print("FAILED! no new conformation found in %d attempts!!!" %ntries)
 
 
 # To execute this command type:

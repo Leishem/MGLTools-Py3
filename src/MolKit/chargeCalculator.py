@@ -107,11 +107,11 @@ atom._charge dictionary and to set the atom.chargeSet to self.chtype
     def addCharges(self, atoms):
         #print 'in KollmanChargeCalculator.addCharges'
         for a in atoms:
-            if not self.q.has_key(a.parent.type):
+            if a.parent.type not in self.q:
                 a._charges['Kollman'] = 0.0
             else:
                 dict = self.q[a.parent.type]
-                if dict.has_key(a.name):
+                if a.name in dict:
                     a._charges['Kollman'] = dict[a.name]
                 else:
                     a._charges['Kollman'] = 0.0
@@ -147,25 +147,25 @@ atom._charge dictionary and to set the atom.chargeSet to self.chtype
         """
         nresSet =  nres.atoms.get('N')
         if nresSet is None or not len(nresSet):
-            if self.q.has_key(nres.type):
+            if nres.type in self.q:
                 for at in nres.atoms:
                     try:
                         at._charges['Kollman'] = self.q[at.parent.type][at.name]
                     except:
                         at._charges['Kollman'] = 0.0
             else:
-                print  nres.name, ' not in qkollua; charges set to 0.0'
+                print(nres.name, ' not in qkollua; charges set to 0.0')
                 for at in nres.atoms:
                     at._charges['Kollman'] = 0.0
             return 
         Natom = nres.atoms.get('N')[0]
         caresSet = nres.atoms.get('CA')
         if caresSet is None or not len(caresSet):
-            if self.q.has_key(nres.type):
+            if nres.type in self.q:
                 for at in nres.atoms:
                     at._charges['Kollman'] = self.q[at.parent.type][at.name]
             else:
-                print  nres.name, ' not in qkollua; charges set to 0.0'
+                print(nres.name, ' not in qkollua; charges set to 0.0')
                 for at in nres.atoms:
                     at._charges['Kollman'] = 0.0
             return 
@@ -173,7 +173,7 @@ atom._charge dictionary and to set the atom.chargeSet to self.chtype
         hlist = Natom.findHydrogens()
         #5/5:assert len(hlist), 'polar hydrogens missing from n-terminus'
         if not len(hlist): 
-            print 'polar hydrogens missing from n-terminus of chain ' + nres.parent.name
+            print('polar hydrogens missing from n-terminus of chain ' + nres.parent.name)
             #self.vf.warningMsg('polar hydrogens missing from n-terminus')
         if nres.type == 'PRO':
             #divide .059 additional charge between CA + CD
@@ -184,7 +184,7 @@ atom._charge dictionary and to set the atom.chargeSet to self.chtype
                 CDatom = CDatom[0]
                 CDatom._charges['Kollman'] = CDatom._charges['Kollman'] + .029
             else:
-                print 'WARNING: no CD atom in ', nres.name
+                print('WARNING: no CD atom in ', nres.name)
             Natom._charges['Kollman'] = Natom._charges['Kollman'] + .274
             CAatom._charges['Kollman'] = CAatom._charges['Kollman'] + .030
             for ha in hlist:
@@ -254,12 +254,12 @@ atom._charge dictionary and to set the atom.chargeSet to self.chtype
             d = q['HIS']
         else:
             msgStr = his.full_name() + ' missing both hydrogens!'
-            print msgStr
+            print(msgStr)
             return 
 
         #assign charges
         for a in his.atoms:
-            if d.has_key(a.name):
+            if a.name in d:
                 a._charges['Kollman'] = d[a.name]
             else:
                 a._charges['Kollman'] = 0.0
@@ -286,7 +286,7 @@ atom._charge dictionary and to set the atom.chargeSet to self.chtype
 
         #assign charges
         for a in cys.atoms:
-            if d.has_key(a.name):
+            if a.name in d:
                 a._charges['Kollman'] = d[a.name]
             else:
                 a._charges['Kollman'] = 0.0

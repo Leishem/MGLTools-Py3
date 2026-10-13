@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 
 class SphereMask:
@@ -9,7 +9,7 @@ class SphereMask:
         """Radius is the the sphere radius (integer).
 A 3D array of size 2*radius + 1 will contain the discrete sphere
 """
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         size = 2*radius + 1
         self.centerIndex = radius
         self.grid = Numeric.zeros((size, size, size), Numeric.UnsignedInt8)
@@ -115,7 +115,7 @@ each dimentsion.
     
     def __init__(self, centers, radii, gridSpacing, gridOrigin,
                  gridSize):
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         self.grid = Numeric.zeros(gridSize, Numeric.UnsignedInt8)
         self.origin = gridOrigin
         self.spacing = gridSpacing
@@ -132,12 +132,12 @@ each dimentsion.
             #i += 1
         for r in radii:
             dr = round(r/self.minSpacing)
-            if not self.sphereMasks.has_key(dr):
+            if dr not in self.sphereMasks:
                 self.sphereMasks[dr] = SphereMask( dr )
 
         largeMap = self.grid
         lx, ly, lz = largeMap.shape
-        from numpy.oldnumeric import logical_or
+        from mglcompat.oldnumeric import logical_or
         i=0
         for p, r in zip(self.positions, radii):
             #print i
@@ -161,7 +161,7 @@ each dimentsion.
             #print 'dims', lx, ly, lz
 
             if px2<0 or py2<0 or py2<0 or px1>lx or py1>ly or py1>lz:
-                print 'discreteSpheres: WARNING: sphere %d outside grid, it is skipped', i
+                print('discreteSpheres: WARNING: sphere %d outside grid, it is skipped', i)
                 continue
             if px1<0:
                 ox = -px1
@@ -194,7 +194,7 @@ each dimentsion.
 
 if __name__=='__main__':
     #sm = SphereMask( 3 )
-    #import numpy.oldnumeric as Numeric
+    #import mglcompat.oldnumeric as Numeric
     #largeMap = Numeric.zeros((22, 11, 11), Numeric.UnsignedInt8)
     #stencilSphereMap(largeMap, sm.grid, [(5, 5, 5), (15, 5, 5)])
 
@@ -203,15 +203,15 @@ if __name__=='__main__':
     radii = mols[0].defaultRadii()
     maxr= max(radii)
     coords = mols.chains.residues.atoms.coords[:]
-    mini = (min(map(lambda x: x[0], coords)), min(map(lambda x: x[1], coords)),
-            min(map(lambda x: x[2], coords)))
+    mini = (min([x[0] for x in coords]), min([x[1] for x in coords]),
+            min([x[2] for x in coords]))
 
-    maxi = (max(map(lambda x: x[0], coords)), max(map(lambda x: x[1], coords)),
-            max(map(lambda x: x[2], coords)))
+    maxi = (max([x[0] for x in coords]), max([x[1] for x in coords]),
+            max([x[2] for x in coords]))
 
     padding = 10
-    minimum = map( lambda i: int(mini[i] - maxr) - padding, [0,1,2])
-    maximum = map( lambda i: int(maxi[i] + maxr + 1) + padding, [0,1,2])
+    minimum = [int(mini[i] - maxr) - padding for i in [0,1,2]]
+    maximum = [int(maxi[i] + maxr + 1) + padding for i in [0,1,2]]
     delta = [maximum[0]-minimum[0], maximum[1]-minimum[1], maximum[2]-minimum[2]]
     #
     dcpk = discreteCPK(coords, radii, 0.5, minimum, [delta[0]*2,delta[1]*2,delta[2]*2])

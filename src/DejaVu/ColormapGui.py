@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -15,9 +15,9 @@
 # $Id$
 #
 
-import types, numpy.oldnumeric as Numeric, os, sys
-import Tkinter, Pmw
-import tkFileDialog
+import types, mglcompat.oldnumeric as Numeric, os, sys
+import tkinter, Pmw
+import tkinter.filedialog
 from string import strip, split, find
 
 from opengltk.OpenGL import GL
@@ -77,7 +77,7 @@ class DummyEvent:
 
 COLORMAPGUI_MAXIMAL_HEIGHT = 1024
 
-class ColorMapGUI(Tkinter.Frame, ColorMap):
+class ColorMapGUI(tkinter.Frame, ColorMap):
     """The ColorMapGUI is an object providing an interface to expose
 and to modify a ColorMap object.
 
@@ -164,9 +164,9 @@ ColorMap.ramp and which can be labeled.
         # Create parts of the GUI
         if master is None:
             if viewer:
-                theMaster = Tkinter.Toplevel(viewer.master)
+                theMaster = tkinter.Toplevel(viewer.master)
             else:
-                theMaster = Tkinter.Toplevel()
+                theMaster = tkinter.Toplevel()
         else:
             theMaster = master
 
@@ -180,8 +180,8 @@ ColorMap.ramp and which can be labeled.
                 master2 = master2.master
             master2.withdraw()
         
-        Tkinter.Frame.__init__(self, theMaster)
-        Tkinter.Pack.config(self, expand=1, fill='both')
+        tkinter.Frame.__init__(self, theMaster)
+        tkinter.Pack.config(self, expand=1, fill='both')
         if hasattr(theMaster, 'title'):
             theMaster.title(self.name)
         # Canvas width (default=200)
@@ -197,7 +197,7 @@ ColorMap.ramp and which can be labeled.
         # DejaVu viewer to which colorMapLegend is added 
         self.viewer = None 
 
-        self.continuousUpdate = Tkinter.IntVar()
+        self.continuousUpdate = tkinter.IntVar()
         self.continuousUpdate.set(continuous)
 
         #if allowRename is False, name entry is disabled.
@@ -246,26 +246,26 @@ ColorMap.ramp and which can be labeled.
         self.currentLines = self.lines['Hue']
         self.currentValues = self.rightXVals['Hue']
 
-        Tkinter.Widget.bind(self, "<Enter>", self.enter_cb)
-        Tkinter.Widget.bind(self, "<Leave>", self.leave_cb)
+        tkinter.Widget.bind(self, "<Enter>", self.enter_cb)
+        tkinter.Widget.bind(self, "<Leave>", self.leave_cb)
 
         #set-up canvas mouse bindings:
         for idStr in ['Hue', 'Sat', 'Val', 'Opa']:
-            Tkinter.Widget.bind(self.canvas[idStr], "<ButtonPress-1>",
+            tkinter.Widget.bind(self.canvas[idStr], "<ButtonPress-1>",
                                 self.mouseDown)
-            Tkinter.Widget.bind(self.canvas[idStr], "<Button1-Motion>",
+            tkinter.Widget.bind(self.canvas[idStr], "<Button1-Motion>",
                                 self.mouseMotion)
-            Tkinter.Widget.bind(self.canvas[idStr], "<ButtonRelease-1>",
+            tkinter.Widget.bind(self.canvas[idStr], "<ButtonRelease-1>",
                                 self.mouseUp)
 
-            Tkinter.Widget.bind(self.canvas[idStr], "<Motion>",
+            tkinter.Widget.bind(self.canvas[idStr], "<Motion>",
                                 self.updateCurTk)
 
-            Tkinter.Widget.bind(self.canvas[idStr], "<ButtonPress-3>",
+            tkinter.Widget.bind(self.canvas[idStr], "<ButtonPress-3>",
                                 self.mouseDownRight)
-            Tkinter.Widget.bind(self.canvas[idStr], "<Button3-Motion>",
+            tkinter.Widget.bind(self.canvas[idStr], "<Button3-Motion>",
                                 self.mouseMotionRight)
-            Tkinter.Widget.bind(self.canvas[idStr], "<ButtonRelease-3>",
+            tkinter.Widget.bind(self.canvas[idStr], "<ButtonRelease-3>",
                                 self.mouseUpRight)
 
             self.canvas[idStr].configure(cursor='cross')
@@ -284,14 +284,14 @@ ColorMap.ramp and which can be labeled.
 
         if master is not None:
             master2 = theMaster
-            if hasattr(master2, 'master') is True and isinstance(master2.master,Tkinter.Widget):
+            if hasattr(master2, 'master') is True and isinstance(master2.master,tkinter.Widget):
                 master2 = master2.master
-            if hasattr(master2, 'master') is True and isinstance(master2.master,Tkinter.Widget):
+            if hasattr(master2, 'master') is True and isinstance(master2.master,tkinter.Widget):
                 master2 = master2.master
             #Tkinter.Widget.bind(master2, '<Configure>', self.configure_cb)
             self.inVision = True
         else:
-            Tkinter.Widget.bind(self.fullWidgetFrame, '<Configure>', self.configure_cb)
+            tkinter.Widget.bind(self.fullWidgetFrame, '<Configure>', self.configure_cb)
             self.inVision = False
 
 
@@ -404,7 +404,7 @@ ColorMap.ramp and which can be labeled.
         if self.maxi is not None:
             cmlOptions['maxi'] = self.maxi
 
-        self.legend = apply(ColorMapLegend, (self,), cmlOptions)
+        self.legend = ColorMapLegend(*(self,), **cmlOptions)
         
 
 #    def resetComp(self, comp):
@@ -516,8 +516,8 @@ after it's creation
             #self.legend.protected = True
             self.viewer.AddObject(self.legend, redo=0)   
 
-            self.showLegendVar = Tkinter.IntVar()
-            self.showLegendButton = Tkinter.Checkbutton(
+            self.showLegendVar = tkinter.IntVar()
+            self.showLegendButton = tkinter.Checkbutton(
                 self.buttonFrame, text='show legend',
                 variable=self.showLegendVar, command=self.showLegendButton_cb)       
             self.showLegendButton.grid(row=5, column=0, columnspan=2, sticky='w')
@@ -527,23 +527,23 @@ after it's creation
         """create Tkinter widgets: 4 canvas and buttons in 2 frames
 """
         #print "createWidgets"
-        self.fullWidgetFrame = Tkinter.Frame(master)
+        self.fullWidgetFrame = tkinter.Frame(master)
         self.fullWidgetFrame.pack(side='top', expand=1, fill='both')
 
         # create menu frame
-        self.menuFrame1 = Tkinter.Frame(self.fullWidgetFrame, relief='raised', borderwidth=3)
+        self.menuFrame1 = tkinter.Frame(self.fullWidgetFrame, relief='raised', borderwidth=3)
         self.menuFrame1.pack(side='top', expand=1, fill='x')
         
-        filebutton = Tkinter.Menubutton(self.menuFrame1, text='File')
+        filebutton = tkinter.Menubutton(self.menuFrame1, text='File')
         filebutton.pack(side='left')
-        filemenu = Tkinter.Menu(filebutton, {})
+        filemenu = tkinter.Menu(filebutton, {})
         filemenu.add_command(label='Read', command=self.read_cb)
         filemenu.add_command(label='Write', command=self.write_cb)
         filebutton['menu'] = filemenu
 
-        editbutton = Tkinter.Menubutton(self.menuFrame1, text='Edit')
+        editbutton = tkinter.Menubutton(self.menuFrame1, text='Edit')
         editbutton.pack(side='left', anchor='w')
-        editmenu = Tkinter.Menu(editbutton, {})
+        editmenu = tkinter.Menu(editbutton, {})
         editmenu.add_command(label='Reset to first in history', command=self.resetAll_cb)
         editmenu.add_command(label='Step back in history loop', command=self.stepBack_cb)
 ##         editmenu.add_checkbutton(label='Preview', variable=self.preview)
@@ -572,15 +572,15 @@ after it's creation
         self.numOfRampValues.pack(side='right', anchor='e')
 
         # create canvas frames
-        self.canvasesFrame = Tkinter.Frame(self.fullWidgetFrame)
+        self.canvasesFrame = tkinter.Frame(self.fullWidgetFrame)
 
         # create a frame for rproperties canvases
-        self.propCanvasFrame = Tkinter.Frame(self.canvasesFrame)
+        self.propCanvasFrame = tkinter.Frame(self.canvasesFrame)
         
         # create 4 canvases
         self.canvas = {}
         for idStr in self.idList:
-            self.canvas[idStr] = Tkinter.Canvas(
+            self.canvas[idStr] = tkinter.Canvas(
                 self.propCanvasFrame, relief='sunken', borderwidth=3,
                 width=self.width, height=self.height)
         #pack Hue to start with
@@ -594,30 +594,30 @@ after it's creation
         self.canvasesFrame.pack(side = 'top', expand=1, fill='both')
 
         # create a frame for buttons
-        self.buttonFrame = Tkinter.Frame(self.fullWidgetFrame, relief='ridge',
+        self.buttonFrame = tkinter.Frame(self.fullWidgetFrame, relief='ridge',
                                          borderwidth=3)
 
         # create radio buttons to switch between canvas
-        self.currentCanvasVar = Tkinter.StringVar()
-        self.buttonHue = Tkinter.Radiobutton(
+        self.currentCanvasVar = tkinter.StringVar()
+        self.buttonHue = tkinter.Radiobutton(
             self.buttonFrame, text='Hue', value = 'Hue', width=8,
             indicatoron = 0, variable = self.currentCanvasVar,
             command=self.button_cb)
         self.buttonHue.grid(row=0, column=0, sticky='we')#pack(side='left')
 
-        self.buttonSat = Tkinter.Radiobutton(
+        self.buttonSat = tkinter.Radiobutton(
             self.buttonFrame, text='Sat.', value = 'Sat', width=8,
             indicatoron = 0, variable = self.currentCanvasVar,
             command=self.button_cb)
         self.buttonSat.grid(row=0, column=1, sticky='we')#pack(side='left')
 
-        self.buttonVal = Tkinter.Radiobutton(
+        self.buttonVal = tkinter.Radiobutton(
             self.buttonFrame, text='Lum.', value = 'Val', width=8,
             indicatoron = 0, variable = self.currentCanvasVar,
             command=self.button_cb)
         self.buttonVal.grid(row=0, column=2, sticky='we')#pack(side='left')
 
-        self.buttonOpa = Tkinter.Radiobutton(
+        self.buttonOpa = tkinter.Radiobutton(
             self.buttonFrame, text='Opa.', value = 'Opa', width=8,
             indicatoron = 0, variable = self.currentCanvasVar,
             command=self.button_cb)
@@ -627,67 +627,67 @@ after it's creation
         self.currentCanvasVar.set('Hue')
 
         # name
-        self.nameVar = Tkinter.StringVar()
+        self.nameVar = tkinter.StringVar()
         if self.name is not None:
             self.nameVar.set(self.name)
-        a = Tkinter.Label(self.buttonFrame, text='name')
+        a = tkinter.Label(self.buttonFrame, text='name')
         a.grid(row=2, column=0, sticky='e')
         if self.allowRename is True:        
-            self.nameEntry = Tkinter.Entry(
+            self.nameEntry = tkinter.Entry(
                 self.buttonFrame, textvariable=self.nameVar, width=18)
             self.nameEntry.bind('<Return>', self.rename_cb)
             self.nameEntry.bind('<Leave>', self.rename_cb)
         else:
-            self.nameEntry = Tkinter.Label(
+            self.nameEntry = tkinter.Label(
                 self.buttonFrame, textvariable=self.nameVar, width=18,
                 relief='groove', padx=2, pady=1)
         self.nameEntry.grid(row=2, column=1, columnspan=3, sticky='w')
 
         # min max
-        self.maxTk = Tkinter.StringVar()
+        self.maxTk = tkinter.StringVar()
         if self.guiMaxi is not None:
             self.maxTk.set(('%8.2f'%self.guiMaxi))
-        a = Tkinter.Label(self.buttonFrame, text='max')
+        a = tkinter.Label(self.buttonFrame, text='max')
         a.grid(row=3, column=2, sticky='e')
         if self.modifyMinMax:
-            self.maxEntry = Tkinter.Entry(
+            self.maxEntry = tkinter.Entry(
                 self.buttonFrame, textvariable=self.maxTk, width=8)
             self.maxEntry.bind('<Return>', self.max_cb)
             self.maxEntry.bind('<Leave>', self.max_cb)
         else:
-            self.maxEntry = Tkinter.Label(
+            self.maxEntry = tkinter.Label(
                 self.buttonFrame, textvariable=self.maxTk, width=8,
                 relief='groove', justify='left', padx=2, pady=1)
         self.maxEntry.grid(row=3, column=3,sticky='w')
 
-        self.curyTk = Tkinter.StringVar()
-        a = Tkinter.Label(self.buttonFrame, text='y ')
+        self.curyTk = tkinter.StringVar()
+        a = tkinter.Label(self.buttonFrame, text='y ')
         a.grid(row=4, column=2, sticky='e')
-        self.curYLabel = Tkinter.Label(
+        self.curYLabel = tkinter.Label(
             self.buttonFrame, textvariable=self.curyTk, width=8,
             relief='groove', justify='left', padx=2, pady=1)
         self.curYLabel.grid(row=4, column=3, sticky='w')
 
-        self.minTk = Tkinter.StringVar()
+        self.minTk = tkinter.StringVar()
         if self.guiMini is not None:
             self.minTk.set(('%8.2f'%self.guiMini))
-        a = Tkinter.Label(self.buttonFrame, text='min')
+        a = tkinter.Label(self.buttonFrame, text='min')
         a.grid(row=5, column=2, sticky='e')
         if self.modifyMinMax:
-            self.minEntry = Tkinter.Entry(
+            self.minEntry = tkinter.Entry(
                 self.buttonFrame, textvariable=self.minTk, width=8)
             self.minEntry.bind('<Return>', self.min_cb)
             self.minEntry.bind('<Leave>', self.min_cb)
         else:
-            self.minEntry = Tkinter.Label(
+            self.minEntry = tkinter.Label(
                 self.buttonFrame, textvariable=self.minTk, width=8,
                 relief='groove', justify='right', padx=2, pady=1)
         self.minEntry.grid(row=5, column=3, sticky='w')
 
-        self.curxTk = Tkinter.StringVar()
-        a = Tkinter.Label(self.buttonFrame, text='x')
+        self.curxTk = tkinter.StringVar()
+        a = tkinter.Label(self.buttonFrame, text='x')
         a.grid(row=4, column=1, sticky='w')
-        self.curXLabel = Tkinter.Label(
+        self.curXLabel = tkinter.Label(
             self.buttonFrame, textvariable=self.curxTk, width=8,
             relief='groove', justify='left', padx=2, pady=1)
         self.curXLabel.grid(row=4, column=0, sticky='w')
@@ -706,15 +706,15 @@ after it's creation
             self.labelsComboBox.grid(row=6, column=0, columnspan=4, sticky='w')
 
         #Apply and Dismiss go here
-        self.frame2 = Tkinter.Frame(self.fullWidgetFrame, relief='raise', borderwidth=3)
+        self.frame2 = tkinter.Frame(self.fullWidgetFrame, relief='raise', borderwidth=3)
         f2 = self.frame2
-        self.apply = Tkinter.Button(f2, text='Apply', command=self.apply_cb)
+        self.apply = tkinter.Button(f2, text='Apply', command=self.apply_cb)
         self.apply.pack(side='left', expand=1, fill='x')
-        self.dismiss = Tkinter.Button(f2, text='Dismiss', command=self.dismiss)
+        self.dismiss = tkinter.Button(f2, text='Dismiss', command=self.dismiss)
         self.dismiss.pack(side='left', expand=1, fill='x')
 
         f2.pack(side='bottom', expand=1, fill='x')
-        self.frame2.pack(side='bottom', expand=1, fill=Tkinter.X)
+        self.frame2.pack(side='bottom', expand=1, fill=tkinter.X)
         self.buttonFrame.pack(side='bottom', expand=1, fill='x')
 
 
@@ -855,7 +855,7 @@ after it's creation
                 
             if hasattr(self, 'showLegendVar'):
                 cmlOptions['visible'] = self.showLegendVar.get()
-            apply(self.legend.Set, (), cmlOptions)
+            self.legend.Set(*(), **cmlOptions)
 
         if updateGui:
             self.update(ramp=ramp, mini=self.mini, maxi=self.maxi, 
@@ -877,7 +877,7 @@ after it's creation
 
             if hasattr(self, 'showLegendVar'):
                 cmlOptions['visible'] = self.showLegendVar.get()
-            apply(self.legend.Set, (), cmlOptions)
+            self.legend.Set(*(), **cmlOptions)
         
         return col
 
@@ -939,8 +939,8 @@ after it's creation
         #print "drawRampCanvases"
         # update Ramp
 
-        self.currentHue = range(self.lengthRamp)
-        self.currentSat = range(self.lengthRamp)
+        self.currentHue = list(range(self.lengthRamp))
+        self.currentSat = list(range(self.lengthRamp))
 
         if drawRamp:
             for v in self.idList:
@@ -1223,7 +1223,7 @@ after it's creation
     def fileOpenAsk(self, idir=None, ifile=None, types=None,
                     title='Open'):
         if types==None: types = [ ('All files', '*') ]
-        file = tkFileDialog.askopenfilename( filetypes=types,
+        file = tkinter.filedialog.askopenfilename( filetypes=types,
                                              initialdir=idir,
                                              initialfile=ifile,
                                              title=title)
@@ -1234,7 +1234,7 @@ after it's creation
     def fileSaveAsk(self, idir=None, ifile=None, types = None,
                 title='Save'):
         if types==None: types = [ ('All files', '*') ]
-        file = tkFileDialog.asksaveasfilename( filetypes=types,
+        file = tkinter.filedialog.asksaveasfilename( filetypes=types,
                                                initialdir=idir,
                                                initialfile=ifile,
                                                title=title)
@@ -1695,13 +1695,13 @@ returns color to be used to draw value and opacity lines in canvas
     def resizeCanvases(self, height=None, width=None):
         #print "resizeCanvases"
         if height is not None:
-            for c in self.canvas.values():
+            for c in list(self.canvas.values()):
                 c.configure(height=height)
             self.ogl_cmw.configure(height=height)
             self.ogl_cmw.height = height
 
         if width is not None:
-            for c in self.canvas.values():
+            for c in list(self.canvas.values()):
                 c.configure(width=width)
             self.ogl_cmw.configure(width=width)
             self.ogl_cmw.width = width
@@ -1713,7 +1713,7 @@ newVals is list of new rightXValues for that column
 """
         #print "buildRGBMap"
         rgbs = []
-        hsva = map(list, map(RGBA2HSLA_list, self.guiRamp))
+        hsva = list(map(list, list(map(RGBA2HSLA_list, self.guiRamp))))
         for i in range(len(self.guiRamp)):
             hsva[i][ind] = newVals[i]
             rgbs.append(list(HSLA2RGBA_list(hsva[i])))
@@ -1741,7 +1741,7 @@ newVals is list of new rightXValues for that column
         ind = self.idList.index(idStr)
         #apparently these are 200-this value and
         #for entire Hue ramp delta x = .66401
-        hsvaRamp = map(list, map(RGBA2HSLA_list, self.guiRamp))
+        hsvaRamp = list(map(list, list(map(RGBA2HSLA_list, self.guiRamp))))
         ramp_vals = Numeric.array(hsvaRamp)[:,ind]
         norm_n = ramp_vals
         if idStr=='Hue':
@@ -1975,12 +1975,12 @@ class OGLColorMapWidget(OGLWidget):
         self.ramp = deepCopySeq(cmap.ramp)
         self.step = 1 # set to larger values to accelerate redraw
         
-        tf = self.topFrame = Tkinter.Frame(master, borderwidth=1)
-        self.frame = Tkinter.Frame(tf, borderwidth=3, relief='sunken')
+        tf = self.topFrame = tkinter.Frame(master, borderwidth=1)
+        self.frame = tkinter.Frame(tf, borderwidth=3, relief='sunken')
 
         if cnf is None:
             cnf = {}
-        apply( OGLWidget.__init__, (self, self.frame, title, cnf, 0), kw )
+        OGLWidget.__init__(*(self, self.frame, title, cnf, 0), **kw)
 
         self.frame.pack(expand=1,fill='both')
         self.topFrame.pack(expand=1,fill='both')
@@ -1996,7 +1996,7 @@ in the overriden function OGLWidget.tkRedraw
         self.tk.call(self._w, 'makecurrent')
         self.initProjection()
         GL.glPushMatrix()
-        apply( self.redraw, dummy ) #guillaume: self.redraw() in OGLWidget.tkRedraw
+        self.redraw(*dummy) #guillaume: self.redraw() in OGLWidget.tkRedraw
         GL.glFlush()
         GL.glPopMatrix()
         self.tk.call(self._w, 'swapbuffers')
@@ -2034,7 +2034,7 @@ if __name__ == '__main__':
     
     l = {}
     g = {}
-    execfile('Tests/rgb256_map.py', g,l)
+    exec(compile(open('Tests/rgb256_map.py', "rb").read(), 'Tests/rgb256_map.py', 'exec'), g,l)
     cm = None
     #for name, object in l.items():
     #    if isinstance(object, ColorMap):

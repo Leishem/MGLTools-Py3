@@ -18,22 +18,22 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: repair_ligand4.py -s filename"
-        print
-        print "    Description of command..."
-        print "        [-f]    pdbqt_filename"
-        print "    Optional parameters:"
-        print "        [-o]    alternative pdbqt_filename"
-        print "        (default is 'repaired_' +pdbqt_filename)"
-        print "        [-v]    verbose output"
+        print("Usage: repair_ligand4.py -s filename")
+        print()
+        print("    Description of command...")
+        print("        [-f]    pdbqt_filename")
+        print("    Optional parameters:")
+        print("        [-o]    alternative pdbqt_filename")
+        print("        (default is 'repaired_' +pdbqt_filename)")
+        print("        [-v]    verbose output")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'f:o:v')
 
-    except getopt.GetoptError, msg:
-        print 'repair_ligand4.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('repair_ligand4.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -49,27 +49,27 @@ if __name__ == '__main__':
     for o, a in opt_list:
         if o in ('-f', '--f'):
             pdbqt_filename = a
-            if verbose: print 'set pdbqt_filename to ', pdbqt_filename
+            if verbose: print('set pdbqt_filename to ', pdbqt_filename)
             outputfilename =  'repaired_' + pdbqt_filename
         if o in ('-o', '--o'):
             outputfilename = a 
             if verbose: 
-                print 'set output outputfilename to ', a
+                print('set output outputfilename to ', a)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
 
     if not pdbqt_filename:
-        print 'repair_ligand4: pdbqt_filename must be specified.'
+        print('repair_ligand4: pdbqt_filename must be specified.')
         usage()
         sys.exit()
 
     mol = Read(pdbqt_filename)[0]
-    if verbose: print 'read ', pdbqt_filename
+    if verbose: print('read ', pdbqt_filename)
     mol.buildBondsByDistance()
     mol.LPO = AD4LigandPreparation(mol, mode='interactive', repairs='', charges_to_add=None,
                 root=0, outputfilename=outputfilename, cleanup='')

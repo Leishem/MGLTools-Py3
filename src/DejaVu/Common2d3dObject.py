@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -24,7 +24,7 @@
 # modified by Stefano Forli 2009
 
 import types
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 import warnings
 
 from opengltk.OpenGL import GL
@@ -110,7 +110,7 @@ class Common2d3dObject:
 
         self.animatable = True
 
-        apply( self.Set, (check, 0), kw)
+        self.Set(*(check, 0), **kw)
 
         self._modified = False  # used to decide if we should save state
 
@@ -122,7 +122,7 @@ redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
         if __debug__ and check:
-            apply( checkKeywords, (self.name, self.keywords), kw)
+            checkKeywords(*(self.name, self.keywords), **kw)
 
         if self.viewer:
             self.viewer.currentCamera.tk.call(self.viewer.currentCamera._w, 'makecurrent')
@@ -133,7 +133,7 @@ updateOwnGui=True : allow to update owngui at the end this func
 
         redoFlags = 0
         # this allows to grab directly the correct function rather than going through the full Set function
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             if k == 'transparent':
                 continue
             lFunctionName = '_set' + k[0].upper() + k[1:]
@@ -147,7 +147,7 @@ updateOwnGui=True : allow to update owngui at the end this func
 
         val = kw.pop( 'name', None)
         if not val is None:
-            assert type(val) == types.StringType
+            assert type(val) == bytes
             if self.parent:
                 # make sure name is unique amongst siblings
                 sameName = None
@@ -206,7 +206,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         if val is not None:
             if val in (True, False):
                 self.animatable = val
-	    else: raise ValueError("visible can only be True or False")
+            else: raise ValueError("visible can only be True or False")
 
         return self.redoNow(redo, updateOwnGui, redoFlags)
 
@@ -217,11 +217,11 @@ updateOwnGui=True : allow to update owngui at the end this func
                 self.redoTemplate()
                 redoFlags |= self._redoFlags['redrawFlag']
             if (redoFlags & self._redoFlags['redoDisplayListFlag']) != 0:
-                if self not in self.viewer.objectsNeedingRedo.keys():
+                if self not in list(self.viewer.objectsNeedingRedo.keys()):
                     self.viewer.objectsNeedingRedo[self] = None
                 redoFlags |= self._redoFlags['redrawFlag']
             if (redoFlags & self._redoFlags['redoDisplayChildrenListFlag']) != 0:
-                lObjectsNeedingRedo = self.viewer.objectsNeedingRedo.keys()
+                lObjectsNeedingRedo = list(self.viewer.objectsNeedingRedo.keys())
                 for child in self.AllObjects():
                     if child not in lObjectsNeedingRedo:
                         self.viewer.objectsNeedingRedo[child] = None
@@ -365,7 +365,7 @@ This dictionary can be passed to the Set method to restore the object's state
     def AllVisibleObjects(self):
         """Return a list of all visible children of this object in the object tree"""
         if not self.visible: return
-        obj = [self] + filter(lambda x: x.visible, self.children)
+        obj = [self] + [x for x in self.children if x.visible]
         if len(obj) == 1: return obj
         oi = 1
         while oi != len(obj):

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -21,7 +21,7 @@ from opengltk.OpenGL import GL
 #from opengltk.extent.utillib import glTriangleNormals
 from geomutils.geomalgorithms import  TriangleNormals
 
-import numpy.oldnumeric as Numeric, math, string, warnings
+import mglcompat.oldnumeric as Numeric, math, warnings; from mglcompat import pystring as string
 from mglutil.math import rotax
 from mglutil.util.misc import ensureFontCase
 from DejaVu.Geom import Geom
@@ -36,7 +36,7 @@ from DejaVu.colorTool import glMaterialWithCheck
 from DejaVu.GleObjects import GleExtrude
 from DejaVu.glfLabels import GlfLabels
 
-import Tkinter, Pmw
+import tkinter, Pmw
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr, InputForm
 
 
@@ -68,12 +68,11 @@ property.
     lines.append('begin\n')
     # vertices
     verts = geometry.vertexSet.vertices.array
-    lines.extend( map(lambda x: ('v %f %f %f\n'%tuple(x)), verts) )
+    lines.extend( [('v %f %f %f\n'%tuple(x)) for x in verts] )
 
     # faces
     tri = geometry.faceSet.faces.array
-    lines.extend( map(lambda x:
-                      ('f %d %d %d\n'%(x[0]+1,x[1]+1,x[2]+1)), tri) )
+    lines.extend( [('f %d %d %d\n'%(x[0]+1,x[1]+1,x[2]+1)) for x in tri] )
 
     # normals
     normals = geometry.normals
@@ -84,15 +83,13 @@ property.
     else:
         normals = None
     if normals:
-        lines.extend( map(lambda x:
-                          ('n %f %f %f\n'%tuple(x)), normals) )
+        lines.extend( [('n %f %f %f\n'%tuple(x)) for x in normals] )
 
     # colors
     if geometry.materials[1028].binding[1]==11: #per vertex color
         lines.append('bind c vertex\n')
         cols = geometry.materials[1028].prop[1]
-        lines.extend( map(lambda x:
-                          ('c %f %f %f\n'%tuple(x[:3])), cols) )
+        lines.extend( [('c %f %f %f\n'%tuple(x[:3])) for x in cols] )
     lines.append('end\n')
     return lines
 
@@ -101,7 +98,7 @@ def writePolygonsAsSMF(geometry, filename):
     """Write a IndexedPolygons geometry to a file"""
 
     f = open(filename, 'w')
-    map( lambda x, f=f: f.write(x), IndexedPolgonsAsSMFString(geometry) )
+    list(map( lambda x, f=f: f.write(x), IndexedPolgonsAsSMFString(geometry) ))
     f.close()
 
 
@@ -208,7 +205,7 @@ class OutputNode:
     def _loopGeomsRec(self, obj):
         """ recursive method """
 
-	GL.glPushMatrix()
+        GL.glPushMatrix()
 
         # we discard root object transformation:
         if obj is not obj.viewer.rootObject:
@@ -232,7 +229,7 @@ class OutputNode:
 
             GL.glPopMatrix()
 
-	GL.glPopMatrix()     # Restore the matrix
+        GL.glPopMatrix()     # Restore the matrix
         del obj.instanceMatricesFortranIndex # clean up object
         del obj.VRML2CreatedPROTOForThisGeom 
 
@@ -433,7 +430,7 @@ class OutputSTL(OutputNode):
     def makestl(self, vert, faces, fn):
         stl = []
         
-        for i in xrange(len(faces)):
+        for i in range(len(faces)):
             stl.append("    facet normal %f %f %f\n"%tuple(fn[i]))
             stl.append("        outer loop\n")
             fa = faces[i]
@@ -806,7 +803,7 @@ class OutputVRML2(OutputNode):
         specCol = '%.5f'%mat[3][0][0]+" "+'%.5f'%mat[3][0][1]+" "+\
                   '%.5f'%mat[3][0][2]
         shin =    '%.5f'%mat[4][0]
-        trans =    `1-mat[5][0]`
+        trans =    repr(1-mat[5][0])
 
         vrml2.append("          material        Material {\n")
         vrml2.append("            ambientIntensity      "+ambInt+"\n")
@@ -885,7 +882,7 @@ class OutputVRML2(OutputNode):
             height = 1
             num_byte = dims[1]
             
-        vrml2.append("          image "+`width`+" "+`height`+" "+`num_byte`+"\n")
+        vrml2.append("          image "+repr(width)+" "+repr(height)+" "+repr(num_byte)+"\n")
 
         if len(dims) == 3:
             # we have a 2D texture (image)
@@ -963,12 +960,12 @@ class OutputVRML2(OutputNode):
         for face in faces:
             facestring = "                          "
             if geom.invertNormals: # reverse faces
-                facestring = facestring + `face[0]` + ", "
+                facestring = facestring + repr(face[0]) + ", "
                 for i in range(len(face)-1,0,-1): 
-                    facestring = facestring + `face[i]` + ", "
+                    facestring = facestring + repr(face[i]) + ", "
             else:
                 for f in face:
-                    facestring = facestring + `f` + ", "
+                    facestring = facestring + repr(f) + ", "
 
             facestring = facestring + "-1,\n"
             vrml2.append(facestring)
@@ -984,7 +981,7 @@ class OutputVRML2(OutputNode):
         for cI in colorIndex:
             cIstring = "         "
             for c in cI:
-                cIstring = cIstring + `c` +", "
+                cIstring = cIstring + repr(c) +", "
             cIstring = cIstring + "-1,\n"
             vrml2.append(cIstring)
         vrml2.append("	                ]\n")
@@ -1017,9 +1014,9 @@ class OutputVRML2(OutputNode):
         vrml2.append("        point [\n")
         for p in geom.vertexSet.texCoords.array:
             if len(p) == 1: # one dimension array
-                vrml2.append("          "+`p[0]`+" 0,\n")
+                vrml2.append("          "+repr(p[0])+" 0,\n")
             else:
-                vrml2.append("          "+`p[0]`+" "+`p[1]`+",\n")
+                vrml2.append("          "+repr(p[0])+" "+repr(p[1])+",\n")
         vrml2.append("          ]\n")
         vrml2.append("        }\n")
         return vrml2
@@ -1032,7 +1029,7 @@ class OutputVRML2(OutputNode):
         for face in texCoordsIndex:
             indexstring = "                          "
             for i in face:
-                indexstring = indexstring + `i` + ", "
+                indexstring = indexstring + repr(i) + ", "
 
             indexstring = indexstring + "-1,\n"
             vrml2.append(indexstring)
@@ -1068,12 +1065,12 @@ class OutputVRML2(OutputNode):
         r[1] = round(r[1],6)
         r[2] = round(r[2],6)
         r[3] = round(r[3],6)
-        vrml2.append("      translation "+`trans[0]`+" "+`trans[1]`+" "+\
-                           `trans[2]`+"\n")
-        vrml2.append("      rotation "+`r[0]`+" "+`r[1]`+" "+\
-                           `r[2]`+" "+`r[3]`+"\n")
-        vrml2.append("      scale "+`scale[0]`+" "+`scale[1]`+" "+\
-                               `scale[2]`+"\n")
+        vrml2.append("      translation "+repr(trans[0])+" "+repr(trans[1])+" "+\
+                           repr(trans[2])+"\n")
+        vrml2.append("      rotation "+repr(r[0])+" "+repr(r[1])+" "+\
+                           repr(r[2])+" "+repr(r[3])+"\n")
+        vrml2.append("      scale "+repr(scale[0])+" "+repr(scale[1])+" "+\
+                               repr(scale[2])+"\n")
         return vrml2
 
 
@@ -1088,11 +1085,11 @@ class DatGUI:
             self.title = 'Options Panel'
 
         if self.master is None:
-            self.master = Tkinter.Frame()
+            self.master = tkinter.Frame()
             self.master.pack()
    
-        self.sphInput       = Tkinter.StringVar()
-        self.cylInput       = Tkinter.StringVar() 
+        self.sphInput       = tkinter.StringVar()
+        self.cylInput       = tkinter.StringVar() 
 
         self.sphereQuality = -1    # values range from -1 to 5
         self.cylinderQuality = -1 # values range from -1 to 5
@@ -1186,13 +1183,13 @@ class STLGUI(DatGUI):
 
     def createForm(self):
 
-        self.idf.append({'widgetType':Tkinter.Label,
+        self.idf.append({'widgetType':tkinter.Label,
                  'wcfg':{'text':'Sphere quality'},
                  'gridcfg':{'sticky':'w','columnspan':1, 'row':0, 'column':0},
                  })
 
         self.idf.append({'name':'inpSphQual',
-                         'widgetType':Tkinter.Entry,
+                         'widgetType':tkinter.Entry,
                          'defaultValue':self.sphereQuality,
                          'wcfg':{'font':(ensureFontCase('Courier'),10),
                                  'width':5,'textvariable':self.sphInput,
@@ -1202,13 +1199,13 @@ class STLGUI(DatGUI):
                                     'columnspan':1, 'row':0, 'column':1 }
                          })
 
-        self.idf.append({'widgetType':Tkinter.Label,
+        self.idf.append({'widgetType':tkinter.Label,
                  'wcfg':{'text':'Cylinder quality'},
                  'gridcfg':{'sticky':'w','columnspan':1, 'row':1, 'column':0},
                  })
 
         self.idf.append({'name':'inpCylQual',
-                         'widgetType':Tkinter.Entry,
+                         'widgetType':tkinter.Entry,
                          'defaultValue':self.cylinderQuality,
                          'wcfg':{'font':(ensureFontCase('Courier'),10),
                                  'width':5,'textvariable':self.cylInput,
@@ -1218,7 +1215,7 @@ class STLGUI(DatGUI):
                                     'columnspan':1, 'row':1, 'column':1 }
                          })
         
-	self.idf.append({'widgetType':Tkinter.Button,
+        self.idf.append({'widgetType':tkinter.Button,
                          'text':'OK',
                          'wcfg':{},
                          'gridcfg':{'sticky':'wens',
@@ -1226,7 +1223,7 @@ class STLGUI(DatGUI):
                          'command': self.OK_cb})
 
 
-	self.idf.append({'widgetType':Tkinter.Button,
+        self.idf.append({'widgetType':tkinter.Button,
                          'text':'Cancel',
                          'wcfg':{},
                          'gridcfg':{'sticky':'wens',
@@ -1255,17 +1252,17 @@ class VRML2GUI(DatGUI):
     def __init__(self, master=None, title=None):
         DatGUI.__init__(self, master, title)
 
-        self.saveNormals    = Tkinter.IntVar()
-        self.colorPerVertex = Tkinter.IntVar()
+        self.saveNormals    = tkinter.IntVar()
+        self.colorPerVertex = tkinter.IntVar()
         self.colorPerVertex.set(1) # on by default
-        self.usePROTO         = Tkinter.IntVar()
+        self.usePROTO         = tkinter.IntVar()
 
         self.createForm()
 
     def createForm(self):
         row = 0
         self.idf.append({'name':'savNormals',
-                         'widgetType':Tkinter.Checkbutton,
+                         'widgetType':tkinter.Checkbutton,
                          'wcfg':{'text':'Save Normals            ',
                                  'variable':self.saveNormals,
                                  'command':self.saveNormals_cb},
@@ -1273,14 +1270,14 @@ class VRML2GUI(DatGUI):
                                     'columnspan':2, 'row':row, 'column':0}
                          })
         row+= 1
-        self.idf.append({'widgetType':Tkinter.Frame,
+        self.idf.append({'widgetType':tkinter.Frame,
                  'wcfg':{'relief':'sunken','borderwidth':2,'height':2},
                  'gridcfg':{'columnspan':2, 'row':row, 'column':0},
                  })
 
         row += 1
         self.idf.append({'name':'colorPerVertex',
-                         'widgetType':Tkinter.Checkbutton,
+                         'widgetType':tkinter.Checkbutton,
                          'wcfg':{'text':'color per vertex',
                                  'variable':self.colorPerVertex,
                                  'command':self.colorPerVertex_cb},
@@ -1289,14 +1286,14 @@ class VRML2GUI(DatGUI):
                          })
         
         row+= 1
-        self.idf.append({'widgetType':Tkinter.Frame,
+        self.idf.append({'widgetType':tkinter.Frame,
                  'wcfg':{'relief':'sunken','borderwidth':2,'height':2},
                  'gridcfg':{'columnspan':2, 'row':row, 'column':0},
                  })
 
         row+= 1
         self.idf.append({'name':'usePROTO',
-                         'widgetType':Tkinter.Checkbutton,
+                         'widgetType':tkinter.Checkbutton,
                          'wcfg':{'text':'Use PROTO for instance\n'+\
                                  'matrices to lower file size',
                                  'variable':self.usePROTO,
@@ -1305,20 +1302,20 @@ class VRML2GUI(DatGUI):
                                     'columnspan':2, 'row':row, 'column':0}
                          })
         row+= 1
-        self.idf.append({'widgetType':Tkinter.Frame,
+        self.idf.append({'widgetType':tkinter.Frame,
                  'wcfg':{'relief':'sunken','borderwidth':2,'height':2},
                  'gridcfg':{'columnspan':2, 'row':row, 'column':0},
                  })
 
         row+= 1
-        self.idf.append({'widgetType':Tkinter.Label,
+        self.idf.append({'widgetType':tkinter.Label,
                  'wcfg':{'text':'Sphere quality'},
                  'gridcfg':{'sticky':'w','columnspan':2, 'row':row,
                             'column':0},
                  })
         
         self.idf.append({'name':'inpSphQual',
-                         'widgetType':Tkinter.Entry,
+                         'widgetType':tkinter.Entry,
                          'defaultValue':'2',
                          'wcfg':{'font':(ensureFontCase('Courier'),10),
                                  'width':5,'textvariable':self.sphInput,
@@ -1328,14 +1325,14 @@ class VRML2GUI(DatGUI):
                                     'columnspan':2, 'row':row, 'column':1 }
                          })
         row+= 1
-        self.idf.append({'widgetType':Tkinter.Label,
+        self.idf.append({'widgetType':tkinter.Label,
                  'wcfg':{'text':'Cylinder quality'},
                  'gridcfg':{'sticky':'w','columnspan':2, 'row':row,
                             'column':0},
                  })
 
         self.idf.append({'name':'inpCylQual',
-                         'widgetType':Tkinter.Entry,
+                         'widgetType':tkinter.Entry,
                          'defaultValue':'10',
                          'wcfg':{'font':(ensureFontCase('Courier'),10),
                                  'width':5,'textvariable':self.cylInput,
@@ -1346,7 +1343,7 @@ class VRML2GUI(DatGUI):
                          })
 
         row+= 1
-	self.idf.append({'widgetType':Tkinter.Button,
+        self.idf.append({'widgetType':tkinter.Button,
                          'text':'OK',
                          'wcfg':{},
                          'gridcfg':{'sticky':'wens',
@@ -1354,7 +1351,7 @@ class VRML2GUI(DatGUI):
                          'command': self.OK_cb})
 
 
-	self.idf.append({'widgetType':Tkinter.Button,
+        self.idf.append({'widgetType':tkinter.Button,
                          'text':'Cancel',
                          'wcfg':{},
                          'gridcfg':{'sticky':'wens',

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -32,8 +32,8 @@ from Pmv.mvCommand import MVCommand, MVAtomICOM
 from Pmv.measureCommands import MeasureDistance, MeasureTorsion, MeasureTorsionGUICommand
 from MolKit.protein import Protein
 from MolKit.molecule import Atom, AtomSet
-import string, types
-import Tkinter, numpy.oldnumeric as Numeric
+import types; from mglcompat import pystring as string
+import tkinter, mglcompat.oldnumeric as Numeric
 import math
 
 from mglutil.math.rotax import rotax
@@ -45,7 +45,7 @@ def vvmult(a,b):
     """
     Compute a vector product for 3D vectors
     """
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     res = Numeric.zeros(3, 'f')
     res[0] = a[1]*b[2] - a[2]*b[1]
     res[1] = a[2]*b[0] - a[0]*b[2]
@@ -60,7 +60,7 @@ def torsionAngle(x1, x2, x3, x4):
     Raises a ValueError if angle is not defined.
     """
     from math import sqrt, acos
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
 
     tang=0.0
     assert x1.shape == (3,)
@@ -111,7 +111,7 @@ class SetRelativeTorsion(MeasureTorsion):
         if not len(ats): return 'ERROR'
         atom2 = ats[0]
         assert atom1.top == atom2.top
-        return apply(self.doitWrapper,(atom1,atom2,angle,mov_atoms,returnVal),kw)
+        return self.doitWrapper(*(atom1,atom2,angle,mov_atoms,returnVal), **kw)
 
 
     def doit(self, atom1, atom2, angle, mov_atoms, returnVal=0):
@@ -157,7 +157,7 @@ class SetTranslation(MeasureDistance):
         allAtoms = ats.findType(Atom)
         #check that trans is tuple with length 3
         assert len(trans)==3
-        return apply(self.doitWrapper, (allAtoms, trans), kw)
+        return self.doitWrapper(*(allAtoms, trans), **kw)
 
 
     def doit(self, ats, trans):
@@ -187,7 +187,7 @@ class SetQuaternion(MeasureDistance):
         allAtoms = ats.findType(Atom)
         #check that trans is tuple with length 3
         assert len(quat)==4
-        return apply(self.doitWrapper, (allAtoms, quat, origin, trans), kw)
+        return self.doitWrapper(*(allAtoms, quat, origin, trans), **kw)
 
 
     def hypotenuse(self, x,y,z):
@@ -298,7 +298,7 @@ class SetTorsion(MeasureTorsion):
         #check that angle is between -360 and +360
         #why?
         #assert angle >= -360 and angle <= 360
-        return apply(self.doitWrapper, (atom0, atom1, atom2, atom3, angle,returnVal), kw)
+        return self.doitWrapper(*(atom0, atom1, atom2, atom3, angle,returnVal), **kw)
 
 
     def doit(self, atom0, atom1, atom2, atom3, angle, returnVal):
@@ -328,10 +328,10 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
         self.save = None
         from DejaVu.bitPatterns import pat3
         from DejaVu.IndexedPolygons import IndexedPolygons
-        if not self.vf.commands.has_key('setICOM'):
+        if 'setICOM' not in self.vf.commands:
             self.vf.loadCommand('interactiveCommands', 'setICOM', 'Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('measureTorsion'):
+        if 'measureTorsion' not in self.vf.commands:
             self.vf.loadCommand('measureCommands', 'measureTorsion', 'Pmv',
                                 topCommand=0) 
 
@@ -359,9 +359,9 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
             self.vf.GUI.VIEWER.AddObject(item, parent=self.masterGeom)
         self.snakeLength = 1
         self.oldValue = None
-        self.torsionType = Tkinter.StringVar()
+        self.torsionType = tkinter.StringVar()
         self.torsionType.set('1')
-        self.newAngList = Tkinter.StringVar()
+        self.newAngList = tkinter.StringVar()
         self.TAHdata = None
         self.molecule = None
         #self.bondString = Tkinter.StringVar()
@@ -390,7 +390,7 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
         the torsion is returned when the number of atoms is a multiple of 4"""
         ats = self.vf.expandNodes(atoms)
         if not len(ats): return 'ERROR'
-        return apply(self.doitWrapper, (ats, angle,), kw)
+        return self.doitWrapper(*(ats, angle,), **kw)
 
 
     def doit(self, ats, angle):
@@ -473,10 +473,10 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
                 newcenter = tuple((c0+c1)/2.0)
                 self.labelCenters.append(newcenter)
         self.vf.GUI.VIEWER.Redraw()
-        items = self.callbackDict.keys()
+        items = list(self.callbackDict.keys())
         #items = ['measureDistanceGC','measureAngleGC','measureTorsionGC']
         #checkout whether measure update needs to be called
-        icomVals = self.vf.ICmdCaller.commands.value.values()
+        icomVals = list(self.vf.ICmdCaller.commands.value.values())
         for item in items: 
             if not len(icomVals): break
             if not hasattr(self.vf, item):
@@ -592,7 +592,7 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
 
 
     def Accept_cb(self):
-        apply(self.setupUndoAfter,(self.atomList, self.oldValue),{})
+        self.setupUndoAfter(*(self.atomList, self.oldValue), **{})
         self.origValue = self.oldValue
 
 
@@ -692,10 +692,10 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
         #get TA:
         if self.historyList.get(0)=='': return
         items=self.historyList.curselection()
-        if type(items)==types.TupleType:
+        if type(items)==tuple:
             items = items[0]
         try:
-            items=map(int, items)
+            items=list(map(int, items))
         except ValueError:pass
         thisTA=self.TAHdata.torslist[items[0]]
         #get currentAngle
@@ -722,10 +722,10 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
     def getAngList(self, event=None):
         items=self.historyList.curselection()
         try:
-            items=map(int, items)
+            items=list(map(int, items))
         except ValueError:pass
         thisTA=self.TAHdata.torslist[items[0]]
-        thisTA.angleList=map(float, split(self.newAngList.get()))
+        thisTA.angleList=list(map(float, split(self.newAngList.get())))
         last=thisTA.angleList[-1]
         newAts = AtomSet([thisTA.atom1,thisTA.atom2, thisTA.atom3,\
                     thisTA.atom4])
@@ -744,7 +744,7 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
         items=self.historyList.curselection()
         if len(items)==0: return
         try:
-            items=map(int, items)
+            items=list(map(int, items))
         except ValueError:
             pass
         thisTA=self.TAHdata.torslist[items[0]]
@@ -779,7 +779,7 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
         items=self.historyList.curselection()
         if len(items)==0: return
         try:
-            items=map(int, items)
+            items=list(map(int, items))
         except ValueError:pass
         thisTA=self.TAHdata.torslist[items[0]]
         self.resetAngle(thisTA)
@@ -815,13 +815,13 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
     def buildForm(self):
         if hasattr(self, 'ifd'):
             return
-        self.torsionType = Tkinter.StringVar()
+        self.torsionType = tkinter.StringVar()
         self.torsionType.set('1')
         self.ifd = ifd = InputFormDescr(title = 'Set Torsion Angle')
         ifd.append({'name':'extLabel',
-                    'widgetType': Tkinter.Label,
+                    'widgetType': tkinter.Label,
                     'wcfg':{'text':'Set Angle:\n(180=trans)'},
-                    'gridcfg':{'sticky':Tkinter.W+Tkinter.E,
+                    'gridcfg':{'sticky':tkinter.W+tkinter.E,
                                 'columnspan':2}})
         ifd.append( {'name':'extslider',
             'widgetType': ExtendedSliderWidget,
@@ -834,11 +834,11 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
                 'entrypackcfg':{'side':'bottom'}},
             'gridcfg':{'sticky':'we', 'columnspan':2}})
         ifd.append({'name':'typeLabel',
-                    'widgetType': Tkinter.Label,
+                    'widgetType': tkinter.Label,
                     'wcfg':{'text':'Torsion Type'},
                     'gridcfg':{'sticky':'we', 'columnspan':2}})
         ifd.append({'name':'rdbut1',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Absolute',
                 'variable': self.torsionType,
                 'value':1,
@@ -846,7 +846,7 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
                 },
             'gridcfg':{'sticky':'we'}})
         ifd.append({'name':'rdbut2',
-            'widgetType':Tkinter.Radiobutton,
+            'widgetType':tkinter.Radiobutton,
             'wcfg':{'text':'Relative ',
                 'variable': self.torsionType,
                 'value':0,
@@ -866,33 +866,33 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
             },
             'gridcfg':{'sticky':'we', 'columnspan':2}})
         ifd.append({'name':'hbut1',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Step Back ',
                 'command': self.stepBack},
             'gridcfg':{'sticky':'we','columnspan':2}})
         ifd.append({'name':'hbut2',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Start Over ',
                 'command': self.startOver},
             'gridcfg':{'sticky':'we','columnspan':2}})
         ifd.append({'name':'hbut3',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Reset All ',
                 'command': self.resetAll},
             'gridcfg':{'sticky':'we','columnspan':2}})
         ifd.append({'name':'angListEnt',
-           'widgetType':Tkinter.Entry, 
+           'widgetType':tkinter.Entry, 
            'wcfg':{'width':5,
                 'command':self.getAngList,
                 'textvariable':self.newAngList},
            'gridcfg':{'sticky':'we','columnspan':2}})
         ifd.append({'name':'hbut4',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'Move',
                 'command': self.repeat_transTors},
             'gridcfg':{'sticky':'we','columnspan':2}})
         ifd.append({'name':'hbut5',
-            'widgetType':Tkinter.Button,
+            'widgetType':tkinter.Button,
             'wcfg': { 'text':'New Torsion',
                 'command': self.new_Tors},
             'gridcfg':{'sticky':'we','columnspan':2}})
@@ -902,7 +902,7 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
                             #'command': self.Accept_cb},
                     #'gridcfg':{'sticky':'we'}})
         ifd.append({'name':'done',
-                    'widgetType': Tkinter.Button,
+                    'widgetType': tkinter.Button,
                     'wcfg':{'text' : 'Done',
                             'command': self.Done_cb},
                     'gridcfg':{'sticky':'we','columnspan':2}})
@@ -999,7 +999,7 @@ class  TorsionHistory:
         self.molecule=mol
 
     def addTorsion(self, newtangle):
-        previous=filter(newtangle.__cmp__,self.torslist)
+        previous=list(filter(newtangle.__cmp__,self.torslist))
         #if this angle is already on the list, add its current angle
         #to its angleList
         if len(previous)>0:
@@ -1016,7 +1016,7 @@ class  TorsionHistory:
         return self.addTorsion(newone)
 
     def getIndex(self, newtangle):
-        result=map(newtangle.__cmp__, self.torslist)
+        result=list(map(newtangle.__cmp__, self.torslist))
         #at this point result is a list such as [1,0,0,0,0]
         return result.index(1)
 

@@ -21,7 +21,7 @@ from ViewerFramework.VFCommand import CommandGUI
 
 class ComputeExposure(MVCommand):
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('computeSESAndSASArea'):
+        if 'computeSESAndSASArea' not in self.vf.commands:
             self.vf.loadCommand('msmsCommands', ['computeSESAndSASArea',], topCommand=0)
 
     def __call__(self, nodes, **kw):
@@ -32,12 +32,12 @@ class ComputeExposure(MVCommand):
     computeAtomSESExposure(atoms) compute percentage of Solvent Excluded Surface for atoms and stores it in atom.ses_ratio.    
         """
         if len(nodes) == 0:
-            print "Input list is empty"
+            print("Input list is empty")
             return
         nodes=self.vf.expandNodes(nodes)
         if not hasattr(nodes[0], 'ses_area'):
             self.vf.computeSESAndSASArea(nodes[0].top)
-        return apply( self.doitWrapper, (nodes,), kw )
+        return self.doitWrapper(*(nodes,), **kw)
         
 class ComputeAtomSESExposure(ComputeExposure):
     def doit(self, atoms):
@@ -61,7 +61,7 @@ class ComputeResidueSESExposure(ComputeExposure):
     def doit(self, residues):
         for r in residues:
           coords = r.atoms.coords
-          rad = map(lambda x: x.radius, r.atoms)
+          rad = [x.radius for x in r.atoms]
           m = mslib.MSMS(coords=coords, radii = rad) 
           m.compute()
           m.compute_ses_area()
@@ -74,7 +74,7 @@ class ComputeResidueSASExposure(ComputeExposure):
     def doit(self, residues):
         for r in residues:
           coords = r.atoms.coords
-          rad = map(lambda x: x.radius, r.atoms)
+          rad = [x.radius for x in r.atoms]
           m = mslib.MSMS(coords=coords, radii = rad) 
           m.compute()
           m.compute_ses_area()
@@ -87,7 +87,7 @@ class ComputeChainSESExposure(ComputeExposure):
     def doit(self, chains):
         for chain in chains:
           coords = chain.residues.atoms.coords
-          rad = map(lambda x: x.radius, chain.residuse.atoms)
+          rad = [x.radius for x in chain.residuse.atoms]
           m = mslib.MSMS(coords=coords, radii = rad) 
           m.compute()
           m.compute_ses_area()
@@ -100,7 +100,7 @@ class ComputeChainSASExposure(ComputeExposure):
     def doit(self, chains):
         for chain in chains:
           coords = chain.residues.atoms.coords
-          rad = map(lambda x: x.radius, chain.residuse.atoms)
+          rad = [x.radius for x in chain.residuse.atoms]
           m = mslib.MSMS(coords=coords, radii = rad) 
           m.compute()
           m.compute_ses_area()

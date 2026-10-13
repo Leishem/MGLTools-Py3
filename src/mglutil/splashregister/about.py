@@ -1,6 +1,6 @@
 # $Header: /opt/cvs/python/packages/share1.5/mglutil/splashregister/about.py,v 1.9.6.1 2011/05/16 18:24:58 sargis Exp $
 # $Id: about.py,v 1.9.6.1 2011/05/16 18:24:58 sargis Exp $
-import Tkinter, os
+import tkinter, os
 from mglutil.util.misc import ensureFontCase
 
 try:
@@ -31,7 +31,7 @@ class About:
     
     def gui(self, master):
         
-        Tkinter.Label(master, text=self.title, font =(ensureFontCase('helvetica'), 16, 'bold') ).\
+        tkinter.Label(master, text=self.title, font =(ensureFontCase('helvetica'), 16, 'bold') ).\
                       pack(side='top')
         text = 'Version ' + self.version
         if self.revision is not None:
@@ -46,7 +46,7 @@ class About:
                 tmpTxt = self.path_data[tested:].split()
                 text += " - Update Tested Build " + tmpTxt[1]
             
-        Tkinter.Label(master, text=text).pack(side='top')
+        tkinter.Label(master, text=text).pack(side='top')
 
         files = os.listdir(self.image_dir)
         import fnmatch
@@ -56,28 +56,28 @@ class About:
         image_file = os.path.join(os.path.join(self.image_dir ,files[rand]))
         image = Image.open(image_file)
         self.image1 = ImageTk.PhotoImage(image, master=master)
-        self.imageTk = Tkinter.Label(master,image=self.image1 )
+        self.imageTk = tkinter.Label(master,image=self.image1 )
         self.imageTk.pack()
-        Tkinter.Label(master, text=self.copyright, relief='sunken' ).pack()
-        logoFrame = Tkinter.Frame(master, bg='white')
+        tkinter.Label(master, text=self.copyright, relief='sunken' ).pack()
+        logoFrame = tkinter.Frame(master, bg='white')
         logoFrame.pack(fill='x',expand=True)
         basepath = os.path.split(__file__)[0]
         
         NBCR = Image.open(os.path.join(basepath,'NBCR.jpg'))
         self.NBCR1 = ImageTk.PhotoImage(NBCR, master=master)
-        self.NBCRTk = Tkinter.Label(logoFrame,image=self.NBCR1, bd=0 )
+        self.NBCRTk = tkinter.Label(logoFrame,image=self.NBCR1, bd=0 )
         self.NBCRTk.pack(side='left', padx=40, expand=True)
         NIH = Image.open(os.path.join(basepath,'NIH.gif'))
         self.NIH1 = ImageTk.PhotoImage(NIH, master=master)
-        self.NIHTk = Tkinter.Label(logoFrame,image=self.NIH1, bd=0)
+        self.NIHTk = tkinter.Label(logoFrame,image=self.NIH1, bd=0)
         self.NIHTk.pack(side='left', padx=40,expand=True)
         NSF = Image.open(os.path.join(basepath,'NSF.gif'))
         self.NSF1 = ImageTk.PhotoImage(NSF, master=master)
-        self.NSFTk = Tkinter.Label(logoFrame,image=self.NSF1, bd=0)
+        self.NSFTk = tkinter.Label(logoFrame,image=self.NSF1, bd=0)
         self.NSFTk.pack(side='left', padx=40, expand=True)
 
 if __name__ == '__main__':
-    root = Tkinter.Tk()
+    root = tkinter.Tk()
     about = About(image_dir='../../Pmv/Icons/Images')
     about.gui(root)
     root.mainloop()

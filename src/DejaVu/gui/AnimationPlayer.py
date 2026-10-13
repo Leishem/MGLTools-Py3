@@ -14,12 +14,12 @@
 #
 #
 #
-import string, math,time
+import math, time; from mglcompat import pystring as string
 from mglutil.gui.BasicWidgets.Tk.player import Player
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr,InputForm,CallBackFunction
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser
 from DejaVu.gui.geomsChooser import geomsChooser
-import Pmw,Tkinter
+import Pmw,tkinter
 import types
 
 class AnimPlayer(Player,geomsChooser):
@@ -57,7 +57,7 @@ class AnimPlayer(Player,geomsChooser):
                  gui=1,framerate=15.):
 
         if master is None:
-            master = Tkinter.Toplevel()
+            master = tkinter.Toplevel()
 
         # viewer from which we get the geom to animate
         self.viewer = viewer
@@ -100,7 +100,7 @@ class AnimPlayer(Player,geomsChooser):
             obj.Set(visible=1,redo=0)
         
         self.viewer.deleteOpenglList()
-	self.viewer.Redraw()
+        self.viewer.Redraw()
         self.currentFrameIndex = id
 
 #####################################################################
@@ -134,13 +134,13 @@ class AnimPlayer(Player,geomsChooser):
                         'gridcfg':{'row':0,'column':0,
                                    'sticky':'wens','rowspan':3}})
             ifd.append({'name':'newframe',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':""" Add an empty frame to the animation""",
                         'wcfg':{'text':'NewFrame','command':self.addframe_cb},
                         'gridcfg':{'row':0,'column':1,'rowspan':1 }})
             
             ifd.append({'name':'add',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':""" Add the selected geom to selected frame""",
                         'wcfg':{'text':'AddGeom','command':self.add_cb},
                         'gridcfg':{'row':1,'column':1,'rowspan':1 }})
@@ -156,7 +156,7 @@ class AnimPlayer(Player,geomsChooser):
                         'gridcfg':{'sticky':'we', 
                                    'row':0, 'column':2,'rowspan':3}})
             ifd.append({'name':'remove',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':""" Remove the selected entry from the
                         commands to be applied to the object when loaded in the application""",
                         'wcfg':{'text':'REMOVE','width':10,
@@ -164,14 +164,14 @@ class AnimPlayer(Player,geomsChooser):
                         'gridcfg':{'sticky':'we','row':0, 'column':3}})
             
             ifd.append({'name':'oneup',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':"""Move the selected entry up one entry""",
                         'wcfg':{'text':'Move up','width':10,
                                 'command':self.moveup_cb},
                         'gridcfg':{'sticky':'we','row':1,'column':3}})
             
             ifd.append({'name':'onedown',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':"""Move the selected entry down one entry""",
                         'wcfg':{'text':'Move down','width':10,
                                 'command':self.movedown_cb},
@@ -218,20 +218,20 @@ class AnimPlayer(Player,geomsChooser):
             self.framelist=[]
             for f in list:
                 self.framelist.append((f,[]))
-        print "assign"
-        print "self.framelist",self.framelist
+        print("assign")
+        print("self.framelist",self.framelist)
         for frame in self.framelist:
             geomDic = frame[0]
             Namelist=[]
-            for parents in geomDic.keys():
-                parentlist = filter(lambda x, name=parents:x.name == name,AllObjects)
+            for parents in list(geomDic.keys()):
+                parentlist = list(filter(lambda x, name=parents:x.name == name,AllObjects))
                 obj = parentlist[0]
                 childrens = geomDic[obj.name]
                 if len(childrens) > 0:
                     for namegeom in childrens:
-                        child = filter(lambda x,
+                        child = list(filter(lambda x,
                                        name=namegeom:x.name == name,
-                                       obj.children)[0]
+                                       obj.children))[0]
                         if child.children != []:
                             for c in child.children:
                                 frame[1].append(c)
@@ -300,7 +300,7 @@ class AnimPlayer(Player,geomsChooser):
             ind = self.lc2.getInd()
             if len(ind) ==0:return # no entry selected so create a new frame
             # get geom name to load
-            o = map(int,self.lc.lb.curselection())
+            o = list(map(int,self.lc.lb.curselection()))
             for Ind in o:
                     fullName = self.getFullName(Ind)
                     listgeom.append(fullName)
@@ -313,7 +313,7 @@ class AnimPlayer(Player,geomsChooser):
                 for geom in listgeom:
                     # strip the root
                     l = string.split(geom,'|')
-                    if not frameGeom.has_key(l[1]):
+                    if l[1] not in frameGeom:
                         frameGeom[l[1]]=[]
                     for i in l[2:]:
                         if not( i in frameGeom[l[1]]):
@@ -337,7 +337,7 @@ class AnimPlayer(Player,geomsChooser):
             nb = nb+1
             # listchooser entry has to be a tuple(value,comment)
             self.lc2.add((v,))
-            for mol in e[0].keys():
+            for mol in list(e[0].keys()):
                 self.lc2.add((prefix+mol,))
                 for geom in e[0][mol]:
                     self.lc2.add((prefix2+geom,))
@@ -382,7 +382,7 @@ class AnimPlayer(Player,geomsChooser):
                     rindex = listgeom.index(value[2:])
                     del listgeom[rindex]
                 
-            elif self.framelist[frameInd][0].has_key(value[1:]):
+            elif value[1:] in self.framelist[frameInd][0]:
                 del self.framelist[frameInd][0][value[1:]]
             
             self.updatelistchooser(self.framelist)

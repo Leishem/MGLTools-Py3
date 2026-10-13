@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -14,7 +14,7 @@
 # $Id: Ribbon.py,v 1.14 2008/10/03 19:28:29 sargis Exp $
 #
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 def cross( b, c):
     a = [0.,0.,0.]
@@ -280,7 +280,7 @@ if __name__=='__main__':
     from DejaVu.IndexedPolygons import IndexedPolygons
     f = []
     n = smooth.shape[1]
-    f = map( lambda x: (x, x+1, x+n+1, x+n), range(smooth.shape[1]-1))
+    f = [(x, x+1, x+n+1, x+n) for x in range(smooth.shape[1]-1)]
     v = Numeric.array(Numeric.reshape(smooth, (-1,4))[:,:3])
     p = IndexedPolygons('sheet2D', vertices = v, faces = f, protected=True,)
     if self.vf.userpref['Sharp Color Boundaries for MSMS']['value'] == 'blur':

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ##
 ##  Author Michel F. Sanner May 2007
@@ -71,7 +71,7 @@ class BoolType(DataType):
             return False, None
 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 class IntVectorType(DataType):
     

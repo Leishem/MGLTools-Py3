@@ -91,7 +91,7 @@ class Bonds2Send(File2Send):
         if len(self.data) == 0 : 
             return length
         for l in self.data:
-            print l
+            print(l)
             for j in range(len(l)):
                 length += struct.pack(">i", int(l[j]))
         self.buffer = length
@@ -142,7 +142,7 @@ class IMDEnergies:
 class IMD(Command):
     """ This class implements method to connect to a server."""
     def checkDependencies(self, vf):
-        import thread
+        import _thread
 
     def init(self,hostname,
               mode,
@@ -195,9 +195,9 @@ class IMD(Command):
         #before handshacking do we need to send the files
         if self.mindy:
             self.sendFiles()
-        print "fileSend"
+        print("fileSend")
         IMDswap = self.imd_recv_handshake(self.sock);
-        print "IMDswap",IMDswap
+        print("IMDswap",IMDswap)
         """
       if ( IMDswap == 0 ){
     fprintf(IMDlog, "MDDriver >      Same endian machines\n");
@@ -229,7 +229,7 @@ class IMD(Command):
         #ref Wall p.380
         s.sd = socket(AF_INET, SOCK_STREAM) #no PF_INET in python
         if s.sd is None : 
-            print "Failed to open socket."
+            print("Failed to open socket.")
             # TODO: provide error detail using errno
             return None
         return s
@@ -310,29 +310,29 @@ class IMD(Command):
         sender.fill(data)
         buf=sender.getBinary()
         res=self.sock.sd.send(buf)
-        print "res",res
+        print("res",res)
 
     def sendFiles(self):
         #first get the pdb/psf
         try :
             from MDTools.md_AtomGroup import Molecule
         except :
-            print "no MDTools package, cancel action"
+            print("no MDTools package, cancel action")
             return
         m = self.m =Molecule(self.pdbFile,self.psfFile)
         s2Send = File2Send()
         b2Send = Bonds2Send()
         #need to send pdb
-        print "pdb"
+        print("pdb")
         self.sendOne(m.pdbLines,s2Send)
         #need to send the parmaFile
         o = open(self.paraFile,'r')
         data = o.readlines()
         o.close()
-        print "param"
+        print("param")
         self.sendOne(data,s2Send)
         #need to send psf file
-        print "psf"
+        print("psf")
         self.sendOne(m.psfAtomsLines,s2Send)
         self.sendOne(m._bonds,b2Send)
         self.sendOne(m._angles,b2Send)
@@ -340,7 +340,7 @@ class IMD(Command):
         self.sendOne(m._impropers,b2Send)           
         self.sendOne([],s2Send)
         #need then to send fixed atoms
-        print "atomsF"
+        print("atomsF")
         self.sendOne([],s2Send)
         
     def imd_pause(self):
@@ -355,7 +355,7 @@ class IMD(Command):
         header.fill_header(IMD_GO, 0)
         #print "type", header.imdtype
         header.swap_header()
-        print "type", header.imdtype
+        print("type", header.imdtype)
         return (self.imd_writen(self.sock, header, HEADERSIZE) != HEADERSIZE)
 
     def imd_send_fcoords(self,n,coords):
@@ -495,7 +495,7 @@ class IMD(Command):
  
     def readInt(self,data):
         if(len(data)<4):
-           print "Error: too few bytes for int", data, len(data)
+           print("Error: too few bytes for int", data, len(data))
            rest = data
            integer = 0
         else:
@@ -517,14 +517,14 @@ class IMD(Command):
         return buffer
 
     def start(self,func=None):
-        import thread
-        self.lock = thread.allocate_lock()
+        import _thread
+        self.lock = _thread.allocate_lock()
         if self.pause : self.imd_pause()
-        thread.start_new(self.listenToImdServer, (func,))
+        _thread.start_new(self.listenToImdServer, (func,))
 
     def mindySend(self):
         from ARViewer import util
-        import numpy.oldnumeric as Numeric       
+        import mglcompat.oldnumeric as Numeric       
         coords=[]
         for m in self.mol:
             if hasattr(self.vf,'art'):
@@ -538,7 +538,7 @@ class IMD(Command):
 
     def mindyGet(self):
         from ARViewer import util
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         imdheader = self.imd_recv_header(self.sock)
         vmd_length = imdheader.length
         imdtype = imdheader.imdtype
@@ -561,13 +561,13 @@ class IMD(Command):
                         #print "update coords but back in CS"
                         #print vt[0]
                         if True in numpy.isnan(vt[0]):
-                            vt = map(lambda x: x[0], m.allAtoms._coords)
+                            vt = [x[0] for x in m.allAtoms._coords]
                         m.allAtoms.updateCoords(vt, self.slot[i])
                         #print m.allAtoms.coords[0]
                     else :
                         m.allAtoms.updateCoords(self.imd_coords[b:n1], self.slot[i])
                 except:
-                    print "coord update failed"
+                    print("coord update failed")
                 b=n1
             from Pmv.moleculeViewer import EditAtomsEvent
             for i,m in enumerate(self.mol) :
@@ -575,18 +575,18 @@ class IMD(Command):
                 try :
                     self.vf.dispatchEvent(event)
                 except:
-                    print "event failed"
+                    print("event failed")
 
     def updateMindy(self):
         from ARViewer import util
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         imdheader = self.imd_recv_header(self.sock)
         vmd_length = imdheader.length
         imdtype = imdheader.imdtype
         if imdtype == IMD_FCOORDS:
-            print "recv fcoords ",vmd_length
+            print("recv fcoords ",vmd_length)
             test=self.imd_recv_fcoords(vmd_length,self.imd_coords)
-            print self.imd_coords[0]           
+            print(self.imd_coords[0])           
             b=0
             n1 = 0
             for i,m in enumerate(self.mol) :
@@ -596,14 +596,14 @@ class IMD(Command):
                     if hasattr(self.vf,'art'):
                         M = matrix(m.pat.mat_transfo.reshape(4,4))
                         vt=util.ApplyMatrix(Numeric.array(self.imd_coords[b:n1]),numpy.array(M.I))
-                        print "update coords but back in CS"
-                        print vt[0]
+                        print("update coords but back in CS")
+                        print(vt[0])
                         m.allAtoms.updateCoords(vt, self.slot[i])
-                        print m.allAtoms.coords[0]
+                        print(m.allAtoms.coords[0])
                     else :
                         m.allAtoms.updateCoords(self.imd_coords[b:n1], self.slot[i])
                 except:
-                    print "coord update failed"
+                    print("coord update failed")
                 b=n1
             #print m.allAtoms._coords[0]
             #print "ipdate coords events"
@@ -613,7 +613,7 @@ class IMD(Command):
                 try :
                     self.vf.dispatchEvent(event)
                 except:
-                    print "event failed"
+                    print("event failed")
             #here we should update from AR....which is apply the marker transformation
             #one marker per mol...should have some mol.mat_transfo attributes
             #get the maker position transfo
@@ -660,7 +660,7 @@ class IMD(Command):
                     if (i % self.ffreq) == 0 :
                         if self.vf.handler.forceType == "move" : 
                             self.imd_send_fcoords(self.vf.handler.N_forces,self.vf.handler.forces_list)
-                            print "ok",self.vf.handler.N_forces
+                            print("ok",self.vf.handler.N_forces)
                         else : 
                             self.imd_send_mdcomm(self.vf.handler.N_forces, self.vf.handler.atoms_list, self.vf.handler.forces_list)
                 if self.mindy:

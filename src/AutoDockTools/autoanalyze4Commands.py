@@ -270,7 +270,7 @@ try:
     {'name':'AD4analyze_addExtraGridIsocontour','cmd':ADGetAGrid(),'gui':ADGetAGridGUI}, {'name':'AD4analyze_showGridIsocontours','cmd':ADMakeAllGrids(),'gui':ADMakeAllGridsGUI}]:
         commandList.insert(7,i)
 except:
-    print 'skipping the isocontour-dependent commands'
+    print('skipping the isocontour-dependent commands')
 
 
 def initModule(vf):
@@ -279,26 +279,26 @@ def initModule(vf):
     #if not hasattr(vf, 'ADanalyze_showHistogram') and hasattr(vf, 'AD4analyze_showHistogram'):
     #	vf.ADanalyze_showHistogram = vf.AD4analyze_showHistogram
     if not hasattr(vf, 'ADanalyze_showDockingsAsSpheres') and hasattr(vf, 'AD4analyze_showDockingsAsSpheres'):
-    	vf.ADanalyze_showDockingsAsSpheres = vf.AD4analyze_showDockingsAsSpheres
+        vf.ADanalyze_showDockingsAsSpheres = vf.AD4analyze_showDockingsAsSpheres
     if not hasattr(vf, 'ADanalyze_showGridIsocontours') and hasattr(vf, 'AD4analyze_showGridIsocontours'):
-    	vf.ADanalyze_showGridIsocontours = vf.AD4analyze_showGridIsocontours
+        vf.ADanalyze_showGridIsocontours = vf.AD4analyze_showGridIsocontours
     if not hasattr(vf, 'ADanalyze_showBindingSite') and hasattr(vf, 'AD4analyze_showBindingSite'):
-    	vf.ADanalyze_showBindingSite = vf.AD4analyze_showBindingSite
+        vf.ADanalyze_showBindingSite = vf.AD4analyze_showBindingSite
     if not hasattr(vf, 'ADanalyze_chooseDockedConformations') and hasattr(vf, 'AD4analyze_chooseDockedConformations'):
-    	vf.ADanalyze_chooseDockedConformations = vf.AD4analyze_chooseDockedConformations
+        vf.ADanalyze_chooseDockedConformations = vf.AD4analyze_chooseDockedConformations
     if not hasattr(vf, 'ADanalyze_readDLG') and hasattr(vf, 'AD4analyze_readDLG'):
-    	vf.ADanalyze_readDLG = vf.AD4analyze_readDLG
+        vf.ADanalyze_readDLG = vf.AD4analyze_readDLG
     if not hasattr(vf, 'ADanalyze_selectDLG') and hasattr(vf, 'AD4analyze_selectDLG'):
-    	vf.ADanalyze_selectDLG = vf.AD4analyze_selectDLG
+        vf.ADanalyze_selectDLG = vf.AD4analyze_selectDLG
     if not hasattr(vf, 'ADanalyze_makeSubsetClustering') and hasattr(vf, 'AD4analyze_makeSubsetClustering'):
-    	vf.ADanalyze_makeSubsetClustering = vf.AD4analyze_makeSubsetClustering
+        vf.ADanalyze_makeSubsetClustering = vf.AD4analyze_makeSubsetClustering
 
     if hasattr(vf, 'GUI'):
-        for item in vf.GUI.menuBars['AutoTools4Bar'].menubuttons.values():
+        for item in list(vf.GUI.menuBars['AutoTools4Bar'].menubuttons.values()):
             item.configure(background = 'tan')
         if not hasattr(vf.GUI, 'adtBar'):
             vf.GUI.adtBar = vf.GUI.menuBars['AutoTools4Bar']
-            vf.GUI.adtFrame = vf.GUI.adtBar.menubuttons.values()[0].master
+            vf.GUI.adtFrame = list(vf.GUI.adtBar.menubuttons.values())[0].master
             
 
 

@@ -54,7 +54,7 @@ class inputGen:
         #
         # Set all the attributes
         #
-        for prop in defaults.keys():
+        for prop in list(defaults.keys()):
             setattr(self,prop,defaults[prop])
         return
 
@@ -66,7 +66,7 @@ class inputGen:
         #
         # Reads the PQR file and get the dimensions and the center of the molecule
         #
-        import string
+        from mglcompat import pystring as string
         coords=[]
         fd=open(self.pqrfile)
         line=fd.readline()
@@ -87,7 +87,7 @@ class inputGen:
         #
         minmax=[[999.9,-999.9],[999.9,-999.9],[999.9,-999.9]]
         for coord in coords:
-            for axis in xrange(3):
+            for axis in range(3):
                 if coord[axis]<minmax[axis][0]:
                     minmax[axis][0]=coord[axis]
                 if coord[axis]>minmax[axis][1]:
@@ -97,7 +97,7 @@ class inputGen:
         #
         center=[0,0,0]
         extent=[0,0,0]
-        for axis in xrange(3):
+        for axis in range(3):
             extent[axis]=minmax[axis][1]-minmax[axis][0]
             center[axis]=extent[axis]/2.0+minmax[axis][0]
         return center,extent
@@ -221,7 +221,7 @@ class inputGen:
     #
     
     def printInput(self):
-        import string
+        from mglcompat import pystring as string
         period = string.find(self.fullpath,".")
         if period > 0:
             outname = self.fullpath[0:period] + ".in"

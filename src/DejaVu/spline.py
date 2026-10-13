@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -18,7 +18,7 @@
 reimplementation of lincrv.c in python MS April 2000
 original code from Graphics Gem V pp220-222  Ken Shoemake, 1994
 """
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from copy import deepcopy
 
 # Perform a generic vector unary operation.
@@ -204,7 +204,7 @@ class SplineObject:
             Kts = []
             interp = 1
             inc = 1.0/(length-1)
-            for i in xrange(length):
+            for i in range(length):
                 Kts.append( i*inc )
             Kts.append(999999999999999.99)
 
@@ -224,7 +224,7 @@ class SplineObject:
 
 
 if __name__ == '__main__':
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     ctlPts = Numeric.array ( (
         ( 16.967 , 12.784 , 4.338),
         ( 13.856 , 11.469 , 6.066),
@@ -279,7 +279,7 @@ if __name__ == '__main__':
 
     lagKts = []
     inc = 1.0/(len(ctlPts)-1)
-    for i in xrange(len(ctlPts)):
+    for i in range(len(ctlPts)):
         lagKts.append( i*inc )
     lagKts.append(999999999999999.99)
 
@@ -288,8 +288,8 @@ if __name__ == '__main__':
     tinc = 1.0/460;
     vals = []
     #print 'Start....'
-    print 'Flavor PLY: interp=1, Cn=2'
-    print len(ctlPts)
+    print('Flavor PLY: interp=1, Cn=2')
+    print(len(ctlPts))
     for t in range(460+1):
         val = DialASpline(t*tinc, lagKts, ctlPts, m=3, n=len(ctlPts)-1,
                           work=work, Cn=Cn, interp=interp)

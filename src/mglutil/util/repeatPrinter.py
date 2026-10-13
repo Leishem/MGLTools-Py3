@@ -25,11 +25,11 @@ class RepeatPrinter:
         #os.system("tput sc")
         os.system("tput cup %d 0"%(self.nbLines-1))
         self.repeatingPosition = len(prompt) + 1  
-        print prompt
+        print(prompt)
         
     def update(self, msg):
         os.system("tput cup %d %d"%(self.nbLines-2, self.repeatingPosition))
-        print msg
+        print(msg)
 
 
 

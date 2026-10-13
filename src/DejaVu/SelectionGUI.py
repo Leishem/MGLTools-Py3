@@ -20,9 +20,9 @@
 # $Id: SelectionGUI.py,v 1.8 2008/11/11 22:06:54 vareille Exp $
 #
 
-import Tkinter
+import tkinter
 import DejaVu
-import Slider
+from . import Slider
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 from mglutil.util.callback import CallBackFunction
 from mglutil.util.colorUtil import TkColor
@@ -33,18 +33,18 @@ class SelectionGUI:
     def __init__(self, master=None, viewerGui=None):
 
         if master is None:
-            self.master = Tkinter.Toplevel()
+            self.master = tkinter.Toplevel()
             self.master.withdraw()
             self.master.title('Selection Settings')
             self.master.protocol('WM_DELETE_WINDOW', self.master.withdraw )
         else:
             self.master = master
 
-        self.mainFrame = Tkinter.Frame(self.master, relief='ridge', borderwidth=3)
+        self.mainFrame = tkinter.Frame(self.master, relief='ridge', borderwidth=3)
 
         # CONTOUR WIDTH
         if DejaVu.enableSelectionContour is True:
-            lLabel =Tkinter.Label(self.mainFrame, text='Contour width:')
+            lLabel =tkinter.Label(self.mainFrame, text='Contour width:')
             lLabel.grid(row=0, column=0, sticky='w')
             self.contourSizeSlider = Slider.Slider(
                                         self.mainFrame,
@@ -61,14 +61,14 @@ class SelectionGUI:
                 viewerGui.viewer.Redraw()
             self.contourSizeSlider.AddCallback(setContourWidthSliderValue_cb)
         else:
-            lLabel =Tkinter.Label(self.mainFrame, text='Contour selection is disabled')
+            lLabel =tkinter.Label(self.mainFrame, text='Contour selection is disabled')
             lLabel.grid(row=0, column=0, columnspan=3, sticky='w')
 
         # BACKGROUND COLOR
-        lLabel =Tkinter.Label(self.mainFrame, text='Contour color:')
+        lLabel =tkinter.Label(self.mainFrame, text='Contour color:')
         lLabel.grid(row=1, column=0, sticky='w')
         lFunc = CallBackFunction(viewerGui.colorChooser.showColorChooser,'selection contour')
-        self.contourColorButton = Tkinter.Button(self.mainFrame,
+        self.contourColorButton = tkinter.Button(self.mainFrame,
                                  #text='Contour color',
                                  width=7,
                                  background=TkColor(DejaVu.selectionContourColor),
@@ -76,7 +76,7 @@ class SelectionGUI:
         self.contourColorButton.grid(row=1, column=1, columnspan=3)
 
         # PATTERN SIZE
-        lLabel =Tkinter.Label(self.mainFrame, text='Pattern size:')
+        lLabel =tkinter.Label(self.mainFrame, text='Pattern size:')
         lLabel.grid(row=2, column=0, sticky='w')
         
         def setPatternSizeSliderValue_cb(val):

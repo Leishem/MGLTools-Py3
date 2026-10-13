@@ -9,7 +9,7 @@
 #########################################################################
 
 
-import Tkinter, Pmw
+import tkinter, Pmw
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr, InputForm
 from mglutil.util.misc import ensureFontCase
 
@@ -29,7 +29,7 @@ title is the title of the
             self.title = 'Options Panel'
 
         if self.master is None: # this is to test this widget without a widget
-            self.master = Tkinter.Tk()
+            self.master = tkinter.Tk()
             self.master.continuous = 1
 
             def configure(**kw):
@@ -68,20 +68,20 @@ title is the title of the
                           
         self.type = float # can be float or int
         
-        self.toggleMin  =  Tkinter.IntVar()
-        self.minInput   =  Tkinter.StringVar()
+        self.toggleMin  =  tkinter.IntVar()
+        self.minInput   =  tkinter.StringVar()
         self.min_entry  =  None
 
-        self.toggleMax  =  Tkinter.IntVar()
-        self.maxInput   =  Tkinter.StringVar()
+        self.toggleMax  =  tkinter.IntVar()
+        self.maxInput   =  tkinter.StringVar()
         self.max_entry  =  None
 
-        self.toggleIncr =  Tkinter.IntVar()
-        self.incrInput  =  Tkinter.StringVar()
+        self.toggleIncr =  tkinter.IntVar()
+        self.incrInput  =  tkinter.StringVar()
         self.incr_entry =  None
 
-        self.valInput   =  Tkinter.StringVar()
-        self.sensInput  =  Tkinter.StringVar()
+        self.valInput   =  tkinter.StringVar()
+        self.sensInput  =  tkinter.StringVar()
 
         self.toggleMin.set(0)
         self.toggleMax.set(0)
@@ -89,7 +89,7 @@ title is the title of the
        
         self.idf = InputFormDescr(title=self.title)
         
-        self.idf.append({'widgetType':Tkinter.Label,
+        self.idf.append({'widgetType':tkinter.Label,
                          'wcfg':{'text': '\n'},
                          'gridcfg':{'columnspan':3, 'row':0, 'column':0},
                          })
@@ -108,7 +108,7 @@ title is the title of the
 
 
         self.idf.append({'name':'togMin',
-                         'widgetType':Tkinter.Checkbutton,
+                         'widgetType':tkinter.Checkbutton,
                          'wcfg':{'text':'Minimum',
                                  'variable':self.toggleMin,
                                  'command':self.toggleMin_cb},
@@ -118,7 +118,7 @@ title is the title of the
 
 
         self.idf.append({'name':'inpMin',
-                         'widgetType':Tkinter.Entry,
+                         'widgetType':tkinter.Entry,
                          'defaultValue':'0.0',
                          'wcfg':{'font':(ensureFontCase('Courier'),10),
                                  'width':5, 'textvariable':self.minInput,
@@ -130,7 +130,7 @@ title is the title of the
 
 
         self.idf.append({'name':'togMax',
-                         'widgetType':Tkinter.Checkbutton,
+                         'widgetType':tkinter.Checkbutton,
                          'wcfg':{'text':'Maximum',
                                  'variable':self.toggleMax,
                                  'command':self.toggleMax_cb,
@@ -141,7 +141,7 @@ title is the title of the
 
 
         self.idf.append({'name':'inpMax',
-                         'widgetType':Tkinter.Entry,
+                         'widgetType':tkinter.Entry,
                          'defaultValue':'0.0',
                          'wcfg':{'font':(ensureFontCase('Courier'),10),
                                  'width':5,'textvariable':self.maxInput,
@@ -152,7 +152,7 @@ title is the title of the
 
         
         self.idf.append({'name':'togIncr',
-                         'widgetType':Tkinter.Checkbutton,
+                         'widgetType':tkinter.Checkbutton,
                          'wcfg':{'text':'Increment',
                                  'variable':self.toggleIncr,
                                  'command':self.toggleIncr_cb},
@@ -162,7 +162,7 @@ title is the title of the
 
 
         self.idf.append({'name':'inpIncr',
-                         'widgetType':Tkinter.Entry,
+                         'widgetType':tkinter.Entry,
                          'defaultValue':'0.1',
                          'wcfg':{'font':(ensureFontCase('Courier'),10),
                                  'width':5,'textvariable':self.incrInput,
@@ -173,7 +173,7 @@ title is the title of the
                          })
 
 
-        self.idf.append({'widgetType':Tkinter.Label,
+        self.idf.append({'widgetType':tkinter.Label,
                          'wcfg':{'text': 'Value'},
                          'gridcfg':{'sticky':'w',
                                     'columnspan':2, 'row':5, 'column':0},
@@ -181,7 +181,7 @@ title is the title of the
 
 
         self.idf.append({'name':'inpVal',
-                         'widgetType':Tkinter.Entry,
+                         'widgetType':tkinter.Entry,
                          'defaultValue':'0.0',
                          'wcfg':{'font':(ensureFontCase('Courier'),10),
                                  'width':5,'textvariable':self.valInput,
@@ -192,7 +192,7 @@ title is the title of the
                          })
 
 
-        self.idf.append({'widgetType':Tkinter.Label,
+        self.idf.append({'widgetType':tkinter.Label,
                          'wcfg':{'text': 'Sensitivity'},
                          'gridcfg':{'sticky':'w',
                                     'columnspan':2, 'row':6, 'column':0},
@@ -200,7 +200,7 @@ title is the title of the
 
 
         self.idf.append({'name':'inpSens',
-                         'widgetType':Tkinter.Entry,
+                         'widgetType':tkinter.Entry,
                          'defaultValue':self.master.oneTurn,
                          'wcfg':{'font':(ensureFontCase('Courier'),10),
                                  'width':5,'textvariable':self.sensInput,
@@ -251,21 +251,21 @@ title is the title of the
 #########Buttons##########
 
         self.idf.append({'name':'OKButton',
-                         'widgetType':Tkinter.Button,
+                         'widgetType':tkinter.Button,
                          'text':'  OK  ',
                          'wcfg':{'bd':3},
                          'gridcfg':{'sticky':'we', 'row':10,'column':0},
                          'command': self.OK_cb})
         
-	self.idf.append({'name':'ApplyButton',
-                         'widgetType':Tkinter.Button,
+        self.idf.append({'name':'ApplyButton',
+                         'widgetType':tkinter.Button,
                          'text':'Apply',
                          'wcfg':{'bd':3},
                          'gridcfg':{'sticky':'we', 'row':10,'column':1},
                          'command': self.Apply_cb})
 
-	self.idf.append({'name':'CancelButton',
-                         'widgetType':Tkinter.Button,
+        self.idf.append({'name':'CancelButton',
+                         'widgetType':tkinter.Button,
                          'text':'Dismiss',
                          'wcfg':{'bd':3},
                          'gridcfg':{'sticky':'we', 'row':11, 'column':0,
@@ -394,8 +394,7 @@ title is the title of the
         if val == 'int':
             self.idf.entryByName['selPrec']['widget'].grid_forget()
         else:
-            apply( self.idf.entryByName['selPrec']['widget'].grid,(),
-                   self.idf.entryByName['selPrec']['gridcfg'])
+            self.idf.entryByName['selPrec']['widget'].grid(*(), **self.idf.entryByName['selPrec']['gridcfg'])
 
 
     def setTitle(self, title):
@@ -426,7 +425,7 @@ title is the title of the
 
     def Dismiss_cb(self, event=None):
         self.flag = 0
-	self.optionsForm.withdraw()
+        self.optionsForm.withdraw()
 
 
     def displayPanel(self, create):
@@ -615,7 +614,7 @@ class VectorOptionsPanel:
             self.title = 'Options Panel'
 
         if self.master is None:
-            self.master = Tkinter.Tk()
+            self.master = tkinter.Tk()
             self.master.continuous = 1             
             self.master.withdraw()
 
@@ -623,7 +622,7 @@ class VectorOptionsPanel:
 
         self.idf = InputFormDescr(title=self.title)
         
-        self.idf.append({'widgetType':Tkinter.Label,
+        self.idf.append({'widgetType':tkinter.Label,
                          'wcfg':{'text': '\n'},
                          'gridcfg':{'columnspan':2, 'row':0, 'column':0},
                          })
@@ -667,7 +666,7 @@ class VectorOptionsPanel:
         
 
         self.idf.append({'name':'DismissButton',
-                         'widgetType':Tkinter.Button,
+                         'widgetType':tkinter.Button,
                          'text':'Dismiss',
                          'wcfg':{'bd':3},
                          'gridcfg':{'columnspan':2},
@@ -691,7 +690,7 @@ class VectorOptionsPanel:
 
     def Dismiss_cb(self):
         self.flag = 0
-	self.optionsForm.withdraw()
+        self.optionsForm.withdraw()
 
 
     def displayPanel(self, create):

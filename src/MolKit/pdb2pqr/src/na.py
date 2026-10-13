@@ -47,8 +47,8 @@
 __date__ = "28 February 2006"
 __author__ = "Todd Dolinsky"
 
-import string
-from structures import *
+from mglcompat import pystring as string
+from .structures import *
 
 class Nucleic(Residue):
     """

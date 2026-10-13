@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -15,7 +15,7 @@
 #
 
 import os
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 from opengltk.OpenGL import GL
 from opengltk.extent import _gllib
@@ -24,8 +24,8 @@ import DejaVu
 from DejaVu.IndexedPolylines import IndexedPolylines
 from DejaVu.Geom import Geom
 from DejaVu.IndexedGeom import IndexedGeom
-import datamodel, viewerConst
-from viewerFns import checkKeywords
+from . import datamodel, viewerConst
+from .viewerFns import checkKeywords
 if hasattr(DejaVu, 'enableVertexArray') is False:
     DejaVu.enableVertexArray = False
 
@@ -45,23 +45,23 @@ will be used.
 
     from string import split
     f = open(filename+'.indpolvert')
-    data = map(split, f.readlines())
+    data = list(map(split, f.readlines()))
     f.close()
-    verts = map( lambda x: (float(x[0]), float(x[1]), float(x[2])), data )
-    norms = map( lambda x: (float(x[3]), float(x[4]), float(x[5])), data )
+    verts = [(float(x[0]), float(x[1]), float(x[2])) for x in data]
+    norms = [(float(x[3]), float(x[4]), float(x[5])) for x in data]
 
     f = open(filename+'.indpolface')
-    data = map(split, f.readlines())
+    data = list(map(split, f.readlines()))
     f.close()
     faces = []
     fnorms = []
     for line in data:
-        faces.append( map( int, line[:-3]) )
-        fnorms.append( map( float, line[-3:]) )
+        faces.append( list(map( int, line[:-3])) )
+        fnorms.append( list(map( float, line[-3:])) )
     if name is None:
         name = filename
 
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     faces = Numeric.array(faces)
     if min(faces.ravel())==1:
         faces = faces - 1
@@ -87,7 +87,7 @@ class IndexedPolygons(IndexedPolylines):
         #    kw['vertexArrayFlag'] = True
         #    kw['immediateRendering'] = True
 
-        apply( IndexedPolylines.__init__, (self, name, check), kw)
+        IndexedPolylines.__init__(*(self, name, check), **kw)
 
 
     def Set(self, check=1, redo=1, updateOwnGui=True, setCurrent=True, **kw):
@@ -98,7 +98,7 @@ check=1 : verify that all the keywords present can be handle by this func
 redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
-        redoFlags = apply( IndexedPolylines.Set, (self, check, 0), kw )
+        redoFlags = IndexedPolylines.Set(*(self, check, 0), **kw)
 
         if    hasattr(self, 'faceSet') \
           and len(self.faceSet.faces.array) > 0 \
@@ -186,14 +186,14 @@ and 0-based topoly in the .face file (i, j, k, ... ).
         faces = self.getFaces()
 
         file = open(filename+'.indpolvert', 'w')
-        map( lambda v, n, f=file: \
+        list(map( lambda v, n, f=file: \
              f.write("%f %f %f %f %f %f\n"%tuple(tuple(v)+tuple(n))),
-             verts, vnorms)
+             verts, vnorms))
         file.close()
 
         file = open(filename+'.indpolface', 'w')
         for v, face in zip(fnorms, faces):
-            map( lambda ind, f=file: f.write("%d "%ind ), face )
+            list(map( lambda ind, f=file: f.write("%d "%ind ), face ))
             file.write("%f %f %f\n"%tuple(v))
         file.close()
 

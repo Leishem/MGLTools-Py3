@@ -14,7 +14,7 @@
 #
 #
 
-import string
+from mglcompat import pystring as string
 
 def read_element_table(filename):
     """void <- read_element_table(filename)
@@ -46,7 +46,7 @@ def writeElementTableAsPythonCode(elemTab, inFileName, outFileName):
     f = open(outFileName,'w')
     f.write("# File generated from %s\n#\n"%inFileName)
     f.write("babel_elements = {\n")
-    for k,v in elemTab.items():
+    for k,v in list(elemTab.items()):
         f.write("  '%s': %s, \n" % (k,str(v)))
     f.write('}\n#END\n');
     f.close()
@@ -55,7 +55,7 @@ def writeElementTableAsPythonCode(elemTab, inFileName, outFileName):
 def read_types_table(filename):
     f = open(filename)
     typestab = {}
-    nrow, ncol = map( int, string.split(f.readline()))
+    nrow, ncol = list(map( int, string.split(f.readline())))
     typeFormats = string.split(f.readline())
     for t in typeFormats:
         typestab[t] = []
@@ -73,7 +73,7 @@ def writeTypesTableAsPythonCode(typestab, inFileName, outFileName):
     f = open(outFileName,'w')
     f.write("# File generated from %s\n#\n"%inFileName)
     f.write("babel_types = {\n")
-    for k,v in typestab.items():
+    for k,v in list(typestab.items()):
         f.write("  '%s': %s, \n" % (k,str(v)))
     f.write('}\n#END\n');
     f.close()

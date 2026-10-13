@@ -10,8 +10,8 @@ def getActor(object, propname):
     propname is the name of the attribute in object that willbe animated
     """
     animatableProps = getAnimatableAttributes(object)
-    if not animatableProps[0].has_key(propname):
-        print "DejaVu.scenarioInterface.getActor: cannot create %s actor for object:" % (propname,), object
+    if propname not in animatableProps[0]:
+        print("DejaVu.scenarioInterface.getActor: cannot create %s actor for object:" % (propname,), object)
         return None
     descr = animatableProps[0][propname]
     actorname = getActorName(object, propname)
@@ -222,7 +222,7 @@ def getActor(object, propname):
 
 
 try:
-    import Tkinter
+    import tkinter
 
     #from Scenario2.director import Director
     #from Scenario2.gui import DirectorGUI
@@ -236,9 +236,9 @@ try:
     from DejaVu.Clip import ClippingPlane 
     from DejaVu.Viewer import SetCurrentObjectEvent, SetCurrentCameraEvent, SetCurrentLightEvent, SetCurrentClipEvent, AddObjectEvent
 
-    from actor import RedrawActor, getAnimatableAttributes, getActorName
+    from .actor import RedrawActor, getAnimatableAttributes, getActorName
     import numpy
-    from SimpleDialog import SimpleDialog
+    from tkinter.simpledialog import SimpleDialog
     import weakref
     
     class DejaVuScenario:
@@ -295,30 +295,30 @@ try:
 
                 # add menu button to ViewerGUI
                 # Objects
-                self.animObjMenuB = menuB = Tkinter.Menubutton(
+                self.animObjMenuB = menuB = tkinter.Menubutton(
                     vi.GUI.inheritF, text='Animate', relief='raise' )
-                menuB.menu = Tkinter.Menu(menuB)
+                menuB.menu = tkinter.Menu(menuB)
                 menuB['menu'] = menuB.menu
                 menuB.pack(fill='x')
 
                 # Cameras
-                self.animCamMenuB = menuB = Tkinter.Menubutton(
+                self.animCamMenuB = menuB = tkinter.Menubutton(
                     vi.GUI.CameraProp, text='Animate', relief='raise' )
-                menuB.menu = Tkinter.Menu(menuB)
+                menuB.menu = tkinter.Menu(menuB)
                 menuB['menu'] = menuB.menu
                 menuB.pack(fill='x')
 
                 # Lights
-                self.animLightMenuB = menuB = Tkinter.Menubutton(
+                self.animLightMenuB = menuB = tkinter.Menubutton(
                     vi.GUI.LightProp, text='Animate', relief='raise' )
-                menuB.menu = Tkinter.Menu(menuB)
+                menuB.menu = tkinter.Menu(menuB)
                 menuB['menu'] = menuB.menu
                 menuB.pack(fill='x')
 
                 # Cliping planes
-                self.animClipMenuB = menuB = Tkinter.Menubutton(
+                self.animClipMenuB = menuB = tkinter.Menubutton(
                     vi.GUI.ClipProp, text='Animate', relief='raise' )
-                menuB.menu = Tkinter.Menu(menuB)
+                menuB.menu = tkinter.Menu(menuB)
                 menuB['menu'] = menuB.menu
                 menuB.pack(fill='x')
 
@@ -363,14 +363,14 @@ try:
             elif isinstance(object, Light): menuB = self.animLightMenuB
             elif isinstance(object, ClippingPlane): menuB = self.animClipMenuB
             else:
-                print 'no menu button for object:', object, object.__class__
+                print('no menu button for object:', object, object.__class__)
                 return
             
             # clear menu's content
             menuB.menu.delete(0, 'end')
 
             # get list of properties
-            p1 = object.animatableProps[0].keys()
+            p1 = list(object.animatableProps[0].keys())
             p1.sort()
             propnames = p1
             #p2 = object.animatableProps[1].keys()
@@ -382,9 +382,9 @@ try:
             aprop = self.animatedProperties
             
             for i, name in enumerate(propnames):
-                var = Tkinter.IntVar()
+                var = tkinter.IntVar()
                 actorname = getActorName(object, name)
-                if aprop.has_key(actorname):
+                if actorname in aprop:
                     var.set(1)
                     aprop[actorname].guiVar = var
                 cb = CallbackFunction( self.toggleAnimatePropVar, name, var, object)
@@ -580,11 +580,11 @@ try:
             vi = self.application
             director = self._director()
             autotrackDict = director.autotrackDict
-            if not vi.eventListeners.has_key(AddObjectEvent):
+            if AddObjectEvent not in vi.eventListeners:
                 func = self.getNewActor_cb
                 vi.registerListener(AddObjectEvent, func)
             newDict = {}
-            actornames = map(lambda x: x.name, director.actors[1:])
+            actornames = [x.name for x in director.actors[1:]]
             
             allobjects = []
             for object in vi.rootObject.AllObjects():
@@ -621,10 +621,10 @@ try:
                 #self.setCurrentObjectAttrList(object)
                 props = getAnimatableAttributes(object)[0]
                 #print "object : ", object, props.keys()
-                for propname in props.keys():
+                for propname in list(props.keys()):
                     descr = props[propname]
                     actorname = getActorName(object, propname)
-                    if not autotrackDict.has_key(actorname):
+                    if actorname not in autotrackDict:
                         if not actorname in actornames:
                             # actor 'actorname' does not exist - create it and add to
                             # newDict
@@ -645,10 +645,10 @@ try:
                 autotrackDict = director.autotrackDict
                 props = getAnimatableAttributes(object)[0]
                 #print "object : ", object, props.keys()
-                for propname in props.keys():
+                for propname in list(props.keys()):
                     descr = props[propname]
                     actorname = getActorName(object, propname)
-                    if not autotrackDict.has_key(actorname):
+                    if actorname not in autotrackDict:
                         actorClass, args, kw = descr['actor']
                         actor = actorClass( *(propname, object)+args, **kw )
                         actor.scenario = self
@@ -665,7 +665,7 @@ try:
             #from actorFromFile import fromFileForm
             #form = fromFileForm(self, propnames, object, command = director.createFileActor)
             from scenario.fileActorGUI import fileActorGUI
-            if object in self.fileactorGui.keys():
+            if object in list(self.fileactorGui.keys()):
                 self.fileactorGui[object].show()
             else:
                 self.fileactorGui[object] = fileActorGUI(self, propnames, object, director.createActorFromData)
@@ -687,4 +687,4 @@ except ImportError:
     import traceback
     traceback.print_exc()
     traceback.print_stack()
-    print 'WARNING: failed to import package Scenario2'
+    print('WARNING: failed to import package Scenario2')

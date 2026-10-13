@@ -219,7 +219,7 @@ class Actor:
         """
         # is called at each time step if the actor's readMode is active
         from SimPy.Simulation import now
-        print 'setting ', self.name, 'for', self.name, 'at:', frame
+        print('setting ', self.name, 'for', self.name, 'at:', frame)
 
 
     def setValue(self, value):
@@ -229,7 +229,7 @@ class Actor:
         """
         # is called at each time step if the actor's readMode is active
         from SimPy.Simulation import now
-        print 'setting ', self.name, 'for', self.name, 'at:', now(), 'to', value
+        print('setting ', self.name, 'for', self.name, 'at:', now(), 'to', value)
 
 
     def setEaseIn(self, val):

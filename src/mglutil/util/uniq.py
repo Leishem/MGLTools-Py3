@@ -18,8 +18,8 @@ def uniq(alist):    # Fastest order preserving
  
 def uniq3(alist):    # Fastest without order preserving
     set = {}
-    map(set.__setitem__, alist, [])
-    return set.keys()
+    list(map(set.__setitem__, alist, []))
+    return list(set.keys())
 
 """
 from mglutil.util.uniq import uniq, uniq2, uniq3

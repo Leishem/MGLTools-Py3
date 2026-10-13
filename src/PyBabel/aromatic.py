@@ -51,8 +51,8 @@ Original code by W. Patrick Walters and Matthew T. Stahl
 
 import math
 
-from atomTypes import TypeConverter
-from util import distance, bond_angle
+from .atomTypes import TypeConverter
+from .util import distance, bond_angle
 
 class Aromatic:
     """ """
@@ -93,7 +93,7 @@ class Aromatic:
                 is_aromatic = 1
                 for a in r['atoms']:
                     # check to see if the atom is sp2 
-	            # if not, the ring isn't aromatic
+                    # if not, the ring isn't aromatic
                     hyb_str = converter.convert(a.babel_type, 'all_caps')
                     hyb = int(hyb_str)
                     if hyb != 2:
@@ -209,11 +209,11 @@ class Aromatic:
 
 if __name__ == '__main__':
     import pdb, sys
-    from atomTypes import AtomHybridization
-    from cycle import RingFinder
-    from bo import BondOrder
-    from aromatic import Aromatic
-    from addh import AddHydrogens
+    from .atomTypes import AtomHybridization
+    from .cycle import RingFinder
+    from .bo import BondOrder
+    from .aromatic import Aromatic
+    from .addh import AddHydrogens
     
     from MolKit.pdbParser import PdbqParser
     #parser = NewPdbqParser("./txp_noh.pdbq") # doesn't work
@@ -230,16 +230,16 @@ if __name__ == '__main__':
 
     allAtoms = mol.chains.residues.atoms
 
-    print "assigning atom types"
+    print("assigning atom types")
     babel = AtomHybridization()
     babel.assignHybridization(allAtoms)
 
-    print "looking for rings"
+    print("looking for rings")
     bonds = allAtoms.bonds[0]
     rings = RingFinder()
     rings.findRings(allAtoms, bonds)
 
-    print "assigning bond order"
+    print("assigning bond order")
     bo = BondOrder()
     #pdb.run("bo.assignBondOrder(allAtoms, bonds)")
     bo.assignBondOrder(allAtoms, bonds)
@@ -340,12 +340,12 @@ if __name__ == '__main__':
             if len(needDB)==0: break
             if l==len(needDB): break
 
-        print 'NEED'
+        print('NEED')
         for a in needDB:
-            print a
-        print 'canHave'
+            print(a)
+        print('canHave')
         for a in canHave:
-            print a
+            print(a)
         all = []
 ##          while (1):
 ##              l = len(all)
@@ -355,12 +355,12 @@ if __name__ == '__main__':
         return all
     
     pbatoms = fixMissingBondOrders()
-    print "WARNING couldn't fix all bond orders", pbatoms
+    print("WARNING couldn't fix all bond orders", pbatoms)
 
-    print "looking for aromatic rings"
+    print("looking for aromatic rings")
     arom = Aromatic(rings)
     arom.find_aromatic_atoms(allAtoms)
-    print "done"
+    print("done")
 
     import math
 
@@ -454,7 +454,7 @@ if __name__ == '__main__':
         n = b.bondOrder
         if n=='aromatic': continue
         for i in range(1, n):
-            print i, scale[i]
+            print(i, scale[i])
             l.append( (vc,vc+1) )
             c1 = b.atom1.coords
             v.append( c1[0]+(scale[i]*b.dispVec[0]),

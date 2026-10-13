@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -26,9 +26,9 @@ ICOM      : Base class to implement Picking command for application dercived
 # $Id: VFCommand.py,v 1.99.2.1 2011/06/22 21:27:46 sargis Exp $
 #
 
-import numpy.oldnumeric as Numeric
-import os, types, string, Tkinter,Pmw, warnings #, webbrowser
-import tkMessageBox
+import mglcompat.oldnumeric as Numeric
+import os, types, tkinter, Pmw, warnings; from mglcompat import pystring as string #, webbrowser
+import tkinter.messagebox
 from time import time, sleep
 ##  from ViewerFramework.gui import InputFormDescr
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
@@ -67,10 +67,10 @@ class ActiveObject:
 
     def waitForCompletion(self):
         # used for commands running in threads
-	while (1):
-	   if not  self.private_threadDone.locked():
+        while (1):
+           if not  self.private_threadDone.locked():
                return
-	   sleep(0.01)
+           sleep(0.01)
 
 
     def AddCallback(self, callback):
@@ -92,7 +92,7 @@ class ActiveObject:
     def HasCallback(self, callback):
         """Check whether a function is registered as a callback for an event
         """
-        if type(callback) in types.StringTypes:
+        if type(callback) in (str,):
             callback = self.FindFunctionByName(callback, self.callbacks)
             if callback is None: return 0
         assert callable(callback)
@@ -248,7 +248,7 @@ picked objects.
         # ignore lastusedValue of negate as it might have been set by
         # control panel and in interactive commands we do call the
         # display or undisplay, slect or deselect command explicitly
-        if defaultValues.has_key('negate'):
+        if 'negate' in defaultValues:
             del defaultValues['negate']
         cmd( *(objects,), **defaultValues)
         #cmd(objects)
@@ -688,8 +688,8 @@ modules implement commands.
     def setLastUsedValues(self, formName='default', **kw):
         form = self.cmdForms.get(formName, None)
         values = self.lastUsedValues[formName]
-        for k,v in kw.items():
-            if values.has_key(k):
+        for k,v in list(kw.items()):
+            if k in values:
                 values[k] = v
                 if form is None:
                     values[k] = v
@@ -707,7 +707,7 @@ modules implement commands.
                         except:
                             widget.invoke()
                     else:
-                        print "Could not set the value of ", k, v
+                        print("Could not set the value of ", k, v)
 
 
     def getLastUsedValues(self, formName='default', **kw):
@@ -740,7 +740,7 @@ of the pop up window is the name of the command
         """
          """
         from inspect import getargspec
-        args = getargspec(self.__call__.im_func)
+        args = getargspec(self.__call__.__func__)
         allNames = args[0][1:]
         defaultValues = args[3]
         if defaultValues is None:
@@ -791,7 +791,7 @@ have to overwrite it.
 
         # we handle commands that have a negate keyword argument
         if self.flag & self.negateKw:
-            if kw.has_key('negate'):
+            if 'negate' in kw:
                 kw['negate'] = not kw['negate']
             else:
                 kw['negate'] = 1
@@ -839,12 +839,12 @@ by afterDoit if the command is successfully executed"""
                         self.vf.message( self.lastCmdLog[-1] )
 
         if setupUndo and self.vf.userpref['Number of Undo']['value']>0:
-            apply( self.setupUndoBefore, args, kw )
+            self.setupUndoBefore(*args, **kw)
 
         # call callbacks
         for cb, args, kw in self.callbacksBefore:
             if callable(cb):
-                apply(cb, args, kw)
+                cb(*args, **kw)
 
 
     def afterDoit(self, args, kw, setupUndo, busyIdle):
@@ -855,13 +855,13 @@ by afterDoit if the command is successfully executed"""
         if self.vf.hasGui: 
             if busyIdle:
                 self.vf.GUI.idle()
-            if kw.has_key('redraw') :
+            if 'redraw' in kw :
                 if kw['redraw']: self.vf.GUI.VIEWER.Redraw()
 
         # call callbacks
         for cb, args, kw in self.callbacksAfter:
             if callable(cb):
-                apply(cb, args, kw)
+                cb(*args, **kw)
 
 
     def doitWrapper(self, *args, **kw):
@@ -869,7 +869,7 @@ by afterDoit if the command is successfully executed"""
 
         self.undoCmds = ''
 
-        if kw.has_key('redraw'):
+        if 'redraw' in kw:
             redraw = kw['redraw']
             del kw['redraw']
         else:
@@ -877,13 +877,13 @@ by afterDoit if the command is successfully executed"""
             
         # when called with topCommand=0, then  log=0, busyIdle=0 and
         # setupUndo=0
-        if kw.has_key('topCommand'):
+        if 'topCommand' in kw:
             topCommand = kw['topCommand']
             del kw['topCommand']
         else:
             topCommand = 1
 
-        if kw.has_key('createEvents'):
+        if 'createEvents' in kw:
             self.createEvents = kw.pop('createEvents')
         
         if topCommand: log = setupUndo = busyIdle = 1
@@ -891,19 +891,19 @@ by afterDoit if the command is successfully executed"""
 
         callListener = 1
         
-        if kw.has_key('log'):
+        if 'log' in kw:
             log = kw['log']
             del kw['log']
                 
-        if kw.has_key('callListener'):
+        if 'callListener' in kw:
             callListener = kw['callListener']
             del kw['callListener']
                 
-        if kw.has_key('setupUndo'):
+        if 'setupUndo' in kw:
             setupUndo = kw['setupUndo']
             del kw['setupUndo']
 
-        if kw.has_key('busyIdle'):
+        if 'busyIdle' in kw:
             busyIdle = kw['busyIdle']
             del kw['busyIdle']
 
@@ -912,7 +912,7 @@ by afterDoit if the command is successfully executed"""
             w1 = self.vf.showHideGUI.getWidget('MESSAGE_BOX')
             if w1.winfo_ismapped():
                 kw['log']=0
-                logst = apply( self.logString, args, kw)
+                logst = self.logString(*args, **kw)
                 if logst is None:
                     log = False
                 else:    
@@ -930,12 +930,12 @@ by afterDoit if the command is successfully executed"""
 
         # Update self.lastUsedValues
         defaultValues = self.lastUsedValues['default']
-        for key, value in kw.items():
-            if defaultValues.has_key(key):
+        for key, value in list(kw.items()):
+            if key in defaultValues:
                 defaultValues[key] = value
 
         t1 = time()
-        result = apply( self.vf.tryto, (self.func,)+args, kw )
+        result = self.vf.tryto(*(self.func,)+args, **kw)
         t2 = time()
 
         # call onCmdRun of listeners
@@ -968,7 +968,7 @@ by afterDoit if the command is successfully executed"""
                     self.lastCmdLog.remove(self.lastCmdLog[-1])
 
             if setupUndo and self.vf.userpref['Number of Undo']['value']>0:
-                apply( self.setupUndoAfter, args, kw )
+                self.setupUndoAfter(*args, **kw)
                 if  len(self.undoCmds)>0:
                     name = self.undoMenuStringPrefix+self.undoMenuString
                     self.vf.undo.addEntry( self.undoCmds, name )
@@ -1007,9 +1007,9 @@ by afterDoit if the command is successfully executed"""
         
     def strArg(self, arg):
         before = ""
-        if type(arg) is types.ListType or type(arg) is types.TupleType:
+        if type(arg) is list or type(arg) is tuple:
             seenBefore = {} # used to save only once each before line needed
-            if type(arg) is types.ListType:
+            if type(arg) is list:
                 argstr = "["
                 endstr = "], "
             else:
@@ -1025,10 +1025,10 @@ by afterDoit if the command is successfully executed"""
                 argstr = argstr[:-2]+endstr
             else:
                 argstr = argstr+endstr
-            for s in seenBefore.keys():
+            for s in list(seenBefore.keys()):
                 before += s+'\n'
             return argstr, before
-        elif type(arg) is types.DictionaryType:
+        elif type(arg) is dict:
             seenBefore = {} # used to save only once each before line needed
             # d = {'k1':5, 'k2':6, 'k3':7, 'k8':14}
             argstr = "{"
@@ -1036,7 +1036,7 @@ by afterDoit if the command is successfully executed"""
             if len(arg)==0:
                 #special handling for empty dictionary
                 return "{}, ", before
-            for key, value in arg.items():
+            for key, value in list(arg.items()):
                 astr, before = self._strArg(key)
                 if before is not None:
                     seenBefore[before] = True
@@ -1057,7 +1057,7 @@ by afterDoit if the command is successfully executed"""
 FIXME describe what types of arguments are handled
         """
         from mglutil.util.misc import isInstance
-        if type(arg)==types.ClassType:
+        if type(arg)==type:
             before = 'from %s import %s'%(arg.__module__, arg.__name__)
             return arg.__name__+', ', before
 
@@ -1080,7 +1080,7 @@ FIXME describe what types of arguments are handled
                 return argst+', ', before
 
             try:
-                import cPickle
+                import pickle
                 pickle = cPickle
                 before = 'import cPickle; pickle = cPickle'
             except:
@@ -1094,7 +1094,7 @@ FIXME describe what types of arguments are handled
             picklelog = string.replace(pl1, '\n', '\\n')
             return 'pickle.loads("' + picklelog + '"), ', before
 
-        elif type(arg) in types.StringTypes:
+        elif type(arg) in (str,):
             arg1 = string.replace(arg, '\n', '\\n')
             if string.find(arg, "'") != -1:
                 return '"'+ arg1 + '",', None
@@ -1102,7 +1102,7 @@ FIXME describe what types of arguments are handled
                 return "'" + arg1 + "', ", None
 
         elif type(arg)==Numeric.ArrayType:
-            before = 'from numpy.oldnumeric import array\n'
+            before = 'from mglcompat.oldnumeric import array\n'
             #arg = arg.tolist()
             return repr(arg)+ ', ', before
 
@@ -1127,7 +1127,7 @@ FIXME describe what types of arguments are handled
             s, bef = self.strArg(arg)
             argString = argString + s
             if bef is not None: before.append(bef)
-        for name,value in kw.items():
+        for name,value in list(kw.items()):
             s, bef = self.strArg(value)
             argString = argString + '%s=%s'%(name, s)
             if bef is not None: before.append(bef)
@@ -1153,16 +1153,16 @@ FIXME describe what types of arguments are handled
         """
         import traceback
         traceback.print_strack()
-        print 'VFCommand.log STILL USED'
+        print('VFCommand.log STILL USED')
         
         if self.vf.logMode == 'no': return
-        logStr = apply( self.logString, args, kw)
+        logStr = self.logString(*args, **kw)
         self.vf.log( logStr )
         
 
     def __call__(self, *args, **kw):
         """None <- commandName( *args, **kw)"""
-        return apply( self.doitWrapper, args, kw)
+        return self.doitWrapper(*args, **kw)
 
 
     def tkCb(self, event=None):
@@ -1186,13 +1186,13 @@ FIXME describe what types of arguments are handled
         kw = {}
         if log!=None: kw['log']=log
         if redraw!=None: kw['redraw']=redraw
-        args, kw = apply( self.getArguments, (), kw)
-        if not kw.has_key('redraw'): kw['redraw']=1
-        if not kw.has_key('log'): kw['log']=1
+        args, kw = self.getArguments(*(), **kw)
+        if 'redraw' not in kw: kw['redraw']=1
+        if 'log' not in kw: kw['log']=1
         if event:
-            return apply( self.doitWrapper, (event,)+args, kw )
+            return self.doitWrapper(*(event,)+args, **kw)
         else:
-            return apply( self.doitWrapper, args, kw )
+            return self.doitWrapper(*args, **kw)
 
     def getHelp(self):
         modName = self.__module__
@@ -1292,11 +1292,11 @@ optional arguments :
          """
         from mglutil.gui.InputForm.Tk.gui import InputForm, InputFormDescr
         if self.vf.hasGui:
-            if self.cmdForms.has_key(formName) and force == 1:
+            if formName in self.cmdForms and force == 1:
                 self.cmdForms[formName].destroy()
                 del self.cmdForms[formName]
             
-            if not self.cmdForms.has_key(formName):
+            if formName not in self.cmdForms:
                 formDescription = self.buildFormDescr(formName)
                 if formDescription is None:
                     val = {}

@@ -8,7 +8,7 @@ from Scenario2.events import AddMAAEvent, RemoveMAAEvent, CurrentFrameEvent,\
      PlayerStartEvent, PlayerStopEvent
 from Scenario2.sequenceAnimator import SequenceAnimator
 
-import Tkinter, Pmw, os
+import tkinter, Pmw, os
 from mglutil.util.callback import CallBackFunction
 from mglutil.util.packageFilePath import findFilePath
 
@@ -110,7 +110,7 @@ class SequenceAnimatorGUI:
         Create a ScrolledFrame to hold MAA entries
         """
         if self.master is None:
-            self.master = master = Tkinter.Toplevel()
+            self.master = master = tkinter.Toplevel()
             self.ownsMaster = True
         else:
             self.ownsMaster = False
@@ -122,7 +122,7 @@ class SequenceAnimatorGUI:
         parent =  Pmw.Group(self.master, tag_text='Actions')
 
         # create container
-	w = self.MAAContainer = Pmw.ScrolledListBox(
+        w = self.MAAContainer = Pmw.ScrolledListBox(
             parent.interior(), #labelpos='nw', label_text='AnimationClips',
             listbox_height = 6,
             selectioncommand = self.selectionCommand_cb,
@@ -134,7 +134,7 @@ class SequenceAnimatorGUI:
         ##
         ## Action manipulation group
         ##        
-	#w.grid(sticky='nesw', column=0, row=0, rowspan=3)
+        #w.grid(sticky='nesw', column=0, row=0, rowspan=3)
         w.pack(fill='both', expand=1, side="left")
         w._listbox.config(exportselection = False)
         
@@ -142,36 +142,36 @@ class SequenceAnimatorGUI:
         manipGroup =  Pmw.Group(parent.interior(),
                                  tag_text='Manipulate Actions')
         master = manipGroup.interior()
-        self.gotoStartIcon = im = Tkinter.PhotoImage(
+        self.gotoStartIcon = im = tkinter.PhotoImage(
             file=os.path.join(ICONDIR, 'go_to_start.gif'), master=master)
-        w = self.startActionb =  Tkinter.Button(
+        w = self.startActionb =  tkinter.Button(
             master, image=im, command=self.gotoActionStart_cb)
         w.pack(side='left', anchor='n')
         self.balloon.bind(w, "goto action's start") 
 
-        self.gotoEndIcon = im = Tkinter.PhotoImage(
+        self.gotoEndIcon = im = tkinter.PhotoImage(
             file=os.path.join(ICONDIR, 'go_to_end.gif'), master=master)
-        w = self.endActionb =  Tkinter.Button(
+        w = self.endActionb =  tkinter.Button(
             master, image=im, command=self.gotoActionEnd_cb)
         w.pack(side='left', anchor='n')
         self.balloon.bind(w, "goto action's end") 
         
-        self.moveUpIcon = im = Tkinter.PhotoImage(
+        self.moveUpIcon = im = tkinter.PhotoImage(
             file=os.path.join(ICONDIR, 'arrowup.gif'), master=master)
-        w = self.upb =  Tkinter.Button(master, image=im, command=self.moveUp_cb)
+        w = self.upb =  tkinter.Button(master, image=im, command=self.moveUp_cb)
         w.pack(side='left', anchor='n')
         self.balloon.bind(w, "Move selected action one position up") 
         
-        self.moveDownIcon = im = Tkinter.PhotoImage(
+        self.moveDownIcon = im = tkinter.PhotoImage(
             file=os.path.join(ICONDIR, 'arrowdown.gif'), master=master)
-        w = self.downb =  Tkinter.Button(
+        w = self.downb =  tkinter.Button(
             master, image=im, command=self.moveDown_cb)
         w.pack(side='top', anchor='n')
         self.balloon.bind(w, "Move selected action one position down")         
         
-        self.deleteIcon = im = Tkinter.PhotoImage(
+        self.deleteIcon = im = tkinter.PhotoImage(
             file=os.path.join(ICONDIR, 'close.gif'), master=master)
-        w = self.deleteb =  Tkinter.Button(
+        w = self.deleteb =  tkinter.Button(
             master, image=im, command=self.delete_cb)
         w.pack(side='top', anchor='n')
         self.balloon.bind(w, "Delete selected action")         
@@ -183,16 +183,16 @@ class SequenceAnimatorGUI:
         ##
         self.actionGroup =  Pmw.Group(parent.interior(), tag_text='force')
         actionFrame = self.actionGroup.interior()
-        self.forceOrientTk = Tkinter.IntVar()
-        w = self.orientb =  Tkinter.Checkbutton(
+        self.forceOrientTk = tkinter.IntVar()
+        w = self.orientb =  tkinter.Checkbutton(
             actionFrame, text='Orientation', variable=self.forceOrientTk,
             command=self.orient_cb)
         w.pack(side='top', fill='x', anchor='nw')
         w.configure(state='disabled')
         self.balloon.bind(w, "Force the original orientation on the first frame of this action")
         
-        self.forceRenderingTk = Tkinter.IntVar()
-        w = self.renderingb =  Tkinter.Checkbutton(
+        self.forceRenderingTk = tkinter.IntVar()
+        w = self.renderingb =  tkinter.Checkbutton(
             actionFrame, text='Rendering', variable=self.forceRenderingTk,
             command=self.rendering_cb)
         w.pack(side='top', fill='x', anchor='nw')
@@ -200,7 +200,7 @@ class SequenceAnimatorGUI:
         self.balloon.bind(w, "Force the original rendering on the first frame of this action")    
         self.actionGroup.pack(side='top', anchor='n', fill='x')
 
-        w = self.editb =  Tkinter.Button(parent.interior(), text='Edit ...',
+        w = self.editb =  tkinter.Button(parent.interior(), text='Edit ...',
                                          command=self.edit_cb)
         w.pack(side='top', fill='x', anchor='n')
         self.balloon.bind(w, "Edit selected clip")    
@@ -245,7 +245,7 @@ class SequenceAnimatorGUI:
 
         #self.frameCounter = Tkinter.Label(master, text='Frame 000000')
         #self.frameCounter.pack(side='top')
-        frame = Tkinter.Frame(self.master)               
+        frame = tkinter.Frame(self.master)               
         self.pl = PlayerControls( self.animator, root=frame, #root=self.master,
                                   form2=1, hasSlider=True)
         frame.pack(side='top')

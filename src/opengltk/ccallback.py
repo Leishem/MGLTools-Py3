@@ -27,7 +27,7 @@
 """helper for generating C callback files
 """
 
-import string, re, types,sys
+import re, types, sys; from mglcompat import pystring as string
 platformname = sys.platform
 winfpref = platformname == 'win32' and 'WSTDCALL ' or ''
 
@@ -69,7 +69,7 @@ def cb_name( rettype, args):
         return re.sub( r'\*', 'star',
                        re.sub( r' ', '', name))
     return string.join( [subfun( rettype)]
-                         + [subfun( isinstance( x, types.StringType)
+                         + [subfun( isinstance( x, bytes)
                                     and x or x[ 0])
                             for x in args], '_'
                         )
@@ -123,7 +123,7 @@ def cb_interface( headername, nslots, pyargs, rettype, args, pythread):
 
     result += '  result = PyObject_CallFunction( s_runcallback,'\
               ' "si%s", "%s", idx%s%s);\n'\
-                % (isinstance( pyargs, types.StringType)
+                % (isinstance( pyargs, bytes)
                    and (pyargs,
                         cbname,
                         callargs and ',' or '',
@@ -158,7 +158,7 @@ swigfuns = {}
 
 def swigfun( moduledef, sig, cbfun):
     assert cbfun is None or callable( cbfun)
-    ftype = apply( cb_name, sig)
+    ftype = cb_name(*sig)
     if cbfun is None:
         return getattr( moduledef, '%s_NULL' % ftype)
     else:
@@ -183,7 +183,7 @@ def swigcallback( ftype, idx, *args):
     '''callback from C (callback.i)
     '''
     try:
-        return apply( swigfuns[ ftype][ idx], args)
+        return swigfuns[ ftype][ idx](*args)
     except SystemExit:
         raise
     except:

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -12,9 +12,9 @@
 #
 # $Id: extrusionCommands.py,v 1.45.2.1 2012/06/20 20:58:59 sanner Exp $
 #
-import Tkinter, numpy.oldnumeric as Numeric,Pmw
-import types, string
-from tkColorChooser import askcolor
+import tkinter, mglcompat.oldnumeric as Numeric,Pmw
+import types; from mglcompat import pystring as string
+from tkinter.colorchooser import askcolor
 from Pmv.mvCommand import MVCommand
 from ViewerFramework.VFCommand import CommandGUI
 
@@ -84,12 +84,11 @@ class ComputeSheet2DCommand(MVCommand):
         kw['nbchords'] = nbchords
         kw['width'] = width
         kw['offset'] = offset
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
 
         nodes = self.vf.expandNodes(nodes)
-        apply(self.doitWrapper, (nodes, sheet2DName, ctlAtmName, torsAtmName),
-              kw)
+        self.doitWrapper(*(nodes, sheet2DName, ctlAtmName, torsAtmName), **kw)
         
     def getSheet2DRes(self, chain, ctlAtmName, torsAtmName, buildIsHelix=False):
         isHelix = []
@@ -155,7 +154,7 @@ class ComputeSheet2DCommand(MVCommand):
             if not hasattr(chain, 'sheet2D'):
                 chain.sheet2D = {}
 
-            if not chain.sheet2D.has_key(sheet2DName):
+            if sheet2DName not in chain.sheet2D:
                 chain.sheet2D[sheet2DName] = Sheet2D()
             else:
                 # If one of the parameter of the sheet2D is different then...
@@ -283,8 +282,8 @@ class ComputeSheet2DCommand(MVCommand):
         if self.vf.userpref['Expand Node Log String']['value'] == 0:
             self.nodeLogString = "self.getSelection()"
 
-        apply(self.doitWrapper,(self.vf.getSelection(),sheet2DName ,
-                                ctlAtmName, torsAtmName), val)
+        self.doitWrapper(*(self.vf.getSelection(),sheet2DName ,
+                                ctlAtmName, torsAtmName), **val)
 
 ComputeSheet2DGUI = CommandGUI()
 ComputeSheet2DGUI.addMenuCommand('menuRoot', 'Compute', 'sheet2D')
@@ -314,7 +313,7 @@ class DisplayPath3DCommand(MVCommand):
 
     def onAddObjectToViewer(self,obj):
         for c in obj.chains:
-            c.residues.rindex = range(len(c.residues))
+            c.residues.rindex = list(range(len(c.residues)))
 
     def createGeometries(self, obj):
         from DejaVu.Geom import Geom
@@ -330,7 +329,7 @@ class DisplayPath3DCommand(MVCommand):
             if not hasattr(chain, 'sheet2D') or chain.sheet2D is None: 
                 continue
             # HACK TO DEBUG SECONDARYSTRUCTURE
-            if not chain.sheet2D.has_key('ssSheet2D') or \
+            if 'ssSheet2D' not in chain.sheet2D or \
                chain.sheet2D['ssSheet2D'] is None:
                 continue
 
@@ -469,9 +468,9 @@ class DisplayPath3DCommand(MVCommand):
         kw['only'] = only
         kw['redraw'] = True
         nodes = self.vf.expandNodes(nodes)
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'" + nodes +"'"
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
         
     def doit(self, nodes, negate=False, only=False):
@@ -487,7 +486,7 @@ class DisplayPath3DCommand(MVCommand):
 ##                     self.vf.ComputeSheet2D(mol, nbchords = 10,
 ##                                            buildIsHelix = 0,
 ##                                            topCommand=0,log=0)
-                if not chain.sheet2D.has_key('ssSheet2D'):
+                if 'ssSheet2D' not in chain.sheet2D:
                     self.vf.computeSheet2D(chain, 'ssSheet2D',
                                                'CA','O', buildIsHelix=1,
                                                nbchords=8,
@@ -530,7 +529,7 @@ class DisplayPath3DCommand(MVCommand):
                 del val['display']
                 
             val['redraw'] = 1
-            apply( self.doitWrapper, (self.vf.getSelection(),), val )
+            self.doitWrapper(*(self.vf.getSelection(),), **val)
 
 DisplayPathGUI = CommandGUI()
 DisplayPathGUI.addMenuCommand('menuRoot', 'Display', 'Path3D',
@@ -616,7 +615,7 @@ class Nucleic_Acids_properties(MVCommand):
                           255*self.color_A[2])
             self.hex_color_A = "#%02x%02x%02x" % (self.A_rgb)
             idf.append( {'name':'colorA',
-                         'widgetType':Tkinter.Button,
+                         'widgetType':tkinter.Button,
                          'tooltip':'Click to change the color',
                          'parent':'Purines',                         
                          'wcfg':{'text':'Adenine',
@@ -632,7 +631,7 @@ class Nucleic_Acids_properties(MVCommand):
                           255*self.color_G[2])
             self.hex_color_G = "#%02x%02x%02x" % (self.G_rgb)
             idf.append( {'name':'colorG',
-                         'widgetType':Tkinter.Button,
+                         'widgetType':tkinter.Button,
                          'tooltip':'Click to change the color',
                          'parent':'Purines',
                          'wcfg':{'text':'Guanine',
@@ -681,7 +680,7 @@ class Nucleic_Acids_properties(MVCommand):
                           255*self.color_T[2])
             self.hex_color_T = "#%02x%02x%02x" % (self.T_rgb)
             idf.append( {'name':'colorT',
-                         'widgetType':Tkinter.Button,
+                         'widgetType':tkinter.Button,
                          'tooltip':'Click to change the color',
                          'parent':'Pyrimidines',            
                          'wcfg':{'text':'Thymine',
@@ -697,7 +696,7 @@ class Nucleic_Acids_properties(MVCommand):
                           255*self.color_C[2])
             self.hex_color_C = "#%02x%02x%02x" % (self.C_rgb)
             idf.append( {'name':'colorC',
-                         'widgetType':Tkinter.Button,
+                         'widgetType':tkinter.Button,
                          'tooltip':'Click to change the color',
                          'parent':'Pyrimidines',
                          'wcfg':{'text':'Cytosine',
@@ -712,7 +711,7 @@ class Nucleic_Acids_properties(MVCommand):
                           255*self.color_U[2])
             self.hex_color_U = "#%02x%02x%02x" % (self.U_rgb)
             idf.append( {'name':'colorU',
-                         'widgetType':Tkinter.Button,
+                         'widgetType':tkinter.Button,
                          'tooltip':'Click to change the color',
                          'parent':'Pyrimidines',
                          'wcfg':{'text':'Uracil',
@@ -754,10 +753,10 @@ class Nucleic_Acids_properties(MVCommand):
                          })
 
             idf.append( {'name':'color_backbone',
-                         'widgetType':Tkinter.Checkbutton,
+                         'widgetType':tkinter.Checkbutton,
                          'defaultValue':1,                                    
                          'wcfg':{'text':'Color ribbon using these colors',
-                                 'variable': Tkinter.IntVar()
+                                 'variable': tkinter.IntVar()
                                  },
                          'gridcfg':{'sticky':'ew', 'row':5,'column':0}})
  
@@ -831,4 +830,4 @@ def initModule(viewer):
     imports the commands for Secondary Structure specific coloring, and
     initializes these commands also. """
     for dict in commandList:
-	viewer.addCommand(dict['cmd'], dict['name'], dict['gui'])
+        viewer.addCommand(dict['cmd'], dict['name'], dict['gui'])

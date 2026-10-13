@@ -112,8 +112,8 @@ class MMCIFParser(MoleculeParser):
                                     continue 
                                 tmp_list = tmp_string.split();
                                 if len(tmp_list) > len(tmp_dict):
-                                    print "WARNING!!! in mmcifParser.py" 
-                                    print "More data-values was provided than data-name"
+                                    print("WARNING!!! in mmcifParser.py") 
+                                    print("More data-values was provided than data-name")
                                 for key_ii in range(len(tmp_list)):
                                     tmp_dict[key_i][1].append(tmp_list[key_ii])
                                     key_i += 1
@@ -141,7 +141,7 @@ class MMCIFParser(MoleculeParser):
         type_symbol = None
         B_iso_or_equiv = None
         mmCIF_dict = self.mmCIF_dict
-        if mmCIF_dict.has_key('_atom_site.id'):
+        if '_atom_site.id' in mmCIF_dict:
             #The description of the data names can be found in the following link
             #http://mmcif.pdb.org/dictionaries/mmcif_pdbx.dic/Items   
             ids = mmCIF_dict['_atom_site.id'] #1 number
@@ -161,11 +161,11 @@ class MMCIFParser(MoleculeParser):
             type_symbol = mmCIF_dict['_atom_site.type_symbol']
             molName = mmCIF_dict['_entry.id']
                 
-        elif mmCIF_dict.has_key('_atom_site_label'):
+        elif '_atom_site_label' in mmCIF_dict:
             #ftp://ftp.iucr.org/pub/cif_core.dic
             atom_id = mmCIF_dict['_atom_site_label']
             len_atoms = len(atom_id)
-            ids = range(len_atoms)
+            ids = list(range(len_atoms))
             
             group_PDB = len_atoms*['HETATM']
             comp_id = len_atoms*["CIF"]
@@ -200,21 +200,21 @@ class MMCIFParser(MoleculeParser):
                 x_coords.append(trans[0]) 
                 y_coords.append(trans[1])
                 z_coords.append(trans[2])
-                if mmCIF_dict.has_key('_atom_site_U_iso_or_equiv'):
+                if '_atom_site_U_iso_or_equiv' in mmCIF_dict:
                     B_iso_or_equiv.append(mmCIF_dict['_atom_site_U_iso_or_equiv'][i].split('(')[0])
-            if mmCIF_dict.has_key('_atom_site_type_symbol'):
+            if '_atom_site_type_symbol' in mmCIF_dict:
                 type_symbol = mmCIF_dict['_atom_site_type_symbol']
-            if mmCIF_dict.has_key('_atom_site_occupancy'):
+            if '_atom_site_occupancy' in mmCIF_dict:
                 occupancy = mmCIF_dict['_atom_site_occupancy']
-            if mmCIF_dict.has_key('_chemical_name_common'):   
+            if '_chemical_name_common' in mmCIF_dict:   
                 molName = mmCIF_dict['_chemical_name_common']
-            elif mmCIF_dict.has_key('_chemical_name_mineral'):
+            elif '_chemical_name_mineral' in mmCIF_dict:
                 molName = mmCIF_dict['_chemical_name_mineral']
                                 
-            if mmCIF_dict.has_key('_symmetry_space_group_name_H-M'):   
+            if '_symmetry_space_group_name_H-M' in mmCIF_dict:   
                 mmCIF_dict['_symmetry.space_group_name_H-M'] = mmCIF_dict['_symmetry_space_group_name_H-M']
         else:
-            print 'No _atom_site.id or _atom_site_label record is available in %s' % self.filename
+            print('No _atom_site.id or _atom_site_label record is available in %s' % self.filename)
             return  None  
         
         mol = Protein()
@@ -280,7 +280,7 @@ class MMCIFParser(MoleculeParser):
         try:
             self.parse_MMCIF_HYDBND()       
         except:
-             print >>sys.stderr,"Parsing Hydrogen Bond Record Failed in",self.filename
+             print("Parsing Hydrogen Bond Record Failed in",self.filename, file=sys.stderr)
                
         mol.name = molName
         mol.allAtoms = mol.chains.residues.atoms
@@ -382,7 +382,7 @@ class MMCIFParser(MoleculeParser):
         try:
             conf_id = mmCIF_dict['_struct_conf.conf_type_id']
         except KeyError:      
-            print  'No STRUCT_CONF category record is available in %s' % self.filename
+            print('No STRUCT_CONF category record is available in %s' % self.filename)
             return  None
 
         beg_comp_id  = mmCIF_dict['_struct_conf.beg_label_comp_id']
@@ -407,8 +407,8 @@ class MMCIFParser(MoleculeParser):
                 startRes = chain.residues.get(startData)
 
                 if len(startRes) != 1:
-                    print ("ERROR: When parsing the HELIX information found \
-%d %s in chain %s"%(len(startRes), startData, chain.id))
+                    print(("ERROR: When parsing the HELIX information found \
+%d %s in chain %s"%(len(startRes), startData, chain.id)))
                     continue
                 endData = end_comp_id[index]+ end_PDB_ins_code[index].strip('?')\
                             +  end_seq_id[index]
@@ -416,8 +416,8 @@ class MMCIFParser(MoleculeParser):
                 endRes = chain.residues.get(endData)
 
                 if len(endRes) != 1:
-                    print ("ERROR: When parsing the HELIX information found \
-%d %s in chain %s"%(len(endRes), endData, chain.id))
+                    print(("ERROR: When parsing the HELIX information found \
+%d %s in chain %s"%(len(endRes), endData, chain.id)))
                     continue
                 helClass = helix_class[index]
                 comment = conf_details[index]
@@ -436,7 +436,7 @@ class MMCIFParser(MoleculeParser):
         try:
             sheet_range_id = mmCIF_dict['_struct_sheet_range.sheet_id']
         except KeyError:      
-            print  'No STRUCT_SHEET category record is available in %s' % self.filename
+            print('No STRUCT_SHEET category record is available in %s' % self.filename)
             return  None
 
         range_id = mmCIF_dict['_struct_sheet_range.id']
@@ -467,8 +467,8 @@ class MMCIFParser(MoleculeParser):
                 startRes = chain.residues.get(startData)
 
                 if len(startRes) != 1:
-                    print ("ERROR: When parsing the SHEET information found \
-%d %s in chain %s"%(len(startRes), startData, chain.id))
+                    print(("ERROR: When parsing the SHEET information found \
+%d %s in chain %s"%(len(startRes), startData, chain.id)))
                     continue
 
                 endData = end_comp_id[index]+ end_PDB_ins_code[index].strip('?')\
@@ -477,13 +477,12 @@ class MMCIFParser(MoleculeParser):
                 endRes = chain.residues.get(endData)
 
                 if len(endRes) != 1:
-                    print ("ERROR: When parsing the SHEET information found \
-%d %s in chain %s"%(len(endRes), endData, chain.id))
+                    print(("ERROR: When parsing the SHEET information found \
+%d %s in chain %s"%(len(endRes), endData, chain.id)))
                     continue
                 
-                nbStrand = len(filter(lambda x: x[0] == sheet_range_id[index], \
-                               sheet_range_id))
-                if type( order_sheet_id ) == types.ListType:
+                nbStrand = len([x for x in sheet_range_id if x[0] == sheet_range_id[index]])
+                if type( order_sheet_id ) == list:
                     for tmp_index in range(len(order_sense)):
                         if sheet_range_id[index] == order_sheet_id[tmp_index]:
                             if order_range_id_1[tmp_index] == range_id[index] or \
@@ -538,16 +537,16 @@ class MMCIFParser(MoleculeParser):
                 startData = startData.strip()
                 startRes = chain.residues.get(startData)
                 if len( startRes ) != 1:
-                    print ("ERROR: When parsing the TURN information found \
-%d %s in chain %s"%(len(startRes), startData, chain.id))
+                    print(("ERROR: When parsing the TURN information found \
+%d %s in chain %s"%(len(startRes), startData, chain.id)))
                     continue
                 endData = end_comp_id[index] + end_PDB_ins_code[index].strip('?')\
                             +  end_seq_id[index]
                 endData = endData.strip()
                 endRes = chain.residues.get(endData)
                 if len(endRes) != 1:
-                    print ("ERROR: When parsing the TURN information found \
-%d %s in chain %s"%(len(endRes), endData, chain.id))
+                    print(("ERROR: When parsing the TURN information found \
+%d %s in chain %s"%(len(endRes), endData, chain.id)))
                     continue
 
                 comment = conf_details[index]
@@ -557,15 +556,15 @@ class MMCIFParser(MoleculeParser):
 
     def addModelToMolecules(self, listOfMol):
         length = len(listOfMol)
-        for i in xrange(length):
+        for i in range(length):
             listOfMol[i].model = ProteinSet()
-            for j in xrange(length):
+            for j in range(length):
                 if listOfMol[i]!= listOfMol[j]:
                     listOfMol[i].model.append(listOfMol[j])
     def hasSsDataInFile(self):
         """ Function testing if the informations on the secondary structure
         are in the file"""
-        test = filter(lambda x: x in self.mmCIF_dict, ['_struct_conf.id', '_struct_sheet_range.id'])
+        test = [x for x in ['_struct_conf.id', '_struct_sheet_range.id'] if x in self.mmCIF_dict]
         if test: return 1
         else: return 0 
 
@@ -576,7 +575,7 @@ class MMCIFParser(MoleculeParser):
         try:
             mmCIF_dict['_cell.length_a']
         except KeyError:      
-            print  'No CELL category record is available in %s' % self.filename
+            print('No CELL category record is available in %s' % self.filename)
             return
         a = mmCIF_dict['_cell.length_a']
         b = mmCIF_dict['_cell.length_b']
@@ -600,7 +599,7 @@ class MMCIFParser(MoleculeParser):
         try:
             struct_conn_id = mmCIF_dict['_struct_conn.conn_type_id']
         except KeyError:      
-            print  'No STRUCT_CONN category record is available in %s' % self.filename
+            print('No STRUCT_CONN category record is available in %s' % self.filename)
             return
         ptnr1_asym_id = mmCIF_dict['_struct_conn.ptnr1_label_asym_id']
         ptnr1_atom_id = mmCIF_dict['_struct_conn.ptnr1_label_atom_id']
@@ -664,9 +663,9 @@ class MMCIFParser(MoleculeParser):
                    hAt.hbonds = [hbond]    
 if __name__ == '__main__':
     parser = MMCIFParser( filename='Tests/Data/1CRN.cif' )
-    print "Reading molecule"
+    print("Reading molecule")
     mol = parser.parse()
-    print "Done parsing"
+    print("Done parsing")
     SS_Data  = parser.parseSSData( mol )
-    print "Done parsing secondary structure"
-    print "Done"
+    print("Done parsing secondary structure")
+    print("Done")

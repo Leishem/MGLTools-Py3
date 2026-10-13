@@ -90,11 +90,11 @@ class MMCIFWriter(MoleculeWriter):
 if __name__ == '__main__':
     from MolKit.mmcifParser import MMCIFParser
     parser = MMCIFParser( filename='Tests/Data/1CRN.cif' )
-    print "Reading molecule"
+    print("Reading molecule")
     mol = parser.parse()
-    print "Done parsing"
+    print("Done parsing")
     SS_Data  = parser.parseSSData( mol )
-    print "Done parsing secondary structure"
+    print("Done parsing secondary structure")
     writer = MMCIFWriter()
     writer.write('Tests/Data/1CRN_.cif',mol)
-    print "Done"
+    print("Done")

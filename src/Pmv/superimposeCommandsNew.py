@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -14,7 +14,7 @@
 # $Id: superimposeCommandsNew.py,v 1.15.4.1 2010/12/30 21:56:18 rhuey Exp $
 #
 
-import numpy.oldnumeric as Numeric, os, Tkinter, Pmw
+import mglcompat.oldnumeric as Numeric, os, tkinter, Pmw
 
 from Pmv.stringSelectorGUI import StringSelectorGUI
 from Pmv.mvCommand import MVCommand, MVAtomICOM
@@ -34,7 +34,7 @@ from mglutil.gui.InputForm.Tk.gui import InputFormDescr, InputForm
 from mglutil.util.callback import CallBackFunction
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser
 from mglutil.math.rigidFit import RigidfitBodyAligner
-from SimpleDialog import SimpleDialog
+from tkinter.simpledialog import SimpleDialog
 
 from MolKit.tree import TreeNode, TreeNodeSet
 from Pmv.moleculeViewer import EditAtomsEvent 
@@ -66,10 +66,10 @@ class SuperimposeCommand(MVCommand):
         mobAtoms = mobAtoms.findType(Atom)
         # validate the inputs
         if len(refAtoms) !=len(mobAtoms):
-            print "The two atomSet are not of equal length"
+            print("The two atomSet are not of equal length")
             return
         if len(refAtoms) < 3 :
-            print "At least three atoms are needed for superimposition"
+            print("At least three atoms are needed for superimposition")
             return
         
         refCoords = refAtoms.coords
@@ -91,7 +91,7 @@ class SuperimposeCommand(MVCommand):
 
         if showRMSD:
             rmsd=rigidfitAligner.rmsdAfterSuperimposition(mobCoords)
-            print "RMSD = ", rmsd
+            print("RMSD = ", rmsd)
             return rmsd
         else:
             return
@@ -109,8 +109,8 @@ class SuperimposeCommand(MVCommand):
         mobAtoms = self.vf.expandNodes(mobAtoms)
 
         if not mobAtoms or not refAtoms: return        
-        if not kw.has_key('redraw'): kw['redraw'] = 1
-        res=apply(self.doitWrapper, (refAtoms, mobAtoms, updateGeom, showRMSD), kw)
+        if 'redraw' not in kw: kw['redraw'] = 1
+        res=self.doitWrapper(*(refAtoms, mobAtoms, updateGeom, showRMSD), **kw)
         return res
         
 
@@ -126,7 +126,7 @@ class TransformAtomsCommand(MVCommand):
         # fixme: need checking for mat (matrix) and mobAtoms
         sh=mat.shape
         if sh!=(4,4) and sh !=(16,):
-            print "Need a 4x4 matrix or flatted (16,) list"
+            print("Need a 4x4 matrix or flatted (16,) list")
             return
         
         mGeom = mobAtoms[0].top.geomContainer.masterGeom 
@@ -150,8 +150,8 @@ class TransformAtomsCommand(MVCommand):
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return
 
-        if not kw.has_key('redraw'): kw['redraw'] = 1
-        apply(self.doitWrapper, (mat, nodes), kw)
+        if 'redraw' not in kw: kw['redraw'] = 1
+        self.doitWrapper(*(mat, nodes), **kw)
 
 
         
@@ -201,8 +201,8 @@ Assuming the AtomSet are from same molecule
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return
 
-        if not kw.has_key('redraw'): kw['redraw'] = 1
-        apply(self.doitWrapper, (nodes, ), kw)
+        if 'redraw' not in kw: kw['redraw'] = 1
+        self.doitWrapper(*(nodes, ), **kw)
 
 
 
@@ -228,8 +228,8 @@ class SuperimposeAtomsCommand(MVCommand):
         # Nothing can be done if the two sets of coords are not of the same
         # size
         if not len(refCoords) == len(mobCoords):
-            print " ERROR: Cannot perform the superimposition because the 2 \
-            mv.lsets of Atoms are not of the same length"
+            print(" ERROR: Cannot perform the superimposition because the 2 \
+            mv.lsets of Atoms are not of the same length")
             return
 
         # Get the rotation and the translation ysing mglutil.math.rigidFit
@@ -322,8 +322,8 @@ class SuperimposeAtomsCommand(MVCommand):
         """
         None <- superimposeAtoms(refAtoms, mobAtoms, **kw)
         """
-        if not kw.has_key('redraw'): kw['redraw'] = 1
-        apply(self.doitWrapper, (refAtoms, mobAtoms), kw)
+        if 'redraw' not in kw: kw['redraw'] = 1
+        self.doitWrapper(*(refAtoms, mobAtoms), **kw)
         
 
 #class SuperimposeAtomsGUICommand(MVCommand, MVAtomICOM):
@@ -376,21 +376,21 @@ class SuperimposeAtomsGUICommand(SuperimposeCommand, MVAtomICOM):
     def onAddCmdToViewer(self):
         # Check first is any of the command that superimpose depends on are
         # already loaded.
-        if not self.vf.commands.has_key('setICOM'):
+        if 'setICOM' not in self.vf.commands:
             self.vf.loadCommand('interactiveCommands', 'setICOM', 'Pmv',
                                 topCommand = 0)
-        if not self.vf.commands.has_key('superimposeAtoms'):
+        if 'superimposeAtoms' not in self.vf.commands:
             self.vf.loadCommand('superImposeCommands', 'superimposeAtoms',
                                 'Pmv', topCommand = 0)
             
-        if not self.vf.commands.has_key('startContinuousPicking'):
+        if 'startContinuousPicking' not in self.vf.commands:
             self.vf.loadCommand('dejaVuCommands','startContinuousPicking',
                                 'ViewerFramework', topCommand = 0)
 
-        if not self.vf.commands.has_key('stopContinuousPicking'):
+        if 'stopContinuousPicking' not in self.vf.commands:
             self.vf.loadCommand('dejaVuCommands','stopContinuousPicking',
                                 'ViewerFramework', topCommand = 0)
-        if not self.vf.commands.has_key('labelByExpression'):
+        if 'labelByExpression' not in self.vf.commands:
             self.vf.loadCommand('labelCommands', 'labelByExpression', 'Pmv',
                                 topCommand = 0)
 
@@ -434,7 +434,7 @@ class SuperimposeAtomsGUICommand(SuperimposeCommand, MVAtomICOM):
             self.vf.ICmdCaller.level.AddCallback(self.unlabelLevel)
             if level == Molecule : level = Protein
             self.node = atom.findType(level)
-            funcItems = map(lambda x: x.full_name(), self.node)
+            funcItems = [x.full_name() for x in self.node]
             self.vf.labelByExpression(self.node,
                                       font = 'arial1.glf',
                                       location = 'First', 
@@ -616,10 +616,10 @@ class SuperimposeAtomsGUICommand(SuperimposeCommand, MVAtomICOM):
 
 
     def dismiss_cb(self):
-        if self.cmdForms.has_key('pairs'):self.cmdForms['pairs'].withdraw()
-        if self.cmdForms.has_key('addPairs'):
+        if 'pairs' in self.cmdForms:self.cmdForms['pairs'].withdraw()
+        if 'addPairs' in self.cmdForms:
             self.cmdForms['addPairs'].withdraw()
-        if self.cmdForms.has_key('editString'):
+        if 'editString' in self.cmdForms:
             self.cmdForms['addPairs'].withdraw()
         # Dismiss all the forms ???
 ##         for v in self.cmdForms.values():
@@ -635,11 +635,11 @@ class SuperimposeAtomsGUICommand(SuperimposeCommand, MVAtomICOM):
     def superimpose_cb(self):
         refAtoms = AtomSet()
         mobAtoms = AtomSet()
-        for pair in self.newPairs.values():
+        for pair in list(self.newPairs.values()):
             refAtoms.append(pair[0])
             mobAtoms.append(pair[1])
             
-        apply( self.doitWrapper, (refAtoms,mobAtoms),  {} )
+        self.doitWrapper(*(refAtoms,mobAtoms), **{})
         
 
     def add_cb(self):
@@ -650,9 +650,9 @@ class SuperimposeAtomsGUICommand(SuperimposeCommand, MVAtomICOM):
         # Need this for the order of the nodes in the pairs...
         ebn = self.cmdForms['addPairs'].descr.entryByName
         reflc = ebn['refnodes']['widget']
-        refnames = map(lambda x: x[0], reflc.entries)
+        refnames = [x[0] for x in reflc.entries]
         moblc = ebn['mobnodes']['widget']
-        mobnames = map(lambda x: x[0], moblc.entries)
+        mobnames = [x[0] for x in moblc.entries]
         self.createPairs(refnames, mobnames, val['slice'][0], val['choice'][0])
         
     def refremove_cb(self):
@@ -737,25 +737,25 @@ class SuperimposeAtomsGUICommand(SuperimposeCommand, MVAtomICOM):
                         'wcfg':{'tag_text':"Create Reference Nodes and Mobile Nodes Lists"},
                         'gridcfg':{'sticky':'wnse'}
                         })
-            idf.append({'widgetType':Tkinter.Label,
+            idf.append({'widgetType':tkinter.Label,
                         'parent':'mode',
                         'wcfg':{'text':'By String'},
                         'gridcfg':{'sticky':'we'}}
                        )
-            idf.append({'widgetType':Tkinter.Checkbutton,
+            idf.append({'widgetType':tkinter.Checkbutton,
                         'name':'string',
                         'parent':'mode',
                         #'tooltip':'Use the string selector to create refnode-mobnodes pairs',
                         'wcfg':{'text':'on/off','command':self.string_cb},
                         'gridcfg':{'sticky':'we','row':-1}})
 
-            idf.append({'widgetType':Tkinter.Label,
+            idf.append({'widgetType':tkinter.Label,
                         'parent':'mode',
                         'wcfg':{'text':'By Picking'},
                         'gridcfg':{'sticky':'we', 'row':-1}}
                        )
 
-            idf.append({'widgetType':Tkinter.Checkbutton,
+            idf.append({'widgetType':tkinter.Checkbutton,
                         'name':'pick',
                         'tooltip':'Use the picking event to create refnode-mobnodes pairs',
                         'parent':'mode',
@@ -775,7 +775,7 @@ class SuperimposeAtomsGUICommand(SuperimposeCommand, MVAtomICOM):
 
             idf.append({'name':'refremove',
                         'parent':'editnodes',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':""" Remove the selected entry from the
 commands to be applied to the object when loaded in the application""",
                         'wcfg':{'text':'REMOVE','width':10,
@@ -784,7 +784,7 @@ commands to be applied to the object when loaded in the application""",
 
             idf.append({'name':'refoneup',
                         'parent':'editnodes',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':"""Move the selected entry up one entry""",
                         'wcfg':{'text':'Move up','width':10,
                                 'command':self.refmoveup_cb},
@@ -792,7 +792,7 @@ commands to be applied to the object when loaded in the application""",
 
             idf.append({'name':'refonedown',
                         'parent':'editnodes',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':"""Move the selected entry down one entry""",
                         'wcfg':{'text':'Move down','width':10,
                                 'command':self.refmovedown_cb},
@@ -828,7 +828,7 @@ commands to be applied to the object when loaded in the application""",
             
             idf.append({'name':'mobremove',
                         'parent':'editnodes',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':""" Remove the selected mobile node""",
                         'wcfg':{'text':'REMOVE','width':10,
                                'command':self.mobremove_cb},
@@ -836,7 +836,7 @@ commands to be applied to the object when loaded in the application""",
 
             idf.append({'name':'moboneup',
                         'parent':'editnodes',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':"""Move the selected entry up one entry""",
                         'wcfg':{'text':'Move up','width':10,
                                 'command':self.mobmoveup_cb},
@@ -844,7 +844,7 @@ commands to be applied to the object when loaded in the application""",
 
             idf.append({'name':'mobonedown',
                         'parent':'editnodes',
-                        'widgetType':Tkinter.Button,
+                        'widgetType':tkinter.Button,
                         'tooltip':"""Move the selected entry down one entry""",
                         'wcfg':{'text':'Move down','width':10,
                                 'command':self.mobmovedown_cb},
@@ -867,7 +867,7 @@ commands to be applied to the object when loaded in the application""",
                         'tooltip':"""This filter allows the user to choose
 which atom to consider from the ref node or mob nodes sets to create the atom pairs""",
                         'defaultValue':self.defaultFilter,
-                        'wcfg':{ 'scrolledlist_items': self.filters.keys(),
+                        'wcfg':{ 'scrolledlist_items': list(self.filters.keys()),
                                 'selectioncommand':self.setDefault},
                         'gridcfg':{'sticky':'w'}})
 
@@ -902,7 +902,7 @@ beginning, the end or half and half""",
                         })
                                          
             
-            entries = map(lambda x: (x, None), self.newPairs.keys())
+            entries = [(x, None) for x in list(self.newPairs.keys())]
             idf.append({'widgetType':ListChooser,
                         'name':'newpairs',
                         'parent':'edit',
@@ -913,14 +913,14 @@ beginning, the end or half and half""",
                         'gridcfg':{'sticky':'wens', 'columnspan':2}})
             
 
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'name': 'delete',
                         'parent':'edit',
                         'wcfg':{'width':15,'text': 'Add Pairs',
                                 'command':self.add_cb},
                         'gridcfg':{'sticky':'we'}})
 
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'name': 'delete',
                         'parent':'edit',
                         'wcfg':{'width':15,'text': 'Delete Pairs',
@@ -934,10 +934,10 @@ beginning, the end or half and half""",
                         'gridcfg':{'sticky':'wnse'}
                         })
             # Continuous Superimposition
-            idf.append({'widgetType':Tkinter.Checkbutton,
+            idf.append({'widgetType':tkinter.Checkbutton,
                         'name':'continuous',
                         'parent':'superimpose',
-                        'wcfg':{'variable':Tkinter.IntVar(),
+                        'wcfg':{'variable':tkinter.IntVar(),
                                 'text':'Continuous',
                                 'command':self.continuous_cb,
                                 'padx':10,'pady':10},
@@ -945,21 +945,21 @@ beginning, the end or half and half""",
 
                                          
             # Reset & SuperImpose button.
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'name':'final',
                         'parent':'superimpose',
                         'wcfg':{'width':15,'text':'Superimpose',
                                 'command':self.superimpose_cb},
                         'gridcfg':{'sticky':'we', 'row':-1}})
 
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'parent':'superimpose',
                         'name':'reset',
                         'wcfg':{'text':'Reset', 'command':self.reset_cb},
                         'gridcfg':{'sticky':'we', 'row':-1}})
 
 
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'name': 'dismiss',
                         'wcfg':{'text': 'DISMISS',
                                 'command':self.dismiss_cb},

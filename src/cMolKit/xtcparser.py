@@ -31,7 +31,7 @@ def _swig_getattr(self,class_type,name):
     if (name == "thisown"): return self.this.own()
     method = class_type.__swig_getmethods__.get(name,None)
     if method: return method(self)
-    raise AttributeError,name
+    raise AttributeError(name)
 
 def _swig_repr(self):
     try: strthis = "proxy of " + self.this.__repr__()
@@ -40,7 +40,7 @@ def _swig_repr(self):
 
 import types
 try:
-    _object = types.ObjectType
+    _object = object
     _newclass = 1
 except AttributeError:
     class _object : pass
@@ -65,15 +65,15 @@ def read_xtc(file):
     headers = []
     status, magic, natoms, step, time =_xtcparser.read_header_xtc()
     if not status:
-        print "Error in reading header of file %s"%file
+        print("Error in reading header of file %s"%file)
         return 0
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     cs = Numeric.zeros((natoms, 3), typecode="f")
     status, prec = _xtcparser.read_first_frame_xtc(magic, cs)
     coords=[]
     
     if not status:
-        print "Error in reading frame %d"%nframes
+        print("Error in reading frame %d"%nframes)
         return 0
     while status:
         nframes = nframes + 1

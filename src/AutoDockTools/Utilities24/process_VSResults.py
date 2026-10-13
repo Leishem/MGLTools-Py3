@@ -34,25 +34,25 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: process_VSResults.py -d directory"
-        print
-        print "    Description of command..."
-        print "         -d     directory"
-        print "    Optional parameters:"
-        print "        [-t]    rmsd tolerance (default is 2.0)"
-        print "        [-f]    rmsd reference filename "
-        print "        (default is to use input ligand coordinates from a docking log)"
-        print "        [-r]    receptor filename (default is set from gridmap names)"
-        print "        [-B]    create best docking pdbqt only (default is create both best energy and largest cluster )"
-        print "        [-L]    create largest cluster docking pdbqt only (default is create both best energy and largest cluster )"
-        print "        [-l]    stem for largest cluster docking pdbqt file (default is 'ligandname_lc')"
-        print "        [-x]    maximum number of clusters to report (default is all)"
-        print "        [-Z]    do not include interactions in output pdbqt file(default is to include interactions)"
-        print "        [-n]    do not build hydrogen bonds (default is to build hydrogen bonds + report)"
-        print "        [-c]    do not detect atoms in close contact (default is to detect + report)"
-        print "        [-p]    include detection of pi-pi interactions in close contact (default is not to detect pi-pi and pi-cation)"
-        print "        [-H]    custom HydrogenBondBuilder parameters: comma-separated-list eg distCutoff=3.00,distCutoff2=3.25"
-        print "        [-v]    verbose output"
+        print("Usage: process_VSResults.py -d directory")
+        print()
+        print("    Description of command...")
+        print("         -d     directory")
+        print("    Optional parameters:")
+        print("        [-t]    rmsd tolerance (default is 2.0)")
+        print("        [-f]    rmsd reference filename ")
+        print("        (default is to use input ligand coordinates from a docking log)")
+        print("        [-r]    receptor filename (default is set from gridmap names)")
+        print("        [-B]    create best docking pdbqt only (default is create both best energy and largest cluster )")
+        print("        [-L]    create largest cluster docking pdbqt only (default is create both best energy and largest cluster )")
+        print("        [-l]    stem for largest cluster docking pdbqt file (default is 'ligandname_lc')")
+        print("        [-x]    maximum number of clusters to report (default is all)")
+        print("        [-Z]    do not include interactions in output pdbqt file(default is to include interactions)")
+        print("        [-n]    do not build hydrogen bonds (default is to build hydrogen bonds + report)")
+        print("        [-c]    do not detect atoms in close contact (default is to detect + report)")
+        print("        [-p]    include detection of pi-pi interactions in close contact (default is not to detect pi-pi and pi-cation)")
+        print("        [-H]    custom HydrogenBondBuilder parameters: comma-separated-list eg distCutoff=3.00,distCutoff2=3.25")
+        print("        [-v]    verbose output")
 
 
     #HydrogenBondBuilder default parameter values:
@@ -70,8 +70,8 @@ if __name__ == '__main__':
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'd:t:f:r:BLl:x:DZncpH:vh')
-    except getopt.GetoptError, msg:
-        print 'process_VSResults.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('process_VSResults.py: %s' %msg)
         usage()
         sys.exit(2)
     
@@ -125,72 +125,72 @@ if __name__ == '__main__':
         #print "o=", o, " a=", a
         if o in ('-d', '--d'):
             directory = a
-            if verbose: print 'set directory to ', a
+            if verbose: print('set directory to ', a)
         if o in ('-t', '--t'):
             rms_tolerance = float(a)
-            if verbose: print 'set rms_tolerance to ', rms_tolerance
+            if verbose: print('set rms_tolerance to ', rms_tolerance)
         if o in ('-f', '--f'):
             rms_reference = a
-            if verbose: print 'set rms_reference filename to ', rms_reference
+            if verbose: print('set rms_reference filename to ', rms_reference)
         if o in ('-r', '--r'):
             receptor_filename = a
-            if verbose: print 'set receptor_filename to ', receptor_filename
+            if verbose: print('set receptor_filename to ', receptor_filename)
         if o in ('-B', '--B'): #create pdbqt file for bestenergy result only
             best_only = True
             write_both = False
-            if verbose: print 'set best_only to ', best_only
+            if verbose: print('set best_only to ', best_only)
         if o in ('-L', '--L'): #create pdbqt file for largestcluster result only
             largestCl_only = True
             write_both = False
-            if verbose: print 'set largestCL_only to ', largestCL_only
+            if verbose: print('set largestCL_only to ', largestCL_only)
         if o in ('-l', '--l'): #stem for pdbqt file for be in largest cluster
             lc_stem = a
-            if verbose: print 'set largest_cluster stem to ', lc_stem
+            if verbose: print('set largest_cluster stem to ', lc_stem)
 
         if o in ('-x', '--x'):
             max_cl_to_write = int(a)
-            if verbose: print 'set maximum number of clusters to write to ', max_cl_to_write
+            if verbose: print('set maximum number of clusters to write to ', max_cl_to_write)
 
         if o in ('-Z', '--Z'):
             include_interactions = False
-            if verbose: print 'set include_interactions to ', include_interactions
+            if verbose: print('set include_interactions to ', include_interactions)
 
         if o in ('-n', '--n'):
             build_hbonds = False
-            if verbose: print 'set build_hbonds to ', build_hbonds
+            if verbose: print('set build_hbonds to ', build_hbonds)
         if o in ('-c', '--c'):
             detect_close_contacts = False
-            if verbose: print 'set detect_close_contacts to ', detect_close_contacts
+            if verbose: print('set detect_close_contacts to ', detect_close_contacts)
         if o in ('-p', '--p'):
             detect_pi = True
-            if verbose: print 'set detect_pi interactions to ', detect_pi
+            if verbose: print('set detect_pi interactions to ', detect_pi)
 
         if o in ('-H', '--H'):
             custom_hb_parameters = a
-            if verbose: print 'custom_hb_parameters to ', custom_hb_parameters
+            if verbose: print('custom_hb_parameters to ', custom_hb_parameters)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
     if not  directory:
-        print 'process_VSResults: directory must be specified.'
+        print('process_VSResults: directory must be specified.')
         usage()
         sys.exit()
 
     intF = None
     if len(custom_hb_parameters):
-        if verbose: print "using custom hb parameters!"
+        if verbose: print("using custom hb parameters!")
         #custom_hb_parameters "distCutoff=3.00,distCutoff2=3.25"
         hb_list = custom_hb_parameters.split(',')
         kw = {}
         for item in hb_list:
             param, value = item.split('=')
             kw[param] = float(value)
-            if verbose: print param, '=', value
-        hbB = apply(HydrogenBondBuilder, (), kw)
+            if verbose: print(param, '=', value)
+        hbB = HydrogenBondBuilder(*(), **kw)
         intF = InteractionDetector(receptor_filename, detect_pi=detect_pi, hydrogen_bond_builder=hbB)
 
     drp = DockingResultProcessor(rms_tolerance=rms_tolerance,

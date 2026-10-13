@@ -19,23 +19,23 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: summarize_epdb_results4.py -f epdb_dlgfilename"
-        print
-        print "    Description of command..."
-        print "         -f     epdb_dlgfilename"
-        print "    Optional parameters:"
-        print "        [-o]    output filename"
-        print "                      (default is 'summary_of_epdb_results')"
-        print "        [-a]    append to  output filename"
-        print "                      (default is to open output filename 'w')"
-        print "        [-v]    verbose output"
+        print("Usage: summarize_epdb_results4.py -f epdb_dlgfilename")
+        print()
+        print("    Description of command...")
+        print("         -f     epdb_dlgfilename")
+        print("    Optional parameters:")
+        print("        [-o]    output filename")
+        print("                      (default is 'summary_of_epdb_results')")
+        print("        [-a]    append to  output filename")
+        print("                      (default is to open output filename 'w')")
+        print("        [-v]    verbose output")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'f:o:avh')
-    except getopt.GetoptError, msg:
-        print 'summarize_epdb_results4.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('summarize_epdb_results4.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -55,22 +55,22 @@ if __name__ == '__main__':
         #print "o=", o, " a=", a
         if o in ('-f', '--f'):
             epdb_dlgfilename = a
-            if verbose: print 'set epdb_dlgfilename to ', a
+            if verbose: print('set epdb_dlgfilename to ', a)
         if o in ('-o', '--o'):
             outputfilename = a
-            if verbose: print 'set outputfilename to ', a
+            if verbose: print('set outputfilename to ', a)
         if o in ('-a', '--a'):
             append_to_outputfile = True
-            if verbose: print 'set append_to_outputfile to ', True
+            if verbose: print('set append_to_outputfile to ', True)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
     if not  epdb_dlgfilename:
-        print 'summarize_epdb_results4: epdb_dlgfilename must be specified.'
+        print('summarize_epdb_results4: epdb_dlgfilename must be specified.')
         usage()
         sys.exit()
 
@@ -82,7 +82,7 @@ if __name__ == '__main__':
         first = not os.path.exists(outputfilename)
     fptr = open(outputfilename, mode)
 
-    if verbose: print "first is ", first
+    if verbose: print("first is ", first)
     if first:
         tstr = "      dlgfn      estFE  IntermolE   InternalE     torsFE   sumTotal   sumEstat     sumVDW  #at #tors\n "
         fptr.write(tstr)

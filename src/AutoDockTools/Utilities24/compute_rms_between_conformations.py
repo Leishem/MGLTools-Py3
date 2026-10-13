@@ -5,7 +5,7 @@
 # $Header: /opt/cvs/python/packages/share1.5/AutoDockTools/Utilities24/compute_rms_between_conformations.py,v 1.2.2.1 2011/09/14 17:01:24 annao Exp $
 #
 import os, glob
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from math import sqrt
 
 from MolKit import Read
@@ -30,23 +30,23 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: compute_rms_between_conformations.py -r reference"
-        print
-        print "    Description of command..."
-        print "         -f     first filename"
-        print "         -s     second filename"
-        print "    Optional parameters:"
-        print "        [-x]    omit hydrogen atoms from the calculation"
-        print "        [-o]    output filename"
-        print "                      (default is 'summary_rms_results.txt')"
-        print "        [-v]    verbose output"
+        print("Usage: compute_rms_between_conformations.py -r reference")
+        print()
+        print("    Description of command...")
+        print("         -f     first filename")
+        print("         -s     second filename")
+        print("    Optional parameters:")
+        print("        [-x]    omit hydrogen atoms from the calculation")
+        print("        [-o]    output filename")
+        print("                      (default is 'summary_rms_results.txt')")
+        print("        [-v]    verbose output")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'f:s:o:xvh')
-    except getopt.GetoptError, msg:
-        print 'compute_rms_between_conformations.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('compute_rms_between_conformations.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -68,30 +68,30 @@ if __name__ == '__main__':
         #print "o=", o, " a=", a
         if o in ('-f', '--f'):
             first = a
-            if verbose: print 'set first filename to ', a
+            if verbose: print('set first filename to ', a)
         if o in ('-s', '--s'):
             second = a
-            if verbose: print 'set second filename to ', a
+            if verbose: print('set second filename to ', a)
         if o in ('-o', '--o'):
             outputfilename = a
-            if verbose: print 'set outputfilename to ', a
+            if verbose: print('set outputfilename to ', a)
         if o in ('-x', '--x'):
             omit_hydrogens = True
-            if omit_hydrogens: print 'set omit_hydrogens to ', True
+            if omit_hydrogens: print('set omit_hydrogens to ', True)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
     if not first:
-        print 'compute_rms_between_conformations: reference filename must be specified.'
+        print('compute_rms_between_conformations: reference filename must be specified.')
         usage()
         sys.exit()
 
     if not second:
-        print 'compute_rms_between_conformations: second filename must be specified.'
+        print('compute_rms_between_conformations: second filename must be specified.')
         usage()
         sys.exit()
 

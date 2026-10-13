@@ -1,11 +1,11 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 from Scenario2.actor import  Actor, CustomActor
 from Scenario2.datatypes import DataType
 from Scenario2.interpolators import Interpolator, FloatScalarInterpolator,\
      BooleanInterpolator
 from SimPy.Simulation import now
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 
 
@@ -88,7 +88,7 @@ class RedrawActor(Actor):
 def getActorName(object, propname):
     # create a name for object's actor
     objname = object.name
-    import string
+    from mglcompat import pystring as string
     if hasattr(object, "fullName"):
         names = object.fullName.split("|")
         if len(names)> 1:
@@ -183,7 +183,7 @@ class DejaVuActor(CustomActor):
 
         return newActor
  
-from interpolators import MaterialInterpolator
+from .interpolators import MaterialInterpolator
 from Scenario2.datatypes import FloatType, IntType, BoolType,IntVectorType,\
      FloatVectorType, IntVarType, FloatVarType, VarVectorType
 
@@ -561,7 +561,7 @@ class DejaVuFogActor(DejaVuCameraActor):
 
     
 from Scenario2.interpolators import FloatVarScalarInterpolator
-from interpolators import LightColorInterpolator
+from .interpolators import LightColorInterpolator
 
 class DejaVuLightColorActor(DejaVuActor):
 
@@ -620,7 +620,7 @@ class DejaVuSpheresRadiiActor(DejaVuActor):
 
         
 
-from interpolators import TransformInterpolator
+from .interpolators import TransformInterpolator
 
 class DejaVuTransformationActor(DejaVuActor):
 
@@ -674,7 +674,7 @@ def getAllSubclasses(klass):
 
 
 import inspect
-from actorsDescr import actorsDescr
+from .actorsDescr import actorsDescr
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 from Scenario2.interpolators import FloatScalarInterpolator, IntScalarInterpolator
 def getAnimatableAttributes(object):
@@ -684,7 +684,7 @@ def getAnimatableAttributes(object):
 
     # merge the dict of attribute for all base classes
     d1 = {}
-    for klass, d2 in actorsDescr.items():
+    for klass, d2 in list(actorsDescr.items()):
         if isinstance(object, klass):
             d1.update(d2)
 
@@ -692,7 +692,7 @@ def getAnimatableAttributes(object):
     # find all attribute that are float
     attrs = inspect.getmembers(object, lambda x: isinstance(x, float))
     for name,value in attrs:
-        if d1.has_key(name): continue
+        if name in d1: continue
         d2[name] = {
             'interp': FloatScalarInterpolator,
             'interpKw': {'values':[value, value]},
@@ -703,7 +703,7 @@ def getAnimatableAttributes(object):
     # find all attribute that are bool or int
     attrs = inspect.getmembers(object, lambda x: isinstance(x, int))
     for name,value in attrs:
-        if d1.has_key(name): continue
+        if name in d1: continue
         d2[name] = {
             'interp': IntScalarInterpolator,
             'interpKw': {'values':[value, value]},

@@ -2,7 +2,7 @@ from ViewerFramework.VFCommand import Command, CommandGUI
 from DejaVu.Spheres import Spheres
 from DejaVu.Arrows import Arrows
 from MolKit.molecule import Atom
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 import math
 #from Pmv.moleculeViewer import EditAtomsEvent
 #from DejaVu.Transformable import translateEvent
@@ -43,15 +43,15 @@ class Handler(Command):
         #self.vf.GUI.VIEWER.registerListener(translateEvent, self.getForces)
 
     def getTargetCenter(self):
-	self.target.setConformation(self.slot)
-	coords = Numeric.array(self.target.coords)#self.allAtoms.coords
-	center = sum(coords)/(len(coords)*1.0)
-	center = list(center)
-	for i in range(3):
-	    center[i] = round(center[i], 4)
-	self.target.setConformation(0)
-	self.N_forces = len(coords)
-	return center
+        self.target.setConformation(self.slot)
+        coords = Numeric.array(self.target.coords)#self.allAtoms.coords
+        center = sum(coords)/(len(coords)*1.0)
+        center = list(center)
+        for i in range(3):
+            center[i] = round(center[i], 4)
+        self.target.setConformation(0)
+        self.N_forces = len(coords)
+        return center
 
     def prepareArrow(self):
         force = Numeric.array(self.forces_list)
@@ -88,7 +88,7 @@ class Handler(Command):
         self.arrow.Set(vertices = vertices,faces=faces)
 
     def prepareQuickKeys(self):
-        import Tkinter
+        import tkinter
         from mglutil.util.callback import CallBackFunction
         #prepare the QuickKeys one for the root, one for the handler
         self.vf.GUI.VIEWER.GUI.showHideQuickKeysVar.set(1)
@@ -99,10 +99,10 @@ class Handler(Command):
         label = "Xform Scene"
         labelHandler = "Xform Handler"
         # create a button and add it to the Quick Keys panel
-        button = Tkinter.Button(self.vf.GUI.VIEWER.GUI.QuickKeysFrame, text=label, command=cbroot)
+        button = tkinter.Button(self.vf.GUI.VIEWER.GUI.QuickKeysFrame, text=label, command=cbroot)
         button.pack(side='top', expand=1, fill='y')
         # create a button and add it to the Quick Keys panel
-        button = Tkinter.Button(self.vf.GUI.VIEWER.GUI.QuickKeysFrame, text=labelHandler, command=cbhandler)
+        button = tkinter.Button(self.vf.GUI.VIEWER.GUI.QuickKeysFrame, text=labelHandler, command=cbhandler)
         button.pack(side='top', expand=1, fill='y')
 
     def getHandlerPos(self):

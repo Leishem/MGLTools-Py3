@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -14,8 +14,8 @@
 #$Id: WriteVolumeToFile.py,v 1.3 2007/07/24 17:30:45 vareille Exp $
 #
 import struct, os
-from SimpleDialog import SimpleDialog
-import Tkinter
+from tkinter.simpledialog import SimpleDialog
+import tkinter
 
 class WriteVolumeToFile:
     """class that has a method to write data into a file file"""
@@ -39,7 +39,7 @@ class WriteVolumeToFile:
         Function returns: 1 if file exists - no overwritting;
                           0 if no file or file exists - overwrite. """
         if os.path.exists(self.file):
-            root = Tkinter.Toplevel()
+            root = tkinter.Toplevel()
             root.withdraw()
             d = SimpleDialog(root,
                              title = "Overwrite Existing File Question",
@@ -57,7 +57,7 @@ class WriteVolumeToVox(WriteVolumeToFile):
         """Checks if self.file is .vox file"""
         suff = os.path.splitext(self.file)[-1]
         if suff != '.vox':
-            print "Error: expected .vox file"
+            print("Error: expected .vox file")
             return 0
         else : return 1
 
@@ -84,7 +84,7 @@ class WriteVolumeToVox(WriteVolumeToFile):
             of.write("Field0 (Position 0 Size 8 Name \"Density\")\n")
             fmt = ">%dB" % size  # B for unsigned char
         of.write("##\f\n")
-        of.write( apply(struct.pack, (fmt,)+tuple(self.data.ravel())) )
+        of.write( struct.pack(*(fmt,)+tuple(self.data.ravel())) )
         of.close()
 
 class WriteVolumeToRawiv(WriteVolumeToFile):
@@ -92,15 +92,15 @@ class WriteVolumeToRawiv(WriteVolumeToFile):
     def write_file(self, packType = 'B'):
         """Writes data in .rawiv file."""
         nx,ny,nz = self.size
-        print "writing to file: %s, data size: %d, %d, %d" % (self.file, nx,ny,nz)
+        print("writing to file: %s, data size: %d, %d, %d" % (self.file, nx,ny,nz))
         size = nx*ny*nz
         size1 = (nx-1)*(ny-1)*(nz-1)
         of = open(self.file,"wb")
         #Header: FIXME - not sure if this is right
         st=(0.0, 0.0, 0.0, float(nx-1), float(ny-1),float(nz-1),
             size, size1, nx, ny, nz, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
-        of.write(apply(struct.pack, ('>6f5I6f',)+st))
+        of.write(struct.pack(*('>6f5I6f',)+st))
         #fmt = ">%dB"%size
         fmt = ">%d%s"%(size, packType)
-        of.write( apply(struct.pack, (fmt,)+tuple(self.data.ravel())))
+        of.write( struct.pack(*(fmt,)+tuple(self.data.ravel())))
         of.close()

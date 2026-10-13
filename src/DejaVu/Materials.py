@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -15,7 +15,7 @@
 #
 
 import types
-from numpy.oldnumeric import array, ones, concatenate, minimum, maximum
+from mglcompat.oldnumeric import array, ones, concatenate, minimum, maximum
 
 from opengltk.OpenGL import GL
 
@@ -63,12 +63,12 @@ index into this table (i.e. tropical, 0)."""
 
     
     def InitDefault(self):
-	self.prop[self.ambi] = array( (( 0.1, 0.1, 0.1, 1.0 ), ), 'f' )
-	self.prop[self.diff] = array( (( 1.0, 1.0, 1.0, 1.0 ), ), 'f'  )
-	self.prop[self.emis] = array( (( 0.0, 0.0, 0.0, 1.0 ), ), 'f'  )
-	self.prop[self.spec] = array( (( 0.4, 0.4, 0.4, 1.0 ), ), 'f'  )
-	self.prop[self.shini] = array( ( 75.0, ), 'f' )
-	self.prop[self.opac] = array( ( 1.0, ), 'f' )
+        self.prop[self.ambi] = array( (( 0.1, 0.1, 0.1, 1.0 ), ), 'f' )
+        self.prop[self.diff] = array( (( 1.0, 1.0, 1.0, 1.0 ), ), 'f'  )
+        self.prop[self.emis] = array( (( 0.0, 0.0, 0.0, 1.0 ), ), 'f'  )
+        self.prop[self.spec] = array( (( 0.4, 0.4, 0.4, 1.0 ), ), 'f'  )
+        self.prop[self.shini] = array( ( 75.0, ), 'f' )
+        self.prop[self.opac] = array( ( 1.0, ), 'f' )
         self._modified = False
         
 
@@ -82,7 +82,7 @@ index into this table (i.e. tropical, 0)."""
             self.prop[5] = array( self.prop[1][:,3] )
 
         else:
-            self.prop = range(6)
+            self.prop = list(range(6))
             self.InitDefault()
         self.binding = [ viewerConst.OVERALL,]*6
 
@@ -115,7 +115,7 @@ index into this table (i.e. tropical, 0)."""
 self.getFrom attribute. This is called by RedoDisplayList.
 prop can be a string, an integer, or an RGB tuple
 """
-        if type(prop) is types.StringType:
+        if type(prop) is bytes:
             prop = propertyNum[prop]
         assert prop < 4
         if self.getFrom[prop] is None:
@@ -123,16 +123,16 @@ prop can be a string, an integer, or an RGB tuple
         else:
             sourceProp, sca = self.getFrom[prop]
             if sourceProp is not None:
-                if type(sourceProp) is types.StringType:
+                if type(sourceProp) is bytes:
                     origProp = self.prop[propertyNum[sourceProp]]
                 else:
                     origProp = self.prop[sourceProp]
                     
-            if type(sourceProp) is types.StringType:
+            if type(sourceProp) is bytes:
                 sourceProp = propertyNum[sourceProp]
                 return self.binding[sourceProp], p
 
-            elif type(sourceProp) is types.IntType:
+            elif type(sourceProp) is int:
                 p = (self.prop[sourceProp]*sca).astype('f')
                 if sourceProp==1:
                     p[:,3] = origProp[:,3] # restore opacity
@@ -224,21 +224,21 @@ alpha values < 1.0 or 0 else"""
 
     
     def AddMaterial(self, values, prop=1):
-	"""Add materials to the current set"""
+        """Add materials to the current set"""
 
         assert prop in (0,1,2,3,4,5)
         
         values = array( values, 'f' )
-	if prop < self.shini:
-	    if values.shape[1] == 3:
-		alpha = ones( (values.shape[0], 1), 'f' )
-		values = concatenate( (values, alpha), 1 )
+        if prop < self.shini:
+            if values.shape[1] == 3:
+                alpha = ones( (values.shape[0], 1), 'f' )
+                values = concatenate( (values, alpha), 1 )
 
         self.prop[prop] = concatenate( (self.prop[prop], values) )
 
 
     def SetMaterial(self, values, prop=1, tagModified=True):
-	"""Set the materials
+        """Set the materials
 WARNING: when back face colors are set, two sided lighting has to be enabled
         
 we set RGB values for all properties except for shininess and opacity
@@ -253,13 +253,13 @@ material have been updated.
             self._modified = True
 
         if prop is None: prop = self.diff
-        elif type(prop) is types.StringType:
+        elif type(prop) is bytes:
             prop = getattr(self, prop)
 
         assert prop in (0,1,2,3,4,5)
 
         values = array( values, 'f' )
-	if prop < self.shini:
+        if prop < self.shini:
             assert len(values.shape)==2 and values.shape[1] in [3,4]
             alpha = ones( (values.shape[0], 1), 'f' )
             values = concatenate( (values[:,:3], alpha), 1 )
@@ -281,40 +281,40 @@ material have been updated.
 
         if __debug__:
             if check:
-                apply( checkKeywords, ('Material',self.keywords), kw)
+                checkKeywords(*('Material',self.keywords), **kw)
 
-	val = getkw(kw, 'ambient')
-	if not val is None:
+        val = getkw(kw, 'ambient')
+        if not val is None:
             val = array(val).astype('f')
             self.prop[propertyNum['ambi']] = val
 
-	val = getkw(kw, 'diffuse')
-	if not val is None:
+        val = getkw(kw, 'diffuse')
+        if not val is None:
             val = array(val).astype('f')
             self.prop[propertyNum['diff']] = val
 
-	val = getkw(kw, 'emission')
-	if not val is None:
+        val = getkw(kw, 'emission')
+        if not val is None:
             val = array(val).astype('f')
             self.prop[propertyNum['emis']] = val
 
-	val = getkw(kw, 'specular')
-	if not val is None:
+        val = getkw(kw, 'specular')
+        if not val is None:
             val = array(val).astype('f')
             self.prop[propertyNum['spec']] = val
 
-	val = getkw(kw, 'shininess')
-	if not val is None:
+        val = getkw(kw, 'shininess')
+        if not val is None:
             val = array(val).astype('f')
             self.prop[propertyNum['shini']] = val
 
-	val = getkw(kw, 'opacity')
-	if not val is None:
+        val = getkw(kw, 'opacity')
+        if not val is None:
             val = array(val).astype('f')
             self.prop[propertyNum['opac']] = val
 
-	val = getkw(kw, 'binding')
-	if not val is None:
+        val = getkw(kw, 'binding')
+        if not val is None:
             val = array(val).astype('f')
             self.binding[:] = val[:]
             

@@ -50,7 +50,7 @@ class QuestionTimer(gui.SubDialog):
         self.AddStaticText(self.LABEL_ID[1]["id"],flags=gui.BFH_CENTER | gui.BFV_MASK)
         self.SetString(self.LABEL_ID[1]["id"],self.LABEL_ID[1]["label"])        
 
-        for k in self.OPTIONS.keys():       
+        for k in list(self.OPTIONS.keys()):       
             self.AddButton(id=self.OPTIONS[k]["id"], flags=gui.BFH_CENTER | gui.BFV_MASK,
                             initw=self.OPTIONS[k]["width"],
                             inith=self.OPTIONS[k]["height"],
@@ -68,7 +68,7 @@ class QuestionTimer(gui.SubDialog):
 #######EVENT COMMAND######################################################
     def Command(self, id, msg):
         c4d.gui.SetMousePointer(c4d.MOUSE_BUSY)
-        for butn in self.OPTIONS.keys():
+        for butn in list(self.OPTIONS.keys()):
             if id == self.OPTIONS[butn]["id"]:
                 self.OPTIONS[butn]["action"]()
         c4d.gui.SetMousePointer(c4d.MOUSE_NORMAL)

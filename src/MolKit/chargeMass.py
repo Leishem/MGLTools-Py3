@@ -28,7 +28,7 @@ def getChargeMass(atoms):
             e=18.0
             totmass+=1.00794*2+15.9994 # ficticious water 'atom'
         else:
-            print "skipping unknown atom %s"%a.element
+            print("skipping unknown atom %s"%a.element)
             e = -1
         elist.append(e)
 

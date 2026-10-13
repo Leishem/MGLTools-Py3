@@ -46,8 +46,8 @@ class UserPreference(UserDict):
                 pkl_file = open(self.resourceFile)
                 self.settings = pickle.load(pkl_file)
                 pkl_file.close()
-            except Exception, inst:
-                print inst, "Error in ", __file__
+            except Exception as inst:
+                print(inst, "Error in ", __file__)
                 
     def add(self, name, value, validValues = [], validateFunc=None,
             callbackFunc=[], doc='', category="General"):
@@ -65,8 +65,8 @@ class UserPreference(UserDict):
         if validateFunc:
             assert callable(validateFunc)
         if callbackFunc != []:
-            assert type(callbackFunc) is types.ListType and \
-                   len(filter(lambda x: not callable(x), callbackFunc))==0
+            assert type(callbackFunc) is list and \
+                   len([x for x in callbackFunc if not callable(x)])==0
         
 
         self[name] = { 'value':value, 'validValues':validValues,
@@ -79,7 +79,7 @@ class UserPreference(UserDict):
         
 
     def set(self, name, value):
-        if not self.data.has_key(name):
+        if name not in self.data:
             self.settings[name] = value
             return
         if self.resourceFile is None:
@@ -87,18 +87,18 @@ class UserPreference(UserDict):
         self.settings[name] = value
         entry = self.data[name]
         try:
-            if entry.has_key('validValues') and len(entry['validValues']):
+            if 'validValues' in entry and len(entry['validValues']):
                 if not value in entry['validValues']:
                     #msg = " is not a valid value, value has to be in %s" % str(entry['validValues'])
                     #print value, msg
                     return
-            if entry.has_key('validateFunc') and entry['validateFunc']:
+            if 'validateFunc' in entry and entry['validateFunc']:
                 if not entry['validateFunc'](value):
                     msg = " is not a valid value, try the Info button"
                     #print value, msg
                     return
-        except Exception, inst:
-            print __file__, inst
+        except Exception as inst:
+            print(__file__, inst)
 
         oldValue = entry['value']
         entry['value'] = value
@@ -109,12 +109,12 @@ class UserPreference(UserDict):
  
     def addCallback(self, name, func):
         assert callable(func)
-        assert self.data.has_key(name)
+        assert name in self.data
         entry = self.data[name]
         entry['callbackFunc'].append(func)
 
     def removeCallback(self, name, func):
-        assert self.data.has_key(name) and \
+        assert name in self.data and \
                func in self.data[name]['callbackFunc']
         entry = self.data[name]
         entry['callbackFunc'].remove(func)
@@ -134,7 +134,7 @@ class UserPreference(UserDict):
             pkl_file = open(self.resourceFile)
             settings = pickle.load(pkl_file)
             pkl_file.close()
-        for key, value in settings.items():
+        for key, value in list(settings.items()):
             self.set(key, value)
         
     def saveAllSettings(self):
@@ -157,10 +157,10 @@ class UserPreference(UserDict):
     def saveDefaults(self):
         if self.resourceFile is None:
             return
-        for key, value in self.data.items():
+        for key, value in list(self.data.items()):
             self.defaults[key] = value
     
     def restoreDefaults(self):
-        for key, value in self.defaults.items():
+        for key, value in list(self.defaults.items()):
             self.set(key, value)
     

@@ -20,7 +20,7 @@
 #$Id: visionCommands.py,v 1.56 2009/04/24 20:03:55 vareille Exp $
 #
 #
-import Tkinter
+import tkinter
 import sys
 
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr, InputForm
@@ -59,7 +59,7 @@ class VisionCommand(MVCommand):
             self.vf.log("self = pmv.vision.ed")
 
         from NetworkEditor.macros import MacroNetwork
-        for netname, net in self.ed.networks.items():
+        for netname, net in list(self.ed.networks.items()):
             if isinstance(net, MacroNetwork):
                 continue
 
@@ -83,7 +83,7 @@ class VisionCommand(MVCommand):
                 if net.filename:
                     self.vf.log("self.loadNetwork('%s')"%net.filename)
                 else:
-                    print 'WARNING: visionCommand: onExit: network %s has no filename'%netname
+                    print('WARNING: visionCommand: onExit: network %s has no filename'%netname)
             self.vf.log("##")
             self.vf.log("## Networks %s End"%netname)
             self.vf.log("##\n\n")
@@ -106,7 +106,7 @@ class VisionCommand(MVCommand):
     
         # we add attributes to node libraries. Upon exit, we clear these
         # attributes:
-        for lib in self.ed.libraries.values():
+        for lib in list(self.ed.libraries.values()):
             self.ed.deleteLibrary(lib.name)
 
         
@@ -114,7 +114,7 @@ class VisionCommand(MVCommand):
         # PART II: this is the exit_cb() from NetworkEditor/simpleNE.py:
         #################
         from NetworkEditor.macros import MacroNetwork
-        for net in self.ed.networks.values():
+        for net in list(self.ed.networks.values()):
             if not isinstance(net, MacroNetwork):
                 self.ed.deleteNetwork(net)
         self.root = None
@@ -124,7 +124,7 @@ class VisionCommand(MVCommand):
         pass
 
     def interactiveExit_cb(self, event=None):
-        from tkMessageBox import askyesno
+        from tkinter.messagebox import askyesno
         msg = askyesno("Quit","Are you sure you want to quit PMV?",parent = self.root)
         if msg == True:
             self.exit_cb()
@@ -133,7 +133,7 @@ class VisionCommand(MVCommand):
                     
     def doit(self):
         if self.root is None:
-            self.root = Tkinter.Toplevel()
+            self.root = tkinter.Toplevel()
             self.root.withdraw()
 
 # the vision font must be decided in vision or _visionrc, not here anymore
@@ -233,13 +233,13 @@ class VisionCommand(MVCommand):
 
     def __call__(self, **kw):
         """None <- vision(**kw) starts the visual programming environment"""
-        apply( self.doitWrapper, (), kw )
+        self.doitWrapper(*(), **kw)
 
 
         
 VisionCommandGUI = MVCommandGUI()
 msg = 'show/Hide the visual programming environment Vision'
-from moleculeViewer import ICONPATH
+from .moleculeViewer import ICONPATH
 VisionCommandGUI.addToolBar('Vision', icon1='vision.png', balloonhelp=msg,
                             icon_dir=ICONPATH, index=5)
 

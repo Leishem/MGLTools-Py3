@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -87,7 +87,7 @@ This MIXIN Object adds AutoDock Ligand features to a MolKit.Protein
 
 
 """
-import numpy.oldnumeric as Numeric, math, types, os
+import mglcompat.oldnumeric as Numeric, math, types, os
 from string import find
 from MolKit.pdbWriter import PdbqWriter
 from AutoDockTools.AutoDockBondClassifier import AutoDockBondClassifier
@@ -135,7 +135,7 @@ def MixIn(pyClass, mixInClass, makeAncestor=0):
                 #skip private members
                 member = getattr(mixInClass, name)
                 if type(member) is types.MethodType:
-                    member = member.im_func
+                    member = member.__func__
                     setattr(pyClass, name, member)
 
                     
@@ -166,7 +166,7 @@ class LigandMixin(Subject):
         self.torscount = 0
         self.possible_torscount = 0
         self.TORSDOF = 0
-        self.resKeys = q.keys()
+        self.resKeys = list(q.keys())
         self.PdbqWriter = PdbqWriter()
         #should this be here?
         msg = 'initialized ' + self.name +':\n'
@@ -195,7 +195,7 @@ class LigandMixin(Subject):
         dict = {}
         for r in resSet:
             dict[r.type] = 0
-        for t in dict.keys():
+        for t in list(dict.keys()):
             if t not in self.resKeys:
                 self.isPeptide = 0
                 return '    -it is not a peptide\n'
@@ -219,7 +219,7 @@ class LigandMixin(Subject):
             needToAdd = 1
         elif len(chargedAts)!=len(self.allAtoms):
             needToAdd = 1
-        elif len(filter(lambda x:x.charge==0, chargedAts))==len(chargedAts):
+        elif len([x for x in chargedAts if x.charge==0])==len(chargedAts):
             #this checks that each atom doesn't have charge=0
             needToAdd = 1
         #to add Kollman need to:
@@ -329,13 +329,13 @@ class LigandMixin(Subject):
         atLen = len(self.allAtoms)
         self.allAtoms = self.allAtoms - nphs
         #first add charge to nph's heavy atom
-        chList = nphs[0]._charges.keys()
+        chList = list(nphs[0]._charges.keys())
         if not len(chList):
-            print 'no charges present'
+            print('no charges present')
             return 'XXX'
         #check that all nphs have a certain kind of charge
         for at in nphs:
-            chs = at._charges.keys()
+            chs = list(at._charges.keys())
             for c in chList:
                 if c not in chs:
                     chList.remove(c)
@@ -407,7 +407,7 @@ class LigandMixin(Subject):
         d = {}
         for a in ptAts:
             d[a] = 0
-        self.pTatomset = AtomSet(d.keys())
+        self.pTatomset = AtomSet(list(d.keys()))
         #print 'len(pTatomset=', len(self.pTatomset)
         self.leafbonds = results['leaf']
         self.pepbackbonds = results['ppbb']
@@ -443,7 +443,7 @@ class LigandMixin(Subject):
                 item.nrmsize = result[0]
                 item.nrms = result[1]
                 #next find the other bond w/atom2:
-                z2 = filter(lambda x,item=item, at2=item.atom2, blist=blist:x!=item and x.atom1==at2 or x.atom2==at2, blist)
+                z2 = list(filter(lambda x,item=item, at2=item.atom2, blist=blist:x!=item and x.atom1==at2 or x.atom2==at2, blist))
                 #finally, return the other atom in this bond
                 item.nextbond2 = z2[0]
                 if item.nextbond2==item:
@@ -478,11 +478,11 @@ class LigandMixin(Subject):
         atD = {}
         #to keep from overwriting names of aromatic carbons at 
         #junctions of rings use this klug
-        for blist in self.bondDict.values():
+        for blist in list(self.bondDict.values()):
             for item in blist:
                 item.atom1.setThisTime = 0
                 item.atom2.setThisTime = 0
-        for blist in self.bondDict.values():
+        for blist in list(self.bondDict.values()):
             ct = 0
             for item in blist:
                 #these are values for the default 7.5degrees:
@@ -508,7 +508,7 @@ class LigandMixin(Subject):
                         at2.autodock_element = 'A'
                         atD[at2] = 0
                         at2.setThisTime = 1
-                aromaticCs = AtomSet(atD.keys())
+                aromaticCs = AtomSet(list(atD.keys()))
             else:
                 #if there were any aromatic carbons which no longer 
                 #meet the criteria, change them back
@@ -522,7 +522,7 @@ class LigandMixin(Subject):
                         at2.autodock_element = 'C'
                         at2.name = 'C' + at2.name[1:]
         #remove klug
-        for blist in self.bondDict.values():
+        for blist in list(self.bondDict.values()):
             for item in blist:
                 if hasattr(item.atom1, 'setThisTime'):
                     delattr(item.atom1,'setThisTime')
@@ -553,23 +553,23 @@ class LigandMixin(Subject):
 
     def addAromatic(self, at):
         if at.element!='C':
-            print at.name, ' is not a carbon'
+            print(at.name, ' is not a carbon')
             return 'ERROR'
         if at in self.aromaticCs:
-            print at.name, ' is already in aromatic set'
+            print(at.name, ' is already in aromatic set')
             return 'ERROR'
         at.autodock_element = 'A'
         self.aromaticCs.append(at)
-        print at.name, ' added to aromatic set'
+        print(at.name, ' added to aromatic set')
    
 
     def removeAromatic(self, at):
         if at not in self.aromaticCs:
-            print at.name, ' is not in aromatic set'
+            print(at.name, ' is not in aromatic set')
             return 'ERROR'
         self.aromaticCs.remove(at)
         at.autodock_element = 'C'
-        print at.name, ' removed from aromatic set'
+        print(at.name, ' removed from aromatic set')
    
 
     def getPeptideAromatics(self):
@@ -588,7 +588,7 @@ class LigandMixin(Subject):
        
     def getPeptideBondDict(self):
         resSet = self.chains.residues.get(lambda x, \
-                    d = aromDict.keys():x.type in d)
+                    d = list(aromDict.keys()):x.type in d)
         if not resSet:
             return BondSet()
         self.cyclecount = numres = len(resSet)
@@ -645,7 +645,7 @@ class LigandMixin(Subject):
         #first get the bonds in this cycle
         at = b.atom1
         #next find the other one with at as one of the atoms:
-        z2 = filter(lambda x,b=b,at=at,z=z:x!=b and x.atom1==at or x.atom2==at, z)
+        z2 = list(filter(lambda x,b=b,at=at,z=z:x!=b and x.atom1==at or x.atom2==at, z))
         #finally, return the other atom in this bond
         b.nextbond = z2[0]
         neighbor = self._getnxtAtom(at,z2[0])
@@ -670,7 +670,7 @@ class LigandMixin(Subject):
         """
         setroot to 'C11' or 'hsg1:A:ILE2:CA'
         """
-        if type(atom)==types.StringType:
+        if type(atom)==bytes:
             if find(atom, ':')>-1:
                 #have to use full_name list
                 #check that it is an atom
@@ -771,7 +771,7 @@ class LigandMixin(Subject):
 
     def buildTorsionTree(self):
         if not hasattr(self, 'ROOT'):
-            print 'must set ROOT first!'
+            print('must set ROOT first!')
             return
         self.torTree = TorTree(self.parser, self.ROOT)
 
@@ -812,11 +812,11 @@ move the fewest atoms or those which move the most. if number is > than
 current but less than possible, torsions are reactivated
         """
 
-        print 'lT: numTors=', numTors, ' type=', type
+        print('lT: numTors=', numTors, ' type=', type)
         allAts = self.allAtoms
         root = self.ROOT
         torscount = self.torscount
-        print 'torscount=', torscount, 
+        print('torscount=', torscount, end=' ') 
         #NB: torscount is not necessarily the max
         #ie it could have been adjusted already
         at0 = self.allAtoms[0]
@@ -824,7 +824,7 @@ current but less than possible, torsions are reactivated
             self.torTree = TorTree(self.parser, root)
         torsionMap = self.torTree.torsionMap
         torsionMapNum = len(torsionMap)
-        print 'len(tm)=', torsionMapNum
+        print('len(tm)=', torsionMapNum)
         possibleTors = self.possible_torscount
         if simpleModel:
             self.setTorsions(numTors, type)
@@ -866,7 +866,7 @@ current but less than possible, torsions are reactivated
             msg = 'too many torsions specified! '+ str(numTors)+  ' reducing to'+str(tNum)
             numTors = tNum
         if type=='fewest':
-            rangeList = range(numTors)
+            rangeList = list(range(numTors))
         else:
             rangeList = []
             for k in range(1, numTors+1):
@@ -901,7 +901,7 @@ current but less than possible, torsions are reactivated
         torscount = self.torscount
         #turn on delta torsions + adjust torscount in dict 
         if type=='fewest':
-            rangeList = range(delta)
+            rangeList = list(range(delta))
         else:
             rangeList = []
             for k in range(1, delta+1):
@@ -930,7 +930,7 @@ current but less than possible, torsions are reactivated
         torscount = self.torscount
         #turn on delta torsions + adjust torscount in dict 
         if type=='fewest':
-            rangeList = range(delta)
+            rangeList = list(range(delta))
         else:
             rangeList = []
             for k in range(1, delta+1):
@@ -938,7 +938,7 @@ current but less than possible, torsions are reactivated
         for i in rangeList:
             node = baseTorsionMap[i]
             if node.bond==(None,None):
-                print 'error in turnOff torsions with ', rangeList
+                print('error in turnOff torsions with ', rangeList)
                 break
             b = allAts.get(lambda x, node=node: x.tt_ind in node.bond).bonds[0][0]
             if b.activeTors:

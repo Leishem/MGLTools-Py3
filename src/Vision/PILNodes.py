@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #########################################################################
 #
@@ -15,8 +15,8 @@
 #
 #########################################################################
 
-import Tkinter
-import numpy.oldnumeric as Numeric
+import tkinter
+import mglcompat.oldnumeric as Numeric
 import Image, ImageTk
 import types
 import math
@@ -32,7 +32,7 @@ Output: Image"""
     
     def __init__(self, name='Image from array', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, array, width, height, normalize, linkRGB): 
     lennar = len(array)
@@ -95,11 +95,11 @@ Output: Image"""
     
     import Image
     if lenarray == 1:
-        im = Image.fromstring('L', (width, height), nar.tostring()) 
+        im = Image.fromstring('L', (width, height), nar.tobytes()) 
     elif lenarray == 3:
-        im = Image.fromstring('RGB', (width, height), nar.tostring()) 
+        im = Image.fromstring('RGB', (width, height), nar.tobytes()) 
     elif lenarray == 4:
-        im = Image.fromstring('RGBA', (width, height), nar.tostring()) 
+        im = Image.fromstring('RGBA', (width, height), nar.tobytes()) 
     if im:
         self.outputData(image=im)
 """
@@ -138,7 +138,7 @@ Output: Image"""
     
     def __init__(self, name='Read Image', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         #self.readOnly = 1
@@ -168,7 +168,7 @@ class SaveImage(NetworkNode):
     
     def __init__(self, name='Save Image', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         #self.readOnly = 1
         code = """def doit(self, image, filename):
     if filename:
@@ -209,13 +209,13 @@ class GetFrontBuffer(NetworkNode):
 
     def __init__(self, name='Front Buffer', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='viewer', name='viewer')
         ip.append(datatype='int', required=False, name='cameraNum')
 
-	self.outputPortsDescr.append(datatype='image', name='image')
+        self.outputPortsDescr.append(datatype='image', name='image')
         
 
         code = """def doit(self, viewer, cameraNum):
@@ -240,7 +240,7 @@ class GetFrontBuffer(NetworkNode):
         except:
             import traceback
             traceback.print_exc()
-            print 'Warning! Could not import vizlib from DejaVu/VisionInterface'
+            print('Warning! Could not import vizlib from DejaVu/VisionInterface')
 
 
 class GetZBuffer(NetworkNode):
@@ -255,7 +255,7 @@ class GetZBuffer(NetworkNode):
         zmax = max(zval)
         zmin = min(zval)
         zval1 = 255 * ((zval-zmin) / (zmax-zmin))
-        ds = zval1.astype('c').tostring()
+        ds = zval1.astype('c').tobytes()
         depthImage = Image.fromstring('P', (width, height), ds)
 
         return depthImage.transpose(Image.FLIP_TOP_BOTTOM)
@@ -263,13 +263,13 @@ class GetZBuffer(NetworkNode):
 
     def __init__(self, name='Z Buffer', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='viewer', name='viewer')
         ip.append(datatype='int', required=False, name='cameraNum')
 
-	self.outputPortsDescr.append(datatype='image', name='image')
+        self.outputPortsDescr.append(datatype='image', name='image')
 
         code = """def doit(self, viewer, cameraNum):
     if cameraNum is None:
@@ -293,7 +293,7 @@ class GetZBuffer(NetworkNode):
         except:
             import traceback
             traceback.print_exc()
-            print 'Warning! Could not import vizlib from DejaVu/VisionInterface'
+            print('Warning! Could not import vizlib from DejaVu/VisionInterface')
 
 
 class ToRGB(NetworkNode):
@@ -301,7 +301,7 @@ class ToRGB(NetworkNode):
 
     def __init__(self, name='To RGB', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append(datatype='image', name='image')
 
@@ -323,7 +323,7 @@ class ResizeImage(NetworkNode):
     
     def __init__(self, name='Resize', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         code = """def doit(self, image, scale, filter):
@@ -371,7 +371,7 @@ class ImageFilter(NetworkNode):
 
     def __init__(self, name='Filter Image', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         filters = ['BLUR', 'CONTOUR', 'DETAIL', 'EDGE_ENHANCE',
                    'EDGE_ENHANCE_MORE', 'EMBOSS', 'FIND_EDGES',
@@ -405,11 +405,11 @@ class ImageInvert(NetworkNode):
 
     def __init__(self, name='Invert Image', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append(datatype='image', name='image')
 
-	self.outputPortsDescr.append(datatype='image', name='image')
+        self.outputPortsDescr.append(datatype='image', name='image')
         
         code = """def doit(self, image):
     import ImageChops
@@ -425,13 +425,13 @@ a solid white image, the image is unaffected."""
     
     def __init__(self, name='Multiply Image', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='image', name='image1')
         ip.append(datatype='image', name='image2')
 
-	self.outputPortsDescr.append(datatype='image', name='image')
+        self.outputPortsDescr.append(datatype='image', name='image')
         
         code = """def doit(self, image1, image2):
     import ImageChops
@@ -444,14 +444,14 @@ class ImageSplit(NetworkNode):
     """Apply different filters to an image"""
 
     def __init__(self, name='Split Image', **kw):
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append(datatype='image', name='image')
 
         op = self.outputPortsDescr
         op.append(datatype='None', name='r')
-	op.append(datatype='None', name='g')
-	op.append(datatype='None', name='b')
+        op.append(datatype='None', name='g')
+        op.append(datatype='None', name='b')
         
         code = """def doit(self, image):
     r,g,b = image.split()
@@ -470,7 +470,7 @@ class AlphaMask(NetworkNode):
 
     def __init__(self, name='Alpha Mask', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['threshold'] = {
             'class':'NEDial', 'master':'node', 'size':50,
@@ -482,7 +482,7 @@ class AlphaMask(NetworkNode):
         ip.append(datatype='image', name='image')
         ip.append(datatype='image', name='threshold')
 
-	self.outputPortsDescr.append(datatype='None', name='mask')
+        self.outputPortsDescr.append(datatype='None', name='mask')
 
         code = """def doit(self, image, threshold):
     l = lambda x,cutOff=threshold: (x > cutOff)*255
@@ -497,14 +497,14 @@ class ImagePaste(NetworkNode):
 
     def __init__(self, name='Invert Image', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='image', name='image1')
         ip.append(datatype='image', name='image2')
         ip.append(datatype='None', name='mask')
 
-	self.outputPortsDescr.append(datatype='image', name='image')
+        self.outputPortsDescr.append(datatype='image', name='image')
         
         code = """def doit(self, image1, image2, mask):
     image1.paste(image2, None, mask)
@@ -522,7 +522,7 @@ Input:  Image"""
     
     def __init__(self, name='Show Image', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         #self.readOnly = 1
         self.top = None       # will be created after adding to network
@@ -556,8 +556,8 @@ Input:  Image"""
 
 
     def afterAddingToNetwork(self):
-        self.top = Tkinter.Toplevel()
-        self.imCanvas = Tkinter.Canvas(self.top)
+        self.top = tkinter.Toplevel()
+        self.imCanvas = tkinter.Canvas(self.top)
         self.top.protocol('WM_DELETE_WINDOW', self.show_hide)
         self.isWithdrawn = 0
 
@@ -581,7 +581,7 @@ output range."""
 
     def __init__(self, name='Invert Image', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['alpha'] = {
             'class': 'NEDial', 'master':'node', 'size':50,
@@ -598,7 +598,7 @@ output range."""
         ip.append(datatype='image', name='image2')
         ip.append(datatype='float', name='alpha')
 
-	self.outputPortsDescr.append(datatype='image', name='image')
+        self.outputPortsDescr.append(datatype='image', name='image')
         
         code = """def doit(self, image1, image2, alpha):
     import Image
@@ -615,7 +615,7 @@ or BICUBIC. If omitted, it defaults to NEAREST. """
 
     def __init__(self, name='Rotate', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['angle'] = {
             'class': 'NEThumbWheel', 'master':'node', 'width':75, 'height':28,
@@ -639,7 +639,7 @@ or BICUBIC. If omitted, it defaults to NEAREST. """
         ip.append(datatype='float', name='angle')
         ip.append(datatype='string', name='filter')
 
-	self.outputPortsDescr.append(datatype='image', name='image')
+        self.outputPortsDescr.append(datatype='image', name='image')
         
         code = """def doit(self, image, angle, filter):
     if filter is not None and filter != '':
@@ -660,7 +660,7 @@ class ImageTranspose(NetworkNode):
 
     def __init__(self, name='Transpose', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         methods = ['FLIP_LEFT_RIGHT','FLIP_TOP_BOTTOM','ROTATE_90',
                    'ROTATE_180', 'ROTATE_270']
@@ -676,7 +676,7 @@ class ImageTranspose(NetworkNode):
         ip.append(datatype='image', name='image')
         ip.append(datatype='string', name='method')
 
-	self.outputPortsDescr.append(datatype='image', name='image')
+        self.outputPortsDescr.append(datatype='image', name='image')
         
         code = """def doit(self, image, method):
     if method is not None and method != '':
@@ -697,14 +697,14 @@ the same size."""
 
     def __init__(self, name='Composite', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='image', name='image1')
         ip.append(datatype='image', name='image2')
         ip.append(datatype='image', name='mask')
 
-	self.outputPortsDescr.append(datatype='image', name='image')
+        self.outputPortsDescr.append(datatype='image', name='image')
         
         code = """def doit(self, image1, image2, mask):
     import Image
@@ -721,7 +721,7 @@ included in the statistics."""
 
     def __init__(self, name='Image Stat', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         stats = ['extrema','count','sum','sum2','mean','median','rms','var',
                  'stddev']
@@ -739,7 +739,7 @@ included in the statistics."""
         #ip.append(datatype='image', required=False, name='mask')
         ip.append(datatype='string', required=False, name='stat')
 
-	self.outputPortsDescr.append(datatype='None', name='stats')
+        self.outputPortsDescr.append(datatype='None', name='stats')
         
         code = """def doit(self, image, stat):
     if stat is not None and stat != '':
@@ -815,7 +815,7 @@ try:
 
         def __init__(self, name='Record MPEG movie', **kw):
             kw['name'] = name
-            apply( NetworkNode.__init__, (self,), kw)
+            NetworkNode.__init__(*(self,), **kw)
             self.inNodeWidgetsVisibleByDefault = True
 
             fileTypes = [('all', '*'), ('mpg', '*.mpg'), ('mpeg', '*.mpeg')]
@@ -869,7 +869,7 @@ try:
         
             bmpFrame = vcodec.VFrame(
                 vcodec.formats.PIX_FMT_RGB24, image.size,
-                (image.tostring(), None, None))
+                (image.tobytes(), None, None))
             yuvFrame = bmpFrame.convert(vcodec.formats.PIX_FMT_YUV420P)
             self.videoOutputFile.write(self.encoder.encode(yuvFrame).data)
             self.nbFrames += 1
@@ -885,7 +885,7 @@ try:
 
         def __init__(self, name='PlayMPEG', **kw):
             kw['name'] = name
-            apply( NetworkNode.__init__, (self,), kw)
+            NetworkNode.__init__(*(self,), **kw)
             self.inNodeWidgetsVisibleByDefault = True
 
             code = """def doit(self, movieFileName, MPEGplayerPgm):
@@ -921,7 +921,7 @@ try:
 
 
 except ImportError:
-    print 'Failed to import pymedia.video.vcodec'
+    print('Failed to import pymedia.video.vcodec')
     
 from Vision.VPE import NodeLibrary
 imagelib = NodeLibrary('Imaging', '#995699')

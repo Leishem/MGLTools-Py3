@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -24,14 +24,14 @@ This module provides 4 classes. TK based GUI (graphical user interface) of
 """
 import sys
 import os
-import Tkinter, types
+import tkinter, types
 from warnings import warn
-from Tkinter import Scrollbar, Listbox, Button, Label, Toplevel
+from tkinter import Scrollbar, Listbox, Button, Label, Toplevel
 import Pmw
 from time import sleep
 import types
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 try:
     from PIL import Image, ImageTk
@@ -202,7 +202,7 @@ width=200          : whe width of the list, in pixels
         self.width=width
         self.selection  = None  # the selected list item
         
-	self.canvas = Pmw.ScrolledCanvas(
+        self.canvas = Pmw.ScrolledCanvas(
             master, borderframe=1, #labelpos='n', label_text='main',
             usehullsize=0, hull_width=200, hull_height=400,
             vscrollmode='dynamic', hscrollmode='dynamic')
@@ -283,7 +283,7 @@ locked: lock the object
         
         new_item.Draw()
         
-        bb = self.canvas.bbox(Tkinter.ALL)
+        bb = self.canvas.bbox(tkinter.ALL)
         canvas = self.canvas.component('canvas')
         canvas.configure( scrollregion=(0, 0,bb[2]+OFFSET, bb[3]+OFFSET))
 
@@ -617,7 +617,7 @@ expand the tree if not expanded or collapsed the tree if already expanded
             i1 = all.index(self)
             i2 = all.index(last)
         except ValueError:
-            raise ValueError, "range only work over sibblings"
+            raise ValueError("range only work over sibblings")
 
         if i1 > i2:
             tmp=i1; i1=i2; i2=tmp
@@ -849,7 +849,7 @@ of the tree
 self.update=True means toggle the expanding status. ( expand <-> collapse )
 """
         self.update = False
-        all_items = self.tree.canvas.bbox(Tkinter.ALL)
+        all_items = self.tree.canvas.bbox(tkinter.ALL)
         xx = all_items[2]+100
         yy = all_items[3]+OFFSET
 
@@ -888,7 +888,7 @@ self.update=True means toggle the expanding status. ( expand <-> collapse )
                 self.tree.canvas.dtag(i, "tag_"+self.name) 
 
             #resize the canvas' scrolling region
-            bb = self.tree.canvas.bbox(Tkinter.ALL)
+            bb = self.tree.canvas.bbox(tkinter.ALL)
             self.tree.canvas.configure(
                     scrollregion=(0, 0,bb[2]+OFFSET, bb[3]+OFFSET) )
             # end of Expand
@@ -926,7 +926,7 @@ self.update=True means toggle the expanding status. ( expand <-> collapse )
                 self.tree.canvas.dtag(i, mTag) 
 
             # resize the canvas' scrolling region
-            bb = self.tree.canvas.bbox(Tkinter.ALL)
+            bb = self.tree.canvas.bbox(tkinter.ALL)
             self.tree.canvas.configure(
                     scrollregion=(0, 0,bb[2]+OFFSET, bb[3]+OFFSET) )
             # end of Collapse
@@ -948,7 +948,7 @@ self.update=True means toggle the expanding status. ( expand <-> collapse )
         
         self.x1     = 0
         self.y1     = self.y + (self.height -1)*OFFSET
-        all_items   = self.tree.canvas.bbox(Tkinter.ALL)
+        all_items   = self.tree.canvas.bbox(tkinter.ALL)
         if all_items:
             self.x2     = all_items[2]+100
             self.y2     = all_items[3]+OFFSET
@@ -1018,7 +1018,7 @@ batch   : a set of children nodes added.
             else:
                 warn('Unknown mode')                
 
-            all_items = self.tree.canvas.bbox(Tkinter.ALL)
+            all_items = self.tree.canvas.bbox(tkinter.ALL)
             if all_items:
                 xx = all_items[2]+100
                 yy = all_items[3]+OFFSET
@@ -1127,7 +1127,7 @@ batch   : a set of children nodes added.
 ##             canvas.tag_bind(sign, "<1>", self.invoke)            
 
             sign = canvas.create_image(self.x,self.y,
-                image=plus_minus, anchor=Tkinter.CENTER)
+                image=plus_minus, anchor=tkinter.CENTER)
             self.canvasIDs.append(sign)
             canvas.lift(sign)
 
@@ -1141,7 +1141,7 @@ batch   : a set of children nodes added.
 ##             txt = canvas.create_text(self.x + OFFSET ,self.y,
 ##                                      text=caption,anchor=Tkinter.W)
         txt = canvas.create_text(self.x + OFFSET ,self.y,
-                                 text=caption,anchor=Tkinter.W)         
+                                 text=caption,anchor=tkinter.W)         
         canvas.tag_bind(txt, "<Button-3>", self.showFullText1_cb)
         self.canvasIDs.append(txt)
 
@@ -1152,7 +1152,7 @@ batch   : a set of children nodes added.
         #'This is help for\nan arc item')#fullText)
 
         # Set the mouse binding
-        for action,func in self.mouseBinding.iteritems():
+        for action,func in self.mouseBinding.items():
             if action == "<Control-Button-1>":
                 if self.tree.multi_choice:
                     canvas.tag_bind(txt, action,func , '+')
@@ -1195,7 +1195,7 @@ batch   : a set of children nodes added.
         #if len(text)>80:
         #    text = text[:77] + "..."
         valueStr = canvas.create_text(self.x + OFFSET + 150,self.y, \
-                                      text=text, anchor=Tkinter.W)
+                                      text=text, anchor=tkinter.W)
         canvas.tag_bind(valueStr, "<1>", self.pickNode_cb, '+')
         canvas.tag_bind(valueStr, "<Button-3>", self.showFullText2_cb)
         # add canvas ID to list so they will be erased and moved properly
@@ -1231,11 +1231,11 @@ multi-dimentional array"""
         
 
     def showFullText1_cb(self, event=None):
-        print self.name
+        print(self.name)
         
 
     def showFullText2_cb(self, event=None):
-        print repr(self.object).replace('\\n','\n')
+        print(repr(self.object).replace('\\n','\n'))
 
         
     def addToHistory_cb(self, event=None):
@@ -1254,7 +1254,7 @@ multi-dimentional array"""
     def rename(self, newName):
         """this function renames the node and updates the caption on canvas """
 
-        if type(newName) is not types.StringType:
+        if type(newName) is not bytes:
             return
         self.name = newName
         self.draw()
@@ -1331,7 +1331,7 @@ put a folder is node has children"""
                     
             # save current node as current_selected
             self.tree.current_selected = self
-            bb = self.tree.canvas.bbox(Tkinter.ALL)
+            bb = self.tree.canvas.bbox(tkinter.ALL)
             if len(self.tree.list_selected)>0:
                 yoff=1
             else:
@@ -1436,7 +1436,7 @@ put a folder is node has children"""
             index=nodeList.index(self)
 
         if index==0:
-            print "already at the top of children node list"
+            print("already at the top of children node list")
             return
         
         nodeList.remove(self)
@@ -1465,7 +1465,7 @@ put a folder is node has children"""
             index=nodeList.index(self)
 
         if index==len(nodeList)-1:
-            print "already at the end of children node list"
+            print("already at the end of children node list")
             return
         
         nodeList.remove(self)
@@ -1589,7 +1589,7 @@ Creates the canvas used to draw the tree
         
         # create the Canvas
         if canvasHeaderCol:
-            self.canvasHeaderCol = Tkinter.Canvas(self.topFrame_1, height=50)
+            self.canvasHeaderCol = tkinter.Canvas(self.topFrame_1, height=50)
             #self.canvasHeaderCol.grid(column=0, row=0, sticky='ew')
             self.canvasHeaderCol.pack(side='top', expand=0, fill='x')
 
@@ -1636,7 +1636,7 @@ Creates the canvas used to draw the tree
         #self.showHideHistoryIcon.bind('<1>', self.toggleHistoryVisibility)
 
         if not nohistory:
-            frame = Tkinter.Frame(master=self.topFrame_2, )
+            frame = tkinter.Frame(master=self.topFrame_2, )
             Label(frame, text = "History").pack(side="left")
             frame.pack(side='top')
         
@@ -1685,7 +1685,7 @@ Creates the canvas used to draw the tree
 
     def scrollAll(self, *args):        
         #print "scrollAll", args
-        apply( self.canvas.xview, args)
+        self.canvas.xview(*args)
         canvas = self.canvasHeaderCol
         if canvas:
             region = self.canvas.configure('scrollregion')[4]
@@ -1693,7 +1693,7 @@ Creates the canvas used to draw the tree
             #print self.canvas.configure('width')
             #print canvas.configure('width')
             canvas.configure(scrollregion=region)
-            apply( canvas.xview, args)
+            canvas.xview(*args)
 
 
     def scrollUp(self, event):        
@@ -1738,9 +1738,9 @@ Up / Down / Left / Right arrow keys are supported"""
             pass # print event.keysym
 
     def Enter_cb(self, event):
-	"""Call back function trigger when the mouse enters the cavas """
+        """Call back function trigger when the mouse enters the cavas """
         #print 'entering tree'
-	self.canvas.focus_set()
+        self.canvas.focus_set()
         #atFocus = self.canvas.focus()
 
         
@@ -1911,9 +1911,9 @@ firstExpand_cb : call_back fucntions
                  (not a list, always objectBrower.expandTreeNode_cb)
 """
         
-        if (type(object) is not types.ListType) or \
-           (type(name) is not types.ListType) or \
-           (type(hasChildren) is not types.ListType):
+        if (type(object) is not list) or \
+           (type(name) is not list) or \
+           (type(hasChildren) is not list):
             warn("List of children needed, non-list type found")
             return None
            
@@ -1950,7 +1950,7 @@ firstExpand_cb : call_back fucntions
             node.tag = [str(node.uniqueID)]
         
             # if parent given as a string, find the Node obj of the parent
-            if type(parent) is types.StringType:
+            if type(parent) is bytes:
                 input=parent
                 parent = self.findNodeFromName(parent)
                 if parent is None:
@@ -1959,7 +1959,7 @@ firstExpand_cb : call_back fucntions
                     return
                 else:
                     node.parentFullname = input
-            elif self.objToNode.has_key(parent):
+            elif parent in self.objToNode:
                 parent = self.objToNode[parent]
             elif not isinstance(parent, Node) and parent is not None:
                 raise RuntimeError('bad parent')
@@ -2011,7 +2011,7 @@ firstExpand_cb : call_back fucntions
             for i in range(num):
                 self.draw_new_root(nodeList[i])
         
-        bb = self.canvas.bbox(Tkinter.ALL)
+        bb = self.canvas.bbox(tkinter.ALL)
         self.canvas.configure(scrollregion=(0, 0,bb[2]+OFFSET, bb[3]+OFFSET))
             
         return nodeList
@@ -2075,14 +2075,14 @@ a Node. If no parent is specified this node will become the next root node
             
         else:
             # if parent given as a string, find the Node obj of the parent
-            if type(parent) is types.StringType:
+            if type(parent) is bytes:
                 input=parent
                 parent = self.findNodeFromName(parent)
                 if parent is None:
                     node.parentFullname = None
                     warn( "error in addNode, check name of parent:"+ input)
                     return            
-            elif self.objToNode.has_key(parent):
+            elif parent in self.objToNode:
                 parent = self.objToNode[parent]
             elif not isinstance(parent, Node):
                 raise RuntimeError('bad parent')
@@ -2116,7 +2116,7 @@ a Node. If no parent is specified this node will become the next root node
             # parent down
             parent.draw()            
         
-        bb = self.canvas.bbox(Tkinter.ALL)
+        bb = self.canvas.bbox(tkinter.ALL)
         self.canvas.configure(
                             scrollregion=(0, 0,bb[2]+OFFSET, bb[3]+OFFSET))
             
@@ -2130,7 +2130,7 @@ parent should be given as full name of parent node"""
             warn( "Node cannot be None")
             return
         
-        if type(parent) is types.StringType:
+        if type(parent) is bytes:
             input=parent
             parent=self.findNodeFromName(parent)
             if parent is None:
@@ -2163,7 +2163,7 @@ parent should be given as full name of parent node"""
         """ Delete a node from the TreeView. 
         Node can be given as the Node object, or full name of the node"""
 
-        if type(node) is types.StringType:
+        if type(node) is bytes:
             n = self.findNodeFromName(node)
             if n is None:
                 warn( node+" not found")
@@ -2315,7 +2315,7 @@ parent should be given as full name of parent node"""
                         node.selected= True
                         self.list_selected.append(node)
                         node.draw()
-            elif self.objToNode.has_key(node):
+            elif node in self.objToNode:
                 node = self.objToNode[node]
                 if firstNode==None:
                     firstNode = node
@@ -2327,7 +2327,7 @@ parent should be given as full name of parent node"""
                         self.list_selected.append(node)
                         node.draw()
             else:
-                raise ValueError, 'Node %s not found'%str(node)
+                raise ValueError('Node %s not found'%str(node))
 
         if firstNode is not None:
             self.showNode(firstNode)
@@ -2358,7 +2358,7 @@ parent should be given as full name of parent node"""
         prev_selection=self.GetSelected()
    
         result = False
-        if type(node) is types.StringType:
+        if type(node) is bytes:
             fullname=node
         else:
             assert isinstance(node, Node)
@@ -2401,7 +2401,7 @@ parent should be given as full name of parent node"""
         """move the tree to make sure the node n is visible
 """
         y = n.y - OFFSET + 0.0
-        bb = self.canvas.bbox(Tkinter.ALL)
+        bb = self.canvas.bbox(tkinter.ALL)
         self.canvas.yview_moveto(y/bb[3])
         
         
@@ -2528,14 +2528,14 @@ newParent: a Node object or fullName of Node, if None, add as new root
         if nodeFrom == None: return
         # if newParent is None: add as new root node
         
-        if type(newParent) is types.StringType:
+        if type(newParent) is bytes:
             input=newParent
             newParent = self.findNodeFromName(newParent)
             if newParent is None:
                 warn( "error in moveNode, check name of parent: "+ input  )
                 return
 
-        if type(nodeFrom) is types.StringType:
+        if type(nodeFrom) is bytes:
             input=nodeFrom
             nodeFrom = self.findNodeFromName(nodeFrom)
             if nodeFrom is None:
@@ -2586,7 +2586,7 @@ newParent: a Node object or fullName of Node, if None, add as new root
             self.updateY()
             self.draw_new_root(node)
 
-        bb = self.canvas.bbox(Tkinter.ALL)
+        bb = self.canvas.bbox(tkinter.ALL)
         self.canvas.configure(
                             scrollregion=(0, 0,bb[2]+OFFSET, bb[3]+OFFSET))
 

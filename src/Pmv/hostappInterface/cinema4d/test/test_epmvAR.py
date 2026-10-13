@@ -110,8 +110,8 @@ self.art.patternMgr.loadDevice(name='head',type='cube4',width=40.,
                                listPatt=['kanjiPatt','sampPatt1', 'sampPatt2','patt15' ],
                                 trans=[0.,0.,-30.],scaleFactor=1.)
 self.art.patternMgr.loadDevice(name='bott',type='cube4',
-							listPatt=[patt6,patt7,patt8,patt5],width=40.,
-							trans=[0.,0.,-30.],scaleFactor=1.)
+                                                        listPatt=[patt6,patt7,patt8,patt5],width=40.,
+                                                        trans=[0.,0.,-30.],scaleFactor=1.)
 #offset ?
 self.art.patternMgr.groups['head'].offset = [60.,0.,0.]
 self.art.patternMgr.groups['bott'].offset = [60.,0.,0.]
@@ -161,7 +161,7 @@ bmpS.Init(320,240,32)#RGB
 #thr.wait() #wait until the main method is done
 
 #regular thread
-import thread 
+import _thread 
 #lock=thread.allocate_lock()
 #helper.AR(self,bmp=bmp,v=Right)
 #t=thread.start_new_thread(helper.AR,(self,Right))

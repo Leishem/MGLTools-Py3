@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #########################################################################
 #
@@ -16,7 +16,7 @@
 # $Id: msmsParser.py,v 1.9 2007/07/24 17:30:39 vareille Exp $
 #
 import os
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 class MSMSParser:
     """
     This class will parse a .vert file and a .face file.
@@ -55,10 +55,9 @@ class MSMSParser:
         else:
             facesLines = faceDescr
             facesComments = []
-        facesInfo = map(lambda x: x.split(), facesLines)
-        self.faces = Numeric.array(map(lambda x: [int(x[0])-1, int(x[1])-1,
-                                                  int(x[2])-1],
-                                       facesInfo)).astype('i')
+        facesInfo = [x.split() for x in facesLines]
+        self.faces = Numeric.array([[int(x[0])-1, int(x[1])-1,
+                                                  int(x[2])-1] for x in facesInfo]).astype('i')
         
     def getVert(self, vertDescr):
         ################################################################
@@ -78,12 +77,10 @@ class MSMSParser:
         else:
             vertComments = []
             vertLines = vertDescr
-        vertInfo = map(lambda x: x.split(), vertLines)
+        vertInfo = [x.split() for x in vertLines]
         self.vertices = Numeric.array(
-            map(lambda x: [float(x[0]), float(x[1]), float(x[2])],
-                vertInfo)).astype('f')
-        self.normals = Numeric.array(map(
-            lambda x: [float(x[3]), float(x[4]), float(x[5])], vertInfo)
+            [[float(x[0]), float(x[1]), float(x[2])] for x in vertInfo]).astype('f')
+        self.normals = Numeric.array([[float(x[3]), float(x[4]), float(x[5])] for x in vertInfo]
                                      ).astype('f')
 ##         self.vertInfo = Numeric.array(map(
 ##             lambda x: [int(x[6]), int(x[7]), int(x[8])], vertInfo)

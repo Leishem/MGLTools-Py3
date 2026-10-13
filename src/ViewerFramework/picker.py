@@ -38,7 +38,7 @@ objects can be picked is added.
 
 ##  from ViewerFramework.gui import InputFormDescr
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
-import Tkinter, time, types
+import tkinter, time, types
 
 class Picker:
     """Base class for picker objects"""
@@ -66,7 +66,7 @@ class Picker:
         l = len(callbacks)
         self.callbacks = callbacks
         self.disableOtherPickingFunctions = disableOtherPickingFunctions
-	self.clear() #this set-up self.objects to be the right thing
+        self.clear() #this set-up self.objects to be the right thing
         self.saveCallBackList = None
         if self.gui and self.vf.hasGui:
             self.ifd=self.buildInputFormDescr()
@@ -155,7 +155,7 @@ class Picker:
                 l = len(objects)+len(self.objects)
                 if self.numberOfObjects is not None and \
                    l > self.numberOfObjects:
-                    print "WARNING: this operation would select %d objects while %d are needed\n" % (l,self.numberOfObjects)
+                    print("WARNING: this operation would select %d objects while %d are needed\n" % (l,self.numberOfObjects))
                     return
 
             # add te new objects to already selected ones
@@ -182,7 +182,7 @@ class Picker:
                              'wcfg':{'mode':'multiple'},
                              })
         if self.numberOfObjects==None:
-            ifd.append({'widgetType':Tkinter.Button,
+            ifd.append({'widgetType':tkinter.Button,
                              'wcfg':{'text':'Done'},
                              'command': self.stop})
         return ifd
@@ -194,20 +194,20 @@ class Picker:
 
     def callCallback(self, objects):
         for f in self.callbacks:
-            apply(f, ( (objects), ) )
+            f(*( (objects), ))
         
             
     def addCallback(self, callback):
-	"""Add a callback function"""
+        """Add a callback function"""
 
-	assert callable(callback)
-	# Here we should also check that callback has exactly 1 argument
+        assert callable(callback)
+        # Here we should also check that callback has exactly 1 argument
 
         self.callbacks.append(callback)
 
 
     def removeCallback(self, func):
-	"""Delete function func from the list of callbacks for eventType"""
+        """Delete function func from the list of callbacks for eventType"""
 
         self.callbacks.remove(callback)
 
@@ -231,5 +231,5 @@ class Picker:
 class GeomPicker(Picker):
 
     def getObjects(self, pick):
-        return pick.hits.keys()
+        return list(pick.hits.keys())
 

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
 #
@@ -13,16 +13,16 @@
 #
 
 import math
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 from PyAutoDock.scorer import WeightedMultiTerm, DistDepPairwiseScorer
 from PyAutoDock.scorer import PairwiseScorer
 
-from vanDerWaals import VanDerWaals, HydrogenBonding
-from vanDerWaals import  NewHydrogenBonding, NewVanDerWaals
-from desolvation import Desolvation
-from desolvation import NewDesolvation, NewDesolvationLigOnly, NewDesolvationAtomMap
-from electrostatics import Electrostatics
+from .vanDerWaals import VanDerWaals, HydrogenBonding
+from .vanDerWaals import  NewHydrogenBonding, NewVanDerWaals
+from .desolvation import Desolvation
+from .desolvation import NewDesolvation, NewDesolvationLigOnly, NewDesolvationAtomMap
+from .electrostatics import Electrostatics
 
 
 
@@ -137,12 +137,12 @@ class Gauss(DistDepPairwiseScorer):
                      self.xs_vdw_radii.get(at_b.autodock_element,2.0) + \
                      self.offset)
             if verbose:
-                print "rddist=", rddist, " a,b are:", at_a.full_name(), " ", at_b.full_name()
-                print "autodock_elements = ", at_a.autodock_element," ",  at_b.autodock_element
-                print "xs_vdw_radii = ", self.xs_vdw_radii.get(at_a.autodock_element, 2.0), " ", self.xs_vdw_radii.get(at_b.autodock_element, 2.0),
+                print("rddist=", rddist, " a,b are:", at_a.full_name(), " ", at_b.full_name())
+                print("autodock_elements = ", at_a.autodock_element," ",  at_b.autodock_element)
+                print("xs_vdw_radii = ", self.xs_vdw_radii.get(at_a.autodock_element, 2.0), " ", self.xs_vdw_radii.get(at_b.autodock_element, 2.0), end=' ')
             #if verbose:
-                print "self.offset=", self.offset,
-                print "self.width=", self.width
+                print("self.offset=", self.offset, end=' ')
+                print("self.width=", self.width)
             #energy = math.exp(-1*(((dist - (self.get_xs_radius_sum(at_a,at_b)+self.offset))/self.width)**2))
             energy = math.exp(-1*(rddist/self.width)**2)
             #print '%s-%s: rddist=%f, energy=%f'%(at_a.full_name(), at_b.full_name(), rddist, energy)
@@ -206,17 +206,17 @@ class Repulsion(DistDepPairwiseScorer):
                      self.xs_vdw_radii.get(at_b.autodock_element,2.0) + \
                      self.offset)
             if verbose:
-                print "rddist=", rddist, " a,b are:", at_a.full_name(), " ", at_b.full_name()
-                print "autodock_elements = ", at_a.autodock_element," ",  at_b.autodock_element
-                print "xs_vdw_radii = ", self.xs_vdw_radii.get(at_a.autodock_element, 2.0), " ", self.xs_vdw_radii.get(at_b.autodock_element, 2.0),
-                print "self.offset=", self.offset 
+                print("rddist=", rddist, " a,b are:", at_a.full_name(), " ", at_b.full_name())
+                print("autodock_elements = ", at_a.autodock_element," ",  at_b.autodock_element)
+                print("xs_vdw_radii = ", self.xs_vdw_radii.get(at_a.autodock_element, 2.0), " ", self.xs_vdw_radii.get(at_b.autodock_element, 2.0), end=' ')
+                print("self.offset=", self.offset) 
             energy = 0
             if rddist < 0: 
                 energy = rddist*rddist
         except ZeroDivisionError:
-            print "returning 99999.9"
+            print("returning 99999.9")
             return 99999.9
-        if verbose: print "returning ",energy 
+        if verbose: print("returning ",energy) 
         #@@NON-triangular adjustment:@@
         energy = energy/2.
         return energy
@@ -323,22 +323,22 @@ class Hydrophobic(DistDepPairwiseScorer):
 
     def slope_step(self, x_bad, x_good,  x, verbose=False):
         if x_bad < x_good:
-            if verbose: print "bad is smaller"
+            if verbose: print("bad is smaller")
             if x <= x_bad: 
-                if verbose: print "x<= x_bad"
+                if verbose: print("x<= x_bad")
                 return 0
             if x >= x_good: 
-                if verbose: print "x>= x_good"
+                if verbose: print("x>= x_good")
                 return 1
         else:
-            if verbose: print "bad is equal or larger"
+            if verbose: print("bad is equal or larger")
             if x >= x_bad: 
-                if verbose: print "2:x>= x_bad"
+                if verbose: print("2:x>= x_bad")
                 return 0
             if x <= x_good: 
-                if verbose: print "2:x<= x_good"
+                if verbose: print("2:x<= x_good")
                 return 1
-        if verbose: print "returning fraction:"
+        if verbose: print("returning fraction:")
         return (x - x_bad) / (x_good - x_bad)
 
 
@@ -361,19 +361,19 @@ class Hydrophobic(DistDepPairwiseScorer):
     def set_vina_types(self, ats, verbose=False):
         for a in ats:
             a.is_hydrophobic = 0
-            if verbose: print a.name, ' svt:'
+            if verbose: print(a.name, ' svt:')
             if a.element in self.hp_types:
                 a.is_hydrophobic = 1
-                if verbose: print "is_hydrophobic"
+                if verbose: print("is_hydrophobic")
             elif a.element in ['C','A']:
                 a.is_hydrophobic = 1
                 for b in a.bonds:  #a-c
-                    if verbose: print "bond ", b.atom1.name, b.atom1.is_hydrophobic, '-', b.atom2.name, b.atom2.is_hydrophobic
+                    if verbose: print("bond ", b.atom1.name, b.atom1.is_hydrophobic, '-', b.atom2.name, b.atom2.is_hydrophobic)
                     nAt = b.neighborAtom(a)
-                    if verbose: print 'checking nAt ', nAt.name, ':', nAt.element
+                    if verbose: print('checking nAt ', nAt.name, ':', nAt.element)
                     if nAt.element not in self.hp_types:
                         a.is_hydrophobic = 0
-                        if verbose: print 'unset ', a.name, a.number, ' is_hydrophobic'
+                        if verbose: print('unset ', a.name, a.number, ' is_hydrophobic')
 
 
     def _f(self, at_a, at_b, dist, verbose=False):
@@ -399,16 +399,16 @@ class Hydrophobic(DistDepPairwiseScorer):
                     (self.xs_vdw_radii.get(at_a.autodock_element,2.0) + \
                      self.xs_vdw_radii.get(at_b.autodock_element,2.0))
             if verbose:
-                print "rddist=", rddist, " a,b are:", at_a.full_name(), " ", at_b.full_name()
-                print "autodock_elements = ", at_a.autodock_element," ",  at_b.autodock_element
-                print "xs_vdw_radii = ", self.xs_vdw_radii.get(at_a.autodock_element, 2.0), " ", self.xs_vdw_radii.get(at_b.autodock_element, 2.0),
+                print("rddist=", rddist, " a,b are:", at_a.full_name(), " ", at_b.full_name())
+                print("autodock_elements = ", at_a.autodock_element," ",  at_b.autodock_element)
+                print("xs_vdw_radii = ", self.xs_vdw_radii.get(at_a.autodock_element, 2.0), " ", self.xs_vdw_radii.get(at_b.autodock_element, 2.0), end=' ')
             energy = self.slope_step(self.bad, self.good, rddist)
         except ZeroDivisionError:
-            print "returning 99999.9"
+            print("returning 99999.9")
             return 99999.9
         #@@NON-triangular adjustment:@@
         energy = energy/2.
-        if verbose: print "returning ",energy 
+        if verbose: print("returning ",energy) 
         return energy
 
 
@@ -482,22 +482,22 @@ class Non_dir_h_bond(DistDepPairwiseScorer):
 
     def slope_step(self, x_bad, x_good,  x, verbose=False):
         if x_bad < x_good:
-            if verbose: print "bad is smaller"
+            if verbose: print("bad is smaller")
             if x <= x_bad: 
-                if verbose: print "x<= x_bad"
+                if verbose: print("x<= x_bad")
                 return 0
             if x >= x_good: 
-                if verbose: print "x>= x_good"
+                if verbose: print("x>= x_good")
                 return 1
         else:
-            if verbose: print "bad is equal or larger"
+            if verbose: print("bad is equal or larger")
             if x >= x_bad: 
-                if verbose: print "2:x>= x_bad"
+                if verbose: print("2:x>= x_bad")
                 return 0
             if x <= x_good: 
-                if verbose: print "2:x<= x_good"
+                if verbose: print("2:x<= x_good")
                 return 1
-        if verbose: print "returning fraction:"
+        if verbose: print("returning fraction:")
         return (x - x_bad) / (x_good - x_bad)
 
 
@@ -590,7 +590,7 @@ class Non_dir_h_bond(DistDepPairwiseScorer):
         retval = 0.
         if self.h_bond_possible(at_a.autodock_element, at_b.autodock_element):
             if verbose: 
-                print "hbond_possible! ", at_a.autodock_element,'-',at_b.autodock_element
+                print("hbond_possible! ", at_a.autodock_element,'-',at_b.autodock_element)
             retval= self.slope_step(self.bad, self.good, rddist)
         #@@NON-triangular adjustment:@@??
         retval = retval/2.
@@ -652,18 +652,18 @@ class Repulsion(DistDepPairwiseScorer):
                      self.xs_vdw_radii.get(at_b.autodock_element,2.0) + \
                      self.offset)
             if verbose:
-                print "rddist=", rddist, " a,b are:", at_a.full_name(), " ", at_b.full_name()
-                print "autodock_elements = ", at_a.autodock_element," ",  at_b.autodock_element
-                print "xs_vdw_radii = ", self.xs_vdw_radii.get(at_a.autodock_element, 2.0), " ", self.xs_vdw_radii.get(at_b.autodock_element, 2.0),
-                print "self.offset=", self.offset 
+                print("rddist=", rddist, " a,b are:", at_a.full_name(), " ", at_b.full_name())
+                print("autodock_elements = ", at_a.autodock_element," ",  at_b.autodock_element)
+                print("xs_vdw_radii = ", self.xs_vdw_radii.get(at_a.autodock_element, 2.0), " ", self.xs_vdw_radii.get(at_b.autodock_element, 2.0), end=' ')
+                print("self.offset=", self.offset) 
             if rddist > 0:
                 energy = 0 #line 117 everything.cpp
             else:
                 energy = rddist*rddist
         except ZeroDivisionError:
-            print "ZeroDivisionError: returning 99999.9"
+            print("ZeroDivisionError: returning 99999.9")
             energy = 99999.9
-        if verbose: print "returning ",energy 
+        if verbose: print("returning ",energy) 
         #@@NON-triangular adjustment:@@??
         energy = energy/2.
         return energy
@@ -720,13 +720,13 @@ class AutoDockVinaScorer(WeightedMultiTerm, AutoDockVinaTermWeights):
         try:
             at_b = atoms_b[0]
         except:
-            at_b = atoms_b.next()
+            at_b = next(atoms_b)
         atoms_ax = self.ms.configuration[0]
         atoms_a = self.ms.get_entities(atoms_ax)
         try:
             at_a = atoms_a[0]
         except:
-            at_a = atoms_a.next()
+            at_a = next(atoms_a)
         ndihe = 0
         if hasattr(at_b.top, 'ndihe'):
             ndihe = at_b.top.ndihe
@@ -890,7 +890,7 @@ class AutoDock4Scorer2(WeightedMultiTerm):
 class AutoDock41Scorer(WeightedMultiTerm, AutoDockTermWeights41):
     def __init__(self, exclude_torsFreeEnergy=False, verbose=False):
         self.verbose = verbose
-        if verbose: print "initialized exclude_torsFreeEnergy=", exclude_torsFreeEnergy
+        if verbose: print("initialized exclude_torsFreeEnergy=", exclude_torsFreeEnergy)
         self.prop = 'ad41_energy'
         self.exclude_torsFreeEnergy=exclude_torsFreeEnergy
         WeightedMultiTerm.__init__(self)
@@ -903,7 +903,7 @@ class AutoDock41Scorer(WeightedMultiTerm, AutoDockTermWeights41):
 
 
     def get_supported_types(self):
-        double_types = self.terms[2][0].epsij.keys()
+        double_types = list(self.terms[2][0].epsij.keys())
         supported_types = []
         odd_length = []
         for t in double_types:
@@ -960,7 +960,7 @@ class AutoDock41Scorer(WeightedMultiTerm, AutoDockTermWeights41):
                 ll = l.split()
                 atomT = ll[1]
                 all_types[atomT] = 1
-                r,eps, v, sp, Rhb, ehb = map( float, ll[2:8])
+                r,eps, v, sp, Rhb, ehb = list(map( float, ll[2:8]))
                 hb = int(ll[8])
                 t = atomT+atomT
                 Rij[t] = r
@@ -979,7 +979,7 @@ class AutoDock41Scorer(WeightedMultiTerm, AutoDockTermWeights41):
         vdwT = self.terms[2][0]
         don_keys = []
         acc_keys = []
-        for k,v in hbond.items():
+        for k,v in list(hbond.items()):
             if v in [1,2]:
                 don_keys.append(k)
             if v >2:
@@ -993,10 +993,10 @@ class AutoDock41Scorer(WeightedMultiTerm, AutoDockTermWeights41):
         vdwT.Rij = {}
         vdwT.epsij = {}
         #newvdw
-        for t, val in Rij.items():
+        for t, val in list(Rij.items()):
             vdwT.Rij[t] = val
             hbondT.Rij[t] = 0
-        for t,val in epsij.items():
+        for t,val in list(epsij.items()):
             vdwT.epsij[t] = val
             hbondT.epsij[t] = 0
         #then override the hbonders
@@ -1027,8 +1027,8 @@ class AutoDock41Scorer(WeightedMultiTerm, AutoDockTermWeights41):
         if self.exclude_torsFreeEnergy==False:
             lig = self.ms.get_entities(self.ms.configuration[1])[0].top
             torsEnrg = lig.TORSDOF*self.tors_weight
-        if self.verbose: print "torsEnrg=", torsEnrg
-        if self.verbose: print "score=", score
+        if self.verbose: print("torsEnrg=", torsEnrg)
+        if self.verbose: print("score=", score)
         return score + torsEnrg
 
 
@@ -1090,7 +1090,7 @@ solpar_q*lig.charge*rec.vol*sol_fn[dist]
 
 
 if __name__ == '__main__':
-    print "Test are in Tests/test_AutoDockScorer.py @@ WRITE ME!!"
+    print("Test are in Tests/test_AutoDockScorer.py @@ WRITE ME!!")
     # test_scorer.run_test()
 
 

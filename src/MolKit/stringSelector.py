@@ -13,7 +13,7 @@
 from MolKit.tree import TreeNodeSet, evalString
 from MolKit.molecule import MoleculeSet, AtomSet
 from MolKit.protein import ProteinSet, ChainSet, ResidueSet
-import types, string
+import types; from mglcompat import pystring as string
 from mglutil.util.misc import isInstance
 
 class StringSelector:
@@ -103,10 +103,10 @@ class StringSelector:
                         #does this happen automatically?
                         overallmsg = overallmsg + msg
                     else:
-                        print "ERROR"
-                        print "overall_class->", overall_class
-                        print "results.__class__->", results.__class__
-                        print "results=", results
+                        print("ERROR")
+                        print("overall_class->", overall_class)
+                        print("results.__class__->", results.__class__)
+                        print("results=", results)
                         raise RuntimeError
                 if selString!=allSelectionStrings[-1]:
                     final_str_repr += ';'
@@ -168,7 +168,7 @@ class CompoundStringSelector:
         #li<0,ri<0;li>0,ri>0...ok
         #li<0,ri>0;li>0,ri<0...error
         if (second_index<0 and first_index>0) or (second_index>0 and first_index<0):
-            raise ValueError, '%s badly nested selection string:'%selectionString
+            raise ValueError('%s badly nested selection string:'%selectionString)
         elif second_index>-1 and first_index>-1:
             r_i = selectionString[:second_index].rfind('(')
             sub_sel_string = selectionString[r_i+1:second_index]
@@ -246,7 +246,7 @@ class CompoundStringSelector:
             elif op=='^':
                 result ^= tmp
             else:
-                raise ValueError, '%s bad operation in selection string'%op
+                raise ValueError('%s bad operation in selection string'%op)
             #PROCESS the stringRepr
             # only add stringsel if something was selected
             if len(tmp):
@@ -255,7 +255,7 @@ class CompoundStringSelector:
                 elif op=='+':
                     stringRepr += arg
                 else:
-                    print "about to raise RuntimeError on ", op
+                    print("about to raise RuntimeError on ", op)
                     raise RuntimeError('ERROR: selection string starting with operator which is not +, (%s)'%op)
             else: #add arg to msg_to_return
                 msg_to_return += arg
@@ -267,7 +267,7 @@ class CompoundStringSelector:
         #print "in process with len(nodes)=", len(nodes), ' and criteria=', criteria
         #print "type(criteria)==", type(criteria)
         msg_to_return = ""
-        if type(criteria)==types.StringType:
+        if type(criteria)==bytes:
             selected, msg = self.do_op(nodes, criteria, sets=sets)
             #print " back in process with len(selected) = ", len(selected)
             msg_to_return += msg
@@ -387,14 +387,14 @@ class CompoundStringSelector:
         msg_to_return = ''
         first_item = token_list[0]   
         first_type = type(first_item)
-        if first_type==types.StringType:  #a subselect '(.....)'
+        if first_type==bytes:  #a subselect '(.....)'
             result, msg = self.get_nodes(nodes, first_item, sets=sets)
-        elif first_type==types.ListType:  # string/op/-> [string, op, ....]
+        elif first_type==list:  # string/op/-> [string, op, ....]
             result, msg = getSet.select(nodes, first_item[0], sets=sets)
             op = first_item[1]
             token_list.insert(1, op)
         else:
-            print " INVALID selection string ", selectionString
+            print(" INVALID selection string ", selectionString)
             return None, ''
         msg_to_return += msg
         result = result.copy()
@@ -410,7 +410,7 @@ class CompoundStringSelector:
             ##print "###########################"
             op = token_list[i]
             #after the first, can only have ['',op,string] lists
-            if type(op)==types.ListType:
+            if type(op)==list:
                 assert op[0]==''
                 op = op[1]
             arg = token_list[i+1]
@@ -432,7 +432,7 @@ class CompoundStringSelector:
             elif op=='^':
                 result ^= tmp
             else:
-                raise ValueError, '%s bad operation in selection string'%op
+                raise ValueError('%s bad operation in selection string'%op)
 
             #PROCESS the stringRepr
             # only add stringsel if something was selected
@@ -442,7 +442,7 @@ class CompoundStringSelector:
                 elif op=='+':
                     stringRepr += arg
                 else:
-                    print "about to raise RuntimeError on ", op
+                    print("about to raise RuntimeError on ", op)
                     raise RuntimeError('ERROR: selection string starting with operator which is not +, (%s)'%op)
         if len(result):
             result.setStringRepr(stringRepr)
@@ -524,8 +524,8 @@ class MVStringSelector:
             return []
             #return [], msgStr
 
-        noChainMols=MoleculeSet(filter(lambda x: Chain not in x.levels, self.molSet))
-        haveChainMols=MoleculeSet(filter(lambda x: Chain in x.levels, self.molSet))
+        noChainMols=MoleculeSet([x for x in self.molSet if Chain not in x.levels])
+        haveChainMols=MoleculeSet([x for x in self.molSet if Chain in x.levels])
 
         #build the residues belonging to molecules w/ no Chains (!WEIRD!)
         ncrs=ResidueSet()
@@ -581,7 +581,7 @@ class MVStringSelector:
         #find correct levelType to return
         #need to split atomSet into two parts:
         if self.atomSet:
-            haveChainAtoms = AtomSet(filter(lambda x: x.top!=x.parent,self.atomSet))
+            haveChainAtoms = AtomSet([x for x in self.atomSet if x.top!=x.parent])
             haveNoChainAtoms=self.atomSet-haveChainAtoms
             if self.selList[3]==['']:
                 #change atoms to residues
@@ -692,11 +692,11 @@ class MVStringSelector:
             newNodes = FD['range'](item, nodes )
             return newNodes
         
-        if item in residueList_.keys():
+        if item in list(residueList_.keys()):
             newNodes = FD['NamedResSet'](item,nodes)
             return newNodes
 
-        if item in atomList_.keys():
+        if item in list(atomList_.keys()):
             newNodes = FD['NamedAtomSet'](item,nodes)
             return newNodes
 
@@ -826,7 +826,7 @@ class MVStringSelector:
         selNodes = None
         parentNodes = nodes[0].parent.setClass(nodes.parent.uniq())
         for par in parentNodes:
-            nds = ResidueSet(filter(lambda x, par=par: x.parent==par, nodes))
+            nds = ResidueSet(list(filter(lambda x, par=par: x.parent==par, nodes)))
             if len(nds)<2: continue
             firstNodes = self.processListItem(nds, levItList[0], self.resFD)
             lastNodes = self.processListItem(nds, levItList[1], self.resFD)
@@ -842,7 +842,7 @@ class MVStringSelector:
     def getResidueIndex(self, item, nodes):
         #residue indices are strings
         item = str(item)
-        ans= filter(lambda x, item = item: x.number==item,nodes)
+        ans= list(filter(lambda x, item = item: x.number==item,nodes))
         return ResidueSet(ans)
         
 
@@ -879,7 +879,7 @@ class MVStringSelector:
     def getNamedResSet(self, item,nodes):
         #here get all residues w/ name in  residueList_[item]
         rlist = residueList_[item]
-        ans = filter(lambda x, rlist=rlist, nodes=nodes: x.type in rlist, nodes)
+        ans = list(filter(lambda x, rlist=rlist, nodes=nodes: x.type in rlist, nodes))
         return ResidueSet(ans)
 
 
@@ -905,7 +905,7 @@ class MVStringSelector:
         selNodes = None
         parentNodes = ResidueSet(nodes.parent.uniq())
         for par in parentNodes:
-            nds = AtomSet(filter(lambda x, par=par: x.parent==par, nodes))
+            nds = AtomSet(list(filter(lambda x, par=par: x.parent==par, nodes)))
             firstNodes = self.processListItem(nds, levItList[0], self.atomFD)
             lastNodes = self.processListItem(nds, levItList[-1], self.atomFD)
             if firstNodes and lastNodes:
@@ -922,15 +922,15 @@ class MVStringSelector:
         alist = atomList_[item]
         #only get atoms in standard residues
         reslist = residueList_['std']
-        res_atoms = filter(lambda x, nodes=nodes: x.parent.type in reslist, nodes)
-        ans = filter(lambda x, alist=alist, res_atoms=res_atoms: x.name in alist, res_atoms)
+        res_atoms = list(filter(lambda x, nodes=nodes: x.parent.type in reslist, nodes))
+        ans = list(filter(lambda x, alist=alist, res_atoms=res_atoms: x.name in alist, res_atoms))
         #previously:
         #ans = filter(lambda x, alist=alist, nodes=nodes: x.name in alist, nodes)
         return AtomSet(ans)
 
 
     def getAtomIndex(self, item, nodes):
-        ans= filter(lambda x, item = item: x.number ==item,nodes)
+        ans= list(filter(lambda x, item = item: x.number ==item,nodes))
         return AtomSet(ans)
             
 
@@ -959,7 +959,7 @@ class MVStringSelector:
 
     #Functions for converting input for regular expressions:
     def processStringcIWEC(self,someString):
-        import string
+        from mglcompat import pystring as string
         strList = string.split(someString, ',')
         retExp = ''
         specialList = ['?','*','.','$','#', ':', '-']
@@ -1004,7 +1004,7 @@ class MVStringSelector:
 
 
     def processStringcI(self,someString):
-        import string
+        from mglcompat import pystring as string
         someString = string.replace(someString, '?', '.')
         #if there are any commas, preceed them by (?i)
         someString = string.replace(someString, ',','(?i),')
@@ -1014,7 +1014,7 @@ class MVStringSelector:
 
 
     def processStringcS(self, someString):
-        import string
+        from mglcompat import pystring as string
         #in all cases do these things:
         someString = string.replace(someString, '-', ':')
         someString = string.replace(someString, '*', '.*')

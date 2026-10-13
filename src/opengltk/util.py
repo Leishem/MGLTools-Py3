@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 30, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 30, 2007 by 
 
 #
 # copyright_notice
@@ -12,11 +12,12 @@ __all__ = (
     'attachCurrentThread',
     'detachCurrentThread',
     )
-import numpy.oldnumeric as Numeric
-from extent._utillib import *
-from extent import _utillib, _gllib
+import mglcompat.oldnumeric as Numeric
+from .extent._utillib import *
+from .extent import _utillib, _gllib
 
 import threading
+from functools import reduce
 
 attachLock = threading.Lock()
 attachedThread = None
@@ -43,7 +44,7 @@ def sizedict( types):
     lst.sort()
     result = {}
     for sz, typ in lst:
-        if not result.has_key( sz):
+        if sz not in result:
             result[ sz] = typ
     return result
 
@@ -116,7 +117,7 @@ gltypmap = {
 ##      }
 
 revtypmap = {}
-for ctype, econst in gltypmap.items():
+for ctype, econst in list(gltypmap.items()):
     revtypmap[ econst] = ctype
 
 # GL_[234]_BYTES not supported ... ?
@@ -369,7 +370,7 @@ for param in (
     'GL_POLYGON_MODE'
     ):
     if hasattr(_gllib, param):
-        assert not glXXDim.has_key( param), (param, glXXDim[ param])
+        assert param not in glXXDim, (param, glXXDim[ param])
         glXXDim[ getattr(_gllib, param)] = 2
 
 for param in (
@@ -378,7 +379,7 @@ for param in (
     'GL_SPOT_DIRECTION',
     ):
     if hasattr(_gllib, param):
-        assert not glXXDim.has_key( param), (param, glXXDim[ param])
+        assert param not in glXXDim, (param, glXXDim[ param])
         glXXDim[ getattr(_gllib, param)] = 3
 
 for param in (
@@ -407,7 +408,7 @@ for param in (
     'GL_VIEWPORT',
     ):
     if hasattr(_gllib, param):
-        assert not glXXDim.has_key( param), (param, glXXDim[ param])
+        assert param not in glXXDim, (param, glXXDim[ param])
         glXXDim[ getattr(_gllib, param)] = 4
 
 for param in (
@@ -416,7 +417,7 @@ for param in (
     'GL_TEXTURE_MATRIX',
     ):
     if hasattr(_gllib, param):
-        assert not glXXDim.has_key( param), (param, glXXDim[ param])
+        assert param not in glXXDim, (param, glXXDim[ param])
         glXXDim[ getattr(_gllib, param)] = 16
 
 

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
 #
@@ -89,7 +89,7 @@ from MolKit.molecule import Atom, AtomSet, HydrogenBond
 from MolKit.distanceSelector import DistanceSelector
 
 #needed for some math..
-import numpy.oldnumeric as Numeric, math
+import mglcompat.oldnumeric as Numeric, math
 
 #set up lists of types for donors/acceptors
 sp2Donors = ['Nam', 'Ng+', 'Npl']
@@ -397,31 +397,31 @@ class HydrogenBondBuilder:
         if paramDict is None:
             paramDict = self.paramDict
         #these are from the __call__ method of vf.buildHBonds
-        if not paramDict.has_key('distCutoff'):
+        if 'distCutoff' not in paramDict:
             paramDict['distCutoff'] = 2.25
-        if not paramDict.has_key('distCutoff2'):
+        if 'distCutoff2' not in paramDict:
             paramDict['distCutoff2'] = 3.00
-        if not paramDict.has_key('d2min'):
+        if 'd2min' not in paramDict:
             paramDict['d2min'] = 120.
-        if not paramDict.has_key('d2max'):
+        if 'd2max' not in paramDict:
             paramDict['d2max'] = 180.
-        if not paramDict.has_key('d3min'):
+        if 'd3min' not in paramDict:
             paramDict['d3min'] = 120.
-        if not paramDict.has_key('d3max'):
+        if 'd3max' not in paramDict:
             paramDict['d3max'] = 170.
-        if not paramDict.has_key('a2min'):
+        if 'a2min' not in paramDict:
             paramDict['a2min'] = 130.
-        if not paramDict.has_key('a2max'):
+        if 'a2max' not in paramDict:
             paramDict['a2max'] = 170.
-        if not paramDict.has_key('a3min'):
+        if 'a3min' not in paramDict:
             paramDict['a3min'] = 120.
-        if not paramDict.has_key('a3max'):
+        if 'a3max' not in paramDict:
             paramDict['a3max'] = 170.
-        if not paramDict.has_key('distOnly'):
+        if 'distOnly' not in paramDict:
             paramDict['distOnly'] = 0
-        if not paramDict.has_key('donorTypes'):
+        if 'donorTypes' not in paramDict:
             paramDict['donorTypes'] = allDonors
-        if not paramDict.has_key('acceptorTypes'):
+        if 'acceptorTypes' not in paramDict:
             paramDict['acceptorTypes'] = allAcceptors
 
         d = {}
@@ -512,7 +512,7 @@ class HydrogenBondBuilder:
 
 
     def makeBonds(self, pD, d2Ats, d3Ats, a2Ats, a3ats, paramDict):
-        for k in pD.keys():
+        for k in list(pD.keys()):
             if k.element=='H':
                 if hasattr(k, 'hbonds') and len(k.hbonds):
                     continue
@@ -565,7 +565,7 @@ class HydrogenBondBuilder:
         a3max = paramDict['a3max']
         a3min = paramDict['a3min']
         #NB now pD keys could be hydrogens OR donors
-        for k in pD.keys():
+        for k in list(pD.keys()):
             if k.element=='H':
                 d = k.bonds[0].atom1
                 if id(d)==id(k): d = k.bonds[0].atom2
@@ -647,8 +647,8 @@ class HydrogenBondBuilder:
 
     def removeBadAts(self, atDict, badAtDict):
         #clean-up function called after filtering on angles
-        badKeys= badAtDict.keys()
-        for at in atDict.keys():
+        badKeys= list(badAtDict.keys())
+        for at in list(atDict.keys()):
             if at not in badKeys:
                 continue
             if not len(badAtDict[at]):
@@ -670,7 +670,7 @@ class HydrogenBondBuilder:
     def removeNeighbors(self, atDict):
         #filter out at-itself and at-bondedat up to 1:4
         #NB keys could be hydrogens OR donors
-        for at in atDict.keys():
+        for at in list(atDict.keys()):
             closeAts = atDict[at]
             bondedAts = AtomSet([])
             for b in at.bonds:
@@ -848,9 +848,9 @@ class HydrogenBondBuilder:
         ret3Ats = AtomSet([])
         for item in [s3Accs, o3Accs]:
             ret3Ats = ret3Ats + item
-        if ret2Ats: print 'ret2Ats=', ret2Ats.name
-        else: print 'no ret2Ats'
-        if ret3Ats: print 'ret3Ats=', ret3Ats.name
-        else: print 'no ret3Ats'
+        if ret2Ats: print('ret2Ats=', ret2Ats.name)
+        else: print('no ret2Ats')
+        if ret3Ats: print('ret3Ats=', ret3Ats.name)
+        else: print('no ret3Ats')
         return ret2Ats, ret3Ats
 

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #!/usr/bin/env python
 #
@@ -6,7 +6,7 @@
 
 from DejaVu.colorTool import TkColor, RedWhiteRamp
 from DejaVu.colorMap import ColorMap
-import Image, numpy.oldnumeric as Numeric
+import Image, mglcompat.oldnumeric as Numeric
 
 
 class PixelMap2D:
@@ -36,7 +36,7 @@ class PixelMap2D:
 
     def __init__(self, results, master=None, mini=None, maxi=None, 
                     cmap=None, cmap_name='cmap', ramp=None, npixels=10):
-        assert isinstance(results, type(Numeric.array(range(4))))
+        assert isinstance(results, type(Numeric.array(list(range(4)))))
         assert len(results.shape)==2
         # a copy of the input array is used
         self.results = Numeric.array(results[:])
@@ -50,16 +50,16 @@ class PixelMap2D:
         if mini is None:
             mini=min(results.ravel())
         else:
-            for x in xrange(self.x_number):
-                for y in xrange(self.y_number):
+            for x in range(self.x_number):
+                for y in range(self.y_number):
                     if self.results[x][y]<mini:
                         self.results[x][y]=mini
         self.mini = mini
         if maxi is None:
             maxi=max(results.ravel())
         else:
-            for x in xrange(self.x_number):
-                for y in xrange(self.y_number):
+            for x in range(self.x_number):
+                for y in range(self.y_number):
                     if self.results[x][y]>maxi:
                         self.results[x][y]=maxi
         self.maxi = maxi
@@ -74,7 +74,7 @@ class PixelMap2D:
         #'RGBA' requires a tuple (r,g,b,a) where r,g,b,a are ints in range 0-255
         values = self.cmap.Map(self.results.ravel())
         self.image = Image.fromstring('RGBA', (self.x_number,self.y_number), 
-                                (values*255).astype('B').tostring())
+                                (values*255).astype('B').tobytes())
         self.image.show()
 
 
@@ -86,47 +86,47 @@ class PixelMap2D:
         self.vals.append(self.maxi)
         values = self.cmap.Map(vals)
         if horizontal:
-            self.legend = Image.fromstring('RGBA', (steps, 1), (values*255).astype('B').tostring())
+            self.legend = Image.fromstring('RGBA', (steps, 1), (values*255).astype('B').tobytes())
         else:
-            self.legend = Image.fromstring('RGBA', (1,steps), (values*255).astype('B').tostring())
+            self.legend = Image.fromstring('RGBA', (1,steps), (values*255).astype('B').tobytes())
         self.legend.show()
 
 
       
 if __name__=='__main__':
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     from time import sleep
-    r = Numeric.array(range(10000))
+    r = Numeric.array(list(range(10000)))
     r.shape = (100,100)
 
     rw_w = PixelMap2D(r[:])
     rw_w.show_image()
-    print "rw_w shown"
+    print("rw_w shown")
     sleep(3)
 
 
     rw_half_w = PixelMap2D(Numeric.array(r[:])[:], maxi=5000.)
     rw_half_w.show_image()
-    print "rw_half_w shown"
+    print("rw_half_w shown")
     sleep(3)
 
     from DejaVu.colorTool import RedWhiteBlueRamp
     rwb_w = PixelMap2D(r[:], ramp=RedWhiteBlueRamp())
     rwb_w.show_image()
-    print "rwb_w shown"
+    print("rwb_w shown")
     sleep(3)
 
     s_r = Numeric.array(Numeric.swapaxes(r[:],0,1))
     s_r.shape = (100,100)
     s_r_w = PixelMap2D(s_r, ramp=RedWhiteBlueRamp())
     s_r_w.show_image()
-    print "s_r_w shown"
+    print("s_r_w shown")
     sleep(3)
 
     
     rwb_half_w = PixelMap2D(Numeric.array(r[:])[:], maxi=5000., ramp=RedWhiteBlueRamp())
     rwb_half_w.show_image()
-    print "rwb_half_w shown"
+    print("rwb_half_w shown")
     sleep(3)
 
 
@@ -153,7 +153,7 @@ if __name__=='__main__':
 ##here results are [lig1,lig2,lig3,lig4...]
 ## here rows in image will correspond to ligands and columns to receptors
 
-##import numpy.oldnumeric as Numeric
+##import mglcompat.oldnumeric as Numeric
 ##ligand_results = Numeric.array(all_ligand_results)
 ##ligand_results.shape = (100,100)
 ##now ligand_results are #[[lig1]

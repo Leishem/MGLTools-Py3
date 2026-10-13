@@ -43,8 +43,8 @@ from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser, \
      ExtendedSliderWidget
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
-import Tkinter, Pmw, string, types
-import numpy.oldnumeric as Numeric
+import tkinter, Pmw, types; from mglcompat import pystring as string
+import mglcompat.oldnumeric as Numeric
 
 class ComputeSplineCommand(MVCommand):
     """The CompueSplineCommand omplements a set of method to create an DejaVu.splineObject per chain given:a TreeNodeSet,type of control Atoms (atmtype),number of points per control point in the smooth array (nbchords),continuity of the curves (continuity).
@@ -190,11 +190,11 @@ class ComputeSplineCommand(MVCommand):
         kw['atmtype'] = atmtype
         kw['curSel'] = curSel
         kw['closedSpline'] = closedSpline
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'" + nodes +"'"
         expnodes = self.vf.expandNodes(nodes)
         if len(expnodes)==0: return
-        apply(self.doitWrapper, (expnodes, ), kw)
+        self.doitWrapper(*(expnodes, ), **kw)
 
 
 
@@ -229,11 +229,11 @@ class ComputeSplineGUICommand(MVCommand):
         self.flag = self.flag | self.objArgOnly
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('computeSpline'):
+        if 'computeSpline' not in self.vf.commands:
             self.vf.loadCommand("splineCommands", 'computeSpline',
                                 "Pmv", topCommand = 0)
         #if self.vf .hasGui and \
-        if not self.vf.commands.has_key('displaySplineAsLine'):
+        if 'displaySplineAsLine' not in self.vf.commands:
             self.vf.loadCommand("splineCommands",'displaySplineAsLine','Pmv',
                                 topCommand = 0)
 
@@ -241,29 +241,29 @@ class ComputeSplineGUICommand(MVCommand):
     def cursel_cb(self, event = None):
         """ if the use curSel checkbutton is on: the entryFiedl should be
         disabled."""
-        if self.cmdForms.has_key('spline'):
+        if 'spline' in self.cmdForms:
             idf = self.cmdForms['spline'].descr
             cbVar =idf.entryByName['curSel']['wcfg']['variable']
             entry = idf.entryByName['atmtype']['widget']
 
             if cbVar.get() == 1:
-                entry._entryFieldEntry.configure(state = Tkinter.DISABLED)
+                entry._entryFieldEntry.configure(state = tkinter.DISABLED)
                 entry.configure(label_fg = 'darkgray')
 
             else:
-                entry._entryFieldEntry.configure(state = Tkinter.NORMAL)
+                entry._entryFieldEntry.configure(state = tkinter.NORMAL)
                 entry.configure(label_fg = 'black')
         
 
     def buildFormDescr(self, formName):
         if formName == 'spline':
             idf = InputFormDescr(title="Compute Spline:")
-            nbchordEntryVar = Tkinter.StringVar()
+            nbchordEntryVar = tkinter.StringVar()
             idf.append({'name':'curSel',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue':0,
                         'wcfg':{'text':'Current Selection',
-                                'variable':Tkinter.IntVar(),
+                                'variable':tkinter.IntVar(),
                                'command':self.cursel_cb},
                         'gridcfg':{'sticky':'we'}})
 
@@ -301,17 +301,17 @@ class ComputeSplineGUICommand(MVCommand):
                          })
 
             idf.append({'name':'closedSpline',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue':0,
                         'wcfg':{'text':'Closed Spline       ',
-                                'variable':Tkinter.IntVar()},
+                                'variable':tkinter.IntVar()},
                         'gridcfg':{'sticky':'we'}})
 
             idf.append({'name':'sortAtms',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue':1,
                         'wcfg':{'text':'Sort control Atoms',
-                                'variable':Tkinter.IntVar()},
+                                'variable':tkinter.IntVar()},
                         'gridcfg':{'sticky':'we', 'row':-1}})
 
 ##          idf.append({'name': 'interp',
@@ -338,7 +338,7 @@ class ComputeSplineGUICommand(MVCommand):
                 return
                                      
             val['redraw']=0
-            apply(self.doitWrapper, (nodes,), val)
+            self.doitWrapper(*(nodes,), **val)
 
 
     def doit(self,nodes, atmtype="", curSel=False,  nbchords=4,
@@ -379,11 +379,11 @@ class ComputeSplineGUICommand(MVCommand):
         kw['atmtype'] = atmtype
         kw['curSel'] = curSel
         kw['closedSpline'] = closedSpline
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'" + nodes +"'"
         nodes = self.vf.expandNodes(nodes)
         if len(nodes)==0: return
-        apply(self.doitWrapper, (nodes, ), kw)
+        self.doitWrapper(*(nodes, ), **kw)
 
     
 class ExtrudeSplineCommand(MVCommand):
@@ -414,19 +414,19 @@ class ExtrudeSplineCommand(MVCommand):
         gc = obj.geomContainer
         for c in obj.chains:
             splineName = 'spline'+c.id
-            if gc.geoms.has_key(splineName):
+            if splineName in gc.geoms:
                 g = gc.geoms[splineName]
                 if hasattr(g, 'spline'):
                     delattr(g,'spline')
 
     def onAddCmdToViewer(self):
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('computeSplineGC'):
+        if 'computeSplineGC' not in self.vf.commands:
             self.vf.loadCommand("splineCommands", 'computeSplineGC',
                                 "Pmv", topCommand = 0)
             
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('displayExtrudedSpline'):
+        if 'displayExtrudedSpline' not in self.vf.commands:
             self.vf.loadCommand("splineCommands", 'displayExtrudedSpline',
                                 'Pmv', topCommand = 0)
 
@@ -436,7 +436,7 @@ class ExtrudeSplineCommand(MVCommand):
         if not hasattr(chain, 'spline') or chain.spline is None:
             return 
         name = "spline"+chain.id
-        if geomC.geoms.has_key(name) and geomC.atoms.has_key(name):
+        if name in geomC.geoms and name in geomC.atoms:
             g = geomC.geoms[name]
             if g.spline == chain.spline['spline'+chain.id]:
                 return
@@ -555,14 +555,14 @@ class ExtrudeSplineCommand(MVCommand):
         \ncapsFlag --- Boolean flag to add caps at the end of the spline (default=False)
         \ndisplay --- Boolean flag to call or not the displayExtrudedSpline command default value is True.
         """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
 
         nodes = self.vf.expandNodes(nodes)
         kw['shape2D'] = shape2D
         kw['display'] = display
         kw['capsFlag']=capsFlag
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes, shape2D=None, capsFlag=False, display=True):
@@ -577,11 +577,11 @@ class ExtrudeSplineCommand(MVCommand):
             for chain in chains:
                 if not hasattr(chain, 'spline'):
                     # should call the guiCallback of compute Spline.
-                    print 'cannot do the extrusion the spline has not been computed for %s '%chain.full_name()
+                    print('cannot do the extrusion the spline has not been computed for %s '%chain.full_name())
                     continue
 
                 if chain.spline is None:
-                    print "the %s chain has no spline"%chain.full_name()
+                    print("the %s chain has no spline"%chain.full_name())
                     continue
                 self.createGeometries(chain)
                 atmInSel = atoms.inter(chain.findType(Atom))
@@ -617,7 +617,7 @@ class ExtrudeSplineCommand(MVCommand):
         if formName == 'geomChooser':
             # Build the imputForm letting the user to choose the shape to
             # be extruded
-            nbchordEntryVar = Tkinter.StringVar()
+            nbchordEntryVar = tkinter.StringVar()
             idf = InputFormDescr(title ="Choose a shape :")
         
             entries = [('rectangle',None),
@@ -690,10 +690,10 @@ class ExtrudeSplineCommand(MVCommand):
                                   'gridcfg':{'columnspan':2,'sticky':'we'}})
             
             capsWidgetDescr = {'name':'capsFlag',
-                               'widgetType':Tkinter.Checkbutton,
+                               'widgetType':tkinter.Checkbutton,
                                'defaultValue':0,
                                'wcfg':{'text':'caps',
-                                       'variable': Tkinter.IntVar()},
+                                       'variable': tkinter.IntVar()},
                                    'gridcfg':{'sticky':'we'}}
 
             if formName == 'rectangle':
@@ -841,7 +841,7 @@ class DisplayExtrudedSplineCommand(DisplayCommand):
     
     def onAddCmdToViewer(self):
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('computeSplineGC'):
+        if 'computeSplineGC' not in self.vf.commands:
             self.vf.loadCommand("splineCommands", "computeSplineGC", "Pmv",
                                 topCommand = 0)
 
@@ -854,14 +854,14 @@ class DisplayExtrudedSplineCommand(DisplayCommand):
         only --- flag when set to 1 only the current selection will be displayed
         \nnegate --- flag when set to 1 undisplay the current selection
         """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
 
         nodes = self.vf.expandNodes(nodes)
         kw['only'] = only
         kw['negate'] = negate
-        if not kw.has_key('redraw') : kw['redraw']=1
-        apply(self.doitWrapper, (nodes,), kw)
+        if 'redraw' not in kw : kw['redraw']=1
+        self.doitWrapper(*(nodes,), **kw)
                 
 
     def doit(self, nodes, only=False, negate=False):
@@ -977,8 +977,8 @@ class DisplayExtrudedSplineCommand(DisplayCommand):
                     # maybe fixe that.
                     continue
                 splineName = 'spline'+chain.id
-                if not gc.atoms.has_key(splineName) \
-                   or not gc.geoms.has_key(splineName):
+                if splineName not in gc.atoms \
+                   or splineName not in gc.geoms:
                     continue
                 drawAtoms(chain, atomsInSel, splineName, only, negate)
                 
@@ -995,7 +995,7 @@ class UndisplayExtrudedSplineCommand(DisplayCommand):
     """
     def onAddCmdToViewer(self):
         #if not self.vf.hasGui: return 
-        if not self.vf.commands.has_key('displayExtrudedSpline'):
+        if 'displayExtrudedSpline' not in self.vf.commands:
             self.vf.loadCommand('splineCommands',
                                 ['displayExtrudedSpline'], 'Pmv',
                                 topCommand=0)
@@ -1005,10 +1005,10 @@ class UndisplayExtrudedSplineCommand(DisplayCommand):
         \nRequired Arguments:\n
         nodes --- TreeNodeSet holding the current selection. Can also be a string representing the current selection.
         """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'" + nodes +"'"
         kw['negate']= 1
-        apply(self.vf.displayExtrudedSpline, (nodes,),kw)
+        self.vf.displayExtrudedSpline(*(nodes,), **kw)
             
             
 class DisplaySplineAsLineCommand(DisplayCommand):
@@ -1030,7 +1030,7 @@ class DisplaySplineAsLineCommand(DisplayCommand):
         gc = obj.geomContainer
         for c in obj.chains:
             splineName = 'linespline'+c.id
-            if gc.geoms.has_key(splineName):
+            if splineName in gc.geoms:
                 g = gc.geoms[splineName]
                 if hasattr(g, 'spline'):
                     delattr(g,'spline')
@@ -1045,7 +1045,7 @@ class DisplaySplineAsLineCommand(DisplayCommand):
                 # no spline Object computed for that chain.
                 continue
             name = "lineSpline" + chain.id
-            if geomC.geoms.has_key(name) and geomC.atoms.has_key(name):
+            if name in geomC.geoms and name in geomC.atoms:
                 g = geomC.geoms[name]
                 addGeom = True
                 if g.spline == chain.spline['spline'+chain.id]:
@@ -1181,7 +1181,7 @@ class DisplaySplineAsLineCommand(DisplayCommand):
                 if not hasattr(chain, 'spline') or chain.spline is None:
                     continue
                 name = 'lineSpline%s'%chain.id
-                if not gc.atoms.has_key(name):
+                if name not in gc.atoms:
                     continue
                 geomSet = geomSet + gc.atoms[name]
             
@@ -1235,7 +1235,7 @@ class DisplaySplineAsLineCommand(DisplayCommand):
                 val['negate'] = 1
                 val['only'] = 0
                 del val['display']
-            apply( self.doitWrapper, (self.vf.getSelection(),), val)
+            self.doitWrapper(*(self.vf.getSelection(),), **val)
         
         
 
@@ -1249,15 +1249,15 @@ class DisplaySplineAsLineCommand(DisplayCommand):
         \nnegate --- Boolean flag when set to True undisplay the current selection 
         \nlineWidth --- width of the line representing the spline.
         """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
 
         nodes = self.vf.expandNodes(nodes)
         kw['only'] = only
         kw['negate'] = negate
         kw['lineWidth']=lineWidth
-        if not kw.has_key('redraw'):kw['redraw'] = 1
-        apply(self.doitWrapper, (nodes,), kw)
+        if 'redraw' not in kw:kw['redraw'] = 1
+        self.doitWrapper(*(nodes,), **kw)
 
 
     def doit(self, nodes, lineWidth=3, only=False, negate=False):
@@ -1351,7 +1351,7 @@ class DisplaySplineAsLineCommand(DisplayCommand):
                 splineName = 'lineSpline'+chain.id
                 atomsInSel = atoms.inter(chain.findType(Atom))
                 if not hasattr(chain, 'spline') or chain.spline is None:
-                    print 'the spline has not been computed for %s '%chain.full_name()
+                    print('the spline has not been computed for %s '%chain.full_name())
                     continue
                 drawAtoms(chain, atomsInSel, splineName, lineWidth, only,
                           negate) 
@@ -1371,7 +1371,7 @@ class UndisplaySplineAsLineCommand(DisplayCommand):
 
     def onAddCmdToViewer(self):
         #if not self.vf.hasGui: return 
-        if not self.vf.commands.has_key('displaySplineAsLine'):
+        if 'displaySplineAsLine' not in self.vf.commands:
             self.vf.loadCommand('splineCommands',
                                 ['displaySplineAsLine'], 'Pmv',
                                 topCommand=0)
@@ -1383,11 +1383,11 @@ class UndisplaySplineAsLineCommand(DisplayCommand):
         nodes --- TreeNodeSet holding the current selection. Can also be a
                 string representing the current selection.
         """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'" + nodes +"'"
         kw['negate']= 1
         if not nodes: return
-        apply(self.vf.displaySplineAsLine, (nodes,),kw)
+        self.vf.displaySplineAsLine(*(nodes,), **kw)
 
 
 
@@ -1429,17 +1429,17 @@ class CustomSplineCommand(MVCommand):
 
     def onAddCmdToViewer(self):
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('computeSpline'):
+        if 'computeSpline' not in self.vf.commands:
             self.vf.loadCommand("splineCommands",
                                 "computeSpline", "Pmv",
                                 topCommand = 0)
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('extrudeSpline'):
+        if 'extrudeSpline' not in self.vf.commands:
             self.vf.loadCommand("splineCommands",
                                 "extrudeSpline", "Pmv",
                                 topCommand = 0)
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('displaySpline'):
+        if 'displaySpline' not in self.vf.commands:
             self.vf.loadCommand("splineCommands",
                                 "displayExtrudedSpline", "Pmv",
                                 topCommand = 0)
@@ -1447,12 +1447,12 @@ class CustomSplineCommand(MVCommand):
     def buildFormDescr(self, formName):
         if formName == 'customSpline':
             idf = InputFormDescr(title="Custom Spline:")
-            nbchordEntryVar = Tkinter.StringVar()
+            nbchordEntryVar = tkinter.StringVar()
             idf.append({'name':'curSel',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue':0,
                         'wcfg':{'text':'Current Selection',
-                                'variable':Tkinter.IntVar(),
+                                'variable':tkinter.IntVar(),
                                'command':self.cursel_cb},
                         'gridcfg':{'sticky':'we'}})
 
@@ -1490,22 +1490,22 @@ class CustomSplineCommand(MVCommand):
                          })
 
             idf.append({'name':'closedSpline',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue':0,
                         'wcfg':{'text':'Closed Spline       ',
-                                'variable':Tkinter.IntVar()},
+                                'variable':tkinter.IntVar()},
                         'gridcfg':{'sticky':'we'}})
 
             idf.append({'name':'sortAtms',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue':1,
                         'wcfg':{'text':'Sort control Atoms',
-                                'variable':Tkinter.IntVar()},
+                                'variable':tkinter.IntVar()},
                         'gridcfg':{'sticky':'we'}})
 
 
             
-            nbchordEntryVar = Tkinter.StringVar()
+            nbchordEntryVar = tkinter.StringVar()
             
         
             entries = [('rectangle',None),
@@ -1578,10 +1578,10 @@ class CustomSplineCommand(MVCommand):
                                   'gridcfg':{'columnspan':2,'sticky':'we'}})
             
             capsWidgetDescr = {'name':'capsFlag',
-                               'widgetType':Tkinter.Checkbutton,
+                               'widgetType':tkinter.Checkbutton,
                                'defaultValue':0,
                                'wcfg':{'text':'caps',
-                                       'variable': Tkinter.IntVar()},
+                                       'variable': tkinter.IntVar()},
                                    'gridcfg':{'sticky':'we'}}
 
             if formName == 'rectangle':
@@ -1637,17 +1637,17 @@ class CustomSplineCommand(MVCommand):
     def cursel_cb(self, event = None):
         """ if the use curSel checkbutton is on: the entryField should be
         disabled."""
-        if self.cmdForms.has_key('customSpline'):
+        if 'customSpline' in self.cmdForms:
             idf = self.cmdForms['customSpline'].descr
             cbVar =idf.entryByName['curSel']['wcfg']['variable']
             entry = idf.entryByName['atmtype']['widget']
 
             if cbVar.get() == 1:
-                entry._entryFieldEntry.configure(state = Tkinter.DISABLED)
+                entry._entryFieldEntry.configure(state = tkinter.DISABLED)
                 entry.configure(label_fg = 'darkgray')
 
             else:
-                entry._entryFieldEntry.configure(state = Tkinter.NORMAL)
+                entry._entryFieldEntry.configure(state = tkinter.NORMAL)
                 entry.configure(label_fg = 'black')
 
     def guiCallback(self):
@@ -1751,21 +1751,21 @@ class CustomSplineCommand(MVCommand):
         kw['shape2D']=shape2D
         kw['capsFlag']=capsFlag
         kw['display']=display
-        apply(self.doitWrapper, (nodes,), kw)   
+        self.doitWrapper(*(nodes,), **kw)   
 
     def doit(self, nodes,**kw):     
         nkw={}
         if kw!={}:
             if kw['display']==0:
                 nkw['negate']=1
-                apply(self.vf.displayExtrudedSpline,(nodes,),nkw)
+                self.vf.displayExtrudedSpline(*(nodes,), **nkw)
                 return
 
             elif kw['display']==1:
-                if kw.has_key('negate'):
+                if 'negate' in kw:
                     if kw['negate']==1:
                         nkw['negate']=1
-                        apply(self.vf.displayExtrudedSpline,(nodes,),nkw)
+                        self.vf.displayExtrudedSpline(*(nodes,), **nkw)
                         return
                  
         self.vf.computeSpline(nodes,atmtype=kw['atmtype'],curSel=kw['curSel'], nbchords=kw['nbchords'], interp= kw['interp'], continuity=kw['continuity'], closedSpline=kw['closedSpline'], sortAtms=kw['sortAtms'])         
@@ -1796,17 +1796,17 @@ class ComputeExtrudeSplineCommand(MVCommand):
 
     def onAddCmdToViewer(self):
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('computeSpline'):
+        if 'computeSpline' not in self.vf.commands:
             self.vf.loadCommand("splineCommands",
                                 "computeSpline", "Pmv",
                                 topCommand = 0)
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('extrudeSpline'):
+        if 'extrudeSpline' not in self.vf.commands:
             self.vf.loadCommand("splineCommands",
                                 "extrudeSpline", "Pmv",
                                 topCommand = 0)
         #if self.vf.hasGui and \
-        if not self.vf.commands.has_key('displaySpline'):
+        if 'displaySpline' not in self.vf.commands:
             self.vf.loadCommand("splineCommands",
                                 "extrudeSpline", "Pmv",
                                 topCommand = 0)
@@ -1821,25 +1821,25 @@ class ComputeExtrudeSplineCommand(MVCommand):
                   will be displayed
         \nnegate ---  flag when set to 1 undisplay the current selection
         """
-        if type(nodes) is types.StringType:
+        if type(nodes) is bytes:
             self.nodeLogString = "'"+nodes+"'"
         
-        if not kw.has_key('redraw'): kw['redraw']=1
+        if 'redraw' not in kw: kw['redraw']=1
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return "ERROR"
         kw['only']=only
         kw['negate']=negate
         #print "in ribbon with only=", only
-        apply(self.doitWrapper, (nodes,), kw)
+        self.doitWrapper(*(nodes,), **kw)
 
     def doit(self, nodes, **kw):
         if kw!={}:
             if kw['negate']==1:
-                apply(self.vf.displayExtrudedSpline,(nodes,), kw)
+                self.vf.displayExtrudedSpline(*(nodes,), **kw)
                 return
-        apply(self.vf.computeSpline,(nodes,), {'topCommand':False})
+        self.vf.computeSpline(*(nodes,), **{'topCommand':False})
         kw['topCommand'] = 0
-        apply(self.vf.extrudeSpline,(nodes,), {})        
+        self.vf.extrudeSpline(*(nodes,), **{})        
         
 
 computeSplineCommandGuiDescr = {'widgetType':'Menu',
@@ -1904,4 +1904,4 @@ def initModule(viewer):
     initializes these commands also. """
 
     for dict in commandList:
-	viewer.addCommand(dict['cmd'], dict['name'], dict['gui'])
+        viewer.addCommand(dict['cmd'], dict['name'], dict['gui'])

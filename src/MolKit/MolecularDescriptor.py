@@ -137,8 +137,8 @@ class MolecularDescriptorMixIn:
         for a in self.allAtoms:
             try:
                 mw += self.atomic_weight[a.element]
-            except KeyError, key:
-                print "Unknown element: %s" % (key)
+            except KeyError as key:
+                print("Unknown element: %s" % (key))
         return mw
 
 
@@ -201,7 +201,7 @@ if __name__ == '__main__':
     # mix in the molecular descriptors
     mol.__class__.__bases__ += (MolecularDescriptorMixIn,)
 
-    print "atomic formula of %s: %s" % (mol.name, repr(mol.atomic_formula()) )
-    print "molecular weight of %s: %4.2f" % (mol.name, mol.molecular_weight())
-    print "H-bond acceptors of %s: %d" % (mol.name, mol.Hbond_acceptors())
-    print "H-bond donors    of %s: %d" % (mol.name, mol.Hbond_donors())
+    print("atomic formula of %s: %s" % (mol.name, repr(mol.atomic_formula()) ))
+    print("molecular weight of %s: %4.2f" % (mol.name, mol.molecular_weight()))
+    print("H-bond acceptors of %s: %d" % (mol.name, mol.Hbond_acceptors()))
+    print("H-bond donors    of %s: %d" % (mol.name, mol.Hbond_donors()))

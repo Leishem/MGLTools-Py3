@@ -22,27 +22,27 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: write_modes_from_states.py -l ligandfile -s statefile -o multimodelfile"
-        print
-        print "    Description of command..."
-        print "         -l     ligandfile name"
-        print "         -s     statefile name"
-        print "    Optional parameters:"
-        print "        [-o]    multimodel output filename "
-        print "        [-S]    single string replacing statefile eg:"
-        print "    'State: 29.303 14.415 23.603 0.5609 0.4518 0.2662 -0.6406 -20.89 -0.65 81.86 -17.36 28.83 -10.80 -23.98 114.21'"
-        print "        [-e]    statefile includes energy"
-        print "        [-z]    use zero origin"
-        print "        [-i]    interim state->apply quaternion before 'about' translation"
-        print "        [-n]    index of energy on energy line: default is 8"
-        print "        [-v]    verbose output"
+        print("Usage: write_modes_from_states.py -l ligandfile -s statefile -o multimodelfile")
+        print()
+        print("    Description of command...")
+        print("         -l     ligandfile name")
+        print("         -s     statefile name")
+        print("    Optional parameters:")
+        print("        [-o]    multimodel output filename ")
+        print("        [-S]    single string replacing statefile eg:")
+        print("    'State: 29.303 14.415 23.603 0.5609 0.4518 0.2662 -0.6406 -20.89 -0.65 81.86 -17.36 28.83 -10.80 -23.98 114.21'")
+        print("        [-e]    statefile includes energy")
+        print("        [-z]    use zero origin")
+        print("        [-i]    interim state->apply quaternion before 'about' translation")
+        print("        [-n]    index of energy on energy line: default is 8")
+        print("        [-v]    verbose output")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 'l:S:s:o:n:ezivh')
-    except getopt.GetoptError, msg:
-        print 'write_modes_from_states.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('write_modes_from_states.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -74,62 +74,62 @@ if __name__ == '__main__':
         #print "o=", o, " a=", a
         if o in ('-l', '--l'):
             ligandfile = a
-            if verbose: print 'set ligandfile to ', a
+            if verbose: print('set ligandfile to ', a)
         if o in ('-S', '--S'):
             SINGLESTATE = 1
-            if verbose: print 'set SINGLESTATE to ', a
+            if verbose: print('set SINGLESTATE to ', a)
             #['30.691_15.206_23.914_-0.3807_0.0201_0.9215_0.0747_-7.06_93.27_127.02_-130.67_7.04_-95.44_-4.91_-126.85']"
             if args[0].find('_')>-1:
                 args[0] = args[0].replace("_"," ")
             states = ["State: " + join(args)]
         if o in ('-s', '--s'):
             statefile = a
-            if verbose: print 'set statefile to ', a
+            if verbose: print('set statefile to ', a)
         if o in ('-o', '--o'):
             outputfile = a
-            if verbose: print 'set outputfile to ', a
+            if verbose: print('set outputfile to ', a)
         if o in ('-e', '--e'):
             states_have_energy = True
-            if verbose: print 'set states_have_energy to ', states_have_energy
+            if verbose: print('set states_have_energy to ', states_have_energy)
         if o in ('-n', '--n'):
             index_of_energy = int(a)
-            if verbose: print 'set index_of_energy to ', index_of_energy
+            if verbose: print('set index_of_energy to ', index_of_energy)
         if o in ('-z', '--z'):
             use_zero_origin = True
-            if verbose: print 'set use_zero_origin to ', use_zero_origin
+            if verbose: print('set use_zero_origin to ', use_zero_origin)
         if o in ('-i', '--i'):
             interim_state = True
-            if verbose: print 'set interim_state to ', interim_state
+            if verbose: print('set interim_state to ', interim_state)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
 
     if not ligandfile:
-        print 'write_modes_from_states.py: ligandfile must be specified.'
+        print('write_modes_from_states.py: ligandfile must be specified.')
         usage()
         sys.exit()
 
     if not statefile and not SINGLESTATE:
-        print 'write_modes_from_states.py: SINGLESTATE or statefile must be specified.'
+        print('write_modes_from_states.py: SINGLESTATE or statefile must be specified.')
         usage()
         sys.exit()
 
     if not outputfile:
-        if verbose: print 'write_modes_from_states.py: outputfile not specified. Using stdout'
+        if verbose: print('write_modes_from_states.py: outputfile not specified. Using stdout')
         #usage()
         #sys.exit()
 
 
     lig = Read(ligandfile)
     if not len(lig):
-        print "no ligand found in ", ligandfile
+        print("no ligand found in ", ligandfile)
         sys.exit()
     lig = lig[0]
     if not hasattr(lig, 'ndihe'):
-        print ligandfile + "molecule has no torsion tree"
+        print(ligandfile + "molecule has no torsion tree")
         sys.exit()
     lig.buildBondsByDistance()
     # add extra slot to ._coords for changing coordinates
@@ -163,7 +163,7 @@ if __name__ == '__main__':
         states = sptr.readlines()
         sptr.close()
         if not len(states):
-            print "no states found in ", statefile
+            print("no states found in ", statefile)
             sys.exit()
 
     state_list = []
@@ -175,7 +175,7 @@ if __name__ == '__main__':
             eline =states[i+1]
             #build a states from each of the lines in statefile
             #State:\t  4.847  -2.386  14.760  -0.413  0.552 -0.724  4.257     58.27  -33.47  -87.92  134.64  -36.46  114.79  -44.86  -74.96 -118.53   77.29  139.08   78.23  -52.09  -12.69   35.08 -118.21 -175.94\n'
-            fl = map(float, sline.split()[1:])
+            fl = list(map(float, sline.split()[1:]))
             assert len(fl)==length_of_state
             # 0  1  2  3  4  5  6 [7....
             #[t1,t2,t3,q1,q2,q3,q4,tors1,tors2, tors3....
@@ -208,7 +208,7 @@ if __name__ == '__main__':
                     else:
                         new_l = l
                     outptr.write(new_l) 
-                if verbose: print "wrote ", outputfile
+                if verbose: print("wrote ", outputfile)
                 ostr = "ENDMDL\n"
                 outptr.write(ostr)
                 i+=1
@@ -216,7 +216,7 @@ if __name__ == '__main__':
         for sline in states:
             #build a state from each of the lines in states
             #State:\t  4.847  -2.386  14.760  -0.413  0.552 -0.724  4.257     58.27  -33.47  -87.92  134.64  -36.46  114.79  -44.86  -74.96 -118.53   77.29  139.08   78.23  -52.09  -12.69   35.08 -118.21 -175.94\n'
-            fl = map(float, sline.split()[1:])
+            fl = list(map(float, sline.split()[1:]))
             assert len(fl)==length_of_state
             # 0  1  2  3  4  5  6 [7....
             #[t1,t2,t3,q1,q2,q3,q4,tors1,tors2, tors3....
@@ -246,10 +246,10 @@ if __name__ == '__main__':
                     else:
                         new_l = l
                     outptr.write(new_l) 
-                if verbose: print "wrote ", outputfile
+                if verbose: print("wrote ", outputfile)
                 ostr = "ENDMDL\n"
                 outptr.write(ostr)
-    if verbose: print "Done!"
+    if verbose: print("Done!")
     outptr.close()            
 
 # To execute this command type:

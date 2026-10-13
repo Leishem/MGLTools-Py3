@@ -18,21 +18,21 @@ if __name__ == '__main__':
 
     def usage():
         "Print helpful, accurate usage statement to stdout."
-        print "Usage: pdbq_to_pdbqt.py -s ligand_stem"
-        print
-        print "    Description of command..."
-        print "        [-s]    stem of ligand.pdbq file"
-        print "    Optional parameters:"
-        print "        [-o]    alternative pdbqt_filename"
-        print "        [-v]    verbose output"
+        print("Usage: pdbq_to_pdbqt.py -s ligand_stem")
+        print()
+        print("    Description of command...")
+        print("        [-s]    stem of ligand.pdbq file")
+        print("    Optional parameters:")
+        print("        [-o]    alternative pdbqt_filename")
+        print("        [-v]    verbose output")
 
 
     # process command arguments
     try:
         opt_list, args = getopt.getopt(sys.argv[1:], 's:o:v')
 
-    except getopt.GetoptError, msg:
-        print 'pdbq_to_pdbqt.py: %s' %msg
+    except getopt.GetoptError as msg:
+        print('pdbq_to_pdbqt.py: %s' %msg)
         usage()
         sys.exit(2)
 
@@ -51,15 +51,15 @@ if __name__ == '__main__':
             if pdbqt_filename is None:
                 pdbqt_filename = a + '.pdbqt'
             if verbose: 
-                print 'set pdbq_filename to ', a, 
-                print " and pdbqt_filename to ", pdbqt_filename
+                print('set pdbq_filename to ', a, end=' ') 
+                print(" and pdbqt_filename to ", pdbqt_filename)
         if o in ('-o', '--o'):
             pdbqt_filename = a 
             if verbose: 
-                print 'set pdbqt_filename to ', a
+                print('set pdbqt_filename to ', a)
         if o in ('-v', '--v'):
             verbose = True
-            if verbose: print 'set verbose to ', True
+            if verbose: print('set verbose to ', True)
         if o in ('-h', '--'):
             usage()
             sys.exit()
@@ -67,14 +67,14 @@ if __name__ == '__main__':
 
 
     if not pdbq_filename:
-        print 'pdbq_to_pdbqt: stem of pdbq_filename must be specified.'
+        print('pdbq_to_pdbqt: stem of pdbq_filename must be specified.')
         usage()
         sys.exit()
 
     #what about nucleic acids???
 
     mols = Read(pdbq_filename)
-    if verbose: print 'read ', pdbq_filename
+    if verbose: print('read ', pdbq_filename)
     mol = mols[0]
     mol.buildBondsByDistance()
 
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     AD4_typer = AutoDock4_AtomTyper()
     AD4_typer.setAutoDockElements(mol)
     if verbose:
-        print "set autodock4 autodock_element for ", mol.name
+        print("set autodock4 autodock_element for ", mol.name)
 
     writer = PdbqtWriter()
     fptr = open(pdbqt_filename, 'w')
@@ -105,19 +105,19 @@ if __name__ == '__main__':
             #this_atom = mol.allAtoms.get(lambda x:x.coords[0]==x_coords)[0]
             this_atom = mol.allAtoms.get(lambda x:x.coords[0]==x_coords)
             if this_atom is None or len(this_atom)==0:
-                print name, x_coords,' do not correspond to an atom in ', pdbq_filename
+                print(name, x_coords,' do not correspond to an atom in ', pdbq_filename)
                 raise RuntimeError
             elif len(this_atom)>1:
-                if verbose: print "using y coord comparison also for ", this_atom.name[0], this_atom.number
+                if verbose: print("using y coord comparison also for ", this_atom.name[0], this_atom.number)
                 this_atom = this_atom.get(lambda x:x.coords[1]==y_coords)
                 if this_atom is None or len(this_atom)==0:
-                    print name, x_coords, y_coords, ' do not correspond to an atom in ', pdbq_filename
+                    print(name, x_coords, y_coords, ' do not correspond to an atom in ', pdbq_filename)
                     raise RuntimeError
                 elif len(this_atom)>1:
-                    if verbose: print "using z coord comparison also for ", this_atom.name[0], this_atom.number
+                    if verbose: print("using z coord comparison also for ", this_atom.name[0], this_atom.number)
                     this_atom = this_atom.get(lambda x:x.coords[2]==z_coords)
                     if this_atom is None or len(this_atom)==0:
-                        print name, x_coords, y_coords, z_coords, ' do not correspond to an atom in ', pdbq_filename
+                        print(name, x_coords, y_coords, z_coords, ' do not correspond to an atom in ', pdbq_filename)
                         raise RuntimeError
                     else:
                         #x and y and z coords were required
@@ -135,7 +135,7 @@ if __name__ == '__main__':
                 this_atom.element = 'Cl'
                 this_atom.autodock_element ='CL'
             elif this_atom.name=='b': 
-                print "processing ", this_atom.name
+                print("processing ", this_atom.name)
                 this_atom.name = 'Br'
                 this_atom.element = 'Br'
                 this_atom.autodock_element ='BR'
@@ -147,7 +147,7 @@ if __name__ == '__main__':
         ctr = ctr + 1
     fptr.close()
     if verbose:
-        print "wrote ", ctr, " atoms to", pdbqt_filename
+        print("wrote ", ctr, " atoms to", pdbqt_filename)
     
 
 # To execute this command type:

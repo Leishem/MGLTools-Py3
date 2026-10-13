@@ -17,21 +17,21 @@ class epmv_update(plugins.TagData):
 
     def __init__(self):
         #self.optimize_method_control = True
-        print "__init__"
+        print("__init__")
         
     def Init(self, node):
         """get Pmv"""
-        print "init"        
+        print("init")        
         #doc = c4d.documents.get_active_document()
         return True
 
     def say_hi(self):
-        print "hi there, everyone!"
+        print("hi there, everyone!")
 
     def Execute(self, tag, doc, op, bt, priority, flags):
         dname=doc.GetDocumentName()
         if hasattr(c4d,'mv'):
-            if c4d.mv.has_key(dname) :
+            if dname in c4d.mv :
                 self.epmv = c4d.mv[dname]
                 self.mv = self.epmv.mv
             else : 

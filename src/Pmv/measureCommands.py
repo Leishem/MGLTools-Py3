@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -13,7 +13,7 @@
 #
 # $Id: measureCommands.py,v 1.52 2010/11/15 23:32:03 sanner Exp $
 #
-import numpy.oldnumeric as Numeric, math, types
+import mglcompat.oldnumeric as Numeric, math, types
 from Pmv.mvCommand import MVCommand, MVAtomICOM
 from DejaVu.Geom import Geom
 from DejaVu.Spheres import Spheres
@@ -71,7 +71,7 @@ class MeasureAtomCommand(MVCommand):
         """
         Compute a vector product for 3D vectors
         """
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
         res = Numeric.zeros(3, 'f')
         res[0] = a[1]*b[2] - a[2]*b[1]
         res[1] = a[2]*b[0] - a[0]*b[2]
@@ -111,7 +111,7 @@ class MeasureDistance(MeasureAtomCommand):
         ats = self.vf.expandNodes(atom2)
         if not len(ats): return 'ERROR'
         atom2 = ats[0]
-        return apply(self.doitWrapper, (atom1, atom2), kw)
+        return self.doitWrapper(*(atom1, atom2), **kw)
 
 
     
@@ -164,7 +164,7 @@ class MeasureAngle(MeasureAtomCommand):
         ats = self.vf.expandNodes(atom3)
         if not len(ats): return 'ERROR'
         atom3 = ats[0]
-        return apply(self.doitWrapper, (atom1, atom2, atom3), kw)
+        return self.doitWrapper(*(atom1, atom2, atom3), **kw)
 
     
     
@@ -191,7 +191,7 @@ class MeasureTorsion(MeasureAtomCommand):
         Raises a ValueError if angle is not defined.
         """
         from math import sqrt, acos
-        import numpy.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric
 
         tang=0.0
         assert x1.shape == (3, )
@@ -251,7 +251,7 @@ class MeasureTorsion(MeasureAtomCommand):
         ats = self.vf.expandNodes(atom4)
         if not len(ats): return 'ERROR'
         atom4 = ats[0]
-        return apply(self.doitWrapper, (atom1, atom2, atom3, atom4), kw)
+        return self.doitWrapper(*(atom1, atom2, atom3, atom4), **kw)
 
 
 from opengltk.OpenGL import GL
@@ -581,10 +581,10 @@ class MeasureDistanceGUICommand(MeasureGUICommand):
                         topCommand=0)
 
     def onAddCmdToViewer(self):
-        if not self.vf.commands.has_key('setICOM'):
+        if 'setICOM' not in self.vf.commands:
             self.vf.loadCommand('interactiveCommands', 'setICOM', 'Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('measureDistance'):
+        if 'measureDistance' not in self.vf.commands:
             self.vf.loadCommand('measureCommands', 'measureDistance',
                                 'Pmv', topCommand=0) 
 
@@ -613,7 +613,7 @@ class MeasureDistanceGUICommand(MeasureGUICommand):
     def __call__(self, atoms, **kw):
         """distance/None<---measureDistanceGC(atoms)
         \natoms --- atom(s)"""
-        if type(atoms) is types.StringType:
+        if type(atoms) is bytes:
             self.nodeLogString = "'"+atoms+"'"
         ats = self.vf.expandNodes(atoms)
         if not len(ats): return 'ERROR'
@@ -713,10 +713,10 @@ class MeasureAngleGUICommand(MeasureGUICommand):
         self.arcNormals = []
         self.arcVectors = []
         self.arcCenters = []
-        if not self.vf.commands.has_key('setICOM'):
+        if 'setICOM' not in self.vf.commands:
             self.vf.loadCommand('interactiveCommands', 'setICOM', 'Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('measureAngle'):
+        if 'measureAngle' not in self.vf.commands:
             self.vf.loadCommand('measureCommands', 'measureAngle', 'Pmv',
                                 topCommand=0)
 
@@ -772,11 +772,11 @@ turned off  and viewer's current object is not Root."""
         """angle/None<---measureAngleGC(atoms)
            \natoms --- atom(s)
            \nangle --- returned when the number of atoms is a multiple of 3"""
-        if type(atoms) is types.StringType:
+        if type(atoms) is bytes:
             self.nodeLogString = "'"+atoms+"'"
         ats = self.vf.expandNodes(atoms)
         if not len(ats): return 'ERROR'
-        return apply(self.doitWrapper, (ats,), kw)
+        return self.doitWrapper(*(ats,), **kw)
 
 
     def doit(self, ats):
@@ -863,12 +863,12 @@ turned off  and viewer's current object is not Root."""
             #to reset labels, lines and fan, EACH TIME
             self.labels.Set(vertices=self.labelCenters,labels=self.labelStrs)
                             #tagModified=False)
-            faces = range(numItems*3)
+            faces = list(range(numItems*3))
             faces = Numeric.reshape(faces, (-1,3))
             self.lines.Set(vertices=self.lineVertices, type=GL.GL_LINE_STRIP,
                            faces=faces, freshape=1)
                            #faces=faces, freshape=1, tagModified=False)
-            self.fan.angles=map(float, self.labelStrs)
+            self.fan.angles=list(map(float, self.labelStrs))
             self.fan.vectors=self.arcVectors
             self.fan.Set(vertices=self.arcCenters, vnormals=self.arcNormals)
                          #tagModified=False)
@@ -916,10 +916,10 @@ class MeasureTorsionGUICommand(MeasureGUICommand):
     def onAddCmdToViewer(self):
         from DejaVu.bitPatterns import pat3
         from DejaVu.IndexedPolygons import IndexedPolygons
-        if not self.vf.commands.has_key('setICOM'):
+        if 'setICOM' not in self.vf.commands:
             self.vf.loadCommand('interactiveCommands', 'setICOM', 'Pmv',
                                 topCommand=0)
-        if not self.vf.commands.has_key('measureAngle'):
+        if 'measureAngle' not in self.vf.commands:
             self.vf.loadCommand('measureCommands', 'measureAngle', 'Pmv',
                                 topCommand=0)
             
@@ -972,11 +972,11 @@ turned off  and viewer's current object is not Root."""
         """torsion/None<-measureTorsionGC(atoms)
         \natoms  --- the atom(s)
         \ntorsion --- returned when the number of atoms is a multiple of 4"""
-        if type(atoms) is types.StringType:
+        if type(atoms) is bytes:
             self.nodeLogString = "'"+atoms+"'"
         ats = self.vf.expandNodes(atoms)
         if not len(ats): return 'ERROR'
-        return apply(self.doitWrapper, (ats,), kw)
+        return self.doitWrapper(*(ats,), **kw)
 
 
     def doit(self, ats):
@@ -1052,7 +1052,7 @@ turned off  and viewer's current object is not Root."""
             #only draw lines in groups of 4
             #numItems*4
             if len(self.atomList)%4==0:
-                faces = range(numItems*4)
+                faces = list(range(numItems*4))
                 faces = Numeric.reshape(faces, (-1,4))
                 ###FIX THIS
                 ###on undo: if you have just wrapped, undoing the next pt
@@ -1068,7 +1068,7 @@ turned off  and viewer's current object is not Root."""
             else:
                 #this only works going forward: undo breaks here
                 if len(self.lines.faceSet.faces.array)>numItems:
-                    faces = range((numItems+1)*4)
+                    faces = list(range((numItems+1)*4))
                     faces = Numeric.reshape(faces, (-1,4))
                     if forward:
                         faces = faces[1:]

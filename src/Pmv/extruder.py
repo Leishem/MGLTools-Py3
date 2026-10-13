@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -14,7 +14,7 @@
 #
 
 import numpy
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 import math
 from Pmv import Ribbon
 from DejaVu.Shapes import Rectangle2D
@@ -91,8 +91,8 @@ class Sheet2D:
     def computeFaces2D(self):
         f = []
         n = self.smooth.shape[1]
-        f = map(lambda x, n1 = n: (x,x+n1,x+n1+1,x+1),
-                range(self.smooth.shape[1]-1))
+        f = list(map(lambda x, n1 = n: (x,x+n1,x+n1+1,x+1),
+                list(range(self.smooth.shape[1]-1))))
         faces2D = Numeric.array(f).astype('i')
         return faces2D
 
@@ -256,14 +256,14 @@ class ExtrudeObject:
         #    |  *  |  *  |  *  |  *  |  * / |  */    /
         #    | /   | /   | /   | /   | / @  |  @    /
         #    |/    |/    |/    |/    |/  |  |  |   /
-	#    *-----*-----*-----*-----*   |  *  |  /
-	#                                | /   | /
+        #    *-----*-----*-----*-----*   |  *  |  /
+        #                                | /   | /
         #                                |/    |/
         #                            |   @     @
-	#   <    BLOC1->  lp-lenarrow>   |
-	#                         <lp-lenarrow>
+        #   <    BLOC1->  lp-lenarrow>   |
+        #                         <lp-lenarrow>
         #                           BLOC2      |
-	#                                     <v[lp-lenarrow:] translated >
+        #                                     <v[lp-lenarrow:] translated >
         #                                             BLOC3
         # lp = len(self.path3D)
         # *: vertices results of the extrusion of the shape2D along the path3D
@@ -288,7 +288,7 @@ class ExtrudeObject:
 
         d = Numeric.zeros( lenarrow+1, 'f') # the firs section will be
                                             # duplicate to build the caps.
-        for n in xrange(1, lenarrow+1):
+        for n in range(1, lenarrow+1):
             d[n] = d[n-1] + self.dist(path[-n], path[-n-1])
         d = d*widtharrow/d[lenarrow] - abs(self.shape.contpts[0][0])
 
@@ -297,7 +297,7 @@ class ExtrudeObject:
         # three blocs of vertices see the drawing above:
         # A total of 3*ls vertices have been added
         # Build bloc3
-        for s in xrange(lenarrow+1):
+        for s in range(lenarrow+1):
             #v = [0, 0, 0]
             uvector = self.norms[-s-1]
             v = (uvector*d[s]).astype('f')
@@ -374,7 +374,7 @@ class ExtrudeObject:
                 # the index of the first caps vertices is:
                 # the last vertex  - (ls + 1)
                 fc1 = lv - (ls + 1)
-                for j in xrange(0,ls-2,2):
+                for j in range(0,ls-2,2):
                     faces.append( (fc1+j+2, fc1+j, fc1+ls, fc1+ls))
                 faces.append( (fc1, fc1+ls-2, fc1+ls, fc1+ls))
 
@@ -383,7 +383,7 @@ class ExtrudeObject:
                 # the index of the first caps vertices is:
                 # the last vertex  - (ls + 1)
                 fc2 = lv - (ls + 1)
-                for j in xrange(0,ls-2,2):
+                for j in range(0,ls-2,2):
                     faces.append((fc2+j, fc2+j+2, fc2+ls, fc2+ls))
                 faces.append( (fc2+ls-2, fc2, fc2+ls, fc2+ls))
                 
@@ -391,7 +391,7 @@ class ExtrudeObject:
                 # the index of the first cap vertex is :
                 # last vertex (lv) - (2*(ls+1)) because 1st caps:
                 fc1 = lv - (2*(ls+1))
-                for j in xrange(0,ls-2,2):
+                for j in range(0,ls-2,2):
                     faces.append((fc1+j+2, fc1+j, fc1+ls, fc1+ls))
                 faces.append( (fc1, fc1+ls-2, fc1+ls, fc1+ls))
 
@@ -399,7 +399,7 @@ class ExtrudeObject:
                 # the index of the second cap vertex is :
                 # last vertex (lv) - ((ls+1))
                 fc2 = lv - (ls+1)
-                for j in xrange(0,ls-2,2):
+                for j in range(0,ls-2,2):
                     faces.append((fc2+j, fc2+j+2,  fc2+ls, fc2+ls))
                 faces.append( (fc2+ls-2,fc2, fc2+ls, fc2+ls))
                 
@@ -448,7 +448,7 @@ class ExtrudeObject:
                 # the index of the first cap vertex is :
                 # last vertex (lv) - (2*(ls+1)) because 1st caps:
                 fc1 = lv - (2*(ls+1))
-                for j in xrange(ls-1):
+                for j in range(ls-1):
                     faces.append((fc1+j+1, fc1+j, fc1+ls, fc1+ls))
                 faces.append( (fc1, fc1+ls-1, fc1+ls, fc1+ls))
 
@@ -456,7 +456,7 @@ class ExtrudeObject:
                 # the index of the second cap vertex is :
                 # last vertex (lv) - ((ls+1))
                 fc2 = lv - (ls+1)
-                for j in xrange(ls-1):
+                for j in range(ls-1):
                     faces.append((fc2+j, fc2+j+1,  fc2+ls, fc2+ls))
                 faces.append( (fc2+ls-1,fc2, fc2+ls, fc2+ls))
         return faces
@@ -467,7 +467,7 @@ class ExtrudeObject:
         between start and end. Ls is the length of the shape and dup
         indicates if the vertices are duplicated."""
         if dup:            
-            jrange = range(1,ls-2,2)
+            jrange = list(range(1,ls-2,2))
             #                         b+6
             #       b+ls+6 | /b+ls+7   | /b+7      
             #              |/          |/            
@@ -488,7 +488,7 @@ class ExtrudeObject:
             #        b+ls+2 
             
         else:
-            jrange = range(ls-1)
+            jrange = list(range(ls-1))
             # The vertices are not duplicated.
             #            
             #         
@@ -506,7 +506,7 @@ class ExtrudeObject:
             #         b+ls+1       b+1
 
             
-        for i in xrange(start, end):
+        for i in range(start, end):
             # i represent the section number you are connecting.
             for j in jrange:
                 # j represents the vertex number.
@@ -712,7 +712,7 @@ class ExtrudeSSElt(ExtrudeObject):
         self.gapEnd = gapEnd
         self.lengthPath = len(self.ssElt.sheet2D.path)
         self.residuesInChain = self.ssElt.sheet2D.resInSheet
-        self.residuesInChain.nbSS = range(len(self.residuesInChain))
+        self.residuesInChain.nbSS = list(range(len(self.residuesInChain)))
         self.chords = self.ssElt.sheet2D.chords
         # last residue index in chain.
         self.lastResIndex = self.residuesInChain[-1].nbSS

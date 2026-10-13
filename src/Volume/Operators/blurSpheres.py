@@ -1,6 +1,6 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 def blurSpheres(coords, elist, totmass, box=0, apix=1.0,res=1.5, solv=False):
   totchg = 0.0
@@ -104,7 +104,7 @@ def blurSpheres(coords, elist, totmass, box=0, apix=1.0,res=1.5, solv=False):
     for k in range(zmin, zmax):
       for j in range(ymin, ymax):
         for i in range(xmin, xmax):
-	  r= (i-xx)*(i-xx) + (j-yy)*(j-yy) + (k-zz)*(k-zz)
+          r= (i-xx)*(i-xx) + (j-yy)*(j-yy) + (k-zz)*(k-zz)
           if solv:
             if rd[i][j][k]>r:
               rd[i][j][k] = r

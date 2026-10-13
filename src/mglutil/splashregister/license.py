@@ -2,9 +2,9 @@
 # $Id: license.py,v 1.15 2010/08/19 20:14:31 sargis Exp $
 #
 
-import Tkinter
+import tkinter
 
-tk_root = Tkinter.Tk()
+tk_root = tkinter.Tk()
 tk_root.title("Commercial Usage")
 txt = """
  The software component for computing molecular surfaces (MSMS) 
@@ -19,6 +19,6 @@ txt = """
  A list of papers is provided under Help -> Citation Information 
  menu in PMV and ADT. 
 """
-Tkinter.Label(tk_root, text=txt, justify=Tkinter.LEFT).pack()
-Tkinter.Button(tk_root, text="OK", command=tk_root.quit).pack()
+tkinter.Label(tk_root, text=txt, justify=tkinter.LEFT).pack()
+tkinter.Button(tk_root, text="OK", command=tk_root.quit).pack()
 tk_root.mainloop()

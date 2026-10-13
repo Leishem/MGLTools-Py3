@@ -33,14 +33,14 @@ class MoleculeParser:
             self.allLines = self.allLines[0].split('\r')
             warnings.warn('Only 1 line read from PDB file, splitting on \r')
         f.close()
-        import string
-        self.allLines = filter( lambda x,s=string.strip: len(s(x)),
-                                self.allLines )
+        from mglcompat import pystring as string
+        self.allLines = list(filter( lambda x,s=string.strip: len(s(x)),
+                                self.allLines ))
 
     
     def viewSource(self):
-        import Tkinter, Pmw
-        root = Tkinter.Toplevel()
+        import tkinter, Pmw
+        root = tkinter.Toplevel()
         root.title(self.filename)
         self.st = Pmw.ScrolledText(root)
         self.st.pack(fill = 'both', expand=1)

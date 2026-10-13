@@ -53,10 +53,10 @@ class MSMSClient:
                 connected = True
                 #print "msms client connected on port "+str(self.port)
                 break;
-            except Exception, inst:
+            except Exception as inst:
                 pass
                 #print inst
-        print connected
+        print(connected)
         if not connected: 
             raise RuntimeError("Unable to connect to msms on port "+str(self.port))
         soc.settimeout(None) 
@@ -72,7 +72,7 @@ class MSMSClient:
             if d[0]=='\n':
                 break
             msg += d
-        print msg
+        print(msg)
         # e.g. "tahiti: MSMS SERVICE started on tahiti"
         cmd = ''
         while 1:
@@ -85,7 +85,7 @@ class MSMSClient:
         #          successfuly and the data was sent back
         # MSMS RS  This string indicates that next the reduced surface will be sent
         # MSMS RCF This string indicates that nexttbhe triangulated surface will be sent
-        print cmd        
+        print(cmd)        
         isize = struct.calcsize('i')
         fsize = struct.calcsize('f')
         
@@ -133,7 +133,7 @@ class MSMSClient:
             
     def getTriangles(self, atomindices, **kw):
         firstTime = True
-        indices = range(len(self.faces))
+        indices = list(range(len(self.faces)))
         faces = self.faces.copy()
         for index, item in enumerate(self.indices):
             if item in atomindices: continue

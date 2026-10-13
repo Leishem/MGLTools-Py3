@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ##
 ##  Authors:  Michel Sanner, Anna Omelchenko May 2007
@@ -10,7 +10,7 @@ An interpolator object has values for the first and last positions (firstVal , l
 This object implements the getValue(fraction) which will return
 the value corresponding to the the position (a fraction of the range 0.0 ... 1.0)
 """
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 from math import acos, sqrt, sin, cos, pi
 from copy import copy
 import weakref
@@ -163,7 +163,7 @@ class BehaviorList:
 
     def testKW(self, **kw):
         options = ["firstVal", "lastVal", "active"]
-        for k in kw.keys():
+        for k in list(kw.keys()):
             assert k in options
             
     def configure(self, **kw):
@@ -244,7 +244,7 @@ The getValue method has to be implemented to compute the appropriate value
 
     def testKW(self, **kw):
         options = ["firstVal", "lastVal", "active", "interpolation", "interpolators"]
-        for k in kw.keys():
+        for k in list(kw.keys()):
             assert k in options
     
     def configure(self, **kw):
@@ -316,12 +316,12 @@ The getValue method has to be implemented to compute the appropriate value
         # easeIn occurs from time 0 to time a.
         # easeOut occurs from time b to time 1.
 
-        if not interval.data.has_key('easeInEnd'):
+        if 'easeInEnd' not in interval.data:
             easeInEnd = interval.data['easeInEnd'] = 0.3
         else:
             easeInEnd =  interval.data['easeInEnd']
 
-        if not interval.data.has_key('easeOutStart'):
+        if 'easeOutStart' not in interval.data:
             easeOutStart = interval.data['easeOutStart'] = 0.7
         else:
             easeOutStart = interval.data['easeOutStart']
@@ -399,7 +399,7 @@ class noise(Interpolator):
                 return value
             else:
                 from random import random as r
-                return  map(lambda x: x+r(), value)
+                return  [x+r() for x in value]
 
             
 
@@ -436,7 +436,7 @@ class ScalarInterpolator(Interpolator):
                 return self.cast(self.firstVal +
                                  self.valueRange*fraction)
             else:
-                print 'spline interpolation not yet implemented'
+                print('spline interpolation not yet implemented')
 
 
 class IntScalarInterpolator(ScalarInterpolator):
@@ -512,10 +512,10 @@ class VarScalarInterpolator(Interpolator):
                     firstVal = list(self.firstVal)*len(self.valueRange)
                 else:
                     firstVal = self.firstVal
-                return self.cast(map(lambda v1, v2, s=fraction:\
-                        v2+s*v1, self.valueRange, firstVal))
+                return self.cast(list(map(lambda v1, v2, s=fraction:\
+                        v2+s*v1, self.valueRange, firstVal)))
             else:
-                print 'spline interpolation not yet implemented'
+                print('spline interpolation not yet implemented')
 
 
 
@@ -580,10 +580,10 @@ class VectorInterpolator(Interpolator):
         else:
             if self.interpolation=='linear':
                 fraction = self.ease(fraction, interval)
-                return self.cast(map(lambda x, off, s=fraction:\
-                        off+s*x, self.valueRange, self.firstVal))
+                return self.cast(list(map(lambda x, off, s=fraction:\
+                        off+s*x, self.valueRange, self.firstVal)))
             else:
-                print 'spline interpolation not yet implemented'
+                print('spline interpolation not yet implemented')
 
 
 
@@ -656,7 +656,7 @@ class VarVectorInterpolator(Interpolator):
                 fraction = self.ease(fraction, interval)
                 return self.cast(firstVal + self.valueRange*fraction)
             else:
-                print 'spline interpolation not yet implemented'
+                print('spline interpolation not yet implemented')
 
     def cast(self, value):
         if type(value) != Numeric.ArrayType:
@@ -715,7 +715,7 @@ class BooleanInterpolator(Interpolator):
                 else:
                     return {0: False, 1:True}.get(lastVal)
             else:
-                print 'spline interpolation not yet implemented'
+                print('spline interpolation not yet implemented')
 
 
 
@@ -814,20 +814,20 @@ class RotationInterpolator(Interpolator):
             return qm
         #Calculate temporary values.
         from math import acos, sqrt, fabs, sin, pi
-	halfTheta = acos(cosHalfTheta)
+        halfTheta = acos(cosHalfTheta)
         
-	sinHalfTheta = sqrt(1.0 - cosHalfTheta*cosHalfTheta)
-	# we could rotate around any axis normal to qa or qb
+        sinHalfTheta = sqrt(1.0 - cosHalfTheta*cosHalfTheta)
+        # we could rotate around any axis normal to qa or qb
         if fabs(sinHalfTheta) < 0.001: #fabs is floating point absolute
             qm = [(qa[0] * 0.5 + qb[0] * 0.5), (qa[1] * 0.5 + qb[1] * 0.5),
                   (qa[2] * 0.5 + qb[2] * 0.5), (qa[3]* 0.5 + qb[3] * 0.5)]
             return qm
-	ratioA = sin((1 - t) * halfTheta) / sinHalfTheta
-	ratioB = sin(t * halfTheta) / sinHalfTheta
-	#calculate Quaternion.
-	qm = [(qa[0] * ratioA + qb[0] * ratioB), (qa[1] * ratioA + qb[1] * ratioB),
+        ratioA = sin((1 - t) * halfTheta) / sinHalfTheta
+        ratioB = sin(t * halfTheta) / sinHalfTheta
+        #calculate Quaternion.
+        qm = [(qa[0] * ratioA + qb[0] * ratioB), (qa[1] * ratioA + qb[1] * ratioB),
               (qa[2] * ratioA + qb[2] * ratioB), (qa[3] * ratioA + qb[3] * ratioB)]
-	return qm
+        return qm
 
 
 class CompositeInterpolator(Interpolator, object):
@@ -1208,44 +1208,44 @@ def quatToMatrix(q):
 if __name__=='__main__':
     ip = IntScalarInterpolator(0,10)
 
-    print ip.getValue(0.3, None)
-    print ip.getValue(0.34, None)
-    print ip.getValue(0.35, None)
-    print ip.getValue(0.36, None)
-    print "---------------"
+    print(ip.getValue(0.3, None))
+    print(ip.getValue(0.34, None))
+    print(ip.getValue(0.35, None))
+    print(ip.getValue(0.36, None))
+    print("---------------")
     
     ip1 = FloatScalarInterpolator(7., 10.)
-    print ip1.getValue(0.3, None)
-    print ip1.getValue(0.34, None)
-    print ip1.getValue(0.35, None)
-    print ip1.getValue(0.36, None) 
-    print "---------------"
+    print(ip1.getValue(0.3, None))
+    print(ip1.getValue(0.34, None))
+    print(ip1.getValue(0.35, None))
+    print(ip1.getValue(0.36, None)) 
+    print("---------------")
     
     ip2 = FloatVectorInterpolator( [1,1,1], [10,10,10])
-    print ip2.getValue(0.5, None)
-    print ip2.getValue(0.6, None)
-    print ip2.getValue(0.67, None)
-    print "---------------"
+    print(ip2.getValue(0.5, None))
+    print(ip2.getValue(0.6, None))
+    print(ip2.getValue(0.67, None))
+    print("---------------")
 
     ip3 = IntVectorInterpolator( [1,1,1], [10,10,10])
-    print ip3.getValue(0.5, None)
-    print ip3.getValue(0.6, None)
-    print ip3.getValue(0.67, None)
-    print "---------------"
+    print(ip3.getValue(0.5, None))
+    print(ip3.getValue(0.6, None))
+    print(ip3.getValue(0.67, None))
+    print("---------------")
     
     ip4 = VarScalarInterpolator (2, [2,4,6])
-    print ip4.getValue(0.5, None)
-    print ip4.getValue(0.6, None)
-    print ip4.getValue(0.67, None)
-    print "---------------"
+    print(ip4.getValue(0.5, None))
+    print(ip4.getValue(0.6, None))
+    print(ip4.getValue(0.67, None))
+    print("---------------")
     
     #ip5 = VarVectorInterpolator([[1,1,1], ], [[6,6,6], [8,8,8], [10,10,10]] )
     ip5 = VarVectorInterpolator( [[6,6,6], [8,8,8], [10,10,10]], [[1,1,1], ] )
-    print ip5.getValue(0.5, None)
-    print ip5.getValue(0.6, None)
-    print ip5.getValue(0.67, None)
+    print(ip5.getValue(0.5, None))
+    print(ip5.getValue(0.6, None))
+    print(ip5.getValue(0.67, None))
     
-    print "---------------"
+    print("---------------")
     #firstVal = Numeric.identity(4).astype('f')
     #from mglutil.math.rotax import rotax
     #import math
@@ -1261,6 +1261,6 @@ if __name__=='__main__':
                                 firstVal =([1,1,1], 1,), lastVal = ([10,10,10], 10))
     
                                
-    print ip7.getValue(0.5, None)
-    print ip7.getValue(0.6, None)
-    print ip7.getValue(0.67, None)
+    print(ip7.getValue(0.5, None))
+    print(ip7.getValue(0.6, None))
+    print(ip7.getValue(0.67, None))

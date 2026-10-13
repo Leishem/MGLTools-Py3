@@ -1,7 +1,7 @@
 import os, sys
 import time
 import stat
-import string
+from mglcompat import pystring as string
 
 mglpacks=[ "DejaVu", "MolKit", "ViewerFramework",  "Pmv", "AutoDockTools", "PyBabel",
            "symserv", "mglutil", "NetworkEditor", "Volume", "Vision","PyAutoDock", "Support"]                              
@@ -65,7 +65,7 @@ def getTestSummaryResults(testroot, testreportdir):
     numtests = 0
     numerrors = 0
     results = {}
-    for file in rantestsS.keys():
+    for file in list(rantestsS.keys()):
         test = None
         ntests = 0
         testerrors = 0
@@ -125,7 +125,7 @@ def getTestSummaryResults(testroot, testreportdir):
             results[test]['failed'] = testerrors
             results[test]['errtxt'] = errtxt
 
-    for file in rantests.keys():
+    for file in list(rantests.keys()):
         testerrors = 0
         f= open(file, "r")
         st =f.readline()
@@ -208,7 +208,7 @@ def mkSummaryHTML(testroot, testreportdir, filename = None):
         #resfile.write("<b>%s</b><br> \n" % mod)
         resfile.write("<b>%s &nbsp; &nbsp; </b>\n" % mod+"   ")
         
-        if results[mod].has_key("failed"):
+        if "failed" in results[mod]:
             nfailed = results[mod]["failed"]
             #txt = "<pre>\nRan <b>%d</b> tests: number of failed tests <b>%d</b> \nThe following tests failed: \n" % (ntests, nfailed)
             txt = "Ran <b>%d</b> tests; <b>%d</b> test(s) failed:\n" % (ntests, nfailed)
@@ -224,7 +224,7 @@ def mkSummaryHTML(testroot, testreportdir, filename = None):
     resfile.write("===========================================================<br>\n")
     resfile.write("<b>Overall Results(%s): ran %d tests, failed %d (%.2f %s) </b><br> \n" %
                   (results['reportdate'], results['numtests'], results['numerrors'], results['perc'], "%") )
-    if results.has_key('tail'):
+    if 'tail' in results:
         resfile.write("<pre>\n%s</pre>" % results['tail'])
     
     resfile.close()
@@ -239,5 +239,5 @@ if __name__ == "__main__":
     elif len(args) == 3:
         mkSummaryHTML(args[0], args[1], args[2])
     else:
-        print "mkreport requires 2 or 3 arguments"
+        print("mkreport requires 2 or 3 arguments")
 

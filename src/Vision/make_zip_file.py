@@ -7,7 +7,7 @@ def make_zip_file(input_directory, output_directory=None, output_name=None):
     import tempfile                                                             
 
     if not os.path.exists(input_directory):
-        print "ERROR: Input make_zip directory " + input_directory + " does not exist!"
+        print("ERROR: Input make_zip directory " + input_directory + " does not exist!")
         return 'stop'
 
     if output_name == None:                              

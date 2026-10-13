@@ -12,7 +12,7 @@
 # $Id: povrayCommands.py,v 1.5 2008/09/16 17:27:18 sanner Exp $
 #
 
-import Tkinter, os
+import tkinter, os
 from Pmv.mvCommand import MVCommand
 from ViewerFramework.VFCommand import CommandGUI
 ##  from ViewerFramework.gui import InputFormDescr, InputForm
@@ -120,13 +120,13 @@ class Povray(MVCommand):
                                              self.filename)
         if outf!='':
             cmd = '%s +O%s'%(cmd, outf)
-        print cmd
+        print(cmd)
 
-        import thread
+        import _thread
         def renderIt(c, cmd):
             os.system(cmd)
             
-        thread.start_new_thread( renderIt, (c,cmd) )
+        _thread.start_new_thread( renderIt, (c,cmd) )
 
 
     def writeFile(self, event=None):
@@ -150,7 +150,7 @@ class Povray(MVCommand):
         g = self.form.descr.entryByName['selectedGeometries']['widget']
 ##          geoms = g.lb.get(0,'end')
         geoms = g.getAll(0)
-        print 'aaaaaaaa', geoms
+        print('aaaaaaaa', geoms)
         #geoms = vi.getVisibleGeoms()
 
         for ge in geoms:
@@ -185,7 +185,7 @@ class Povray(MVCommand):
         self.geomList = {}
         self.properties = {}
         for m in self.vf.Mols:
-            for g in m.geomContainer.geoms.values():
+            for g in list(m.geomContainer.geoms.values()):
                 if g.visible and g.__class__.__name__ != 'Geom':
                     name = '%s_%s'%(m.name,g.name)
                     self.geomList[name] = g
@@ -200,7 +200,7 @@ class Povray(MVCommand):
                                          'finish':'specular 1 roughness 0.001 ambient 0.3'}
             
         idf = InputFormDescr(title ="PovRay")
-        incEntries = map(lambda x: (x,None),inclist)
+        incEntries = [(x,None) for x in inclist]
         idf.append({'name':'includes',
                     'widgetType':ListChooser,
                     'wcfg':{'entries': incEntries,
@@ -217,7 +217,7 @@ class Povray(MVCommand):
 ##                      'gridcfg':{'rowspan':4,'column':0,'row':0},
 ##                      'lbwcfg':{'height':5}} )
 
-        geomsEntries = map(lambda x: (x,None),self.geomList.keys())
+        geomsEntries = [(x,None) for x in list(self.geomList.keys())]
 ##          idf.append({'name':'geometries',
 ##                      'widgetType':ListChooser,
 ##                      'wcfg':{'title':'Select geometries',
@@ -356,10 +356,10 @@ class Povray(MVCommand):
                                'row':7,'sticky':'w'}})
 
         idf.append({'name':'wbg',
-                    'widgetType':Tkinter.Checkbutton,
+                    'widgetType':tkinter.Checkbutton,
                     'defaultValue':1,
                     'wcfg':{'text':'White Background',
-                            'variable': Tkinter.IntVar()},
+                            'variable': tkinter.IntVar()},
                     'gridcfg':{'column':3, 'row':7,'sticky':'e'}})
 
 ##          idf.append({'name':'povrayArgs','label':'cmdline arguments',
@@ -389,13 +389,13 @@ class Povray(MVCommand):
                                'row':9,'sticky':'w'}})
 
         idf.append({'name':'WriteFile',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'WriteFile','command': self.writeFile},
                     'gridcfg':{'columnspan':1,'column':0,
                                'row':10,'sticky':'ew'}})
 
         idf.append({'name':'Render',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Render',
                             'command': CallBackFunction( self.runPovray,
                                                          (idf))},
@@ -403,7 +403,7 @@ class Povray(MVCommand):
                                'row':10,'sticky':'ew'}})
 
         idf.append({'name':'Dismiss',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Dismiss',
                             'command':self.dismissCB},
                     'gridcfg':{'column':3, 'row':10,'sticky':'ew'}})

@@ -15,12 +15,12 @@
 
 import sys, os
 import types
-import Tkinter
+import tkinter
 import threading
 import traceback
 import warnings
 import weakref
-import tkMessageBox
+import tkinter.messagebox
 import Pmw 
 
 from mglutil.gui.BasicWidgets.Tk.TreeWidget.objectBrowser import ObjectBrowser
@@ -43,28 +43,28 @@ class UserPanel:
             return
         
         if master is None:
-            self.master = Tkinter.Toplevel()
+            self.master = tkinter.Toplevel()
             self.master.title(name)
             self.master.protocol('WM_DELETE_WINDOW', self.withdraw_cb)
 
         ## build menu
         if master is None:
-            buttonsFrame = Tkinter.Frame(self.master)
-            self.buttonRun = Tkinter.Button(buttonsFrame, text='Run / Stop',
+            buttonsFrame = tkinter.Frame(self.master)
+            self.buttonRun = tkinter.Button(buttonsFrame, text='Run / Stop',
                                             command=self.editor.toggleNetworkRun_cb)
             self.buttonRun.pack(side='left', expand=1, fill='x')
             if hasattr(network, 'isApplication') is True:
-                self.buttonQuit = Tkinter.Button(buttonsFrame, text='Quit',
+                self.buttonQuit = tkinter.Button(buttonsFrame, text='Quit',
                                                  command=self.editor.stopNetworkAndQuit_cb)
                 self.buttonQuit.pack(side='left', expand=1, fill='x')
             else:
-                self.buttonShowHideNetwork = Tkinter.Button(buttonsFrame, text='Show / Hide Vision',
+                self.buttonShowHideNetwork = tkinter.Button(buttonsFrame, text='Show / Hide Vision',
                                                  command=self.editor.toggleGuiVisibility)
                 self.buttonShowHideNetwork.pack(side='left', expand=1, fill='x')
             buttonsFrame.pack(side='top', fill='x')      
 
         ## build frame for widgets
-        self.frame = Tkinter.Frame(
+        self.frame = tkinter.Frame(
             self.master, relief='sunken', bd=3, bg='#c3d0a6')
         self.frame.configure(width=width, height=height)
         self.frame.pack(side='top', expand=1, fill='both')
@@ -91,7 +91,7 @@ class UserPanel:
         if labelSide is None:
             labelSide = 'left'
 
-        widget.widgetFrame.place(relx=relx, rely=rely, anchor=Tkinter.CENTER)
+        widget.widgetFrame.place(relx=relx, rely=rely, anchor=tkinter.CENTER)
         if labelSide == 'left':
             labelx = .5 * widget.widgetFrame.winfo_width() \
                  / widget.widgetFrame.master.winfo_width()
@@ -201,7 +201,7 @@ class ParamPanel:
             self.dismissFun = self.hide
 
         if master is None:
-            master=Tkinter.Toplevel()
+            master=tkinter.Toplevel()
             self.master = master
             if title:
                 self.master.title(title)
@@ -211,18 +211,18 @@ class ParamPanel:
             self.master = master
 
         # the mainFrame holds the widgetFrame plus some buttons
-        self.mainFrame = Tkinter.Frame(self.master)
+        self.mainFrame = tkinter.Frame(self.master)
         self.mainFrame.pack(fill='both',expand=1)
 
         # add menu entries
         self.createMenus(self.mainFrame)
         
         # the widgetFrame holds the widgets bound to this panel
-        self.widgetFrame = Tkinter.Frame(self.mainFrame, borderwidth=3,
+        self.widgetFrame = tkinter.Frame(self.mainFrame, borderwidth=3,
                                          bg='#c3d0a6', relief='ridge')
         self.widgetFrame.pack(fill='both', expand=1)
 
-        self.applyButton = Tkinter.Button(self.mainFrame, text="Run node",
+        self.applyButton = tkinter.Button(self.mainFrame, text="Run node",
                                           command=self.forceRun)
         Pmw.Balloon(self.mainFrame).bind(self.applyButton,"Run node and subnetwork") #tooltip
         self.applyButton.pack(side='left', fill='x', expand=1)
@@ -234,24 +234,24 @@ class ParamPanel:
 
 
     def createMenus(self, parent):
-        self.mBar = Tkinter.Frame(parent, relief=Tkinter.RAISED,
+        self.mBar = tkinter.Frame(parent, relief=tkinter.RAISED,
                                   borderwidth=2)
         self.mBar.pack(side='top',fill='x')
         self.menuButtons = {}
         self.makeOptionsMenu(self.mBar)
-        apply( self.mBar.tk_menuBar, self.menuButtons.values() )
+        self.mBar.tk_menuBar(*list(self.menuButtons.values()))
          
 
     def makeOptionsMenu(self, parent):
-        Options_button = Tkinter.Menubutton(parent, text='Options',
+        Options_button = tkinter.Menubutton(parent, text='Options',
                                             underline=0)
         self.menuButtons['Options'] = Options_button
-        Options_button.pack(side=Tkinter.LEFT, padx="1m")
+        Options_button.pack(side=tkinter.LEFT, padx="1m")
 
-		# got rid of useless tearoff
-        Options_button.menu = Tkinter.Menu(Options_button, tearoff=False)
+                # got rid of useless tearoff
+        Options_button.menu = tkinter.Menu(Options_button, tearoff=False)
 
-        self.immediateTk = Tkinter.IntVar()
+        self.immediateTk = tkinter.IntVar()
         self.immediateTk.set(1)
         Options_button.menu.add_checkbutton(label='Immediate',
                                             variable=self.immediateTk,
@@ -301,7 +301,7 @@ class ParamPanel:
 
 
     def destroy(self, event=None):
-        if isinstance(self.master, Tkinter.Toplevel):
+        if isinstance(self.master, tkinter.Toplevel):
             self.master.destroy()
         else:
             self.mainFrame.destroy()
@@ -572,7 +572,7 @@ return 0 if run failed. (Thread safe)"""
 ##                             exec(input, mod.__dict__)
 
             if debug:
-                print 'in run', self.name, debug
+                print('in run', self.name, debug)
                 net = self.network
                 net.debugCmd = None
                 # FIXME .. not sure this is the proper way to make a variable
@@ -609,13 +609,13 @@ return 0 if run failed. (Thread safe)"""
             else:
                 return stat
 
-        except KeyboardInterrupt, e:
-            raise(KeyboardInterrupt, e)
+        except KeyboardInterrupt as e:
+            raise KeyboardInterrupt
         except:
-            print
-            print "***********************************************************"
-            print "*** ERROR while executing node: ", self.name
-            print "***********************************************************"
+            print()
+            print("***********************************************************")
+            print("*** ERROR while executing node: ", self.name)
+            print("***********************************************************")
             self.forceExecution = 0
             traceback.print_exc()
             if ed.hasGUI and ed.flashNodesWhenRun:
@@ -638,7 +638,7 @@ return 0 if run failed. (Thread safe)"""
 
 
     def editNodeMenu(self, type, *args, **kw):
-        apply( eval("self.menu."+type), args, kw )
+        eval("self.menu."+type)(*args, **kw)
         
 
     def __repr__(self):
@@ -729,15 +729,15 @@ return 0 if run failed. (Thread safe)"""
 
         ed = self.getEditor()
 
-        self.frozenTk = Tkinter.IntVar()
+        self.frozenTk = tkinter.IntVar()
         self.frozenTk.set(self.frozen)
         
         self.paramPanel = ParamPanel(self, master=None, title=self.name,
                                      applyFun=self.schedule_cb,
                                      dismissFun=self.hideParamPanel)
         if self.menu is None:
-			# got rid of useless tearoff
-            self.menu = Tkinter.Menu(ed, title=self.name, tearoff=False)
+                        # got rid of useless tearoff
+            self.menu = tkinter.Menu(ed, title=self.name, tearoff=False)
             self.menu.add_separator()
 
             if ed.hasGUI:
@@ -781,7 +781,7 @@ renumber all ports after this ports and mark them modified. Update code.
         # save configuration of port about to be deleted
         #cfg = p.configure()
 
-        from ports import InputPort, OutputPort, SpecialInputPort, \
+        from .ports import InputPort, OutputPort, SpecialInputPort, \
              SpecialOutputPort
         
         # delete port Icon
@@ -810,7 +810,7 @@ renumber all ports after this ports and mark them modified. Update code.
             del self.outputPortsDescr[p.number]
 
         else:
-            print "FAILED. Port is neither of class InputPort or OuputPort!"
+            print("FAILED. Port is neither of class InputPort or OuputPort!")
             return
 
         # remove all connections from this port

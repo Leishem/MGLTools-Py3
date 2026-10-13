@@ -1,11 +1,11 @@
 import user
-import tkFileDialog, os
+import tkinter.filedialog, os
 
 
 def fileOpenAsk(master, idir=None, ifile=None, types=None,
                 title='Open'):
     if types==None: types = [ ('All files', '*') ]
-    file = tkFileDialog.askopenfilename( filetypes=types,
+    file = tkinter.filedialog.askopenfilename( filetypes=types,
                                          initialdir=idir,
                                          initialfile=ifile,
                                          title=title)
@@ -15,7 +15,7 @@ def fileOpenAsk(master, idir=None, ifile=None, types=None,
 def fileSaveAsk(master, idir=None, ifile=None, types = None,
                 title='Save'):
     if types==None: types = [ ('All files', '*') ]
-    file = tkFileDialog.asksaveasfilename( filetypes=types,
+    file = tkinter.filedialog.asksaveasfilename( filetypes=types,
                                            initialdir=idir,
                                            initialfile=ifile,
                                            title=title)
@@ -37,7 +37,7 @@ class DirOpenBrowser:
             
 
     def get(self):
-        folder = tkFileDialog.askdirectory(parent = self.parent,
+        folder = tkinter.filedialog.askdirectory(parent = self.parent,
                                            initialdir = self.lastDir,
                                            title=self.title)
         if folder:
@@ -63,7 +63,7 @@ class FileOpenBrowser:
             
 
     def get(self):
-        file = tkFileDialog.askopenfilename(parent = self.parent,
+        file = tkinter.filedialog.askopenfilename(parent = self.parent,
             initialdir = self.lastDir, filetypes=self.filetypes,
             title=self.title)
 
@@ -88,7 +88,7 @@ class FileSaveBrowser:
             
 
     def get(self):
-        file = tkFileDialog.asksaveasfilename(
+        file = tkinter.filedialog.asksaveasfilename(
             initialdir = self.lastDir, filetypes=self.filetypes,
             title=self.title)
 

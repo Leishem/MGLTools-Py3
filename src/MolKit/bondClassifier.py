@@ -43,7 +43,7 @@ class BondClassifier:
         #make sure that classify is called with some bonds
         assert isinstance(bonds, BondSet)
         resultDict = {}
-        for k, v in self.dict.items():
+        for k, v in list(self.dict.items()):
             resultDict[k] = v.select(bonds)
         return resultDict
 

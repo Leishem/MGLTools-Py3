@@ -64,10 +64,10 @@ carbons.....
             mol.rings = RingFinder()
             mol.rings.findRings2(mol.allAtoms, mol.allAtoms.bonds[0])
             mol.rings.bondRings = {}
-            for ind in xrange(len(mol.rings.rings)):
+            for ind in range(len(mol.rings.rings)):
                 r = mol.rings.rings[ind]
                 for b in r['bonds']:
-                    if not mol.rings.bondRings.has_key(b):
+                    if b not in mol.rings.bondRings:
                         mol.rings.bondRings[b] = [ind,]
                     else:
                         mol.rings.bondRings[b].append(ind)
@@ -81,7 +81,7 @@ carbons.....
         hat = AddHydrogens().addHydrogens(mol.allAtoms, method=self.method)
         bondedAtomDict = {}  # key is heavy atom
         for a in hat:
-            if bondedAtomDict.has_key(a[1]):
+            if a[1] in bondedAtomDict:
                 bondedAtomDict[a[1]].append(a)
             else:
                 bondedAtomDict[a[1]] = [a]
@@ -91,7 +91,7 @@ carbons.....
         molNewHs = AtomSet([]) # list of created H atoms for this molecule
         heavyAtoms = AtomSet([]) # list of atoms that need new radii
         
-        for heavyAtom, HatmsDscr in bondedAtomDict.items():
+        for heavyAtom, HatmsDscr in list(bondedAtomDict.items()):
             #don't add hydrogens to carbons: polar Only!!!
             if self.htype!='all' and heavyAtom.element=='C': 
                 continue
@@ -143,13 +143,13 @@ carbons.....
                 # HAVE TO CREATE THESE ENTRIES 
                 # create the color entries for all geoemtries
                 # available for the heavyAtom
-                for key, value in heavyAtom.colors.items():
+                for key, value in list(heavyAtom.colors.items()):
                     atom.colors[key]=(0.0, 1.0, 1.0)
                     atom.opacities[key]=1.0
 
         mol.allAtoms = mol.chains.residues.atoms
         if self.renumber:
-            mol.allAtoms.number = range(1, len(mol.allAtoms)+1)
+            mol.allAtoms.number = list(range(1, len(mol.allAtoms)+1))
         return len(molNewHs)
 
 

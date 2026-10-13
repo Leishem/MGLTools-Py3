@@ -49,7 +49,7 @@ global MGL_ROOT
 MGL_ROOT=""
 def getMGL(filename):
         MGL_ROOT=filename
-        print "whats upone",MGL_ROOT
+        print("whats upone",MGL_ROOT)
         f=open(mgldirfile,'w')
         f.write(MGL_ROOT)
         f.close()
@@ -83,14 +83,14 @@ if len(MGL_ROOT):
         mgltoolsDir = MGL_ROOT+os.sep+"MGLToolsPckgs"
         patch=os.path.isfile(mgltoolsDir+os.sep+"patched")
         if not patch :
-            import urllib
+            import urllib.request, urllib.parse, urllib.error
             import tarfile 
-            print mgltoolsDir+os.sep
+            print(mgltoolsDir+os.sep)
             patchpath = mgltoolsDir+os.sep
             URI="http://mgldev.scripps.edu/projects/ePMV/patchs/depdtPckgs.tar"
             tmpFileName = mgltoolsDir+os.sep+"depdtPckgs.tar"
             if not os.path.isfile(tmpFileName):
-                urllib.urlretrieve(URI, tmpFileName)
+                urllib.request.urlretrieve(URI, tmpFileName)
                 #geturl(URI, tmpFileName)
             TF=tarfile.TarFile(tmpFileName)
             TF.extractall(patchpath)
@@ -100,19 +100,19 @@ if len(MGL_ROOT):
             f.close()
 #do I need to copy the file
     plugfile = prefdir+os.sep+"blenderPmvScriptGUI.py"
-    print plugfile
+    print(plugfile)
     if not os.path.isfile(plugfile) :
         indir = MGL_ROOT+os.sep+"MGLToolsPckgs"+os.sep+"Pmv"+os.sep+"hostappInterface"+os.sep+\
                 "blender"+os.sep+"plugin"+os.sep
         outdir = prefdir+os.sep
-        print outdir
+        print(outdir)
         files=[]
         files.append("blenderPmvScriptGUI.py")
         files.append("blenderPmvClientGUI.py") 
         files.append("epmv_blender_update.py")   
         for f in files : 
             shutil.copy (indir+f, outdir+f)
-        print "copy"
+        print("copy")
 sys.path.append(MGL_ROOT+'/MGLToolsPckgs')
 if sys.platform == "win32":
     sys.path.append(MGL_ROOT+'/MGLToolsPckgs/PIL')
@@ -200,21 +200,21 @@ def checkExtension():
             #_useModeller = True #depend on the user preference by default True
             listExtension.append('modeller')
         except:
-            print "noModeller"
+            print("noModeller")
     if not _AF:
         try :
             import AutoFill
             _AF = True
             listExtension.append('AutoFill')
         except:
-            print "noAutoFill"
+            print("noAutoFill")
     if not _AR:
         try :
             import ARViewer
             _AR = True
             listExtension.append('ARViewer')
         except:
-            print "noARViewer"
+            print("noARViewer")
 
 LOG = 0
 VERBOSE = 0
@@ -225,7 +225,7 @@ selections={}
 self=None
 epmv=None
 listExtension.append('Add Extension')
-print "BEFORE"
+print("BEFORE")
 
 def update_Registry():
    d = {}
@@ -239,14 +239,14 @@ def update_Registry():
 sc=Blender.Scene.GetCurrent()
 
 rdict = Registry.GetKey('bmv', False) # True to check on disk also
-print rdict
-if rdict and 'self' in rdict.keys() : 
+print(rdict)
+if rdict and 'self' in list(rdict.keys()) : 
     self = rdict['self']
     epmv = rdict['epmv']
-    if VERBOSE : print "redo"
+    if VERBOSE : print("redo")
     #print self,self.Mols.name
     if self == None :
-        if VERBOSE : print "self none"
+        if VERBOSE : print("self none")
         epmv = blenderAdaptor(debug=0)
         self = epmv.mv     
         self.armObj = None
@@ -254,10 +254,10 @@ if rdict and 'self' in rdict.keys() :
         update_Registry()
     else : 
         if VERBOSE : 
-            print "ok in registry ",self,self.Mols.name
-            print self.Mols[0].geomContainer.masterGeom.chains_obj
+            print("ok in registry ",self,self.Mols.name)
+            print(self.Mols[0].geomContainer.masterGeom.chains_obj)
 else :
-    if VERBOSE : print "no registration"
+    if VERBOSE : print("no registration")
     epmv = blenderAdaptor(debug=0)
     self = epmv.mv
     self.armObj = None
@@ -282,7 +282,7 @@ self.hostApp.driver.bicyl = True
 
 strDataSupported = lG.getSupportedFormat()
 
-if VERBOSE :  print self,self.Mols
+if VERBOSE :  print(self,self.Mols)
 selections=self.selections
 RS=ResidueSetSelector()
 Draw=Blender.Draw
@@ -401,13 +401,13 @@ LCOLOR=(0)
 LKEY=(0)
 
 cpkopt={}
-for k,v in self.displayCPK.lastUsedValues['default'].items():
+for k,v in list(self.displayCPK.lastUsedValues['default'].items()):
     if type(v) == type(None) : continue
     elif type(v) == bool : cpkopt[k]=Draw.Create(int(v))
     else : cpkopt[k]=Draw.Create(v)
 
 bsopt={}
-for k,v in self.displaySticksAndBalls.lastUsedValues['default'].items():
+for k,v in list(self.displaySticksAndBalls.lastUsedValues['default'].items()):
     if type(v) == type(None) : continue
     elif type(v) == bool : bsopt[k]=Draw.Create(int(v))
     else : bsopt[k]=Draw.Create(v)
@@ -415,7 +415,7 @@ bsopt["ratio"] = Draw.Create(1.5)
 bsopt['bScale']= Draw.Create(1.)
 
 msmsopt={}
-for k,v in self.computeMSMS.lastUsedValues['default'].items():
+for k,v in list(self.computeMSMS.lastUsedValues['default'].items()):
     if type(v) == type(None) : continue
     elif type(v) == bool : msmsopt[k]=Draw.Create(int(v))
     else : msmsopt[k]=Draw.Create(v)
@@ -470,7 +470,7 @@ colorMenu = {1:['Atoms using CPK',0],
             }
 
 keyword = ['Keywords','  backbone','  sidechain','  chain','  picked']
-kw=map(lambda x:"  "+x,RS.residueList.keys())
+kw=["  "+x for x in list(RS.residueList.keys())]
 keyword.extend(kw)
 
 stringBezier = ["Circle","Square"]
@@ -513,11 +513,11 @@ def getSelectionLevel(mol):
 def Make():
     global pdb,radius,mesh_objects,sc
     #molname=os.path.splitext(os.path.basename(stringName.val))[0]
-    if VERBOSE :print "the name ",stringName.val
+    if VERBOSE :print("the name ",stringName.val)
     string=stringName.val
     P=self.getMolFromName(str(stringName.val).split(":")[0])
     
-    if VERBOSE : print P
+    if VERBOSE : print(P)
     armObj = None
     if ARMATURE == 1 : #always on CA-backbone
         #if CAT == 0 and BKBONE == 0 :
@@ -547,7 +547,7 @@ def get_children(ob):
 
 def getAllRelatedGeom(molname):
     listO = Blender.Object.Get()
-    liste = filter(lambda x: x.name.find(molname) != -1, listO)
+    liste = [x for x in listO if x.name.find(molname) != -1]
     return liste
     
 def delMolDic(molname):
@@ -578,7 +578,7 @@ def getMolName():
         mol = self.getMolFromName(name)
     else : #selection
         for mname in self.selections:
-            if name in self.selections[mname].keys() : 
+            if name in list(self.selections[mname].keys()) : 
                 mol = self.getMolFromName(mname)
                 break
     return name,mol
@@ -653,24 +653,24 @@ def parseObjectName(o):
 def parseSelection(string,mol):
     strselection=""
     if string == "picked" : 
-        if VERBOSE :print sc.objects.selected
+        if VERBOSE :print(sc.objects.selected)
         astr=[]
         for o in sc.objects.selected : 
-            if VERBOSE : print o.name,o.type
+            if VERBOSE : print(o.name,o.type)
             astr.append(parseObjectName(o))
         strselection=sortName(astr)
-        if VERBOSE : print strselection
+        if VERBOSE : print(strselection)
         return strselection
     elif string.upper() == "BACKBONE": return mol.name+":::CA,C,N;"
     elif string.upper() == "SIDECHAIN": return mol.name+":::sidechain;"
     elif string.upper()[0:5] == "CHAIN" : return mol.name+":"+string.upper()[5:].replace(" ","")+"::;"
-    elif string.upper() in AtomElements.keys() : return mol.name+":::"+string.upper()
-    elif string.upper() in RS.r_keyD.keys() : return mol.name+"::"+RS.r_keyD[string.upper()]
-    elif string.lower() in ResidueSetSelector.residueList.keys() : return mol.name+'::'+string.lower()+':'
+    elif string.upper() in list(AtomElements.keys()) : return mol.name+":::"+string.upper()
+    elif string.upper() in list(RS.r_keyD.keys()) : return mol.name+"::"+RS.r_keyD[string.upper()]
+    elif string.lower() in list(ResidueSetSelector.residueList.keys()) : return mol.name+'::'+string.lower()+':'
     else : return mol.name
 
 def getSelectionName(sel,mol):
-       for selname in self.selections[mol.name].keys() : 
+       for selname in list(self.selections[mol.name].keys()) : 
            if sel == self.selections[mol.name][selname][0] : return selname           
        return mol.name+"_Selection"+str(len(self.MolSelection[mol.name]))
 
@@ -687,12 +687,12 @@ def editSelection(ind):
 def saveSelection():
     #store the current selection
     name,mol = getMolName()
-    if VERBOSE :print "mol name ",name
+    if VERBOSE :print("mol name ",name)
     sel=stringSelection.val
     n=len(self.selections[name])
     selname=mol.name+"_sel_"+str(n)
     name = mol.name
-    if VERBOSE :print "sel str ",sel,n,selname
+    if VERBOSE :print("sel str ",sel,n,selname)
     self.selections[name][selname]=[]#array of parameter : selection string / display mode / color mode
     self.selections[name][selname].append(sel)
     self.selections[name][selname].append([LVDW.val,LBSTICK.val,LSS.val,LSURF.val,LCMS.val,None,None]) #cpk,b&s,ribbon,surf
@@ -705,7 +705,7 @@ def saveSelection():
         self.selections[name][selname][1][6]=ColorMol.val
     self.molDispl[selname][5] = ColorPreset1.val
     self.selections[name][selname][1][5]=ColorPreset1.val
-    if VERBOSE :print self.selections[name][selname]
+    if VERBOSE :print(self.selections[name][selname])
     self.iMolData[selname]=self.iMolData[mol.name]
     #operateSelection(selname,self.selections[name][selname],mol)
     resetDashBoard()
@@ -753,11 +753,11 @@ def operateSelection(selname,selection,mol):
     #self.selections[name][selname] ie 'CA', [0, 1, 0, 0], 'byAtomType' string selection, display,color
     #need to add CMS
     dis=selection[1]
-    print dis
+    print(dis)
     string=parseSelection(selection[0],mol)
     lGeom=getGeomActive(mol.name)
     self.select.clear()
-    if VERBOSE :print "ok selection ",string
+    if VERBOSE :print("ok selection ",string)
       #if dis[0] : #cpk
     if dis[0] : 
         self.displayCPK(string,log=LOG,negate=(not bool(LVDW.val)),
@@ -781,7 +781,7 @@ def operateSelection(selname,selection,mol):
                                only=bool(ONLY), log=1)        
     if dis[5] != None :
         funcId = colorMenu[dis[5]][1]
-        print funcId,funcColor[funcId]
+        print(funcId,funcColor[funcId])
         if int(dis[5]) == 7 : 
            #apply the color on the molecule geometry if no selection geometry displayed
            if len(lGeom) == 0 :
@@ -812,7 +812,7 @@ def delete_Atom_Selection():
     #self.mv.deleteAtomSet...
     mname,mol=getMolName()
     sel = parseSelection(stringSelection.val,mol)
-    print "del ", sel,mname, mol
+    print("del ", sel,mname, mol)
     if sel is mol.name :
         #print sel,mname, mol , "del"
         res = drawQuestion("Are You sure you want to delete:\n "+mol.name,"delete")
@@ -907,7 +907,7 @@ def update(mname,mol):
         color=self.molDispl[mname][6]
         ColorMol=Draw.Create(color[0],color[1],color[2])
     if mname not in self.Mols.name:
-        print mname+" is a selection"
+        print(mname+" is a selection")
         #dis=selection[1]
         operateSelection(mname,self.selections[mol.name][mname],mol)
         #should also modified the sel fields
@@ -938,7 +938,7 @@ def doModeller(res):
     mname,mol = getMolName()
     Sel = parseSelection(stringSelection.val,mol)    
     mdl = mol.mdl
-    print mname
+    print(mname)
     # Select all atoms:
     atmsel = modeller.selection(mdl)
     # Generate the restraints:
@@ -947,7 +947,7 @@ def doModeller(res):
     mpdf = atmsel.energy()
     mol.pmvaction.last = 10000
     mol.pmvaction.store = dic.BTN['store']['value'].val
-    print "before optmimise"
+    print("before optmimise")
     if doMini:
         cg = modeller.optimizers.conjugate_gradients(output='REPORT')
         maxit = int(dic.NUMBERS['miniIterMax']['value'].val)
@@ -963,12 +963,12 @@ def doModeller(res):
 def check_update():
     ask = False
     #get the update file
-    import urllib
+    import urllib.request, urllib.parse, urllib.error
     URL=__url__[1]
     import WebServices
     test = WebServices.checkURL(URL)
     if test :
-        fURL=urllib.urlopen(URL)
+        fURL=urllib.request.urlopen(URL)
         note=fURL.read()
         fURL.close()
         fields=note.split()
@@ -1020,7 +1020,7 @@ def drawMessage(message,title):
             block.append("-"+line[28:])
         else :
             block.append(line)
-    print block
+    print(block)
     retval = Blender.Draw.PupBlock(title, block)
     return 
     
@@ -1066,14 +1066,14 @@ def drawRecentFiles():
             loadPDB()
 
 def drawExtension(choice):
-    print choice
-    print listExtension[choice-1]
+    print(choice)
+    print(listExtension[choice-1])
     extension = listExtension[choice-1]
     if extension == "modeller":
         res=drawModeller()
         doModeller(res)
     elif extension == 'Add Extension':
-        print "add extension"
+        print("add extension")
 
 def citationInformation():
     txt=epmv.getCitations()
@@ -1144,7 +1144,7 @@ def drawPreferences():
     preferences['Center_grid'].val = int(epmv.center_grid)
     preferences['Force_fetch'].val = int(_forceFetch)
     options=[]
-    for n in preferences.keys():
+    for n in list(preferences.keys()):
         options.append((n,preferences[n]))
     retval = Blender.Draw.PupBlock("ePMV preferences", options)
     return retval,preferences
@@ -1168,7 +1168,7 @@ def drawAdvanceOptions(iline):
     drawBs=False
     drawCms=False
     for o in sc.objects.selected : 
-        if VERBOSE :print o.name,o.type
+        if VERBOSE :print(o.name,o.type)
         if o.name.find('cpk') !=-1 or o.name.split("_")[0] == 'S': drawCpk=True#
         if o.name.find('ball') !=-1 or o.name.split("_")[0] == 'B' or o.name.split("_")[0] == 'T': drawBs=True#
         if o.name.find('MSMS') !=-1 : drawMSM=True#
@@ -1193,7 +1193,7 @@ def drawDataPlayer(lmol,iline):
     menu="DATA : %t|None %x0"
     doit=True
     for i,mol in enumerate(lmol) :
-        if VERBOSE :print "drawDataPlayer ", mol.name,self.iMolData
+        if VERBOSE :print("drawDataPlayer ", mol.name,self.iMolData)
         listData=self.iMolData[mol.name]
         for  j,data in enumerate(listData) :
             menu+="|"+data+" %x"+str(i+j+1)
@@ -1233,7 +1233,7 @@ def drawDash(lmol,indl):
     #BGL.glRasterPos2i(5,line[indl])
     #Draw.Text("Color By")
     color=""
-    for i in colorMenu.keys():
+    for i in list(colorMenu.keys()):
         color+=colorMenu[i][0]+" %x"+str(i)+"|"
     drawLabel(10,line[indl]+10,"Color scheme:")
     #color = "Atom %x1|DG %x2|NtoC %x3|Residues %x4|ResShapely %x5|SS %x6|Color %x7"
@@ -1387,12 +1387,12 @@ def event(event, val) :
 
 def loadPDB():
     #todo, some part may probably be in the adaptor or helper instead of here
-    if VERBOSE :print stringName.val
+    if VERBOSE :print(stringName.val)
     if len(stringName.val) == 4 : #PDB CODE -> webdownload!
             molname=stringName.val
             if molname in self.Mols.name : 
                 self.hostApp.driver.duplicatemol=True
-            if VERBOSE :print self.hostApp.driver.duplicatemol
+            if VERBOSE :print(self.hostApp.driver.duplicatemol)
             #how support modeller here
             #will use fetch instead
             pdbtype=['PDB','TMPDB','OPM','CIF','PQS']
@@ -1402,16 +1402,16 @@ def loadPDB():
             #self.readFromWeb(stringName.val.upper(), log=1)
     else :    
         molname=os.path.splitext(os.path.basename(stringName.val))[0]
-        print molname
+        print(molname)
         #test the name lenght
         if len(molname) > 7 :
             drawError("Sorry, but the name of the given file is to long,\nand not suppported by Blender.\n Please rename it or load another file")
             return 0
-        if VERBOSE :print molname, self.Mols.name, (molname in self.Mols.name)
+        if VERBOSE :print(molname, self.Mols.name, (molname in self.Mols.name))
         name=stringName.val
         adt=False
         ext = os.path.splitext(os.path.basename(name))[1]
-        print ext
+        print(ext)
         if ext == '.dlg' :#Autodock
             epmv.center_mol = False
             self.readDLG(name,1,0) #addToPrevious,ask
@@ -1420,7 +1420,7 @@ def loadPDB():
             adt=True
         if molname in self.Mols.name : 
             self.hostApp.driver.duplicatemol=True
-            if VERBOSE :print self.hostApp.driver.duplicatemol
+            if VERBOSE :print(self.hostApp.driver.duplicatemol)
         if _useModeller and not adt :
             import modeller
             from modeller.scripts import complete_pdb
@@ -1434,9 +1434,9 @@ def loadPDB():
                 self.Mols[-1].mdl=mdl
         molname = self.Mols[-1].name
         molname=molname.replace(".","_")
-        if VERBOSE :print "1",molname, self.Mols[-1].name
+        if VERBOSE :print("1",molname, self.Mols[-1].name)
         self.Mols[-1].name=molname
-        if VERBOSE :print "2", self.Mols.name
+        if VERBOSE :print("2", self.Mols.name)
         #molname.replace(".","_")
         if molname in self.Mols.name : self.hostApp.driver.duplicatemol=False
         if len(molname) > 7 : 
@@ -1453,14 +1453,14 @@ def loadPDB():
                 if dataname.find('xtc') != -1 : 
                     doit= False
         if doit : modelData(self.Mols[-1],adt=adt)
-    if VERBOSE :print "self.iMolData ",self.iMolData
-    if molname not in self.molDispl.keys() :
+    if VERBOSE :print("self.iMolData ",self.iMolData)
+    if molname not in list(self.molDispl.keys()) :
         self.molDispl[self.Mols[-1].name]=[False,False,False,False,False,None,None]
-    if molname not in self.MolSelection.keys() :
+    if molname not in list(self.MolSelection.keys()) :
         self.MolSelection[molname]={}
-    if molname not in self.selections.keys() :       
+    if molname not in list(self.selections.keys()) :       
         self.selections[molname]={}
-    if molname not in self.iMolData.keys() :       
+    if molname not in list(self.iMolData.keys()) :       
         self.iMolData[molname]=[]
     DASH=1
     #do we test the number of Atoms
@@ -1472,10 +1472,10 @@ def choosePDB(filename):
     loadPDB()
 
 def loadData():
-    if VERBOSE :print dataName.val
+    if VERBOSE :print(dataName.val)
     dataname = dataName.val
     extension = os.path.splitext(os.path.basename(dataname))[1] #.xtc,.trj
-    if VERBOSE :print dataname,extension
+    if VERBOSE :print(dataname,extension)
     if extension == '.xtc' : gromacsTraj(dataname)
     #elif extension == '.map' : gridData_1(dataname)
     else : gridData_2(dataname)    
@@ -1509,7 +1509,7 @@ def applyDataState(mol,value=None,redraw=True) :
         if self.molDispl[mol.name][3] : updateSurf()
         if self.molDispl[mol.name][4] : updateCoarseMS()
     elif (re.search(strDataSupported,extension,re.I)):
-         if VERBOSE :print "value",value
+         if VERBOSE :print("value",value)
          #value=convertFrame(value,1000)
          #print value
          #self.setIsovalue(data,value, log = 1)
@@ -1540,7 +1540,7 @@ def updateData(mol) :
     global slider_min, slider_max,typedata,data_slider
     #data player default option
     index=dataMenu.val
-    print index
+    print(index)
     if index == 0 : #first level == None
         return
     data=self.iMolData[mol.name][index-1]
@@ -1577,7 +1577,7 @@ def dataToKeyFrame(mol,start=0,end=100,step=1):
     data=self.iMolData[mol.name][index-1]
     extension = os.path.splitext(data)[1] #.xtc,.trj
     if extension != '.xtc': 
-        print "only for trajectories "
+        print("only for trajectories ")
         return 
     lGeom=getGeomActive(mol.name)
     geoms = []
@@ -1604,7 +1604,7 @@ def modelData(mol,adt=False):
 def gromacsTraj(filename):
     self.openTrajectory(filename, log=0)
     trajname=os.path.basename(filename)
-    if VERBOSE :print filename,trajname,stringName.val
+    if VERBOSE :print(filename,trajname,stringName.val)
     string=stringName.val
     mol=self.getMolFromName(str(stringName.val).split(":")[0])
     #create the player
@@ -1620,7 +1620,7 @@ def gridData_1(filename):
     self.readAUTOGRID(filename, log=0)
     self.getIsosurface(filename, log = 1)
     dataname=filename#os.path.basename(filename)
-    if VERBOSE :print dataname
+    if VERBOSE :print(dataname)
     #string=stringName.val
     mol=self.getMolFromName(str(stringName.val).split(":")[0])
     #create the slider variable
@@ -1635,17 +1635,17 @@ def gridData_2(filename):
     or not, in that case parent = None
     """
     self.readAny(filename)
-    name = self.grids3D.keys()[-1] #the last grid added
+    name = list(self.grids3D.keys())[-1] #the last grid added
     grid = self.grids3D[name]#the grid
     #get the isoContour
     mname,mol = getMolName()
-    print mname
+    print(mname)
     self.cmol = mol  		   		   
     self.isoC.select(grid_name=name)
     self.isoC(grid,name=mname+"IsoSurface",
                  isovalue=self.grids3D[name].mean)  
     dataname=name
-    if VERBOSE :print dataname
+    if VERBOSE :print(dataname)
     #string=stringName.val
     #create the slider variable
     data_slider = Draw.Create(0)
@@ -1677,7 +1677,7 @@ def dsCPK():
 def updateCPK():
     for i,molname in enumerate(self.Mols.name):
         geoms=getGeomActive(molname)
-        if VERBOSE :print geoms
+        if VERBOSE :print(geoms)
         if 'cpk' in geoms : 
             self.displayCPK(molname, log=LOG, 
                             #cpkRad=cpkopt['cpkRad'].val, 
@@ -1710,7 +1710,7 @@ def dsBS():
 def updateBS():
     for i,molname in enumerate(self.Mols.name):
         geoms=getGeomActive(molname)
-        if VERBOSE :print geoms
+        if VERBOSE :print(geoms)
         if 'balls' in geoms or 'sticks' in geoms:
             ratio =  bsopt["ratio"].val #ball/stick
             scale =  bsopt["bScale"].val #ball/stick
@@ -1879,7 +1879,7 @@ def color():
     else : 
         funcColor[funcId](Sel, lGeom, log=1)
     self.molDispl[mname][5] = ColorPreset1.val
-    if TIMER : print "time ", time()-t1
+    if TIMER : print("time ", time()-t1)
 
 def updateCloud(mol):
     #should update cloud...and other mixed object type
@@ -1913,7 +1913,7 @@ def updateCoarseMS():
     #chain=select.findParentsOfType(Chain)[0]
     #parent=mol.geomContainer.masterGeom.chains_obj[chain.name]
     #select=self.mv.select(sel,negate=False, only=True, xor=False, log=0, intersect=False)
-    if bool(LCMS.val) and name in mol.geomContainer.geoms.keys():
+    if bool(LCMS.val) and name in list(mol.geomContainer.geoms.keys()):
         #isovalue=7.1#float(cmsopt['iso'].val),
         #resolution=-0.3#float(cmsopt['res'].val)
         g = epmv.coarseMolSurface(select,[32,32,32],
@@ -1929,8 +1929,8 @@ def getSelectTxt():
     if textNames:
         choice = Draw.PupMenu('|'.join(textNames))
         if choice != -1:
-        	text = texts[choice-1]
-        	return text
+                text = texts[choice-1]
+                return text
     return None
 
 def execPmvComds():
@@ -1942,19 +1942,19 @@ def execPmvComds():
         cmds=""
         for l in scmds:
             cmds+=l+'\n'
-            print len(cmds),cmds
+            print(len(cmds),cmds)
         exec(cmds,{'self':self,'epmv':epmv})
 
 def timeFunction(function,arg=None):
     t1=time()
     function()
-    print "time ", time()-t1
+    print("time ", time()-t1)
 
 def button_event(evt) :
     global SURF,VDW,BKBONE,ARMATURE,CAT,TUBE,BSTICK,SS,COLOR1,COLOR2,JOIN1
     global JOIN2,JOIN3,DASH,LSURF,LVDW,LSS,LCMS,LMETA,LSPLINE,LBSTICK,LCOLOR,ONLY,EV_CPKRAD
     global stringName,dataName,stringSelection,pmvcmds
-    if VERBOSE :print "button evt", evt
+    if VERBOSE :print("button evt", evt)
     Blender.Window.WaitCursor(1)
 
     ###########PLUGIN EVENT#######################################
@@ -2039,7 +2039,7 @@ def button_event(evt) :
             lGeom=getGeomActive(mname)
             funcColor[colorMenu[ColorPreset1.val][1]](mname,[ColorMol.val], lGeom, log=1) 
             self.molDispl[mname][6]=ColorMol.val
-        if TIMER :print "time ", time()-t1
+        if TIMER :print("time ", time()-t1)
     elif evt == ev_mod :
         mname,mol = getMolName()
         Sel = parseSelection(stringSelection.val,mol)
@@ -2060,18 +2060,18 @@ def button_event(evt) :
         if TIMER : t1 = time()
         mname,mol = getMolName()
         updateData(mol)
-        if TIMER :print "time ", time()-t1
+        if TIMER :print("time ", time()-t1)
     elif evt == ev_slider :
         if TIMER : t1 = time()
         mname,mol = getMolName()
         applyDataState(mol)
-        if TIMER :print "time ", time()-t1
+        if TIMER :print("time ", time()-t1)
     elif evt == ev_2key:
         if TIMER : t1 = time()
         #need to get start / end / step
         name,mol = getMolName()
         dataToKeyFrame(mol)
-        if TIMER :print "time ", time()-t1
+        if TIMER :print("time ", time()-t1)
     ###########SELECTION EVENT#######################################
     elif evt == EV_ST_SELECTION :
         #do nothing
@@ -2097,7 +2097,7 @@ def button_event(evt) :
         name+='|'.join(listSelection)
         result = Draw.PupMenu(name)
         editSelection(result)        
-        if TIMER :print "time ", time()-t1
+        if TIMER :print("time ", time()-t1)
     ###########OPTIONAL EVENT#######################################
     elif evt==EV_TG_BKBONE:
         if TIMER : timeFunction(dsRibon)
@@ -2117,7 +2117,7 @@ def button_event(evt) :
     elif evt==EV_BT_EXT:
         #draw popumenu with associated command
         choice = Draw.PupMenu('|'.join(listExtension))
-        print choice
+        print(choice)
         drawExtension(choice)
     elif evt==EV_BT_OPT:
         res=drawPreferences()
@@ -2136,4 +2136,4 @@ def button_event(evt) :
     Blender.Window.WaitCursor(0)
     update_Registry()
 Draw.Register(draw_gui, event, button_event)
-print "registration"
+print("registration")

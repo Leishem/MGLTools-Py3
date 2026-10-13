@@ -73,32 +73,32 @@ OUTPUT:
 
         m = 0.0
         if output_8pts:
-            print '0:', m," + p1u=", p1u, "*p1v=", p1v, "*p1w=", p1w, "*map[ ", u0, "][", v0,"][", w0,"]"
+            print('0:', m," + p1u=", p1u, "*p1v=", p1v, "*p1w=", p1w, "*map[ ", u0, "][", v0,"][", w0,"]")
         m = m + p1u * p1v * p1w * map[ u0 ][ v0 ][ w0 ]
         if output_8pts:
-            print '1:', m," + p1u=", p1u, " p1v=", p1v, " p0w=", p0w, " map[ ", u0, "][", v0,"][", w1,"]"
+            print('1:', m," + p1u=", p1u, " p1v=", p1v, " p0w=", p0w, " map[ ", u0, "][", v0,"][", w1,"]")
         m = m + p1u * p1v * p0w * map[ u0 ][ v0 ][ w1 ]
         if output_8pts:
-            print '2:', m," + p1u=", p1u, " p0v=", p0v, " plw=", p1w, " map[ ", u0, "][", v1,"][", w0,"]"
+            print('2:', m," + p1u=", p1u, " p0v=", p0v, " plw=", p1w, " map[ ", u0, "][", v1,"][", w0,"]")
         m = m + p1u * p0v * p1w * map[ u0 ][ v1 ][ w0 ]
         if output_8pts:
-            print '3:', m," + p1u=", p1u, " p0v=", p0v, " p0w=", p0w, " map[ ", u0, "][", v1,"][", w1,"]"
+            print('3:', m," + p1u=", p1u, " p0v=", p0v, " p0w=", p0w, " map[ ", u0, "][", v1,"][", w1,"]")
         m = m + p1u * p0v * p0w * map[ u0 ][ v1 ][ w1 ]
         if output_8pts:
-            print '4:', m," + p0u=", p0u, " p1v=", p1v, " p1w=", p1w, " map[ ", u1, "][", v0,"][", w0,"]"
+            print('4:', m," + p0u=", p0u, " p1v=", p1v, " p1w=", p1w, " map[ ", u1, "][", v0,"][", w0,"]")
         m = m + p0u * p1v * p1w * map[ u1 ][ v0 ][ w0 ]
         if output_8pts:
-            print '5:', m," + p0u=", p0u, " p1v=", p1v, " p0w=", p0w, " map[ ", u1, "][", v0,"][", w1,"]"
+            print('5:', m," + p0u=", p0u, " p1v=", p1v, " p0w=", p0w, " map[ ", u1, "][", v0,"][", w1,"]")
         m = m + p0u * p1v * p0w * map[ u1 ][ v0 ][ w1 ]
         if output_8pts:
-            print '6:', m," + p0u=", p0u, " p0v=", p0v, " p1w=", p1w, " map[ ", u1, "][", v1,"][", w0,"]"
+            print('6:', m," + p0u=", p0u, " p0v=", p0v, " p1w=", p1w, " map[ ", u1, "][", v1,"][", w0,"]")
         m = m + p0u * p0v * p1w * map[ u1 ][ v1 ][ w0 ]
         if output_8pts:
-            print '7:', m," + p0u=", p0u, " p0v=", p0v, " p0w=", p0w, " map[ ", u1, "][", v1,"][", w1,"]"
+            print('7:', m," + p0u=", p0u, " p0v=", p0v, " p0w=", p0w, " map[ ", u1, "][", v1,"][", w1,"]")
         m = m + p0u * p0v * p0w * map[ u1 ][ v1 ][ w1 ]
         if output_8pts:
-            print 'end: m=', m
+            print('end: m=', m)
 
-	values.append(m)
+        values.append(m)
 
     return values

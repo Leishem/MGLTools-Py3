@@ -10,8 +10,8 @@ between houdini and a pmv cession.
 """
 #Python import
 import numpy
-import numpy.oldnumeric as Numeric
-import sys, os, os.path, struct, math, string
+import mglcompat.oldnumeric as Numeric
+import sys, os, os.path, struct, math; from mglcompat import pystring as string
 from math import *    
 from types import StringType, ListType
 
@@ -75,7 +75,7 @@ def start(debug=0):
     @return:  an instance of pmv.
     """     
     from Pmv.moleculeViewer import MoleculeViewer
-    if VERBOSE : print "start PMV - debug ",debug
+    if VERBOSE : print("start PMV - debug ",debug)
     mv = MoleculeViewer(logMode = 'overwrite', customizer=None, master=None,
                         title='pmv', withShell= 0,verbose=False, gui = False)
     mv.addCommand(BindGeomToMolecularFragment(), 
@@ -123,8 +123,8 @@ def compareSel(currentSel,molSelDic):
     """
     Search for a selection in the dictionary of selection
     """
-    for selname in molSelDic.keys():
-        print "The compareSelection   ",currentSel,molSelDic[selname][3]
+    for selname in list(molSelDic.keys()):
+        print("The compareSelection   ",currentSel,molSelDic[selname][3])
         #if currentSel[-1] == ';' : currentSel=currentSel[0:-1]
         if currentSel == molSelDic[selname] : return selname
 
@@ -762,10 +762,10 @@ def getMaterialListe():
     
     Material=getMaterials()
     matlist=[]
-    matlist.extend(Material["atoms"].keys())
-    matlist.extend(Material["residus"].keys())
-    matlist.extend(Material["ss"].keys())
-    matlist.extend(Material["sticks"].keys())            
+    matlist.extend(list(Material["atoms"].keys()))
+    matlist.extend(list(Material["residus"].keys()))
+    matlist.extend(list(Material["ss"].keys()))
+    matlist.extend(list(Material["sticks"].keys()))            
     return matlist
 
 def makeLabels(mol,selection):
@@ -790,7 +790,7 @@ def updateRTSpline(spline,selectedPoint,distance = 2.0,DistanceBumping = 1.85):
     #get the total number of point of the curve
     nb_points = spline.GetPointCount()
     #update upstream
-    for j in xrange(selectedPoint,nb_points-1):
+    for j in range(selectedPoint,nb_points-1):
         #get point j and j+1
         leaderB = spline.GetPointAll(j)
         myPos = spline.GetPointAll(j+1)
@@ -854,7 +854,7 @@ def updateMolAtomCoord(mol,index=-1):
         #get the object o position, use the hostApp api 
         pos=(0.,0.,0.)#o.GetMg().off
         vt.append(pos)
-	if index == -1 : index = 0	
+        if index == -1 : index = 0	
     mol.allAtoms.updateCoords(vt,ind=index)
 
 def updateCoordFromObj(mv,sel,debug=True):
@@ -905,7 +905,7 @@ def updateCoordFromObj(mv,sel,debug=True):
                             #from Pmv import amberCommands
                             #amberCommands.Amber94Config = {}
                             #amberCommands.CurrentAmber94 = {}
-							#amb_ins = Amber94(atoms, prmfile=filename)
+                                                        #amb_ins = Amber94(atoms, prmfile=filename)
                             mv.setup_Amber94(mol.name+":",mv.energy.name,mol.prname,indice=mol.cconformationIndex)
                             mv.minimize_Amber94(mv.energy.name, dfpred=10.0, callback_freq='10', callback=1, drms=1e-06, maxIter=100., log=0)
                             #mv.md_Amber94(mv.energy.name, 349, callback=1, filename='0', log=0, callback_freq=10)
@@ -953,7 +953,7 @@ def Cylinder(name,radius=1.,length=1.,res=16, pos = [0.,0.,0.]):
 #    baseCyl length = length
 #    baseCyl resolution = res
     return baseCyl
-		
+                
 def Sphere(name,radius=1.0,res=0, pos = [0.,0.,0.]):
     """
     Create a hostobject of type sphere.
@@ -1001,7 +1001,7 @@ def updateSphereMesh(geom,quality=0,cpkRad=0.8,scale=0.,radius=0):
     
     AtmRadi = {"A":1.7,"N":"1.54","C":"1.85","O":"1.39","S":"1.85","H":"1.2","P" : "1.7"}
     #print geom.mesh
-    for name in geom.mesh.keys() : 
+    for name in list(geom.mesh.keys()) : 
         #get the scale factor
         scaleFactor=float(cpkRad)+float(AtmRadi[name])*float(scale)
         if float(cpkRad) > 0. :
@@ -1049,7 +1049,7 @@ def createBaseSphere(name="BaseMesh",quality=0,cpkRad=0.,scale=0.,
     baseSphere = Sphere(name+"_sphere",radius=1.0,res=QualitySph[str(quality)])
     addObjectToScene(getCurrentScene(),baseSphere,parent=baseparent)
     #if mat == None : mat=create_Atoms_materials()
-    for atn in AtmRadi.keys():
+    for atn in list(AtmRadi.keys()):
 #        atparent=newEmpty(name+"_"+atn)
         scaleFactor=float(cpkRad)+float(AtmRadi[atn])*float(scale)
         rad=AtmRadi[atn]
@@ -1148,7 +1148,7 @@ def instancesSphere(name,centers,radii,meshsphere,colors,scene,parent=None):
 #    return sphs
 #    
 def instancesAtomsSphere(name,x,iMe,doc,mat=None,scale=1.0,Res=32,
-						R=None,join=0,geom=None,dialog=None,pb=False):
+                                                R=None,join=0,geom=None,dialog=None,pb=False):
     sphers=[]
     k=0
     n='S'
@@ -1168,52 +1168,52 @@ def instancesAtomsSphere(name,x,iMe,doc,mat=None,scale=1.0,Res=32,
     hiera = 'default'		
     mol = x[0].getParentOfType(Protein)		
     molname = name.split("_")[0]
-    if VERBOSE : print "molname ", molname,mol
+    if VERBOSE : print("molname ", molname,mol)
 #    Spline = getObject("spline"+molname)
     for c in mol.chains:
-		spher=[]
-		oneparent = True 
-		atoms = c.residues.atoms
+                spher=[]
+                oneparent = True 
+                atoms = c.residues.atoms
 #		parent=findatmParentHierarchie(atoms[0],n,hiera)
-		parent=getObject(mol.geomContainer.masterGeom.chains_obj[c.name+"_"+t])
-		#print "finded",parent        
-		for j in xrange(len(atoms.coords)):
-			#at=res.atoms[j]
-			at=atoms[j]
-			radius = at.radius
-			scaleFactor=float(R)+float(radius)*float(scale)
-			atN=at.name
-			#print atN
-			if atN[0] not in AtmRadi.keys(): atN="A"
-			fullname = at.full_name()
-			#print fullname
-			atC=at.coords#at._coords[0]                
-			spher.append( newInstance(n+"_"+fullname,iMe[atN[0]]) )
-			#sc = iMe[atN[0]].parm('sx').eval()
-			#if sc != scaleFactor : 
-			scaleObj(spher[j],float(scaleFactor))#(1/sc)*scale)
-			spher[j].parmTuple('t').set(atC)
+                parent=getObject(mol.geomContainer.masterGeom.chains_obj[c.name+"_"+t])
+                #print "finded",parent        
+                for j in range(len(atoms.coords)):
+                        #at=res.atoms[j]
+                        at=atoms[j]
+                        radius = at.radius
+                        scaleFactor=float(R)+float(radius)*float(scale)
+                        atN=at.name
+                        #print atN
+                        if atN[0] not in list(AtmRadi.keys()): atN="A"
+                        fullname = at.full_name()
+                        #print fullname
+                        atC=at.coords#at._coords[0]                
+                        spher.append( newInstance(n+"_"+fullname,iMe[atN[0]]) )
+                        #sc = iMe[atN[0]].parm('sx').eval()
+                        #if sc != scaleFactor : 
+                        scaleObj(spher[j],float(scaleFactor))#(1/sc)*scale)
+                        spher[j].parmTuple('t').set(atC)
             #instance use properties path
-			spher[j].parm('shop_propertiespath').set('/shop/'+atN[0]) #should be mat[atN[0]]
-			p = parent#findatmParentHierarchie(at,n,hiera)
-			#print "dinded",p
-			if parent != p : 
-			    cp = p
-			    oneparent = False
-			    parent = p
-			else :
-			    cp = parent							
-			#print "parent",cp
-			addObjectToScene(getCurrentScene(),spher[j],parent=cp)
-			toggleDisplay(spher[j],False)
-			k=k+1
+                        spher[j].parm('shop_propertiespath').set('/shop/'+atN[0]) #should be mat[atN[0]]
+                        p = parent#findatmParentHierarchie(at,n,hiera)
+                        #print "dinded",p
+                        if parent != p : 
+                            cp = p
+                            oneparent = False
+                            parent = p
+                        else :
+                            cp = parent							
+                        #print "parent",cp
+                        addObjectToScene(getCurrentScene(),spher[j],parent=cp)
+                        toggleDisplay(spher[j],False)
+                        k=k+1
 #			if pb :
 #				progressBar(j/len(coords)," cpk ")
 #                #dialog.bc[c4d.gui.BFM_STATUSBAR_PROGRESS] = j/len(coords)
 #				#dialog.bc[c4d.gui.BFM_STATUSBAR_PROGRESSFULLSIZE] = True
 #				#c4d.StatusSetBar(j/len(coords))
 #                update()
-		sphers.extend(spher)
+                sphers.extend(spher)
 #    if pb :
 #        resetProgressBar(0)
     return sphers
@@ -2081,7 +2081,7 @@ def piecewiseLinearInterpOnIsovalue(x):
             X = [-3.0, -2.5, -2.0, -1.5, -1.3, -1.1, -0.9, -0.7, -0.5, -0.3, -0.1]
             Y = [0.6565, 0.8000, 1.0018, 1.3345, 1.5703, 1.8554, 2.2705, 2.9382, 4.1485, 7.1852, 26.5335]
             if x<X[0] or x>X[-1]:
-                print "WARNING: Fast approximation :blobbyness is out of range [-3.0, -0.1]"
+                print("WARNING: Fast approximation :blobbyness is out of range [-3.0, -0.1]")
                 return None
             i = 0
             while x > X[i]:
@@ -2416,18 +2416,18 @@ def colorMaterial(mat,col):
 #
 def changeMaterialSchemColor(typeMat):
      if typeMat == "ByAtom":
-          for atms in AtomElements.keys() : colorMaterial(atms,AtomElements[atms])
+          for atms in list(AtomElements.keys()) : colorMaterial(atms,AtomElements[atms])
      elif typeMat == "AtomsU" :
-          for atms in DavidGoodsell.keys() :colorMaterial(atms,DavidGoodsell[atms])
+          for atms in list(DavidGoodsell.keys()) :colorMaterial(atms,DavidGoodsell[atms])
               #if (atms == "P") or (atms == "A") or (atms == "CA"): colorMaterial(atms[0],AtomElements[atms])
               #else : 
               #colorMaterial(atms,DavidGoodsell[atms])
      elif typeMat == "ByResi":
-          for res in RasmolAmino.keys(): colorMaterial(res,RasmolAmino[res])
+          for res in list(RasmolAmino.keys()): colorMaterial(res,RasmolAmino[res])
      elif typeMat == "Residu":
-          for res in Shapely.keys(): colorMaterial(res,Shapely[res])
+          for res in list(Shapely.keys()): colorMaterial(res,Shapely[res])
      elif typeMat == "BySeco":
-          for ss in SecondaryStructureType.keys(): colorMaterial(ss[0:4],SecondaryStructureType[ss])
+          for ss in list(SecondaryStructureType.keys()): colorMaterial(ss[0:4],SecondaryStructureType[ss])
      else : pass
 
 def splitName(name):
@@ -2816,7 +2816,7 @@ def setupAmber(mv,name,mol,prmtopfile, type,add_Conf=True,debug = False):
                     mol.cconformationIndex = confNum
     mv.setup_Amber94(mol.name+":",name,prmtopfile,indice=mol.cconformationIndex)
     mv.minimize_Amber94(name, dfpred=10.0, callback_freq='10', callback=1, drms=1e-06, maxIter=100., log=0)	
-	
+        
 def cAD3Energies(mv,mols,atomset1,atomset2,add_Conf=False,debug = False):
     from Pmv.hostappInterface import comput_util as C
     mv.energy = C.EnergyHandler(mv)
@@ -3135,7 +3135,7 @@ def updateMolAtomCoord(mol,index=-1):
 #    #array = Numeric.array(cam.im_array[:])    
 #    #n=int(len(array)/(cam.width*cam.height))
 #    im = Image.fromstring('RGBA',(mv.art.video.width,mv.art.video.height),
-#                           cam.im_array.tostring())
+#                           cam.im_array.tobytes())
 #    #cam.lock.release()
 #    rgba = im.split()
 #    new = Image.merge("RGBA", (rgba[order[0]],rgba[order[1]],rgba[order[2]],rgba[order[3]]))

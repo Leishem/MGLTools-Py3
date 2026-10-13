@@ -44,7 +44,7 @@ class OxtBuilder:
         #check whether residue already has OXT
         res = catom.parent
         if 'OXT' in res.atoms.name:
-            print 'not adding OXT to ',res.full_name(),'\n', 'it already has an OXT atom'
+            print('not adding OXT to ',res.full_name(),'\n', 'it already has an OXT atom')
             return
         #check whether catom has a hydrogen to delete
         hatoms = catom.parent.atoms.get(lambda x: x.name=='HC')
@@ -78,7 +78,7 @@ class OxtBuilder:
 
         #have to type atoms before call to add_sp2_hydrogen:
         if not hasattr(catom,'babel_type'):
-            print 'catom has no babel_type: calling typeAtoms'
+            print('catom has no babel_type: calling typeAtoms')
             #self.warningMsg(msg)
             #typeAtoms does whole molecule
             babel = AtomHybridization()
@@ -116,7 +116,7 @@ class OxtBuilder:
         # available for the other oxygen atom attached to 'C'
         oatom = res.atoms.get(lambda x: x.name=='O')[0]
         if oatom is not None:
-            for key, value in oatom.colors.items():
+            for key, value in list(oatom.colors.items()):
                 atom.colors[key] = value
                 #atom.opacities[key] = oatom.opacities[key]
                 
@@ -125,7 +125,7 @@ class OxtBuilder:
 
         # update numbers of allAtoms
         fst = mol.allAtoms[0].number
-        mol.allAtoms.number = range(fst, len(mol.allAtoms)+fst)
+        mol.allAtoms.number = list(range(fst, len(mol.allAtoms)+fst))
 
         # update _uniqIndex of this residues atoms
         res.assignUniqIndex()

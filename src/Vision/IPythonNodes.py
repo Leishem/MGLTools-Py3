@@ -2,7 +2,7 @@ from NetworkEditor.items import NetworkNode
 from Vision.StandardNodes import RunFunction
 from idlelib.EditorWindow import EditorWindow
 from IPython.kernel import client
-import Tkinter, Image, ImageTk, types, inspect, warnings
+import tkinter, Image, ImageTk, types, inspect, warnings
 
 def importImageLib(net):
     try:
@@ -75,7 +75,7 @@ class FractalDemo(NetworkNode):
 
     def __init__(self, name='FractalDemo', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append(datatype=None, name='mec')
 
@@ -166,13 +166,13 @@ class FractalDemo(NetworkNode):
 
     def afterAddingToNetwork(self):
         # create a label with a photo image to display result
-        import Tkinter
-        root = self.root = Tkinter.Toplevel()
+        import tkinter
+        root = self.root = tkinter.Toplevel()
         # create an image
         self.image = im = Image.new('RGBA', self.size)
         # make it a photo image and display it
         photo = ImageTk.PhotoImage(im)
-        label = self.display = Tkinter.Label(root, image=photo)
+        label = self.display = tkinter.Label(root, image=photo)
         label.image = im # keep a reference!
         label.pack()
 
@@ -184,17 +184,17 @@ class IPmecBase(NetworkNode):
 """
     def __init__(self, name='MEC', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
     def afterAddingToNetwork(self):
         NetworkNode.afterAddingToNetwork(self)
-        top = Tkinter.Toplevel()
+        top = tkinter.Toplevel()
         top.withdraw()
         ed = EditorWindow(root=top)
         ed.top.withdraw()
         self.top = ed.top
         self.editorDialogue = ed
-        b=Tkinter.Button(master=ed.status_bar,
+        b=tkinter.Button(master=ed.status_bar,
                          text='Apply', command=self.applyCmd)
         b.pack(side='left')
 
@@ -203,7 +203,7 @@ class IPmecBase(NetworkNode):
         self.mecCode = self.editorDialogue.io.text.get("1.0", 'end')
         for line in self.mecCode.split('\n'):
             if len(line):
-                print self.mec.execute(line)
+                print(self.mec.execute(line))
 
     def pass_cb(self, event=None):
         pass
@@ -245,7 +245,7 @@ outputs:
 
     def __init__(self, name='MEC', **kw):
         kw['name'] = name
-        apply( IPmecBase.__init__, (self,), kw )
+        IPmecBase.__init__(*(self,), **kw)
         self.mec = None
         self.mecCode = ""
         self.targets = 'all'
@@ -259,7 +259,7 @@ outputs:
             'initialValue':0, 'labelCfg':{'text':'code editor'},
             }
 
-	self.widgetDescr['engineSelector'] = {
+        self.widgetDescr['engineSelector'] = {
             'class':'NEMultiCheckButtons', 'lockedOnPort':True,
             'valueList':None, #'callback':self.myCallback,
             'sfcfg':{'hull_width':10,'hull_height':4},
@@ -352,7 +352,7 @@ class IPLocalMEC2(IPmecBase):
         
     def __init__(self, name='MEC2local', **kw):
         kw['name'] = name
-        apply( IPmecBase.__init__, (self,), kw )
+        IPmecBase.__init__(*(self,), **kw)
         self.nbEngines = 2
         self.mec = None
         self.mecCode = ""
@@ -396,37 +396,37 @@ class IPLocalMEC2(IPmecBase):
 class IPLocalMEC3(IPLocalMEC2):
     def __init__(self, name='MEC3local', **kw):
         kw['name'] = name
-        apply( IPLocalMEC2.__init__, (self,), kw )
+        IPLocalMEC2.__init__(*(self,), **kw)
         self.nbEngines = 3
 
 class IPLocalMEC4(IPLocalMEC2):
     def __init__(self, name='MEC3local', **kw):
         kw['name'] = name
-        apply( IPLocalMEC2.__init__, (self,), kw )
+        IPLocalMEC2.__init__(*(self,), **kw)
         self.nbEngines = 4
 
 class IPLocalMEC5(IPLocalMEC2):
     def __init__(self, name='MEC3local', **kw):
         kw['name'] = name
-        apply( IPLocalMEC2.__init__, (self,), kw )
+        IPLocalMEC2.__init__(*(self,), **kw)
         self.nbEngines = 5
 
 class IPLocalMEC6(IPLocalMEC2):
     def __init__(self, name='MEC3local', **kw):
         kw['name'] = name
-        apply( IPLocalMEC2.__init__, (self,), kw )
+        IPLocalMEC2.__init__(*(self,), **kw)
         self.nbEngines = 6
 
 class IPLocalMEC7(IPLocalMEC2):
     def __init__(self, name='MEC3local', **kw):
         kw['name'] = name
-        apply( IPLocalMEC2.__init__, (self,), kw )
+        IPLocalMEC2.__init__(*(self,), **kw)
         self.nbEngines = 7
 
 class IPLocalMEC8(IPLocalMEC2):
     def __init__(self, name='MEC3local', **kw):
         kw['name'] = name
-        apply( IPLocalMEC2.__init__, (self,), kw )
+        IPLocalMEC2.__init__(*(self,), **kw)
         self.nbEngines = 8
 
 
@@ -443,7 +443,7 @@ outputs:
 """
     def __init__(self, name='Scatter', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         self.widgetDescr['varname'] = {
@@ -481,7 +481,7 @@ outputs:
 """
     def __init__(self, name='Gather', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         self.widgetDescr['varname'] = {
@@ -517,7 +517,7 @@ outputs:
 """
     def __init__(self, name='Pull', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append(datatype='string', name='varname')
         self.inputPortsDescr.append(datatype=None, name='mec')
@@ -550,7 +550,7 @@ outputs:
 """
     def __init__(self, name='Push', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append(datatype=None, name='object',
                                     singleConnection=False)
@@ -606,28 +606,28 @@ output:
                  name='PRunFunc', **kw):
             
         # we do this to pass the variables into kw
-        if functionOrString is not None or kw.has_key('functionOrString') is False:
+        if functionOrString is not None or ('functionOrString' in kw) is False:
             kw['functionOrString'] = functionOrString
-        elif kw.has_key('functionOrString') is True:
+        elif ('functionOrString' in kw) is True:
             functionOrString = kw['functionOrString']
-        if importString is not None or kw.has_key('importString') is False:
+        if importString is not None or ('importString' in kw) is False:
             kw['importString'] = importString
-        elif kw.has_key('importString') is True:
+        elif ('importString' in kw) is True:
             importString = kw['importString']
-        if len(posArgsNames)>0 or kw.has_key('posArgsNames') is False:
+        if len(posArgsNames)>0 or ('posArgsNames' in kw) is False:
             kw['posArgsNames'] = posArgsNames
-        elif kw.has_key('posArgsNames') is True:
+        elif ('posArgsNames' in kw) is True:
             posArgsNames = kw['posArgsNames']
-        if len(namedArgs)>0 or kw.has_key('namedArgs') is False:
+        if len(namedArgs)>0 or ('namedArgs' in kw) is False:
             kw['namedArgs'] = namedArgs
-        elif kw.has_key('namedArgs') is True:
+        elif ('namedArgs' in kw) is True:
             namedArgs = kw['namedArgs']
-        if name is not None or kw.has_key('name') is False:
+        if name is not None or ('name' in kw) is False:
             kw['name'] = name
-        elif kw.has_key('name') is True:
+        elif ('name' in kw) is True:
             name = kw['name']
 
-        apply( RunFunction.__init__, (self,), kw )
+        RunFunction.__init__(*(self,), **kw)
         self.inNodeWidgetsVisibleByDefault = True
 
         ip = self.inputPortsDescr
@@ -829,7 +829,7 @@ example: parallel_result = mec.map(lambda x:x**10, range(32))
 """
     def __init__(self, name='Map', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.inputPortsDescr.append(datatype=None, name='function')
         self.inputPortsDescr.append(datatype=None, name='data')

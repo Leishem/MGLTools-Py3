@@ -17,7 +17,7 @@ import os, sys, types, Pmw
 from PIL import Image, ImageTk
 from weakref import ref
 from Pmw import ScrolledCanvas
-from Tkinter import Tk, PhotoImage, Label, ALL, Menu, IntVar
+from tkinter import Tk, PhotoImage, Label, ALL, Menu, IntVar
 from mglutil.util.packageFilePath import findFilePath
 from mglutil.gui import widgetsOnBackWindowsCanGrabFocus
 from mglutil.events import Event, EventHandler
@@ -84,8 +84,8 @@ root has to be a widget supporting .bind .after
         self.afterID = None
         self.matchString = ''
         self.lastMatchString = ''
-	KeyRootTk.bind('<KeyPress>', self.key_cb)
-	KeyRootTk.bind('<KeyRelease>', self.keyUp_cb)
+        KeyRootTk.bind('<KeyPress>', self.key_cb)
+        KeyRootTk.bind('<KeyRelease>', self.keyUp_cb)
         self.isControl = False
         self.isShift = False
         self.isAlt = False
@@ -156,13 +156,13 @@ root has to be a widget supporting .bind .after
     # SUBCLASS THIS
     def match(self, name):
         """has to return None if no match or an object that matches"""
-        print 'jumping to ', name
+        print('jumping to ', name)
         return None
 
 
     def selectItem(self, item):
         """do what has to be done to show what matches the typed string"""
-        print 'selecting item', item
+        print('selecting item', item)
 
 
 class SelectEvent(Event):
@@ -257,23 +257,23 @@ label or icon.
         self.nbLines = 1 # height of the tree (i.e. how many lines in canvas)
 
         # build the GUI
-        if not kw.has_key('vscrollmode'):
+        if 'vscrollmode' not in kw:
             kw['vscrollmode'] ='dynamic'
-        if not kw.has_key('hscrollmode'):
+        if 'hscrollmode' not in kw:
             kw['hscrollmode'] ='dynamic'
-        if not kw.has_key('hull_width'):
+        if 'hull_width' not in kw:
             kw['hull_width'] = 550
-        if not kw.has_key('hull_height'):
+        if 'hull_height' not in kw:
             kw['hull_height'] = 100
-        if not kw.has_key('background') and not kw.has_key('bg') and \
-               not kw.has_key('canvas_bg'):
+        if 'background' not in kw and 'bg' not in kw and \
+               'canvas_bg' not in kw:
             kw['canvas_bg']='white'
-        if not kw.has_key('usehullsize'):
+        if 'usehullsize' not in kw:
             kw['usehullsize'] = 1
             
         self.nbLinesPerPage = (kw['hull_height']-self.headerHeight) / nodeHeight
 
-        if not kw.has_key('yscrollincrement'):
+        if 'yscrollincrement' not in kw:
             kw['canvas_yscrollincrement'] = nodeHeight
 
         kw['horizscrollbar_command'] = self.xview
@@ -282,7 +282,7 @@ label or icon.
         #kw['canvasmargin'] = 10
         #kw['hscrollmode'] = 'none'
         
-        apply( ScrolledCanvas.__init__, (self, master), kw)
+        ScrolledCanvas.__init__(*(self, master), **kw)
 
         canvas = self.canvas = self.component('canvas')
 
@@ -1028,7 +1028,7 @@ below self"""
             i1 = all.index(self)
             i2 = all.index(last)
         except ValueError:
-            raise ValueError, "range only work over siblings"
+            raise ValueError("range only work over siblings")
 
         if i1 > i2:
             tmp=i1; i1=i2; i2=tmp
@@ -1061,7 +1061,7 @@ below self"""
     def refresh(self):
         self.needsRedraw = True
         try:
-            self.label["text"] = unicode(self)
+            self.label["text"] = str(self)
         except:
             pass
 
@@ -1312,7 +1312,7 @@ if __name__=='__main__':
     ##                 func(self)
 
         def menu_cb(self, column, what, menuEntryIndex, event=None):
-            print 'FFFF', column, what, menuEntryIndex
+            print('FFFF', column, what, menuEntryIndex)
 
 
         def buttonClick(self, column, event=None):
@@ -1328,7 +1328,7 @@ if __name__=='__main__':
 
             for i,v in enumerate(self.menuVars[column]):
                 if v.get():
-                    print 'DDD', tree.menuEntries[column][i], self.chkbt[column]
+                    print('DDD', tree.menuEntries[column][i], self.chkbt[column])
 
 
         def shiftButtonClick(self, column, event=None):

@@ -63,11 +63,11 @@ class PmvColorObjectMAA(ColorObjectMAA):
         self.gui = None
         self.redrawActor = None
         if not pmv:
-            print "application Pmv is not specified"
+            print("application Pmv is not specified")
             return
         vi = pmv.GUI.VIEWER
-        if colortype not in colorCmds.keys():
-            print "unsupported color scheme %s" % colortype
+        if colortype not in list(colorCmds.keys()):
+            print("unsupported color scheme %s" % colortype)
             return
         
         self.cmd = pmv.commands[colorCmds[colortype][0]]
@@ -79,14 +79,14 @@ class PmvColorObjectMAA(ColorObjectMAA):
         self.nodes = nodes
         geoms = self.cmd.getAvailableGeoms(nodes)
         #print "available geoms", geoms
-        molnames = map(lambda x: x.name , pmv.Mols)
+        molnames = [x.name for x in pmv.Mols]
         
         for object in objects:
             #print "object:", object
             oname = object.name
             if oname != "root" and oname not in geoms and oname not in molnames:
-                import tkMessageBox
-                tkMessageBox.showwarning("Pmv AniMol warning:", "Cannot create %s animation for %s -\nobject is not available for Pmv color command."%(colortype, object.name))
+                import tkinter.messagebox
+                tkinter.messagebox.showwarning("Pmv AniMol warning:", "Cannot create %s animation for %s -\nobject is not available for Pmv color command."%(colortype, object.name))
                 #print "object %s cannot be colored with %s" % (object.name, colortype)
                 ind = objects.index(object)
                 objects.pop(ind)
@@ -127,7 +127,7 @@ class PmvColorObjectMAA(ColorObjectMAA):
             self.cmd(nodes, geomsToColor, log = 0)
         #finalColors = self.finalColors = self.getObjectsColors(objects, nodes)
         finalColors = self.finalColors = self.getObjectsColors(geomsToColor, molecules)
-        geoms = finalColors.keys()
+        geoms = list(finalColors.keys())
         self.geomsToColor = geomsToColor
         self.molecules = molecules
         #print "geoms:", geoms
@@ -189,14 +189,14 @@ class PmvColorObjectMAA(ColorObjectMAA):
             allGeoms = []
             geomC = mol.geomContainer
             for gName in geomsToColor:
-                if not geomC.geoms.has_key(gName): continue
+                if gName not in geomC.geoms: continue
                 geom = geomC.geoms[gName]
                 allGeoms.append(gName)
                 if len(geom.children):
-                    childrenNames = map(lambda x: x.name, geom.children)
+                    childrenNames = [x.name for x in geom.children]
                     allGeoms = allGeoms + childrenNames
                 for name in allGeoms:
-                    if geomC.atoms.has_key(name) and len(geomC.atoms[name])==0: continue 
+                    if name in geomC.atoms and len(geomC.atoms[name])==0: continue 
                     col = geomC.getGeomColor(name)
                     if col is not None:
                         g = geomC.geoms[name]
@@ -212,7 +212,7 @@ class PmvColorObjectMAA(ColorObjectMAA):
         for actor in self.actors:
             if actor.name.find(prop) > 0:
                 obj = actor.object
-                if self.atomSets.has_key(obj.fullName):
+                if obj.fullName in self.atomSets:
                     #setstr = self.atomSets[obj.fullName]['atomset']
                     g = obj.mol.geomContainer
                     aset = g.atoms[obj.name].findType(Atom)
@@ -222,7 +222,7 @@ class PmvColorObjectMAA(ColorObjectMAA):
                     atList = []
                     func = g.geomPickToAtoms.get(obj.name)
                     if func:
-                        atList = func(obj, range(len(obj.vertexSet.vertices)))
+                        atList = func(obj, list(range(len(obj.vertexSet.vertices))))
                     else:
                         allAtoms = g.atoms[obj.name]
                         if hasattr(obj, "vertexSet") and len(allAtoms) == len(obj.vertexSet):
@@ -230,9 +230,9 @@ class PmvColorObjectMAA(ColorObjectMAA):
                     if not len(atList): return
                     col = actor.getLastKeyFrame().getValue()
                     oname = None
-                    if aset.colors.has_key(obj.name):
+                    if obj.name in aset.colors:
                         oname = obj.name
-                    elif aset.colors.has_key(obj.parent.name):
+                    elif obj.parent.name in aset.colors:
                         oname = obj.parent.name
                     if not oname : return
                     if len(col) == 1:
@@ -282,7 +282,7 @@ class PmvColorObjectMAA(ColorObjectMAA):
         """
         set kfpos, direction and easeInOut and rebuild MAA
         """
-        if kw.has_key('color'):
+        if 'color' in kw:
             if self.colortype == "choose color":
                 vi = self.pmv.GUI.VIEWER
                 vi.stopAutoRedraw()
@@ -293,7 +293,7 @@ class PmvColorObjectMAA(ColorObjectMAA):
                 vi.startAutoRedraw()
                 self.color = kw['color']
             kw.pop('color')
-        if not kw.has_key('colortype'):
+        if 'colortype' not in kw:
             kw['colortype'] = self.colortype
         ColorObjectMAA.configure(self, **kw)
 
@@ -366,7 +366,7 @@ class  PartialFadeMolGeomsMAA(PartialFadeMAA):
         self.redrawActor = None
         self.editorClass = None
         if not pmv:
-            print "application Pmv is not specified"
+            print("application Pmv is not specified")
             return
         self.pmv = pmv
         if not len(geometries):
@@ -435,7 +435,7 @@ class  PartialFadeMolGeomsMAA(PartialFadeMAA):
                 # for each molecule
                 geomName = geom.name
                 for mol, atms in zip(molecules, atmSets):
-                    if not mol.geomContainer.geoms.has_key(geomName):
+                    if geomName not in mol.geomContainer.geoms:
                         continue
                     if geom.mol != mol:
                         continue
@@ -480,13 +480,13 @@ class  PartialFadeMolGeomsMAA(PartialFadeMAA):
         """set nodes, destValue, fade parameters and rebuild MAA."""
         
         nodes = None
-        if kw.has_key('nodes'):
+        if 'nodes' in kw:
             nodes = kw.pop('nodes')
         destValue = None
-        if kw.has_key('destValue'):
+        if 'destValue' in kw:
             destValue = kw.pop('destValue')
         fade = None
-        if kw.has_key('fade'):
+        if 'fade' in kw:
             fade = kw.pop('fade')
         allobjects = self.getOpacityValues(self.objects, nodes, destValue, fade)
         self.objects = allobjects

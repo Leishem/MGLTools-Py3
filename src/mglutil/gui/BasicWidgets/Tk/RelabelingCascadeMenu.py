@@ -18,15 +18,15 @@
 # $Id: RelabelingCascadeMenu.py,v 1.4 2007/05/01 22:48:05 vareille Exp $
 #
 
-import Tkinter
+import tkinter
 import weakref
 
-class RelabelingCascadeMenu(Tkinter.Menu):
+class RelabelingCascadeMenu(tkinter.Menu):
     """
 """
     def __init__(self, label, variable, master=None, cnf={}, **kw):
         #print "RelabelingCascadeMenu.__init__", cnf, kw
-        Tkinter.Menu.__init__(self,  *(master, cnf), **kw)
+        tkinter.Menu.__init__(self,  *(master, cnf), **kw)
         self.baseLabel = label
         self.cascadeVariable = variable
         self._upperMenu = weakref.ref(master)
@@ -46,10 +46,10 @@ class RelabelingCascadeMenu(Tkinter.Menu):
 
         self._valuesLabels[kw['value']] = kw['label']
 
-        if kw.has_key('command') and kw['command'] is not None:
+        if 'command' in kw and kw['command'] is not None:
             self._externalCallbackFunction = kw['command']
         kw['command'] = self._envelopeCallbackFunction
-        Tkinter.Menu.add_radiobutton( self, *(cnf,), **kw)
+        tkinter.Menu.add_radiobutton( self, *(cnf,), **kw)
 
 
     def setWithoutCallbackFunction(self, value):

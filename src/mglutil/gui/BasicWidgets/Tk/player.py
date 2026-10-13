@@ -16,7 +16,7 @@
 #
 #
 
-import Tkinter, Pmw
+import tkinter, Pmw
 import types, time, os
 from mglutil.util.callback import CallBackFunction
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr,InputForm,evalString
@@ -24,7 +24,7 @@ from mglutil.util.callback import CallbackManager
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 from mglutil.util.packageFilePath import findFilePath
 from mglutil.util.misc import ensureFontCase
-import tkMessageBox
+import tkinter.messagebox
 
 try:
     import pymedia
@@ -33,7 +33,7 @@ except:
     pymediaFound = False
 
 
-class Player(Tkinter.Frame):
+class Player(tkinter.Frame):
     """Widget to play sequence of frames.
     The GUI allows to specify direction and speed of playback.
 
@@ -220,7 +220,7 @@ class Player(Tkinter.Frame):
         """ function to display the player gui."""
 
         if hasattr(self, 'form'):
-	    if hasattr(self.form, "deiconify"):
+            if hasattr(self.form, "deiconify"):
                 self.form.deiconify()
                 return   
         self.master=master
@@ -246,17 +246,17 @@ class Player(Tkinter.Frame):
             recordfile = os.path.join(ICONDIR,"record.gif")
             record1file = os.path.join(ICONDIR, "record1.gif")
             
-            self.gotoStartIcon = Tkinter.PhotoImage(file=gotoStartfile, master=master)
-            self.gotoEndIcon = Tkinter.PhotoImage(file=gotoEndfile, master=master)
-            self.ff_revIcon = Tkinter.PhotoImage(file=ff_revfile, master=master)
-            self.ff_fwdIcon = Tkinter.PhotoImage(file=ff_fwdfile, master=master)
-            self.stopIcon = Tkinter.PhotoImage(file=stopfile, master=master)
-            self.playIcon = Tkinter.PhotoImage(file=playfile, master=master)
-            self.playRevIcon = Tkinter.PhotoImage(file=playRevfile, master=master)
-            self.recIcon = Tkinter.PhotoImage(file=recordfile, master=master)
-            self.rec1Icon = Tkinter.PhotoImage(file=record1file, master=master)
-            self.chmodIcon = Tkinter.PhotoImage(file=chmodfile, master=master)
-            self.closeIcon = Tkinter.PhotoImage(file=closefile, master=master)
+            self.gotoStartIcon = tkinter.PhotoImage(file=gotoStartfile, master=master)
+            self.gotoEndIcon = tkinter.PhotoImage(file=gotoEndfile, master=master)
+            self.ff_revIcon = tkinter.PhotoImage(file=ff_revfile, master=master)
+            self.ff_fwdIcon = tkinter.PhotoImage(file=ff_fwdfile, master=master)
+            self.stopIcon = tkinter.PhotoImage(file=stopfile, master=master)
+            self.playIcon = tkinter.PhotoImage(file=playfile, master=master)
+            self.playRevIcon = tkinter.PhotoImage(file=playRevfile, master=master)
+            self.recIcon = tkinter.PhotoImage(file=recordfile, master=master)
+            self.rec1Icon = tkinter.PhotoImage(file=record1file, master=master)
+            self.chmodIcon = tkinter.PhotoImage(file=chmodfile, master=master)
+            self.closeIcon = tkinter.PhotoImage(file=closefile, master=master)
             self.form = self.buildForm2(titleStr)  # pass some argument here
 
     #play methods:
@@ -273,7 +273,7 @@ class Player(Tkinter.Frame):
             
         while not self.stop: #this has to be more complex
             if self.stop: 
-                print 'play stopped!'
+                print('play stopped!')
                 break
             
             #do something different here if ff_fwd or ff_rev
@@ -382,7 +382,7 @@ class Player(Tkinter.Frame):
             self.form.ent2.insert(0, str(id))
             if self.hasSlider:
                 self.form.ifd.entryByName['slider']['widget'].set(id)
-        print 'playing ', id
+        print('playing ', id)
         self.currentFrameIndex = int(id)
 
 
@@ -564,7 +564,7 @@ class Player(Tkinter.Frame):
 
         if self.buttonMask.get('gotoStartB', None) is not False:
             ifd.append({'name': 'gotoStartB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 #'text':'gotoStart',
                 'tooltip':'sets frame to current startFrame',
                 'wcfg':{'bd':4,
@@ -577,7 +577,7 @@ class Player(Tkinter.Frame):
 
         if self.buttonMask.get('fastReverseB', None) is not False:
             ifd.append({'name': 'fastReverseB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 #'text':'fastReverse',
                 'tooltip':'play reverse as fast as possible',
                 'wcfg':{'bd':4,
@@ -590,7 +590,7 @@ class Player(Tkinter.Frame):
 
         if self.buttonMask.get('playRevB', None) is not False:
             ifd.append({'name': 'playRevB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 #'text':'Play Reverse',
                 'tooltip':'play reverse according to current play mode',
                 'wcfg':{'bd':4,
@@ -617,7 +617,7 @@ class Player(Tkinter.Frame):
 
         if self.buttonMask.get('playB', None) is not False:
             ifd.append({'name': 'playB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 #'text':'Play',
                 'tooltip':'play forward according to current play mode',
                 'wcfg':{'bd':4,
@@ -630,7 +630,7 @@ class Player(Tkinter.Frame):
 
         if self.buttonMask.get('fastForwardB', None) is not False:
             ifd.append({'name': 'fastForwardB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 #'text':'fastForward',
                 'tooltip':'play as fast as possible',
                 'wcfg':{'bd':4,
@@ -643,7 +643,7 @@ class Player(Tkinter.Frame):
 
         if self.buttonMask.get('gotoEndB', None) is not False:
             ifd.append({'name': 'gotoEndB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 #'text':'gotoEnd',
                 'tooltip':'sets frame to current endFrame',
                 'wcfg':{'bd':4,
@@ -656,7 +656,7 @@ class Player(Tkinter.Frame):
 
         if self.buttonMask.get('modeB', None) is not False:
             ifd.append({'name': 'modeB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'text':'Change Mode',
                 'tooltip':'opens panel to change play options',
                 'wcfg':{'bd':4,
@@ -669,12 +669,12 @@ class Player(Tkinter.Frame):
 
         if pymediaFound and self.buttonMask.get('recordB', None) is not False:
             ifd.append({'name': 'recordB',
-                'widgetType': Tkinter.Checkbutton,
+                'widgetType': tkinter.Checkbutton,
                 'text':'Record',
                 'tooltip':'record an mpeg movie into movie_####.mpg',
                 'defaultValue':0,
                 'wcfg':{'bd':4,
-                        'variable':Tkinter.IntVar(),
+                        'variable':tkinter.IntVar(),
                         'image':self.recIcon,
                         'width':self.recIcon.width(),
                         'height':self.recIcon.height(),
@@ -685,7 +685,7 @@ class Player(Tkinter.Frame):
 
         if self.buttonMask.get('setanimB', None) is not False:
             ifd.append({'name': 'setanimB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'text':'SetAnim',
                 'tooltip':'Set Animation',
                 'wcfg':{'bd':4},
@@ -694,7 +694,7 @@ class Player(Tkinter.Frame):
         
         if self.buttonMask.get('closeB', None) is not False:
             ifd.append({'name': 'closeB',
-                'widgetType': Tkinter.Button,
+                'widgetType': tkinter.Button,
                 'text':'Close',
                 'tooltip':'closes player',
                 'wcfg':{'bd':4,
@@ -708,7 +708,7 @@ class Player(Tkinter.Frame):
 
         if self.hasSlider:
             ifd.append({'name': 'slider',
-                'widgetType': Tkinter.Scale,
+                'widgetType': tkinter.Scale,
                 'wcfg':{'orient':'horizontal',
                         'from_':self.startFrame,
                         'to':self.maxFrame,
@@ -767,32 +767,32 @@ class Player(Tkinter.Frame):
                         'entryfield_validate': self.custom_validate },
                      'gridcfg':{'sticky':'nesw', 'columnspan':2}})
         ifd.append({'name': 'playB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Play',
             'tooltip':'play sequence according to current play mode',
             'wcfg':{'bd':4},
             'gridcfg':{'sticky':'nesw','columnspan':1},
             'command':self.Play_cb})
         ifd.append({'name': 'playRevB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Play Reverse',
             'wcfg':{'bd':4},
             'gridcfg':{'sticky':'nesw','row':-1, 'column':1},
             'command':self.PlayRev_cb})
         ifd.append({'name': 'playTB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Play+Return',
             'wcfg':{'bd':4},
             'gridcfg':{'sticky':'nesw','columnspan':1},
             'command':self.PlayReturn_cb})
         ifd.append({'name': 'loopB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Loop',
             'wcfg':{'bd':4},
             'gridcfg':{'sticky':'nesw','row':-1, 'column':1},
             'command':self.Loop_cb})
         ifd.append({'name': 'stopB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Stop',
             'tooltip':'stop play',
             'wcfg':{'bd':4,
@@ -801,14 +801,14 @@ class Player(Tkinter.Frame):
             'command':self.Stop_cb})
         #add fastforward, fastrewind, thumbwheel for speed
         ifd.append({'name': 'pauseB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Pause',
             'wcfg':{'bd':4},
             'gridcfg':{'sticky':'nesw','row':-1, 'column':1},
             'command':self.Pause_cb})
 
         ifd.append({'name': 'closeB',
-            'widgetType': Tkinter.Button,
+            'widgetType': tkinter.Button,
             'text':'Close',
             'wcfg':{'bd':4},
             #'gridcfg':{'sticky':'nesw','row':-1, 'column':1},
@@ -853,13 +853,13 @@ class Player(Tkinter.Frame):
             ifd2 = InputFormDescr(title='Set Play Mode')    
 
             ifd2.append( {'name': 'playModeLabel',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':'play mode options:', 
                         'font':(ensureFontCase('helvetica'),12,'bold')},
                     'gridcfg':{'sticky':'w'}})
 
             ifd2.append({'name':'playMode',
-                        'widgetType': Tkinter.Radiobutton,
+                        'widgetType': tkinter.Radiobutton,
                         'defaultValue': self.playModeList[self.playMode],
                         'listtext':self.playModeList,
                         'gridcfg':{'sticky':'w'}})
@@ -921,7 +921,7 @@ class Player(Tkinter.Frame):
                          })
 
             ifd2.append({'name':'acceptB',
-                        'widgetType': Tkinter.Button,
+                        'widgetType': tkinter.Button,
                         'wcfg':{
                             'text': 'ok',
                             'command': self.setPlayMode_cb,
@@ -929,7 +929,7 @@ class Player(Tkinter.Frame):
                         'gridcfg':{'sticky':'nesw'}})
 
             ifd2.append({'name':'cancelB',
-                        'widgetType': Tkinter.Button,
+                        'widgetType': tkinter.Button,
                         'wcfg':{
                             'text': 'cancel',
                             'command': self.cancelPlayMode_cb,
@@ -938,7 +938,7 @@ class Player(Tkinter.Frame):
             if self.master is None:
                 master = self.root
             else:
-                master = Tkinter.Toplevel()
+                master = tkinter.Toplevel()
             self.playModeForm = InputForm(master, None,
                         descr = ifd2,
                         modal = 0, blocking = 0)
@@ -980,7 +980,7 @@ class Player(Tkinter.Frame):
             return 1
 
         tt = int(text)
-        okList = range(self.startFrame, self.endFrame+1)
+        okList = list(range(self.startFrame, self.endFrame+1))
         if tt in okList:
             return 1
         else:
@@ -1006,8 +1006,8 @@ class Player(Tkinter.Frame):
 
 if __name__ == '__main__':
     def foo(val):
-        print val
-    root = Tkinter.Tk()
+        print(val)
+    root = tkinter.Tk()
     root.withdraw()
     pl = Player( master=root, endFrame=10, maxFrame=10, form2=1)
 

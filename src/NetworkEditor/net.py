@@ -17,13 +17,13 @@
 
 import sys
 import os
-import types, math, string, threading, weakref
-import Tkinter, Pmw
+import types, math, threading, weakref; from mglcompat import pystring as string
+import tkinter, Pmw
 import traceback, time
 from time import time, sleep
 import re
 
-from tkSimpleDialog import askstring
+from tkinter.simpledialog import askstring
 
 from mglutil.gui import widgetsOnBackWindowsCanGrabFocus
 from mglutil.util.callback import CallbackManager, CallBackFunction
@@ -35,8 +35,8 @@ from NetworkEditor.ports import InputPort, OutputPort, \
      RunChildrenInputPort, RunNodeInputPort
 from NetworkEditor.flow import ExecutionThread, AfterExecution
 from NetworkEditor.itemBase import UserPanel
-from Tkinter import *
-from Glyph import Glyph
+from tkinter import *
+from .Glyph import Glyph
 
 from mglutil.events import Event
 
@@ -97,16 +97,16 @@ class Communicator:
             try:
                 s.bind((self.host, portBase+i))
                 break
-            except Exception,e:
-                print e
+            except Exception as e:
+                print(e)
                 i += 1
                 if i==10:
-                    raise RuntimeError, "Communicator unable to bind"
+                    raise RuntimeError("Communicator unable to bind")
                 #if e.args[0]==98: # Address already in use
                 #elif e.args[0]==22: # socket already bound
         
-	s.listen(listen)
-	s.setblocking(0)
+        s.listen(listen)
+        s.setblocking(0)
         self.port = portBase+i
         self.connId = s.fileno()
         self.clientConnections = []
@@ -123,7 +123,7 @@ class Communicator:
                 sleep(0.2)
                 i +=1
                 if i == 10:
-                    print "Communicator: failed to connect"
+                    print("Communicator: failed to connect")
                     return None
                 continue
             break
@@ -139,7 +139,7 @@ class Communicator:
             conn, addr = self.socket.accept()
             self.clientConnections.append( (conn, addr) )
             self.clientInIds.append( conn.fileno() )
-            print 'Connected by', addr
+            print('Connected by', addr)
 
         if len(self.clientInIds)==0:
             return
@@ -154,7 +154,7 @@ class Communicator:
                     self.clientConnections.remove(conn)
                 else:
                     procid = os.getpid()
-                    print "process %d input"%procid, repr(input)
+                    print("process %d input"%procid, repr(input))
 
                     #mod = __import__('__main__')
                     #mod.__dict__['clientSocket'] = conn[0]
@@ -183,7 +183,7 @@ class Network(KeyboardModifierMonitor, NetworkItemsBase):
                 sleep(0.2)
                 i +=1
                 if i == 10:
-                    print "Communicator: failed to connect"
+                    print("Communicator: failed to connect")
                     return None
                 continue
             break
@@ -386,7 +386,7 @@ Return all the nodes who's name match the name regular expression
         nodes = []
         import re
         reg = re.compile(name)
-        nodes = filter( lambda x,reg=reg: reg.match(x.name), self.nodes )
+        nodes = list(filter( lambda x,reg=reg: reg.match(x.name), self.nodes ))
         return nodes
     
 
@@ -418,20 +418,20 @@ Return all the nodes who's name match the name regular expression
 
 
     def createCallbackManager(self, event, doc=None):
-        assert not self.eventHandler.has_key(event)
+        assert event not in self.eventHandler
         self.eventHandler[event] = CallbackManager()
         self.eventHandler[event].doc = doc
 
 
     def addCallbackManager(self, event, func):
-        assert self.eventHandler.has_key(event)
+        assert event in self.eventHandler
         assert callable(func)
         
         self.eventHandler[event].AddCallback(func)
         
 
     def describeCallbackManager(self, event):
-        assert self.eventHandler.has_key(event)
+        assert event in self.eventHandler
         return self.eventHandler[event].doc
     
 
@@ -462,7 +462,7 @@ Return all the nodes who's name match the name regular expression
         if self.canvas:
             self.destroyIcons(saveValues=saveValues)
 
-        for p in self.userPanels.values():
+        for p in list(self.userPanels.values()):
             p.master.destroy()
         self.runOnNewData.value = lRunOnNewDataValue
 
@@ -562,7 +562,7 @@ Return all the nodes who's name match the name regular expression
     def rename(self, name):
         ed = self.getEditor()
         if ed is not None:
-            if self.name in ed.networks.keys():
+            if self.name in list(ed.networks.keys()):
                 del ed.networks[self.name]
                 ed.networks[name] = self
             if self.canvas:
@@ -593,7 +593,7 @@ Return all the nodes who's name match the name regular expression
         ed = self.getEditor()
 
         if self.canvas is None:
-            print 'too early to bind'
+            print('too early to bind')
             return
         self.canvas.bind("<Any-ButtonPress-1>", self.mouse1Down)
         self.canvas.bind("<Any-ButtonPress-3>", self.mouse1Down)
@@ -656,7 +656,7 @@ Return all the nodes who's name match the name regular expression
         master = self.canvasFrame = ed.networkArea.add(self.name)
         self.origName = self.name
         self.scrollregion=[0 , 0, ed.totalWidth, ed.totalHeight]
-	self.scrolledCanvas = Pmw.ScrolledCanvas(
+        self.scrolledCanvas = Pmw.ScrolledCanvas(
             master, borderframe=1, #labelpos='n', label_text='main',
             usehullsize=0, hull_width=ed.visibleWidth,
             hull_height=ed.visibleHeight,
@@ -674,12 +674,12 @@ Return all the nodes who's name match the name regular expression
 ##                                             image=self.bg)
 
         # bind standard callbacks
-  	self.canvas.bind('<Configure>', self.configure)
-	self.canvas.bind("<Control-z>", ed.undo)
-	self.canvas.bind("<Control-Z>", ed.undo)
+        self.canvas.bind('<Configure>', self.configure)
+        self.canvas.bind("<Control-z>", ed.undo)
+        self.canvas.bind("<Control-Z>", ed.undo)
 
-	# pack 'em up
-	self.scrolledCanvas.pack(side=Tkinter.LEFT, expand=1,fill=Tkinter.BOTH)
+        # pack 'em up
+        self.scrolledCanvas.pack(side=tkinter.LEFT, expand=1,fill=tkinter.BOTH)
 
         self.canvas.bind("<Enter>", self.enter)
 
@@ -690,11 +690,11 @@ Return all the nodes who's name match the name regular expression
         if yesno is True:
             self.defaultConnectionOptions['smooth'] = 1
             for c in self.connections:
-                apply( c.iconMaster.itemconfigure, (c.iconTag,),{'smooth':1})
+                c.iconMaster.itemconfigure(*(c.iconTag,), **{'smooth':1})
         else:
             self.defaultConnectionOptions['smooth'] = 0
             for c in self.connections:
-                apply( c.iconMaster.itemconfigure, (c.iconTag,),{'smooth':0})
+                c.iconMaster.itemconfigure(*(c.iconTag,), **{'smooth':0})
 
 #
 # save/restore source code generation
@@ -710,7 +710,7 @@ Return all the nodes who's name match the name regular expression
 
         lines += self.getNetworkCreationSourceCode(copyright=copyright)
         f = open(filename, 'w')        
-        map( f.write, lines )
+        list(map( f.write, lines ))
         f.close()
 
 
@@ -781,10 +781,10 @@ if __name__=='__main__':
     else: # run as a stand alone application while vision is hidden
         withoutVision = False
         from Vision import launchVisionToRunNetworkAsApplication, mainLoopVisionToRunNetworkAsApplication
-	if '-noSplash' in argv:
-	    splash = False
-	else:
-	    splash = True
+        if '-noSplash' in argv:
+            splash = False
+        else:
+            splash = True
         masterNet = launchVisionToRunNetworkAsApplication(splash=splash)
     import os
     masterNet.filename = os.path.abspath(__file__)
@@ -797,7 +797,7 @@ if __name__=='__main__':
 #        lines.append(indent+"#### File written by Vision ####\n\n")
 
         ## save code to create user panels
-        for name, value in self.userPanels.items():
+        for name, value in list(self.userPanels.items()):
             #print "name, value", name, value, dir(value.frame)
             lines.append(indent+
                          "masterNet.createUserPanel('%s' ,width=%d, height=%d)\n"
@@ -859,7 +859,7 @@ if __name__=='__main__':
         for t in txt:
             lines.extend(t)
 
-        for lNodeName, lNode in ed._tmpListOfSavedNodes.items():
+        for lNodeName, lNode in list(ed._tmpListOfSavedNodes.items()):
             #print "_tmpListOfSavedNodes", lNodeName, lNode
             if hasattr(lNode, 'vi'):
                 lines.extend('\n\ndef loadSavedStates_%s(self=%s, event=None):\n'%(lNodeName, lNodeName) )    
@@ -953,7 +953,7 @@ if __name__=='__main__':
 
 The following nodes and ports exist in this network:
 """ % sys.argv[0]
-        print help_msg
+        print(help_msg)
         lNodeDict = {}
         for node in self.nodes:
            lNodeDict[node.name] = node
@@ -990,21 +990,21 @@ The following nodes and ports exist in this network:
     def buildNodeDict(self, mod):
         nodeDict = {}
         from NetworkEditor.items import NetworkNode
-        for name, object in mod.items():
+        for name, object in list(mod.items()):
             if isinstance(object, NetworkNode):
                 nodeDict[name] = object
         return nodeDict
 
 
     def listInputPorts(self, nodeDict):
-        for k,v in nodeDict.items():
-            print k
+        for k,v in list(nodeDict.items()):
+            print(k)
             for port in v.inputPorts:
-                print "\t", port.name,
+                print("\t", port.name, end=' ')
                 if port.widget:
-                    print '\t', port.widget.get()
+                    print('\t', port.widget.get())
                 else:
-                    print
+                    print()
     ##
     ## End functions used to run networks as programs
     ##
@@ -1014,7 +1014,7 @@ The following nodes and ports exist in this network:
         """Loop recursively (if macro nodes are present) over all nodes and
         build a dictionary containing the libraries needed to save a network"""
         
-        from macros import MacroNode, MacroInputNode, MacroOutputNode
+        from .macros import MacroNode, MacroInputNode, MacroOutputNode
         for n in network.nodes:
 
             if selectedOnly:
@@ -1042,8 +1042,8 @@ The following nodes and ports exist in this network:
             else:
                 pass # Hmmmm? What else could we do here?
 
-            if n.constrkw.has_key('host') is True:
-                if cache.has_key('hosts') is False:
+            if ('host' in n.constrkw) is True:
+                if ('hosts' in cache) is False:
                     cache['hosts'] = {}
                 cache['hosts'].update({n.constrkw['host']:None})
 
@@ -1068,7 +1068,7 @@ loadHost: allows loading of the webserver host as category
             lines.append(indent+"## loading libraries ##\n")
 
         # import code for all libraries
-        for k, v in cache.items():
+        for k, v in list(cache.items()):
             if k == 'files':
                 for var, mod, file in v:
                     l = "from mglutil.util.packageFilePath import "+\
@@ -1091,7 +1091,7 @@ loadHost: allows loading of the webserver host as category
             #lines.append(indent+"if __name__!='__main__' or withoutVision is False:\n")
             #lines.append(indent1+"pass\n")
             addlib = indent+editor+'.addLibraryInstance('
-            for k, v in cache.items():
+            for k, v in list(cache.items()):
                 if k == 'files':
                     for var, mod, file in v:
                         lines.append(
@@ -1100,13 +1100,13 @@ loadHost: allows loading of the webserver host as category
                 elif k != 'hosts':
                     lines.append(indent+addlib+'%s,"%s", "%s")\n\n'%(k, v, k) )
         elif loadHost is True:
-            if cache.has_key('hosts'):
+            if 'hosts' in cache:
                 lines.append(indent+networkName+'.getEditor().addLibraryInstance(wslib,"WebServices.VisionInterface.WSNodes", "wslib")\n')
 
         if importOnly is False or loadHost is True:
-            if cache.has_key('hosts'):
+            if 'hosts' in cache:
                 lines.append(indent+'from WebServices.VisionInterface.WSNodes import addOpalServerAsCategory\n')
-                for host in cache['hosts'].keys():
+                for host in list(cache['hosts'].keys()):
                     lines.append(indent+'try:\n')
                     lines.append(indent+"    addOpalServerAsCategory("+host+", replace=False)\n")
                     lines.append(indent+'except:\n')
@@ -1149,7 +1149,7 @@ loadHost: allows loading of the webserver host as category
     def getNodes(self, nodesIds):
         """return a list of nodes corresponding to canvasIds"""
         nodes = []
-        nodekeys = self.nodesById.keys()
+        nodekeys = list(self.nodesById.keys())
         for n in nodesIds:
             if n in nodekeys:
                 nodes.append(self.nodesById[n])
@@ -1164,10 +1164,10 @@ loadHost: allows loading of the webserver host as category
         conns = []
         inports = []
         outports = []
-        nodekeys = self.nodesById.keys()
-        connkeys = self.connById.keys()
-        inportkeys = self.inPortsId.keys()
-        outportkeys = self.outPortsId.keys()
+        nodekeys = list(self.nodesById.keys())
+        connkeys = list(self.connById.keys())
+        inportkeys = list(self.inPortsId.keys())
+        outportkeys = list(self.outPortsId.keys())
         for n in nodesIds:
             if n in nodekeys:
                 nodes.append(self.nodesById[n])
@@ -1208,12 +1208,12 @@ returns 3 lists:
                 twoNodes.append(c)
         for n in nodes:
             delattr(n, 'inset__')
-        return twoNodes, oneNode, no1.keys()
+        return twoNodes, oneNode, list(no1.keys())
 
 
     def getNodesAndInputPort(self, nodesIds):
         nodes = []
-        portkeys = self.inPortsId.keys()
+        portkeys = list(self.inPortsId.keys())
         for n in nodesIds:
             if n in portkeys:
                 nodes.append(self.inPortsId[n])
@@ -1222,7 +1222,7 @@ returns 3 lists:
 
     def getNodesAndOutputPort(self, nodesIds):
         nodes = []
-        portkeys = self.outPortsId.keys()
+        portkeys = list(self.outPortsId.keys())
         for n in nodesIds:
             if n in portkeys:
                 nodes.append(self.outPortsId[n])
@@ -1232,8 +1232,8 @@ returns 3 lists:
     def getNodesAndConnections(self, nodesIds):
         nodes = []
         conn = []
-        nodekeys = self.nodesById.keys()
-        connkeys = self.connById.keys()
+        nodekeys = list(self.nodesById.keys())
+        connkeys = list(self.connById.keys())
         for n in nodesIds:
             if n in nodekeys:
                 nodes.append(self.nodesById[n])
@@ -1266,8 +1266,8 @@ returns 3 lists:
             self.postedMenu.unpost()
             self.postedMenu = None
 
-	self.origx = self.lastx = self.canvas.canvasx(event.x)
-	self.origy = self.lasty = self.canvas.canvasy(event.y)
+        self.origx = self.lastx = self.canvas.canvasx(event.x)
+        self.origy = self.lasty = self.canvas.canvasy(event.y)
         self.hasMoved = 0
 
         mod = self.getModifier()
@@ -1519,10 +1519,10 @@ returns 3 lists:
                 x = canvas.canvasx(event.x)
                 y = canvas.canvasy(event.y)
                 if hasattr(self,"glyphKeywords"):
-                    if self.glyphKeywords.has_key("fill"):
+                    if "fill" in self.glyphKeywords:
                         fillcolor = self.glyphKeywords['fill']
 
-                    if self.glyphKeywords.has_key("outline"):
+                    if "outline" in self.glyphKeywords:
                         outlinecolor = self.glyphKeywords['outline']
                 if self.circle:
                     coords =canvas.coords(self.circle)
@@ -1575,8 +1575,8 @@ returns 3 lists:
         num = event.num
         self.mouseButtonFlag = self.mouseButtonFlag & ~num
         canvas = self.canvas
-  	canvas.unbind("<B%d-Motion>"%num)
-	canvas.unbind("<ButtonRelease-%d>"%num)
+        canvas.unbind("<B%d-Motion>"%num)
+        canvas.unbind("<ButtonRelease-%d>"%num)
         if not self.hasMoved:
             self.clearSelection()
         else:
@@ -1618,7 +1618,7 @@ returns 3 lists:
 
         canvas.xview_moveto(xo/float(ed.totalWidth))
         canvas.yview_moveto(yo/float(ed.totalHeight))
-	self.lastx = event.x
+        self.lastx = event.x
         self.lasty = event.y
         self.canvas.update_idletasks()
     
@@ -1671,8 +1671,8 @@ returns 3 lists:
         for c in self.halfSelConn:
             c.updatePosition()
 
-	self.lastx = event.x
-	self.lasty = event.y
+        self.lastx = event.x
+        self.lasty = event.y
         canvas.update_idletasks()
         self.hasMoved = 1
 
@@ -1777,8 +1777,8 @@ returns 3 lists:
         else: sca = 1.+dy*0.01
         self.scaleSum = self.scaleSum*sca
         self.scale(sca, sca, self.private_xo, self.private_yo)
- 	self.lastx = x
-	self.lasty = y
+        self.lastx = x
+        self.lasty = y
         for c in self.private_c1:
             c.updatePosition()
 
@@ -1788,10 +1788,10 @@ returns 3 lists:
         del self.private_xo
         del self.private_yo
         
-        for p in self.inPortsId.values():
+        for p in list(self.inPortsId.values()):
             if p.node.selected:
                 p.relposx = round(p.relposx*self.scaleSum)
-        for p in self.outPortsId.values():
+        for p in list(self.outPortsId.values()):
             if p.node.selected:
                 p.relposx = round(p.relposx*self.scaleSum)
                 p.relposy = round(p.relposy*self.scaleSum)
@@ -1818,7 +1818,7 @@ returns 3 lists:
             canvas.scale(n.iconTag, (bb[0]+bb[2])/2, (bb[1]+bb[3])/2,
                          sca, sca )
             n.scaleSum = 1.0
-            for wn, wd in n.widgetDescr.items():
+            for wn, wd in list(n.widgetDescr.items()):
                 if wd['master'] != 'node':
                     continue
                 for p in n.inputPorts:
@@ -1874,7 +1874,7 @@ returns 3 lists:
             
     def resetScale(self, event=None):
         canvas = self.canvas
-        for n in self.nodes.values():
+        for n in list(self.nodes.values()):
             sca = 1.0/n.distScaleFactor
             canvas.scale(n.iconTag, self.lastx, self.lasty, sca, sca)
             n.distScaleFactor = 1.0
@@ -1899,8 +1899,8 @@ returns 3 lists:
         nodes = []
         for name in names:
             reg = re.compile(name)
-            nodes.extend( filter( lambda x,reg=reg: reg.match(x.name),
-                                  objects ) )
+            nodes.extend( list(filter( lambda x,reg=reg: reg.match(x.name),
+                                  objects )) )
         return nodes
 
 
@@ -1913,22 +1913,22 @@ returns 3 lists:
 
     
     def expand(self, objects, objectList):
-        if type(objects) == types.StringType:
+        if type(objects) == bytes:
             return self.getObjectsFromNames(objects, objectList)
         else:
             return objects
 
         
     def expandNodes(self, objects):
-        if type(objects) == types.StringType:
-            return self.getObjectsFromNames(objects, self.nodes.values())
+        if type(objects) == bytes:
+            return self.getObjectsFromNames(objects, list(self.nodes.values()))
         else:
             return objects
         
 
         
     def expandConnections(self, objects):
-        if type(objects) == types.StringType:
+        if type(objects) == bytes:
             return self.getObjectsFromNames(objects, self.connections )
         else:
             return objects
@@ -1939,7 +1939,7 @@ returns 3 lists:
         # function to invalidate node's cache
         def resetCache(node):
             node.nodesToRunCache = []
-        map( resetCache, self.nodes )
+        list(map( resetCache, self.nodes ))
 
 
 #
@@ -1966,12 +1966,12 @@ tagModified: True or False. Sets the _modified flag of the node."""
             
         if node.network:
             # MacroNodes have to be treated differently
-            from macros import MacroNode
+            from .macros import MacroNode
             
             # only print warning if node is not a MacroNode
             if not isinstance(node, MacroNode):
-                print 'ERROR: node %s already belongs to network %s!'\
-                      %(node.name, node.network.name)
+                print('ERROR: node %s already belongs to network %s!'\
+                      %(node.name, node.network.name))
             return
 
 ##         if ed is None:
@@ -2000,12 +2000,12 @@ tagModified: True or False. Sets the _modified flag of the node."""
         # to input port 1
         for kw in node.outputPortsDescr:
             kw['updateSignature'] = False # prevent recreating source code sig.
-            op = apply( node.addOutputPort, (), kw )
+            op = node.addOutputPort(*(), **kw)
 
         # create all inputPorts from description
         for kw in node.inputPortsDescr:
             kw['updateSignature'] = False # prevent recreating source code sig.
-            ip = apply( node.addInputPort, (), kw )
+            ip = node.addInputPort(*(), **kw)
 
         # create all specialPorts
         node.addSpecialPorts()
@@ -2086,7 +2086,7 @@ if doNotCb is True,  the callbacks afterConnect and beforeConnect ain't called
         assert isinstance(node1, NetworkNodeBase)
         assert isinstance(node2, NetworkNodeBase)
 
-        if type(portNode2) is types.StringType:
+        if type(portNode2) is bytes:
             ip = node2.inputPortByName[portNode2]
             if ip is None:
                 return
@@ -2102,7 +2102,7 @@ It can only have one parent node"""%ip.name
             self.rootNodes.remove(node2)
             node2.isRootNode = 0
 
-        if type(portNode1) is types.StringType:
+        if type(portNode1) is bytes:
             op = node1.outputPortByName[portNode1]
             if op is None:
                 return
@@ -2118,7 +2118,7 @@ It can only have one parent node"""%ip.name
         #node1.beforeConnect(op, ip)
         #node2.beforeConnect(op, ip)
         
-        from macros import MacroInputNode, MacroOutputNode
+        from .macros import MacroInputNode, MacroOutputNode
         # prevent connecting a macroinput node to a macrooutput node
         if isinstance(node1, MacroInputNode) and \
            isinstance(node2, MacroOutputNode):
@@ -2156,7 +2156,7 @@ It can only have one parent node"""%ip.name
 
             # create input ports on MacroNode
             macroNode.inputPortsDescr.append(ipdescr)
-            p2 = apply( macroNode.addInputPort, (), ipdescr )
+            p2 = macroNode.addInputPort(*(), **ipdescr)
             p2._newdata = 1
 
             codeAfterDisconnect="""def afterDisconnect(self, port1, port2):
@@ -2185,7 +2185,7 @@ It can only have one parent node"""%ip.name
                         'afterDisconnect':codeAfterDisconnect}
 
             node1.outputPortsDescr.append( opdescr )
-            p1 = apply( node1.addOutputPort, (), opdescr )
+            p1 = node1.addOutputPort(*(), **opdescr)
             portNum1 = len(node1.outputPorts)-1
 
             # reassign op to the newly created port
@@ -2213,7 +2213,7 @@ It can only have one parent node"""%ip.name
             dummy = opdescr.pop('afterDisconnect',None)
 
             macroNode.outputPortsDescr.append(opdescr)
-            p2 = apply( macroNode.addOutputPort, (), opdescr )
+            p2 = macroNode.addOutputPort(*(), **opdescr)
 
             codeAfterDisconnect = """def afterDisconnect(self, port1, port2):
     macno = port2.node
@@ -2240,7 +2240,7 @@ It can only have one parent node"""%ip.name
                         'required': False
                       }
             node2.inputPortsDescr.append(ipdescr )
-            p1 = apply( node2.addInputPort, (), ipdescr )
+            p1 = node2.addInputPort(*(), **ipdescr)
             portNum2 =len(node2.outputPorts)-1
 
             # reassign ip to the newly created port
@@ -2254,7 +2254,7 @@ It can only have one parent node"""%ip.name
                 if op.datatypeObject['name']!='None':
                     ip.setDataType(op.datatypeObject, tagModified=False)
             
-        conn = apply( NetworkConnection, (op, ip, mode, name, blocking), kw )
+        conn = NetworkConnection(*(op, ip, mode, name, blocking), **kw)
 
         self.connections.append(conn)
         conn.network = self
@@ -2330,14 +2330,14 @@ It can only have one parent node"""%ip.name
         assert isinstance(node1, NetworkNodeBase)
         assert isinstance(node2, NetworkNodeBase)
 
-        if type(portNode2) is types.StringType:
+        if type(portNode2) is bytes:
             ip = node2.getSpecialInputPortByName(portNode2)
             if ip is None:
                 return
         else:
             ip = node2.specialInputPorts[portNode2]
 
-        if type(portNode1) is types.StringType:
+        if type(portNode1) is bytes:
             op = node1.getSpecialOutputPortByName(portNode1)
             if op is None:
                 return
@@ -2353,7 +2353,7 @@ It can only have one parent node"""%ip.name
         #node1.beforeConnect(op, ip)
         #node2.beforeConnect(op, ip)
         
-        conn = apply( NetworkConnection, (op, ip, mode, name), kw )
+        conn = NetworkConnection(*(op, ip, mode, name), **kw)
         #assert conn not in self.connections
         self.connections.append(conn)
         conn.network = self
@@ -2466,7 +2466,7 @@ It can only have one parent node"""%ip.name
                 n.deletePort(p, resize=False, updateSignature=False)
 
             
-	    if n.objEditor:
+            if n.objEditor:
                 n.objEditor.Dismiss()
 
             if n.selected:
@@ -2609,9 +2609,9 @@ schedule:
         """Delete a connection between port1 (output) and port2 (input).
         Port1 and port2 can be either a port instance or the port name."""
                 
-        if type(port1) == types.StringType:
+        if type(port1) == bytes:
             port1 = node1.outputPortByName[port1]
-        if type(port2) == types.StringType:
+        if type(port2) == bytes:
             port2 = node2.inputPortByName[port2]
 
         if hasattr(port2,'_validationStatus'):     
@@ -2843,7 +2843,7 @@ All nodes have an attribute hasMoved which will be set to True."""
                 if input != '\n':
                     inbuffer += input
                 else:
-                    print 'sentence', inbuffer
+                    print('sentence', inbuffer)
                     inbuffer = ""
 
         fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
@@ -2965,16 +2965,16 @@ Waiting execution threads are notified."""
         stop = 0
         self.execStatusLock.acquire()
         if self.execStatus.lower()=='stop':
-            print 'exec was stopped'
+            print('exec was stopped')
             stop = 1
 
         elif self.execStatus.lower()=='pause':
-            print 'exec was paused'
+            print('exec was paused')
             if self.editor.withThreads:
                 self.execStatusCond.wait()
-                print 'exec was resumed'
+                print('exec was resumed')
                 if self.execStatus.lower()=='stop':
-                    print 'exec stops after resume'
+                    print('exec stops after resume')
                     stop = 1
             else:
                 self.execStatusLock.release()
@@ -3006,7 +3006,7 @@ Waiting execution threads are notified."""
         """if node is in a macro, this also sets the children of upper networks.
 but this doesn't go down into macros.
 """
-        from macros import MacroOutputNode
+        from .macros import MacroOutputNode
         for conn in node.getOutConnections():
             #conn.port2._newdata = True
             #conn.port2.data = 'no data yet'
@@ -3029,7 +3029,7 @@ but this doesn't go down into macros.
         A node will not be added to the list before all of its
         parents have been added"""
 
-        from macros import MacroOutputNode
+        from .macros import MacroOutputNode
         node = allNodes[nodeIndex]
 
         # children nodes of scheduling nodes are not scheduled here.
@@ -3105,7 +3105,7 @@ but this doesn't go down into macros.
         if len(roots)==0:
             return[]
         
-        from macros import MacroOutputNode, MacroNetwork
+        from .macros import MacroOutputNode, MacroNetwork
         for node in roots:
             node.widthFirstTag = 0
 
@@ -3322,7 +3322,7 @@ if roots is provided: HARD RUN: every nodes in roots will run (and all their chi
                 # previousely we would simple break out of the loop but
                 # this would prevent the excution of nodes in the network that
                 # are not under node and hence should really run
-                if type(status)==types.StringType and status.lower()=='stop':
+                if type(status)==bytes and status.lower()=='stop':
                     # node returned 'stop' we have to remove all children
                     # of node from the allNodes list so they will not be run
                     allOK = False
@@ -3335,15 +3335,15 @@ if roots is provided: HARD RUN: every nodes in roots will run (and all their chi
                     allOK = False
                     break
 
-        except KeyboardInterrupt, e:
+        except KeyboardInterrupt as e:
 
             if not self.editor.hasGUI:
-                print 'execution stopped'
+                print('execution stopped')
                 sys.exit(1)
             else:
                 self.editor.stopCurrentNet_cb()
         except:
-            print "*** ERROR during execution"
+            print("*** ERROR during execution")
             traceback.print_exc()
 
         # notify end of execution (even if it failed or was stopped)
@@ -3387,19 +3387,19 @@ recursively call this method in the macro network."""
         else:
             nodes = self.nodes
 
-        from macros import MacroNode
+        from .macros import MacroNode
         for node in nodes:
             if isinstance(node, MacroNode):
                 node.macroNetwork.resetWidgetValues()
-            dummyNode = apply(node.__class__,(),node.constrkw)
+            dummyNode = node.__class__(*(), **node.constrkw)
             origWidgetDescr = dummyNode.widgetDescr
-            for wname, wdescr in origWidgetDescr.items():
-                if node.widgetDescr.has_key(wname):
+            for wname, wdescr in list(origWidgetDescr.items()):
+                if wname in node.widgetDescr:
                     # get a handle to the widget
                     widget = node.getWidgetByName(wname)
                     ## 1) do we have an initiaValue defined here?
                     ndescr = node.widgetDescr[wname]
-                    if ndescr.has_key('initialValue'):
+                    if 'initialValue' in ndescr:
                         val = wdescr['initialValue']
                         ndescr['initialValue'] = val
                     ## 2) if not, use configOpt defined in widgets.py
@@ -3414,13 +3414,13 @@ recursively call this method in the macro network."""
 
     def createUserPanel(self, name, **kw):
         #print "createUserPanel", name
-        if self.userPanels.has_key(name) or self.getEditor() is None:
+        if name in self.userPanels or self.getEditor() is None:
             #warnings.warn("Name %s already use for a panel"%name)
             return
-        if not kw.has_key('master'):
+        if 'master' not in kw:
             kw['master']=None
         kw['network']= self
-        panel = apply(UserPanel, (name,), kw)
+        panel = UserPanel(*(name,), **kw)
         self.userPanels[name] = panel
 
 
@@ -3484,13 +3484,13 @@ recursively call this method in the macro network."""
             diffy = bbox[3]-bbox[1]
             if self.canvas.type(CURRENT) != "text":
                 if hasattr(self,"glyphKeywords"):
-                    if self.glyphKeywords.has_key("font"):
+                    if "font" in self.glyphKeywords:
                         font = self.glyphKeywords['font']
-                    if self.glyphKeywords.has_key("fontsize"):
+                    if "fontsize" in self.glyphKeywords:
                         fontsize = self.glyphKeywords['fontsize']   
-                    if self.glyphKeywords.has_key("fontstyle"):
+                    if "fontstyle" in self.glyphKeywords:
                         fontstyle = self.glyphKeywords['fontstyle']    
-                    if self.glyphKeywords.has_key("fill"):
+                    if "fill" in self.glyphKeywords:
                         fill = self.glyphKeywords['fill']
                         if fill == '':
                             fill = "black"

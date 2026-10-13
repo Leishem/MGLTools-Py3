@@ -14,11 +14,11 @@
 ##     else: return False
 
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 def checkURL(url):
     try:
-        request = urllib2.Request(url, None, {})
-        response = urllib2.urlopen(request)
+        request = urllib.request.Request(url, None, {})
+        response = urllib.request.urlopen(request)
         return True
     except:
         return False

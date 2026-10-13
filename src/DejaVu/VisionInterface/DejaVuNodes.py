@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
 #
@@ -24,8 +24,8 @@
 
 import types
 import warnings
-import string
-import numpy.oldnumeric as Numeric, sys, os
+from mglcompat import pystring as string
+import mglcompat.oldnumeric as Numeric, sys, os
 from math import sqrt, atan, pi
 
 from NetworkEditor.items import NetworkNode
@@ -71,7 +71,7 @@ def importVolLib(net):
 class GeomOptions(NetworkNode):
     def __init__(self, name='Set Geom Options', viewer=None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(name='geomOptions', datatype='dict')
@@ -80,14 +80,14 @@ class GeomOptions(NetworkNode):
             'class':'NEDejaVuGeomOptions', 'lockedOnPort':True
             }
         
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='dict', name='geomOptions')
 
         code = """def doit(self, geomOptions):
     self.outputData(geomOptions=geomOptions)       
 """
-		
-	self.setFunction(code)
+                
+        self.setFunction(code)
 
 
 class RestoreState(NetworkNode):
@@ -109,7 +109,7 @@ Output Ports:
 
     def __init__(self, name='RestoreState', viewer=None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(name='viewer', datatype='viewer')
@@ -150,7 +150,7 @@ Output Ports:
 
     def __init__(self, name='CenterOnPick', viewer=None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(name='viewer', datatype='viewer')
@@ -181,7 +181,7 @@ Output Ports:
 
     def __init__(self, name='CenterOnPick', viewer=None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(name='viewer', datatype='viewer')
@@ -213,7 +213,7 @@ Output Ports:
 
     def __init__(self, name='Viewer', viewer=None, **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         #self.readOnly = 1
         self.vi = viewer
 
@@ -328,7 +328,7 @@ this will delete geometries added to the viewer
             # geoms can be packed in a list or not
             import types
             from DejaVu.Geom import Geom
-            if type(geoms) == types.ListType:
+            if type(geoms) == list:
                 for g in geoms:
                     if self.vi is None:
                         g.viewer = None  
@@ -346,7 +346,7 @@ this will delete geometries added to the viewer
 
 
     def buildIcons(self, canvas, posx, posy):
-        apply( NetworkNode.buildIcons, (self, canvas, posx, posy) )
+        NetworkNode.buildIcons(*(self, canvas, posx, posy))
         self.paramPanel.applyButton.forget()
         from DejaVu import Viewer
         from DejaVu.Geom import Geom
@@ -376,7 +376,7 @@ this will delete geometries added to the viewer
 
     def afterRedraw(self):
         if self.vi:
-            apply( self.vi.__class__.afterRedraw, (self.vi,))
+            self.vi.__class__.afterRedraw(*(self.vi,))
             # trigger all children of the redraw outputPort
             if len(self.outputPorts):
                 self.outputData(redraw=1)
@@ -425,7 +425,7 @@ Output Ports:
     pickedVertices: list of 3D vertices
 """
     def __init__(self, **kw):
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
            
         self.vertices = []
         
@@ -452,7 +452,7 @@ Output Ports:
             'labelCfg':{'text':'remove'},
             }
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='list', name='pickedVertices')
 
         code = """def doit(self, pick, viewer, reset, remove):
@@ -532,7 +532,7 @@ Output Ports:
 
     def __init__(self, name='PolyhedronVolumeArea', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         #self.readOnly = 1
 
         ip = self.inputPortsDescr
@@ -572,7 +572,7 @@ Output Ports:
     
     def __init__(self, name='writeIndexedPolygon', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         #self.readOnly = 1
 
         self.widgetDescr['filename'] = {
@@ -618,13 +618,13 @@ Output Ports:
                                      
                                      
                                      
-        dum = map(lambda x, f=f: f.write('%f\n'%x), verts)
-        dum = map(lambda x, f=f: f.write('%d\n'%x), faces)
+        dum = list(map(lambda x, f=f: f.write('%f\n'%x), verts))
+        dum = list(map(lambda x, f=f: f.write('%d\n'%x), faces))
         f.close()
         
     def __init__(self, name='writeCurvPly', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         #self.readOnly = 1
 
         self.widgetDescr['filename'] = {
@@ -704,8 +704,8 @@ Output Ports:
                                      crestLines ))
                                      #crestLines==True ))
                                      
-        dum = map(lambda x, f=f: f.write('%f\n'%x), verts)
-        dum = map(lambda x, f=f: f.write('%d\n'%x), faces)
+        dum = list(map(lambda x, f=f: f.write('%f\n'%x), verts))
+        dum = list(map(lambda x, f=f: f.write('%d\n'%x), faces))
         f.close()
 
         
@@ -715,18 +715,18 @@ Output Ports:
         f.close()
         nbv = int(data[0])
         nbt = int(data[1])
-        import string
-        dataf = map(string.split, data[2:])
+        from mglcompat import pystring as string
+        dataf = list(map(string.split, data[2:]))
         curvData = []
         for l in dataf:
-            curvData.append(map(float, l))
+            curvData.append(list(map(float, l)))
         curvData = Numeric.array(curvData, 'f')
         return curvData
     
         
     def __init__(self, name='curvature', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['neighborhoodSize'] = {
             'class':'NEThumbWheel',
@@ -809,7 +809,7 @@ Output Ports:
         #warnings.warn("read Indexed Polygon is deprecated, use 'geoms from file' instead")
 
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         #self.readOnly = 1
 
         wdescr = self.widgetDescr
@@ -828,7 +828,7 @@ Output Ports:
         ip.append(datatype='string', required=False, name='name')
 
         op = self.outputPortsDescr
-	op.append(datatype='geom', name='geom')
+        op.append(datatype='geom', name='geom')
 
         code = """def doit(self, filename, name):
     if filename is None or filename == '':
@@ -860,7 +860,7 @@ output:
 """
     def __init__(self, name='removeDupVert', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr = []
         ip.append({'datatype':'geom', 'name':'geom'})
@@ -915,7 +915,7 @@ output:
 """
     def __init__(self, name='removeDupVertC', **kw):
         kw['name'] = name
-        apply(NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr = []
         ip.append({'datatype':'geom', 'name':'geom'})
@@ -969,7 +969,7 @@ Output Ports:
     
     def __init__(self, name='write SMF', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['percent'] = {
             'class':'NEDial', 'size':50,
@@ -1035,7 +1035,7 @@ Output Ports:
     
     def __init__(self, name='GeomToSMF', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(name='geometry', datatype='geom')
@@ -1069,7 +1069,7 @@ Output Ports:
     
     def __init__(self, name='SMFtoGeom', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         from DejaVu.IndexedPolygons import IndexedPolygons
         self.geom = IndexedPolygons()
@@ -1086,7 +1086,7 @@ Output Ports:
         ip.append(name='parent', datatype='geom', required=False)
 
         op = self.outputPortsDescr
-	op.append(name='geom', datatype='geom')
+        op.append(name='geom', datatype='geom')
 
         code = """def doit(self, lines, geomname, parent):
     if len(lines)==0:
@@ -1124,7 +1124,7 @@ Output Ports:
 
 
 from DejaVu.IndexedPolygons import IndexedPolygons
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 try:
     from QSlimLib import qlimlib
 except:
@@ -1205,7 +1205,7 @@ class QSlimDecimate:
 
     def decimate(self, targetfaces): 
 
-        print 'DECIMATING TO', targetfaces
+        print('DECIMATING TO', targetfaces)
         self.model.slim_to_target(targetfaces)
         # the number of faces we get back can be slightly different 
         # from the taget number of faces: 
@@ -1238,7 +1238,7 @@ class QSlimDecimate:
         for j, t in enumerate(self.newfaces[:numFaces]):
             for i in (0,1,2):
                 n = t[i]
-                if not vl.has_key(n):
+                if n not in vl:
                     vl[n] = nvert
                     decimVerts[nvert] = self.newverts[n,:]
                     decimNormals[nvert] = self.newnorms[n,:]
@@ -1274,7 +1274,7 @@ Output Ports:
     def __init__(self, name='QSlim', **kw):
         
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         self.widgetDescr['percent'] = {
             'class':'NEDial', 'master':'ParamPanel', 'size':50,
             'oneTurn':100, 'min':0., 'max':100., 'type':'float',
@@ -1421,7 +1421,7 @@ Output Ports:
 
         def __init__(self, name='getSurfaceVFN', **kw):
             kw['name'] = name
-            apply( NetworkNode.__init__, (self,), kw )
+            NetworkNode.__init__(*(self,), **kw)
             #self.readOnly = 1
 
             ip = self.inputPortsDescr
@@ -1432,7 +1432,7 @@ Output Ports:
             op.append(datatype='coordinates3D', name='points')
 
             code = """def doit(self, points, cutoff):
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     ids = Numeric.arange(len(points)).astype('i')
     bht = bhtreelib.TBHTree( points, ids, 10, 10, 9999.0 )
     result = Numeric.zeros( (len(points),) ).astype('i')
@@ -1466,7 +1466,7 @@ OutputPort:
 """
         def __init__(self, name='DistFromSphereToGeom', **kw):
             kw['name'] = name
-            apply( NetworkNode.__init__, (self,), kw )
+            NetworkNode.__init__(*(self,), **kw)
 
             ip = self.inputPortsDescr
             ip.append(datatype='coordinates3D', name='centers')
@@ -1481,7 +1481,7 @@ OutputPort:
 
     #build a BHtree for geometry's vertices
     vf = geom.getVertices()
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     points = Numeric.array(vf, 'f')
     ids = Numeric.arange(len(points)).astype('i')
     result = Numeric.zeros( (len(points),) ).astype('i')
@@ -1530,16 +1530,16 @@ Output Ports:
     
     def __init__(self, name='getSurfaceVFN', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         #self.readOnly = 1
 
         ip = self.inputPortsDescr
         ip.append(datatype='geom', name='geometry')
 
         op = self.outputPortsDescr
-	op.append(datatype='geom', name='geom')
-	op.append(datatype='coordinates3D', name='vertices')
-	op.append(datatype='faceIndices', name='faces')
+        op.append(datatype='geom', name='geom')
+        op.append(datatype='coordinates3D', name='vertices')
+        op.append(datatype='faceIndices', name='faces')
         op.append(datatype='normals3D', name='normals')
         op.append(datatype='normals3D', name='facenormals')
 
@@ -1584,7 +1584,7 @@ try:
             
         def _init__(self, name='ImageViewer', **kw):
             kw['name'] = name
-            apply( NetworkNode.__init__, (self,), kw )
+            NetworkNode.__init__(*(self,), **kw)
 
             from DejaVu.imageViewer import ImageViewer
             self.ivi = ImageViewer(name='image renderer')
@@ -1652,7 +1652,7 @@ try:
 
         def __init__(self, name='NPR', **kw):
             kw['name'] = name
-            apply( NetworkNode.__init__, (self,), kw )
+            NetworkNode.__init__(*(self,), **kw)
             self.ivi = None  # will be instanciated when node added to network
 
             self.widgetDescr['d1cut'] = {
@@ -1811,7 +1811,7 @@ Output:
     
     def __init__(self, name='Choose Geoms', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['name'] = {
             'class':'NEEntry', 'master':'node',
@@ -1841,7 +1841,7 @@ class SelectGeometry(NetworkNode):
     
     def __init__(self, name='Choose Geom', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['geomName'] = {
             'class':'NEComboBox', 'master':'node',
@@ -1855,7 +1855,7 @@ class SelectGeometry(NetworkNode):
         ip.append(datatype='viewer', name='viewer')
         ip.append(datatype='string', required=False, name='geomName')
 
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(datatype='geom', name='geometry')
 
         code = """def doit(self, viewer, geomName):
@@ -1889,7 +1889,7 @@ Output:
     
     def __init__(self, name='Redraw', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='viewer', singleConnection=False, name='viewer')
@@ -1912,7 +1912,7 @@ Output:
     
     def __init__(self, name='Stop Auto Redraw', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='viewer', singleConnection=False, name='viewer')
@@ -1935,7 +1935,7 @@ Output:
     
     def __init__(self, name='Start Auto Redraw', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='viewer', singleConnection=False, name='viewer')
@@ -1958,7 +1958,7 @@ Output:
     
     def __init__(self, name='One Redraw', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='viewer', singleConnection=False, name='viewer')
@@ -1977,7 +1977,7 @@ class SetInstances(NetworkNode):
 """    
     def __init__(self, name='Set Instances', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='geom', singleConnection=False, name='geometry')
@@ -2014,7 +2014,7 @@ Output Ports:
 """
     def __init__(self, name='Reparent Geom', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         
 
         ip = self.inputPortsDescr
@@ -2079,7 +2079,7 @@ Output Ports:
 """
     def __init__(self, name='geoms properties', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         
 
         ip = self.inputPortsDescr
@@ -2195,7 +2195,7 @@ Output:
         from mglutil.util.qhullUtils import QConvex
         self.QH = QConvex()
 
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.widgetDescr['tmpdir'] = {
             'class':'NEEntry', 'master':'node',
@@ -2272,7 +2272,7 @@ Output: list of Ellipsoid Objects"""
         #from geomutils import geomutilslib
         from geomutils import efitlib
 
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='list', name='coords')
@@ -2333,7 +2333,7 @@ Output:
 
     def __init__(self, name='Gyration Sphere', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         from DejaVu.Spheres import Spheres
         self.geom = Spheres('gyration', quality=30)
@@ -2376,7 +2376,7 @@ class GroupGeomsNE(NetworkNode):
 
     def __init__(self, name='Group Geoms', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.g = None
 
@@ -2441,7 +2441,7 @@ class Decimate(NetworkNode):
 
     def __init__(self, name='Color By Ramp', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.model = None
         self.resolution = 0
@@ -2505,7 +2505,7 @@ OutputPorts:
 
     def __init__(self, name='1D Texture Coordinates', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
             
         ip = self.inputPortsDescr
         ip.append(datatype='list', name='data')
@@ -2514,7 +2514,7 @@ OutputPorts:
 
         op = self.outputPortsDescr
         op.append(datatype='list', name='texCoords')
-	
+        
         code = """def doit(self, data, mini, maxi):
 
     if data is None or len(data)==0:
@@ -2552,9 +2552,9 @@ The property has to be of length coords of the geometry."""
 
     def __init__(self, name='1D Texture Mapping', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
-	
-	code = """def doit(self, geom, texture, prop):
+        NetworkNode.__init__(*(self,), **kw)
+        
+        code = """def doit(self, geom, texture, prop):
     # if we get a new texture, we have to set texture and textureCoords
     
     prop = Numeric.array(prop, 'f')
@@ -2576,10 +2576,10 @@ The property has to be of length coords of the geometry."""
             
         if code: self.setFunction(code)
         
-	ip = self.inputPortsDescr
+        ip = self.inputPortsDescr
         ip.append(datatype='geom', name='geom')
-	ip.append(datatype='texture', name='texture')
-	ip.append(datatype='None', name='prop')
+        ip.append(datatype='texture', name='texture')
+        ip.append(datatype='None', name='prop')
 
         op = self.outputPortsDescr
         op.append(datatype='geom', name='geom')
@@ -2599,7 +2599,7 @@ OutputPorts:
 
     def __init__(self, name='Texture2D', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='geom', name='geom')
@@ -2649,7 +2649,7 @@ Output Ports
     
     def __init__(self, name='Choose Color', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         #self.readOnly = 1
         self.w_brightness = 255 # variable used to gain some speed in doit()
         self.w_singleCol = 0 # used to switch between datatypes of outp.Port
@@ -2746,7 +2746,7 @@ Output Ports
     
     def __init__(self, name='Choose Editor', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         #self.readOnly = 1
         self.w_brightness = 255 # variable used to gain some speed in doit()
         self.w_singleCol = 0 # used to switch between datatypes of outp.Port
@@ -2802,7 +2802,7 @@ Output:
     
     def __init__(self, name='Color Map', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         #self.readOnly = 1
         
         ip = self.inputPortsDescr
@@ -2907,7 +2907,7 @@ Output Ports
     def __init__(self, name='Color By Ramp', **kw):
         
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
         #self.readOnly = 1
 
         from DejaVu.colorTool import RGBARamp, Map
@@ -2942,7 +2942,7 @@ strings which can be saved using a save text node."""
 
     def __init__(self, name='Get VRML2', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         from DejaVu.DataOutput import OutputVRML2
         self.V = OutputVRML2()
@@ -2987,7 +2987,7 @@ class TransferFuncEditor(NetworkNode):
         
     def __init__(self, name='TransferFuncEditor', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.utvolGeom = None
         self.need_update = False
@@ -3021,8 +3021,8 @@ class TransferFuncEditor(NetworkNode):
 
 
     def beforeAddingToNetwork(self, net):
-        import Tkinter
-        root = Tkinter.Toplevel()
+        import tkinter
+        root = tkinter.Toplevel()
         from mglutil.gui.BasicWidgets.Tk.tablemaker import TableManager
         self.tm = TableManager(None, master=root, ymaxval=255, xminval = 0,
                          alphaCallback=self.alpha_cb,
@@ -3061,7 +3061,7 @@ Output:
 
     def __init__(self, name='ScaleLegend', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         self.v = [[0.,0.,0.], [10.,0.,0.], [0.,-1.,0.], [10.,-1.,0.]]
         self.f = ( (0,1), (0,2), (1,3) )
@@ -3153,7 +3153,7 @@ Output: a list of geometries
         #warnings.warn("Read STL ASCII is deprecated, use 'geoms from file' instead")
 
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         from DejaVu.DataInput import ReadASCIISTL
         self.Parser = ReadASCIISTL()
@@ -3196,7 +3196,7 @@ Output: a DejaVu IndexedPolygon geometry object
         #warnings.warn("Read STL Binary is deprecated, use 'geoms from file' instead")
 
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         from DejaVu.DataInput import ReadBinarySTL
         self.Parser = ReadBinarySTL()
@@ -3235,7 +3235,7 @@ Output: rmsd (float)"""
 
     def __init__(self, name='Compute RMSD', **kw):
         kw['name'] = name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         from mglutil.math.rmsd import RMSDCalculator
         self.RMSD = RMSDCalculator()
@@ -3263,7 +3263,7 @@ Output: rmsd (float)"""
 class SelectAxis(NetworkNode):
     def __init__(self, constrkw={}, name='SelectAxis', **kw):
         kw['name']=name
-        apply( NetworkNode.__init__, (self,), kw )
+        NetworkNode.__init__(*(self,), **kw)
 
         ip = self.inputPortsDescr
         ip.append(datatype='boolean', name ='x-axis')
@@ -3318,25 +3318,25 @@ Output:
 """
     def __init__(self, name='DM', **kw):
         kw['name'] = name
-	apply( NetworkNode.__init__, (self,), kw)
-	
-	code = """def doit(self, points):
-	import numpy.oldnumeric as Numeric
-	l = len(points)
-	dm = Numeric.zeros( (l,l), 'd')
-	points = Numeric.array(points).astype('d')
-	for i in range(l):
-	    dist = points[i] - points
-	    dist = dist*dist
-	    dm[i] = Numeric.sqrt(Numeric.sum(dist, 1))
-	self.outputData(dm=dm)
+        NetworkNode.__init__(*(self,), **kw)
+        
+        code = """def doit(self, points):
+        import mglcompat.oldnumeric as Numeric
+        l = len(points)
+        dm = Numeric.zeros( (l,l), 'd')
+        points = Numeric.array(points).astype('d')
+        for i in range(l):
+            dist = points[i] - points
+            dist = dist*dist
+            dm[i] = Numeric.sqrt(Numeric.sum(dist, 1))
+        self.outputData(dm=dm)
 """
 
-	if code: self.setFunction(code)
-	
-	self.inputPortsDescr.append({'name': 'points',
+        if code: self.setFunction(code)
+        
+        self.inputPortsDescr.append({'name': 'points',
                                      'datatype': 'coordinates3D'})
-	self.outputPortsDescr.append({'name': 'dm', 'datatype': 'None'})
+        self.outputPortsDescr.append({'name': 'dm', 'datatype': 'None'})
 
 
 class DDM(NetworkNode):
@@ -3353,21 +3353,21 @@ Output
     
     def __init__(self, name='DDM', **kw):
         kw['name'] = name
-	apply( NetworkNode.__init__, (self,), kw)
-	
-	code = """def doit(self, points1, points2):
-	import numpy.oldnumeric as Numeric
-	result = points1-points2
+        NetworkNode.__init__(*(self,), **kw)
+        
+        code = """def doit(self, points1, points2):
+        import mglcompat.oldnumeric as Numeric
+        result = points1-points2
         self.outputData(ddm=result)
 """
-		
-	if code: self.setFunction(code)
-	
-	self.inputPortsDescr.append({'name': 'points1',
+                
+        if code: self.setFunction(code)
+        
+        self.inputPortsDescr.append({'name': 'points1',
                                      'datatype': 'None'})
-	self.inputPortsDescr.append({'name':'points2', 'datatype':
+        self.inputPortsDescr.append({'name':'points2', 'datatype':
                                      'None'})
-	self.outputPortsDescr.append({'name':'ddm', 'datatype': 'None'})
+        self.outputPortsDescr.append({'name':'ddm', 'datatype': 'None'})
 
 
 
@@ -3382,7 +3382,7 @@ class ConnectedComponents0(NetworkNode):
     """
     def __init__(self, name='ConnectedComponents', **kw):
         kw['name'] = name
-	apply( NetworkNode.__init__, (self,), kw)
+        NetworkNode.__init__(*(self,), **kw)
         self.widgetDescr['outgeomname'] = {
             'class':'NEEntry', 'master':'node', 'width':10,
             'labelCfg':{'text':'name:'},
@@ -3392,7 +3392,7 @@ class ConnectedComponents0(NetworkNode):
         ip = self.inputPortsDescr
         ip.append(name='ingeoms', datatype='geom', required=True)
         ip.append(name='outgeomname', datatype='str', required=False)
-	op = self.outputPortsDescr
+        op = self.outputPortsDescr
         op.append(name='outgeoms', datatype='geom')
 
         code = """def doit(self, ingeoms, outgeomname):
@@ -3473,8 +3473,8 @@ class ConnectedComponents0(NetworkNode):
             outgeoms.append(obj)
         self.outputData(outgeoms=outgeoms)
 """
-		
-	self.setFunction(code)
+                
+        self.setFunction(code)
 
     
 from Vision.VPE import NodeLibrary

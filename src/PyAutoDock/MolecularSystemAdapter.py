@@ -50,7 +50,7 @@ class ResidueSetAdapter(MolecularSystemAdapter):
 
 class GridMapAdapter(MolecularSystemAdapter):
     def __init__(self, grid_map):
-        from AutoGrid import GridMap
+        from .AutoGrid import GridMap
         assert( isinstance(grid_map, GridMap))
         self.grid_map = grid_map
         MolecularSystemAdapter.__init__(self)

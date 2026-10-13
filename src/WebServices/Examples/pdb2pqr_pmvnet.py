@@ -32,7 +32,7 @@ try:
     pdb2pqr_ws_nbcr_1 = pdb2pqrNode(service='http://ws.nbcr.net:8080/opal/services/Pdb2pqrOpalService', name='pdb2pqr@ws.nbcr', library=wslib)
     masterNet.addNode(pdb2pqr_ws_nbcr_1,360,146)
 except:
-    print "WARNING: failed to restore pdb2pqrNode named pdb2pqr@ws.nbcr in network masterNet"
+    print("WARNING: failed to restore pdb2pqrNode named pdb2pqr@ws.nbcr in network masterNet")
     print_exc()
     pdb2pqr_ws_nbcr_1=None
 
@@ -42,9 +42,9 @@ try:
     Download_2 = DownloadNode(name='Download', library=wslib)
     masterNet.addNode(Download_2,31,108)
     Download_2.inputPortByName['url'].widget.set("http://www.pdb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId=1CRN", run=False)
-    apply(Download_2.configure, (), {'expanded': True})
+    Download_2.configure(*(), **{'expanded': True})
 except:
-    print "WARNING: failed to restore DownloadNode named Download in network masterNet"
+    print("WARNING: failed to restore DownloadNode named Download in network masterNet")
     print_exc()
     Download_2=None
 
@@ -54,9 +54,9 @@ try:
     Save_Lines_3 = SaveLines(name='Save Lines', library=stdlib)
     masterNet.addNode(Save_Lines_3,56,207)
     Save_Lines_3.inputPortByName['filename'].widget.set("1crn.pdb", run=False)
-    apply(Save_Lines_3.configure, (), {'expanded': True})
+    Save_Lines_3.configure(*(), **{'expanded': True})
 except:
-    print "WARNING: failed to restore SaveLines named Save Lines in network masterNet"
+    print("WARNING: failed to restore SaveLines named Save Lines in network masterNet")
     print_exc()
     Save_Lines_3=None
 
@@ -68,7 +68,7 @@ try:
     WebBrowser_4.inputPortByName['url'].widget.set("", run=False)
     WebBrowser_4.inputPortByName['url'].unbindWidget()
 except:
-    print "WARNING: failed to restore WebBrowserNode named WebBrowser in network masterNet"
+    print("WARNING: failed to restore WebBrowserNode named WebBrowser in network masterNet")
     print_exc()
     WebBrowser_4=None
 
@@ -81,19 +81,19 @@ if Download_2 is not None and Save_Lines_3 is not None:
         masterNet.connectNodes(
             Download_2, Save_Lines_3, "output", "data", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Download_2 and Save_Lines_3 in network masterNet"
+        print("WARNING: failed to restore connection between Download_2 and Save_Lines_3 in network masterNet")
 if Save_Lines_3 is not None and pdb2pqr_ws_nbcr_1 is not None:
     try:
         masterNet.connectNodes(
             Save_Lines_3, pdb2pqr_ws_nbcr_1, "filename", "input_file", blocking=True)
     except:
-        print "WARNING: failed to restore connection between Save_Lines_3 and pdb2pqr_ws_nbcr_1 in network masterNet"
+        print("WARNING: failed to restore connection between Save_Lines_3 and pdb2pqr_ws_nbcr_1 in network masterNet")
 if pdb2pqr_ws_nbcr_1 is not None and WebBrowser_4 is not None:
     try:
         masterNet.connectNodes(
             pdb2pqr_ws_nbcr_1, WebBrowser_4, "URL", "url", blocking=True)
     except:
-        print "WARNING: failed to restore connection between pdb2pqr_ws_nbcr_1 and WebBrowser_4 in network masterNet"
+        print("WARNING: failed to restore connection between pdb2pqr_ws_nbcr_1 and WebBrowser_4 in network masterNet")
 masterNet.unfreeze()
 
 #masterNet.run()

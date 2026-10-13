@@ -35,7 +35,7 @@ import sys,os
 from time import time
 #get the current software
 if __name__ == "__main__":
-	soft = os.path.basename(sys.argv[0]).lower()
+        soft = os.path.basename(sys.argv[0]).lower()
 else : 
     soft = __name__
 
@@ -55,12 +55,12 @@ if not plugin :
     t1=time()
     from Pmv.hostappInterface.epmvAdaptor import epmv_start
     epmv = epmv_start(soft,debug=1)
-    print "time to start epmv ",time()-1
+    print("time to start epmv ",time()-1)
 else :
     #get epmv and mv (adaptor and molecular viewer)
     if sotf == 'c4d':
         import c4d
-        epmv = c4d.mv.values()[0]#[dname]
+        epmv = list(c4d.mv.values())[0]#[dname]
 import Pmv
 dataDir = Pmv.__path__[0]+'/Tests/Data/'
 self = epmv.mv
@@ -105,7 +105,7 @@ from time import time
 def timeFunction(function,arg):
     t1=time()
     function(arg)
-    print "time ", time()-t1
+    print("time ", time()-t1)
 
 def doit(mv,mol,R):
     from time import time
@@ -162,9 +162,9 @@ def doit(mv,mol,R):
     return R
     
 def displayR(result):
-    for molname in result.keys():
-        for ds in result[molname].keys():
-            print ds, " ", result[molname][ds]
+    for molname in list(result.keys()):
+        for ds in list(result[molname].keys()):
+            print(ds, " ", result[molname][ds])
             sys.stderr.write(ds+" "+str(result[molname][ds])+'\n')
 
 re=doit(self,dataDir+listemol[6],re)

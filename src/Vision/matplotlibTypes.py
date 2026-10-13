@@ -23,7 +23,7 @@
 from NetworkEditor.datatypes import AnyArrayType
 
 class MPLFigureType(AnyArrayType):
-    from matplotlibNodes import Figure
+    from .matplotlibNodes import Figure
     def __init__(self, name='MPLFigure', color='#99AFD8', shape='oval',
                  klass=Figure):
       

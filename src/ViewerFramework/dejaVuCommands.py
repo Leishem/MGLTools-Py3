@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -17,14 +17,14 @@ This module implements classes relative to DejaVu.
 #
 
 
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 import types
 import os
-import string
-import Tkinter, Pmw
+from mglcompat import pystring as string
+import tkinter, Pmw
 from math import pi, pow
 from time import time, sleep
-import tkMessageBox
+import tkinter.messagebox
 
 from mglutil.util.callback import CallbackManager, CallBackFunction
 from mglutil.math.rotax import rotax
@@ -66,7 +66,7 @@ class ResetView(Command):
         to fit in viewport and sets the center of rotation to be the center of
         the scene
         """
-        apply( self.doitWrapper, (), kw )
+        self.doitWrapper(*(), **kw)
 
 ResetViewGUI = CommandGUI()
 ResetViewGUI.addToolBar('Reset View', icon1='icon-focus.gif', 
@@ -146,7 +146,7 @@ enableStereo must be set to True in:
 ~/.mgltools/(ver_number)/DejaVu/_dejavurc
 """
                 #self.warningMsg(msg)
-                tkMessageBox.showerror('Stereo Buffers Error', msg)
+                tkinter.messagebox.showerror('Stereo Buffers Error', msg)
                 stereo = 'MONO'
                 self.vf.GUI.toolbarCheckbuttons['mono_stereo']['Variable'].set(stereo)
             self.vf.GUI.VIEWER.currentCamera.Set( stereoMode=stereo,
@@ -157,7 +157,7 @@ enableStereo must be set to True in:
         val = {}
         val['stereo'] = self.vf.GUI.toolbarCheckbuttons['mono_stereo']['Variable'].get()
         val['redraw'] = 1
-        apply( self.doitWrapper, (), val )
+        self.doitWrapper(*(), **val)
 
 
     def __call__(self, stereo=1, **kw):
@@ -170,7 +170,7 @@ mono mode on
             kw['stereo'] = 'STEREO_BUFFERS' # was 'native'
         else:
             kw['stereo'] = 'MONO' # was 'none'
-        apply( self.doitWrapper, (), kw )
+        self.doitWrapper(*(), **kw)
 
 stereoRadioLabels = [
                 'mono (disabled)', 
@@ -226,7 +226,7 @@ class TransformObject(Command):
         geometry = vi.FindObjectByName(geomName)
         
         if not geometry:
-            print 'WARNING: geometry name  %s not found'%geomName
+            print('WARNING: geometry name  %s not found'%geomName)
             return
 
         # set the vi.currentObject to be the object to transform
@@ -275,9 +275,9 @@ class TransformObject(Command):
         object           : the geometry to be transformed
         matrix           : transformation matrix to be applied to the object
         """
-        if not kw.has_key('redraw'):
+        if 'redraw' not in kw:
             kw['redraw']=1
-        apply(self.doitWrapper, (transformation, object, matrix), kw)
+        self.doitWrapper(*(transformation, object, matrix), **kw)
 
 
 class TransformCamera(Command):
@@ -321,9 +321,9 @@ class TransformCamera(Command):
         matrix           : transformation matrix to be applied to the object
         camIndex         : index of camera (defaults to 0)
         """
-        if not kw.has_key('redraw'):
+        if 'redraw' not in kw:
             kw['redraw']=1
-        apply(self.doitWrapper, (transformation, matrix, camIndex), kw)
+        self.doitWrapper(*(transformation, matrix, camIndex), **kw)
 
 
 class SetObject(Command):
@@ -334,10 +334,10 @@ class SetObject(Command):
         vi = self.vf.GUI.VIEWER
         viewerObj = vi.FindObjectByName(object)
         if not viewerObj:
-            print 'WARNING: object %s not found'%object
+            print('WARNING: object %s not found'%object)
             return
         kw['tagModified']=False
-        apply( viewerObj.Set, (), kw)
+        viewerObj.Set(*(), **kw)
 
 
         
@@ -347,18 +347,18 @@ class SetCamera(Command):
         if not self.vf.hasGui:
             return
         vi = self.vf.GUI.VIEWER
-        viewerCameras = filter(lambda x, name=camera: x.name==name, vi.cameras)
+        viewerCameras = list(filter(lambda x, name=camera: x.name==name, vi.cameras))
         if len(viewerCameras)==1:
             viewerCamera = viewerCameras[0]
         elif len(viewerCameras)>1:
-            print 'WARNING: more than one camera found for the name: %s'%camera
+            print('WARNING: more than one camera found for the name: %s'%camera)
             return
         else:
-            print 'WARNING: camera %s not found'%camera
+            print('WARNING: camera %s not found'%camera)
             return
         #print kw
         kw['tagModified']=False
-        apply( viewerCamera.Set, (), kw)
+        viewerCamera.Set(*(), **kw)
 
 
 
@@ -368,18 +368,18 @@ class SetLight(Command):
         if not self.vf.hasGui:
             return
         vi = self.vf.GUI.VIEWER
-        viewerLights = filter(lambda x, name=light: x.name==name, vi.lights)
+        viewerLights = list(filter(lambda x, name=light: x.name==name, vi.lights))
         if len(viewerLights)==1:
             viewerLight = viewerLights[0]
         elif len(viewerLights)>1:
-            print 'WARNING: more than one light found for the num: %d'%lightnum
+            print('WARNING: more than one light found for the num: %d'%lightnum)
             return
         else:
-            print 'WARNING: light nb: %d not found'%lightnum
+            print('WARNING: light nb: %d not found'%lightnum)
             return
 
         kw['tagModified']=False
-        apply( viewerLight.Set, (), kw)
+        viewerLight.Set(*(), **kw)
 
 
 
@@ -390,17 +390,17 @@ class AddClipPlane(Command):
         vi = self.vf.GUI.VIEWER
         viewerObj = vi.FindObjectByName(object)
         if not viewerObj:
-            print 'WARNING: object %s not found'%object
+            print('WARNING: object %s not found'%object)
             return
 
-        viewerClips = filter(lambda x, name=clip: x.name==name, vi.clipP)
+        viewerClips = list(filter(lambda x, name=clip: x.name==name, vi.clipP))
         if len(viewerClips)==1:
             viewerClip = viewerClips[0]
         elif len(viewerClips)>1:
-            print 'WARNING: more than one clipping plane found for the name: %s'%clip
+            print('WARNING: more than one clipping plane found for the name: %s'%clip)
             return
         else:
-            print 'WARNING: camera %s not found'%clip
+            print('WARNING: camera %s not found'%clip)
             return
 
         viewerObj.AddClipPlane( viewerClip, side, inh )
@@ -413,18 +413,18 @@ class SetClip(Command):
         if not self.vf.hasGui:
             return
         vi = self.vf.GUI.VIEWER
-        viewerClips = filter(lambda x, name=clip: x.name==name, vi.clipP)
+        viewerClips = list(filter(lambda x, name=clip: x.name==name, vi.clipP))
         if len(viewerClips)==1:
             viewerClip = viewerClips[0]
         elif len(viewerClips)>1:
-            print 'WARNING: more than one clipping plane found for the name: %s'%clip
+            print('WARNING: more than one clipping plane found for the name: %s'%clip)
             return
         else:
-            print 'WARNING: camera %s not found'%clip
+            print('WARNING: camera %s not found'%clip)
             return
 
         kw['tagModified']=False
-        apply( viewerClip.Set, (), kw)
+        viewerClip.Set(*(), **kw)
 
 
 
@@ -489,7 +489,7 @@ class ViewPoints(Command):
         """
         kw['name'] = name
         kw['mode'] = mode
-        apply( self.doitWrapper, (), kw)
+        self.doitWrapper(*(), **kw)
 
 
 
@@ -549,7 +549,7 @@ The commands stop() method has to be called to break out of the loop
 """
         self._redraw = kw.get('redraw', True)
         kw['redraw'] = False
-        apply( self.doitWrapper, (axis, stepSize, nbSteps, pause), kw )
+        self.doitWrapper(*(axis, stepSize, nbSteps, pause), **kw)
 
 
 
@@ -582,7 +582,7 @@ of view when a new object is loaded""")
         if mode==choices[0] and len(self.vf.objects)>1:
             return
         if mode=='ask':
-            from SimpleDialog import SimpleDialog
+            from tkinter.simpledialog import SimpleDialog
             t= 'Do you want to center scene?'
             d=SimpleDialog(self.vf.GUI.ROOT, text=t,
                 buttons=['yes','no'], default=0,
@@ -609,10 +609,10 @@ class CenterGeom(Command):
 Geom can be either a tring or an instance of a DejaVu.Geom.Geom
 The point3D is given in the global coodinates system.
 """
-        if type(object)==types.StringType:
+        if type(object)==bytes:
             vi = self.vf.GUI.VIEWER
             object = vi.FindObjectByName(object)
-        apply( self.doitWrapper, (object, point), kw)
+        self.doitWrapper(*(object, point), **kw)
         
 
 class CenterSceneOnPickedPixel(Command, ICOM):
@@ -661,7 +661,7 @@ matrices.
         # we do not want this command to log or undo itself
         kw['topCommand'] = 0
         kw['busyIdle'] = 1
-        apply( self.doitWrapper, (pick,), kw )
+        self.doitWrapper(*(pick,), **kw)
 
 
 class CenterSceneOnVertices(Command, ICOM):
@@ -709,7 +709,7 @@ matrices.
         # we do not want this command to log or undo itself
         kw['topCommand']=0
         kw['busyIdle']=1
-        apply( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
 
 
 
@@ -772,11 +772,11 @@ class AlignGeoms(Command):
 
     def __call__(self, geom1, vertInd1, geom2, vertInd2, **kw):
         """describe this command for a programmer"""
-        if type(geom1) is types.StringType :
+        if type(geom1) is bytes :
             geom1 = self.vf.GUI.VIEWER.FindObjectByName(geom1)
-        if type(geom2) is types.StringType :
+        if type(geom2) is bytes :
             geom2 = self.vf.GUI.VIEWER.FindObjectByName(geom2)
-        apply( self.doitWrapper, (geom1, vertInd1, geom2, vertInd2), kw )
+        self.doitWrapper(*(geom1, vertInd1, geom2, vertInd2), **kw)
 
 
 
@@ -878,7 +878,7 @@ operation and deleted when finished."""
     def getVertexIndex(self):
         vi = self.vf.GUI.VIEWER
         pick = vi.lastPick
-        geom, vertIndList = pick.hits.items()[0]
+        geom, vertIndList = list(pick.hits.items())[0]
         return vertIndList[1]
 
 
@@ -887,7 +887,7 @@ operation and deleted when finished."""
         # we do not want this command to log or undo itself
         kw['topCommand']=0
         kw['busyIdle']=1
-        apply( self.doitWrapper, (nodes,), kw )
+        self.doitWrapper(*(nodes,), **kw)
 
 
 
@@ -906,8 +906,8 @@ class PrintGeometryName(Command, ICOM):
 
     def __call__(self, objects, topCommand=0, **kw):
         # we do not want this command to log or undo itself
-        if not kw.has_key('topCommand'): kw['topCommand'] = topCommand
-        apply( self.doitWrapper, (objects,), kw )
+        if 'topCommand' not in kw: kw['topCommand'] = topCommand
+        self.doitWrapper(*(objects,), **kw)
 
 
 
@@ -982,7 +982,7 @@ class LoadColorMap(Command):
                    ('all files:', '*')],\
                 title = 'Color Map File:')
         if not filename: return
-        apply(self.doitWrapper, (filename,), {})
+        self.doitWrapper(*(filename,), **{})
 
 
     def doit(self, filename):
@@ -990,9 +990,9 @@ class LoadColorMap(Command):
         name = os.path.splitext(os.path.basename(filename))[0]
         l = {}
         g = {}
-        execfile(filename, g, l)
+        exec(compile(open(filename, "rb").read(), filename, 'exec'), g, l)
         newColorMap = None
-        for name, object in l.items():
+        for name, object in list(l.items()):
             if isinstance(object, ColorMap):
                 newColorMap = object
                 break
@@ -1000,7 +1000,7 @@ class LoadColorMap(Command):
         #newColorMap = ColorMap(name, filename=filename)
         if newColorMap:
             #name should be uniq already
-            for k in self.vf.colorMaps.keys():
+            for k in list(self.vf.colorMaps.keys()):
                 if k==name:
                     newColorMap.name = name + '_' + str(self.vf.colorMapCt)
                     self.vf.colorMapCt = self.vf.colorMapCt + 1
@@ -1013,7 +1013,7 @@ class LoadColorMap(Command):
         None <- loadColorMap(filename)
         filename: file containing colorMap *_map.py
         """
-        return apply( self.doitWrapper, (filename,), kw)
+        return self.doitWrapper(*(filename,), **kw)
 
 
 
@@ -1041,7 +1041,7 @@ class SaveColorMap(Command):
     def buildFormDescr(self, formName):
         if formName == 'saveCM':
             ifd = InputFormDescr(title = 'Save Color Map')
-            cmNames = map(lambda x: (x, None), self.vf.colorMaps.keys())
+            cmNames = [(x, None) for x in list(self.vf.colorMaps.keys())]
             ifd.append({'name':'colorMapName',
                             'widgetType':ListChooser,
                             'wcfg':{'entries': cmNames,
@@ -1055,12 +1055,12 @@ class SaveColorMap(Command):
 
     def guiCallback(self):
         #force a redraw of form
-        keys = self.vf.colorMaps.keys()
+        keys = list(self.vf.colorMaps.keys())
         if not len(keys):
             self.vf.warningMsg('currently no color maps in viewer')
             return
                 
-        if self.cmdForms.has_key('saveCM'):
+        if 'saveCM' in self.cmdForms:
             descr = self.cmdForms['saveCM']
 
         val = self.showForm('saveCM', force=1)
@@ -1077,11 +1077,11 @@ class SaveColorMap(Command):
                    ('all files:', '*')],\
             title = 'Color Map File:')
         if not filename: return
-        apply(self.doitWrapper, (colorMapName, filename,), {})
+        self.doitWrapper(*(colorMapName, filename,), **{})
 
 
     def doit(self, colorMapName, filename):
-        assert colorMapName in self.vf.colorMaps.keys(), 'no colorMap of that name'
+        assert colorMapName in list(self.vf.colorMaps.keys()), 'no colorMap of that name'
         colorMap = self.vf.colorMaps[colorMapName]
         colorMap.write(filename)
             
@@ -1092,7 +1092,7 @@ class SaveColorMap(Command):
         colorMapName: name of colorMap to be written
         filename: file containing colorMap
         """
-        apply( self.doitWrapper, (colorMapName, filename,), kw)
+        self.doitWrapper(*(colorMapName, filename,), **kw)
 
 
 
@@ -1112,13 +1112,13 @@ class CreateColorMap(Command):
     """
 
     def guiCallback(self):
-        apply(self.doitWrapper, (), {'viewer':self.vf.GUI.VIEWER, 'log':0})
+        self.doitWrapper(*(), **{'viewer':self.vf.GUI.VIEWER, 'log':0})
 
 
     def accept_cb(self, event=None):
         #print "accept_cb"
         self.cmg.apply_cb()
-        if self.colorMaps.has_key('self.cmg.name') is False:
+        if ('self.cmg.name' in self.colorMaps) is False:
             self.vf.addColorMap(self.cmg)
             self.cmg.apply.configure(command=self.cmg.apply_cb)
 
@@ -1129,16 +1129,16 @@ class CreateColorMap(Command):
         if not viewer:
             viewer = self.vf.GUI.VIEWER
 
-        if ramp and type(ramp) is types.StringType:
+        if ramp and type(ramp) is bytes:
             #ramp can only be a string
             ramp = eval(ramp + '()')
 
-        if name != 'colormap' and self.vf.colorMaps.has_key(name):
+        if name != 'colormap' and name in self.vf.colorMaps:
             self.cmg = self.vf.colorMaps[name]
             self.cmg.showColormapSettings_cb()
         else:
             i = 1
-            while self.vf.colorMaps.has_key(name):
+            while name in self.vf.colorMaps:
                 name = 'colormap' + str(i)
                 i += 1
 
@@ -1158,12 +1158,12 @@ class CreateColorMap(Command):
         ramp:         color ramp string ('RGBARamp', 'RedWhiteARamp',
                       'WhiteBlueARamp' or 'RedWhiteBlueARamp'
         """
-        if not kw.has_key('redraw'): kw['redraw'] = 1
-        if not kw.has_key('viewer'): kw['viewer'] = self.vf.GUI.VIEWER
+        if 'redraw' not in kw: kw['redraw'] = 1
+        if 'viewer' not in kw: kw['viewer'] = self.vf.GUI.VIEWER
         kw['ramp'] = ramp
         kw['name'] = name
         kw['log'] = 0
-        apply( self.doitWrapper, (), kw)
+        self.doitWrapper(*(), **kw)
 
 
 
@@ -1183,13 +1183,13 @@ class ColorMapEditor(Command):
         
     def buildFormDescr(self, formName):
         if formName == 'editCM':
-            self.interpOn = Tkinter.IntVar()
+            self.interpOn = tkinter.IntVar()
             #self.id = Tkinter.StringVar()
-            self.showLabels = Tkinter.IntVar()
+            self.showLabels = tkinter.IntVar()
             self.showLabels.set(1)
             ifd = InputFormDescr(title = 'Select Color Map To Edit')
             #cmNames = self.vf.colorMaps.keys()
-            cmNames = map(lambda x: (x, None), self.vf.colorMaps.keys())
+            cmNames = [(x, None) for x in list(self.vf.colorMaps.keys())]
             #could use this to build a new one
             #self.id.set(cmNames[0])
 #            ifd.append({'widgetType':Pmw.ComboBox,
@@ -1215,26 +1215,26 @@ class ColorMapEditor(Command):
 
     def guiCallback(self):
         # Update the level if the form exists already.
-        if not len(self.vf.colorMaps.keys()):
-            print 'no color maps in viewer'
+        if not len(list(self.vf.colorMaps.keys())):
+            print('no color maps in viewer')
             return
-        if self.cmdForms.has_key('editCM'):
+        if 'editCM' in self.cmdForms:
             descr = self.cmdForms['editCM'].descr
         val = self.showForm('editCM',force=1)
         if val=={}: return
         if not val: return
         cmap = val['colorMapName'][0]
         vi = self.vf.GUI.VIEWER
-        apply(self.doitWrapper, (cmap,), {'viewer':vi, 'log':0})
+        self.doitWrapper(*(cmap,), **{'viewer':vi, 'log':0})
 
 
     def doit(self, cmap, viewer=None):
         
-        if type(cmap) is types.StringType:
-            if self.vf.colorMaps.has_key(cmap):
+        if type(cmap) is bytes:
+            if cmap in self.vf.colorMaps:
                 cmap=self.vf.colorMaps[cmap]
             else:
-                print 'no such color map'
+                print('no such color map')
 
         assert isinstance(cmap, ColorMap)
 
@@ -1255,21 +1255,21 @@ class ColorMapEditor(Command):
         None <- showCMGUI(cmap='cmap', **kw)
         cmap:         ColorMap or its name
         """
-        if type(cmap) is types.StringType:
-            if cmap not in self.vf.colorMaps.keys():
-                print 'unknown color map name: ', cmap
+        if type(cmap) is bytes:
+            if cmap not in list(self.vf.colorMaps.keys()):
+                print('unknown color map name: ', cmap)
                 return 'ERROR'
             else:
                 cmap = self.vf.colorMaps[cmap]
         elif not isinstance(cmap, ColorMap):
-            print 'specified colormap not a ColorMap instance'
+            print('specified colormap not a ColorMap instance')
             return 'ERROR'
         if not viewer:
             viewer = self.vf.GUI.VIEWER
         kw['log'] = 0
         kw['viewer'] = viewer
 
-        apply( self.doitWrapper, (cmap,), kw)
+        self.doitWrapper(*(cmap,), **kw)
 
 
 
@@ -1296,25 +1296,25 @@ class EditColorMap(Command):
             cfg['mini']=mini
         if maxi:
             cfg['maxi']=maxi 
-        apply( cmap.configure, (), cfg)
+        cmap.configure(*(), **cfg)
         
     def __call__(self, cmap, ramp=None, mini=None, maxi=None, **kw):
         """
         None <- editCM(cmap, ramp=None, mini=None,
                  maxi=None, name=None, **kw)
         """
-        if type(cmap) is types.StringType:
-            if cmap not in self.vf.colorMaps.keys():
-                print 'unknown color map name: ', cmap
+        if type(cmap) is bytes:
+            if cmap not in list(self.vf.colorMaps.keys()):
+                print('unknown color map name: ', cmap)
                 return 'ERROR'
             cmap = self.vf.colorMaps[cmap]
         elif not isinstance(cmap, ColorMap):
-            print 'specified colormap not a ColorMap instance'
+            print('specified colormap not a ColorMap instance')
             return 'ERROR'
         kw['ramp']=ramp
         kw['mini']=mini
         kw['maxi']=maxi
-        apply( self.doitWrapper, (cmap,), kw)
+        self.doitWrapper(*(cmap,), **kw)
 
 
 
@@ -1417,14 +1417,14 @@ Keywords : large, image, tile rendering
         kw['backBuffer'] = backBuffer
         kw['checkeredBackground'] = checkeredBackground
         kw['redraw'] = True
-        apply(self.doitWrapper, (), kw)
+        self.doitWrapper(*(), **kw)
         
         
     def guiCallback(self):
         #print "RenderLargeImageCommand.guiCallback"
 
         # in case we arrive here after a cancel and a resizing
-        if self.cmdForms.has_key('tileRendering'):
+        if 'tileRendering' in self.cmdForms:
             self.fixHeight_cb()
         
         val = self.showForm('tileRendering', 
@@ -1433,12 +1433,12 @@ Keywords : large, image, tile rendering
             
         if not val=={}:
             del val['constraint']
-            if val.has_key('filebrowse'):
+            if 'filebrowse' in val:
                 del val['filebrowse']
-            if val.has_key('outputFile') and not val['outputFile']:
+            if 'outputFile' in val and not val['outputFile']:
                 val['outputFile'] = './test.tif'
             val['redraw'] = False
-            apply(self.doitWrapper, (), val)
+            self.doitWrapper(*(), **val)
 
 
     def getConstrainedWidth(self, mode, height, width):
@@ -1541,7 +1541,7 @@ Keywords : large, image, tile rendering
                         'gridcfg':{'sticky':'e'}})
 
             idf.append({'name':'constrLab',
-                        'widgetType':Tkinter.Label,
+                        'widgetType':tkinter.Label,
                         'wcfg':{ 'text':'Constraints: '},
                         'gridcfg':{'sticky':'wens', 'row':0, 'column':1}})
             
@@ -1567,18 +1567,18 @@ Keywords : large, image, tile rendering
                         'gridcfg':{'sticky':'e'}})
 
             idf.append({'name':'backBuffer',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue':1,
                         'wcfg':{'text':'Back Buffer',
-                                'variable':Tkinter.IntVar()},
+                                'variable':tkinter.IntVar()},
                         'gridcfg':{'sticky':'w', 'columnspan':2}
                         })
 
             idf.append({'name':'checkeredBackground',
-                        'widgetType':Tkinter.Checkbutton,
+                        'widgetType':tkinter.Checkbutton,
                         'defaultValue':0,
                         'wcfg':{'text':'Checkered Background',
-                                'variable':Tkinter.IntVar()},
+                                'variable':tkinter.IntVar()},
                         'gridcfg':{'sticky':'w', 'columnspan':2}
                         })
 
@@ -1594,7 +1594,7 @@ Keywords : large, image, tile rendering
 
             idf.append({'widgetType':SaveButton,
                         'name':'filebrowse',
-                        'wcfg':{'buttonType':Tkinter.Button,
+                        'wcfg':{'buttonType':tkinter.Button,
                                 'title':'Save In File ...',
                                 'types':[('TIFF', '*.tif'),
                                          ('JPEG','*.jpg'),
@@ -1711,7 +1711,7 @@ yoffset  : int to specify the y position of the left corner of the camera
                 opts = mb.pack_info()
                 mb.pack_forget()
                 opts['expand'] = 0
-                apply( mb.pack, (), opts)
+                mb.pack(*(), **opts)
                 MESSAGE_BOX_reqheight = vfgui.MESSAGE_BOX.winfo_reqheight()
             except: #mb.pack_info() hrows exception
                 MESSAGE_BOX_reqheight = 0
@@ -1827,7 +1827,7 @@ yoffset  : int to specify the y position of the left corner of the camera
             del val['width']
             height = val['height']
             del val['height']
-            apply(self.doitWrapper, (width, height), val)
+            self.doitWrapper(*(width, height), **val)
         
     
 
@@ -1845,7 +1845,7 @@ yoffset  : int to specify the y position of the left corner of the camera
         kw['xoffset']=xoffset
         kw['yoffset']=yoffset
         kw['redraw']=True
-        return apply(self.doitWrapper, (width, height), kw)
+        return self.doitWrapper(*(width, height), **kw)
 
 
 
@@ -1896,8 +1896,8 @@ BMP, EPS, GIF, IM, JPEG, PNG, PPM, TIFF or TIF, PDF.
         
         idf = InputFormDescr(title="SaveImage")
         idf.append({'name':"TB",
-                        'widgetType':Tkinter.Checkbutton,
-                        'wcfg':{'text':'Transparent Background', 'variable':Tkinter.IntVar()},
+                        'widgetType':tkinter.Checkbutton,
+                        'wcfg':{'text':'Transparent Background', 'variable':tkinter.IntVar()},
                         'command':self.switch_type_cb,
                         'gridcfg':{'sticky':'nw'}})
         
@@ -1912,7 +1912,7 @@ BMP, EPS, GIF, IM, JPEG, PNG, PPM, TIFF or TIF, PDF.
     
         idf.append({'widgetType':SaveButton,
                         'name':'filesave',
-                        'wcfg':{'buttonType':Tkinter.Button,
+                        'wcfg':{'buttonType':tkinter.Button,
                                 'title':'Save as File',
                                 'types':[('PNG files', '*.png'),
                                          ('TIFF files', '*.tif'),
@@ -1929,24 +1929,24 @@ BMP, EPS, GIF, IM, JPEG, PNG, PPM, TIFF or TIF, PDF.
         
         
         idf.append({'name':'cite',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'Cite',
                             'command':self.cite_cb,
                            },
                     'gridcfg':{'sticky':'wnse','column':1}})
         idf.append({'name':'Citelab',
-                        'widgetType':Tkinter.Label,
+                        'widgetType':tkinter.Label,
                         'wcfg':{ 'text':'If you are going to publish this image'},
                         'gridcfg':{'sticky':'wnse','row':-1,'column':0}})
         idf.append({'name':'ok',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'OK',
                             'command':self.ok_cb,
                            },
                     'gridcfg':{'sticky':'wnse'}})            
         
         idf.append({'name':'dismiss',
-                    'widgetType':Tkinter.Button,
+                    'widgetType':tkinter.Button,
                     'wcfg':{'text':'DISMISS',
                             'command':self.dismiss_cb,
                            },
@@ -1989,16 +1989,16 @@ BMP, EPS, GIF, IM, JPEG, PNG, PPM, TIFF or TIF, PDF.
         file = ebn['File']['widget'].get()                
         if file == None or file =='': return
         transparentbg = ebn['TB']['wcfg']['variable'].get()
-        if not self.cmdForms.has_key('SaveImage'): return
+        if 'SaveImage' not in self.cmdForms: return
         f = self.cmdForms['SaveImage']
         if f.root.winfo_ismapped():
             f.root.withdraw()
             f.releaseFocus()
 
-        apply(self.doitWrapper, (file,transparentbg), {})
+        self.doitWrapper(*(file,transparentbg), **{})
     
     def dismiss_cb(self):
-        if not self.cmdForms.has_key('SaveImage'): return
+        if 'SaveImage' not in self.cmdForms: return
         f = self.cmdForms['SaveImage']
         if f.root.winfo_ismapped():
             f.root.withdraw()
@@ -2023,7 +2023,7 @@ BMP, EPS, GIF, IM, JPEG, PNG, PPM, TIFF or TIF, PDF.
     transparentbg: true to get a transparent background, works only with .png files"""
         if filename==None: return
         kw['transparentbg'] = transparentbg
-        apply(self.doitWrapper, (filename,), kw)
+        self.doitWrapper(*(filename,), **kw)
 
 
 
@@ -2039,7 +2039,7 @@ class ColorGeomsByName(Command):
 
     def onAddCmdToViewer(self):
         if self.vf.hasGui:
-            self.patVar = Tkinter.StringVar()
+            self.patVar = tkinter.StringVar()
             self.patVar.set("")
 
     def hidePalette_cb(self, event=None):
@@ -2050,12 +2050,12 @@ class ColorGeomsByName(Command):
 
 
     def doit(self, pat, material):
-        print 'in doit with pat=', pat 
-        print 'and material=', material 
+        print('in doit with pat=', pat) 
+        print('and material=', material) 
         geomsToColor = self.vf.GUI.VIEWER.findGeomsByName(pat)
-        print "geomsToColor=", 
+        print("geomsToColor=", end=' ') 
         for g in geomsToColor:
-            print g.name
+            print(g.name)
         if len(geomsToColor)==0:
             return
         for geom in geomsToColor:
@@ -2081,12 +2081,12 @@ class ColorGeomsByName(Command):
         menuBar = self.palette.ccFrame
         ifd = self.ifd = InputFormDescr(title="Color Geometries by Name")
         ifd.append({'name':'patternLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'parent':top,
                     'text':"pattern:",
                     'gridcfg':{'sticky':'w'}})
         ifd.append({'name':'patternEnt',
-                'widgetType':Tkinter.Entry,
+                'widgetType':tkinter.Entry,
                 'parent':top,
                 'wcfg':{ 'textvariable': self.patVar, },
                 'gridcfg':{'sticky':'wens', 'row':-1, 'column':1}})
@@ -2111,7 +2111,7 @@ class ColorGeomsByName(Command):
         pat: string to match to geometry names
         material: new color 
         """
-        apply( self.doitWrapper, (pat, material,), kw)
+        self.doitWrapper(*(pat, material,), **kw)
 
 
 
@@ -2161,7 +2161,7 @@ class setAntialiasingCommand(Command):
             
             
             
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'name':'dismiss',
                         'wcfg':{'text':'DISMISS', 'command':self.dismiss_cb},
                         'gridcfg':{'sticky':'we', 'columnspan':3}})
@@ -2169,7 +2169,7 @@ class setAntialiasingCommand(Command):
             return idf
     
     def dismiss_cb(self):
-        if self.cmdForms.has_key('setAntialiasing'):
+        if 'setAntialiasing' in self.cmdForms:
             self.cmdForms['setAntialiasing'].withdraw()
     
     def guiCallback(self):
@@ -2183,16 +2183,16 @@ class setAntialiasingCommand(Command):
         else:
             self.curselv = self.curselval[0]
         
-        apply( self.doitWrapper, (self.curselv,),{})
+        self.doitWrapper(*(self.curselv,), **{})
         
     def __call__(self,value, **kw):
         """None <-----setAntialiasing(value)
         \ncolor : background color
         """
-        if isinstance(value, types.IntType) is False:
+        if isinstance(value, int) is False:
             return
         
-        apply( self.doitWrapper, (value,), kw)
+        self.doitWrapper(*(value,), **kw)
 
 
 
@@ -2223,7 +2223,7 @@ class setbackgroundcolorCommand(Command):
         
     def onAddCmdToViewer(self):
         if self.vf.hasGui:
-            self.patVar = Tkinter.StringVar()
+            self.patVar = tkinter.StringVar()
             self.patVar.set("")
             path = os.path.join(getResourceFolder(),'backgroundColor')
             if os.path.exists(path):
@@ -2257,7 +2257,7 @@ class setbackgroundcolorCommand(Command):
                                 'immediate':0, 'exitFunction':self.dismiss_cb},
                         'gridcfg':{'sticky':'wens', 'columnspan':3}
                         })
-            idf.append({'widgetType':Tkinter.Button,
+            idf.append({'widgetType':tkinter.Button,
                         'name':'dismiss',
                         'wcfg':{'text':'DISMISS', 'command':self.dismiss_cb},
                         'gridcfg':{'sticky':'we', 'columnspan':3}})
@@ -2266,7 +2266,7 @@ class setbackgroundcolorCommand(Command):
     
 
     def dismiss_cb(self, **kw):
-        if self.cmdForms.has_key('setbackgroundcolor'):
+        if 'setbackgroundcolor' in self.cmdForms:
             self.cmdForms['setbackgroundcolor'].withdraw()
 
 
@@ -2279,14 +2279,14 @@ class setbackgroundcolorCommand(Command):
 None <-----setbackgroundcolorCommand(color)
 \ncolor : background color
 """
-        if type(color) == types.StringType:
+        if type(color) == bytes:
             return "Error: color type can't be string"
         elif hasattr(color, '__len__') is False:
             return "Error: color should have length"
         elif len(color) != 3:
             return "Error: color length should be 3"
         
-        apply( self.doitWrapper, (color,), kw)
+        self.doitWrapper(*(color,), **kw)
 
 
 setbackgroundcolorGUI = CommandGUI()
@@ -2322,40 +2322,40 @@ class setNPROutlinesCommand(ToggleNpr,Command):
         
     def onAddCmdToViewer(self):
         if self.vf.hasGui:
-            self.sensitivityVar = Tkinter.StringVar()
+            self.sensitivityVar = tkinter.StringVar()
             self.sensitivityVar.set("")
-            self.cpVar = Tkinter.StringVar()
+            self.cpVar = tkinter.StringVar()
             self.cpVar.set("")
 
     def buildFormDescr(self, formName):
        if formName=="setNprparams":                
         ifd = InputFormDescr(title="Set NPR Params")
         ifd.append({'name':'cpLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':"Control Points"},
                     
                     'gridcfg':{"row":0,'column':0,'sticky':'w'}})
         ifd.append({'name':'cpEnt',
-                'widgetType':Tkinter.Entry,
+                'widgetType':tkinter.Entry,
                 'tooltip':'controlpoints must be  a list of tuples with x  value ranging from [50,305] and y from [20,275].',
                 'wcfg':{'textvariable':self.cpVar},
                 'gridcfg':{'sticky':'wens', 'row':0, 'column':1}})
         ifd.append({'name':'sensitivityLab',
-                    'widgetType':Tkinter.Label,
+                    'widgetType':tkinter.Label,
                     'wcfg':{'text':"Sensitivity"},
                     
                     'gridcfg':{"row":1,"column":0,'sticky':'w'}})
         ifd.append({'name':'sensitivityEnt',
-                'widgetType':Tkinter.Entry,
+                'widgetType':tkinter.Entry,
                 'tooltip':'sensitivity should be in range of 0.0 to 1.0',
                 'wcfg':{'textvariable':self.sensitivityVar},
                 'gridcfg':{'sticky':'wens', 'row':1, 'column':1}})
        
-        ifd.append({'widgetType':Tkinter.Button,
+        ifd.append({'widgetType':tkinter.Button,
                         'name':'OK',
                         'wcfg':{'text':'OK', 'command':self.ok_cb},
                         'gridcfg':{'sticky':'we', 'row':2,'column':0}})
-        ifd.append({'widgetType':Tkinter.Button,
+        ifd.append({'widgetType':tkinter.Button,
                         'name':'dismiss',
                         'wcfg':{'text':'DISMISS', 'command':self.dismiss_cb},
                         'gridcfg':{'sticky':'we', 'row':2,'column':1}})
@@ -2366,7 +2366,7 @@ class setNPROutlinesCommand(ToggleNpr,Command):
         
     
     def dismiss_cb(self):
-        if self.cmdForms.has_key('setNprparams'):
+        if 'setNprparams' in self.cmdForms:
             self.cmdForms['setNprparams'].withdraw()
     def guiCallback(self):
         form = self.showForm('setNprparams', modal=0, blocking=0)
@@ -2391,14 +2391,14 @@ class setNPROutlinesCommand(ToggleNpr,Command):
         snesitivity:floatvalue(ranging from 0.0 to 1.0)
         \ncolor : background color
         """
-        if type(control_points) != types.ListType:
-            print "Illegal type for points"
+        if type(control_points) != list:
+            print("Illegal type for points")
             return
-        if type(sensitivity)!=types.FloatType:
-            print "Illegal type for sensitivity"
+        if type(sensitivity)!=float:
+            print("Illegal type for sensitivity")
             return
                     
-        apply( self.doitWrapper, (control_points,sensitivity),{})
+        self.doitWrapper(*(control_points,sensitivity), **{})
 
 
    

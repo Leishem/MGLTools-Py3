@@ -36,31 +36,31 @@ del hostDict['localhost']
 
 # first try to find a adthost file in current directory
 if os.path.isfile('./adthosts.py'):
-    execfile('./adthosts.py')
-    if globals().has_key('hostMacros'):
+    exec(compile(open('./adthosts.py', "rb").read(), './adthosts.py', 'exec'))
+    if 'hostMacros' in globals():
         hostDict.update(hostMacros)
 elif os.name != 'nt': #sys.platform!='win32':
     # try to find the user's home directory
     import posix
-    if 'HOME' in posix.environ.keys():
+    if 'HOME' in list(posix.environ.keys()):
         try:
-            execfile(os.path.join(posix.environ['HOME'],'adthosts.py'))
-            if globals().has_key('hostMacros'):
+            exec(compile(open(os.path.join(posix.environ['HOME'],'adthosts.py'), "rb").read(), os.path.join(posix.environ['HOME'],'adthosts.py'), 'exec'))
+            if 'hostMacros' in globals():
                 hostDict.update(hostMacros)
         except:
             pass
    
 
 def setADTmode(modeStr, mv):
-    import Tkinter
+    import tkinter
     from AutoDockTools.autotorsCommands import AdtSetMode
     mv.addCommand(AdtSetMode(),'ADTSetMode')
     if not hasattr(mv.GUI, 'adtBar'):
         mv.GUI.adtBar = mv.GUI.menuBars['AutoToolsBar']
     if not hasattr(mv.GUI, 'adtFrame'):
-        mv.GUI.adtFrame = vf.GUI.adtBar.menubuttons.values()[0].master
+        mv.GUI.adtFrame = list(vf.GUI.adtBar.menubuttons.values())[0].master
     if not hasattr(mv.GUI, 'adt41ModeLabel'):
-        mv.GUI.adt41ModeLabel=Tkinter.Label(mv.GUI.adtFrame, text="ADT4.2", width=6,
+        mv.GUI.adt41ModeLabel=tkinter.Label(mv.GUI.adtFrame, text="ADT4.2", width=6,
                              relief='sunken', borderwidth=1, fg='DarkGreen',
                              bg = 'ivory',anchor='w' )
         mv.GUI.adt41ModeLabel.pack(side='left')
@@ -214,7 +214,7 @@ def runADT(*argv, **kw):
                 argv = [argv]
         else:
             argv = list(argv)
-    if kw.has_key("ownInterpreter"):
+    if "ownInterpreter" in kw:
         ownInterpreter = kw["ownInterpreter"]
     else:
         if argv is None:
@@ -301,7 +301,7 @@ def runADT(*argv, **kw):
 
     for opt in optlist:
         if opt[ 0] in ('-h', '--help'):
-            print help_msg
+            print(help_msg)
             sys.exit()
         elif opt[ 0] in ('-a', '--again'):
             again = 1
@@ -331,7 +331,7 @@ def runADT(*argv, **kw):
             try:
                 from Support.update import Update
             except ImportError:
-                print "Support package is needed to get updates"
+                print("Support package is needed to get updates")
                 break
                 
             update = Update()
@@ -342,7 +342,7 @@ def runADT(*argv, **kw):
                 update.latest     = 'tested'
                 update.getUpdates()
             elif 'clear' in args:
-                print "Removing all updates"
+                print("Removing all updates")
                 update.clearUpdates()
             else:
                 waitTk = update.gui()
@@ -353,13 +353,13 @@ def runADT(*argv, **kw):
             elif opt[1] in ('r', 'run'):
                 visionarg = 'run'
         else:
-            print "unknown option %s %s"%tuple(opt)
-            print help_msg
+            print("unknown option %s %s"%tuple(opt))
+            print(help_msg)
             sys.exit(1)
     
     #import sys
     text = 'Python executable     : '+ sys.executable +'\n'
-    if kw.has_key('AdtScriptPath'):
+    if 'AdtScriptPath' in kw:
         text += 'ADT script                : '+ kw['AdtScriptPath'] +'\n'
     text += 'MGLTool packages '+'\n'
     
@@ -373,7 +373,7 @@ def runADT(*argv, **kw):
     
     path_data = text
 
-    print 'Run ADT from ', __path__[0]
+    print('Run ADT from ', __path__[0])
     # if MGLPYTHONPATH environment variable exists - insert the specified path
     # into sys.path
     
@@ -413,7 +413,7 @@ PyMedia video encoder/decoder -- http://pymedia.org"""
             from TkinterDnD2 import TkinterDnD
             root = TkinterDnD.Tk()
         except ImportError:
-            from Tkinter import Tk
+            from tkinter import Tk
             root = Tk()
         root.withdraw()
     
@@ -508,7 +508,7 @@ PyMedia video encoder/decoder -- http://pymedia.org"""
                     mv.vision.ed.softrunCurrentNet_cb()
 
             elif a[-3:]=='.py':     # command script
-                print 'sourcing', a
+                print('sourcing', a)
                 mv.source(a)
     
             elif a[-4:] in ['.pdb', '.pqr', 'pdbq', 'mol2', '.cif', '.gro'] or a[-5:]=='pdbqs' or a[-5:]=='pdbqt':
@@ -518,7 +518,7 @@ PyMedia video encoder/decoder -- http://pymedia.org"""
                 pass
 
             else:
-                print 'WARNING: unable to process %s command line argument'%a
+                print('WARNING: unable to process %s command line argument'%a)
         if again:
             mv.source(".tmp.py")
         if dmode is not None or cmode is not None:
@@ -529,7 +529,7 @@ PyMedia video encoder/decoder -- http://pymedia.org"""
                 mv.removeOnAddObjectCmd(c[0])
             # restore original list of commands
             for c in addCmds:
-                apply( mv.addOnAddObjectCmd, c )
+                mv.addOnAddObjectCmd(*c)
 
         if gui:
             mv.GUI.VIEWER.suspendRedraw = False
@@ -571,7 +571,7 @@ PyMedia video encoder/decoder -- http://pymedia.org"""
     except:
         import traceback
         traceback.print_exc()
-        raw_input("hit enter to continue")
+        input("hit enter to continue")
         import sys
         sys.exit(1)
 

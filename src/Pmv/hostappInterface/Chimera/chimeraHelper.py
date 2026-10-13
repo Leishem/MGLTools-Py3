@@ -1,8 +1,8 @@
 #!/usr/bin/python
 #TODO
 #stabilize curve and metaball...really unstable and produce segmentation fault
-import numpy.oldnumeric as Numeric
-import sys, os, os.path, struct, math, string
+import mglcompat.oldnumeric as Numeric
+import sys, os, os.path, struct, math; from mglcompat import pystring as string
 
 import copy
 import gzip
@@ -61,7 +61,7 @@ from chimera import openModels as om
 #def Compose4x4(rot,tr,sc):
 #    import Blender
 #    from Blender import Mathutils
-#    import numpy.oldnumeric as Numeric
+#    import mglcompat.oldnumeric as Numeric
 #    """ compose a blender matrix of shape (16,) from  a rotation (shape (16,)),
 #    translation (shape (3,)), and scale (shape (3,)) """
 #    translation=Mathutils.Vector(tr[0],tr[1],tr[2])
@@ -264,7 +264,7 @@ def addObjToGeom(obj,geom):
                 #    geom.mesh.append(o.name)
             elif type(obj[1]) == dict :
                 geom.mesh={}                                                
-                for me in obj[1].keys():
+                for me in list(obj[1].keys()):
                     geom.mesh[me]=obj[1][me].name
             else :
                 geom.mesh=obj[1].name
@@ -354,7 +354,7 @@ def addObjToGeom(obj,geom):
 #
 #def Compose4x4BGL(rot,trans,scale):
 #    import Blender 
-#    import numpy.oldnumeric as Numeric
+#    import mglcompat.oldnumeric as Numeric
 #    GL=Blender.BGL
 #    """ compose a matrix of shape (16,) from  a rotation (shape (16,)),
 #    translation (shape (3,)), and scale (shape (3,)) """
@@ -2065,7 +2065,7 @@ def updateMesh(geom,parent=None,proxyCol=None,mol=None):
 #    coords = atoms.coords
 #    radii = atoms.vdwRadius
 #    from UTpackages.UTblur import blur
-#    import numpy.oldnumeric as Numeric
+#    import mglcompat.oldnumeric as Numeric
 #    volarr, origin, span = blur.generateBlurmap(coords, radii, XYZd,resolution, padding = 0.0)
 #    volarr.shape = (XYZd[0],XYZd[1],XYZd[2])
 #    volarr = Numeric.ascontiguousarray(Numeric.transpose(volarr), 'f')
@@ -2201,7 +2201,7 @@ def updateMesh(geom,parent=None,proxyCol=None,mol=None):
 #    msg='\n'
 #    msg+='from DejaVu.IndexedGeom import IndexedGeom\n'
 #    msg+='from DejaVu.IndexedPolygons import IndexedPolygons\n'
-#    msg+='import numpy.oldnumeric as Numeric\n'
+#    msg+='import mglcompat.oldnumeric as Numeric\n'
 #    msg+='g=IndexedPolygons(name="'+mesh.name+'")\n'
 #    msg+='inheritMaterial = None\n'
 #    
@@ -2483,7 +2483,7 @@ def ARstep(mv,concat=False,local=False):
     mv.art.beforeRedraw()
     #up(self,dialog)
     for arcontext in mv.art.arcontext :
-        for pat in arcontext.patterns.values():
+        for pat in list(arcontext.patterns.values()):
             if pat.isdetected:
                 #print pat
                 geoms_2_display = pat.geoms
@@ -2555,7 +2555,7 @@ def updateImage(mv,dialog,order=[3, 3, 1, 2]):#[1, 2, 3, 1]
     cam = mv.art.arcontext[0].cam
     cam.lock.acquire()
     im = Image.fromstring('RGBA',(mv.art.video.width,mv.art.video.height),
-                          cam.im_array.tostring())
+                          cam.im_array.tobytes())
     rgba = im.split()
     new = Image.merge("RGBA", (rgba[order[0]],rgba[order[1]],rgba[order[2]],rgba[order[3]]))
     #can maybe modify the video...

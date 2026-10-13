@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -16,13 +16,13 @@
 try:
     import gle
 except:
-    print 'Sorry you need the GLE extension module'
+    print('Sorry you need the GLE extension module')
  
 from DejaVu.viewerFns import checkKeywords
 from DejaVu.Geom import Geom
 from DejaVu.triangle_strip import Triangle_strip
 from opengltk.OpenGL import GL
-import numpy.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
 
 class GleObject(Triangle_strip):
 
@@ -36,7 +36,7 @@ class GleObject(Triangle_strip):
         self.normalStyle = gle.TUBE_NORM_PATH_EDGE
         self.joinStyle = gle.TUBE_JN_ANGLE
 
-        apply( Triangle_strip.__init__, (self, name, check), kw)
+        Triangle_strip.__init__(*(self, name, check), **kw)
 
 
     def Set(self, check=1, redo=1, updateOwnGui=True, **kw):
@@ -45,12 +45,12 @@ check=1 : verify that all the keywords present can be handle by this func
 redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
-        if kw.has_key('materials') and kw['materials'] is not None:
+        if 'materials' in kw and kw['materials'] is not None:
             materials = Numeric.array((kw['materials']),'f')
         else:
             materials = Numeric.array(((0.,0.,1.,1.),),'f')
 
-        redoFlags = apply( Triangle_strip.Set, (self, check, 0), kw )
+        redoFlags = Triangle_strip.Set(*(self, check, 0), **kw)
 
         nm = kw.get( 'normalStyle')
         # nm can be TUBE_NORM_FACET, TUBE_NORM_EDGE, TUBE_NORM_PATH_EDGE
@@ -120,9 +120,9 @@ class GleExtrude(GleObject):
         
         if __debug__:
             if check:
-                apply( checkKeywords, (name,self.keywords), kw)
+                checkKeywords(*(name,self.keywords), **kw)
 
-        apply( GleObject.__init__, (self, name, 0), kw)
+        GleObject.__init__(*(self, name, 0), **kw)
         self.Set(trace3D = kw.get('trace3D'),
                  shape2D = kw.get('shape2D'),
                  contourUp =  kw.get( 'contourUp'),
@@ -165,7 +165,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         else:
             self.trace3D = trace3D
                 
-        if kw.has_key('materials') and kw['materials'] is not None:
+        if 'materials' in kw and kw['materials'] is not None:
             materials = Numeric.array((kw['materials']),'f')
             redoFlags |= self._redoFlags['redoDisplayListFlag']
         else:
@@ -184,7 +184,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                 kw['stripBegin']=[0] + list( s[:-1,0] )
                 kw['stripEnd'] = list( s[:,0])
 
-        redoFlags |= apply( GleObject.Set, (self, check, 0), kw )
+        redoFlags |= GleObject.Set(*(self, check, 0), **kw)
 
         return self.redoNow(redo, updateOwnGui, redoFlags)
 
@@ -320,12 +320,12 @@ class GlePolyCylinder(GleExtrude):
 
         if __debug__:
             if check:
-                apply( checkKeywords, (name,self.keywords), kw)
+                checkKeywords(*(name,self.keywords), **kw)
 
         r = kw.get('radius')
         if not r: r=1.0
         self.radius = r
-        apply( GleExtrude.__init__, (self, name, 0), kw)
+        GleExtrude.__init__(*(self, name, 0), **kw)
 
         self.Set(trace3D = kw.get( 'trace3D'))
 
@@ -336,9 +336,9 @@ check=1 : verify that all the keywords present can be handle by this func
 redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
-        redoFlags = apply( GleExtrude.Set, (self, check, 0), kw)
+        redoFlags = GleExtrude.Set(*(self, check, 0), **kw)
 
-        if kw.has_key('materials') and kw['materials'] is not None:
+        if 'materials' in kw and kw['materials'] is not None:
             materials = Numeric.array((kw['materials']),'f')
         else:
             materials = Numeric.array(((0.,0.,1.,1.),),'f')
@@ -396,11 +396,11 @@ class GlePolyCone(GlePolyCylinder):
 
         if __debug__:
             if check:
-                apply( checkKeywords, (name,self.keywords), kw)
+                checkKeywords(*(name,self.keywords), **kw)
 
-        apply( GlePolyCylinder.__init__, (self, name, 0), kw )
+        GlePolyCylinder.__init__(*(self, name, 0), **kw)
 
-        apply( self.Set, (), kw)
+        self.Set(*(), **kw)
 
         
     def Set(self, check=1, redo=1, updateOwnGui=True, **kw):
@@ -409,7 +409,7 @@ check=1 : verify that all the keywords present can be handle by this func
 redo=1 : append self to viewer.objectsNeedingRedo
 updateOwnGui=True : allow to update owngui at the end this func
 """
-        redoFlags = apply( GlePolyCylinder.Set, (self, check, 0), kw )
+        redoFlags = GlePolyCylinder.Set(*(self, check, 0), **kw)
 
         r = kw.get('radii')
         if r is not None:

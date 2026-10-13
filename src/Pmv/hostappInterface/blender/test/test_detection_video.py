@@ -50,7 +50,7 @@
 import sys,os
 #get the current software
 if __name__ == "__main__":
-	soft = os.path.basename(sys.argv[0]).lower()
+        soft = os.path.basename(sys.argv[0]).lower()
 else : 
     soft = __name__
 
@@ -70,7 +70,7 @@ else :
     #get epmv and mv (adaptor and molecular viewer)
     if sotf == 'c4d':
         import c4d
-        epmv = c4d.mv.values()[0]#[dname]
+        epmv = list(c4d.mv.values())[0]#[dname]
 self = epmv.mv
 #from Pmv import hostappInterface
 #plgDir = hostappInterface.__path__[0]
@@ -86,7 +86,7 @@ from numpy import oldnumeric as Numeric
 import PyARTK
 from PyARTK import video,arparamlib,arlib,utils,glutils
 import Image
-import Tkinter
+import tkinter
 import ImageTk
 import Blender
 from Blender import *
@@ -106,11 +106,11 @@ class video_tk:
     import PyARTK
     from PyARTK import video,arparamlib,arlib,utils,glutils
     import Image
-    import Tkinter
+    import tkinter
     import ImageTk
     self.matrix=None
     self.trackedObj=trackedObj
-	
+        
     self.data_path = os.path.join(PyARTK.__path__[0],'Tests','data')
     camera_param = os.path.join(self.data_path,"LogitechPro4000.dat")
     patt_name = os.path.join(self.data_path,"kanjiPatt")
@@ -159,7 +159,7 @@ class video_tk:
             return
         
     if debug:
-            print "-- Camera Parameter --"
+            print("-- Camera Parameter --")
             arparamlib.arParamDisp(self.cparam)
     near=0.1
     far=5000.0
@@ -167,30 +167,30 @@ class video_tk:
     self.m_projection = Numeric.zeros((16,),'d')
     glutils.arglCameraFrustumRH(self.cparam,near,far,self.m_projection)
     if debug:
-            print "-- Camera Projection Matrix --"
-	    print self.m_projection
+            print("-- Camera Projection Matrix --")
+            print(self.m_projection)
     
 
     # load pattern data 
     id = arlib.arLoadPatt(patt_name)
     if id == -1:
-            print " pattern load error "
+            print(" pattern load error ")
             sys.exit(0)
     else: self.patt_id = id
 
     # init Tkinter Display
     self.tk=None
     if tk :
-       self.tk=Tkinter.Tk()
+       self.tk=tkinter.Tk()
        self.tk.protocol("WM_DELETE_WINDOW", self.exit_cb)
        self.photo = ImageTk.PhotoImage(self.pixel_format,(self.width,self.height))
-       label= Tkinter.Label(self.tk,text="videoCamera",image=self.photo,
+       label= tkinter.Label(self.tk,text="videoCamera",image=self.photo,
                          width=self.width,height=self.height)
        label.pack()
     else :
-	self.photo=Blender.Image.New("videoCamera", self.width, self.height, self.depth)
-	self.photo.setFilename(self.data_path+'/tmp.png')
-	self.photo.pack()
+        self.photo=Blender.Image.New("videoCamera", self.width, self.height, self.depth)
+        self.photo.setFilename(self.data_path+'/tmp.png')
+        self.photo.pack()
     self.run_now= True
     #self.mainloop()
 
@@ -207,7 +207,7 @@ class video_tk:
         import PyARTK
         from PyARTK import video,arparamlib,arlib,utils,glutils
         import Image
-        import Tkinter
+        import tkinter
         import ImageTk
         from Blender import Mathutils
     #try:
@@ -231,11 +231,11 @@ class video_tk:
         
         if( k > -1 ):
             conf = marker_info[k].cf
-	    sys.stdout.write("-- Detected Marker --")
-	    sys.stderr.write("-- Detected Marker --")
-            print "-- Detected Marker --"
-            print " Marker id = %d conf= %d\n "%(marker_info[k].id,int(conf*100.0))
-	    sys.stderr.write(" Marker id = %d conf= %d\n "%(marker_info[k].id,int(conf*100.0)))
+            sys.stdout.write("-- Detected Marker --")
+            sys.stderr.write("-- Detected Marker --")
+            print("-- Detected Marker --")
+            print(" Marker id = %d conf= %d\n "%(marker_info[k].id,int(conf*100.0)))
+            sys.stderr.write(" Marker id = %d conf= %d\n "%(marker_info[k].id,int(conf*100.0)))
             # get the transformation between the marker and the real camera */
             if(self.mode == 0):
                 arlib.arGetTransMat(marker_info[k], self.patt_center,
@@ -250,62 +250,62 @@ class video_tk:
         m_modelview = Numeric.zeros(16,'d')
         scale = 1.0
         glutils.arglCameraView(self.patt_trans,m_modelview,scale)
-        print "-- Model View Matrix arglCameraView --"
+        print("-- Model View Matrix arglCameraView --")
         for i in range(4):
             i = i *4
-            print "%.2f %.2f %.2f %.2f"%(m_modelview[i],
+            print("%.2f %.2f %.2f %.2f"%(m_modelview[i],
                                          m_modelview[i+1],
                                          m_modelview[i+2],
-                                         m_modelview[i+3])
-        print ''
-        print "-- Model View Matrix arglCameraViewRH --"     
+                                         m_modelview[i+3]))
+        print('')
+        print("-- Model View Matrix arglCameraViewRH --")     
         m_modelview_rh = Numeric.zeros(16,'d')
         glutils.arglCameraViewRH(self.patt_trans,m_modelview_rh,scale)
         for i in range(4):
             i = i *4
-            print "%.2f %.2f %.2f %.2f"%(m_modelview_rh[i],
-                                         m_modelview_rh[i+1],
-                                         m_modelview_rh[i+2],
-                                         m_modelview_rh[i+3])
-	    sys.stderr.write("%.2f %.2f %.2f %.2f"%(m_modelview_rh[i],
+            print("%.2f %.2f %.2f %.2f"%(m_modelview_rh[i],
                                          m_modelview_rh[i+1],
                                          m_modelview_rh[i+2],
                                          m_modelview_rh[i+3]))
-	    sys.stdout.write("%.2f %.2f %.2f %.2f"%(m_modelview_rh[i],
+            sys.stderr.write("%.2f %.2f %.2f %.2f"%(m_modelview_rh[i],
                                          m_modelview_rh[i+1],
                                          m_modelview_rh[i+2],
                                          m_modelview_rh[i+3]))
-	self.matrix=m_modelview
+            sys.stdout.write("%.2f %.2f %.2f %.2f"%(m_modelview_rh[i],
+                                         m_modelview_rh[i+1],
+                                         m_modelview_rh[i+2],
+                                         m_modelview_rh[i+3]))
+        self.matrix=m_modelview
         if self.tk != None : 
-            im = Image.fromstring(self.pixel_format,(self.width,self.height),im_array.tostring())
+            im = Image.fromstring(self.pixel_format,(self.width,self.height),im_array.tobytes())
             self.videoApp.lock.release()
             #update Tk label
             self.photo.paste(im)
             self.tk.update()
-	else :
-	    im = Image.fromstring(self.pixel_format,(self.width,self.height),im_array.tostring())
-	    self.videoApp.lock.release()
-	    im.save(self.data_path+'/tmp.png')
-	    #data=im.getdata()
-	    #for y in range(self.height-1):
-	    #    ind=(self.height-1)+y
-	    #    for x in range(self.width-1):
-	    #        r,g,b=data[x+ind]
-	    #        self.photo.setPixelI(x, y, (int(r), int(g), int(b), 255)) 
-	    self.photo.reload()
+        else :
+            im = Image.fromstring(self.pixel_format,(self.width,self.height),im_array.tobytes())
+            self.videoApp.lock.release()
+            im.save(self.data_path+'/tmp.png')
+            #data=im.getdata()
+            #for y in range(self.height-1):
+            #    ind=(self.height-1)+y
+            #    for x in range(self.width-1):
+            #        r,g,b=data[x+ind]
+            #        self.photo.setPixelI(x, y, (int(r), int(g), int(b), 255)) 
+            self.photo.reload()
 
-	if self.trackedObj != None :
-		#self.matrix[14]=self.matrix[14]/10.0
-		mat=self.matrix.reshape(4,4)
-		self.trackedObj.setMatrix(Mathutils.Matrix(mat[0],mat[1],mat[2],mat[3]))
+        if self.trackedObj != None :
+                #self.matrix[14]=self.matrix[14]/10.0
+                mat=self.matrix.reshape(4,4)
+                self.trackedObj.setMatrix(Mathutils.Matrix(mat[0],mat[1],mat[2],mat[3]))
 
-	sys.stderr.write('i am in the loop\n')
-	sys.stderr.flush()
-	sys.stdout.flush()
-	#Blender.Redraw()
-	#Window.RedrawAll()
-	#Draw.Redraw(1)
-	#ime.sleep(5)
+        sys.stderr.write('i am in the loop\n')
+        sys.stderr.flush()
+        sys.stdout.flush()
+        #Blender.Redraw()
+        #Window.RedrawAll()
+        #Draw.Redraw(1)
+        #ime.sleep(5)
     #except :#kinter.TclError:
     #  self.videoApp.stop()
     #  self.videoApp.arVideoClose()
@@ -314,10 +314,10 @@ class video_tk:
 def mainloop(vid,lock):
     count = 0	
     while 1:  
-	#lock.acquire()
+        #lock.acquire()
         exec('print "exec mainloop"\nvid.mainloop()\n')
-	count = count + 1
-	#lock.reease()
+        count = count + 1
+        #lock.reease()
   
 import Blender
 import bpy
@@ -341,9 +341,9 @@ sc.setCurrentCamera(ob)
 import math
 ob.RotX=math.pi
 vid = video_tk(tk=False,trackedObj=mesho)
-import thread 
-lock=thread.allocate_lock()
-t=thread.start_new_thread(mainloop,(vid,lock))
+import _thread 
+lock=_thread.allocate_lock()
+t=_thread.start_new_thread(mainloop,(vid,lock))
 #print "thread start"
  #i=0
  #while i < 1000:
@@ -354,7 +354,7 @@ t=thread.start_new_thread(mainloop,(vid,lock))
 #run test_detection_video
 #im_array = vid.videoApp.cam.im_array
 #import Image as I
-#im = I.fromstring(vid.pixel_format,(vid.width,vid.height),im_array.tostring())
+#im = I.fromstring(vid.pixel_format,(vid.width,vid.height),im_array.tobytes())
 #data=list(im.getdata())
 #for y in range(vid.height-1):
 #    ind=(vid.height-1)+y

@@ -50,7 +50,7 @@ def pmv_show(pose,self):
   model = self.getMolFromName("test")
   model.allAtoms.setConformation(1)
   coord = {}
-  print pose.n_residue(),len(model.chains.residues)
+  print(pose.n_residue(),len(model.chains.residues))
   for resi in range(1, pose.n_residue()+1):
     res = pose.residue(resi)
     resn = pose.pdb_info().number(resi)
@@ -59,21 +59,21 @@ def pmv_show(pose,self):
     for atomi in range(1, res.natoms()+1):
       name = res.atom_name(atomi).strip()
       if name != 'NV' :
-	     a=model.chains.residues[resi-1].atoms[k]     
-	     pmv_name=a.name
-	     k = k + 1		 
-	     if name != pmv_name : 
-	        if name[1:] != pmv_name[:-1]:
-	            print name,pmv_name
-	        else : 
-	            coord[(resn, pmv_name)] = res.atom(atomi).xyz()
-	            cood=res.atom(atomi).xyz()
-	            a._coords[1]=[cood.x,cood.y,cood.z]
-					
-	     else : 
-	         coord[(resn, name)] = res.atom(atomi).xyz()
-	         cood=res.atom(atomi).xyz()
-	         a._coords[1]=[cood.x,cood.y,cood.z]  #return coord
+             a=model.chains.residues[resi-1].atoms[k]     
+             pmv_name=a.name
+             k = k + 1		 
+             if name != pmv_name : 
+                if name[1:] != pmv_name[:-1]:
+                    print(name,pmv_name)
+                else : 
+                    coord[(resn, pmv_name)] = res.atom(atomi).xyz()
+                    cood=res.atom(atomi).xyz()
+                    a._coords[1]=[cood.x,cood.y,cood.z]
+                                        
+             else : 
+                 coord[(resn, name)] = res.atom(atomi).xyz()
+                 cood=res.atom(atomi).xyz()
+                 a._coords[1]=[cood.x,cood.y,cood.z]  #return coord
   event = EditAtomsEvent('coords', model.allAtoms)
   self.dispatchEvent(event)
   #modEvent = ModificationEvent('edit','coords', mol.allAtoms)
@@ -97,7 +97,7 @@ def pmv_load(f):
   for i in range(nDecoys):
       mol.allAtoms.addConformation(mol.allAtoms.coords[:])
   #mol.name="tset"
-  print mol.name  
+  print(mol.name)  
   #self.displaySticksAndBalls("test",log=1)
   self.displayCPK("test:::",log=1)
   self.colorAtomsUsingDG("test",log=1)
@@ -145,7 +145,7 @@ log = open("log", 'w')
 def fold(pose,self,scorefxn,perturb,mover_3mer,pmv_show):
   import random, math, time   
   kt = 1
-  print "ok Fold"
+  print("ok Fold")
   low_pose = Pose()
   low_score = scorefxn(pose)
   new_pose = Pose()
@@ -153,7 +153,7 @@ def fold(pose,self,scorefxn,perturb,mover_3mer,pmv_show):
   start_time = time.time()
   stat = {"E":0,"A":0,"R":0}
   for it in range(0, maxit):
-    print "in the loop"
+    print("in the loop")
     if it==maxit/2: pose.assign(low_pose)
 
     score = scorefxn(pose)
@@ -180,15 +180,15 @@ def fold(pose,self,scorefxn,perturb,mover_3mer,pmv_show):
       low_score = score
       low_pose.assign(pose)
 
-    print it,"\t",score,"\t",low_score,"\t",action
+    print(it,"\t",score,"\t",low_score,"\t",action)
     #log.write(str(score)+"\t"+str(low_score)+"\t"+str(action)+"\n")
     stat[action] += 1
-    if action<>"R": pmv_show(pose,self)
+    if action!="R": pmv_show(pose,self)
 
   duration = time.time()-start_time
-  print "took ",duration,"s\t",duration/float(maxit),"s/it"
+  print("took ",duration,"s\t",duration/float(maxit),"s/it")
   #print "E:",stat["E"]/float(maxit),"\t","A:",stat["A"]/float(maxit),"\t","R:",stat["R"]/float(maxit)
-  print low_score
+  print(low_score)
   pmv_show(low_pose,self)
   return low_pose
 

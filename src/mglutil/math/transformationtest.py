@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # Last modified on Wed Aug 22 14:22:48 PDT 2001 by lindy
@@ -18,10 +18,10 @@ Transformation.py defines three classes:
 from mglutil.math.transformation import UnitQuaternion, Quaternion
 from mglutil.math.transformation import Transformation
 import unittest
-#import numpy.oldnumeric as N
-import numpy.oldnumeric as Numeric
+#import mglcompat.oldnumeric as N
+import mglcompat.oldnumeric as Numeric
 N = Numeric
-import numpy.oldnumeric.random_array as RA
+import mglcompat.oldnumeric.random_array as RA
 import math
 
 #

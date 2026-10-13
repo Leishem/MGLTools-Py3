@@ -48,14 +48,14 @@ class GLUSurfaceNurbs(Geom):
         #print "Spheres.__init__"
 
         self.knots = numpy.array((0.0, 0.0, 0.0, 0.0, .5, .5, .5, .5), 'f')
-        apply( Geom.__init__, (self, name, check), kw )
+        Geom.__init__(*(self, name, check), **kw)
         self.theNurb = None
         self.init_surface()
         self.immediateRendering = True
         
     def nurbsError(self, errorCode):
         estring = GLU.gluErrorString(errorCode);
-        print "Nurbs Error: %s"%estring
+        print("Nurbs Error: %s"%estring)
         sys.exit(0)
         
     def Draw(self):
@@ -122,7 +122,7 @@ if __name__=='__main__':
         for n in range(1, 11):
             v = n*0.1
             nurbsg.knots = numpy.array( (0.0, 0.0, 0.0, 0.0, v, v, v, v), 'f')
-            print nurbsg.knots
+            print(nurbsg.knots)
             vi.OneRedraw()
             vi.master.update()
 
@@ -130,6 +130,6 @@ if __name__=='__main__':
         for n in range(0, 10):
             v = n*0.1
             nurbsg.knots = numpy.array( (v, v, v, v, 1, 1, 1, 1), 'f')
-            print nurbsg.knots
+            print(nurbsg.knots)
             vi.OneRedraw()
             vi.master.update()

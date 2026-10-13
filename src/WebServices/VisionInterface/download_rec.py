@@ -1,6 +1,6 @@
 import os
-import urlparse
-import urllib2
+import urllib.parse
+import urllib.request, urllib.error, urllib.parse
 
 from binaries import findExecModule
 
@@ -9,7 +9,7 @@ def recursive_download(url=None, local_dir=None):
 
     if url == "" or local_dir == "":
         import sys
-        print "ERROR: input URL or Directory empty"
+        print("ERROR: input URL or Directory empty")
         sys.exit()
 
     wget = findExecModule('wget')
@@ -21,15 +21,15 @@ def recursive_download(url=None, local_dir=None):
         tmp_url = url + '/'
              
         try:
-            resp = urllib2.urlopen(tmp_url)
+            resp = urllib.request.urlopen(tmp_url)
             resp.close()
-        except urllib2.URLError, e:
+        except urllib.error.URLError as e:
             urldir = False
 
     sep = ";"
 
     if urldir == True:
-        cutdirs = urlparse.urlparse(url).path.count('/')
+        cutdirs = urllib.parse.urlparse(url).path.count('/')
             
         if url.endswith("/"):
             cutdirs = cutdirs - 1

@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Jul 23, 2007 by 
+## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
 #
@@ -14,8 +14,8 @@
 #
 
 
-import numpy.oldnumeric as Numeric
-import viewerConst
+import mglcompat.oldnumeric as Numeric
+from . import viewerConst
 from opengltk.extent import _gllib as gllib
 
 from math import fabs
@@ -48,35 +48,35 @@ def glAllMaterialWithCheck(face, mat, num, eps=0.001, check=True, debug=0):
         glMaterialWithCheck(f, GL.GL_AMBIENT, p[0][0], eps=eps, check=check)
     else:
         if debug:
-            print 'ambi', p[0][num]
+            print('ambi', p[0][num])
         glMaterialWithCheck(f, GL.GL_AMBIENT, p[0][num], eps=eps, check=check)
 
     if mat.binding[1] == viewerConst.OVERALL:
         glMaterialWithCheck(f, GL.GL_DIFFUSE, p[1][0], eps=eps, check=check)
     else:
         if debug:
-            print 'diff', p[1][num]
+            print('diff', p[1][num])
         glMaterialWithCheck(f, GL.GL_DIFFUSE, p[1][num], eps=eps, check=check)
 
     if mat.binding[2] == viewerConst.OVERALL:
         glMaterialWithCheck(f, GL.GL_SPECULAR, p[2][0], eps=eps, check=check)
     else:
         if debug:
-            print 'spec', p[2][num]
+            print('spec', p[2][num])
         glMaterialWithCheck(f, GL.GL_SPECULAR, p[2][num], eps=eps, check=check)
 
     if mat.binding[3] == viewerConst.OVERALL:
         glMaterialWithCheck(f, GL.GL_EMISSION, p[3][0], eps=eps, check=check)
     else:
         if debug:
-            print 'emis', p[3][num]
+            print('emis', p[3][num])
         glMaterialWithCheck(f, GL.GL_EMISSION, p[3][num], eps=eps, check=check)
 
     if mat.binding[4] == viewerConst.OVERALL:
         glMaterialWithCheck(f, GL.GL_SHININESS, p[4][0], eps=eps, check=check)
     else:
         if debug:
-            print 'shini', p[4][num]
+            print('shini', p[4][num])
         glMaterialWithCheck(f, GL.GL_SHININESS, p[4][num], eps=eps, check=check)
 
     
@@ -158,18 +158,18 @@ def OneColor(color, alpha = 1.0):
     """get a color RGBA Add alpha if missing, return values from 0.0 to 1.0"""
 
     if max(color) > 1.0:
-        color = map( lambda x: x/255., color)
+        color = [x/255. for x in color]
     if len(color) == 3:
-	return list(color)+[alpha]
+        return list(color)+[alpha]
     elif len(color)==4:
-	return color
+        return color
     else:
-	raise ValueError( 'Color has to be a 3 or 4 tuple (RGBA)' )
+        raise ValueError( 'Color has to be a 3 or 4 tuple (RGBA)' )
 
 
 def TkColor(col):
     """col should be a rgb triplet of int 0-255 or 0-1"""
-    if max(col)<=1.0: col = map( lambda x: x*255, col)
+    if max(col)<=1.0: col = [x*255 for x in col]
     return '#%02X%02X%02X' % (col[0],col[1],col[2])
 
 
@@ -198,25 +198,25 @@ def ToRGB(hsv):
     t = v*(1.0-s*(1.0-f))
 
     if i==0:
-	if l==3: return (v,t,p)
-	else: return (v,t,p,hsv[3])
+        if l==3: return (v,t,p)
+        else: return (v,t,p,hsv[3])
     elif i==1:
-	if l==3: return (q,v,p)
-	else: return (q,v,p,hsv[3])
+        if l==3: return (q,v,p)
+        else: return (q,v,p,hsv[3])
     elif i==2:
         if l==3: return (p,v,t)
-	else: return (p,v,t,hsv[3])
+        else: return (p,v,t,hsv[3])
     elif i==3:
         if l==3: return (p,q,v)
-	else: return (p,q,v,hsv[3])
+        else: return (p,q,v,hsv[3])
     elif i==4:
         if l==3: return (t,p,v)
-	else: return (t,p,v,hsv[3])
+        else: return (t,p,v,hsv[3])
     elif i==5:
         if l==3: return (v,p,q)
-	else: return (v,p,q,hsv[3])
+        else: return (v,p,q,hsv[3])
     else:
-        print "botch in hsv_to_rgb"
+        print("botch in hsv_to_rgb")
 
 
 def ToHSV(rgb):
@@ -236,12 +236,12 @@ def ToHSV(rgb):
     else: s = 0.0
     if s < 0.0001: h = 0.0
     else:
-	delta = maxi - mini
-	if r == maxi: h = (g - b)/delta
-	elif g == maxi: h = 2.0 + (b - r)/delta
-	elif b == maxi: h = 4.0 + (r - g)/delta
-	h = h/6.0
-	if h < 0.0: h = h + 1.0
+        delta = maxi - mini
+        if r == maxi: h = (g - b)/delta
+        elif g == maxi: h = 2.0 + (b - r)/delta
+        elif b == maxi: h = 4.0 + (r - g)/delta
+        h = h/6.0
+        if h < 0.0: h = h + 1.0
 
     if l==3: return (h,s,maxi)
     else: return (h,s,maxi,rgb[3])
@@ -252,15 +252,15 @@ def Map(values, colorMap, mini=None, maxi=None):
 
     values = Numeric.array(values)
     if len(values.shape)==2 and values.shape[1]==1:
-	values.shape = ( values.shape[0], )
+        values.shape = ( values.shape[0], )
     elif len(values.shape) > 1:
-	print 'ERROR: values array has bad shape'
-	return None
+        print('ERROR: values array has bad shape')
+        return None
 
     cmap = Numeric.array(colorMap)
     if len(cmap.shape) !=2 or cmap.shape[1] not in (3,4):
-	print 'ERROR: colorMap array has bad shape'
-	return None
+        print('ERROR: colorMap array has bad shape')
+        return None
 
     if mini is None: mini = min(values)
     else: values = Numeric.maximum(values, mini)
@@ -268,16 +268,16 @@ def Map(values, colorMap, mini=None, maxi=None):
     else: values = Numeric.minimum(values, maxi)
     valrange = maxi-mini
     if valrange < 0.0001:
-	ind = Numeric.ones( values.shape )
+        ind = Numeric.ones( values.shape )
     else:
-	colrange = cmap.shape[0]-1
-	ind = ((values-mini) * colrange) / valrange
+        colrange = cmap.shape[0]-1
+        ind = ((values-mini) * colrange) / valrange
     col = Numeric.take(colorMap, ind.astype(viewerConst.IPRECISION))
     return col
 
 
 def array2DToImage( array2D, cmap, width=None, 
-	height=None, numComponents=4,texture=1, maxi=None, mini=None):
+        height=None, numComponents=4,texture=1, maxi=None, mini=None):
     #build the image:
     if width is None:
         width=array2D.shape[0]
@@ -331,7 +331,7 @@ def RGBRamp(size=256, upperValue=.6666666666666667):
     assert size > 0
     hsv = HSVRamp(size, upperValue)
     rgb = Numeric.zeros( (hsv.shape[0], 3), viewerConst.FPRECISION )
-    for i in xrange(hsv.shape[0]):
+    for i in range(hsv.shape[0]):
         rgb[i] = ToRGB(hsv[i])
     return rgb
 
@@ -342,7 +342,7 @@ def RGBARamp(size=256, upperValue=.6666666666666667):
     assert size > 0
     hsv = HSVRamp(size, upperValue)
     rgb = Numeric.zeros( (hsv.shape[0], 4), viewerConst.FPRECISION )
-    for i in xrange(hsv.shape[0]):
+    for i in range(hsv.shape[0]):
         rgb[i][:3] = ToRGB(hsv[i])
         rgb[i][3] = 1.0
     return rgb
@@ -352,10 +352,10 @@ def RedWhiteBlueRamp(size=256):
     ramp = Numeric.ones( (size, 3), 'f')
     mid = size/2
     incr = 1./(mid-1)
-    for i in xrange(mid):
+    for i in range(mid):
         ramp[i][1] = i*incr
         ramp[i][2] = i*incr
-    for i in xrange(mid):
+    for i in range(mid):
         ramp[mid+i][0] = 1.-(i*incr)
         ramp[mid+i][1] = 1.-(i*incr)
     return ramp
@@ -364,10 +364,10 @@ def RedWhiteBlueARamp(size=256):
     ramp = Numeric.ones( (size, 4), 'f')
     mid = size/2
     incr = 1./(mid-1)
-    for i in xrange(mid):
+    for i in range(mid):
         ramp[i][1] = i*incr
         ramp[i][2] = i*incr
-    for i in xrange(mid):
+    for i in range(mid):
         ramp[mid+i][0] = 1.-(i*incr)
         ramp[mid+i][1] = 1.-(i*incr)
     return ramp
@@ -431,14 +431,14 @@ if __name__ == '__main__':
 
     def test():
 
-	print '10000 hsv->rgb'
-	for i in range(100):
-		for j in range(100):
-			d = rgb( (i/100, j/100, (i+j)/100) )
+        print('10000 hsv->rgb')
+        for i in range(100):
+                for j in range(100):
+                        d = rgb( (i/100, j/100, (i+j)/100) )
 
-	print '10000 rgb->hsv'
-	for i in range(100):
-		for j in range(100):
-			d = hsv( (i/100, j/100, (i+j)/100) )
+        print('10000 rgb->hsv')
+        for i in range(100):
+                for j in range(100):
+                        d = hsv( (i/100, j/100, (i+j)/100) )
 
-	cmap = RGBRamp()
+        cmap = RGBRamp()
