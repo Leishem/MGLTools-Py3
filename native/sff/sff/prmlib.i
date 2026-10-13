@@ -12,11 +12,6 @@
 
 %{
 
-#ifdef _MSC_VER
-#include <windows.h>
-#define WinVerMajor() LOBYTE(LOWORD(GetVersion()))
-#endif
-
 #include <stdlib.h>
 #include "mgl_npcompat.h"
 #include "prm.h"

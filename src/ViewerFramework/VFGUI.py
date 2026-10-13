@@ -497,7 +497,17 @@ class ViewerFrameworkGUI:
             self.pyshell = getShell(self.mainThread, rootTk = self.ROOT,
                                     enable_shell=True, enable_edit=False,
                                     debug=False)
-            self.pyshell.menubar.children['file'].delete('Close','Exit')
+            # remove the shell's Close/Exit entries (Python 3 IDLE labels
+            # them "Close Window" / "Exit IDLE")
+            fileMenu = self.pyshell.menubar.children['file']
+            last = fileMenu.index('end')
+            for i in range(last, -1, -1) if last is not None else ():
+                try:
+                    label = fileMenu.entrycget(i, 'label')
+                except tkinter.TclError:
+                    continue
+                if label.startswith('Close') or label.startswith('Exit'):
+                    fileMenu.delete(i)
             self.pyshell.menubar.children['file'].add_command(
                 label='Clear Ouput', command=self.clearPyShell )
             # hide it

@@ -93,11 +93,17 @@ def fix_file(path):
         if q not in ('"""', "'''") or any(c in s[:i] for c in "bBfF"):
             continue
         body = s[i + 3:-3]
-        if "\\" in body and s[:i].lower() != "r":
-            continue  # escapes would change meaning; leave for manual review
         new = convert(body)
         if new is None or q in new:
             continue
+        if "\\" in body:
+            # the rewrite edits source text; accept it only if the string's
+            # runtime value (escapes applied) now compiles as Python 3
+            import ast
+            try:
+                compile(ast.literal_eval(s[:i + 3] + new + q), "<s>", "exec")
+            except (SyntaxError, ValueError):
+                continue
         a = offs[t.start[0] - 1] + t.start[1]
         b = offs[t.end[0] - 1] + t.end[1]
         edits.append((a, b, s[:i + 3] + new + q))

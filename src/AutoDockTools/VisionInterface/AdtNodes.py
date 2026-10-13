@@ -549,7 +549,7 @@ bonds_to_inactivate, limit_torsions):
         for mol in mols:
             if not len(mol.allAtoms.bonds[0]):
                 mol.buildBondsByDistance()
-            print "root=", root
+            print("root=", root)
             mol.RBM = RotatableBondManager(mol, allowed_bonds, root,
                             check_for_fragments=check_for_fragments,
                             bonds_to_inactivate=bonds_to_inactivate)

@@ -1326,7 +1326,7 @@ Output Ports:
     #print 'QSlim Node Running QSlim', percent, targetfaces, rebuild, self.inputPortByName['rebuild'].hasNewValidData()
     # QSlim node can only handle 1 geom so far, so print out a message if there
     # are more comming in
-    if type(geometry)==types.ListType:
+    if type(geometry)==list:
         if len(geometry)>1:
             warnings.warn('Only first geometry is being processed by QSlim node')
         geometry = geometry[0]
@@ -1335,14 +1335,14 @@ Output Ports:
     if not geometry.asIndexedPolygons(run=0):
        warnings.warn(geometry.name , 'QSlim Node: %s can not be represented as IndexedPolygons', geometry.name)
        return
-    
+
     # if there is new data on the first input port (geom) rebuild the model
     #if self.inputPortByName['geometry'].hasNewValidData() or \
        #(self.inputPortByName['rebuild'].hasNewValidData() and rebuild):
     if self.inputPortByName['geometry'].hasNewValidData() or \
         self.inputPortByName['rebuild'].hasNewValidData():
        if len(geometry.vertexSet.vertices):
-           print 'QSlim Node BUILDING MODEL'
+           print('QSlim Node BUILDING MODEL')
            self.model.build_model(geometry, u, v)
        else:
            return
@@ -1355,7 +1355,7 @@ Output Ports:
         targetfaces = int(targetfaces)
     else: # use the percentage
         targetfaces = int(maxFaces*percent/100.)
-        print 'ELSE', maxFaces*percent, targetfaces
+        print('ELSE', maxFaces*percent, targetfaces)
 
     # make sure targetfaces is OK
     if targetfaces > maxFaces:
@@ -1364,7 +1364,7 @@ Output Ports:
             self.inputPortByName['percent'].widget.set(100, 0)
         if self.inputPortByName['targetfaces'].widget:
             self.inputPortByName['targetfaces'].widget.set(maxFaces, 0)
-        
+
     # decimate
     if self.model:
         decimVerts, decimFaces, decimNormals, decimColors, decimTex = self.model.decimate(targetfaces)
@@ -1402,6 +1402,7 @@ Output Ports:
             self.outputData(geometry=geometry, u=decimTex[:nvert,0], v = decimTex[:nvert,1] )
         else:
             self.outputData(geometry=geometry)
+
 """
         self.setFunction(code)
 
@@ -2478,8 +2479,7 @@ class Decimate(NetworkNode):
         self.model = self.multires.ModelT(vertices, indices)
 
     if resolution==self.resolution:
-      print 'WARNING ', resolution, self.resolution
-      
+      print('WARNING ', resolution, self.resolution)
     if resolution > self.resolution:
         for i in range(resolution-self.resolution):
             self.model.GoFiner()
@@ -2488,7 +2488,7 @@ class Decimate(NetworkNode):
             self.model.GoCoarser()
     self.resolution = resolution
     tri = self.getTriangles()
-    print len(tri), 'triangles'
+    print(len(tri), 'triangles')
     if len(tri):
         self.outputData(indices=tri)\n"""
 

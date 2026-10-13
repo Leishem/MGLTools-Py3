@@ -36,8 +36,34 @@ def tkgl_dir():
     return os.path.join(os.path.dirname(tkinter_gl.__file__), "tk", target)
 
 
+_win_patch_installed = False
+
+
+def _install_win_parent_fix():
+    """On Windows, TkGL's WGL backend crashes when the parent window does not
+    exist yet. MGLTools creates tkgl widgets in several places (cameras,
+    material editor, stereo probes); make every one map its parent first."""
+    global _win_patch_installed
+    if _win_patch_installed or sys.platform != "win32":
+        return
+    import tkinter
+    _orig = tkinter.Widget.__init__
+
+    def __init__(self, master, widgetName, cnf={}, kw={}, extra=()):
+        if widgetName == WIDGET_CLASS and master is not None:
+            try:
+                master.update()
+            except Exception:  # noqa: BLE001
+                pass
+        return _orig(self, master, widgetName, cnf, kw, extra)
+
+    tkinter.Widget.__init__ = __init__
+    _win_patch_installed = True
+
+
 def loadTkgl(master):
     """Load TkGL into master's Tcl interpreter; return the package version."""
+    _install_win_parent_fix()
     d = tkgl_dir()
     if not os.path.isdir(d):
         raise RuntimeError("TkGL package directory %r is missing; install "

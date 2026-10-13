@@ -7,11 +7,6 @@
 
 %{
 
-#ifdef _MSC_VER
-#include <windows.h>
-#define WinVerMajor() LOBYTE(LOWORD(GetVersion()))
-#endif
-
 #include "mgl_npcompat.h"
 
 static PyArrayObject *contiguous_typed_array(PyObject *obj, int typecode,

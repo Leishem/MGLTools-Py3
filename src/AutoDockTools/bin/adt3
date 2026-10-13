@@ -4,7 +4,7 @@ import sys, getopt
 
 optlist, args = getopt.getopt(sys.argv[1:], 'hai', [
             'help', 'again', 'overwriteLog', 'uniqueLog', 'noLog', 'die',
-	    'customizer=', 'interactive'] )
+            'customizer=', 'interactive'] )
 
 help_msg = """usage: %s <options>
         -h or --help       : print this message
@@ -24,11 +24,11 @@ die=0
 
 for opt in optlist:
     if opt[ 0] in ('-h', '--help'):
-        print help_msg
+        print(help_msg)
         sys.exit()
     elif opt[ 0] in ('-a', '--again'):
         again = 1
-	import os
+        import os
         os.system("mv mvAll.log.py .tmp.py")
     elif opt[ 0] =='--overwriteLog': logmode = 'overwrite'
     elif opt[ 0] =='--uniqueLog': logmode = 'unique'
@@ -39,16 +39,16 @@ for opt in optlist:
     elif opt[ 0] == '--lib':
         libraries.append(opt[1])
     elif opt[ 0] in ('-i', '--interactive'):
-	interactive = 1
+        interactive = 1
     else:
-        print "unknown option %s %s"%tuple(opt)
-        print help_msg
+        print("unknown option %s %s"%tuple(opt))
+        print(help_msg)
         sys.exit( 1)
 
 sys.path.insert(0, '.')
 try:
     import AutoDockTools
-    print 'Run AutoDockTools from', AutoDockTools.__path__[0]
+    print('Run AutoDockTools from', AutoDockTools.__path__[0])
 
     from Pmv.moleculeViewer import MoleculeViewer
     mv = MoleculeViewer( title='AutoDockTools3',
@@ -92,9 +92,9 @@ try:
 
     self=mv
     for a in args:
-        print a
-	if a[0]=='-':# skip all command line options
-	    continue
+        print(a)
+        if a[0]=='-':# skip all command line options
+            continue
 
         elif a[-7:]=='_net.py':  # Vision networks
             mv.browseCommands('visionCommands', commands=('vision',) )
@@ -103,14 +103,14 @@ try:
             mv.vision.ed.loadNetwork(a)
 
         elif a[-3:]=='.py':     # command script
-            print 'sourcing', a
+            print('sourcing', a)
             mv.source(a)
 
         elif a[-4:] in ['.pdb', '.pqr', 'pdbq', 'mol2'] or a[-5:]=='pdbqs':
             mv.readMolecule(a)
 
         else:
-            print 'WARNING: unable to process %s command line argument'%a
+            print('WARNING: unable to process %s command line argument'%a)
     if again:
         mv.source(".tmp.py")
 
@@ -129,7 +129,7 @@ try:
 except:
     import traceback
     traceback.print_exc()
-    raw_input("hit enter to continue")
+    input("hit enter to continue")
     import sys
     sys.exit( 1)
 import sys, getopt

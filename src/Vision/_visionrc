@@ -22,7 +22,7 @@
 ##################################################################
 
 import os
-import user
+from mglcompat import pyuser as user
 from Vision.UserLibBuild import addDirToSysPath
 from Vision.nodeLibraries import libraries
 from mglutil.util.packageFilePath import getResourceFolderWithVersion
@@ -34,7 +34,7 @@ lVisionResourceFolder = getResourceFolderWithVersion() + os.sep + 'Vision' + os.
 ##################################################################
 lFonts4VisionFile = lVisionResourceFolder + '_fonts4vision'
 if os.path.isfile(lFonts4VisionFile) is True:
-    execfile( lFonts4VisionFile )
+    exec(compile(open( lFonts4VisionFile, "rb" ).read(), lFonts4VisionFile, 'exec'))
 
 ##################################################################
 # To toggle ports' icons in the library GUI

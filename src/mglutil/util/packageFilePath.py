@@ -284,7 +284,10 @@ returns None if it doesn't exist and can't be created
         return None
     
     from Support.version import __version__
-    Version = __version__
+    # Separate folder for the Python 3 port: ~/.mgltools/1.5.6 holds resource
+    # files (_pmvrc, ...) written by the original Python 2 MGLTools, which are
+    # executed at startup and are not valid Python 3.
+    Version = __version__ + "-py3"
 
     lRessourceFolder = old_rc + os.sep + Version
 

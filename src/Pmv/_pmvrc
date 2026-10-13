@@ -26,7 +26,7 @@ self.browseCommands('displayCommands',
                               'displayCPK', 'undisplayCPK',
                               'displayLines','undisplayLines',
                               'displayBackboneTrace','undisplayBackboneTrace',
-			      'DisplayBoundGeom'
+                              'DisplayBoundGeom'
                               ],
                     package='Pmv', topCommand=0)
 self.browseCommands('editCommands',package='Pmv', topCommand=0)
@@ -44,12 +44,12 @@ except ImportError:
     mslib_import = False
 if mslib_import:
     self.browseCommands('msmsCommands',
-	                    commands=['computeMSMS',
-	                              'displayMSMS', 'undisplayMSMS',
-	                              'readMSMS', 'saveMSMS',
-	                              'computeSESAndSASArea',
-	                              ],
-	                    package='Pmv', topCommand=0)
+                            commands=['computeMSMS',
+                                      'displayMSMS', 'undisplayMSMS',
+                                      'readMSMS', 'saveMSMS',
+                                      'computeSESAndSASArea',
+                                      ],
+                            package='Pmv', topCommand=0)
 
 self.browseCommands('selectionCommands', commands=['select', 'deselect',
                                                    'clearSelection', 'saveSet',
@@ -57,7 +57,7 @@ self.browseCommands('selectionCommands', commands=['select', 'deselect',
                                                    'selectSet',
                                                    'selectFromString',
                                                    'directSelect',
-						   'selectHeteroAtoms'],
+                                                   'selectHeteroAtoms'],
                     package='Pmv', topCommand=0)
 
 self.browseCommands('APBSCommands', package='Pmv', topCommand=0)
@@ -86,7 +86,7 @@ if self.hasGui:
     # bind several shortcut to commands
     self.bindCmdToKey( 'z', 'Control_L', self.undo, topCommand=0)
 
-	# not needed anymore as theese command are set on modifiers at startup
+        # not needed anymore as theese command are set on modifiers at startup
     #self.bindCmdToKey( 's', 'Control_L', self.setICOM,
     #                   (self.select,), topCommand=0)
     #self.bindCmdToKey( 'd', 'Control_L', self.setICOM,
@@ -103,7 +103,7 @@ self.setUserPreference(('Sharp Color Boundaries for MSMS', 'blur'), topCommand=0
 #self.GUI.floatCamera()
 #self.GUI.addToolBar('large')
 
-if self.hasGui and self.commands.has_key('dashboard'):
+if self.hasGui and 'dashboard' in self.commands:
     # adding columns to dashboard
     self.dashboardSuspendRedraw(True)
 

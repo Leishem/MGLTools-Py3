@@ -3307,7 +3307,7 @@ name, geoms, instanceMatrices, geomOptions, parent):
     #print 'DecimateGeom: name=', name, 'percent=', percent, 'targetfaces=', targetfaces, 'rebuild=', rebuild, self.inputPortByName['rebuild'].hasNewValidData()
     # DecimateGeom node can only handle 1 geom so far, so print out a message if there
     # are more comming in
-    if type(geometry)==types.ListType:
+    if type(geometry)==list:
         if len(geometry)>1:
             warnings.warn('Only first geometry is being processed by DecimateGeom')
         geometry = geometry[0]
@@ -3327,14 +3327,14 @@ name, geoms, instanceMatrices, geomOptions, parent):
             if name != self.name: self.name = name
         else:
             name = geometry.name    
-    
+
     # if there is new data on the first input port (geom) rebuild the model
     #if self.inputPortByName['geometry'].hasNewValidData() or \
        #(self.inputPortByName['rebuild'].hasNewValidData() and rebuild):
     if self.inputPortByName['geometry'].hasNewValidData() or \
         self.inputPortByName['rebuild'].hasNewValidData():
        if len(geometry.vertexSet.vertices):
-           print 'DecimateGeom Node BUILDING MODEL'
+           print('DecimateGeom Node BUILDING MODEL')
            self.model.build_model(geometry, u, v)
        else:
            return
@@ -3358,7 +3358,7 @@ name, geoms, instanceMatrices, geomOptions, parent):
             self.inputPortByName['percent'].widget.set(100, 0)
         if self.inputPortByName['targetfaces'].widget:
             self.inputPortByName['targetfaces'].widget.set(maxFaces, 0)
-            
+
     if self.model:
         decimVerts, decimFaces, decimNormals, decimColors, decimTex = self.model.decimate(targetfaces)
         #print 'creating geometry:', name 
@@ -3397,13 +3397,14 @@ name, geoms, instanceMatrices, geomOptions, parent):
         GeometryNode.doit(self, name=name, geoms=geoms,
                       instanceMatrices=instanceMatrices,
                       geomOptions=geomOptions, parent=parent)
-                      
+
         if self.selectedGeomIndex is not None:
             g  = self.geom()
             self.outputData(decimateGeom=g, allGeometries=self.geoms,
                             u = u, v = v )
         else:
             self.outputData(decimateGeom=None, allGeometries=self.geoms, u=u, v=v)
+
 
 """
         self.setFunction(code)

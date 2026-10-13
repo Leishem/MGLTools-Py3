@@ -30,17 +30,13 @@ c=a+b
 
 t1=time.time()
 for i in range(5000):  x=uniq(c)
-print time.time()-t1
-
+print(time.time()-t1)
 t1=time.time()
 for i in range(5000):  x=uniq2(c)
-print time.time()-t1
-
+print(time.time()-t1)
 t1=time.time()
 for i in range(5000):  x=uniq3(c)
-print time.time()-t1
-
-
+print(time.time()-t1)
 >>>
 0.865363121033
 0.463307857513

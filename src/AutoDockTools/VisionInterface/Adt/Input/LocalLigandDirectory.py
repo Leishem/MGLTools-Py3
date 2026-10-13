@@ -189,19 +189,20 @@ class LocalLigandDirectory(MacroNode):
         if log_file != None:
             from time import strftime
             now = strftime("%Y-%m-%d %H:%M:%S")
-            
+
             log_str = '''On ''' + now + ''', you uploaded a ligand library to: \n'''
             log_str = log_str + ligand_lib_url + '''\n\n'''
 
             f = open(log_file, '''a''')
             f.write(log_str)
-            print "This ligand library upload has been recorded in " + log_file
+            print("This ligand library upload has been recorded in " + log_file)
 
         from AutoDockTools.VisionInterface.Adt.LigandDB import LigandDB
         ligand_db_obj = LigandDB(url_lib=ligand_lib_url)
         pass
 ## to ouput data on port ligand_db_obj use
         self.outputData(ligand_db_obj=ligand_db_obj)
+
 
 
 

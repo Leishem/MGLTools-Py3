@@ -7,11 +7,6 @@
 
 %{
 
-#ifdef _MSC_VER
-#include <windows.h>
-#define WinVerMajor() LOBYTE(LOWORD(GetVersion()))
-#endif
-
 #include "mgl_npcompat.h"
 static PyObject* l_output_helper2(PyObject* target, PyObject* o) {
     PyObject*   o2;

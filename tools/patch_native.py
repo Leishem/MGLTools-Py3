@@ -53,6 +53,10 @@ def patch(path):
         # %exception's $function placeholder was renamed $action (removed in
         # SWIG 4.3+)
         new = new.replace("$function", "$action")
+        # windows.h was included only for the (removed) Vista OWNDATA hack;
+        # it clashes with module macros such as UTmesh's "#define DOUBLE 2"
+        new = re.sub(r"#ifdef _MSC_VER\s*\n\s*#include <windows.h>\s*\n"
+                     r"\s*#define WinVerMajor\(\)[^\n]*\n\s*#endif\s*\n", "", new)
         # t_output_helper was removed in SWIG 4.3; mgl_npcompat.h has a copy
         new = re.sub(r"\bt_output_helper\(", "mgl_t_output_helper(", new)
     if path.suffix == ".i" and "%module" in new and "python:cdefaultargs" not in new:

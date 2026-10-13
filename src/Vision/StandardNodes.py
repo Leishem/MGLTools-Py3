@@ -4881,7 +4881,7 @@ class RunFunction(FunctionNode):
         code = """def doit(self, command, importString, *args):
     functionOrString = command
     import types
-    if type(functionOrString) == types.StringType:
+    if type(functionOrString) == bytes:
         # we add __main__ to the scope of the local function
         # the following code is similar to: "from __main__ import *"
         # but it doesn't raise any warning, and its probably more local
@@ -4898,7 +4898,7 @@ class RunFunction(FunctionNode):
         if importString != '':
             exec(importString)
         lfunctionOrString = functionOrString
-        while type(lfunctionOrString) == types.StringType:
+        while type(lfunctionOrString) == bytes:
              try:
                  function = eval(lfunctionOrString)
              except NameError:
@@ -4936,7 +4936,7 @@ class RunFunction(FunctionNode):
             self.rename('Run '+function.__name__)
         else:
             self.rename('Run '+function.__class__.__name__)
-        
+
         # remove all ports beyond the function and the importString input ports 
         for p in self.inputPorts[2:]:
             self.deletePort(p, updateSignature=False)
@@ -4944,7 +4944,7 @@ class RunFunction(FunctionNode):
         # get arguments description
         from inspect import getfullargspec as getargspec
         if hasattr(function, '__call__') and hasattr(function.__call__, 'im_func'): 
-            args = getargspec(function.__call__.im_func)
+            args = getargspec(function.__call__.__func__)
         else:
             args = getargspec(function)
 
@@ -4968,7 +4968,7 @@ class RunFunction(FunctionNode):
         self.namedArgs = d
 
         # create widgets and ports for arguments
-        if hasattr(function, 'params') and type(function.params) == types.DictType:
+        if hasattr(function, 'params') and type(function.params) == dict:
             argsDescription = function.params
         else:
             argsDescription = {}
@@ -4979,7 +4979,7 @@ class RunFunction(FunctionNode):
         # create the constructor arguments such that when the node is restored
         # from file it will have all the info it needs
         if functionOrString is not None \
-          and type(functionOrString) == types.StringType:
+          and type(functionOrString) == bytes:
             from mglutil.util.misc import suppressMultipleQuotes
             self.constrkw['functionOrString'] = "\'"+suppressMultipleQuotes(functionOrString)+"\'"
             if importString is not None:
@@ -4994,15 +4994,15 @@ class RunFunction(FunctionNode):
             # a function is not savable, so we are trying to save something
             self.constrkw['functionOrString'] = function.__class__.__name__
         if (importString is None or importString == '') \
-          and self.constrkw.has_key('importString') is True:
+          and ('importString' in self.constrkw) is True:
             del self.constrkw['importString']
         if len(self.posArgsNames) > 0:
             self.constrkw['posArgsNames'] = self.posArgsNames # was str() 
-        elif self.constrkw.has_key('posArgsNames') is True:
+        elif ('posArgsNames' in self.constrkw) is True:
             del self.constrkw['posArgsNames']
         if len(self.namedArgs) > 0:
             self.constrkw['namedArgs'] = self.namedArgs # was str()
-        elif self.constrkw.has_key('namedArgs') is True:
+        elif ('namedArgs' in self.constrkw) is True:
             del self.constrkw['namedArgs']
 
     elif self.function is not None:
@@ -5012,19 +5012,20 @@ class RunFunction(FunctionNode):
             posargs.append(locals()[pn])
         # build named arguments
         kw = {}
-        for arg in self.namedArgs.keys():
+        for arg in list(self.namedArgs.keys()):
             kw[arg] = locals()[arg]
         # call function
         try:
             if hasattr(function,'__call__') and hasattr(function.__call__, 'im_func'):
-                result = apply( self.function.__call__, posargs, kw )
+                result = self.function.__call__(*posargs, **kw)
             else:
-                result = apply( self.function, posargs, kw )
-        except Exception, e:
+                result = self.function(*posargs, **kw)
+        except Exception as e:
             from warnings import warn
             warn(e)
             result = None
         self.outputData(result=result)
+
 """
         if code: self.setFunction(code)
         # change signature of compute function

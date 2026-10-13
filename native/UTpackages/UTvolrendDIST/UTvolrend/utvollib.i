@@ -10,11 +10,6 @@
 %}
 %{
 
-#ifdef _MSC_VER
-#include <windows.h>
-#define WinVerMajor() LOBYTE(LOWORD(GetVersion()))
-#endif
-
 #include "VolumeRenderer.h"
 #include "MyExtensions.h"
 #include "mgl_npcompat.h"

@@ -16,7 +16,6 @@ from setuptools.command.build_ext import build_ext
 
 HERE = Path(__file__).resolve().parent
 NATIVE = HERE / "native"
-SWIG_OUT = HERE / "build" / "swig"
 
 
 def n(*parts):
@@ -191,9 +190,12 @@ class SwigBuildExt(build_ext):
 
     def build_extension(self, ext):
         spec = ext._mgl
-        SWIG_OUT.mkdir(parents=True, exist_ok=True)
+        # per-platform/per-interpreter dir (build/temp.<plat>-<py>/swig) so
+        # concurrent builds for different platforms do not collide
+        swig_out = Path(self.build_temp).resolve() / "swig"
+        swig_out.mkdir(parents=True, exist_ok=True)
         cpp = spec.get("cpp", False)
-        wrap = SWIG_OUT / (Path(spec["swig"]).stem + ("_wrap.cpp" if cpp else "_wrap.c"))
+        wrap = swig_out / (Path(spec["swig"]).stem + ("_wrap.cpp" if cpp else "_wrap.c"))
         cmd = [os.environ.get("SWIG", "swig"), "-python"]
         if cpp:
             cmd.append("-c++")
@@ -212,11 +214,15 @@ class SwigBuildExt(build_ext):
 def make_ext(spec):
     root = str(Path(spec["swig"]).parent.parent)
     inc = [n("common"), numpy.get_include(), root] + spec["inc"]
-    macros = list(spec.get("macros", []))
+    # accept NumPy scalars (and anything with __float__/__int__) where the
+    # C API wants double/int, as SWIG 1.3 did
+    macros = list(spec.get("macros", [])) + [("SWIG_PYTHON_CAST_MODE", None)]
     cflags = list(spec.get("cflags", []))
     if WIN:
         macros += [("WIN32", None), ("_USE_MATH_DEFINES", None),
                    ("_CRT_SECURE_NO_WARNINGS", None)]
+        # stand-ins for POSIX headers (unistd.h, sys/time.h, strings.h)
+        inc.append(n("common", "win"))
     if MAC:
         # <GL/gl.h> -> <OpenGL/gl.h> forwarding headers; OpenGL is deprecated
         # on macOS but still supported (legacy 2.1 profile)

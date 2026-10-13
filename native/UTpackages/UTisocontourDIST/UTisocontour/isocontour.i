@@ -34,11 +34,6 @@ sets of unsigned character, short and float.
 %feature("python:cdefaultargs");
 %{
 
-#ifdef _MSC_VER
-#include <windows.h>
-#define WinVerMajor() LOBYTE(LOWORD(GetVersion()))
-#endif
-
 //#include <unistd.h>
 #include <stdlib.h>
 #include "contour.h"

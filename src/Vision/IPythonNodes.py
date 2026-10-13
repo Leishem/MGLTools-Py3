@@ -642,7 +642,7 @@ output:
         code = """def doit(self, mec, scatter, command, importString, *args):
     functionOrString = command
     import types
-    if type(functionOrString) == types.StringType:
+    if type(functionOrString) == bytes:
         # we add __main__ to the scope of the local function
         # the folowing code is similar to: "from __main__ import *"
         # but it doesn't raise any warning, and its probably more local
@@ -658,10 +658,10 @@ output:
 
         if importString != '':
             exec(importString)
-            print mec.execute(importString)
-            
+            print(mec.execute(importString))
+
         lfunctionOrString = functionOrString
-        while type(lfunctionOrString) == types.StringType:
+        while type(lfunctionOrString) == bytes:
              try:
                  function = eval(lfunctionOrString)
              except NameError:
@@ -696,10 +696,10 @@ output:
         else:
             self.rename('PRun '+function.__class__.__name__)
 
-        print 'L pushing function', self.funcname
-        print mec.push_function({self.funcname:function})
-        print 'pulling', mec.execute('print %s'%self.funcname)
-        
+        print('L pushing function', self.funcname)
+        print(mec.push_function({self.funcname:function}))
+        print('pulling', mec.execute('print %s'%self.funcname))
+
         # remove all ports beyond the function and the importString input ports 
         for p in self.inputPorts[4:]:
             self.deletePort(p, updateSignature=False)
@@ -707,7 +707,7 @@ output:
         # get arguments description
         from inspect import getfullargspec as getargspec
         if hasattr(function, '__call__') and hasattr(function.__call__, 'im_func'): 
-            args = getargspec(function.__call__.im_func)
+            args = getargspec(function.__call__.__func__)
         else:
             args = getargspec(function)
 
@@ -731,7 +731,7 @@ output:
         self.namedArgs = d
 
         # create widgets and ports for arguments
-        if hasattr(function, 'params') and type(function.params) == types.DictType:
+        if hasattr(function, 'params') and type(function.params) == dict:
             argsDescription = function.params
         else:
             argsDescription = {}
@@ -742,7 +742,7 @@ output:
         # create the constructor arguments such that when the node is restored
         # from file it will have all the info it needs
         if functionOrString is not None:
-            if type(functionOrString) == types.StringType:
+            if type(functionOrString) == bytes:
                 self.constrkw['functionOrString'] = "\'"+functionOrString+"\'"
             else:
                 self.constrkw['functionOrString'] = functionOrString
@@ -762,28 +762,28 @@ output:
 
         self.constrkw['posArgsNames'] = str(self.posArgsNames)
         self.constrkw['namedArgs'] = str(self.namedArgs)
-        
+
     elif self.function is not None:
         # get all positional arguments
         sig = ""
         numArg = 0
         for pn in self.posArgsNames:
             if numArg==scatter:
-                print 'L scattering', pn, locals()[pn]
-                print mec.scatter(pn, locals()[pn])
-                print 'pull ',mec.pull(pn)
+                print('L scattering', pn, locals()[pn])
+                print(mec.scatter(pn, locals()[pn]))
+                print('pull ',mec.pull(pn))
             else:
-                print 'pushing', pn, locals()[pn]
-                print mec.push({pn:locals()[pn]})
-                print 'pull', mec.pull(pn)
+                print('pushing', pn, locals()[pn])
+                print(mec.push({pn:locals()[pn]}))
+                print('pull', mec.pull(pn))
 
             sig += pn+', '
             numArg += 1
 
         # build named arguments
-        for arg in self.namedArgs.keys():
+        for arg in list(self.namedArgs.keys()):
             if numArg==scatter:
-                print mec.scatter(arg, locals()[arg])
+                print(mec.scatter(arg, locals()[arg]))
             else:
                 #print mec.push(dict(arg=locals()[arg]))
                 mec[arg] = locals()[arg]
@@ -795,9 +795,9 @@ output:
         #print mec.push(dict(posargs=poargs))
         #print mec.push(dict(kw=kw))
         s =  'result = %s('%self.funcname + sig[:-2]+' )'
-        print 'EXECUTING2', s
-        print mec.execute(s)
-        
+        print('EXECUTING2', s)
+        print(mec.execute(s))
+
 ##         try:
 ##             if hasattr(function,'__call__') and hasattr(function.__call__, 'im_func'):
 ##                 s = 'result = %s.__call__('%self.funcname + sig[:-2]+' )'
@@ -812,6 +812,7 @@ output:
 ##             result = None
         result = mec.gather('result')
         self.outputData(result=result)
+
 """
         if code: self.setFunction(code)
         # change signature of compute function

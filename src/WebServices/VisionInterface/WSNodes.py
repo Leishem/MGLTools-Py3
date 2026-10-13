@@ -620,7 +620,7 @@ Output Ports
             else:
                 wget = "wget"
 
-            opener = urllib.FancyURLopener({})
+            opener = urllib.request.FancyURLopener({})
 
             if not os.path.exists(path):
                   os.mkdir(path)
@@ -644,16 +644,17 @@ Output Ports
 
 
             download_cmd = 'cd ' + path + ' ' + sep + ' ' +  wget + ' -r -l inf --no-remove-listing --no-parent --no-host-directories -nH --cut-dirs=''' + str(num_dirs) + ' ' + url
-            print download_cmd
+            print(download_cmd)
             os.system(download_cmd)
 
             ddnct = time.ctime(os.path.getmtime(path))
 
             if ddct != ddnct:
                 self.outputData(output = path)
-            
+
             pass
 #            self.outputData(output=path)
+
 """
         if code:
             self.setFunction(code)

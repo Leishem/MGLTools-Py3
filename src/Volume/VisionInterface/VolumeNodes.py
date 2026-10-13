@@ -1055,14 +1055,15 @@ Output Ports
         self.outputPortsDescr.append(datatype='float', name='mean')
         self.outputPortsDescr.append(datatype='float', name='stdDev')
         code = """def doit(self, grid):
-    
+
     mymin, mymax, mymean, mystdev = grid.stats()
     self.outputData(mini=mymin,maxi=mymax,mean=mymean,stdDev=mystdev)
-    print "\\nSTATS:"
-    print "minimum: ",mymin
-    print "maximum: ",mymax
-    print "mean: ",mymean
-    print "standard deviation: ",mystdev
+    print("\\nSTATS:")
+    print("minimum: ",mymin)
+    print("maximum: ",mymax)
+    print("mean: ",mymean)
+    print("standard deviation: ",mystdev)
+
 """
         if code: self.setFunction(code)
 
@@ -1512,9 +1513,10 @@ class ReadAnyMap(NetworkNode):
                 elif choice=='SPIDER':self.reader=ReadSPIDER()
                 elif choice=='UHBD/GRID':self.reader=UHBDReaderASCII()
                 elif choice=='AVS/FLD Binary':self.reader=ReadFLDBinary()
-                else: print "error in choosing a map"
+                else: print("error in choosing a map")
         grid = self.reader.read(filename, normalize=normalize)
         if grid: self.outputData(grid=grid)
+
 """
             
         if code: self.setFunction(code)
@@ -2271,7 +2273,7 @@ Output Ports
         stepsize = Numeric.array(grid3D.stepSize).astype('f')
         # add 1 dimension for time steps amd 1 for multiple variables
         if data.dtype.char!=Numeric.Float32:
-            print 'converting from ', data.dtype.char
+            print('converting from ', data.dtype.char)
             data = data.astype('f')#Numeric.Float32)
 
         self.newgrid3D = Numeric.ascontiguousarray(Numeric.reshape( Numeric.transpose(data),
@@ -2279,7 +2281,7 @@ Output Ports
         # destroy the ConDataset structure
         if self.data:
             isocontour.delDatasetReg(self.data)
-            
+
         self.data = isocontour.newDatasetRegFloat3D(\
             self.newgrid3D, origin, stepsize)
 
@@ -2310,9 +2312,10 @@ Output Ports
 
         if grid3D.crystal:
             vert = grid3D.crystal.toCartesian(vert)
-            
+
         self.outputData(coords=vert, indices=tri, normals=norm)
         #self.outputData(colors=c)
+
 """
 
         self.setFunction(code)
@@ -2808,7 +2811,7 @@ Output:
         min_bc = min(shape[i], int(round( bc2[i])))
         if (max_bc <= 0 and min_bc <= 0) or \
            (max_bc >= shape[i]-1 and min_bc >= shape[i]-1):
-            print "box is out of range of data"
+            print("box is out of range of data")
             return
         else:
             bc1[i]=max_bc
@@ -2836,6 +2839,7 @@ Output:
                                    crystal)
 ## to ouput data on port out0 use
     self.outputData(clippedMap=maskedGrid)
+
 """
         self.setFunction(code)
     

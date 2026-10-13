@@ -14,11 +14,6 @@
 %{
 
 
-#ifdef _MSC_VER
-#include <windows.h>
-#define WinVerMajor() LOBYTE(LOWORD(GetVersion()))
-#endif
-
   /** #define METH_VARARGS METH_KEYWORDS **/
 
 #ifdef __APPLE__

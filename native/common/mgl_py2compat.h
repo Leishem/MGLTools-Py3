@@ -15,8 +15,8 @@
 #define PyInt_Type           PyLong_Type
 #define PyString_Check       PyUnicode_Check
 #define PyString_FromString  PyUnicode_FromString
-#define PyString_AsString    PyUnicode_AsUTF8
-#define PyString_AS_STRING   PyUnicode_AsUTF8
+#define PyString_AsString(o)  ((char *)PyUnicode_AsUTF8(o))
+#define PyString_AS_STRING(o) ((char *)PyUnicode_AsUTF8(o))
 #define PyString_Size        PyUnicode_GetLength
 #define PyString_GET_SIZE    PyUnicode_GetLength
 #define PyString_FromStringAndSize PyUnicode_FromStringAndSize

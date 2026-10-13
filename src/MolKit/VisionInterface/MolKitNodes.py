@@ -399,7 +399,7 @@ Input:  filename (string)"""
     if mols and filename and len(filename):
         ext = filename.split('.')[-1]
         if not self.writers.has_key(ext):
-            print 'unrecognized outputfile type', ext
+            print('unrecognized outputfile type', ext)
             return 
         writer = self.writers[ext]()
         #check for required attributes
@@ -413,7 +413,7 @@ Input:  filename (string)"""
             try:
                 getattr(ats, attr)
             except:
-                print "all atoms do not have required attribute:", attr
+                print("all atoms do not have required attribute:", attr)
                 return 'ERROR'
         #need support for specifying records (?) 
         #NB: pqrWriter doesnot have same signature: no records parameter
@@ -1897,7 +1897,7 @@ class RemoteMSMS(NetworkNode):
     if radii is None:
         try: radii = atoms.radius
         except:
-            print 'No Radii'
+            print('No Radii')
             return
     if colors is None:
         try: colors = atoms.colors
@@ -1907,7 +1907,7 @@ class RemoteMSMS(NetworkNode):
     radii = Numeric.array(radii)
     radii.shape = (-1, 1)
     coords = Numeric.concatenate( (atoms.coords, radii), 1 )
-    print coords.shape
+    print(coords.shape)
     self.serverObj.setArguments( Coordinates=coords,
                                  Probe_Radius=probe_radius,
                                  Density=density )

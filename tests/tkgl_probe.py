@@ -13,6 +13,8 @@ from opengltk.OpenGL.Tk import loadTkgl  # noqa: E402
 opts = dict(zip((a.lstrip("-") for a in sys.argv[1::2]), sys.argv[2::2]))
 root = tkinter.Tk()
 print("Tkgl", loadTkgl(root), "opts", opts, flush=True)
+if sys.platform == "win32":
+    root.update()  # TkGL's WGL backend needs the parent window to exist
 w = tkinter.Widget(root, "tkgl", {}, dict(width=200, height=200, **opts))
 w.pack()
 root.update()
