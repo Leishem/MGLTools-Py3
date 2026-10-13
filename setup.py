@@ -173,7 +173,8 @@ MODULES += [
              "VolumeRendererFactory.cpp", "SimpleRGBA2DImpl.cpp", "Paletted2DImpl.cpp"]),
          inc=[n(*UT, "UTvolrendDIST", "src"), n(*UT, "UTvolrendDIST", "UTvolrend")],
          macros=[("WIN32", None)] if WIN else ([("__APPLE__", None)] if MAC else [("UNIX", None)]),
-         cflags=UT_CFLAGS, libs=GL_LIBS + LIBM, ldflags=GL_LINK),
+         cflags=UT_CFLAGS,
+         libs=GL_LIBS + LIBM, ldflags=GL_LINK),
 ]
 
 

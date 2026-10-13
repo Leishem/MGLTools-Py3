@@ -50,12 +50,37 @@ def _install_win_parent_fix():
     _orig = tkinter.Widget.__init__
 
     def __init__(self, master, widgetName, cnf={}, kw={}, extra=()):
-        if widgetName == WIDGET_CLASS and master is not None:
-            try:
-                master.update()
-            except Exception:  # noqa: BLE001
-                pass
-        return _orig(self, master, widgetName, cnf, kw, extra)
+        if widgetName != WIDGET_CLASS or master is None:
+            return _orig(self, master, widgetName, cnf, kw, extra)
+        # The window must exist *and be mapped*: TkGL crashes creating its
+        # pixel format in a withdrawn toplevel (PMV builds its first camera
+        # in a hidden floating window). Map it off-screen meanwhile (not via
+        # -alpha: that makes it a layered window, which breaks GL drawing).
+        top = master.winfo_toplevel()
+        hidden = False
+        geom = None
+        try:
+            if not top.winfo_ismapped():
+                hidden = True
+                geom = top.geometry()
+                top.geometry("+-32000+-32000")
+                top.deiconify()
+            master.update()
+            # a parent not yet packed/gridded has no native window yet
+            # (e.g. the material editor's frame); TkGL needs its HWND
+            master.winfo_id()
+        except Exception:  # noqa: BLE001
+            pass
+        try:
+            return _orig(self, master, widgetName, cnf, kw, extra)
+        finally:
+            if hidden:
+                try:
+                    top.withdraw()
+                    if geom:
+                        top.geometry(geom)
+                except Exception:  # noqa: BLE001
+                    pass
 
     tkinter.Widget.__init__ = __init__
     _win_patch_installed = True

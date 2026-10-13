@@ -44,6 +44,19 @@ def make_viewer():
     root.withdraw()
     from mglcompat import x11errors
     x11errors.install()
+    if os.environ.get("MGL_NO_PATTERN"):
+        import DejaVu
+        DejaVu.selectionPatternSize = 0
+    if os.environ.get("MGL_NO_CONTOUR"):
+        import DejaVu
+        DejaVu.enableSelectionContour = False
+    if os.environ.get("MGL_NO_SSAO"):
+        import DejaVu
+        DejaVu.enableSSAO = False
+    if os.environ.get("MGL_NO_INTEL_WORKAROUND"):
+        import DejaVu
+        DejaVu.preventIntelBug_BlackTriangles = False
+        DejaVu.preventIntelBug_WhiteTriangles = False
     from Pmv.moleculeViewer import MoleculeViewer
     mv = MoleculeViewer(logMode='no', customizer=None, master=root,
                         title="AutoDockTools", withShell=0, verbose=False, gui=True)
@@ -83,11 +96,22 @@ cam = mv.GUI.VIEWER.currentCamera
 
 
 def shot(name):
+    """Let scheduled redraws run, then capture the 3D view from the screen."""
+    from PIL import ImageGrab
     mv.GUI.VIEWER.Redraw()
-    mv.GUI.ROOT.update()
-    img = cam.GrabFrontBuffer()
+    t_end = time.time() + 1.5
+    while time.time() < t_end:
+        mv.GUI.ROOT.update()
+        time.sleep(0.05)
+    c = cam
+    box = (c.winfo_rootx(), c.winfo_rooty(),
+           c.winfo_rootx() + c.winfo_width(), c.winfo_rooty() + c.winfo_height())
     p = OUT / f"{name}.png"
-    img.save(p)
+    cam.GrabFrontBuffer().save(p)          # what OpenGL rendered
+    try:                                   # what is on screen
+        ImageGrab.grab(bbox=box).save(OUT / f"{name}_screen.png")
+    except Exception:  # noqa: BLE001  (no screen grabbing available)
+        pass
     return p
 
 
@@ -96,6 +120,24 @@ if mols:
     step("displaySticksAndBalls", lambda: mv.displaySticksAndBalls("hsg1", log=0))
     step("sticks screenshot", lambda: shot("2_sticks"))
     step("displayCPK", lambda: mv.displayCPK("hsg1", log=0))
+    def hl_info():
+        import numpy as _np
+        g = mv.Mols[0].geomContainer.geoms["cpk"]
+        h = _np.asarray(g.highlight)
+        from opengltk.OpenGL import GL as _GL
+        cam.tk.call(cam._w, 'makecurrent')
+        print("      GL state: polymode", _GL.glGetIntegerv(_GL.GL_POLYGON_MODE),
+              "frontface", _GL.glGetIntegerv(_GL.GL_FRONT_FACE),
+              "cull", _GL.glIsEnabled(_GL.GL_CULL_FACE),
+              "geom front/back/cull", g.frontPolyMode, g.backPolyMode, g.culling)
+        import DejaVu as _DV
+        print("      DejaVu flags: intelBlack", _DV.preventIntelBug_BlackTriangles,
+              "intelWhite", _DV.preventIntelBug_WhiteTriangles,
+              "pattern", _DV.selectionPatternSize, "ssao", _DV.enableSSAO,
+              "contour", _DV.enableSelectionContour)
+        print("      cpk highlight:", type(g.highlight).__name__, h.dtype, h.shape,
+              _np.unique(h, return_counts=True))
+    step("cpk highlight info", hl_info)
     step("CPK screenshot", lambda: shot("3_cpk"))
     step("ribbon (secondary structure)", lambda: mv.ribbon("hsg1", log=0))
     step("ribbon screenshot", lambda: shot("4_ribbon"))
@@ -108,11 +150,23 @@ if mols:
     step("surface area info", lambda: print(
         "      ", mv.GUI.VIEWER and
         mv.Mols[0].geomContainer.msms["MSMS-MOL"][0].info()))
+    def surf_info():
+        g = mv.Mols[0].geomContainer.geoms["MSMS-MOL"]
+        f = g.faceSet.faces.array; v = g.vertexSet.vertices.array
+        print("      surface geom:", type(g).__name__, "polyMode", g.frontPolyMode,
+              "faces", f.shape, f.dtype, f.min(), f.max(), "verts", v.shape, v.dtype,
+              "visible", g.visible, "immediate", g.immediateRendering)
+    step("surface geometry info", surf_info)
     step("color surface by atom type",
          lambda: mv.colorByAtomType("hsg1", ['MSMS-MOL'], log=0))
 
 def window_shot():
-    mv.GUI.ROOT.update()
+    # let pending redraws (scheduled with after()) run before capturing
+    mv.GUI.VIEWER.Redraw()
+    t_end = time.time() + 1.5
+    while time.time() < t_end:
+        mv.GUI.ROOT.update()
+        time.sleep(0.05)
     from PIL import ImageGrab
     r = mv.GUI.ROOT
     box = (r.winfo_rootx(), r.winfo_rooty(),

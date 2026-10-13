@@ -47,6 +47,14 @@
 #      include <GL/gl.h>
 #      include <GL/glext.h>
 #      if defined(WIN32)
+           /* windows.h without GDI: its Polygon() would clash with this
+              library's Polygon class. Declare the two WGL calls used. */
+#          ifndef NOGDI
+#              define NOGDI
+#          endif
+#          include <windows.h>
+           extern "C" __declspec(dllimport) PROC WINAPI wglGetProcAddress(LPCSTR);
+           extern "C" __declspec(dllimport) HDC WINAPI wglGetCurrentDC(void);
 #          include <GL/wglext.h>
 #      else
 #          define GLX_GLXEXT_PROTOTYPES
