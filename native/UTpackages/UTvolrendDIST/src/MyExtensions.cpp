@@ -79,7 +79,7 @@ bool MyExtensions::extensionExists(const char* extension, const char* allExtensi
 	padExtName[extLen+1] = 0;
 
     if (0 == strcmp(extension, "GL_VERSION_1_2")) {
-        const char *version = (const char*)glGetString(GL_VERSION);
+        const char *version = (const char*)glGetString(GL_VERSION); if (!version) return false;
         if (strstr(version, "1.0") == version || strstr(version, "1.1") == version) {
             return false;
         } else {
@@ -87,14 +87,14 @@ bool MyExtensions::extensionExists(const char* extension, const char* allExtensi
         }
     }
     if (0 == strcmp(extension, "GL_VERSION_1_3")) {
-      const char *version = (const char*)glGetString(GL_VERSION);
+      const char *version = (const char*)glGetString(GL_VERSION); if (!version) return false;
       if (strstr(version, "1.0") == version ||
 	  strstr(version, "1.1") == version ) {
 	return false;
       }
       else if (strstr(version, "1.2") == version) {
 	//added by A.O.
-	const char *glrenderer = (const char*)glGetString(GL_RENDERER);
+	const char *glrenderer = (const char*)glGetString(GL_RENDERER); if (!glrenderer) glrenderer = "";
 	if (strstr(glrenderer, "Intel") && strstr(glrenderer, "GMA"))
 	  {
 	    //std::cout << "IT IS Intel GMA" << "\n";
@@ -109,7 +109,7 @@ bool MyExtensions::extensionExists(const char* extension, const char* allExtensi
 	}
     }
     if (0 == strcmp(extension, "GL_VERSION_1_4")) {
-        const char *version = (const char*)glGetString(GL_VERSION);
+        const char *version = (const char*)glGetString(GL_VERSION); if (!version) return false;
         if (strstr(version, "1.0") == version ||
             strstr(version, "1.1") == version ||
             strstr(version, "1.2") == version ||
@@ -1007,7 +1007,8 @@ const char* MyExtensions::EatNonWhiteSpace(const char* str)
 const char* MyExtensions::getExtensionStringPrivate()
 {
 	const char* normalExtensions = (const char*)glGetString(GL_EXTENSIONS);
-	return normalExtensions;
+	/* NULL without a current context (or in a core profile): no extensions */
+	return normalExtensions ? normalExtensions : "";
 }
 
 const char* MyExtensions::getSystemExtensions()

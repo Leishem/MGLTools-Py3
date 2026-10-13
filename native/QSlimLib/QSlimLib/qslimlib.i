@@ -1,4 +1,5 @@
 %module qslimlib
+%feature("python:cdefaultargs");
 %feature ("kwargs"); /* enables python keyword arguments swig1.3.20 */
 
 %{

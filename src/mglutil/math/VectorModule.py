@@ -26,11 +26,12 @@
 
 _undocumented = 1
 
+from mglcompat.pyclasses import CmpMixin, cmp
 import mglcompat.oldnumeric as Numeric, types
 from . import TensorModule
 
 
-class Vector:
+class Vector(CmpMixin):
 
     """Vector in 3D space
 
@@ -121,6 +122,10 @@ class Vector:
         else:
             return Vector(Numeric.multiply(self.array, other))
 
+    def __truediv__(self, other):
+        return self.__div__(other)
+    def __rtruediv__(self, other):
+        return self.__rdiv__(other)
     def __div__(self, other):
         if isVector(other):
             raise TypeError("Can't divide by a vector")

@@ -11,6 +11,7 @@
 #
 #$Id: genparserCommands.py,v 1.7 2004/03/22 19:29:39 sophiec Exp $
 #
+from mglcompat.pyclasses import cmp
 from ViewerFramework.VFCommand import CommandGUI
 ##  from ViewerFramework.gui import InputForm, InputFormDescr
 from mglutil.gui.InputForm.Tk.gui import InputForm, InputFormDescr

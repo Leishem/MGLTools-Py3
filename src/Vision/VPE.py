@@ -20,6 +20,7 @@
 # $Id: VPE.py,v 1.230.4.2 2012/02/27 20:21:04 sanner Exp $
 #
 
+from mglcompat.pyclasses import cmp
 import re
 import sys
 import os

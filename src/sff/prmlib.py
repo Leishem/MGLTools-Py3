@@ -59,8 +59,8 @@ class _SwigNonDynamicMeta(type):
 
 
 
-def foo(obj):
-    return _prmlib.foo(obj)
+def foo(*args):
+    return _prmlib.foo(*args)
 PyArray_CHAR = _prmlib.PyArray_CHAR
 PyArray_UBYTE = _prmlib.PyArray_UBYTE
 PyArray_SBYTE = _prmlib.PyArray_SBYTE
@@ -168,8 +168,8 @@ class parmstruct(object):
     N14pairs = property(_prmlib.parmstruct_N14pairs_get, _prmlib.parmstruct_N14pairs_set)
     N14pairlist = property(_prmlib.parmstruct_N14pairlist_get, _prmlib.parmstruct_N14pairlist_set)
 
-    def __init__(self):
-        _prmlib.parmstruct_swiginit(self, _prmlib.new_parmstruct())
+    def __init__(self, *args):
+        _prmlib.parmstruct_swiginit(self, _prmlib.new_parmstruct(*args))
     __swig_destroy__ = _prmlib.delete_parmstruct
 
 # Register parmstruct in _prmlib:
@@ -217,74 +217,74 @@ class SFFoptions(object):
     eel14r = property(_prmlib.SFFoptions_eel14r_get, _prmlib.SFFoptions_eel14r_set)
     nhbpair = property(_prmlib.SFFoptions_nhbpair_get, _prmlib.SFFoptions_nhbpair_set)
 
-    def __init__(self):
-        _prmlib.SFFoptions_swiginit(self, _prmlib.new_SFFoptions())
+    def __init__(self, *args):
+        _prmlib.SFFoptions_swiginit(self, _prmlib.new_SFFoptions(*args))
     __swig_destroy__ = _prmlib.delete_SFFoptions
 
 # Register SFFoptions in _prmlib:
 _prmlib.SFFoptions_swigregister(SFFoptions)
 
-def init_sff_options():
-    return _prmlib.init_sff_options()
+def init_sff_options(*args):
+    return _prmlib.init_sff_options(*args)
 
-def readparm(name):
-    return _prmlib.readparm(name)
+def readparm(*args):
+    return _prmlib.readparm(*args)
 
-def readcrd(name, c, parm):
-    return _prmlib.readcrd(name, c, parm)
+def readcrd(*args):
+    return _prmlib.readcrd(*args)
 
-def readcrdvec(name, parm, nat):
-    return _prmlib.readcrdvec(name, parm, nat)
+def readcrdvec(*args):
+    return _prmlib.readcrdvec(*args)
 
-def mme_initCallbacks():
-    return _prmlib.mme_initCallbacks()
+def mme_initCallbacks(*args):
+    return _prmlib.mme_initCallbacks(*args)
 
-def mme_init(froz, constr, x0i, bfpi, prm, opts):
-    return _prmlib.mme_init(froz, constr, x0i, bfpi, prm, opts)
+def mme_init(*args):
+    return _prmlib.mme_init(*args)
 
-def mme_cleanup():
-    return _prmlib.mme_cleanup()
+def mme_cleanup(*args):
+    return _prmlib.mme_cleanup(*args)
 
-def mme(x, f, iter, ene, prm, opts):
-    return _prmlib.mme(x, f, iter, ene, prm, opts)
+def mme(*args):
+    return _prmlib.mme(*args)
 
-def conjgrad(x, n, f, func, dgrad, dfpred, maxiter, prm, ene, opts):
-    return _prmlib.conjgrad(x, n, f, func, dgrad, dfpred, maxiter, prm, ene, opts)
+def conjgrad(*args):
+    return _prmlib.conjgrad(*args)
 
-def md(n, maxstep, x, minv, f, v, func, ene, prm, opts):
-    return _prmlib.md(n, maxstep, x, minv, f, v, func, ene, prm, opts)
+def md(*args):
+    return _prmlib.md(*args)
 
-def mm_options(c, val, opts):
-    return _prmlib.mm_options(c, val, opts)
+def mm_options(*args):
+    return _prmlib.mm_options(*args)
 
-def md_options(c, val, opts):
-    return _prmlib.md_options(c, val, opts)
+def md_options(*args):
+    return _prmlib.md_options(*args)
 
-def sffC_list_options(opts):
-    return _prmlib.sffC_list_options(opts)
+def sffC_list_options(*args):
+    return _prmlib.sffC_list_options(*args)
 
-def startbinpos(fp):
-    return _prmlib.startbinpos(fp)
+def startbinpos(*args):
+    return _prmlib.startbinpos(*args)
 
-def openbinpos(fp):
-    return _prmlib.openbinpos(fp)
+def openbinpos(*args):
+    return _prmlib.openbinpos(*args)
 
-def readbinpos(n_atom, apos, fp):
-    return _prmlib.readbinpos(n_atom, apos, fp)
+def readbinpos(*args):
+    return _prmlib.readbinpos(*args)
 
-def writebinpos(n_atom, apos, fp):
-    return _prmlib.writebinpos(n_atom, apos, fp)
+def writebinpos(*args):
+    return _prmlib.writebinpos(*args)
 
-def sanityCb(nbat, cbNum, coords, energies, step):
-    return _prmlib.sanityCb(nbat, cbNum, coords, energies, step)
+def sanityCb(*args):
+    return _prmlib.sanityCb(*args)
 class cbFunc(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
     fun = property(_prmlib.cbFunc_fun_get, _prmlib.cbFunc_fun_set)
     freq = property(_prmlib.cbFunc_freq_get, _prmlib.cbFunc_freq_set)
 
-    def __init__(self):
-        _prmlib.cbFunc_swiginit(self, _prmlib.new_cbFunc())
+    def __init__(self, *args):
+        _prmlib.cbFunc_swiginit(self, _prmlib.new_cbFunc(*args))
     __swig_destroy__ = _prmlib.delete_cbFunc
 
 # Register cbFunc in _prmlib:
@@ -293,14 +293,14 @@ cvar = _prmlib.cvar
 
 NCBFUNC = _prmlib.NCBFUNC
 
-def setccallback(cbfun, frequency, callbacknum):
-    return _prmlib.setccallback(cbfun, frequency, callbacknum)
+def setccallback(*args):
+    return _prmlib.setccallback(*args)
 
-def parmcalloc():
-    return _prmlib.parmcalloc()
+def parmcalloc(*args):
+    return _prmlib.parmcalloc(*args)
 
-def parmfree(parm):
-    return _prmlib.parmfree(parm)
+def parmfree(*args):
+    return _prmlib.parmfree(*args)
 mme_fun = _prmlib.mme_fun
 
 set_callback = _prmlib.set_callback

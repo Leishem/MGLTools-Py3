@@ -59,6 +59,6 @@ class _SwigNonDynamicMeta(type):
 
 
 
-def getGaussianCurvature(numberOfGaussians, numberOfGridDivisions, maxFunctionError, blobbiness, numberOfPoints):
-    return _molderivatives.getGaussianCurvature(numberOfGaussians, numberOfGridDivisions, maxFunctionError, blobbiness, numberOfPoints)
+def getGaussianCurvature(*args):
+    return _molderivatives.getGaussianCurvature(*args)
 

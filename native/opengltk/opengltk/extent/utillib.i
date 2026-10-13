@@ -2,6 +2,7 @@
  * copyright_notice
  */
 %module utillib
+%feature("python:cdefaultargs");
 %{
 #include <assert.h>
 #include <stdlib.h>

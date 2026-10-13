@@ -28,7 +28,7 @@ def TkColor(col):
     - RGB triplet of int (0-255) or floats (0.0, 1.0)
     """
     if max(col)<=1.0: col = [x*255 for x in col]
-    return '#%02X%02X%02X' % (col[0],col[1],col[2])
+    return '#%02X%02X%02X' % (int(col[0]),int(col[1]),int(col[2]))
 
 def ToHEX(col, mode="RGB", flag255=0):
     """
@@ -47,7 +47,7 @@ def ToHEX(col, mode="RGB", flag255=0):
     if flag255 == 0:
         col = Numeric.array(col,'f')*255
         col.tolist()
-    return '#%02X%02X%02X'%(col[0],col[1],col[2])
+    return '#%02X%02X%02X'%(int(col[0]),int(col[1]),int(col[2]))
 
 def ToRGBA(col, mode="HSV", flag255=0):
     assert mode in ['HSV']

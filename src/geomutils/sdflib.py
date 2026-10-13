@@ -59,9 +59,9 @@ class _SwigNonDynamicMeta(type):
 
 
 
-def readSDF(sdfgridfile):
-    return _sdflib.readSDF(sdfgridfile)
+def readSDF(*args):
+    return _sdflib.readSDF(*args)
 
-def lookup(sdfgrid, tcoord, largestOverlapAllowed):
-    return _sdflib.lookup(sdfgrid, tcoord, largestOverlapAllowed)
+def lookup(*args):
+    return _sdflib.lookup(*args)
 

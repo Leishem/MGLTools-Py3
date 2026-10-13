@@ -1,4 +1,5 @@
 %module geomalgorithms
+%feature("python:cdefaultargs");
 
 %include geomutils.i
 %{

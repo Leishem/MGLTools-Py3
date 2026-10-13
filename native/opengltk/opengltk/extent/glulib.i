@@ -1,4 +1,5 @@
 %module glulib 
+%feature("python:cdefaultargs");
 /*
  * copyright_notice
  */

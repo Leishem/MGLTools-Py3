@@ -20,6 +20,7 @@ the secondary Structure of a protein and create a secondarystructureset for a
 chain
 """
 
+from mglcompat.pyclasses import cmp
 from MolKit.protein import Helix, Strand, Turn, Coil,\
      SecondaryStructureSet, Residue, ResidueSet
 from MolKit.molecule import Atom

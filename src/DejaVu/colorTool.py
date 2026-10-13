@@ -170,7 +170,7 @@ def OneColor(color, alpha = 1.0):
 def TkColor(col):
     """col should be a rgb triplet of int 0-255 or 0-1"""
     if max(col)<=1.0: col = [x*255 for x in col]
-    return '#%02X%02X%02X' % (col[0],col[1],col[2])
+    return '#%02X%02X%02X' % (int(col[0]),int(col[1]),int(col[2]))
 
 
 def ToRGB(hsv):

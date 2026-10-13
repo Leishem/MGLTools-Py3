@@ -59,20 +59,20 @@ class _SwigNonDynamicMeta(type):
 
 
 
-def triangleNormalsPerFace(v_data, t_data):
-    return _geomalgorithms.triangleNormalsPerFace(v_data, t_data)
+def triangleNormalsPerFace(*args, **kwargs):
+    return _geomalgorithms.triangleNormalsPerFace(*args, **kwargs)
 
-def triangleNormalsPerVertex(v_data, t_data):
-    return _geomalgorithms.triangleNormalsPerVertex(v_data, t_data)
+def triangleNormalsPerVertex(*args, **kwargs):
+    return _geomalgorithms.triangleNormalsPerVertex(*args, **kwargs)
 
-def triangleNormalsBoth(v_data, t_data):
-    return _geomalgorithms.triangleNormalsBoth(v_data, t_data)
+def triangleNormalsBoth(*args, **kwargs):
+    return _geomalgorithms.triangleNormalsBoth(*args, **kwargs)
 
-def removeDuplicatedVertices(verts, faces, norms=0):
-    return _geomalgorithms.removeDuplicatedVertices(verts, faces, norms)
+def removeDuplicatedVertices(*args, **kwargs):
+    return _geomalgorithms.removeDuplicatedVertices(*args, **kwargs)
 
-def computeRMSD(Coords, refCoords):
-    return _geomalgorithms.computeRMSD(Coords, refCoords)
+def computeRMSD(*args, **kwargs):
+    return _geomalgorithms.computeRMSD(*args, **kwargs)
 
 
 def TriangleNormals(vertices, triangles, mode = "PER_FACE" ):
@@ -93,44 +93,44 @@ def TriangleNormals(vertices, triangles, mode = "PER_FACE" ):
         return triangleNormalsBoth(vertices, triangles) 
 
 
-def closest2D_Point_to_Line(P, L):
-    return _geomalgorithms.closest2D_Point_to_Line(P, L)
+def closest2D_Point_to_Line(*args, **kwargs):
+    return _geomalgorithms.closest2D_Point_to_Line(*args, **kwargs)
 
-def dist_Point_to_Line(P, L):
-    return _geomalgorithms.dist_Point_to_Line(P, L)
+def dist_Point_to_Line(*args, **kwargs):
+    return _geomalgorithms.dist_Point_to_Line(*args, **kwargs)
 
-def dist_Point_to_Segment(P, S):
-    return _geomalgorithms.dist_Point_to_Segment(P, S)
+def dist_Point_to_Segment(*args, **kwargs):
+    return _geomalgorithms.dist_Point_to_Segment(*args, **kwargs)
 
-def pbase_Plane(P, PL):
-    return _geomalgorithms.pbase_Plane(P, PL)
+def pbase_Plane(*args, **kwargs):
+    return _geomalgorithms.pbase_Plane(*args, **kwargs)
 
-def dist3D_Line_to_Line(L1, L2):
-    return _geomalgorithms.dist3D_Line_to_Line(L1, L2)
+def dist3D_Line_to_Line(*args, **kwargs):
+    return _geomalgorithms.dist3D_Line_to_Line(*args, **kwargs)
 
-def dist3D_Segment_to_Segment(S1, S2):
-    return _geomalgorithms.dist3D_Segment_to_Segment(S1, S2)
+def dist3D_Segment_to_Segment(*args, **kwargs):
+    return _geomalgorithms.dist3D_Segment_to_Segment(*args, **kwargs)
 
-def cpa_time(Tr1, Tr2):
-    return _geomalgorithms.cpa_time(Tr1, Tr2)
+def cpa_time(*args, **kwargs):
+    return _geomalgorithms.cpa_time(*args, **kwargs)
 
-def cpa_distance(Tr1, Tr2):
-    return _geomalgorithms.cpa_distance(Tr1, Tr2)
+def cpa_distance(*args, **kwargs):
+    return _geomalgorithms.cpa_distance(*args, **kwargs)
 
-def intersect2D_Segments(S1, S2):
-    return _geomalgorithms.intersect2D_Segments(S1, S2)
+def intersect2D_Segments(*args, **kwargs):
+    return _geomalgorithms.intersect2D_Segments(*args, **kwargs)
 
-def inSegment(P, S):
-    return _geomalgorithms.inSegment(P, S)
+def inSegment(*args, **kwargs):
+    return _geomalgorithms.inSegment(*args, **kwargs)
 
-def intersect3D_SegmentPlane(S, Pn):
-    return _geomalgorithms.intersect3D_SegmentPlane(S, Pn)
+def intersect3D_SegmentPlane(*args, **kwargs):
+    return _geomalgorithms.intersect3D_SegmentPlane(*args, **kwargs)
 
-def intersect3D_2Planes(Pn1, Pn2):
-    return _geomalgorithms.intersect3D_2Planes(Pn1, Pn2)
+def intersect3D_2Planes(*args, **kwargs):
+    return _geomalgorithms.intersect3D_2Planes(*args, **kwargs)
 
-def intersect_RayTriangle(R, T):
-    return _geomalgorithms.intersect_RayTriangle(R, T)
+def intersect_RayTriangle(*args, **kwargs):
+    return _geomalgorithms.intersect_RayTriangle(*args, **kwargs)
 class Vert(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -138,28 +138,28 @@ class Vert(object):
     y = property(_geomalgorithms.Vert_y_get, _geomalgorithms.Vert_y_set)
     z = property(_geomalgorithms.Vert_z_get, _geomalgorithms.Vert_z_set)
 
-    def __init__(self):
-        _geomalgorithms.Vert_swiginit(self, _geomalgorithms.new_Vert())
+    def __init__(self, *args, **kwargs):
+        _geomalgorithms.Vert_swiginit(self, _geomalgorithms.new_Vert(*args, **kwargs))
     __swig_destroy__ = _geomalgorithms.delete_Vert
 
 # Register Vert in _geomalgorithms:
 _geomalgorithms.Vert_swigregister(Vert)
 
-def orientation2D_Polygon(n):
-    return _geomalgorithms.orientation2D_Polygon(n)
+def orientation2D_Polygon(*args, **kwargs):
+    return _geomalgorithms.orientation2D_Polygon(*args, **kwargs)
 
-def area2D_Polygon(n):
-    return _geomalgorithms.area2D_Polygon(n)
+def area2D_Polygon(*args, **kwargs):
+    return _geomalgorithms.area2D_Polygon(*args, **kwargs)
 
-def area3D_Polygon(n, N):
-    return _geomalgorithms.area3D_Polygon(n, N)
+def area3D_Polygon(*args, **kwargs):
+    return _geomalgorithms.area3D_Polygon(*args, **kwargs)
 
-def fastBall(V, n, B):
-    return _geomalgorithms.fastBall(V, n, B)
+def fastBall(*args, **kwargs):
+    return _geomalgorithms.fastBall(*args, **kwargs)
 
-def detectObjFileContent(aFilename, aoGroupNames, aoMaterialLibraries, aoMaterialNames):
-    return _geomalgorithms.detectObjFileContent(aFilename, aoGroupNames, aoMaterialLibraries, aoMaterialNames)
+def detectObjFileContent(*args, **kwargs):
+    return _geomalgorithms.detectObjFileContent(*args, **kwargs)
 
-def readObjFileGroup(aFilename, aGroupName, aoMaterialNames, aoVertices, aoTriangles, aoTextureVertices, aoTextureTriangles, aoTriangleMaterialIndices):
-    return _geomalgorithms.readObjFileGroup(aFilename, aGroupName, aoMaterialNames, aoVertices, aoTriangles, aoTextureVertices, aoTextureTriangles, aoTriangleMaterialIndices)
+def readObjFileGroup(*args, **kwargs):
+    return _geomalgorithms.readObjFileGroup(*args, **kwargs)
 

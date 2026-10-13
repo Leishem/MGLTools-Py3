@@ -1,4 +1,5 @@
 %module blur
+%feature("python:cdefaultargs");
 %feature ("kwargs");
 %init %{
   import_array(); /* load the Numeric PyCObjects */

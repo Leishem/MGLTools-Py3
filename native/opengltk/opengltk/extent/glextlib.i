@@ -1,4 +1,5 @@
 %module glextlib 
+%feature("python:cdefaultargs");
 /*
  * copyright_notice
  */

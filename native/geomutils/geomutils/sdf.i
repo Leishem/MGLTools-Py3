@@ -1,4 +1,5 @@
 %module sdflib 
+%feature("python:cdefaultargs");
 #include <stdio.h>
 #include <math.h>
 

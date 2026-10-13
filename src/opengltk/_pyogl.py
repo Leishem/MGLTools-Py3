@@ -168,6 +168,18 @@ def glBitmap(width, height, xorig, yorig, xmove, ymove, bitmap):
                     ptr("glBitmap", bitmap, np.uint8))
 
 
+def plain_constants(ns):
+    """Replace PyOpenGL Constant objects in namespace ns with plain numbers.
+
+    PyOpenGL constants are int subclasses whose str() is the symbol name, so
+    storing one in a Tk IntVar stores "GL_SRC_ALPHA (GL_SRC_ALPHA)".
+    opengltk's constants were plain ints."""
+    from OpenGL.constant import Constant
+    for k, v in list(ns.items()):
+        if isinstance(v, Constant):
+            ns[k] = float(v) if isinstance(v, float) else int(v)
+
+
 RAW_OVERRIDES = [
     "glGetIntegerv", "glGetFloatv", "glGetDoublev", "glGetBooleanv",
     "glGetString", "glGenTextures", "glDeleteTextures", "glSelectBuffer",

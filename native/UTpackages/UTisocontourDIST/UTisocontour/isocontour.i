@@ -31,6 +31,7 @@ sets of unsigned character, short and float.
       isocontour.getContour3dData(isoc, vert, norm, col, tri)
 **************************/
 %module isocontour
+%feature("python:cdefaultargs");
 %{
 
 #ifdef _MSC_VER

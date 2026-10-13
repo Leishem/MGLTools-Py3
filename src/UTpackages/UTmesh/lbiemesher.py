@@ -77,65 +77,65 @@ class LBIE_Mesher(object):
     __swig_destroy__ = _lbiemesher.delete_LBIE_Mesher
     oc = property(_lbiemesher.LBIE_Mesher_oc_get, _lbiemesher.LBIE_Mesher_oc_set)
 
-    def inputData(self, data, dims, numVerts, numCells, origin=0, spans=0):
-        return _lbiemesher.LBIE_Mesher_inputData(self, data, dims, numVerts, numCells, origin, spans)
+    def inputData(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_inputData(self, *args, **kwargs)
 
-    def fileOpen(self, arg2):
-        return _lbiemesher.LBIE_Mesher_fileOpen(self, arg2)
+    def fileOpen(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_fileOpen(self, *args, **kwargs)
 
-    def fileSave(self, arg2):
-        return _lbiemesher.LBIE_Mesher_fileSave(self, arg2)
+    def fileSave(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_fileSave(self, *args, **kwargs)
 
-    def setMesh(self, arg2):
-        return _lbiemesher.LBIE_Mesher_setMesh(self, arg2)
+    def setMesh(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_setMesh(self, *args, **kwargs)
 
-    def errorChange(self, arg2):
-        return _lbiemesher.LBIE_Mesher_errorChange(self, arg2)
+    def errorChange(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_errorChange(self, *args, **kwargs)
 
-    def errorChange_in(self, arg2):
-        return _lbiemesher.LBIE_Mesher_errorChange_in(self, arg2)
+    def errorChange_in(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_errorChange_in(self, *args, **kwargs)
 
-    def isovalueChange(self, arg2):
-        return _lbiemesher.LBIE_Mesher_isovalueChange(self, arg2)
+    def isovalueChange(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_isovalueChange(self, *args, **kwargs)
 
-    def isovalueChange_in(self, arg2):
-        return _lbiemesher.LBIE_Mesher_isovalueChange_in(self, arg2)
+    def isovalueChange_in(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_isovalueChange_in(self, *args, **kwargs)
 
-    def outTriangle(self, outverts, outfaces):
-        return _lbiemesher.LBIE_Mesher_outTriangle(self, outverts, outfaces)
+    def outTriangle(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_outTriangle(self, *args, **kwargs)
 
-    def outTetra(self, outverts, outfaces):
-        return _lbiemesher.LBIE_Mesher_outTetra(self, outverts, outfaces)
+    def outTetra(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_outTetra(self, *args, **kwargs)
 
-    def outHexa(self, outverts, outfaces):
-        return _lbiemesher.LBIE_Mesher_outHexa(self, outverts, outfaces)
+    def outHexa(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_outHexa(self, *args, **kwargs)
 
-    def outQuad(self, outverts, outfaces):
-        return _lbiemesher.LBIE_Mesher_outQuad(self, outverts, outfaces)
+    def outQuad(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_outQuad(self, *args, **kwargs)
 
-    def getNumFaces(self):
-        return _lbiemesher.LBIE_Mesher_getNumFaces(self)
+    def getNumFaces(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_getNumFaces(self, *args, **kwargs)
 
-    def getNumVerts(self):
-        return _lbiemesher.LBIE_Mesher_getNumVerts(self)
+    def getNumVerts(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_getNumVerts(self, *args, **kwargs)
 
-    def getVolMin(self):
-        return _lbiemesher.LBIE_Mesher_getVolMin(self)
+    def getVolMin(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_getVolMin(self, *args, **kwargs)
 
-    def getVolMax(self):
-        return _lbiemesher.LBIE_Mesher_getVolMax(self)
+    def getVolMax(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_getVolMax(self, *args, **kwargs)
 
-    def getOuterSurface(self):
-        return _lbiemesher.LBIE_Mesher_getOuterSurface(self)
+    def getOuterSurface(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_getOuterSurface(self, *args, **kwargs)
 
-    def setXCutPlane(self, plane_x):
-        return _lbiemesher.LBIE_Mesher_setXCutPlane(self, plane_x)
+    def setXCutPlane(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_setXCutPlane(self, *args, **kwargs)
 
-    def setZCutPlane(self, plane_z):
-        return _lbiemesher.LBIE_Mesher_setZCutPlane(self, plane_z)
+    def setZCutPlane(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_setZCutPlane(self, *args, **kwargs)
 
-    def getSurface(self, crossection=0):
-        return _lbiemesher.LBIE_Mesher_getSurface(self, crossection)
+    def getSurface(self, *args, **kwargs):
+        return _lbiemesher.LBIE_Mesher_getSurface(self, *args, **kwargs)
 
 # Register LBIE_Mesher in _lbiemesher:
 _lbiemesher.LBIE_Mesher_swigregister(LBIE_Mesher)

@@ -37,6 +37,7 @@ specified criterion which is either a function to be applied to each object of t
 or a string which forms the basis for a subselect.
 """
 
+from mglcompat.pyclasses import CmpMixin, cmp
 import types, re; from mglcompat import pystring as string
 from MolKit.listSet import ListSet
 from functools import cmp_to_key
@@ -949,7 +950,7 @@ range specified using the '-' character
 
         
 ## class TreeNode(object):
-class TreeNode:
+class TreeNode(CmpMixin):
     """Base class for node that can be used to build trees.
     Every node is by definition a list of its children.mol.
     a leaf is an empty list.

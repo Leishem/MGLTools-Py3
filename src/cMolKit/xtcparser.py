@@ -59,23 +59,23 @@ class _SwigNonDynamicMeta(type):
 
 
 
-def read_xtc_out(fn, bXVG):
-    return _xtcparser.read_xtc_out(fn, bXVG)
+def read_xtc_out(*args):
+    return _xtcparser.read_xtc_out(*args)
 
-def open_xtc(fn):
-    return _xtcparser.open_xtc(fn)
+def open_xtc(*args):
+    return _xtcparser.open_xtc(*args)
 
-def read_header_xtc():
-    return _xtcparser.read_header_xtc()
+def read_header_xtc(*args):
+    return _xtcparser.read_header_xtc(*args)
 
-def read_first_frame_xtc(magic, coords):
-    return _xtcparser.read_first_frame_xtc(magic, coords)
+def read_first_frame_xtc(*args):
+    return _xtcparser.read_first_frame_xtc(*args)
 
-def read_next_frame_xtc(coords):
-    return _xtcparser.read_next_frame_xtc(coords)
+def read_next_frame_xtc(*args):
+    return _xtcparser.read_next_frame_xtc(*args)
 
-def close_xtc():
-    return _xtcparser.close_xtc()
+def close_xtc(*args):
+    return _xtcparser.close_xtc(*args)
 
 #
 # this Python function uses the module interface for reading an xtc trajectory file

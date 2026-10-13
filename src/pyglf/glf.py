@@ -59,8 +59,8 @@ class _SwigNonDynamicMeta(type):
 
 
 
-def glfGet3DSolidStringTriangles(s):
-    return _glf.glfGet3DSolidStringTriangles(s)
+def glfGet3DSolidStringTriangles(*args):
+    return _glf.glfGet3DSolidStringTriangles(*args)
 GLF_ERROR = _glf.GLF_ERROR
 GLF_OK = _glf.GLF_OK
 GLF_YES = _glf.GLF_YES
@@ -84,191 +84,191 @@ GLF_UP = _glf.GLF_UP
 GLF_DOWN = _glf.GLF_DOWN
 GLF_CONSOLE_CURSOR = _glf.GLF_CONSOLE_CURSOR
 
-def glfInit():
-    return _glf.glfInit()
+def glfInit(*args):
+    return _glf.glfInit(*args)
 
-def glfClose():
-    return _glf.glfClose()
+def glfClose(*args):
+    return _glf.glfClose(*args)
 
-def glfLoadFont(font_name):
-    return _glf.glfLoadFont(font_name)
+def glfLoadFont(*args):
+    return _glf.glfLoadFont(*args)
 
-def glfLoadBMFFont(FName):
-    return _glf.glfLoadBMFFont(FName)
+def glfLoadBMFFont(*args):
+    return _glf.glfLoadBMFFont(*args)
 
-def glfUnloadFont():
-    return _glf.glfUnloadFont()
+def glfUnloadFont(*args):
+    return _glf.glfUnloadFont(*args)
 
-def glfUnloadBMFFont():
-    return _glf.glfUnloadBMFFont()
+def glfUnloadBMFFont(*args):
+    return _glf.glfUnloadBMFFont(*args)
 
-def glfUnloadFontD(font_descriptor):
-    return _glf.glfUnloadFontD(font_descriptor)
+def glfUnloadFontD(*args):
+    return _glf.glfUnloadFontD(*args)
 
-def glfUnloadBMFFontD(bmf_descriptor):
-    return _glf.glfUnloadBMFFontD(bmf_descriptor)
+def glfUnloadBMFFontD(*args):
+    return _glf.glfUnloadBMFFontD(*args)
 
-def glfDrawWiredSymbol(s):
-    return _glf.glfDrawWiredSymbol(s)
+def glfDrawWiredSymbol(*args):
+    return _glf.glfDrawWiredSymbol(*args)
 
-def glfDrawWiredString(s):
-    return _glf.glfDrawWiredString(s)
+def glfDrawWiredString(*args):
+    return _glf.glfDrawWiredString(*args)
 
-def glfDrawSolidSymbol(s):
-    return _glf.glfDrawSolidSymbol(s)
+def glfDrawSolidSymbol(*args):
+    return _glf.glfDrawSolidSymbol(*args)
 
-def glfDrawSolidString(s):
-    return _glf.glfDrawSolidString(s)
+def glfDrawSolidString(*args):
+    return _glf.glfDrawSolidString(*args)
 
-def glfDraw3DWiredSymbol(s):
-    return _glf.glfDraw3DWiredSymbol(s)
+def glfDraw3DWiredSymbol(*args):
+    return _glf.glfDraw3DWiredSymbol(*args)
 
-def glfDraw3DWiredString(s):
-    return _glf.glfDraw3DWiredString(s)
+def glfDraw3DWiredString(*args):
+    return _glf.glfDraw3DWiredString(*args)
 
-def glfDraw3DSolidSymbol(s):
-    return _glf.glfDraw3DSolidSymbol(s)
+def glfDraw3DSolidSymbol(*args):
+    return _glf.glfDraw3DSolidSymbol(*args)
 
-def glfDraw3DSolidString(s):
-    return _glf.glfDraw3DSolidString(s)
+def glfDraw3DSolidString(*args):
+    return _glf.glfDraw3DSolidString(*args)
 
-def glfStartBitmapDrawing():
-    return _glf.glfStartBitmapDrawing()
+def glfStartBitmapDrawing(*args):
+    return _glf.glfStartBitmapDrawing(*args)
 
-def glfStopBitmapDrawing():
-    return _glf.glfStopBitmapDrawing()
+def glfStopBitmapDrawing(*args):
+    return _glf.glfStopBitmapDrawing(*args)
 
-def glfDrawBSymbol(s):
-    return _glf.glfDrawBSymbol(s)
+def glfDrawBSymbol(*args):
+    return _glf.glfDrawBSymbol(*args)
 
-def glfDrawBString(s):
-    return _glf.glfDrawBString(s)
+def glfDrawBString(*args):
+    return _glf.glfDrawBString(*args)
 
-def glfDrawBMaskSymbol(s):
-    return _glf.glfDrawBMaskSymbol(s)
+def glfDrawBMaskSymbol(*args):
+    return _glf.glfDrawBMaskSymbol(*args)
 
-def glfDrawBMaskString(s):
-    return _glf.glfDrawBMaskString(s)
+def glfDrawBMaskString(*args):
+    return _glf.glfDrawBMaskString(*args)
 
-def glfDrawWiredSymbolF(font_descriptor, s):
-    return _glf.glfDrawWiredSymbolF(font_descriptor, s)
+def glfDrawWiredSymbolF(*args):
+    return _glf.glfDrawWiredSymbolF(*args)
 
-def glfDrawWiredStringF(font_descriptor, s):
-    return _glf.glfDrawWiredStringF(font_descriptor, s)
+def glfDrawWiredStringF(*args):
+    return _glf.glfDrawWiredStringF(*args)
 
-def glfDrawSolidSymbolF(font_descriptor, s):
-    return _glf.glfDrawSolidSymbolF(font_descriptor, s)
+def glfDrawSolidSymbolF(*args):
+    return _glf.glfDrawSolidSymbolF(*args)
 
-def glfDrawSolidStringF(font_descriptor, s):
-    return _glf.glfDrawSolidStringF(font_descriptor, s)
+def glfDrawSolidStringF(*args):
+    return _glf.glfDrawSolidStringF(*args)
 
-def glfDraw3DWiredSymbolF(font_descriptor, s):
-    return _glf.glfDraw3DWiredSymbolF(font_descriptor, s)
+def glfDraw3DWiredSymbolF(*args):
+    return _glf.glfDraw3DWiredSymbolF(*args)
 
-def glfDraw3DWiredStringF(font_descriptor, s):
-    return _glf.glfDraw3DWiredStringF(font_descriptor, s)
+def glfDraw3DWiredStringF(*args):
+    return _glf.glfDraw3DWiredStringF(*args)
 
-def glfDraw3DSolidSymbolF(font_descriptor, s):
-    return _glf.glfDraw3DSolidSymbolF(font_descriptor, s)
+def glfDraw3DSolidSymbolF(*args):
+    return _glf.glfDraw3DSolidSymbolF(*args)
 
-def glfDraw3DSolidStringF(font_descriptor, s):
-    return _glf.glfDraw3DSolidStringF(font_descriptor, s)
+def glfDraw3DSolidStringF(*args):
+    return _glf.glfDraw3DSolidStringF(*args)
 
-def glfGetStringBoundsF(fd, s):
-    return _glf.glfGetStringBoundsF(fd, s)
+def glfGetStringBoundsF(*args):
+    return _glf.glfGetStringBoundsF(*args)
 
-def glfGetStringBounds(s):
-    return _glf.glfGetStringBounds(s)
+def glfGetStringBounds(*args):
+    return _glf.glfGetStringBounds(*args)
 
-def glfSetSymbolSpace(sp):
-    return _glf.glfSetSymbolSpace(sp)
+def glfSetSymbolSpace(*args):
+    return _glf.glfSetSymbolSpace(*args)
 
-def glfGetSymbolSpace():
-    return _glf.glfGetSymbolSpace()
+def glfGetSymbolSpace(*args):
+    return _glf.glfGetSymbolSpace(*args)
 
-def glfSetSpaceSize(sp):
-    return _glf.glfSetSpaceSize(sp)
+def glfSetSpaceSize(*args):
+    return _glf.glfSetSpaceSize(*args)
 
-def glfGetSpaceSize():
-    return _glf.glfGetSpaceSize()
+def glfGetSpaceSize(*args):
+    return _glf.glfGetSpaceSize(*args)
 
-def glfSetSymbolDepth(dpth):
-    return _glf.glfSetSymbolDepth(dpth)
+def glfSetSymbolDepth(*args):
+    return _glf.glfSetSymbolDepth(*args)
 
-def glfGetSymbolDepth():
-    return _glf.glfGetSymbolDepth()
+def glfGetSymbolDepth(*args):
+    return _glf.glfGetSymbolDepth(*args)
 
-def glfSetCurrentFont(Font_Descriptor):
-    return _glf.glfSetCurrentFont(Font_Descriptor)
+def glfSetCurrentFont(*args):
+    return _glf.glfSetCurrentFont(*args)
 
-def glfSetCurrentBMFFont(Font_Descriptor):
-    return _glf.glfSetCurrentBMFFont(Font_Descriptor)
+def glfSetCurrentBMFFont(*args):
+    return _glf.glfSetCurrentBMFFont(*args)
 
-def glfGetCurrentFont():
-    return _glf.glfGetCurrentFont()
+def glfGetCurrentFont(*args):
+    return _glf.glfGetCurrentFont(*args)
 
-def glfGetCurrentBMFFont():
-    return _glf.glfGetCurrentBMFFont()
+def glfGetCurrentBMFFont(*args):
+    return _glf.glfGetCurrentBMFFont(*args)
 
-def glfSetAnchorPoint(anchp):
-    return _glf.glfSetAnchorPoint(anchp)
+def glfSetAnchorPoint(*args):
+    return _glf.glfSetAnchorPoint(*args)
 
-def glfSetContourColor(r, g, b, a):
-    return _glf.glfSetContourColor(r, g, b, a)
+def glfSetContourColor(*args):
+    return _glf.glfSetContourColor(*args)
 
-def glfEnable(what):
-    return _glf.glfEnable(what)
+def glfEnable(*args):
+    return _glf.glfEnable(*args)
 
-def glfDisable(what):
-    return _glf.glfDisable(what)
+def glfDisable(*args):
+    return _glf.glfDisable(*args)
 
-def glfSetConsoleParam(width, height):
-    return _glf.glfSetConsoleParam(width, height)
+def glfSetConsoleParam(*args):
+    return _glf.glfSetConsoleParam(*args)
 
-def glfSetConsoleFont(Font_Descriptor):
-    return _glf.glfSetConsoleFont(Font_Descriptor)
+def glfSetConsoleFont(*args):
+    return _glf.glfSetConsoleFont(*args)
 
-def glfConsoleClear():
-    return _glf.glfConsoleClear()
+def glfConsoleClear(*args):
+    return _glf.glfConsoleClear(*args)
 
-def glfPrint(s, lenght):
-    return _glf.glfPrint(s, lenght)
+def glfPrint(*args):
+    return _glf.glfPrint(*args)
 
-def glfPrintString(s):
-    return _glf.glfPrintString(s)
+def glfPrintString(*args):
+    return _glf.glfPrintString(*args)
 
-def glfPrintChar(s):
-    return _glf.glfPrintChar(s)
+def glfPrintChar(*args):
+    return _glf.glfPrintChar(*args)
 
-def glfConsoleDraw():
-    return _glf.glfConsoleDraw()
+def glfConsoleDraw(*args):
+    return _glf.glfConsoleDraw(*args)
 
-def glfSetCursorBlinkRate(Rate):
-    return _glf.glfSetCursorBlinkRate(Rate)
+def glfSetCursorBlinkRate(*args):
+    return _glf.glfSetCursorBlinkRate(*args)
 
-def glfStringCentering(center):
-    return _glf.glfStringCentering(center)
+def glfStringCentering(*args):
+    return _glf.glfStringCentering(*args)
 
-def glfGetStringCentering():
-    return _glf.glfGetStringCentering()
+def glfGetStringCentering(*args):
+    return _glf.glfGetStringCentering(*args)
 
-def glfBitmapStringCentering(center):
-    return _glf.glfBitmapStringCentering(center)
+def glfBitmapStringCentering(*args):
+    return _glf.glfBitmapStringCentering(*args)
 
-def glfBitmapGetStringCentering():
-    return _glf.glfBitmapGetStringCentering()
+def glfBitmapGetStringCentering(*args):
+    return _glf.glfBitmapGetStringCentering(*args)
 
-def glfStringDirection(direction):
-    return _glf.glfStringDirection(direction)
+def glfStringDirection(*args):
+    return _glf.glfStringDirection(*args)
 
-def glfGetStringDirection():
-    return _glf.glfGetStringDirection()
+def glfGetStringDirection(*args):
+    return _glf.glfGetStringDirection(*args)
 
-def glfSetRotateAngle(angle):
-    return _glf.glfSetRotateAngle(angle)
+def glfSetRotateAngle(*args):
+    return _glf.glfSetRotateAngle(*args)
 
-def glfSetBRotateAngle(angle):
-    return _glf.glfSetBRotateAngle(angle)
+def glfSetBRotateAngle(*args):
+    return _glf.glfSetBRotateAngle(*args)
 
 cvar = _glf.cvar
 

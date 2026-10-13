@@ -4093,7 +4093,7 @@ Output Ports
         color = list(color)
         if Numeric.minimum.reduce(color) <= 1:
             color = Numeric.multiply(color, 255)
-        colorStr = '#%02x%02x%02x'%(color[0],color[1],color[2])
+        colorStr = '#%02x%02x%02x'%(int(color[0]),int(color[1]),int(color[2]))
 
     elif type(color) in [types.StringType]:
         colorStr = color

@@ -22,6 +22,7 @@
 #
 ######################################################################
 
+from mglcompat.pyclasses import CmpMixin, cmp
 import itertools
 from mglcompat.oldnumeric import *
 from mglcompat.pytypes import *
@@ -96,7 +97,7 @@ def uniqueSort(lst, func=None):
 # The present class tupleElement is not so powerful, but which will be
 # enhanced in the future so that we can manipulate COMPLEX array
 # elements in addition to number.
-class tupleElement:
+class tupleElement(CmpMixin):
     def __init__(self, elements = None):
         if elements:
             self.data = tuple(elements)
@@ -141,7 +142,7 @@ class tupleElement:
 # in the future for both speed and memory management
 #
 #######################################################################
-class Set:
+class Set(CmpMixin):
     """
     Base class for sets of objects. The objects are stored in a list.
     For the sake of simplicity, the set is assumed to be homogenous
@@ -730,6 +731,10 @@ class Grid:
         return self._rc(multiply(self.array,asarray(other)))
     __rmul__ = __mul__
 
+    def __truediv__(self, other):
+        return self.__div__(other)
+    def __rtruediv__(self, other):
+        return self.__rdiv__(other)
     def __div__(self, other): 
         return self._rc(divide(self.array,asarray(other)))
     def __rdiv__(self, other): 

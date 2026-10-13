@@ -1,5 +1,6 @@
 %feature ("kwargs");
 %module lbiemesher
+%feature("python:cdefaultargs");
 %{
 #include "LBIE_Mesher.h"
 %}

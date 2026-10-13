@@ -22,6 +22,7 @@ Choose old mesostate definitions or finegrained mesostate definitions.
 Default is finegrained.
 """
 
+from mglcompat.pyclasses import SliceMixin
 import sys
 import re; from mglcompat import pystring as string
 import copy
@@ -490,7 +491,7 @@ def is_mol(o):
 HAVE_POP = hasattr([], 'pop')
 HAVE_EXTEND = hasattr([], 'extend')
 
-class TypedList:
+class TypedList(SliceMixin):
     """A Python list restricted to having objects of the same type.
     An instance of a TypedList is created as follows:
     

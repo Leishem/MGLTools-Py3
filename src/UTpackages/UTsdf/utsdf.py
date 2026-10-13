@@ -59,11 +59,11 @@ class _SwigNonDynamicMeta(type):
 
 
 
-def setParameters(size, isNormalFlip, insideZero, bufarr):
-    return _utsdf.setParameters(size, isNormalFlip, insideZero, bufarr)
+def setParameters(*args):
+    return _utsdf.setParameters(*args)
 
-def computeSDF(nverts, ntris):
-    return _utsdf.computeSDF(nverts, ntris)
+def computeSDF(*args):
+    return _utsdf.computeSDF(*args)
 
 createNumArr = _utsdf.createNumArr
 

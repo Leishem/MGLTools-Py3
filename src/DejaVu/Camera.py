@@ -1788,6 +1788,13 @@ This only applies when the camera is in its own top level.
 
         if 'stencil' not in kw: kw['stencil'] = 1
 
+        # Accumulation and multisample buffers are opt-in: modern drivers
+        # often lack them, and TkGL (unlike Togl 1.7) cannot fall back --
+        # an unsupported pixel format is a fatal GLX error on X11.
+        if os.environ.get('MGL_GL_ACCUM') != '1':
+            viewer.accumBuffersError = True
+        if os.environ.get('MGL_GL_MULTISAMPLE') == '1' and 'multisample' not in kw:
+            kw['multisample'] = 1
         if hasattr(viewer, 'accumBuffersError') and viewer.accumBuffersError:
             # if we tried to create a context with accumulation buffers before
             # and it failed we set accum to False
@@ -2571,7 +2578,12 @@ button is pressed. buttonNum can be 1,2,3 or 0 to remove call backs
         """Destroy the camera
 """
         #print "StandardCamera.__del__", self
-        self.frame.master.destroy()
+        # Python 2 never ran __del__ for cameras: they live in reference
+        # cycles, and cycles holding __del__ were left uncollected. Python 3
+        # collects them, and destroying self.frame.master here would kill a
+        # window still in use (e.g. the floating viewer after dockCamera).
+        # Viewer._DeleteCamera already destroys what the camera owns.
+        pass
 
     
     def Enter_cb(self, event=None):

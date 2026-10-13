@@ -59,8 +59,8 @@ class _SwigNonDynamicMeta(type):
 
 
 
-def findFaceSubset(vs, fs, nbVert):
-    return _bhtreelib.findFaceSubset(vs, fs, nbVert)
+def findFaceSubset(*args):
+    return _bhtreelib.findFaceSubset(*args)
 class BHpoint(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -68,8 +68,8 @@ class BHpoint(object):
     r = property(_bhtreelib.BHpoint_r_get, _bhtreelib.BHpoint_r_set)
     at = property(_bhtreelib.BHpoint_at_get, _bhtreelib.BHpoint_at_set)
 
-    def __init__(self):
-        _bhtreelib.BHpoint_swiginit(self, _bhtreelib.new_BHpoint())
+    def __init__(self, *args):
+        _bhtreelib.BHpoint_swiginit(self, _bhtreelib.new_BHpoint(*args))
     __swig_destroy__ = _bhtreelib.delete_BHpoint
 
 # Register BHpoint in _bhtreelib:
@@ -84,8 +84,8 @@ class BHnode(object):
     dim = property(_bhtreelib.BHnode_dim_get, _bhtreelib.BHnode_dim_set)
     n = property(_bhtreelib.BHnode_n_get, _bhtreelib.BHnode_n_set)
 
-    def __init__(self):
-        _bhtreelib.BHnode_swiginit(self, _bhtreelib.new_BHnode())
+    def __init__(self, *args):
+        _bhtreelib.BHnode_swiginit(self, _bhtreelib.new_BHnode(*args))
     __swig_destroy__ = _bhtreelib.delete_BHnode
 
 # Register BHnode in _bhtreelib:
@@ -102,63 +102,63 @@ class BHtree(object):
     nodeLookUp = property(_bhtreelib.BHtree_nodeLookUp_get, _bhtreelib.BHtree_nodeLookUp_set)
     bfl = property(_bhtreelib.BHtree_bfl_get, _bhtreelib.BHtree_bfl_set)
 
-    def __init__(self, xyz, rad, granularity):
-        _bhtreelib.BHtree_swiginit(self, _bhtreelib.new_BHtree(xyz, rad, granularity))
+    def __init__(self, *args):
+        _bhtreelib.BHtree_swiginit(self, _bhtreelib.new_BHtree(*args))
     __swig_destroy__ = _bhtreelib.delete_BHtree
 
-    def closePoints(self, pt, cutoff, result):
-        return _bhtreelib.BHtree_closePoints(self, pt, cutoff, result)
+    def closePoints(self, *args):
+        return _bhtreelib.BHtree_closePoints(self, *args)
 
-    def closePointsDist(self, pt, cutoff, result, dist_2):
-        return _bhtreelib.BHtree_closePointsDist(self, pt, cutoff, result, dist_2)
+    def closePointsDist(self, *args):
+        return _bhtreelib.BHtree_closePointsDist(self, *args)
 
-    def closePointsDist2(self, pt, cutoff, result, dist_2):
-        return _bhtreelib.BHtree_closePointsDist2(self, pt, cutoff, result, dist_2)
+    def closePointsDist2(self, *args):
+        return _bhtreelib.BHtree_closePointsDist2(self, *args)
 
-    def closePointsPairsInTree(self, tolerance):
-        return _bhtreelib.BHtree_closePointsPairsInTree(self, tolerance)
+    def closePointsPairsInTree(self, *args):
+        return _bhtreelib.BHtree_closePointsPairsInTree(self, *args)
 
-    def closePointsPairs(self, xyz, rad, tolerance):
-        return _bhtreelib.BHtree_closePointsPairs(self, xyz, rad, tolerance)
+    def closePointsPairs(self, *args):
+        return _bhtreelib.BHtree_closePointsPairs(self, *args)
 
-    def closestPointsArray(self, xyz, cut, returnNullIfFail=1):
-        return _bhtreelib.BHtree_closestPointsArray(self, xyz, cut, returnNullIfFail)
+    def closestPointsArray(self, *args):
+        return _bhtreelib.BHtree_closestPointsArray(self, *args)
 
 # Register BHtree in _bhtreelib:
 _bhtreelib.BHtree_swigregister(BHtree)
 
-def generateBHtree(atoms, nbat, granularity):
-    return _bhtreelib.generateBHtree(atoms, nbat, granularity)
+def generateBHtree(*args):
+    return _bhtreelib.generateBHtree(*args)
 
-def findBHnode(tree, x):
-    return _bhtreelib.findBHnode(tree, x)
+def findBHnode(*args):
+    return _bhtreelib.findBHnode(*args)
 
-def findBHcloseAtoms(tree, x, cutoff, atom, maxn):
-    return _bhtreelib.findBHcloseAtoms(tree, x, cutoff, atom, maxn)
+def findBHcloseAtoms(*args):
+    return _bhtreelib.findBHcloseAtoms(*args)
 
-def findBHcloseAtomsdist(tree, x, cutoff, atom, d, maxn):
-    return _bhtreelib.findBHcloseAtomsdist(tree, x, cutoff, atom, d, maxn)
+def findBHcloseAtomsdist(*args):
+    return _bhtreelib.findBHcloseAtomsdist(*args)
 
-def findBHcloseAtomsdist2(tree, x, cutoff, atom, dist, maxn):
-    return _bhtreelib.findBHcloseAtomsdist2(tree, x, cutoff, atom, dist, maxn)
+def findBHcloseAtomsdist2(*args):
+    return _bhtreelib.findBHcloseAtomsdist2(*args)
 
-def freeBHtree(tree):
-    return _bhtreelib.freeBHtree(tree)
+def freeBHtree(*args):
+    return _bhtreelib.freeBHtree(*args)
 
-def divideBHnode(node, xmin, xmax, granularity):
-    return _bhtreelib.divideBHnode(node, xmin, xmax, granularity)
+def divideBHnode(*args):
+    return _bhtreelib.divideBHnode(*args)
 
-def freeBHnode(node):
-    return _bhtreelib.freeBHnode(node)
+def freeBHnode(*args):
+    return _bhtreelib.freeBHnode(*args)
 
-def findClosePairsInTree(bht, tolerance):
-    return _bhtreelib.findClosePairsInTree(bht, tolerance)
+def findClosePairsInTree(*args):
+    return _bhtreelib.findClosePairsInTree(*args)
 
-def findClosePairs(bht, xyz, rad, tolerance):
-    return _bhtreelib.findClosePairs(bht, xyz, rad, tolerance)
+def findClosePairs(*args):
+    return _bhtreelib.findClosePairs(*args)
 
-def findClosestAtoms(bht, xyz, cut, returnNullIfFail):
-    return _bhtreelib.findClosestAtoms(bht, xyz, cut, returnNullIfFail)
+def findClosestAtoms(*args):
+    return _bhtreelib.findClosestAtoms(*args)
 BH_MAXFINDCOUNT = _bhtreelib.BH_MAXFINDCOUNT
 BH_FINDCOUNT = _bhtreelib.BH_FINDCOUNT
 BH_MAXBOX = _bhtreelib.BH_MAXBOX
@@ -194,8 +194,8 @@ class TBHPoint(object):
     ID = property(_bhtreelib.TBHPoint_ID_get, _bhtreelib.TBHPoint_ID_set)
     Box = property(_bhtreelib.TBHPoint_Box_get, _bhtreelib.TBHPoint_Box_set)
 
-    def __init__(self):
-        _bhtreelib.TBHPoint_swiginit(self, _bhtreelib.new_TBHPoint())
+    def __init__(self, *args):
+        _bhtreelib.TBHPoint_swiginit(self, _bhtreelib.new_TBHPoint(*args))
     __swig_destroy__ = _bhtreelib.delete_TBHPoint
 
 # Register TBHPoint in _bhtreelib:
@@ -207,8 +207,8 @@ class TBHIndex(object):
     NumPts = property(_bhtreelib.TBHIndex_NumPts_get, _bhtreelib.TBHIndex_NumPts_set)
     Size = property(_bhtreelib.TBHIndex_Size_get, _bhtreelib.TBHIndex_Size_set)
 
-    def __init__(self):
-        _bhtreelib.TBHIndex_swiginit(self, _bhtreelib.new_TBHIndex())
+    def __init__(self, *args):
+        _bhtreelib.TBHIndex_swiginit(self, _bhtreelib.new_TBHIndex(*args))
     __swig_destroy__ = _bhtreelib.delete_TBHIndex
 
 # Register TBHIndex in _bhtreelib:
@@ -226,8 +226,8 @@ class TBHNode(object):
     cut = property(_bhtreelib.TBHNode_cut_get, _bhtreelib.TBHNode_cut_set)
     dim = property(_bhtreelib.TBHNode_dim_get, _bhtreelib.TBHNode_dim_set)
 
-    def __init__(self):
-        _bhtreelib.TBHNode_swiginit(self, _bhtreelib.new_TBHNode())
+    def __init__(self, *args):
+        _bhtreelib.TBHNode_swiginit(self, _bhtreelib.new_TBHNode(*args))
     __swig_destroy__ = _bhtreelib.delete_TBHNode
 
 # Register TBHNode in _bhtreelib:
@@ -243,15 +243,15 @@ class TBHTree(object):
     rm = property(_bhtreelib.TBHTree_rm_get, _bhtreelib.TBHTree_rm_set)
     bfl = property(_bhtreelib.TBHTree_bfl_get, _bhtreelib.TBHTree_bfl_set)
 
-    def __init__(self, points3D, ids, Granularity, LeafPadding, SpacePadding):
-        _bhtreelib.TBHTree_swiginit(self, _bhtreelib.new_TBHTree(points3D, ids, Granularity, LeafPadding, SpacePadding))
+    def __init__(self, *args):
+        _bhtreelib.TBHTree_swiginit(self, _bhtreelib.new_TBHTree(*args))
     __swig_destroy__ = _bhtreelib.delete_TBHTree
 
-    def ClosePoints(self, pt, cutoff, result):
-        return _bhtreelib.TBHTree_ClosePoints(self, pt, cutoff, result)
+    def ClosePoints(self, *args):
+        return _bhtreelib.TBHTree_ClosePoints(self, *args)
 
-    def ClosePointsDist2(self, pt, cutoff, result, dist_2):
-        return _bhtreelib.TBHTree_ClosePointsDist2(self, pt, cutoff, result, dist_2)
+    def ClosePointsDist2(self, *args):
+        return _bhtreelib.TBHTree_ClosePointsDist2(self, *args)
 
 # Register TBHTree in _bhtreelib:
 _bhtreelib.TBHTree_swigregister(TBHTree)
@@ -272,88 +272,88 @@ class RBHTree(object):
     LeafPadding = property(_bhtreelib.RBHTree_LeafPadding_get, _bhtreelib.RBHTree_LeafPadding_set)
     SpacePadding = property(_bhtreelib.RBHTree_SpacePadding_get, _bhtreelib.RBHTree_SpacePadding_set)
 
-    def __init__(self, points3D, ids, Granularity, LeafPadding, InsertPadding, DeletePadding, SpacePadding, OwnsMemory):
-        _bhtreelib.RBHTree_swiginit(self, _bhtreelib.new_RBHTree(points3D, ids, Granularity, LeafPadding, InsertPadding, DeletePadding, SpacePadding, OwnsMemory))
+    def __init__(self, *args):
+        _bhtreelib.RBHTree_swiginit(self, _bhtreelib.new_RBHTree(*args))
     __swig_destroy__ = _bhtreelib.delete_RBHTree
 
-    def ClosePoints(self, pt, cutoff, result):
-        return _bhtreelib.RBHTree_ClosePoints(self, pt, cutoff, result)
+    def ClosePoints(self, *args):
+        return _bhtreelib.RBHTree_ClosePoints(self, *args)
 
-    def ClosePointsDist2(self, pt, cutoff, result, dist_2):
-        return _bhtreelib.RBHTree_ClosePointsDist2(self, pt, cutoff, result, dist_2)
+    def ClosePointsDist2(self, *args):
+        return _bhtreelib.RBHTree_ClosePointsDist2(self, *args)
 
-    def InsertRBHPoint(self, Pos, Rad, Data, uInt, ID):
-        return _bhtreelib.RBHTree_InsertRBHPoint(self, Pos, Rad, Data, uInt, ID)
+    def InsertRBHPoint(self, *args):
+        return _bhtreelib.RBHTree_InsertRBHPoint(self, *args)
 
-    def DeleteRBHPoint(self, ID):
-        return _bhtreelib.RBHTree_DeleteRBHPoint(self, ID)
+    def DeleteRBHPoint(self, *args):
+        return _bhtreelib.RBHTree_DeleteRBHPoint(self, *args)
 
-    def MoveRBHPoint(self, ID, NewPos, FindDirection):
-        return _bhtreelib.RBHTree_MoveRBHPoint(self, ID, NewPos, FindDirection)
+    def MoveRBHPoint(self, *args):
+        return _bhtreelib.RBHTree_MoveRBHPoint(self, *args)
 
 # Register RBHTree in _bhtreelib:
 _bhtreelib.RBHTree_swigregister(RBHTree)
 
-def GenerateTBHTree(Pts, NumPts, Granularity, LeafPadding, SpacePadding):
-    return _bhtreelib.GenerateTBHTree(Pts, NumPts, Granularity, LeafPadding, SpacePadding)
+def GenerateTBHTree(*args):
+    return _bhtreelib.GenerateTBHTree(*args)
 
-def FindTBHNodeUp(node, x):
-    return _bhtreelib.FindTBHNodeUp(node, x)
+def FindTBHNodeUp(*args):
+    return _bhtreelib.FindTBHNodeUp(*args)
 
-def FindTBHNode(tree, x):
-    return _bhtreelib.FindTBHNode(tree, x)
+def FindTBHNode(*args):
+    return _bhtreelib.FindTBHNode(*args)
 
-def FreeTBHTree(tree):
-    return _bhtreelib.FreeTBHTree(tree)
+def FreeTBHTree(*args):
+    return _bhtreelib.FreeTBHTree(*args)
 
-def FreeTBHNode(node):
-    return _bhtreelib.FreeTBHNode(node)
+def FreeTBHNode(*args):
+    return _bhtreelib.FreeTBHNode(*args)
 
-def MoveTBHPoint(tree, ID, NewPos, FindDirection):
-    return _bhtreelib.MoveTBHPoint(tree, ID, NewPos, FindDirection)
+def MoveTBHPoint(*args):
+    return _bhtreelib.MoveTBHPoint(*args)
 
-def DivideTBHNode(node, xmin, xmax, sxmin, sxmax, granularity, LeafPadding):
-    return _bhtreelib.DivideTBHNode(node, xmin, xmax, sxmin, sxmax, granularity, LeafPadding)
+def DivideTBHNode(*args):
+    return _bhtreelib.DivideTBHNode(*args)
 
-def FindTBHCloseAtomsDist(tree, x, cutoff, atom, dist, maxn):
-    return _bhtreelib.FindTBHCloseAtomsDist(tree, x, cutoff, atom, dist, maxn)
+def FindTBHCloseAtomsDist(*args):
+    return _bhtreelib.FindTBHCloseAtomsDist(*args)
 
-def FindTBHCloseAtomsInNodeDist(node, x, cutoff, atom, dist, maxn):
-    return _bhtreelib.FindTBHCloseAtomsInNodeDist(node, x, cutoff, atom, dist, maxn)
+def FindTBHCloseAtomsInNodeDist(*args):
+    return _bhtreelib.FindTBHCloseAtomsInNodeDist(*args)
 
-def FindTBHCloseAtoms(tree, x, cutoff, atom, maxn):
-    return _bhtreelib.FindTBHCloseAtoms(tree, x, cutoff, atom, maxn)
+def FindTBHCloseAtoms(*args):
+    return _bhtreelib.FindTBHCloseAtoms(*args)
 
-def FindTBHCloseAtomsInNode(node, x, cutoff, atom, maxn):
-    return _bhtreelib.FindTBHCloseAtomsInNode(node, x, cutoff, atom, maxn)
+def FindTBHCloseAtomsInNode(*args):
+    return _bhtreelib.FindTBHCloseAtomsInNode(*args)
 
-def ModifyBHPoint(tree, ID, Rad):
-    return _bhtreelib.ModifyBHPoint(tree, ID, Rad)
+def ModifyBHPoint(*args):
+    return _bhtreelib.ModifyBHPoint(*args)
 
-def GenerateRBHTree(Pts, NumPts, MaxPts, Granularity, LeafPadding, DeletePadding, SpacePadding, OwnsMemory):
-    return _bhtreelib.GenerateRBHTree(Pts, NumPts, MaxPts, Granularity, LeafPadding, DeletePadding, SpacePadding, OwnsMemory)
+def GenerateRBHTree(*args):
+    return _bhtreelib.GenerateRBHTree(*args)
 
-def FindRBHNode(tree, x):
-    return _bhtreelib.FindRBHNode(tree, x)
+def FindRBHNode(*args):
+    return _bhtreelib.FindRBHNode(*args)
 
-def FreeRBHTree(tree):
-    return _bhtreelib.FreeRBHTree(tree)
+def FreeRBHTree(*args):
+    return _bhtreelib.FreeRBHTree(*args)
 
-def InsertRBHPoint(tree, Pos, Rad, Data, uInt, ID):
-    return _bhtreelib.InsertRBHPoint(tree, Pos, Rad, Data, uInt, ID)
+def InsertRBHPoint(*args):
+    return _bhtreelib.InsertRBHPoint(*args)
 
-def DeleteRBHPoint(tree, ID):
-    return _bhtreelib.DeleteRBHPoint(tree, ID)
+def DeleteRBHPoint(*args):
+    return _bhtreelib.DeleteRBHPoint(*args)
 
-def MoveRBHPoint(tree, ID, NewPos, FindDirection):
-    return _bhtreelib.MoveRBHPoint(tree, ID, NewPos, FindDirection)
+def MoveRBHPoint(*args):
+    return _bhtreelib.MoveRBHPoint(*args)
 
-def ModifyRBHPoint(tree, ID, Rad):
-    return _bhtreelib.ModifyRBHPoint(tree, ID, Rad)
+def ModifyRBHPoint(*args):
+    return _bhtreelib.ModifyRBHPoint(*args)
 
-def FindRBHCloseAtomsDist(tree, x, cutoff, atom, dist, maxn):
-    return _bhtreelib.FindRBHCloseAtomsDist(tree, x, cutoff, atom, dist, maxn)
+def FindRBHCloseAtomsDist(*args):
+    return _bhtreelib.FindRBHCloseAtomsDist(*args)
 
-def FindRBHCloseAtoms(tree, x, cutoff, atom, maxn):
-    return _bhtreelib.FindRBHCloseAtoms(tree, x, cutoff, atom, maxn)
+def FindRBHCloseAtoms(*args):
+    return _bhtreelib.FindRBHCloseAtoms(*args)
 

@@ -1,4 +1,5 @@
 %module gllib
+%feature("python:cdefaultargs");
 
 /*
  * copyright_notice

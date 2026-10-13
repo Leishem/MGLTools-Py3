@@ -81,23 +81,23 @@ class DatasetInfo(object):
     minvar = property(_isocontour.DatasetInfo_minvar_get, _isocontour.DatasetInfo_minvar_set)
     maxvar = property(_isocontour.DatasetInfo_maxvar_get, _isocontour.DatasetInfo_maxvar_set)
 
-    def _dim(self):
-        return _isocontour.DatasetInfo__dim(self)
+    def _dim(self, *args):
+        return _isocontour.DatasetInfo__dim(self, *args)
 
-    def _orig(self):
-        return _isocontour.DatasetInfo__orig(self)
+    def _orig(self, *args):
+        return _isocontour.DatasetInfo__orig(self, *args)
 
-    def _span(self):
-        return _isocontour.DatasetInfo__span(self)
+    def _span(self, *args):
+        return _isocontour.DatasetInfo__span(self, *args)
 
-    def _minext(self):
-        return _isocontour.DatasetInfo__minext(self)
+    def _minext(self, *args):
+        return _isocontour.DatasetInfo__minext(self, *args)
 
-    def _maxext(self):
-        return _isocontour.DatasetInfo__maxext(self)
+    def _maxext(self, *args):
+        return _isocontour.DatasetInfo__maxext(self, *args)
 
-    def __init__(self):
-        _isocontour.DatasetInfo_swiginit(self, _isocontour.new_DatasetInfo())
+    def __init__(self, *args):
+        _isocontour.DatasetInfo_swiginit(self, _isocontour.new_DatasetInfo(*args))
     __swig_destroy__ = _isocontour.delete_DatasetInfo
 
 # Register DatasetInfo in _isocontour:
@@ -109,8 +109,8 @@ class Seed(object):
     max = property(_isocontour.Seed_max_get, _isocontour.Seed_max_set)
     cell_id = property(_isocontour.Seed_cell_id_get, _isocontour.Seed_cell_id_set)
 
-    def __init__(self):
-        _isocontour.Seed_swiginit(self, _isocontour.new_Seed())
+    def __init__(self, *args):
+        _isocontour.Seed_swiginit(self, _isocontour.new_Seed(*args))
     __swig_destroy__ = _isocontour.delete_Seed
 
 # Register Seed in _isocontour:
@@ -121,8 +121,8 @@ class SeedData(object):
     nseeds = property(_isocontour.SeedData_nseeds_get, _isocontour.SeedData_nseeds_set)
     seeds = property(_isocontour.SeedData_seeds_get, _isocontour.SeedData_seeds_set)
 
-    def __init__(self):
-        _isocontour.SeedData_swiginit(self, _isocontour.new_SeedData())
+    def __init__(self, *args):
+        _isocontour.SeedData_swiginit(self, _isocontour.new_SeedData(*args))
     __swig_destroy__ = _isocontour.delete_SeedData
 
 # Register SeedData in _isocontour:
@@ -135,14 +135,14 @@ class Signature(object):
     fx = property(_isocontour.Signature_fx_get, _isocontour.Signature_fx_set)
     fy = property(_isocontour.Signature_fy_get, _isocontour.Signature_fy_set)
 
-    def getFx(self, VECTOR):
-        return _isocontour.Signature_getFx(self, VECTOR)
+    def getFx(self, *args):
+        return _isocontour.Signature_getFx(self, *args)
 
-    def getFy(self, VECTOR):
-        return _isocontour.Signature_getFy(self, VECTOR)
+    def getFy(self, *args):
+        return _isocontour.Signature_getFy(self, *args)
 
-    def __init__(self):
-        _isocontour.Signature_swiginit(self, _isocontour.new_Signature())
+    def __init__(self, *args):
+        _isocontour.Signature_swiginit(self, _isocontour.new_Signature(*args))
     __swig_destroy__ = _isocontour.delete_Signature
 
 # Register Signature in _isocontour:
@@ -157,8 +157,8 @@ class SliceData(object):
     usdata = property(_isocontour.SliceData_usdata_get, _isocontour.SliceData_usdata_set)
     fdata = property(_isocontour.SliceData_fdata_get, _isocontour.SliceData_fdata_set)
 
-    def __init__(self):
-        _isocontour.SliceData_swiginit(self, _isocontour.new_SliceData())
+    def __init__(self, *args):
+        _isocontour.SliceData_swiginit(self, _isocontour.new_SliceData(*args))
     __swig_destroy__ = _isocontour.delete_SliceData
 
 # Register SliceData in _isocontour:
@@ -169,8 +169,8 @@ class Contour2dData(object):
     nvert = property(_isocontour.Contour2dData_nvert_get, _isocontour.Contour2dData_nvert_set)
     nedge = property(_isocontour.Contour2dData_nedge_get, _isocontour.Contour2dData_nedge_set)
 
-    def __init__(self):
-        _isocontour.Contour2dData_swiginit(self, _isocontour.new_Contour2dData())
+    def __init__(self, *args):
+        _isocontour.Contour2dData_swiginit(self, _isocontour.new_Contour2dData(*args))
     __swig_destroy__ = _isocontour.delete_Contour2dData
 
 # Register Contour2dData in _isocontour:
@@ -185,8 +185,8 @@ class Contour3dData(object):
     fmin = property(_isocontour.Contour3dData_fmin_get, _isocontour.Contour3dData_fmin_set)
     fmax = property(_isocontour.Contour3dData_fmax_get, _isocontour.Contour3dData_fmax_set)
 
-    def __init__(self):
-        _isocontour.Contour3dData_swiginit(self, _isocontour.new_Contour3dData())
+    def __init__(self, *args):
+        _isocontour.Contour3dData_swiginit(self, _isocontour.new_Contour3dData(*args))
     __swig_destroy__ = _isocontour.delete_Contour3dData
 
 # Register Contour3dData in _isocontour:
@@ -200,108 +200,108 @@ class ConDataset(object):
     data = property(_isocontour.ConDataset_data_get, _isocontour.ConDataset_data_set)
     plot = property(_isocontour.ConDataset_plot_get, _isocontour.ConDataset_plot_set)
 
-    def getSignature(self, variable, timestep, funcnum):
-        return _isocontour.ConDataset_getSignature(self, variable, timestep, funcnum)
+    def getSignature(self, *args):
+        return _isocontour.ConDataset_getSignature(self, *args)
 
-    def __init__(self):
-        _isocontour.ConDataset_swiginit(self, _isocontour.new_ConDataset())
+    def __init__(self, *args):
+        _isocontour.ConDataset_swiginit(self, _isocontour.new_ConDataset(*args))
     __swig_destroy__ = _isocontour.delete_ConDataset
 
 # Register ConDataset in _isocontour:
 _isocontour.ConDataset_swigregister(ConDataset)
 
-def setVerboseLevel(level):
-    return _isocontour.setVerboseLevel(level)
+def setVerboseLevel(*args):
+    return _isocontour.setVerboseLevel(*args)
 
-def newDatasetUnstr(datatype, meshtype, nvars, ntime, nverts, ncells, verts, cells, celladj, data):
-    return _isocontour.newDatasetUnstr(datatype, meshtype, nvars, ntime, nverts, ncells, verts, cells, celladj, data)
+def newDatasetUnstr(*args):
+    return _isocontour.newDatasetUnstr(*args)
 
-def newDatasetReg(datatype, meshtype, nvars, ntime, dim, data):
-    return _isocontour.newDatasetReg(datatype, meshtype, nvars, ntime, dim, data)
+def newDatasetReg(*args):
+    return _isocontour.newDatasetReg(*args)
 
-def loadDataset(datatype, meshtype, nvars, ntime, files):
-    return _isocontour.loadDataset(datatype, meshtype, nvars, ntime, files)
+def loadDataset(*args):
+    return _isocontour.loadDataset(*args)
 
-def getDatasetInfo(dataset):
-    return _isocontour.getDatasetInfo(dataset)
+def getDatasetInfo(*args):
+    return _isocontour.getDatasetInfo(*args)
 
-def getVariableNames(dataset):
-    return _isocontour.getVariableNames(dataset)
+def getVariableNames(*args):
+    return _isocontour.getVariableNames(*args)
 
-def getSeedCells(dataset, variable, timestep):
-    return _isocontour.getSeedCells(dataset, variable, timestep)
+def getSeedCells(*args):
+    return _isocontour.getSeedCells(*args)
 
-def getNumberOfSignatures(dataset):
-    return _isocontour.getNumberOfSignatures(dataset)
+def getNumberOfSignatures(*args):
+    return _isocontour.getNumberOfSignatures(*args)
 
-def getSignatureFunctions(dataset, variable, timestep):
-    return _isocontour.getSignatureFunctions(dataset, variable, timestep)
+def getSignatureFunctions(*args):
+    return _isocontour.getSignatureFunctions(*args)
 
-def getSignatureValues(dataset, variable, timestep, isovalue):
-    return _isocontour.getSignatureValues(dataset, variable, timestep, isovalue)
+def getSignatureValues(*args):
+    return _isocontour.getSignatureValues(*args)
 
-def getSlice(dataset, variable, timestep, axis, index):
-    return _isocontour.getSlice(dataset, variable, timestep, axis, index)
+def getSlice(*args):
+    return _isocontour.getSlice(*args)
 
-def getContour2d(dataset, variable, timestep, isovalue):
-    return _isocontour.getContour2d(dataset, variable, timestep, isovalue)
+def getContour2d(*args):
+    return _isocontour.getContour2d(*args)
 
-def getContour3d(dataset, variable, timestep, isovalue, colorvar):
-    return _isocontour.getContour3d(dataset, variable, timestep, isovalue, colorvar)
+def getContour3d(*args):
+    return _isocontour.getContour3d(*args)
 
-def saveContour2d(dataset, variable, timestep, isovalue, filename):
-    return _isocontour.saveContour2d(dataset, variable, timestep, isovalue, filename)
+def saveContour2d(*args):
+    return _isocontour.saveContour2d(*args)
 
-def saveContour3d(dataset, variable, timestep, isovalue, colorvar, filename):
-    return _isocontour.saveContour3d(dataset, variable, timestep, isovalue, colorvar, filename)
+def saveContour3d(*args):
+    return _isocontour.saveContour3d(*args)
 
-def writeIsoComponents(dataset, variable, timestep, isovalue, colorvar, fprefix):
-    return _isocontour.writeIsoComponents(dataset, variable, timestep, isovalue, colorvar, fprefix)
+def writeIsoComponents(*args):
+    return _isocontour.writeIsoComponents(*args)
 
-def clearDataset(dataset):
-    return _isocontour.clearDataset(dataset)
+def clearDataset(*args):
+    return _isocontour.clearDataset(*args)
 
-def newDatasetRegFloat3D(dim, orig, span):
-    return _isocontour.newDatasetRegFloat3D(dim, orig, span)
+def newDatasetRegFloat3D(*args):
+    return _isocontour.newDatasetRegFloat3D(*args)
 
-def delDatasetReg(dataset):
-    return _isocontour.delDatasetReg(dataset)
+def delDatasetReg(*args):
+    return _isocontour.delDatasetReg(*args)
 
-def delContour3d(contour):
-    return _isocontour.delContour3d(contour)
+def delContour3d(*args):
+    return _isocontour.delContour3d(*args)
 
-def newDatasetRegShort3D(dim, orig, span):
-    return _isocontour.newDatasetRegShort3D(dim, orig, span)
+def newDatasetRegShort3D(*args):
+    return _isocontour.newDatasetRegShort3D(*args)
 
-def newDatasetRegUchar3D(dim, orig, span):
-    return _isocontour.newDatasetRegUchar3D(dim, orig, span)
+def newDatasetRegUchar3D(*args):
+    return _isocontour.newDatasetRegUchar3D(*args)
 
-def setOrig3D(dataset, orig):
-    return _isocontour.setOrig3D(dataset, orig)
+def setOrig3D(*args):
+    return _isocontour.setOrig3D(*args)
 
-def setSpan3D(dataset, span):
-    return _isocontour.setSpan3D(dataset, span)
+def setSpan3D(*args):
+    return _isocontour.setSpan3D(*args)
 
-def newDatasetRegFloat2D(dim, orig, span):
-    return _isocontour.newDatasetRegFloat2D(dim, orig, span)
+def newDatasetRegFloat2D(*args):
+    return _isocontour.newDatasetRegFloat2D(*args)
 
-def newDatasetRegShort2D(dim, orig, span):
-    return _isocontour.newDatasetRegShort2D(dim, orig, span)
+def newDatasetRegShort2D(*args):
+    return _isocontour.newDatasetRegShort2D(*args)
 
-def newDatasetRegUchar2D(dim, orig, span):
-    return _isocontour.newDatasetRegUchar2D(dim, orig, span)
+def newDatasetRegUchar2D(*args):
+    return _isocontour.newDatasetRegUchar2D(*args)
 
-def setOrig2D(dataset, orig):
-    return _isocontour.setOrig2D(dataset, orig)
+def setOrig2D(*args):
+    return _isocontour.setOrig2D(*args)
 
-def setSpan2D(dataset, span):
-    return _isocontour.setSpan2D(dataset, span)
+def setSpan2D(*args):
+    return _isocontour.setSpan2D(*args)
 
-def getContour3dData(iscontour, vert, norm, vfun, tri, flipNormals):
-    return _isocontour.getContour3dData(iscontour, vert, norm, vfun, tri, flipNormals)
+def getContour3dData(*args):
+    return _isocontour.getContour3dData(*args)
 
-def getContour2dData(iscocontour, vert, edge):
-    return _isocontour.getContour2dData(iscocontour, vert, edge)
+def getContour2dData(*args):
+    return _isocontour.getContour2dData(*args)
 
 string2Float = _isocontour.string2Float
 getSliceArray = _isocontour.getSliceArray

@@ -1,5 +1,6 @@
 
 %module molderivatives
+%feature("python:cdefaultargs");
 
 
 

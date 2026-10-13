@@ -59,7 +59,8 @@ color scales in the color editor.
                 # for unexplained reason anti-aliasing doesn't work
                 # on mesa if we don't set the accumulation buffer
         if 'accum' not in kw:
-            kw['accum'] = 1
+            # opt-in, see Camera.py: unsupported formats are fatal with TkGL
+            kw['accum'] = 1 if os.environ.get('MGL_GL_ACCUM') == '1' else 0
 
         self.width = kw['width']
         self.height = kw['height']

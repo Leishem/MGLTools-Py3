@@ -15,6 +15,7 @@
 #
 #
 
+from mglcompat.pyclasses import CmpMixin
 from ViewerFramework.VFCommand import CommandGUI
 from Pmv.moleculeViewer import EditAtomsEvent 
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
@@ -945,7 +946,7 @@ SetTorsionGUI.addMenuCommand('menuRoot', 'Edit', 'Set Torsion',
 
 
 
-class TorsionAngle:
+class TorsionAngle(CmpMixin):
     def __init__(self,  atom1, atom2, atom3, atom4):
         self.molecule=atom1.top
         self.name_string=atom1.name +"-"+ atom2.name +"-"+ atom3.name +"-"+ atom4.name

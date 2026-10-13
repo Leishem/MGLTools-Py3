@@ -1,5 +1,6 @@
 
 %module efitlib
+%feature("python:cdefaultargs");
 %include numarr.i
 
 %init %{

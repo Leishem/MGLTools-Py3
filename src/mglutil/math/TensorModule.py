@@ -25,10 +25,11 @@
 
 _undocumented = 1
 
+from mglcompat.pyclasses import CmpMixin, cmp
 import mglcompat.oldnumeric as Numeric, types
 from . import VectorModule
 
-class Tensor:
+class Tensor(CmpMixin):
 
     """Tensor in 3D space
 
@@ -96,6 +97,10 @@ class Tensor:
     def __rmul__(self, other):
         return Tensor(self.array*other, 1)
 
+    def __truediv__(self, other):
+        return self.__div__(other)
+    def __rtruediv__(self, other):
+        return self.__rdiv__(other)
     def __div__(self, other):
         if isTensor(other):
             raise TypeError("Can't divide by a tensor")

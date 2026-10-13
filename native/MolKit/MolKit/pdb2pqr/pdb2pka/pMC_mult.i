@@ -1,4 +1,5 @@
 %module pMC_mult
+%feature("python:cdefaultargs");
 
 %{
 #include "pMC_mult.h"

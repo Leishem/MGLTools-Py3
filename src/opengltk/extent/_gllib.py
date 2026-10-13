@@ -6,3 +6,4 @@ from opengltk import _pyogl
 for _n in _pyogl.RAW_OVERRIDES:
     globals()[_n] = getattr(_pyogl, _n)
 del _n
+_pyogl.plain_constants(globals())

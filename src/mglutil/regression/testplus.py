@@ -20,6 +20,7 @@
 
 
 
+from mglcompat.pyclasses import cmp
 import re, sys, os, operator, types
 from functools import cmp_to_key
 from functools import reduce

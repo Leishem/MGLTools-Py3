@@ -238,5 +238,12 @@ setup(
     ext_modules=[make_ext(m) for m in selected_modules()],
     cmdclass={"build_ext": SwigBuildExt},
     python_requires=">=3.10",
-    install_requires=["numpy>=1.22", "Pmw>=2.1", "Pillow"],
+    install_requires=[
+        "numpy>=1.22",
+        "Pmw>=2.1",
+        "Pillow",
+        "PyOpenGL>=3.1.7",
+        "tkinter-gl>=1.1",     # TkGL: Togl-compatible Tk OpenGL widget
+        "simpy==2.3.1",        # classic SimPy API used by Scenario2 animations
+    ],
 )

@@ -2,6 +2,7 @@
  * Copyright_notice
  */
 %module prmlib
+%feature("python:cdefaultargs");
 
 %init %{
   PyEval_InitThreads();

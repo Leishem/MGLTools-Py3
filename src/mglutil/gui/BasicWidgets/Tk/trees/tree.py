@@ -271,7 +271,7 @@ label or icon.
         if 'usehullsize' not in kw:
             kw['usehullsize'] = 1
             
-        self.nbLinesPerPage = (kw['hull_height']-self.headerHeight) / nodeHeight
+        self.nbLinesPerPage = int((kw['hull_height']-self.headerHeight) // nodeHeight)
 
         if 'yscrollincrement' not in kw:
             kw['canvas_yscrollincrement'] = nodeHeight
@@ -447,7 +447,7 @@ label or icon.
 
     def configure_cb(self, event=None):
         
-        nl = (self.winfo_height()-self.headerHeight) / self.nodeHeight
+        nl = int((self.winfo_height()-self.headerHeight) // self.nodeHeight)
         self.nbLinesPerPage = nl
         last = self.nbLines - nl
         if self.firstVisibleNodeLineNum > last:

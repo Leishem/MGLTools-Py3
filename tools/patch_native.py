@@ -49,6 +49,11 @@ def patch(path):
     new = text
     for rx, rep in RULES:
         new = rx.sub(rep, new)
+    if path.suffix == ".i" and "%module" in new and "python:cdefaultargs" not in new:
+        # SWIG 4 writes C default args into the Python proxy (NULL becomes
+        # 0, which typemaps then treat as data). SWIG 1.3 let C apply them.
+        new = re.sub(r'^(%module[^\n]*\n)', r'\1%feature("python:cdefaultargs");\n',
+                     new, count=1, flags=re.M)
     if path.suffix == ".i":
         # only outside %{ ... %} blocks, which hold verbatim C or Python
         parts = re.split(r"(%\{.*?%\})", new, flags=re.S)

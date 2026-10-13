@@ -17,6 +17,7 @@ This module implements a Set class that uses a List to store the objects
 in the set.
 """
 
+from mglcompat.pyclasses import SliceMixin
 import itertools
 import types
 from collections import UserList
@@ -24,7 +25,7 @@ from mglutil.util import misc
 
 verbose = False
 
-class ListSet(UserList):  # would (list) work???
+class ListSet(SliceMixin, UserList):  # would (list) work???
     """Class to represent Sets of objects stored in a list. There is an
     implicit order amongst the objects and there can be duplicate objects.
 

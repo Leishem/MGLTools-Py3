@@ -1,5 +1,6 @@
 /*"MSMS library Module" */
 %module msms
+%feature("python:cdefaultargs");
 %feature ("kwargs"); /* enables python keyword arguments swig1.3.20 */
                      
 %include numarr.i

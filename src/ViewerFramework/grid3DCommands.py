@@ -1365,7 +1365,7 @@ class IGraph(tkinter.Frame):
         green= min((max((4*math.fabs(x-0.5)-1., 0.)), 1.))    
         
         color = (int(red*255), int(green*255), int(yellow*255))
-        hexcolor = '#%02x%02x%02x' % color
+        hexcolor = '#%02x%02x%02x' % tuple(int(c) for c in color)
         self.cmd.grid.isoLastColor[tag] = hexcolor
         self.drawBar(event.x, self.isoBarNumber, color=hexcolor)
         self.canvas.lift(tag)    

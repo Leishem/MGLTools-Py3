@@ -129,9 +129,22 @@ def glPolygonStipple(mask):
 
 
 def glAreTexturesResident(textures):
-    res = _p._GL.glAreTexturesResident(textures)
-    return None if all(np.atleast_1d(res)) else np.asarray(res, np.uint8)
+    import ctypes
+    t = np.ascontiguousarray(np.atleast_1d(textures), np.uint32)
+    res = np.zeros(len(t), np.uint8)
+    ok = _p._raw11.glAreTexturesResident(
+        len(t), t.ctypes.data_as(ctypes.POINTER(ctypes.c_uint)),
+        res.ctypes.data_as(ctypes.POINTER(ctypes.c_ubyte)))
+    return None if ok else res
 
 
 def glPrioritizeTextures(textures, priorities):
-    _p._GL.glPrioritizeTextures(textures, priorities)
+    import ctypes
+    t = np.ascontiguousarray(np.atleast_1d(textures), np.uint32)
+    p = np.ascontiguousarray(np.atleast_1d(priorities), np.float32)
+    if len(t) != len(p):
+        raise TypeError(len(t), len(p),
+                        'texture and priorities must have the same size')
+    _p._raw11.glPrioritizeTextures(
+        len(t), t.ctypes.data_as(ctypes.POINTER(ctypes.c_uint)),
+        p.ctypes.data_as(ctypes.POINTER(ctypes.c_float)))

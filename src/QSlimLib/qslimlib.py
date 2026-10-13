@@ -59,40 +59,40 @@ class _SwigNonDynamicMeta(type):
 
 
 
-def init_slim(smf):
-    return _qslimlib.init_slim(smf)
+def init_slim(*args, **kwargs):
+    return _qslimlib.init_slim(*args, **kwargs)
 
-def cleanup_for_output(m):
-    return _qslimlib.cleanup_for_output(m)
+def cleanup_for_output(*args, **kwargs):
+    return _qslimlib.cleanup_for_output(*args, **kwargs)
 class MxSMFReader(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self):
-        _qslimlib.MxSMFReader_swiginit(self, _qslimlib.new_MxSMFReader())
+    def __init__(self, *args, **kwargs):
+        _qslimlib.MxSMFReader_swiginit(self, _qslimlib.new_MxSMFReader(*args, **kwargs))
     __swig_destroy__ = _qslimlib.delete_MxSMFReader
     unparsed_hook = property(_qslimlib.MxSMFReader_unparsed_hook_get, _qslimlib.MxSMFReader_unparsed_hook_set)
 
-    def asp_store(self):
-        return _qslimlib.MxSMFReader_asp_store(self)
+    def asp_store(self, *args, **kwargs):
+        return _qslimlib.MxSMFReader_asp_store(self, *args, **kwargs)
 
-    def read(self, _in, model=None):
-        return _qslimlib.MxSMFReader_read(self, _in, model)
+    def read(self, *args, **kwargs):
+        return _qslimlib.MxSMFReader_read(self, *args, **kwargs)
 
-    def parse_line(self, arg2, arg3):
-        return _qslimlib.MxSMFReader_parse_line(self, arg2, arg3)
+    def parse_line(self, *args, **kwargs):
+        return _qslimlib.MxSMFReader_parse_line(self, *args, **kwargs)
 
-    def createModel(self, verts, faces, correctverts=True, norms=0, colors=0, texcoords=0, model=None):
-        return _qslimlib.MxSMFReader_createModel(self, verts, faces, correctverts, norms, colors, texcoords, model)
+    def createModel(self, *args, **kwargs):
+        return _qslimlib.MxSMFReader_createModel(self, *args, **kwargs)
 
-    def bind_normals(self, m, face=True):
-        return _qslimlib.MxSMFReader_bind_normals(self, m, face)
+    def bind_normals(self, *args, **kwargs):
+        return _qslimlib.MxSMFReader_bind_normals(self, *args, **kwargs)
 
-    def bind_colors(self, m, face=True):
-        return _qslimlib.MxSMFReader_bind_colors(self, m, face)
+    def bind_colors(self, *args, **kwargs):
+        return _qslimlib.MxSMFReader_bind_colors(self, *args, **kwargs)
 
-    def bind_texcoord(self, m, face=True):
-        return _qslimlib.MxSMFReader_bind_texcoord(self, m, face)
+    def bind_texcoord(self, *args, **kwargs):
+        return _qslimlib.MxSMFReader_bind_texcoord(self, *args, **kwargs)
 
 # Register MxSMFReader in _qslimlib:
 _qslimlib.MxSMFReader_swigregister(MxSMFReader)
@@ -100,16 +100,16 @@ class MxSMFWriter(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self):
-        _qslimlib.MxSMFWriter_swiginit(self, _qslimlib.new_MxSMFWriter())
+    def __init__(self, *args, **kwargs):
+        _qslimlib.MxSMFWriter_swiginit(self, _qslimlib.new_MxSMFWriter(*args, **kwargs))
     vertex_annotate = property(_qslimlib.MxSMFWriter_vertex_annotate_get, _qslimlib.MxSMFWriter_vertex_annotate_set)
     face_annotate = property(_qslimlib.MxSMFWriter_face_annotate_get, _qslimlib.MxSMFWriter_face_annotate_set)
 
-    def write(self, out, m):
-        return _qslimlib.MxSMFWriter_write(self, out, m)
+    def write(self, *args, **kwargs):
+        return _qslimlib.MxSMFWriter_write(self, *args, **kwargs)
 
-    def writeSMF(self, filename, m):
-        return _qslimlib.MxSMFWriter_writeSMF(self, filename, m)
+    def writeSMF(self, *args, **kwargs):
+        return _qslimlib.MxSMFWriter_writeSMF(self, *args, **kwargs)
     __swig_destroy__ = _qslimlib.delete_MxSMFWriter
 
 # Register MxSMFWriter in _qslimlib:
@@ -118,8 +118,8 @@ class ContractionCallback(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self):
-        _qslimlib.ContractionCallback_swiginit(self, _qslimlib.new_ContractionCallback())
+    def __init__(self, *args, **kwargs):
+        _qslimlib.ContractionCallback_swiginit(self, _qslimlib.new_ContractionCallback(*args, **kwargs))
     __swig_destroy__ = _qslimlib.delete_ContractionCallback
 
 # Register ContractionCallback in _qslimlib:
@@ -132,57 +132,57 @@ class QSlimModel(ContractionCallback):
     model = property(_qslimlib.QSlimModel_model_get, _qslimlib.QSlimModel_model_set)
     slim = property(_qslimlib.QSlimModel_slim_get, _qslimlib.QSlimModel_slim_set)
 
-    def __init__(self, verts, faces, bindtoface=True, correctverts=True, norms=0, colors=0, texcoords=0):
-        _qslimlib.QSlimModel_swiginit(self, _qslimlib.new_QSlimModel(verts, faces, bindtoface, correctverts, norms, colors, texcoords))
+    def __init__(self, *args, **kwargs):
+        _qslimlib.QSlimModel_swiginit(self, _qslimlib.new_QSlimModel(*args, **kwargs))
     __swig_destroy__ = _qslimlib.delete_QSlimModel
 
-    def clean_history(self):
-        return _qslimlib.QSlimModel_clean_history(self)
+    def clean_history(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_clean_history(self, *args, **kwargs)
 
-    def bind_normals(self, face):
-        return _qslimlib.QSlimModel_bind_normals(self, face)
+    def bind_normals(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_bind_normals(self, *args, **kwargs)
 
-    def bind_colors(self, face):
-        return _qslimlib.QSlimModel_bind_colors(self, face)
+    def bind_colors(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_bind_colors(self, *args, **kwargs)
 
-    def bind_texcoord(self, face):
-        return _qslimlib.QSlimModel_bind_texcoord(self, face)
+    def bind_texcoord(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_bind_texcoord(self, *args, **kwargs)
 
-    def get_color_binding(self):
-        return _qslimlib.QSlimModel_get_color_binding(self)
+    def get_color_binding(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_get_color_binding(self, *args, **kwargs)
 
-    def get_texcoord_binding(self):
-        return _qslimlib.QSlimModel_get_texcoord_binding(self)
+    def get_texcoord_binding(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_get_texcoord_binding(self, *args, **kwargs)
 
-    def get_normal_binding(self):
-        return _qslimlib.QSlimModel_get_normal_binding(self)
+    def get_normal_binding(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_get_normal_binding(self, *args, **kwargs)
 
-    def get_vert_count(self):
-        return _qslimlib.QSlimModel_get_vert_count(self)
+    def get_vert_count(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_get_vert_count(self, *args, **kwargs)
 
-    def get_face_count(self):
-        return _qslimlib.QSlimModel_get_face_count(self)
+    def get_face_count(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_get_face_count(self, *args, **kwargs)
 
-    def num_valid_faces(self):
-        return _qslimlib.QSlimModel_num_valid_faces(self)
+    def num_valid_faces(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_num_valid_faces(self, *args, **kwargs)
 
-    def num_valid_verts(self):
-        return _qslimlib.QSlimModel_num_valid_verts(self)
+    def num_valid_verts(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_num_valid_verts(self, *args, **kwargs)
 
-    def slim_to_target(self, target):
-        return _qslimlib.QSlimModel_slim_to_target(self, target)
+    def slim_to_target(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_slim_to_target(self, *args, **kwargs)
 
-    def contraction_callback(self, conx, cost):
-        return _qslimlib.QSlimModel_contraction_callback(self, conx, cost)
+    def contraction_callback(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_contraction_callback(self, *args, **kwargs)
 
-    def cleanup_for_output(self):
-        return _qslimlib.QSlimModel_cleanup_for_output(self)
+    def cleanup_for_output(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_cleanup_for_output(self, *args, **kwargs)
 
-    def outmodel(self, outverts, outfaces, outnorms=0, outcolors=0, outtexcoords=0):
-        return _qslimlib.QSlimModel_outmodel(self, outverts, outfaces, outnorms, outcolors, outtexcoords)
+    def outmodel(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_outmodel(self, *args, **kwargs)
 
-    def writeSMF(self, filename=None):
-        return _qslimlib.QSlimModel_writeSMF(self, filename)
+    def writeSMF(self, *args, **kwargs):
+        return _qslimlib.QSlimModel_writeSMF(self, *args, **kwargs)
 
 # Register QSlimModel in _qslimlib:
 _qslimlib.QSlimModel_swigregister(QSlimModel)

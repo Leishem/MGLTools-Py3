@@ -1,4 +1,5 @@
 %module utsdf
+%feature("python:cdefaultargs");
 
 %init %{
   import_array(); /* load the Numeric PyCObjects */

@@ -1,5 +1,6 @@
 
 %module gle
+%feature("python:cdefaultargs");
 /**%include NumericArrays.i **/
 %include numarr.i
 

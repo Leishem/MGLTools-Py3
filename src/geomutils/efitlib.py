@@ -68,17 +68,17 @@ class ellipsoid(object):
     inv_orientation = property(_efitlib.ellipsoid_inv_orientation_get, _efitlib.ellipsoid_inv_orientation_set)
     tensor = property(_efitlib.ellipsoid_tensor_get, _efitlib.ellipsoid_tensor_set)
 
-    def getPosition(self):
-        return _efitlib.ellipsoid_getPosition(self)
+    def getPosition(self, *args):
+        return _efitlib.ellipsoid_getPosition(self, *args)
 
-    def getAxis(self):
-        return _efitlib.ellipsoid_getAxis(self)
+    def getAxis(self, *args):
+        return _efitlib.ellipsoid_getAxis(self, *args)
 
-    def getOrientation(self):
-        return _efitlib.ellipsoid_getOrientation(self)
+    def getOrientation(self, *args):
+        return _efitlib.ellipsoid_getOrientation(self, *args)
 
-    def __init__(self):
-        _efitlib.ellipsoid_swiginit(self, _efitlib.new_ellipsoid())
+    def __init__(self, *args):
+        _efitlib.ellipsoid_swiginit(self, _efitlib.new_ellipsoid(*args))
     __swig_destroy__ = _efitlib.delete_ellipsoid
 
 # Register ellipsoid in _efitlib:
@@ -97,91 +97,91 @@ class efit_info(object):
     cov_scale = property(_efitlib.efit_info_cov_scale_get, _efitlib.efit_info_cov_scale_set)
     ell_scale = property(_efitlib.efit_info_ell_scale_get, _efitlib.efit_info_ell_scale_set)
 
-    def __init__(self):
-        _efitlib.efit_info_swiginit(self, _efitlib.new_efit_info())
+    def __init__(self, *args):
+        _efitlib.efit_info_swiginit(self, _efitlib.new_efit_info(*args))
     __swig_destroy__ = _efitlib.delete_efit_info
 
 # Register efit_info in _efitlib:
 _efitlib.efit_info_swigregister(efit_info)
 
-def fitEllipse(pts, ell_scale, cov_scale, eptr, ellipsoid):
-    return _efitlib.fitEllipse(pts, ell_scale, cov_scale, eptr, ellipsoid)
+def fitEllipse(*args):
+    return _efitlib.fitEllipse(*args)
 
-def vec_normalize(vector_in_out):
-    return _efitlib.vec_normalize(vector_in_out)
+def vec_normalize(*args):
+    return _efitlib.vec_normalize(*args)
 
-def vec_centroid(count, src, p):
-    return _efitlib.vec_centroid(count, src, p)
+def vec_centroid(*args):
+    return _efitlib.vec_centroid(*args)
 
-def vec_dot(arg1, arg2):
-    return _efitlib.vec_dot(arg1, arg2)
+def vec_dot(*args):
+    return _efitlib.vec_dot(*args)
 
-def vec_magsq(VECTOR):
-    return _efitlib.vec_magsq(VECTOR)
+def vec_magsq(*args):
+    return _efitlib.vec_magsq(*args)
 
-def vec_mag(VECTOR):
-    return _efitlib.vec_mag(VECTOR)
+def vec_mag(*args):
+    return _efitlib.vec_mag(*args)
 
-def vec_distancesq(arg1, arg2):
-    return _efitlib.vec_distancesq(arg1, arg2)
+def vec_distancesq(*args):
+    return _efitlib.vec_distancesq(*args)
 
-def vec_distance(arg1, arg2):
-    return _efitlib.vec_distance(arg1, arg2)
+def vec_distance(*args):
+    return _efitlib.vec_distance(*args)
 
-def vec_max(VECTOR):
-    return _efitlib.vec_max(VECTOR)
+def vec_max(*args):
+    return _efitlib.vec_max(*args)
 
-def vec_length(VECTOR):
-    return _efitlib.vec_length(VECTOR)
+def vec_length(*args):
+    return _efitlib.vec_length(*args)
 
-def vec_ctos(VECTOR):
-    return _efitlib.vec_ctos(VECTOR)
+def vec_ctos(*args):
+    return _efitlib.vec_ctos(*args)
 
-def vec_stoc(VECTOR):
-    return _efitlib.vec_stoc(VECTOR)
+def vec_stoc(*args):
+    return _efitlib.vec_stoc(*args)
 
-def vec_sub(arg1, arg2):
-    return _efitlib.vec_sub(arg1, arg2)
+def vec_sub(*args):
+    return _efitlib.vec_sub(*args)
 
-def vec_copy(VECTOR):
-    return _efitlib.vec_copy(VECTOR)
+def vec_copy(*args):
+    return _efitlib.vec_copy(*args)
 
-def vec_add(arg1, arg2):
-    return _efitlib.vec_add(arg1, arg2)
+def vec_add(*args):
+    return _efitlib.vec_add(*args)
 
-def vec_scale(f, VECTOR):
-    return _efitlib.vec_scale(f, VECTOR)
+def vec_scale(*args):
+    return _efitlib.vec_scale(*args)
 
-def vec_zero():
-    return _efitlib.vec_zero()
+def vec_zero(*args):
+    return _efitlib.vec_zero(*args)
 
-def vec_cross(arg1, arg2):
-    return _efitlib.vec_cross(arg1, arg2)
+def vec_cross(*args):
+    return _efitlib.vec_cross(*args)
 
-def vec_mult(arg1, arg2):
-    return _efitlib.vec_mult(arg1, arg2)
+def vec_mult(*args):
+    return _efitlib.vec_mult(*args)
 
-def vec_offset(s, arg2, arg3):
-    return _efitlib.vec_offset(s, arg2, arg3)
+def vec_offset(*args):
+    return _efitlib.vec_offset(*args)
 
-def vec_rand():
-    return _efitlib.vec_rand()
+def vec_rand(*args):
+    return _efitlib.vec_rand(*args)
 
-def vec_average(arg1, arg2, arg3):
-    return _efitlib.vec_average(arg1, arg2, arg3)
+def vec_average(*args):
+    return _efitlib.vec_average(*args)
 
-def vec_transform(VECTOR, ARRAY2D):
-    return _efitlib.vec_transform(VECTOR, ARRAY2D)
+def vec_transform(*args):
+    return _efitlib.vec_transform(*args)
 
-def vec_ftransform(VECTOR, ARRAY2D):
-    return _efitlib.vec_ftransform(VECTOR, ARRAY2D)
+def vec_ftransform(*args):
+    return _efitlib.vec_ftransform(*args)
 
-def mat_jacobi(ARRAY2D):
-    return _efitlib.mat_jacobi(ARRAY2D)
+def mat_jacobi(*args):
+    return _efitlib.mat_jacobi(*args)
 
-def quat_to_mat(VECTOR):
-    return _efitlib.quat_to_mat(VECTOR)
+def quat_to_mat(*args):
+    return _efitlib.quat_to_mat(*args)
 
-def mat_to_quat(ARRAY2D, VECTOR):
-    return _efitlib.mat_to_quat(ARRAY2D, VECTOR)
+def mat_to_quat(*args):
+    return _efitlib.mat_to_quat(*args)
 

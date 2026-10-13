@@ -2,6 +2,7 @@
  * copyright_notice
  */
 %module glxlib
+%feature("python:cdefaultargs");
 %{
 #include <assert.h>
 #include <stdlib.h>

@@ -13,6 +13,7 @@
 #
 # $Id: moleculeViewer.py,v 1.246.2.16 2012/11/05 21:45:22 annao Exp $
 #
+from mglcompat.pyclasses import OldStyleProperty
 import shutil, tarfile
 
 from MolKit.molecule import Atom, AtomSet, BondSet, Molecule , MoleculeSet
@@ -291,7 +292,10 @@ class MoleculeViewer(ViewerFramework):
         assert value in [Molecule, Chain, Residue, Atom]
         self.setSelectionLevel(value)
 
-    selectionLevel = property(getSelLev, setSelLev)
+    # ViewerFramework was an old-style class in 1.5.6, so the setter never
+    # ran on assignment (mvCommand assigns selectionLevel inside the very
+    # command setSelLev invokes); a real property recurses forever on py3.
+    selectionLevel = OldStyleProperty(getSelLev, setSelLev)
 
 
     ##

@@ -66,77 +66,77 @@ class VolumeRenderer(object):
         _UTVolumeLibrary.VolumeRenderer_swiginit(self, _UTVolumeLibrary.new_VolumeRenderer(*args))
     __swig_destroy__ = _UTVolumeLibrary.delete_VolumeRenderer
 
-    def initRenderer(self):
-        return _UTVolumeLibrary.VolumeRenderer_initRenderer(self)
+    def initRenderer(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_initRenderer(self, *args)
 
-    def setAspectRatio(self, ratioX, ratioY, ratioZ):
-        return _UTVolumeLibrary.VolumeRenderer_setAspectRatio(self, ratioX, ratioY, ratioZ)
+    def setAspectRatio(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_setAspectRatio(self, *args)
 
-    def setTextureSubCube(self, minX, minY, minZ, maxX, maxY, maxZ):
-        return _UTVolumeLibrary.VolumeRenderer_setTextureSubCube(self, minX, minY, minZ, maxX, maxY, maxZ)
+    def setTextureSubCube(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_setTextureSubCube(self, *args)
 
-    def setQuality(self, quality):
-        return _UTVolumeLibrary.VolumeRenderer_setQuality(self, quality)
+    def setQuality(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_setQuality(self, *args)
 
-    def getQuality(self):
-        return _UTVolumeLibrary.VolumeRenderer_getQuality(self)
+    def getQuality(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_getQuality(self, *args)
 
-    def setNearPlane(self, nearPlane):
-        return _UTVolumeLibrary.VolumeRenderer_setNearPlane(self, nearPlane)
+    def setNearPlane(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_setNearPlane(self, *args)
 
-    def getNearPlane(self):
-        return _UTVolumeLibrary.VolumeRenderer_getNearPlane(self)
+    def getNearPlane(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_getNearPlane(self, *args)
 
-    def isShadedRenderingAvailable(self):
-        return _UTVolumeLibrary.VolumeRenderer_isShadedRenderingAvailable(self)
+    def isShadedRenderingAvailable(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_isShadedRenderingAvailable(self, *args)
 
-    def enableShadedRendering(self):
-        return _UTVolumeLibrary.VolumeRenderer_enableShadedRendering(self)
+    def enableShadedRendering(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_enableShadedRendering(self, *args)
 
-    def disableShadedRendering(self):
-        return _UTVolumeLibrary.VolumeRenderer_disableShadedRendering(self)
+    def disableShadedRendering(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_disableShadedRendering(self, *args)
 
-    def uploadColorMappedData(self, data, width, height, depth):
-        return _UTVolumeLibrary.VolumeRenderer_uploadColorMappedData(self, data, width, height, depth)
+    def uploadColorMappedData(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_uploadColorMappedData(self, *args)
 
-    def uploadColorMappedDataWithBorder(self, data, width, height, depth):
-        return _UTVolumeLibrary.VolumeRenderer_uploadColorMappedDataWithBorder(self, data, width, height, depth)
+    def uploadColorMappedDataWithBorder(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_uploadColorMappedDataWithBorder(self, *args)
 
-    def testColorMappedData(self, width, height, depth):
-        return _UTVolumeLibrary.VolumeRenderer_testColorMappedData(self, width, height, depth)
+    def testColorMappedData(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_testColorMappedData(self, *args)
 
-    def testColorMappedDataWithBorder(self, width, height, depth):
-        return _UTVolumeLibrary.VolumeRenderer_testColorMappedDataWithBorder(self, width, height, depth)
+    def testColorMappedDataWithBorder(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_testColorMappedDataWithBorder(self, *args)
 
-    def uploadRGBAData(self, data, width, height, depth):
-        return _UTVolumeLibrary.VolumeRenderer_uploadRGBAData(self, data, width, height, depth)
+    def uploadRGBAData(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_uploadRGBAData(self, *args)
 
-    def uploadGradients(self, data, width, height, depth):
-        return _UTVolumeLibrary.VolumeRenderer_uploadGradients(self, data, width, height, depth)
+    def uploadGradients(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_uploadGradients(self, *args)
 
-    def calculateGradientsFromDensities(self, data, width, height, depth):
-        return _UTVolumeLibrary.VolumeRenderer_calculateGradientsFromDensities(self, data, width, height, depth)
+    def calculateGradientsFromDensities(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_calculateGradientsFromDensities(self, *args)
 
-    def uploadColorMap(self, colorMap):
-        return _UTVolumeLibrary.VolumeRenderer_uploadColorMap(self, colorMap)
+    def uploadColorMap(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_uploadColorMap(self, *args)
 
-    def getNumberOfPlanesRendered(self):
-        return _UTVolumeLibrary.VolumeRenderer_getNumberOfPlanesRendered(self)
+    def getNumberOfPlanesRendered(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_getNumberOfPlanesRendered(self, *args)
 
-    def renderVolume(self):
-        return _UTVolumeLibrary.VolumeRenderer_renderVolume(self)
+    def renderVolume(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_renderVolume(self, *args)
 
-    def uploadZeroPaddedData(self, data, width, height, depth):
-        return _UTVolumeLibrary.VolumeRenderer_uploadZeroPaddedData(self, data, width, height, depth)
+    def uploadZeroPaddedData(self, *args):
+        return _UTVolumeLibrary.VolumeRenderer_uploadZeroPaddedData(self, *args)
 
 # Register VolumeRenderer in _UTVolumeLibrary:
 _UTVolumeLibrary.VolumeRenderer_swigregister(VolumeRenderer)
 
-def InitTexParameteri():
-    return _UTVolumeLibrary.InitTexParameteri()
+def InitTexParameteri(*args):
+    return _UTVolumeLibrary.InitTexParameteri(*args)
 
-def QueryExtension(extName):
-    return _UTVolumeLibrary.QueryExtension(extName)
+def QueryExtension(*args):
+    return _UTVolumeLibrary.QueryExtension(*args)
 
 createNumArr = _UTVolumeLibrary.createNumArr
 

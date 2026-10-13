@@ -59,48 +59,48 @@ class _SwigNonDynamicMeta(type):
 
 
 
-def void_void_array_get(idx):
-    return _utillib.void_void_array_get(idx)
+def void_void_array_get(*args):
+    return _utillib.void_void_array_get(*args)
 void_void_dim = _utillib.void_void_dim
 void_void_NULL = _utillib.void_void_NULL
 
-def void_GLenum_array_get(idx):
-    return _utillib.void_GLenum_array_get(idx)
+def void_GLenum_array_get(*args):
+    return _utillib.void_GLenum_array_get(*args)
 void_GLenum_dim = _utillib.void_GLenum_dim
 void_GLenum_NULL = _utillib.void_GLenum_NULL
 
-def void_int_array_get(idx):
-    return _utillib.void_int_array_get(idx)
+def void_int_array_get(*args):
+    return _utillib.void_int_array_get(*args)
 void_int_dim = _utillib.void_int_dim
 void_int_NULL = _utillib.void_int_NULL
 
-def void_int_int_array_get(idx):
-    return _utillib.void_int_int_array_get(idx)
+def void_int_int_array_get(*args):
+    return _utillib.void_int_int_array_get(*args)
 void_int_int_dim = _utillib.void_int_int_dim
 void_int_int_NULL = _utillib.void_int_int_NULL
 
-def void_int_int_int_array_get(idx):
-    return _utillib.void_int_int_int_array_get(idx)
+def void_int_int_int_array_get(*args):
+    return _utillib.void_int_int_int_array_get(*args)
 void_int_int_int_dim = _utillib.void_int_int_int_dim
 void_int_int_int_NULL = _utillib.void_int_int_int_NULL
 
-def void_int_int_int_int_array_get(idx):
-    return _utillib.void_int_int_int_int_array_get(idx)
+def void_int_int_int_int_array_get(*args):
+    return _utillib.void_int_int_int_int_array_get(*args)
 void_int_int_int_int_dim = _utillib.void_int_int_int_int_dim
 void_int_int_int_int_NULL = _utillib.void_int_int_int_int_NULL
 
-def void_unsignedchar_int_int_array_get(idx):
-    return _utillib.void_unsignedchar_int_int_array_get(idx)
+def void_unsignedchar_int_int_array_get(*args):
+    return _utillib.void_unsignedchar_int_int_array_get(*args)
 void_unsignedchar_int_int_dim = _utillib.void_unsignedchar_int_int_dim
 void_unsignedchar_int_int_NULL = _utillib.void_unsignedchar_int_int_NULL
 
-def void_unsignedint_int_int_int_array_get(idx):
-    return _utillib.void_unsignedint_int_int_int_array_get(idx)
+def void_unsignedint_int_int_int_array_get(*args):
+    return _utillib.void_unsignedint_int_int_int_array_get(*args)
 void_unsignedint_int_int_int_dim = _utillib.void_unsignedint_int_int_int_dim
 void_unsignedint_int_int_int_NULL = _utillib.void_unsignedint_int_int_int_NULL
 
-def void_int_voidstar_array_get(idx):
-    return _utillib.void_int_voidstar_array_get(idx)
+def void_int_voidstar_array_get(*args):
+    return _utillib.void_int_voidstar_array_get(*args)
 void_int_voidstar_dim = _utillib.void_int_voidstar_dim
 void_int_voidstar_NULL = _utillib.void_int_voidstar_NULL
 sizeof_GLbitfield = _utillib.sizeof_GLbitfield
@@ -118,32 +118,32 @@ sizeof_GLubyte = _utillib.sizeof_GLubyte
 sizeof_GLuint = _utillib.sizeof_GLuint
 sizeof_GLushort = _utillib.sizeof_GLushort
 
-def glCleanRotMat(mat_data):
-    return _utillib.glCleanRotMat(mat_data)
+def glCleanRotMat(*args, **kwargs):
+    return _utillib.glCleanRotMat(*args, **kwargs)
 
-def extractedGlutSolidSphere(radius, slices, stacks, insideout=0):
-    return _utillib.extractedGlutSolidSphere(radius, slices, stacks, insideout)
+def extractedGlutSolidSphere(*args, **kwargs):
+    return _utillib.extractedGlutSolidSphere(*args, **kwargs)
 
-def solidCylinder(radiusBase, radiusTop, height, slices, stacks=1, insideout=0):
-    return _utillib.solidCylinder(radiusBase, radiusTop, height, slices, stacks, insideout)
+def solidCylinder(*args, **kwargs):
+    return _utillib.solidCylinder(*args, **kwargs)
 
-def namedPoints(nb, coords):
-    return _utillib.namedPoints(nb, coords)
+def namedPoints(*args, **kwargs):
+    return _utillib.namedPoints(*args, **kwargs)
 
-def glDrawSphereSet(oneSphDSPL, coordinates, frontMaterial=0, backMaterial=0, frontMatBind=0, backMatBind=0, frontAndBack=0, noLightCol=1, fillMode=-1, slices=10, stacks=10, highlight=None):
-    return _utillib.glDrawSphereSet(oneSphDSPL, coordinates, frontMaterial, backMaterial, frontMatBind, backMatBind, frontAndBack, noLightCol, fillMode, slices, stacks, highlight)
+def glDrawSphereSet(*args, **kwargs):
+    return _utillib.glDrawSphereSet(*args, **kwargs)
 
-def glDrawIndexedGeom(type, coordinates, indices, normals=None, texIndices=None, frontMaterial=0, backMaterial=0, frontMatBind=0, backMatBind=0, frontAndBack=0, noLightCol=1, sharpColorBoundaries=1, preventIntelBug=0, highlight=None):
-    return _utillib.glDrawIndexedGeom(type, coordinates, indices, normals, texIndices, frontMaterial, backMaterial, frontMatBind, backMatBind, frontAndBack, noLightCol, sharpColorBoundaries, preventIntelBug, highlight)
+def glDrawIndexedGeom(*args, **kwargs):
+    return _utillib.glDrawIndexedGeom(*args, **kwargs)
 
-def triangleNormalsPerFace(v_data, t_data):
-    return _utillib.triangleNormalsPerFace(v_data, t_data)
+def triangleNormalsPerFace(*args, **kwargs):
+    return _utillib.triangleNormalsPerFace(*args, **kwargs)
 
-def triangleNormalsPerVertex(v_data, t_data):
-    return _utillib.triangleNormalsPerVertex(v_data, t_data)
+def triangleNormalsPerVertex(*args, **kwargs):
+    return _utillib.triangleNormalsPerVertex(*args, **kwargs)
 
-def triangleNormalsBoth(v_data, t_data):
-    return _utillib.triangleNormalsBoth(v_data, t_data)
+def triangleNormalsBoth(*args, **kwargs):
+    return _utillib.triangleNormalsBoth(*args, **kwargs)
 
 
 def glTriangleNormals(vertices, triangles, mode = "PER_FACE" ):

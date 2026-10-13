@@ -1,4 +1,5 @@
 %module bhtreelib
+%feature("python:cdefaultargs");
 %{
 #include "bhtree.h"
 %}

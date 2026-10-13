@@ -357,7 +357,8 @@ class vectorGUI(tkinter.Frame, KeyboardModifierMonitor):
 
     def createEntries(self, master):
         self.f = tkinter.Frame(master)
-        self.f.grid(column=3, rowspan=3)
+        # (1.5.6 also gridded self.f here; it is packed below, and Tk 8.6
+        #  refuses grid in a master that already has packed slaves)
 
         def fX(): self.vector = [1.,0.,0.]; self.setEntries(); self.callbacks.CallCallbacks(self.vector)
         def fY(): self.vector = [0.,1.,0.]; self.setEntries(); self.callbacks.CallCallbacks(self.vector)

@@ -1,4 +1,5 @@
 %module glf
+%feature("python:cdefaultargs");
 %{
 #include <stdio.h>
 #include <stdlib.h>

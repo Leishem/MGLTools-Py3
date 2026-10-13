@@ -83,6 +83,11 @@ static inline void mgl_set_owndata(PyObject *a)
 {
   PyObject *cap;
   if (a == NULL) return;
+  /* Some typemaps set OWNDATA on arrays NumPy allocated itself (e.g. via
+     PyArray_FromDims); those already free their buffer. Only arrays that
+     wrap a caller's malloc() buffer need the capsule. */
+  if (PyArray_FLAGS((PyArrayObject *)a) & NPY_ARRAY_OWNDATA) return;
+  if (PyArray_BASE((PyArrayObject *)a) != NULL) return;
   cap = PyCapsule_New(PyArray_DATA((PyArrayObject *)a), "mgl_owned",
                       mgl_capsule_free);
   if (cap) PyArray_SetBaseObject((PyArrayObject *)a, cap);

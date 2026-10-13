@@ -62,8 +62,8 @@ class _SwigNonDynamicMeta(type):
 def generateBlurmap(*args, **kwargs):
     return _blur.generateBlurmap(*args, **kwargs)
 
-def getBoundingBox(coords, radii, blobbyness, padding=0.0):
-    return _blur.getBoundingBox(coords, radii, blobbyness, padding)
+def getBoundingBox(*args, **kwargs):
+    return _blur.getBoundingBox(*args, **kwargs)
 
 elementTable = {
     "N:GLY"   : (1.625, 0.0, 0.0, 1.0,  1, 10 ),

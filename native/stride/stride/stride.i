@@ -1,5 +1,6 @@
 /* "Stride Module" */
 %module stride
+%feature("python:cdefaultargs");
 %include Misc.i  /* used for FILE * */
 #define %immutable   %feature("immutable")
 

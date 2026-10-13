@@ -1,4 +1,5 @@
 %module xtcparser
+%feature("python:cdefaultargs");
 
 %{
 // this file contains methods for reading GROMACS xtc trajectory files.

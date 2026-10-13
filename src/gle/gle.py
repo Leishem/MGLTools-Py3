@@ -84,104 +84,104 @@ GLE_TEXTURE_NORMAL_MODEL_CYL = _gle.GLE_TEXTURE_NORMAL_MODEL_CYL
 GLE_TEXTURE_VERTEX_MODEL_SPH = _gle.GLE_TEXTURE_VERTEX_MODEL_SPH
 GLE_TEXTURE_NORMAL_MODEL_SPH = _gle.GLE_TEXTURE_NORMAL_MODEL_SPH
 
-def gleDestroyGC():
-    return _gle.gleDestroyGC()
+def gleDestroyGC(*args):
+    return _gle.gleDestroyGC(*args)
 
-def gleGetJoinStyle():
-    return _gle.gleGetJoinStyle()
+def gleGetJoinStyle(*args):
+    return _gle.gleGetJoinStyle(*args)
 
-def gleSetJoinStyle(style):
-    return _gle.gleSetJoinStyle(style)
+def gleSetJoinStyle(*args):
+    return _gle.gleSetJoinStyle(*args)
 
-def gleGetNumSides():
-    return _gle.gleGetNumSides()
+def gleGetNumSides(*args):
+    return _gle.gleGetNumSides(*args)
 
-def gleSetNumSides(slices):
-    return _gle.gleSetNumSides(slices)
+def gleSetNumSides(*args):
+    return _gle.gleSetNumSides(*args)
 
-def glePolyCylinder(npoints, color_array, radius):
-    return _gle.glePolyCylinder(npoints, color_array, radius)
+def glePolyCylinder(*args):
+    return _gle.glePolyCylinder(*args)
 
-def glePolyCylinder_c4f(npoints, color_array, radius):
-    return _gle.glePolyCylinder_c4f(npoints, color_array, radius)
+def glePolyCylinder_c4f(*args):
+    return _gle.glePolyCylinder_c4f(*args)
 
-def glePolyCone(npoints, color_array, radius_array):
-    return _gle.glePolyCone(npoints, color_array, radius_array)
+def glePolyCone(*args):
+    return _gle.glePolyCone(*args)
 
-def glePolyCone_c4f(npoints, color_array, radius_array):
-    return _gle.glePolyCone_c4f(npoints, color_array, radius_array)
+def glePolyCone_c4f(*args):
+    return _gle.glePolyCone_c4f(*args)
 
-def gleExtrusion(ncp, cont_normal, up, npoints, color_array):
-    return _gle.gleExtrusion(ncp, cont_normal, up, npoints, color_array)
+def gleExtrusion(*args):
+    return _gle.gleExtrusion(*args)
 
-def gleExtrusion_c4f(ncp, cont_normal, up, npoints, color_array):
-    return _gle.gleExtrusion_c4f(ncp, cont_normal, up, npoints, color_array)
+def gleExtrusion_c4f(*args):
+    return _gle.gleExtrusion_c4f(*args)
 
-def gleTwistExtrusion(ncp, cont_normal, up, npoints, color_array, twist_array):
-    return _gle.gleTwistExtrusion(ncp, cont_normal, up, npoints, color_array, twist_array)
+def gleTwistExtrusion(*args):
+    return _gle.gleTwistExtrusion(*args)
 
-def gleTwistExtrusion_c4f(ncp, cont_normal, up, npoints, color_array, twist_array):
-    return _gle.gleTwistExtrusion_c4f(ncp, cont_normal, up, npoints, color_array, twist_array)
+def gleTwistExtrusion_c4f(*args):
+    return _gle.gleTwistExtrusion_c4f(*args)
 
-def gleSuperExtrusion(ncp, cont_normal, up, npoints, color_array, xform_array):
-    return _gle.gleSuperExtrusion(ncp, cont_normal, up, npoints, color_array, xform_array)
+def gleSuperExtrusion(*args):
+    return _gle.gleSuperExtrusion(*args)
 
-def gleSuperExtrusion_c4f(ncp, cont_normal1, up, npoints, color_array, xform_array):
-    return _gle.gleSuperExtrusion_c4f(ncp, cont_normal1, up, npoints, color_array, xform_array)
+def gleSuperExtrusion_c4f(*args):
+    return _gle.gleSuperExtrusion_c4f(*args)
 
-def gleSpiral(ncp, cont_normal, up, startRadius, drdTheta, startZ, dzdTheta, startXform, dXformdTheta, startTheta, sweepTheta):
-    return _gle.gleSpiral(ncp, cont_normal, up, startRadius, drdTheta, startZ, dzdTheta, startXform, dXformdTheta, startTheta, sweepTheta)
+def gleSpiral(*args):
+    return _gle.gleSpiral(*args)
 
-def gleLathe(ncp, cont_normal, up, startRadius, drdTheta, startZ, dzdTheta, startXform, dXformdTheta, startTheta, sweepTheta):
-    return _gle.gleLathe(ncp, cont_normal, up, startRadius, drdTheta, startZ, dzdTheta, startXform, dXformdTheta, startTheta, sweepTheta)
+def gleLathe(*args):
+    return _gle.gleLathe(*args)
 
-def gleHelicoid(rToroid, startRadius, drdTheta, startZ, dzdTheta, startXform, dXformdTheta, startTheta, sweepTheta):
-    return _gle.gleHelicoid(rToroid, startRadius, drdTheta, startZ, dzdTheta, startXform, dXformdTheta, startTheta, sweepTheta)
+def gleHelicoid(*args):
+    return _gle.gleHelicoid(*args)
 
-def gleToroid(rToroid, startRadius, drdTheta, startZ, dzdTheta, startXform, dXformdTheta, startTheta, sweepTheta):
-    return _gle.gleToroid(rToroid, startRadius, drdTheta, startZ, dzdTheta, startXform, dXformdTheta, startTheta, sweepTheta)
+def gleToroid(*args):
+    return _gle.gleToroid(*args)
 
-def gleScrew(ncp, cont_normal, up, startz, endz, twist):
-    return _gle.gleScrew(ncp, cont_normal, up, startz, endz, twist)
+def gleScrew(*args):
+    return _gle.gleScrew(*args)
 
-def gleTextureMode(mode):
-    return _gle.gleTextureMode(mode)
+def gleTextureMode(*args):
+    return _gle.gleTextureMode(*args)
 
-def rot_axis(omega, axis):
-    return _gle.rot_axis(omega, axis)
+def rot_axis(*args):
+    return _gle.rot_axis(*args)
 
-def rot_about_axis(angle, axis):
-    return _gle.rot_about_axis(angle, axis)
+def rot_about_axis(*args):
+    return _gle.rot_about_axis(*args)
 
-def rot_omega(axis):
-    return _gle.rot_omega(axis)
+def rot_omega(*args):
+    return _gle.rot_omega(*args)
 
-def rot_prince(omega, axis):
-    return _gle.rot_prince(omega, axis)
+def rot_prince(*args):
+    return _gle.rot_prince(*args)
 
-def urot_axis(m, omega, axis):
-    return _gle.urot_axis(m, omega, axis)
+def urot_axis(*args):
+    return _gle.urot_axis(*args)
 
-def urot_about_axis(m, angle, axis):
-    return _gle.urot_about_axis(m, angle, axis)
+def urot_about_axis(*args):
+    return _gle.urot_about_axis(*args)
 
-def urot_omega(m, axis):
-    return _gle.urot_omega(m, axis)
+def urot_omega(*args):
+    return _gle.urot_omega(*args)
 
-def urot_prince(m, omega, axis):
-    return _gle.urot_prince(m, omega, axis)
+def urot_prince(*args):
+    return _gle.urot_prince(*args)
 
-def uview_direction(m, v21, up):
-    return _gle.uview_direction(m, v21, up)
+def uview_direction(*args):
+    return _gle.uview_direction(*args)
 
-def uviewpoint(m, v1, v2, up):
-    return _gle.uviewpoint(m, v1, v2, up)
+def uviewpoint(*args):
+    return _gle.uviewpoint(*args)
 
-def gleFeedBack():
-    return _gle.gleFeedBack()
+def gleFeedBack(*args):
+    return _gle.gleFeedBack(*args)
 
-def gleFreeFeedbackBuffers():
-    return _gle.gleFreeFeedbackBuffers()
+def gleFreeFeedbackBuffers(*args):
+    return _gle.gleFreeFeedbackBuffers(*args)
 
 gleGetTriangleMesh = _gle.gleGetTriangleMesh
 

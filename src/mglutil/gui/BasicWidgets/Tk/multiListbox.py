@@ -2,6 +2,7 @@
 # $Id: multiListbox.py,v 1.5 2008/10/16 22:09:26 vareille Exp $
 # Source: http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/52266
 # Modifed by: Sargis Dallakyan sargis@scripps.edu
+from mglcompat.pyclasses import cmp
 from tkinter import *
 import Pmw
 import tkinter.font

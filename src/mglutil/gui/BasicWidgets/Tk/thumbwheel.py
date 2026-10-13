@@ -555,7 +555,7 @@ every time the widget value is set/modified"""
         drawLines = 0
         co = Numeric.take(xcoords,
                           Numeric.nonzero(Numeric.greater_equal(xsin, 0.0)))
-        co = Numeric.sort(key=cmp_to_key(co))
+        co = Numeric.sort(co)
         co = [-1]+list(co)
         for i in range(len(co)):
             x = c - int(co[i]*r)
