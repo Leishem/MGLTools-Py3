@@ -101,6 +101,69 @@ MODULES = [
          cflags=[] if WIN else ["-fpermissive", "-w"], libs=LIBM),
 ]
 
+# UTpackages (Bajaj lab, UT Austin): all C++, one sub-package each.
+UT = ("UTpackages",)
+UT_CFLAGS = [] if WIN else ["-fpermissive", "-w"]
+MODULES += [
+    dict(name="UTpackages.UTblur._blur", pkgdir="UTpackages/UTblur", cpp=True,
+         swig=n(*UT, "UTblurDIST", "UTblur", "blur.i"), sources=[],
+         inc=[n(*UT, "UTblurDIST", "UTblur")], cflags=UT_CFLAGS, libs=LIBM),
+    dict(name="UTpackages.UTisocontour._isocontour", pkgdir="UTpackages/UTisocontour",
+         cpp=True, swig=n(*UT, "UTisocontourDIST", "UTisocontour", "isocontour.i"),
+         sources=files(*UT, "UTisocontourDIST", "src", names=[
+             "contour.cpp", "edgehash.cpp", "cellqueue.cpp", "range.cpp",
+             "seedcells.cpp", "data.cpp", "dataslc.cpp", "datavol.cpp",
+             "segtree.cpp", "contour2d.cpp", "contour3d.cpp", "conplot_p.cpp",
+             "conplot.cpp", "conplot2d.cpp", "queue.cpp", "squeue.cpp",
+             "rangeprop.cpp", "conplot3d.cpp", "rangesweep.cpp", "datareg2.cpp",
+             "conplotreg2.cpp", "dirseeds.cpp", "inttree.cpp", "bucketsearch.cpp",
+             "datareg3.cpp", "conplotreg3.cpp", "regprop.cpp", "dirseedsreg2.cpp",
+             "regprop2.cpp", "seedchkr2.cpp", "seedchkr3.cpp", "seedall.cpp",
+             "respprop2.cpp", "seeddirreg3.cpp", "cubes.cpp", "dict.c"]),
+         inc=[n(*UT, "UTisocontourDIST", "src"), n(*UT, "UTisocontourDIST", "UTisocontour")],
+         macros=[("SP2", None), ("_BOOL", None), ("USEDICT", None)],
+         cflags=UT_CFLAGS, libs=LIBM),
+    dict(name="UTpackages.UTmesh._lbiemesher", pkgdir="UTpackages/UTmesh", cpp=True,
+         swig=n(*UT, "UTmeshDIST", "UTmesh", "lbiemesher.i"),
+         sources=files(*UT, "UTmeshDIST", "src", names=[
+             "cellQueue.cpp", "e_face.cpp", "geoframe.cpp", "hexa.cpp",
+             "LBIE_Mesher.cpp", "normalspline.cpp", "octree.cpp", "pcio.cpp",
+             "tetra.cpp", "mydrawer.cpp"]),
+         inc=[n(*UT, "UTmeshDIST", "src"), n(*UT, "UTmeshDIST", "UTmesh")],
+         macros=[("WIN32", None)] if WIN else [], cflags=UT_CFLAGS, libs=LIBM),
+    dict(name="UTpackages.UTmolderivatives._molderivatives",
+         pkgdir="UTpackages/UTmolderivatives", cpp=True,
+         swig=n(*UT, "UTmolderivativesDIST", "UTmolderivatives", "molderivatives.i"),
+         sources=files(*UT, "UTmolderivativesDIST", "src", "Curvatures", names=[
+             "Curvature.cpp", "CurvaturesGridVoxel.cpp", "SumOfGaussiansCurvature.cpp"])
+         + files(*UT, "UTmolderivativesDIST", "src", "UsefulMath", names=[
+             "LinearAlgebra.cpp", "AreaVolumes.cpp", "Matrix.cpp", "Ray.cpp",
+             "Tuple.cpp", "Quaternion.cpp", "TrilinearGrid.cpp", "Vector.cpp"]),
+         inc=[n(*UT, "UTmolderivativesDIST", "src", "Curvatures"),
+              n(*UT, "UTmolderivativesDIST", "src", "UsefulMath"),
+              n(*UT, "UTmolderivativesDIST", "UTmolderivatives")],
+         cflags=UT_CFLAGS, libs=LIBM),
+    dict(name="UTpackages.UTsdf._utsdf", pkgdir="UTpackages/UTsdf", cpp=True,
+         swig=n(*UT, "UTsdfDIST", "UTsdf", "utsdf.i"),
+         sources=files(*UT, "UTsdfDIST", "src", names=[
+             "common.cpp", "head.cpp", "main.cpp", "octree.cpp", "testing.cpp",
+             "compute.cpp", "init.cpp", "new_adjust.cpp", "propagate.cpp"]),
+         inc=[n(*UT, "UTsdfDIST", "src"), n(*UT, "UTsdfDIST", "UTsdf")],
+         cflags=UT_CFLAGS, libs=LIBM),
+    dict(name="UTpackages.UTvolrend._UTVolumeLibrary", pkgdir="UTpackages/UTvolrend",
+         cpp=True, swig=n(*UT, "UTvolrendDIST", "UTvolrend", "utvollib.i"),
+         sources=files(*UT, "UTvolrendDIST", "src", names=[
+             "ClipCube.cpp", "Extent.cpp", "FragmentProgramARBImpl.cpp",
+             "FragmentProgramImpl.cpp", "MyExtensions.cpp", "PalettedImpl.cpp",
+             "Plane.cpp", "Polygon.cpp", "PolygonArray.cpp", "Renderer.cpp",
+             "RendererBase.cpp", "RGBABase.cpp", "SGIColorTableImpl.cpp",
+             "SimpleRGBAImpl.cpp", "UnshadedBase.cpp", "VolumeRenderer.cpp",
+             "VolumeRendererFactory.cpp", "SimpleRGBA2DImpl.cpp", "Paletted2DImpl.cpp"]),
+         inc=[n(*UT, "UTvolrendDIST", "src"), n(*UT, "UTvolrendDIST", "UTvolrend")],
+         macros=[("WIN32", None)] if WIN else ([("__APPLE__", None)] if MAC else [("UNIX", None)]),
+         cflags=UT_CFLAGS, libs=GL_LIBS + LIBM, ldflags=GL_LINK),
+]
+
 
 def selected_modules():
     only = os.environ.get("MGL_ONLY")
