@@ -7,3 +7,7 @@ __pycache__/
 *.egg-info/
 dist/
 .venv/
+dist-win/
+dist-*/
+*.whl
+*.zip
