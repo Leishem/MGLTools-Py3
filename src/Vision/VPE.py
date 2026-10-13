@@ -200,7 +200,7 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
         #mod = self.topVert.add('ModulePages',  min=100)
 
         # create scrolled frame for ModulePage (libraries)
-        #self.modulePagesF = Tkinter.Frame(self.modulePages)
+        #self.modulePagesF = tkinter.Frame(self.modulePages)
         self.modulePagesF = Pmw.ScrolledFrame(modulePagesPane,
              borderframe=1, horizscrollbar_width=7, vscrollmode='none',
              frame_relief='flat',
@@ -227,7 +227,7 @@ class VisualProgramingEnvironment(NetworkBuilder, NoGuiVPE):
         # add search widget to search for nodes by name
         
         #iconfile = findFilePath('find1.gif', 'Vision.icons' )
-        #findicon = Tkinter.PhotoImage(file=iconfile)
+        #findicon = tkinter.PhotoImage(file=iconfile)
 
         self.addButtonsToButtonBar(master) # add buttons to buttonBar
         
@@ -1280,8 +1280,8 @@ Legal itemnames: 'All'
                 if ext == '.gif':
                     Icon = tkinter.PhotoImage(file=ICONPATH1, master=master)#, master=self.ROOT)
                 else:
-                    import Image
-                    import ImageTk
+                    from PIL import Image
+                    from PIL import ImageTk
                     image = Image.open(ICONPATH1)
                     Icon = ImageTk.PhotoImage(image=image, master=master)
                 if item[name]['type'] == 'menubutton':
@@ -1604,7 +1604,7 @@ toggle button bar buttons"""
                        command=self.saveNetwork_cb).pack(expand=1, fill='x')
         tkinter.Button(self.stdButtonsPage, text='Run Network',
                        command=self.runNetwork).pack(expand=1, fill='x')
-##          self.flowbt = Tkinter.Button(self.stdButtonsPage, text='Disable Flow',
+##          self.flowbt = tkinter.Button(self.stdButtonsPage, text='Disable Flow',
 ##                                       command=self.flowButton_cb)
 ##          self.flowbt.pack(expand=1, fill='x')
         self.libButtonsPage = self.ButtonsPages.add('Libraries')

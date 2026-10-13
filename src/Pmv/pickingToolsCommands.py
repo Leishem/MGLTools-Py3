@@ -11,7 +11,7 @@
 # 
 # $Id: pickingToolsCommands.py,v 1.28.2.7 2012/03/14 19:41:39 sanner Exp $
 #
-import Pmw, ImageTk, tkinter, os
+import Pmw, tkinter, os; from PIL import ImageTk
 
 from Pmv.mvCommand import MVCommand, MVCommandGUI, MVAtomICOM
 from Pmv.moleculeViewer import ICONPATH
@@ -559,11 +559,11 @@ class GeomToolsCommand(PickingToolsCommand):
                 vi = self.vf.GUI.VIEWER
 
                 # create a frame for up button and apply to label
-##                 f = Tkinter.Frame(parent)
+##                 f = tkinter.Frame(parent)
 ##                 # add up button to go to parent geometry
 ##                 photo = ImageTk.PhotoImage(
 ##                     file=os.path.join(ICONPATH, 'arrowup.gif'))
-##                 self.upw = Tkinter.Button(
+##                 self.upw = tkinter.Button(
 ##                         f, compound='left', image=photo, 
 ##                         command=self.pickParent)
 ##                 self.upw.pack(side='left', anchor='nw')
@@ -577,7 +577,7 @@ class GeomToolsCommand(PickingToolsCommand):
 ##                 else:
 ##                     name='Pick geom in 3D viewer'
                 
-##                     GeomToolsCommand.applyToLabel = Tkinter.Label(
+##                     GeomToolsCommand.applyToLabel = tkinter.Label(
 ##                         f,  compound='left',
 ##                         text='Apply to:\n %s'%name, justify='left')
 
@@ -1165,7 +1165,7 @@ class ClipPToolsCommand(GeomToolsCommand):
                 #photo = ImageTk.PhotoImage(
                 #    file=os.path.join(ICONPATH, cmdDict['icon']))
                 cb = CallbackFunction(self.setCurrent, cpnum+1)
-                #b = Tkinter.Radiobutton(
+                #b = tkinter.Radiobutton(
                 #    parent, compound='left', image=photo,
                 #    command=cb, indicatoron=0, variable=var, value=cpnum+1)
                 b = tkinter.Radiobutton(
@@ -1205,7 +1205,7 @@ class ClipPToolsCommand(GeomToolsCommand):
 ##                     file=os.path.join(ICONPATH, cmdDict['icon']))
 
 ##                 var = self.vf.GUI.VIEWER.GUI.clipvar[cpnum][0]
-##                 b = Tkinter.Checkbutton(
+##                 b = tkinter.Checkbutton(
 ##                     parent, compound='left', image=photo, state='disable',
 ##                     command=cmdDict['cmd'], indicatoron=0, variable=var)
 ##                 b.photo = photo
@@ -1253,7 +1253,7 @@ class ClipPToolsCommand(GeomToolsCommand):
                 b = tkinter.Checkbutton(
                     parent, compound='left', text='Cap', state='disable',
                     command=cb, indicatoron=0, variable=var)
-                #b = Tkinter.Checkbutton(
+                #b = tkinter.Checkbutton(
                 #    parent, compound='left', image=photo,
                 #    command=cb, indicatoron=0, variable=var)
                 #b.photo = photo

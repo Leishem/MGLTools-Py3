@@ -120,7 +120,7 @@ updateOwnGui=True : allow to update owngui at the end this func
             except: # it is not a number, so it has to be a sequence
                 l = len(rad)
                 import types
-                if type(rad) == bytes:
+                if type(rad) == str:
                     raise TypeError("bad value for radii")
                 elif l==len(self.vertexSet.vertices):
                     self.oneRadius = viewerConst.NO

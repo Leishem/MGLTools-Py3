@@ -232,14 +232,14 @@ class Povray(MVCommand):
 ##                      'lbwcfg':{'height':5}} )
 
 ##          idf.append({'name':'AddIncButton',
-##                      'widgetType':Tkinter.Button,
+##                      'widgetType':tkinter.Button,
 ##                      'wcfg':{'text':'->',
 ##                              'command': CallBackFunction( self.addGeometry,
 ##                                                           (idf))},
 ##                      'gridcfg':{'column':2,'row':1}})
 
 ##          idf.append({'name':'RemoveIncButton',
-##                      'widgetType':Tkinter.Button,
+##                      'widgetType':tkinter.Button,
 ##                      'wcfg':{'text':'<-',
 ##                              'command': CallBackFunction( self.removeGeometry,
 ##                                                           (idf))},
@@ -259,7 +259,7 @@ class Povray(MVCommand):
                     'gridcfg':{'rowspan':4, 'column':3, 'row':0}})
 
 ##          idf.append({'name':'pigment','label':'Pigment   ',
-##                      'widgetType':Tkinter.Entry, 'wcfg':{'width':40},
+##                      'widgetType':tkinter.Entry, 'wcfg':{'width':40},
 ##                      'gridcfg':{'columnspan':2, 'column':0,
 ##                                 'row':4, 'sticky':'w'}})
         idf.append({'widgetType':Pmw.EntryField,
@@ -272,7 +272,7 @@ class Povray(MVCommand):
                                'row':4, 'sticky':'w'}})
                     
 ##          idf.append({'name':'finish','label':'Finish      ',
-##                      'widgetType':Tkinter.Entry, 'wcfg':{'width':40},
+##                      'widgetType':tkinter.Entry, 'wcfg':{'width':40},
 ##                      'gridcfg':{'columnspan':2, 'column':0,
 ##                                 'row':5, 'sticky':'w'}})
         idf.append({'widgetType':Pmw.EntryField,
@@ -286,7 +286,7 @@ class Povray(MVCommand):
 
 ##          idf.append({'name':'scaleLight',
 ##                      'label':'Light scale factor', 'type':float,
-##                      'widgetType':Tkinter.Entry, 'wcfg':{'width':5},
+##                      'widgetType':tkinter.Entry, 'wcfg':{'width':5},
 ##                      'defaultValue': '2.0',
 ##                      'gridcfg':{'column':3, 'row':4, 'sticky':'e'}})
         idf.append({'name':'scaleLight',
@@ -301,7 +301,7 @@ class Povray(MVCommand):
 
 ##          idf.append({'name':'scaleImage',
 ##                      'label':'scale Image', 'type':float,
-##                      'widgetType':Tkinter.Entry, 'wcfg':{'width':5},
+##                      'widgetType':tkinter.Entry, 'wcfg':{'width':5},
 ##                      'defaultValue': '1.0',
 ##                      'gridcfg':{'column':3, 'row':5, 'sticky':'e'}})
         idf.append({'name':'scaleImage',
@@ -315,7 +315,7 @@ class Povray(MVCommand):
                     'gridcfg':{'column':3, 'row':5, 'sticky':'e'}})
 
 ##          idf.append({'name':'bondRadius','label':'bond Radius', 'type':float,
-##                      'widgetType':Tkinter.Entry, 'wcfg':{'width':5},
+##                      'widgetType':tkinter.Entry, 'wcfg':{'width':5},
 ##                      'defaultValue': '0.15',
 ##                      'gridcfg':{'column':3, 'row':6, 'sticky':'e'}})
         idf.append({'name':'bondRadius',
@@ -329,7 +329,7 @@ class Povray(MVCommand):
                     'gridcfg':{'column':3, 'row':6, 'sticky':'e'}})
 
 ##          idf.append({'name':'fileName','label':'File Name',
-##                      'widgetType':Tkinter.Entry,
+##                      'widgetType':tkinter.Entry,
 ##                      'defaultValue':'test.pov',
 ##                      'wcfg':{'width':40},
 ##                      'gridcfg':{'columnspan':2,'column':0,'row':6,'sticky':'w'}})
@@ -342,7 +342,7 @@ class Povray(MVCommand):
                     'gridcfg':{'columnspan':2,'column':0,'row':6,'sticky':'w'}})
 
 ##          idf.append({'name':'povrayBin','label':'Povray binary',
-##                      'widgetType':Tkinter.Entry,
+##                      'widgetType':tkinter.Entry,
 ##                      'defaultValue':'povray',
 ##                      'wcfg':{'width':40},
 ##                      'gridcfg':{'columnspan':2,'column':0,'row':7,'sticky':'w'}})
@@ -363,7 +363,7 @@ class Povray(MVCommand):
                     'gridcfg':{'column':3, 'row':7,'sticky':'e'}})
 
 ##          idf.append({'name':'povrayArgs','label':'cmdline arguments',
-##                      'widgetType':Tkinter.Entry,
+##                      'widgetType':tkinter.Entry,
 ##                      'defaultValue':'+D0 +P +X -V +FN +QR',
 ##                      'wcfg':{'width':40},
 ##                      'gridcfg':{'columnspan':2,'column':0,'row':8,'sticky':'w'}})
@@ -377,7 +377,7 @@ class Povray(MVCommand):
                                'row':8,'sticky':'w'}})
 
 ##          idf.append({'name':'imageFile','label':'image file',
-##                      'widgetType':Tkinter.Entry,
+##                      'widgetType':tkinter.Entry,
 ##                      'wcfg':{'width':40},
 ##                      'gridcfg':{'columnspan':2,'column':0,'row':9,'sticky':'w'}})
         idf.append({'name':'imageFile',

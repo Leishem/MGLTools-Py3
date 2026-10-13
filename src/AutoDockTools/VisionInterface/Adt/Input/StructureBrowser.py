@@ -50,11 +50,12 @@ class StructureBrowser(NetworkNode):
     receptor_file = os.path.abspath(receptor_file)
 
     if not(os.path.exists(receptor_file)):
-        print "ERROR: structure file " + receptor_file + " does not exist!"
+        print("ERROR: structure file " + receptor_file + " does not exist!")
         return 'stop'
 
     receptor_obj = receptor(receptor_file)
 
     self.outputData(receptor_obj=receptor_obj)
+
 """
         self.setFunction(code)

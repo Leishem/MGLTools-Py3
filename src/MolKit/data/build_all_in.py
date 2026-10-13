@@ -12,7 +12,7 @@
 #
 
 
-from string import split, strip
+from mglcompat.pystring import split, strip
 
 
 def getLoopInfo(i, allLines):

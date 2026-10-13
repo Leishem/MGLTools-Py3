@@ -129,8 +129,8 @@ attribute describing the hierarchy."""
         self.selectorEntry.pack(side='left', expand=1, fill='x')
 
         # add selection tree expansion checkbox
-        #var = self.expandTreeOnSelection = Tkinter.IntVar(0)
-        #c = self.expandTreeOnSelectionTk = Tkinter.Checkbutton(
+        #var = self.expandTreeOnSelection = tkinter.IntVar(0)
+        #c = self.expandTreeOnSelectionTk = tkinter.Checkbutton(
         #    master1, text="Expand", variable=var)
         #c.pack(side='left')
         
@@ -861,7 +861,7 @@ class LigandAtomsWithButtons(SetWithButtons):
 #####################################################################
 ColumnDescriptors = []
 
-import Pmv, os, ImageTk
+import Pmv, os; from PIL import ImageTk
 
 class MVColumnDescriptor(ColumnDescriptor):         
 

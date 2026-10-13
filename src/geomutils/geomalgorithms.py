@@ -76,7 +76,7 @@ def computeRMSD(Coords, refCoords):
 
 
 def TriangleNormals(vertices, triangles, mode = "PER_FACE" ):
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     import numpy
     if (type(vertices) == Numeric.arraytype) \
       or (type(vertices) == numpy.ndarray):

@@ -90,7 +90,7 @@ class CGIForm:
     def setArguments(self, **kw):
         for k,v in list(kw.items()):
             if type(v) in (float, int,
-                           int, bytes):
+                           int, str):
                 self.arguments[k] = v
             else:
                 pat = re.compile("[\[,\]\012]")

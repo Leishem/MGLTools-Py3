@@ -88,7 +88,7 @@ This MIXIN Object adds AutoDock Ligand features to a MolKit.Protein
 
 """
 import mglcompat.oldnumeric as Numeric, math, types, os
-from string import find
+from mglcompat.pystring import find
 from MolKit.pdbWriter import PdbqWriter
 from AutoDockTools.AutoDockBondClassifier import AutoDockBondClassifier
 from AutoDockTools.observer import Subject
@@ -670,7 +670,7 @@ class LigandMixin(Subject):
         """
         setroot to 'C11' or 'hsg1:A:ILE2:CA'
         """
-        if type(atom)==bytes:
+        if type(atom)==str:
             if find(atom, ':')>-1:
                 #have to use full_name list
                 #check that it is an atom

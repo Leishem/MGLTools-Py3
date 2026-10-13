@@ -50,11 +50,12 @@ class GPFTemplateBrowser(NetworkNode):
     gpf_template_file = os.path.abspath(gpf_template_file)
 
     if not(os.path.exists(gpf_template_file)):
-        print "ERROR: GPF template file " + gpf_template_file + " does not exist!" 
+        print("ERROR: GPF template file " + gpf_template_file + " does not exist!") 
         return 'stop'
 
     gpf_template = gpf_template(gpf_template_file)
 
     self.outputData(gpf_template=gpf_template)
+
 """
         self.setFunction(code)

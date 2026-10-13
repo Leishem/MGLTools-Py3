@@ -147,7 +147,7 @@ browser = ObjectBrowser( __builtins__ )
 
         elif type(object) in [ bool, float,
                                int, int, type(None),
-                               bytes ]:
+                               str ]:
             children = []
 
         else:
@@ -188,7 +188,7 @@ browser = ObjectBrowser( __builtins__ )
         
         if type(x) in [
             bool, float, int,
-            int, type(None), bytes]:
+            int, type(None), str]:
             return True
         elif type(x) in [dict, list] and \
              len(x)==0:

@@ -83,7 +83,7 @@ class Recorder(tkinter.Frame):
                             }})
         
         ## ifd.append({'name':'fileopen',
-##                     'widgetType':Tkinter.Button,
+##                     'widgetType':tkinter.Button,
 ##                     'tooltip': "Open file browser",
 ##                     'wcfg':{'text':"...",
 ##                             'command': self.browseFile,
@@ -132,7 +132,7 @@ class Recorder(tkinter.Frame):
                     })
         
 ##         ifd.append({'name': 'recordB',
-##                     'widgetType': Tkinter.Button,
+##                     'widgetType': tkinter.Button,
 ##                     'tooltip':'start/pause recording',
 ##                     'wcfg':{'bd':4,
 ##                             'image':self.recordIcon,
@@ -143,7 +143,7 @@ class Recorder(tkinter.Frame):
 ##                     'command':self.record_cb})
         
 ##         ifd.append({'name': 'pauseB',
-##                     'widgetType': Tkinter.Button,
+##                     'widgetType': tkinter.Button,
 ##                     'tooltip':'pause recording',
 ##                     'wcfg':{'bd':4,
 ##                             'image':self.pauseIcon,
@@ -155,7 +155,7 @@ class Recorder(tkinter.Frame):
         
         
 ##         ifd.append({'name': 'modeB',
-##                     'widgetType': Tkinter.Button,
+##                     'widgetType': tkinter.Button,
 ##                     'text':'Change Mode',
 ##                     'tooltip':'opens panel to change video parameters',
 ##                     'wcfg':{'bd':4,
@@ -167,7 +167,7 @@ class Recorder(tkinter.Frame):
 ##                     'command':self.setparams_cb })
         
 ##         ifd.append({'name': 'closeB',
-##             'widgetType': Tkinter.Button,
+##             'widgetType': tkinter.Button,
 ##             'text':'Close',
 ##             'tooltip':'closes video recorder',
 ##             'wcfg':{'bd':2,

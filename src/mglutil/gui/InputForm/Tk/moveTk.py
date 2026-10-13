@@ -1,7 +1,7 @@
 
 import tkinter.colorchooser
 import tkinter
-T = Tkinter
+T = tkinter
 
 from mglutil.util.callback import CallBackFunction
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel

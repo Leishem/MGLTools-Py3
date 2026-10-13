@@ -25,7 +25,7 @@ from NetworkEditor.datatypes import AnyArrayType
 
 class ImageType(AnyArrayType):
 
-    from Image import Image
+    from PIL.Image import Image
     def __init__(self, name='image', color='#995699', shape='rect',
                  klass=Image):
 

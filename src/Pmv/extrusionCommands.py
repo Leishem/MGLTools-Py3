@@ -84,7 +84,7 @@ class ComputeSheet2DCommand(MVCommand):
         kw['nbchords'] = nbchords
         kw['width'] = width
         kw['offset'] = offset
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
 
         nodes = self.vf.expandNodes(nodes)
@@ -468,7 +468,7 @@ class DisplayPath3DCommand(MVCommand):
         kw['only'] = only
         kw['redraw'] = True
         nodes = self.vf.expandNodes(nodes)
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'" + nodes +"'"
         self.doitWrapper(*(nodes,), **kw)
 

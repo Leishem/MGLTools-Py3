@@ -17,7 +17,7 @@
 
 import tkinter
 import mglcompat.oldnumeric as Numeric
-import Image, ImageTk
+from PIL import Image; from PIL import ImageTk
 import types
 import math
 
@@ -93,7 +93,7 @@ Output: Image"""
             nar[i] = int(math.floor( 255.999 * nar[i] ))
     nar = nar.astype(Numeric.UnsignedInt8)
     
-    import Image
+    from PIL import Image
     if lenarray == 1:
         im = Image.fromstring('L', (width, height), nar.tobytes()) 
     elif lenarray == 3:
@@ -144,7 +144,7 @@ Output: Image"""
         #self.readOnly = 1
         code = """def doit(self, filename):
     if filename:
-        import Image
+        from PIL import Image
         im = Image.open(filename)
         if im:
             self.outputData(image=im)\n"""
@@ -327,7 +327,7 @@ class ResizeImage(NetworkNode):
         self.inNodeWidgetsVisibleByDefault = True
 
         code = """def doit(self, image, scale, filter):
-    import Image
+    from PIL import Image
     w,h = image.size
     if filter is not None and filter != '':
         op = eval('Image.'+filter)
@@ -392,7 +392,7 @@ class ImageFilter(NetworkNode):
         self.outputPortsDescr.append(datatype='image', name='image')
         
         code = """def doit(self, image, filter):
-    import ImageFilter
+    from PIL import ImageFilter
     if filter is not '' and image:
         op = eval('ImageFilter.'+filter)
         self.outputData(image= image.filter(op))\n"""
@@ -412,7 +412,7 @@ class ImageInvert(NetworkNode):
         self.outputPortsDescr.append(datatype='image', name='image')
         
         code = """def doit(self, image):
-    import ImageChops
+    from PIL import ImageChops
     self.outputData(image = ImageChops.invert(image))\n"""
 
         self.setFunction(code)
@@ -434,7 +434,7 @@ a solid white image, the image is unaffected."""
         self.outputPortsDescr.append(datatype='image', name='image')
         
         code = """def doit(self, image1, image2):
-    import ImageChops
+    from PIL import ImageChops
     self.outputData(image = ImageChops.multiply(image1, image2))\n"""
 
         self.setFunction(code)
@@ -514,7 +514,7 @@ class ImagePaste(NetworkNode):
         
 
 class ShowImage(NetworkNode):
-    """Display an image file as a Tkinter.Photoimage in  a canvas.
+    """Display an image file as a tkinter.Photoimage in  a canvas.
 
 Double-click the on the node icon to show/hide the canvas.
 
@@ -536,7 +536,7 @@ Input:  Image"""
         code = """def doit(self, image):
     if image:
         if self.canvasImage: self.imCanvas.delete(self.canvasImage)
-        import ImageTk
+        from PIL import ImageTk
         self.imtk = ImageTk.PhotoImage(image, master=self.top)
         self.canvasImage = self.imCanvas.create_image(
                         0, 0, image=self.imtk, anchor='nw')
@@ -601,7 +601,7 @@ output range."""
         self.outputPortsDescr.append(datatype='image', name='image')
         
         code = """def doit(self, image1, image2, alpha):
-    import Image
+    from PIL import Image
     result = Image.blend(image1, image2, alpha)
     self.outputData(image=result)\n"""
 
@@ -643,7 +643,7 @@ or BICUBIC. If omitted, it defaults to NEAREST. """
         
         code = """def doit(self, image, angle, filter):
     if filter is not None and filter != '':
-        import Image
+        from PIL import Image
         op = eval('Image.'+filter)
         result = image.rotate(angle, op)
     else:
@@ -680,7 +680,7 @@ class ImageTranspose(NetworkNode):
         
         code = """def doit(self, image, method):
     if method is not None and method != '':
-        import Image
+        from PIL import Image
         op = eval('Image.'+method)
         result = image.transpose(op)
     else:
@@ -707,7 +707,7 @@ the same size."""
         self.outputPortsDescr.append(datatype='image', name='image')
         
         code = """def doit(self, image1, image2, mask):
-    import Image
+    from PIL import Image
     result = Image.composite(image1, image2, mask)
     self.outputData(image=result)\n"""
 
@@ -743,7 +743,7 @@ included in the statistics."""
         
         code = """def doit(self, image, stat):
     if stat is not None and stat != '':
-        import ImageStat
+        from PIL import ImageStat
         data = ImageStat.Stat(image)
         result = eval('data.'+stat)
         self.outputData(stats=result)\n"""

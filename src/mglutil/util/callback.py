@@ -63,7 +63,7 @@ class CallbackManager:
 
     def RemoveCallback(self, func):
         """Delete a callback fuction"""
-        if type(func)==bytes:
+        if type(func)==str:
             func = self.FindFunctionByName(func)
             if func is None: return "function %s not found"%func
         if func in self.callbacks:

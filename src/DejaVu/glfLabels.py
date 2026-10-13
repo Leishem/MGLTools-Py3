@@ -433,7 +433,7 @@ This dictionary can be passed to the Set method to restore the object's state
             txt = None
         else:
             txt = labels[0]
-            if type(txt) != bytes:
+            if type(txt) != str:
                 txt= str(txt)
 
         self.prepareBillboardAndNormalForAllTextLines()
@@ -490,7 +490,7 @@ This dictionary can be passed to the Set method to restore the object's state
             #GL.glPushName(i)
             if txt is None:
                 txt2 = self.labels[i]
-                if type(txt2) != bytes:
+                if type(txt2) != str:
                     txt2 = str(txt2)
                 self.drawOne3dTextLine(txt2, i)
             else:       
@@ -521,7 +521,7 @@ run=1 returns the IndexedPolygon object.
         if lLenLabelsVertices != len(self.labels):
             lSameText = True
             assert len(self.labels) > 0
-            if type(self.labels[0]) == bytes:
+            if type(self.labels[0]) == str:
                 output = glf.glfGet3DSolidStringTriangles(self.labels[0])
             else:
                 output = glf.glfGet3DSolidStringTriangles( str(self.labels[0]) )
@@ -546,7 +546,7 @@ run=1 returns the IndexedPolygon object.
         for i in range(lLenLabelsVertices):
             #print "i", i
             if lSameText is False:
-                if type(self.labels[0]) == bytes:
+                if type(self.labels[0]) == str:
                     output = glf.glfGet3DSolidStringTriangles(self.labels[i])
                 else:
                     output = glf.glfGet3DSolidStringTriangles( str(self.labels[i]) )
@@ -634,9 +634,9 @@ run=1 returns the IndexedPolygon object.
         self.ownGui.guiIncludeCameraRotationInBillboard.pack(side='top', fill='x')
 
 #        # lighting
-#        self.ownGui.lightingVar = Tkinter.IntVar()
+#        self.ownGui.lightingVar = tkinter.IntVar()
 #        self.ownGui.lightingVar.set(self.lighting)
-#        self.ownGui.guiLighting = Tkinter.Checkbutton(
+#        self.ownGui.guiLighting = tkinter.Checkbutton(
 #                                frame1,
 #                                text='lighting',
 #                                variable=self.ownGui.lightingVar,

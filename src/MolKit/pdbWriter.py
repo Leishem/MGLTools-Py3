@@ -721,7 +721,7 @@ class PdbWriter(MoleculeWriter):
         # the Hbond are defined by the HYBND section
         if bondOrigin == 'all':
             bondOrigin = ('File', 'BuiltByDistance', 'UserDefined')
-        elif type(bondOrigin) is bytes and \
+        elif type(bondOrigin) is str and \
              bondOrigin in ['File', 'BuiltByDistance', 'UserDefined']:
             bondOrigin = (bondOrigin,)
         elif type(bondOrigin) is list:

@@ -55,15 +55,16 @@ class ADTFileNames(NetworkNode):
         DPF_template = dpf_template(receptor_dir + os.sep + receptor_id + '.dpf')
         result_dir = os.path.abspath(receptor_dir + os.sep + '..' + os.sep + receptor_id)
 
-        print "-------------------------------------------------------"
-        print "     INPUTS THAT WILL BE USED FOR VIRTUAL SCREENING    "
-        print "GPF Template:                  " + GPF_template.fullpath
-        print "DPF Template:                  " + DPF_template.fullpath
-        print "Results will be downloaded to: " + result_dir
-        print "-------------------------------------------------------"
-        
+        print("-------------------------------------------------------")
+        print("     INPUTS THAT WILL BE USED FOR VIRTUAL SCREENING    ")
+        print("GPF Template:                  " + GPF_template.fullpath)
+        print("DPF Template:                  " + DPF_template.fullpath)
+        print("Results will be downloaded to: " + result_dir)
+        print("-------------------------------------------------------")
+
         pass
         self.outputData(GPF_template=GPF_template, DPF_template=DPF_template, result_dir=result_dir)
+
 """
         self.configure(function=code)
 

@@ -34,7 +34,7 @@ import tkinter, Pmw
 import weakref, warnings
 
 from collections import UserList
-from inspect import getargspec
+from inspect import getfullargspec as getargspec
 
 from NetworkEditor.itemBase import NetworkItems
 from NetworkEditor.widgets import PortWidget, widgetsTable
@@ -202,7 +202,7 @@ class Port(NetworkItems):
         ed = self.getEditor()
         tm = ed.typeManager
 
-        if type(datatype) is bytes:
+        if type(datatype) is str:
             return tm.getType(datatype)
         elif isinstance(datatype, AnyType) or \
                  isinstance(datatype, AnyArrayType):
@@ -297,8 +297,8 @@ class Port(NetworkItems):
         if isinstance(self, InputPort):
             lCast = self._cast
             # constructor create a boolean value which gets overwritten
-            # by a Tkinter.BooleanVar here. When we come from refreshNet_cb
-            # it is already a Tkinter.BooleanVar
+            # by a tkinter.BooleanVar here. When we come from refreshNet_cb
+            # it is already a tkinter.BooleanVar
             if isinstance(lCast, tkinter.BooleanVar):
                 lCast = lCast.get()
             self._cast = tkinter.BooleanVar()
@@ -506,7 +506,7 @@ class Port(NetworkItems):
             
 
     def datatypeStr(self):
-        if type(self.datatype)==bytes:
+        if type(self.datatype)==str:
             return self.datatype
         # obsolete since all datatypes are now string !?
         tstr = self.typeName(self.datatype)
@@ -1028,7 +1028,7 @@ class InputPort(Port):
         if hasattr(self, 'topEntry') is False:
             self.topEntry = tkinter.Toplevel()
             self.defaultValueVar = tkinter.StringVar()
-            if type(self.defaultValue) == bytes: 
+            if type(self.defaultValue) == str: 
                 self.defaultValueVar.set('\''+self.defaultValue +'\'')
             else:
                 self.defaultValueVar.set(self.defaultValue)
@@ -1262,7 +1262,7 @@ parenting : type of parenting (if self.name is 'parent')
 
         # get a copy of the widget's constructor only options
         widgetClass = descr.pop('class')
-        if type(widgetClass) is bytes:
+        if type(widgetClass) is str:
             widgetClass = widgetsTable[widgetClass]
         
         # instanciate the widget
@@ -1451,7 +1451,7 @@ cases, status of port's data remains 'unchecked'.
         else: # we didn't break
             assert False # we should have found the connection
         if    theConnection.blocking is True \
-          and (type(data) == bytes) \
+          and (type(data) == str) \
           and (data == 'no data yet'):
             return False, data #None
 
@@ -1663,7 +1663,7 @@ the data is fetched from the parent port.
                 self.inputDataBallon()
                 return 'Stop'
 
-        if type(allData)==bytes and allData == 'no data yet':
+        if type(allData)==str and allData == 'no data yet':
             if self.required:
                 if ed.hasGUI and ed.verbose:
                     s='Data missing on required port %s in node %s in network %s'%(

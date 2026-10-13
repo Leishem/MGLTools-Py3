@@ -1122,14 +1122,13 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                 self.cmd.start()
                 time.sleep(1)
             else:
-                from popen2 import Popen4
-                os.chdir(self.params.projectFolder)    
-                exec_cmd = Popen4(cmdstring)
-                status = exec_cmd.wait()
-                if status==0:
-                    print(exec_cmd.fromchild.read())
-                else:
-                    print(exec_cmd.childerr.read())
+                import subprocess
+                os.chdir(self.params.projectFolder)
+                # Popen4 merged stderr into stdout
+                exec_cmd = subprocess.run(cmdstring, shell=True, text=True,
+                                          stdout=subprocess.PIPE,
+                                          stderr=subprocess.STDOUT)
+                print(exec_cmd.stdout)
 
             self.SaveResults(self.params.name, )
             os.chdir(self.cwd)
@@ -1541,9 +1540,9 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     self._dx = opener.open(resp._baseURL+"/%s.potential-PE0.dx"%self.rml)
                     self._dx_out = open(os.path.join(self.params.projectFolder,
                                          "%s.potential.dx"%self.rml),"w")
-                    bytes = int(self._dx.headers.dict['content-length'])
+                    str = int(self._dx.headers.dict['content-length'])
                     self._progress_counter = 0
-                    self._download_bytes = bytes/100
+                    self._download_bytes = str/100
                     if self._download_bytes == 0: self._download_bytes = 1
                     self.Download()                
                 else:
@@ -1586,9 +1585,9 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                     showerror("Download Failed!", 
                           "Permission denied: " +filePath)                
 
-                bytes = int(self._dx.headers.dict['content-length'])
+                str = int(self._dx.headers.dict['content-length'])
                 self._progress_counter = 0
-                self._download_bytes = bytes/100
+                self._download_bytes = str/100
                 if self._download_bytes == 0: self._download_bytes = 1
                 self.Download()                
             return
@@ -1628,7 +1627,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
         self._dx_files[0].readline()
         self._dx_files[0].readline()
         tmp_str = self._dx_files[0].readline()
-        from string import split
+        from mglcompat.pystring import split
         w = split(tmp_str)
         nx, ny, nz = int(w[5]), int(w[6]), int(w[7])
         self._dx_out.write("object 1 class gridpositions counts %d %d %d\n"
@@ -2867,7 +2866,7 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                 })
 
 #            ifd.append({'name':'ionConcentrationLabel',
-#                    'widgetType':Tkinter.Label,
+#                    'widgetType':tkinter.Label,
 #                    'wcfg':{'text':'Salt contains ions with radius 2 (Angstrom), and charges +1(e) and -1(e)'},
 #                    'parent':'SaltGroup',
 #                    'gridcfg':{'row':0, 'column':0,'columnspan':2, 'sticky':'we'}
@@ -2977,14 +2976,14 @@ Please try the latest pdb2pqr from: http://pdb2pqr.sourceforge.net."""
                                         'variable':self.RememberLogin_var,
                                   'gridcfg':{'sticky':'w', 'row':3, 'column':1}
                                         })       
-#                self.Parallel_var =Tkinter.BooleanVar()
+#                self.Parallel_var =tkinter.BooleanVar()
 #                self.Parallel_var.set(0)
 #                ifd.append({'widgetType':Pmw.Group,
 #                    'name':'ParallelGroup',
 #                    'container':{'ParallelGroup':'w.interior()'},
 #                    'parent':'APBSservicesGroup',
 #                    'wcfg':{
-#                    'tag_pyclass':Tkinter.Checkbutton,
+#                    'tag_pyclass':tkinter.Checkbutton,
 #                    'tag_text':'Parallel',
 #                    'tag_command':self.ParallelParamUpdate,
 #                    'tag_variable': self.Parallel_var,

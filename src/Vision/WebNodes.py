@@ -152,7 +152,7 @@ class PublicHttpClient:
                 raise RuntimeError (k+' is not a valid argument')
             
             if type(v) in (float, int,
-                           int, bytes):
+                           int, str):
                 self.arguments[k] = v
             else:
                 pat = re.compile("[\[,\]\012]")

@@ -410,7 +410,7 @@ title is the title of the
 
 
     def Apply_cb(self, event=None):
-        # read all the Tkinter.Entry widgets and configure the widget
+        # read all the tkinter.Entry widgets and configure the widget
         # note: combobox widgets get applied automatically upon user selection
 
         if self.master.min is not None:

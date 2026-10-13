@@ -101,7 +101,7 @@ class toPIL(NetworkNode):
         NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, img):
-        import Image, mglcompat.oldnumeric as Numeric
+        import mglcompat.oldnumeric as Numeric; from PIL import Image
 
         if len(img) > 1:
             img = toSeq(img)
@@ -147,7 +147,7 @@ class TkDisplay(NetworkNode):
         self.canvasImage = None
 
         code = """def doit(self, img):
-        import Image, Tkinter, ImageTk, Numeric
+        import Tkinter, Numeric; from PIL import Image; from PIL import ImageTk
 
         if len(img) > 1:
             img = toSeq(img)
@@ -4759,7 +4759,7 @@ ImageMagick.addNode(getImage, 'Get Single Image', 'Multiple Images')
 from NetworkEditor.datatypes import AnyArrayType
 class IMImageType(AnyArrayType):
 
-    from Image import Image
+    from PIL.Image import Image
     def __init__(self, name='imimage', color='#07BAEE', shape='rect1',
                  klass=Image):
 

@@ -23,7 +23,7 @@ from mglutil.gui.BasicWidgets.Tk.player import Player
 import tkinter, Pmw, tkinter.messagebox
 import types, time, os
 import mglcompat.oldnumeric as Numeric
-from string import find
+from mglcompat.pystring import find
 from mglutil.util.callback import CallBackFunction
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr, InputForm, evalString
 from mglutil.util.callback import CallbackManager
@@ -331,20 +331,20 @@ class ConformationPlayer(Player):
 #            self.form.deiconify()
 #            return
 #        maxval = len(self.sequenceList)
-#        self.doTorsionsOnly = Tkinter.IntVar()
-#        self.rmsVar = Tkinter.StringVar()
+#        self.doTorsionsOnly = tkinter.IntVar()
+#        self.rmsVar = tkinter.StringVar()
 #        self.rmsVar.set('rms(ref=0) 0.0000')
-#        self.energyVar = Tkinter.StringVar()
+#        self.energyVar = tkinter.StringVar()
 #        ifd = mol.ifd2 = InputFormDescr(title=titleStr)
 #        ifd.append({'name':'energyLab',
-#            'widgetType': Tkinter.Label,
+#            'widgetType': tkinter.Label,
 #            'textvariable': self.energyVar,
 #            'tooltip':'docking and binding energies of current conf',
 #            'wcfg':{'bd':4},
 #            'gridcfg':{'sticky':'ew', 'columnspan':2}})
 #            #'gridcfg':{'sticky':'ew','row':-1, 'column':1}}),
 #        ifd.append({'name':'rmsLab',
-#            'widgetType': Tkinter.Label,
+#            'widgetType': tkinter.Label,
 #            'tooltip':'rms of current conf vs current rms ref conf',
 #            'textvariable': self.rmsVar,
 #            'wcfg':{'bd':4},
@@ -377,7 +377,7 @@ class ConformationPlayer(Player):
 #		 		    'entryfield_validate': self.custom_validate },
 #		 	    'gridcfg':{'sticky':'ew', 'columnspan':2}})
 #        #ifd.append({'name':'selectCB',
-#        #    'widgetType': Tkinter.Checkbutton,
+#        #    'widgetType': tkinter.Checkbutton,
 #        #    'tooltip':"open a list showing ids of current conf sequence",
 #        #    'text':'show id list',
 #        #    'wcfg':{'bd':4},
@@ -385,7 +385,7 @@ class ConformationPlayer(Player):
 #        #    #'gridcfg':{'sticky':'ew', 'columnspan':2},
 #        #    'command': self.showStatesList})
 #        ifd.append({'name': 'doTransCB',
-#            'widgetType': Tkinter.Checkbutton,
+#            'widgetType': tkinter.Checkbutton,
 #            'text':'torsions only',
 #            'tooltip':"show each conf's torsional transformations only",
 #            #'text':'transform torsions only',
@@ -394,49 +394,49 @@ class ConformationPlayer(Player):
 #            'gridcfg':{'sticky':'ew', 'row':-1,'column':1}})
 #            ##'gridcfg':{'sticky':'ew', 'columnspan':2}})
 #        ifd.append({'name': 'playB',
-#            'widgetType': Tkinter.Button,
+#            'widgetType': tkinter.Button,
 #            'tooltip':'play from current sequence to last conf',
 #            'text':'Play Sequence',
 #            'wcfg':{'bd':4},
 #            'gridcfg':{'sticky':'ew','columnspan':1},
 #            'command':self.Play_cb})
 #        ifd.append({'name': 'playRevB',
-#            'widgetType': Tkinter.Button,
+#            'widgetType': tkinter.Button,
 #            'tooltip':'play from current sequence to input conf',
 #            'text':'Play it Reverse',
 #            'wcfg':{'bd':4},
 #            'gridcfg':{'sticky':'ew','row':-1, 'column':1},
 #            'command':self.PlayRev_cb})
 #        ifd.append({'name': 'stopB',
-#            'widgetType': Tkinter.Button,
+#            'widgetType': tkinter.Button,
 #            'text':'Stop',
 #            'tooltip':'stop and reset to input conf',
 #            'wcfg':{'bd':4},
 #            'gridcfg':{'sticky':'ew'},
 #            'command':self.Stop_cb})
 #        ifd.append({'name': 'pauseB',
-#            'widgetType': Tkinter.Button,
+#            'widgetType': tkinter.Button,
 #            'tooltip':'pause at current conf',
 #            'text':'Pause',
 #            'wcfg':{'bd':4},
 #            'gridcfg':{'sticky':'ew','row':-1, 'column':1},
 #            'command':self.Pause_cb})
 #        ifd.append({'name': 'rmsB',
-#            'widgetType': Tkinter.Button,
+#            'widgetType': tkinter.Button,
 #            'tooltip':'makes current conf rms ref',
 #            'text':'Make rms refcoords',
 #            'wcfg':{'bd':4},
 #            'gridcfg':{'sticky':'ew'},
 #            'command':self.MakeRef_cb})
 #        ifd.append({'name': 'buildB',
-#            'widgetType': Tkinter.Button,
+#            'widgetType': tkinter.Button,
 #            'tooltip':'builds new molecule with current conf coords',
 #            'text':'Build',
 #            'wcfg':{'bd':4},
 #            'gridcfg':{'sticky':'ew','row':-1, 'column':1},
 #            'command':self.Build_cb})
 #        ifd.append({'name':'selectCB',
-#            'widgetType': Tkinter.Checkbutton,
+#            'widgetType': tkinter.Checkbutton,
 #            'text':'Show IdList',
 #            'tooltip':"open a list showing ids of current conf sequence",
 #            'wcfg':{'bd':4},
@@ -445,7 +445,7 @@ class ConformationPlayer(Player):
 #            'command': self.showStatesList})
 
 #        ifd.append({'name': 'closeB',
-#            'widgetType': Tkinter.Button,
+#            'widgetType': tkinter.Button,
 #            'tooltip':'closes player',
 #            'text':'Close',
 #            'wcfg':{'bd':4},
@@ -468,7 +468,7 @@ class ConformationPlayer(Player):
 #        form.showVar = form.ifd.entryByName['selectCB']['variable']
 #        ctr2 = ifd.entryByName['colorType']['widget']
 #        entF2 = ctr2.component('entryfield')
-#        #all this to get a handle to the Tkinter.Entry buried in the pww
+#        #all this to get a handle to the tkinter.Entry buried in the pww
 #        form.ent3 = entF2._entryFieldEntry
 #        form.ent3.bind('<Return>', self.updateColor, '+')
 #        form.ent3.config(width=8)
@@ -795,14 +795,14 @@ class ConformationPlayer(Player):
             #COMMENT OUT THESE LINES 11/4/2004
             #ctr1 = ifd2.entryByName['sortType']['widget']
             #entF1 = ctr1.component('entryfield')
-            ##all this to get a handle to the Tkinter.Entry buried in the pww
+            ##all this to get a handle to the tkinter.Entry buried in the pww
             #self.playModeForm.ent1 = entF1._entryFieldEntry
             #self.playModeForm.ent1.bind('<Return>', self.updateSort, '+')
             #self.playModeForm.ent1.config(width=8)
 
             ctr2 = ifd2.entryByName['colorType']['widget']
             entF2 = ctr2.component('entryfield')
-            #all this to get a handle to the Tkinter.Entry buried in the pww
+            #all this to get a handle to the tkinter.Entry buried in the pww
             self.playModeForm.ent3 = entF2._entryFieldEntry
             self.playModeForm.ent3.bind('<Return>', self.updateColor, '+')
             self.playModeForm.ent3.config(width=8)
@@ -1221,7 +1221,7 @@ class ConformationPlayer(Player):
                 'gridcfg':{'sticky':'nsew',
                      'rowspan':10}})
             #ifd9.append({ 'name': 'closeB',
-                #'widgetType': Tkinter.Button,
+                #'widgetType': tkinter.Button,
                 #'tooltip':'closes stats',
                 #'text':'Close',
                 #'wcfg':{'bd':4},

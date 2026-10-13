@@ -91,7 +91,7 @@ class CheckForMissingAtomsGUICommand(MVCommand):
     def __call__(self, nodes, **kw):
         """dictOfMissingAts <--- checkForMissingAtomsGC(nodes, **kw)
         \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
@@ -271,7 +271,7 @@ class CheckForMissingAtoms(MVCommand):
     def __call__(self, nodes, **kw):
         """dictOfMissingAts <--- checkForMissingAtoms(nodes, **kw)
         \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
@@ -363,11 +363,11 @@ class CheckForCloseContactsGUICommand(MVCommand):
             \nconstant --- possible constant value to be added into selection
             \nfor vdw selectors ,close is defined as interatomic distance< percentCutoff*(key_radius+check_radius) where the radii depend on atom element.
 """
-        if type(keyNodes) is bytes:
+        if type(keyNodes) is str:
             self.nodeLogString = "'"+keyNodes+"'"
         keyNodes = self.vf.expandNodes(keyNodes)
         if not len(keyNodes): return 'ERROR'
-        if type(checkNodes) is bytes:
+        if type(checkNodes) is str:
             self.nodeLogString = "'"+checkNodes+"'"
         checkNodes = self.vf.expandNodes(checkNodes)
         if not len(checkNodes): return 'ERROR'
@@ -430,7 +430,7 @@ class CheckForCloseContactsGUICommand(MVCommand):
                               'width': 30}},
                     'gridcfg':{'row':2,'column':0, 
                                 'columnspan':2, 'sticky':'ew'}})
-                        #'sticky':Tkinter.W+Tkinter.E+Tkinter.N+Tkinter.S},
+                        #'sticky':tkinter.W+tkinter.E+tkinter.N+tkinter.S},
         ifd.append({'name':'showAllBut',
             'widgetType':tkinter.Button,
             'wcfg': { 'text':'Show All ',
@@ -635,9 +635,9 @@ class CheckForCloseContactsGUICommand(MVCommand):
                     'text':'Select Selection Algorithm:',
                     'gridcfg':{'sticky':tkinter.W, 'columnspan':4}})
         #ifd.append({'name':'interSelLab3',
-                    #'widgetType':Tkinter.Label,
+                    #'widgetType':tkinter.Label,
                     #'text':'_____________________________________________',
-                    #'gridcfg':{'sticky':Tkinter.W, 'columnspan':4}})
+                    #'gridcfg':{'sticky':tkinter.W, 'columnspan':4}})
         ifd.append({'name':'VDWsel',
                     'widgetType':tkinter.Radiobutton,
                     'wcfg':{'text':"CloserThanVDW",
@@ -944,7 +944,7 @@ class RepairMissingAtomsGUICommand(MVCommand):
         """closeContactDict<---repairMissingAtomsGC(nodes) 
         \nnodes --- molecule(s) to check for missing atoms
         """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
@@ -1098,7 +1098,7 @@ class RepairMissingAtoms(MVCommand):
     def __call__(self, nodes, **kw):
         """dictOfMissingAts <--- checkForMissingAtoms(nodes, **kw)
         \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
@@ -1145,7 +1145,7 @@ class EditHistHydrogensGUICommand(MVCommand):
         \nnodes --- TreeNodeSet holding the current selection
         \nresSet --- residueSet
            """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         kw['topCommand'] = 0
         nodes = self.vf.expandNodes(nodes)
@@ -1498,7 +1498,7 @@ terminal carbon atom.
         \natoms  --- atom(s)
         \noxt --- the new oxt atom
         """
-        if type(atoms) is bytes:
+        if type(atoms) is str:
             self.nodeLogString = "'"+atoms+"'"
         ats = self.vf.expandNodes(atoms)
         if not len(ats): return 'ERROR'

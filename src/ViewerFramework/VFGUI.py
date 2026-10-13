@@ -275,10 +275,10 @@ class ViewerFrameworkGUI:
             self.ROOT.option_add(
                 '*font',(ensureFontCase('helvetica'), 10, 'normal'), priority)
 
-            filePath = findFilePath(fileName = 'Tkinter.defaults',
+            filePath = findFilePath(fileName = 'tkinter.defaults',
                                     packageName = 'ViewerFramework')
             if filePath:
-                #self.ROOT.option_readfile('./Tkinter.defaults')
+                #self.ROOT.option_readfile('./tkinter.defaults')
                 self.ROOT.option_readfile(filePath)
 
         # create a paned widget
@@ -1450,7 +1450,7 @@ move the menu window under the Camera
         # Description of the frame
         mbar = Pmw.ScrolledFrame(*(self.mBarFrame,), **kw)
         self.mbar = mbar
-    #mbar = apply( Tkinter.Frame, (self.mBarFrame,) , kw)
+    #mbar = apply( tkinter.Frame, (self.mBarFrame,) , kw)
         mbar.pack(*(), **kw2)
         # this line is needed, else root menu hase huge padding
         mbar.component('frame').pack()
@@ -1519,7 +1519,7 @@ move the menu window under the Camera
                     pass
             #if before: print name, 'BEFORE', before, index
         if image is not None:
-            import Image, ImageTk
+            from PIL import Image; from PIL import ImageTk
             image = Image.open(image)
             image1 = ImageTk.PhotoImage(image, master=menu.master)
             kw['image'] = image1

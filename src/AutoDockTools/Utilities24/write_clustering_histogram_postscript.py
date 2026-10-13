@@ -136,7 +136,7 @@ if __name__ == '__main__':
     top = tkinter.Toplevel()
     top.title(tstr)
     mol.ehist
-    #top = Tkinter.Toplevel()
+    #top = tkinter.Toplevel()
     xlabel = 'ENERGY'
     mol.clustNB = InteractiveHistogramGraph(mol.name,
             master=top, nodeList = dataList, reverseIndex=reverseList,

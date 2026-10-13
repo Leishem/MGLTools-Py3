@@ -1346,7 +1346,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                 obj = actor.object
                 if obj.fullName in self.atomSets:
                     aset = self.atomSets[obj.fullName]
-                    if type(aset) == bytes:
+                    if type(aset) == str:
                         if self._animNB:
                             pmv = self._animNB().pmv
                             self.viewer.stopAutoRedraw()
@@ -1383,7 +1383,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
     def saveGeomAtomProp2File(self, name, indent):
         ats = {}
         for k, val in list(self.atomSets.items()):
-            if type(val) == bytes:
+            if type(val) == str:
                 ats[k] = val
             else:
                 ats[k] = val.getStringRepr()

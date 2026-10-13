@@ -99,7 +99,7 @@ class WriteSTL(MVCommand):
         self.log(nodes, filename)
 #        oldcursor = self.vf.GUI.setCursor('watch')
 
-        if type(nodes)==bytes:
+        if type(nodes)==str:
             nodes = self.vf.Mols.NodesFromName(nodes)
         
         assert isinstance(nodes,TreeNode) or isinstance(nodes,TreeNodeSet)
@@ -172,7 +172,7 @@ class WriteColoredM(MVCommand):
     def doit(self, nodes, filename):
         self.log(nodes, filename)
 
-        if type(nodes)==bytes:
+        if type(nodes)==str:
             nodes = self.vf.Mols.NodesFromName(nodes)
         
         assert isinstance(nodes,TreeNode) or isinstance(nodes,TreeNodeSet)

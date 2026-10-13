@@ -34,8 +34,8 @@ The filter is initialized with a file containing the receptor residues whose int
 For example, in the case of hsg1, a file could potentially contain only A:ARG8 and B:ARG8 atoms.
 
 """
-from string import strip
-from numpy import oldnumeric as Numeric
+from mglcompat.pystring import strip
+import mglcompat.oldnumeric as Numeric
 from MolKit import Read
 from MolKit.molecule import MoleculeSet, Atom, AtomSet, HydrogenBond, BondSet
 from MolKit.protein import Residue, ResidueSet

@@ -282,7 +282,7 @@ Output: molecules where all atoms in HOH residues have been removed(MoleculeSet)
                         chain.remove(res)
                         if len(chain.children)==0:
                             mol = chain.parent
-                            print 'removing chain', chain.id
+                            print('removing chain', chain.id)
                             mol.remove(chain)
                             del chain
                         del res

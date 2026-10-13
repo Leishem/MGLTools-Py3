@@ -18,7 +18,7 @@
 
 import os, sys, re; from mglcompat import pystring as string
 import warnings
-import user
+from mglcompat import pyuser as user
 
 resourceFolder = user.home + os.sep + ".mgltools"
 
@@ -30,6 +30,8 @@ assumed under windows
       and (name [-4:]!='.exe'):
         name = name+'.exe'
     pgmfullpath = findFilePath(name, package)
+    if pgmfullpath is None:
+        return None
     # assert it is executable
     pgmfullpath = os.path.abspath(pgmfullpath)
     if not os.access(pgmfullpath, os.X_OK):

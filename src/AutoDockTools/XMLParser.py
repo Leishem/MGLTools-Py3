@@ -23,7 +23,7 @@ This Object parses the xml result of an AutoDock operation. It builds a dictiona
 
 """
 import os
-from string import find, join, replace, split, rfind
+from mglcompat.pystring import find, join, replace, split, rfind
 import re
 
 from AutoDockTools.ResultParser import ResultParser

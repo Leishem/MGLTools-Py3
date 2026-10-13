@@ -52,7 +52,8 @@ class ATEST(NetworkNode):
 
         code = """def doit(self, singleFloat, float3, floatmore3, float44,
 float4or5):
-    print singleFloat, float3, floatmore3, float44, float4or5
+    print(singleFloat, float3, floatmore3, float44, float4or5)
+
 """
         self.setFunction(code)
 
@@ -69,10 +70,11 @@ class TestDefaultValues(NetworkNode):
         ip.append(datatype='float', required=False, name='opt2', defaultValue=3.14)
 
         code = """def doit(self, required, optNodefault, opt1, opt2):
-    print 'required', required
-    print 'optNodefault',optNodefault
-    print 'opt1',opt1
-    print 'opt2',opt2   
+    print('required', required)
+    print('optNodefault',optNodefault)
+    print('opt1',opt1)
+    print('opt2',opt2)   
+
 """
         self.setFunction(code)
 
@@ -296,7 +298,7 @@ Output:
     new_a = self.inputPorts[0].hasNewValidData()
     new_b = self.inputPorts[1].hasNewValidData()
 
-    print new_a, a, new_b, b
+    print(new_a, a, new_b, b)
 #    if new_a and new_b:
 #        print 'ERROR: both input ports of ExclusiveOR node have new value'
 #        return 'stop'
@@ -304,6 +306,7 @@ Output:
         self.outputData(value=a)
     else:
         self.outputData(value=b)
+
 """
         self.setFunction(code)
 
@@ -3102,13 +3105,14 @@ Output Ports
         NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, in1):
-    print in1
+    print(in1)
 
     try:
       self.editor.vf.GUI.pyshell.top.deiconify()
-    
+
     except AttributeError:
       return
+
 """
             
         if code: self.setFunction(code)
@@ -3131,7 +3135,8 @@ Output Ports
         NetworkNode.__init__(*(self,), **kw)
 
         code = """def doit(self, in1):
-    print in1
+    print(in1)
+
 """
             
         if code: self.setFunction(code)
@@ -3722,15 +3727,15 @@ Output Ports
 
     if selectedLines:
         for ln in self.selectedLines:
-            st.tag_delete(Tkinter.SEL, '%d.0'%(ln+1), '%d.0'%(ln+2))
+            st.tag_delete(tkinter.SEL, '%d.0'%(ln+1), '%d.0'%(ln+2))
         self.selectedLines = eval(selectedLines)
         for ln in self.selectedLines:
-            st.tag_add(Tkinter.SEL, '%d.0'%(ln+1), '%d.0'%(ln+2))
+            st.tag_add(tkinter.SEL, '%d.0'%(ln+1), '%d.0'%(ln+2))
             st.clipboard_append(self.text[ln])
         self.lastSelectedLinesStr=str(selectedLines)
         self.sel = st.component('text').selection_get()
     else:
-        st.tag_add(Tkinter.SEL, '1.0', 'end')
+        st.tag_add(tkinter.SEL, '1.0', 'end')
         self.selectedLines = range(len(self.text))
         st.clipboard_append(all)
         self.lastSelectedLinesStr='range(0,len(self.text))'
@@ -3900,7 +3905,7 @@ example:
             elif castop == 'f': castarrayfunc=(float,)*len(cols)
             elif castop == 's': castarrayfunc=(str,)*len(cols)
             else:
-                raise ValueError, csatop, 'bad format string, i=int, f=float, s=string expected'
+                raise ValueError(csatop).with_traceback('bad format string, i=int, f=float, s=string expected')
 
         else:
             castarrayfunc=(cast[0],)*len(cols)
@@ -3911,16 +3916,17 @@ example:
             for i,col in enumerate(cols):
                 fcast = castarrayfunc[i]
                 if col[0]=='[':
-                    a,b = map(int, col[1:-1].split(':'))
-                    newline.extend(map(fcast, words.__getslice__(a, b)))
+                    a,b = list(map(int, col[1:-1].split(':')))
+                    newline.extend(list(map(fcast, words.__getslice__(a, b))))
                 else:
                     newline.append(fcast(words.__getitem__(int(col))))
             if len(newline)==1:
                 result.append(newline[0])
             else:
                 result.append(newline)
- 
+
         self.outputData(result=result)
+
 """
 
         self.setFunction(code)
@@ -4514,7 +4520,7 @@ Output Ports
                         break
             else:
                 for i in range(len(self.objectList)):
-                    if type(self.objectList[i]) == bytes and self.objectList[i] == selection:
+                    if type(self.objectList[i]) == str and self.objectList[i] == selection:
                         data = self.objectList[i]
                         break
                     elif repr(self.objectList[i]) == selection:
@@ -4936,7 +4942,7 @@ class RunFunction(FunctionNode):
             self.deletePort(p, updateSignature=False)
 
         # get arguments description
-        from inspect import getargspec
+        from inspect import getfullargspec as getargspec
         if hasattr(function, '__call__') and hasattr(function.__call__, 'im_func'): 
             args = getargspec(function.__call__.im_func)
         else:

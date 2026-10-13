@@ -19,7 +19,7 @@ from sff.amber import AmberParm
 
 import mglcompat.oldnumeric as Numeric, types
 from math import pi, sqrt, ceil, fabs
-from string import split, strip, join
+from mglcompat.pystring import split, strip, join
 from os.path import basename
 
 from MolKit.data.all_amino94_dat import all_amino94_dat
@@ -38,11 +38,11 @@ class Parm:
             allDict = all_amino94_dat
         else:
             allDict = allDictList[0]
-            if type(allDict)==bytes:
+            if type(allDict)==str:
                 allDict = self.getDictObj(allDict)
         if len(allDictList)>1:
             for d in allDictList:
-                if type(d)== bytes:
+                if type(d)== str:
                     d = self.getDictObj(d)
                 allDict.update(d)
                 #allDict.extend(d)
@@ -51,11 +51,11 @@ class Parm:
             ntDict = all_aminont94_dat
         else:
             ntDict = ntDictList[0]
-            if type(ntDict)==bytes:
+            if type(ntDict)==str:
                 ntDict = self.getDictObj(ntDict)
         if len(ntDictList)>1:
             for d in ntDictList:
-                if type(d)== bytes:
+                if type(d)== str:
                     d = self.getDictObj(d)
                 ntDict.update(d)
                 #ntDict.extend(d)
@@ -64,11 +64,11 @@ class Parm:
             ctDict = all_aminoct94_dat
         else:
             ctDict = ctDictList[0]
-            if type(ctDict)==bytes:
+            if type(ctDict)==str:
                 ctDict = self.getDictObj(ctDict)
         if len(ctDictList)>1:
             for d in ctDictList:
-                if type(d)== bytes:
+                if type(d)== str:
                     d = self.getDictObj(d)
                 ctDict.update(d)
                 #ctDict.extend(d)

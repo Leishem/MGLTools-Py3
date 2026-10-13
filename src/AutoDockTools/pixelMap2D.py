@@ -6,7 +6,7 @@
 
 from DejaVu.colorTool import TkColor, RedWhiteRamp
 from DejaVu.colorMap import ColorMap
-import Image, mglcompat.oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric; from PIL import Image
 
 
 class PixelMap2D:

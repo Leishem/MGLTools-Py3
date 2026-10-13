@@ -115,17 +115,17 @@ class FilterLigandsNode(NetworkNode):
     if self.inputPorts[1].hasNewValidData(): # new mode -> update widgets
         self.setParamPanelWidget(lfilter)
 
-    print "Running Filter node with parameters:"
-    print "min number of hydrogen bond donors: " + str(lfilter.HbDMin)
-    print "max number of hydrogen bond donors: " + str(lfilter.HbDMax)
-    print "min number of hydrogen bond acceptors: " + str(lfilter.HbAMin)
-    print "max number of hydrogen bond acceptors: " + str(lfilter.HbAMax)
-    print "min molecular weight: " + str(lfilter.MWMin)
-    print "max molecular weight: " + str(lfilter.MWMax)
-    print "min number of heavy atoms: " + str(lfilter.NatMin)
-    print "max number of heavy atoms: " + str(lfilter.NatMax)
-    print "min number of rotatable bonds: " + str(lfilter.TORSDOFMin)
-    print "max number of rotatable bonds: " + str(lfilter.TORSDOFMax)
+    print("Running Filter node with parameters:")
+    print("min number of hydrogen bond donors: " + str(lfilter.HbDMin))
+    print("max number of hydrogen bond donors: " + str(lfilter.HbDMax))
+    print("min number of hydrogen bond acceptors: " + str(lfilter.HbAMin))
+    print("max number of hydrogen bond acceptors: " + str(lfilter.HbAMax))
+    print("min molecular weight: " + str(lfilter.MWMin))
+    print("max molecular weight: " + str(lfilter.MWMax))
+    print("min number of heavy atoms: " + str(lfilter.NatMin))
+    print("max number of heavy atoms: " + str(lfilter.NatMax))
+    print("min number of rotatable bonds: " + str(lfilter.TORSDOFMin))
+    print("max number of rotatable bonds: " + str(lfilter.TORSDOFMax))
 
 #    accepted, rejected = lfilter.filterTable(ligands.propertyTable)
 
@@ -134,9 +134,10 @@ class FilterLigandsNode(NetworkNode):
     ligands.SetAcceptedLigands(accepted.filenames)
 
     if len(accepted.filenames) > 2500:
-        print "ERROR: Sorry, we cannot send your virtual screening job to the server because the number of accepted ligands from the filter is greater than the maximum number of ligands (2500) the server can support"
+        print("ERROR: Sorry, we cannot send your virtual screening job to the server because the number of accepted ligands from the filter is greater than the maximum number of ligands (2500) the server can support")
         return 'stop'
 
     self.outputData(ligands=ligands, num_accepted = len(accepted.filenames), num_rejected=len(rejected))
+
 """
         self.setFunction(code)

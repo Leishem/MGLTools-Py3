@@ -55,7 +55,7 @@ class RecentFiles:
 
         if category not in self.categories:
             self.categories[category] = []
-            #self.menuList[category] = Tkinter.Menu(self.mainMenu)
+            #self.menuList[category] = tkinter.Menu(self.mainMenu)
             #self.mainMenu.add_cascade(label=category, 
             #                          menu=self.menuList[category])
         if os.path.exists(filePath):
@@ -66,7 +66,7 @@ class RecentFiles:
                 if self.mainMenu != None : self.mainMenu.delete(index+1)
             if len(self.categories[category]) > 20:
                 self.categories[category].pop()
-                #self.menuList[category].delete(10,Tkinter.END)  
+                #self.menuList[category].delete(10,tkinter.END)  
             self.categories[category].insert(0, [filePath,cmdStr])
             if self.mainMenu != None : self.mainMenu.insert(0,'command', label=filePath, 
                                         command=self.callback([filePath,cmdStr]))
@@ -88,7 +88,7 @@ class RecentFiles:
                                   menu=self.mainMenu, underline=underline)
         self.menuList = {}
         for category in self.categories:
-#             self.menuList[category] = Tkinter.Menu(self.mainMenu)
+#             self.menuList[category] = tkinter.Menu(self.mainMenu)
 #             self.mainMenu.add_cascade(label=category, 
 #                                       menu=self.menuList[category])
              for listItem in self.categories[category]:

@@ -17,7 +17,7 @@ import tkinter, Pmw
 import sys, re, os
 from mglcompat import pystring as string
 import webbrowser
-from string import join
+from mglcompat.pystring import join
 from tkinter import *
 from mglcompat.pytypes import StringType
 import tkinter.filedialog

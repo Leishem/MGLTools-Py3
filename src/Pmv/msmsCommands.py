@@ -944,10 +944,10 @@ that should be triangualte at high density""",
 ##                         'tooltip':"""When checked surfaces will be computed using all atoms (selected or not) of
 ## each molecule.  If unchecked, the unselected atoms are ignored during the
 ## calculation.""",
-##                         'widgetType':Tkinter.Checkbutton,
+##                         'widgetType':tkinter.Checkbutton,
 ##                         'defaultValue': defaultValues['perMol'],
 ##                         'wcfg':{'text':'Per Molecule',
-##                                 'variable':Tkinter.IntVar(),
+##                                 'variable':tkinter.IntVar(),
 ##                                 'command':self.perMol_cb},
 ##                         'gridcfg':{'sticky':'we'}
 ##                         })
@@ -1487,7 +1487,7 @@ have to belong\nto a selected atom, for that face to be shown',
         kw['negate'] = negate
         kw['nbVert'] = nbVert
         kw['redraw'] = 1
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if surfName is None: kw['surfName'] = 'all'
@@ -1719,7 +1719,7 @@ class ComputeMSMSApprox(ComputeMSMS):
         kw['nbSphPerRes'] = nbSphPerRes
         kw['perMol'] = perMol
         kw['display'] = display
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         self.doitWrapper(*(nodes,), **kw)
@@ -1805,7 +1805,7 @@ class MsmsNPR(MVCommand):
          """None <--- msmsNPR(nodes, **kw)\n
             \nRequired Arguments :\n
             nodes: TreeNodeSet holding the current selection\n"""
-         if type(nodes) is bytes:
+         if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
          kw['redraw']=True
          self.doitWrapper(*(nodes,), **kw)

@@ -62,7 +62,7 @@ def read_data(filename, function):
 
     from mglcompat import pystring as string
     result = []
-    assert type(filename) == bytes
+    assert type(filename) == str
     assert function in (None, float, int)
     print("reading", filename)
     f = open(filename, "r")
@@ -89,7 +89,7 @@ def read_data(filename, function):
 def write_data(filename,data):
     """Write data to an ASCII file."""
 
-    assert type(filename) == bytes
+    assert type(filename) == str
     from mglcompat import pystring as string
     f = open(filename, "w")
     def writedatum1(datum, f=f):

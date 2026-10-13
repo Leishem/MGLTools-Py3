@@ -78,9 +78,9 @@ parameter panel the master is node.paramPanel.widgetFrame.
 import tkinter, Pmw, warnings
 import os, types; from mglcompat import pystring as string
 import warnings
-import user
+from mglcompat import pyuser as user
 
-from UserDict import UserDict
+from collections import UserDict
 
 from NetworkEditor.itemBase import NetworkItemsBase
 
@@ -117,7 +117,7 @@ class PortWidget(NetworkItemsBase):
 port:    Port instance to which the widget is bound
 
 master:    parent widget into which the widget will be created
-labelCfg:  configuration dictionary for a Tkinter.Label (use to anme the widget
+labelCfg:  configuration dictionary for a tkinter.Label (use to anme the widget
 
 ## FIXME .... labelSide is now in the widgetGridCfgXXX 
 labelSide: 'left', 'right', 'bottom', 'top'. Describes relative position
@@ -162,7 +162,7 @@ initialValue: used to set widget in constructor
             },
         'labelCfg': {
             'defaultValue':{'text':''}, 'type':'dict',
-            'description': 'dict of Tkinter.Label options'
+            'description': 'dict of tkinter.Label options'
             },
         'labelBalloon': {
             'defaultValue':'', 'type':'string',
@@ -302,7 +302,7 @@ initialValue: used to set widget in constructor
 
     def _procTrigger(self):
         value = self.get()
-        if type(value)==bytes:
+        if type(value)==str:
             cmd = self._cmdStr + "'%s', run=0)"%value
         else:
             cmd = self._cmdStr + str(value) + ', run=0)'
@@ -1632,7 +1632,7 @@ class TkPortWidget(PortWidget):
            
 class NEEntry(TkPortWidget):
     """widget wrapping a Tkinter Entry widget.
-Additional constructor arguments are any Tkinter.Entry arguments.
+Additional constructor arguments are any tkinter.Entry arguments.
 """
 
     configOpts = TkPortWidget.configOpts.copy()
@@ -1709,7 +1709,7 @@ class NEEntryWithDirectoryBrowser(NEEntry):
     """widget wrapping a Tkinter Entry widget used to specify a file name.
 double clicking on the entry opens a directory browser.
 Additional constructor arguments are title, initialDir and any
-Tkinter.Entry argument.
+tkinter.Entry argument.
 """
     configOpts = NEEntry.configOpts.copy()
     ownConfigOpts = {
@@ -1833,7 +1833,7 @@ class NEEntryWithFileBrowser(NEEntry):
     """widget wrapping a Tkinter Entry widget used to specify a file name.
 double clicking on the entry opens a file browser.
 Additional constructor arguments are filetypes, title, initialDir and any
-Tkinter.Entry argument.
+tkinter.Entry argument.
 """
     configOpts = NEEntry.configOpts.copy()
     ownConfigOpts = {
@@ -1964,7 +1964,7 @@ class NEEntryWithFileSaver(NEEntryWithFileBrowser):
     """widget wrapping a Tkinter Entry widget used to specify a file name.
 double clicking on the entry opens a SAVE file browser.
 Additional constructor arguments are filetypes, title, initialDir and any
-Tkinter.Entry argument.
+tkinter.Entry argument.
 """
 
     def __init__(self, port, **kw):
@@ -1980,7 +1980,7 @@ Tkinter.Entry argument.
 
 class NECheckButton(TkPortWidget):
     """widget wrapping a Tkinter Entry widget.
-Additional constructor arguments are any Tkinter.Checkbutton arguments.
+Additional constructor arguments are any tkinter.Checkbutton arguments.
 """
 
     configOpts = TkPortWidget.configOpts.copy()
@@ -2034,7 +2034,7 @@ Additional constructor arguments are any Tkinter.Checkbutton arguments.
 
 class NEButton(TkPortWidget):
     """widget wrapping a Tkinter Button widget.
-Additional constructor arguments are any Tkinter.Button arguments.
+Additional constructor arguments are any tkinter.Button arguments.
 """
 
     configOpts = TkPortWidget.configOpts.copy()
@@ -2073,7 +2073,7 @@ Additional constructor arguments are any Tkinter.Button arguments.
 ### useless, use NECheckbutton instead         
 ##class NERadiobutton(TkPortWidget):
 ##    """widget wrapping a Tkinter Radiobutton widget.
-##Additional constructor arguments are any Tkinter.Radiobutton arguments.
+##Additional constructor arguments are any tkinter.Radiobutton arguments.
 ##"""
 ##
 ##    configOpts = TkPortWidget.configOpts.copy()
@@ -2083,7 +2083,7 @@ Additional constructor arguments are any Tkinter.Button arguments.
 ##        # call base class constructor
 ##        apply( TkPortWidget.__init__, (self, port), kw)
 ##
-##        self.var = Tkinter.StringVar()
+##        self.var = tkinter.StringVar()
 ##        widgetcfg ={'textvariable':self.var}
 ##        widgetcfg.update( {'command':self.newValueCallback } )
 ##        
@@ -2091,7 +2091,7 @@ Additional constructor arguments are any Tkinter.Button arguments.
 ##        #apply( self.configure, (False,), widgetcfg)
 ##
 ##        # create the Checkbutton widget
-##        self.widget = apply( Tkinter.Radiobutton, (self.widgetFrame,),
+##        self.widget = apply( tkinter.Radiobutton, (self.widgetFrame,),
 ##                             widgetcfg )
 ##        # bind right mouse button click
 ##        self.widget.bind("<Button-3>", self.postWidgetMenu)

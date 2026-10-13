@@ -115,7 +115,7 @@ index into this table (i.e. tropical, 0)."""
 self.getFrom attribute. This is called by RedoDisplayList.
 prop can be a string, an integer, or an RGB tuple
 """
-        if type(prop) is bytes:
+        if type(prop) is str:
             prop = propertyNum[prop]
         assert prop < 4
         if self.getFrom[prop] is None:
@@ -123,12 +123,12 @@ prop can be a string, an integer, or an RGB tuple
         else:
             sourceProp, sca = self.getFrom[prop]
             if sourceProp is not None:
-                if type(sourceProp) is bytes:
+                if type(sourceProp) is str:
                     origProp = self.prop[propertyNum[sourceProp]]
                 else:
                     origProp = self.prop[sourceProp]
                     
-            if type(sourceProp) is bytes:
+            if type(sourceProp) is str:
                 sourceProp = propertyNum[sourceProp]
                 return self.binding[sourceProp], p
 
@@ -253,7 +253,7 @@ material have been updated.
             self._modified = True
 
         if prop is None: prop = self.diff
-        elif type(prop) is bytes:
+        elif type(prop) is str:
             prop = getattr(self, prop)
 
         assert prop in (0,1,2,3,4,5)

@@ -75,7 +75,7 @@ import tkinter.messagebox
 from MolKit.pdbParser import PdbParser, PdbqParser, PdbqtParser
 from MolKit.groParser import groParser
 
-from string import find
+from mglcompat.pystring import find
 
 class TrajPlayer(Player):
     """ a GUI to play a trajectory. The class constructor takes a Trajectory object and
@@ -206,10 +206,10 @@ class TrajPlayer(Player):
                                   'startFrameTW', 'endFrameLabel', 'endFrameTW', 
                                   'stepSizeLabel', 'stepSizeTW']
 
-            #self.showListVar = Tkinter.IntVar()
+            #self.showListVar = tkinter.IntVar()
             ifd2 = InputFormDescr(title='Set Play Options')    
             ## ifd2.append({'name':'selectCB',
-##                 'widgetType': Tkinter.Checkbutton,
+##                 'widgetType': tkinter.Checkbutton,
 ##                 'tooltip':'show ids of current ordered conformation list',
 ##                 'wcfg':{ 'text':'Show Conf List',
 ##                         #'command': self.showStatesList,

@@ -734,7 +734,7 @@ float computeRMSD(float Coords[1][3], float refCoords[][3], int lenCoords);
 %insert("shadow") %{
 
 def TriangleNormals(vertices, triangles, mode = "PER_FACE" ):
-    import numpy.oldnumeric as Numeric
+    import mglcompat.oldnumeric as Numeric
     import numpy
     if (type(vertices) == Numeric.arraytype) \
       or (type(vertices) == numpy.ndarray):

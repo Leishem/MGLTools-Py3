@@ -198,7 +198,7 @@ argument to the constructor.
 
 
 # DEPRECATED CLASS:  use AnyArrayType instead
-from UserDict import UserDict
+from collections import UserDict
 class AnyType(
                UserDict
 #               , 
@@ -373,7 +373,7 @@ class StringType(AnyArrayType):
 
     def validate(self, data):
         if self['datashape'] is None:
-            if type(data) == bytes:
+            if type(data) == str:
                 return True, data
             else:
                 return False, None
@@ -389,7 +389,7 @@ class StringType(AnyArrayType):
 
     def cast(self, data):
         if self['datashape'] is None:
-            if type(data) == bytes:
+            if type(data) == str:
                 return True, data
             try:
                 data = str(data)
@@ -444,7 +444,7 @@ class ListType(AnyType):
     
     def cast(self, data):
         try:
-            if type(data)==bytes:
+            if type(data)==str:
                 try:
                     lData = eval(data)
                 except:
@@ -557,7 +557,7 @@ class VectorType(AnyType):
 
     def validate(self, data):
         try:
-            if type(data) != bytes:
+            if type(data) != str:
                 len(data)
                 return True
             else:
@@ -569,7 +569,7 @@ class VectorType(AnyType):
     def cast(self, data):
         """returns a success status (true, false) and the coerced data
 """
-        if type(data) == bytes:
+        if type(data) == str:
             return True, (data, )
         return False, None
 

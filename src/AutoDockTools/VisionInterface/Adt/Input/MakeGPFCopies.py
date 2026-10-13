@@ -47,7 +47,7 @@ class MakeGPFCopies(NetworkNode):
     file_path = gpf_file.fullpath
 
     if not(os.path.exists(file_path)):
-        print "ERROR: GPF template file " + file_path + " does not exist!"
+        print("ERROR: GPF template file " + file_path + " does not exist!")
         return 'stop'
 
     name_list = set()
@@ -65,8 +65,9 @@ class MakeGPFCopies(NetworkNode):
 
         if not(os.path.exists(dst)):
             shutil.copyfile(file_path, dst)
-  
+
 
     self.outputData(gpf_list=gpf_list)
+
 """
         self.setFunction(code)

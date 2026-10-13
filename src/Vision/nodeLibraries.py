@@ -138,10 +138,10 @@ class BrowseLibraryPanel:
         rownum = 0
 
 #        # browse button
-#        browseLab = Tkinter.Label(frame, text='Directory of File: ')
+#        browseLab = tkinter.Label(frame, text='Directory of File: ')
 #        browseLab.grid(row=rownum, column=0, sticky='e')
-#        self.fileOrDirTkVar = Tkinter.StringVar()
-#        browseEntry = Tkinter.Entry(frame, textvariable=self.fileOrDirTkVar)
+#        self.fileOrDirTkVar = tkinter.StringVar()
+#        browseEntry = tkinter.Entry(frame, textvariable=self.fileOrDirTkVar)
 #        browseEntry.grid(row=rownum, column=1, columnspan=2, sticky='ew')
 #        browseEntry.bind('<Double-1>', self.fileBrowser_cb)
 #        browseEntry.bind('<Return>', self.open_cb) 
@@ -189,7 +189,7 @@ class BrowseLibraryPanel:
         self.libraryGUI.component('horizscrollbar').configure(width=10)
         rownum+=1
         
-##          reload = Tkinter.Button(frame, text='Reload Packages',
+##          reload = tkinter.Button(frame, text='Reload Packages',
 ##                                  command=self.reloadPackages_cb)
 ##          reload.grid(row=rownum, column=0, sticky='we')
 

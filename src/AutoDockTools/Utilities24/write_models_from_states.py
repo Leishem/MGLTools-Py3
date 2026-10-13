@@ -7,7 +7,7 @@
 # $Id: write_models_from_states.py,v 1.4 2010/04/05 21:07:42 rhuey Exp $
 #
 import os, sys, sys
-from string import join
+from mglcompat.pystring import join
 from MolKit import Read
 from mglutil.math.statetocoords import StateToCoords
 from AutoDockTools.Conformation import Conformation

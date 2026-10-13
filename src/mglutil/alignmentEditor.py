@@ -283,7 +283,7 @@ class AlignmentEditor(tkinter.Frame):
         self.createGUI()
 
     def createGUI(self):
-        #self.widgetArea = Tkinter.Frame(self, borderwidth=2, relief='sunken')
+        #self.widgetArea = tkinter.Frame(self, borderwidth=2, relief='sunken')
         #if self.hasGUI:
         #    return
         if self.Master is None:

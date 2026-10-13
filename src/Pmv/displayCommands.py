@@ -1070,7 +1070,7 @@ class DisplayCPK(DisplayCommand):
         kw['quality'] = quality
         kw['setScale']= setScale
         if propertyName is not None:
-            if type(propertyName) != bytes:
+            if type(propertyName) != str:
                 propertyName = propertyName[0]
             kw['propertyName'] = propertyName
             kw['propertyLevel']= propertyLevel

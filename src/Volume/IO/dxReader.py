@@ -1,7 +1,7 @@
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 import mglcompat.oldnumeric as Numeric
-from string import split
+from mglcompat.pystring import split
 from  Volume.Grid3D import Grid3DF, Grid3DSI, Grid3DUC
 
 class ReadDX:

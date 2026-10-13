@@ -150,7 +150,7 @@ class KeySelectable:
 
 class KeySelectableListBox(KeySelectable):
     """Adds the ability to use keystrokes to quickly select items in a
-    Tkinter.ListBox."""
+    tkinter.ListBox."""
 
     def __init__(self, widget, command=None):
         KeySelectable.__init__(self, widget, command)

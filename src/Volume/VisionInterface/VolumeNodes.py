@@ -1493,8 +1493,8 @@ class ReadAnyMap(NetworkNode):
             elif(re.search('\.spi$',filename,re.I)):
                 self.reader = ReadSPIDER()
             else:
-                f = InputForm(master=Tkinter._default_root,
-                                    root=Tkinter.Toplevel(),
+                f = InputForm(master=tkinter._default_root,
+                                    root=tkinter.Toplevel(),
                                     descr=ifd, blocking=1, modal=1)
                 maptype=f.go()
                 choice=maptype['listchooser'][0]
@@ -2898,7 +2898,7 @@ Ouput:
     elif operation=='NOT':
         op = Numeric.logical_not
     else:
-        print 'unknown operation', operation
+        print('unknown operation', operation)
         return 'STOP'
 
     #print grid1.data[bc1[0]:bc2[0]+1,bc1[1]:bc2[1]+1,bc1[2]:bc2[2]+1].shape
@@ -2924,6 +2924,7 @@ Ouput:
         nGrid = grid1
     self.outputPorts[0].setDataType(nGrid)
     self.outputData(grid=nGrid)
+
 """
         self.setFunction(code)
 
@@ -2951,8 +2952,9 @@ Ouput:
     c = conn.port1.originalDatatype
     # if input is of type Grid3DUC, change settings of dial
     if c=='Grid3DUC':
-        print "is Grid3DUC"
+        print("is Grid3DUC")
         self.node.inputPorts[1].widget.configure(type=int,min=0,max=255,oneTurn=50)
+
 """
         ip = self.inputPortsDescr
         ip.append(datatype='Grid3D', name='grid', afterConnect=codeOnConnect)
@@ -2984,7 +2986,7 @@ Ouput:
     try:
         operation = getattr(Numeric, operation)
     except AttributeError:
-        print 'ERROR: %s is not a known operation'%operation
+        print('ERROR: %s is not a known operation'%operation)
         return 'STOP'
 
     maskdata = operation(grid.data, value)
@@ -2993,10 +2995,11 @@ Ouput:
     if grid.crystal:
         from mglutil.math.crystal import Crystal
         crystal = Crystal( grid.crystal.length, grid.crystal.angles )
-    
+
     mask = Grid3DUC( maskdata.astype('B'), grid.origin, grid.stepSize, h,
                      crystal)
     self.outputData(mask=mask)
+
 """
         self.setFunction(code)
 
@@ -3219,7 +3222,7 @@ Output:
 """
         self.setFunction(code)
 
-from string import split
+from mglcompat.pystring import split
 class UTblurSpheres(NetworkNode):
     """creates a 3D mask in which Gaussians are placed on the
 spheres centers.  The output mask is of type Grid3DF,
@@ -3323,7 +3326,7 @@ Output:
             assert len(radius)==len(coords)
         else:
             radius = (Numeric.ones(len(coords))*radius).astype('f')
-        print 'radius is list -', islist
+        print('radius is list -', islist)
 
         wxres = self.getInputPortByName('resX').widget
         wyres = self.getInputPortByName('resY').widget
@@ -3337,7 +3340,7 @@ Output:
                 Zdim = int(dimensions[2])
             else:
                Xdim , Ydim, Zdim = (64, 64,64)
-            
+
         else:
             if resY == 0 or oneRes:
                 resY = resX
@@ -3370,6 +3373,7 @@ Output:
         #maskGrid.normalize()
         h['amin'], h['amax'],h['amean'],h['arms']= maskGrid.stats()
         self.outputData(maskGrid=maskGrid)
+
 """
         self.setFunction(code)
 
@@ -3688,7 +3692,8 @@ class TSRIsdf(NetworkNode):
                     extent[2]/(nbgpz-1)]
 
         from math import sqrt
-        def signedDistance((x,y,z), bht, vertices, normals):
+        def signedDistance(xxx_todo_changeme, bht, vertices, normals):
+            (x,y,z) = xxx_todo_changeme
             nb = 0
             cut = 0.
             cutIncr = 2.0
@@ -3742,6 +3747,7 @@ class TSRIsdf(NetworkNode):
         sdfGrid = Grid3DF( df, (xo, yo, zo), stepSize, h)
 
         self.outputData(sdfGrid=sdfGrid)
+
 """
         self.setFunction(code)
 
@@ -3864,23 +3870,24 @@ Output Ports
 
     maxr= max(radii)
     coords = atoms.coords[:]
-    mini = (min(map(lambda x: x[0], coords)), min(map(lambda x: x[1], coords)),
-            min(map(lambda x: x[2], coords)))
+    mini = (min([x[0] for x in coords]), min([x[1] for x in coords]),
+            min([x[2] for x in coords]))
 
-    maxi = (max(map(lambda x: x[0], coords)), max(map(lambda x: x[1], coords)),
-            max(map(lambda x: x[2], coords)))
+    maxi = (max([x[0] for x in coords]), max([x[1] for x in coords]),
+            max([x[2] for x in coords]))
 
-    minimum = map( lambda i: mini[i] - maxr - padding, [0,1,2])
-    maximum = map( lambda i: maxi[i] + maxr + 1 + padding, [0,1,2])
-    dims = map( lambda i: int((maximum[i]-minimum[i])/stepSize)+1, [0,1,2])
+    minimum = [mini[i] - maxr - padding for i in [0,1,2]]
+    maximum = [maxi[i] + maxr + 1 + padding for i in [0,1,2]]
+    dims = [int((maximum[i]-minimum[i])/stepSize)+1 for i in [0,1,2]]
 
-    print 'Molecule BB grid has dimensions: ', dims
+    print('Molecule BB grid has dimensions: ', dims)
 
     from Volume.Grid3D import Grid3DUC
     import mglcompat.oldnumeric as Numeric
     ar = Numeric.zeros( dims, Numeric.UnsignedInt8)
     grid = Grid3DUC( ar, minimum, (stepSize,)*3, {} )
     self.outputData(grid3D = grid)
+
 """
         self.setFunction(code)
 
@@ -4149,7 +4156,7 @@ inner_isoval, inner_error, outersurf, crossection, planeX, planeZ):
                 res.append(self.power2plus1(d))
             p2 , p2plus1 = map(None, res[0], res[1], res[2])
             if False in p2:
-                print 'Error: unsupported data dimensions: ', (dx, dy,dz)
+                print('Error: unsupported data dimensions: ', (dx, dy,dz))
                 return
             dims1 = [dx, dy, dz]
             if False in p2plus1: # the dims are 2^n, need to pad the volume
@@ -4200,7 +4207,7 @@ inner_isoval, inner_error, outersurf, crossection, planeX, planeZ):
             self.mesher = mesher
             update = 1
         if self.meshtype != self.meshtypes[meshtype]:
-            print 'setting meshtype:', meshtype
+            print('setting meshtype:', meshtype)
             self.meshtype = self.meshtypes[meshtype]
             if self.mesher:
                 self.mesher.setMesh(self.meshtype)
@@ -4234,7 +4241,7 @@ inner_isoval, inner_error, outersurf, crossection, planeX, planeZ):
                 update = 1
         if update:
             vertarr, facearr = self.getOutput(self.meshtype)
-            
+
             #print  'in doit() : verts', len(vertarr), 'faces', len(facearr)
             #self.mesher.displayCutSection()
             self.outputData(coords=vertarr, indices=facearr)"""

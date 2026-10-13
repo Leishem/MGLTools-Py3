@@ -52,7 +52,7 @@ if len(stack): setRendering(self.GUI.VIEWER, stack.pop(), True)
 
     def loadStyles(self):
         # find the location fo the styles directory
-        import Image, ImageTk
+        from PIL import Image; from PIL import ImageTk
         from Pmv import styles
         path = styles.__path__[0]
         from glob import glob
@@ -162,7 +162,7 @@ if len(stack): setRendering(self.GUI.VIEWER, stack.pop(), True)
 
             # add a page for styles
             page = self.StylesMaster = gui.toolsNoteBook.add("Styles")
-            #master = self._master = Tkinter.Frame(gui.StylesMaster)
+            #master = self._master = tkinter.Frame(gui.StylesMaster)
             #master.pack(fill='both', expand=1)
 
             #p = Pmw.ScrolledFrame(

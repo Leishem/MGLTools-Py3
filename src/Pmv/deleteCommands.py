@@ -290,7 +290,7 @@ class DeleteMolecule(MVCommand):
         """None <- deleteMol(nodes, **kw)
         \nnodes: TreeNodeSet holding the current selection.
         """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         kw['undoable'] = undoable
         self.doitWrapper( *(nodes,), **kw )
@@ -298,7 +298,7 @@ class DeleteMolecule(MVCommand):
 
     def setupUndoBefore(self, molecule, undoable=False):
         if undoable:
-            if type(molecule) is bytes:
+            if type(molecule) is str:
                 molecules, nodeSets = self.vf.getNodesByMolecule(molecule)
                 if not len(molecules):return
                 molecule = molecules[0]
@@ -454,7 +454,7 @@ class DeleteAtomSet(MVCommand):
     def __call__(self, atoms, **kw):
         """None <- deleteAtomSet(atoms, **kw)
         \natoms: AtomSet to be deleted."""
-        if type(atoms) is bytes:
+        if type(atoms) is str:
             self.nodeLogString = "'"+atoms+"'"
         ats = self.vf.expandNodes(atoms)
         if not len(ats):
@@ -728,7 +728,7 @@ class DeleteHydrogens(DeleteAtomSet):
     def __call__(self, atoms, **kw):
         """None <- deleteAtomSet(atoms, **kw)
         \natoms: AtomSet to be deleted."""
-        if type(atoms) is bytes:
+        if type(atoms) is str:
             self.nodeLogString = "'"+atoms+"'"
         
         ats = self.vf.expandNodes(atoms)

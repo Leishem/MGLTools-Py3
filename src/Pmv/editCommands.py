@@ -47,7 +47,7 @@ from Pmv.stringSelectorGUI import StringSelectorGUI
 
 import types, tkinter, Pmw, math, os
 import mglcompat.oldnumeric as Numeric
-from string import letters, strip, find
+from mglcompat.pystring import letters, strip, find
 
 def check_edit_geoms(VFGUI):
     edit_geoms_list = VFGUI.VIEWER.findGeomsByName('edit_geoms')
@@ -98,7 +98,7 @@ class DeleteWaterCommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None<---deleteWater(nodes, **kw)
         \nnodes --- TreeNodeSet from which to delete waters"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         try:
             nodes = self.vf.expandNodes(nodes)
@@ -174,7 +174,7 @@ Original code by W. Patrick Walters and Matthew T. Stahl\n
     def __call__(self, nodes, **kw):
         """None<---typeAtoms(nodes, **kw)
         \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         try:
             nodes = self.vf.expandNodes(nodes)
@@ -248,7 +248,7 @@ to change assigned atom types.
     def __call__(self, nodes, **kw):
         """None<---editAtomTypeGC(nodes, **kw)
         \nnodes --- TreeNodeSet """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         ats = self.vf.expandNodes(nodes)
         if not len(ats): return 'ERROR'
@@ -353,7 +353,7 @@ class EditAtomTypeCommand(MVCommand):
         """None <- editAtomType(ats, btype, **kw)
         \nat --- atom 
         \nbtype --- babel_type"""
-        if type(ats) is bytes:
+        if type(ats) is str:
             self.nodeLogString = "'"+ats+"'"
         ats = self.vf.expandNodes(ats)
         if not len(ats): return 'ERROR'
@@ -408,7 +408,7 @@ to change atom charge.
     def __call__(self, nodes, **kw):
         """None<---editAtomChargeGC(nodes, **kw)
         \nnodes --- TreeNodeSet """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
@@ -685,7 +685,7 @@ Original code by W. Patrick Walters and Matthew T. Stahl\n
         \nwithRings --- default is 0"""
 
         kw['withRings'] = withRings
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         self.doitWrapper(*(nodes,), **kw)
 
@@ -752,7 +752,7 @@ class AddHydrogensGUICommand(MVCommand):
            \nrenumber ---  Boolean flag when set to True the atoms are renumbered. (default is True)
            """
         #kw['topCommand'] = 0
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         self.doitWrapper(*(nodes,polarOnly,method,renumber,), **kw)
 
@@ -1002,7 +1002,7 @@ Original code by W. Patrick Walters and Matthew T. Stahl\n
         \nThe hydrogen atoms added to each molecule are also saved as a set
         called mol.name + '_addedH'
         """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         return self.doitWrapper(*(nodes,polarOnly,method,renumber,), **kw)
 
@@ -1186,7 +1186,7 @@ which is invoked by it with the current selection, if there is one.
     def __call__(self, nodes, **kw):
         """None <- fixHNamesGC(nodes, **kw)
         \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         
         self.doitWrapper(*(nodes,), **kw)
@@ -1302,7 +1302,7 @@ in a pdb file.\n
     def __call__(self, nodes, **kw):
         """None <--- fixHNames(nodes, **kw)
            \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         self.doitWrapper(*(nodes,), **kw)
    
@@ -1495,7 +1495,7 @@ class SplitNodesGUICommand(MVCommand):
            \nlevelToSplit --- splitting level
            \ntop ---
            \nrenumber --- default is 1"""
-        if type(levelToSplit)==bytes:
+        if type(levelToSplit)==str:
             levelToSplit = self.levelDict[levelToSplit]
         kw['renumber'] = renumber
         self.doitWrapper(*(nodes, levelToSplit, top,), **kw)
@@ -1698,9 +1698,9 @@ eg. splitting at the chain level adds a new chain to the Protein, etc. etc.\n
            \nif levelToSplit is Molecule/Protein, the new molecule is returned
            OTHERWISE the modified molecule is returned"""
 
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
-        if type(levelToSplit)==bytes:
+        if type(levelToSplit)==str:
             levelToSplit = self.levelDict[levelToSplit]
         kw['renumber'] = renumber
         return self.doitWrapper(*(nodes, levelToSplit, top,), **kw)
@@ -2133,7 +2133,7 @@ class MergeNPHsGUICommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None <- mergeNPHSGC(nodes, **kw)
 \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
@@ -2237,7 +2237,7 @@ class MergeNPHsCommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None <- mergeNPHS(nodes, **kw)
 \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
@@ -2293,7 +2293,7 @@ class MergeLonePairsGUICommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None <- mergeLPSGC(nodes, **kw)
 \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
@@ -2388,7 +2388,7 @@ in the first or second position.
     def __call__(self, nodes, **kw):
         """None<---mergeLPS(nodes, **kw)
 \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
@@ -2499,7 +2499,7 @@ for each atom and entering each atom's charge in its _charges dictionary.
         """None<---computeGasteigerGC(nodes, **kw)
            \nnodes --- TreeNodeSet holding the current selection"""
 
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         if not len(nodes): return
         return self.doitWrapper(*(nodes,), **kw)
@@ -2572,7 +2572,7 @@ class ComputeGasteigerCommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None <- computeGasteiger(nodes, **kw)
            \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return
@@ -2639,7 +2639,7 @@ class AddKollmanChargesGUICommand(MVCommand):
     def __call__(self, nodes, **kw):
         """totalCharge <- addKollmanChargesGC(nodes, **kw)
 \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         kw['topCommand'] = 0
         return self.doitWrapper(*(nodes,), **kw)
@@ -2707,7 +2707,7 @@ class AddKollmanChargesCommand(MVCommand):
     def __call__(self, nodes, **kw):
         """totalCharge<---addKollmanCharges(nodes, **kw)
 \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         return self.doitWrapper(*(nodes,), **kw)
 
@@ -2986,7 +2986,7 @@ class AverageChargeErrorCommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None<---averageChargeError(nodes, **kw)
            \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         kw['topCommand'] = 0
         nodes = self.vf.expandNodes(nodes)
@@ -3114,9 +3114,9 @@ class AverageChargeErrorCommand(MVCommand):
 #        #if the molecule has changed....
 #        ifd = self.ifd=InputFormDescr(title='Check Residue Charge Results:')
 #        ifd.append({'name': 'numResErrsLabel',
-#            'widgetType': Tkinter.Label,
+#            'widgetType': tkinter.Label,
 #            'wcfg':{'text': str(len(resSet)) + ' Residues with non-integral charge:\n(double click to edit charges on a residue\nyellow number is amt to add\nfor closest integral charge)'},
-#            'gridcfg':{'sticky': Tkinter.W+Tkinter.E}})
+#            'gridcfg':{'sticky': tkinter.W+tkinter.E}})
 #        ifd.append({'name': 'resLC',
 #            'widgetType':ListChooser,
 #            'wcfg':{
@@ -3130,20 +3130,20 @@ class AverageChargeErrorCommand(MVCommand):
 #                    'width': 30}},
 #            'gridcfg':{'sticky':'news','row':2,'column':0} })
 #        ifd.append({'name': 'chargeLabel',
-#            'widgetType':Tkinter.Label,
+#            'widgetType':tkinter.Label,
 #            'wcfg':{'text':'Net Charge on ResidueSet:  ' + str(totalCharge)},
-#            'gridcfg':{'sticky':Tkinter.W+Tkinter.E}})
+#            'gridcfg':{'sticky':tkinter.W+tkinter.E}})
 #        ifd.append({'name':'averBut',
-#            'widgetType':Tkinter.Button,
+#            'widgetType':tkinter.Button,
 #            'wcfg': { 'text':'Spread Charge Deficit\nover all atoms in residue',
 #                'command': CallBackFunction(self.averageCharge, resSet)},
-#            'gridcfg':{'sticky':Tkinter.W+Tkinter.E}})
+#            'gridcfg':{'sticky':tkinter.W+tkinter.E}})
 #        #ifd.append({'name':'showBut',
-#            #'widgetType':Tkinter.Button,
+#            #'widgetType':tkinter.Button,
 #            #'wcfg': { 'text':'Save Non-Integral Charge Residues As Set',
 #                #'command': CallBackFunction(self.saveErrResidues, resSet)},
-#            #'gridcfg':{'sticky':Tkinter.W+Tkinter.E}})
-#        ifd.append({'widgetType':Tkinter.Button,
+#            #'gridcfg':{'sticky':tkinter.W+tkinter.E}})
+#        ifd.append({'widgetType':tkinter.Button,
 #            'wcfg':{'bd':6, 'text':'Dismiss',
 #                    'command': CallBackFunction(self.Dismiss_cb, resSet)},
 #            'gridcfg':{'sticky':'ew', 'columnspan':4}})
@@ -3287,7 +3287,7 @@ class CheckChargesGUICommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None<---checkChargesGC(nodes, **kw)
            \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         kw['topCommand'] = 0
         nodes = self.vf.expandNodes(nodes)
@@ -3339,10 +3339,10 @@ class CheckChargesGUICommand(MVCommand):
                 'command': CallBackFunction(self.averageCharge, resSet)},
             'gridcfg':{'sticky':tkinter.W+tkinter.E}})
         #ifd.append({'name':'showBut',
-            #'widgetType':Tkinter.Button,
+            #'widgetType':tkinter.Button,
             #'wcfg': { 'text':'Save Non-Integral Charge Residues As Set',
                 #'command': CallBackFunction(self.saveErrResidues, resSet)},
-            #'gridcfg':{'sticky':Tkinter.W+Tkinter.E}})
+            #'gridcfg':{'sticky':tkinter.W+tkinter.E}})
         ifd.append({'widgetType':tkinter.Button,
             'wcfg':{'bd':6, 'text':'Dismiss',
                     'command': CallBackFunction(self.Dismiss_cb, resSet)},
@@ -3471,7 +3471,7 @@ class SetChargeCommand(MVCommand):
            \nnodes --- TreeNodeSet holding the current selection
            \nkey --- what charges (keyword of the _charges dictionary).
            """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         #is this a good idea?
@@ -3557,7 +3557,7 @@ class CheckResidueChargesCommand(MVCommand):
     def __call__(self, nodes, **kw):
         """None <- checkResCharges(nodes, **kw)
            \nnodes --- TreeNodeSet holding the current selection"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if len(nodes): 
@@ -3656,7 +3656,7 @@ class AssignAtomsRadiiCommand(MVCommand):
                     existing radii information.\n
 
         """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 

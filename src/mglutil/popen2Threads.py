@@ -62,7 +62,7 @@ http://sourceforge.net/project/showfiles.php?group_id=78018
             self.stdoutTk.component('text').config(cursor='watch')
             f = tkinter.Frame(self.root)
             f.pack(fill='x')            
-            #Tkinter.Label(f, text='  ').pack(side='right') #spacer
+            #tkinter.Label(f, text='  ').pack(side='right') #spacer
             if not mswin:
                 self.kill = tkinter.Button(f, text='   Kill   ', 
                                            command=self.kill_cb)

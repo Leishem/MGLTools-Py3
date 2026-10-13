@@ -72,8 +72,8 @@ After the selected docking log file is parsed, the user can:
     * Dockings can be deleted via 'Delete Docking Log'
 
 """
-import types, tkinter, subprocess, os, copy, glob, popen2, time
-from string import find, join, replace, split, rfind, strip
+import types, tkinter, subprocess, os, copy, glob, time
+from mglcompat.pystring import find, join, replace, split, rfind, strip
 import mglcompat.oldnumeric as Numeric, math
 import re
 import Pmw
@@ -1464,7 +1464,7 @@ class ADEPDBMol(MVCommand):
         #FIX THIS: it assumes autodock3 is name of executable
         cmd = "autodock3 -p "+ dpfFile + " -c"
         #cmd = "echo '" + molList + "\n'|autodock3 -p "+ dpfFile + "-c"
-        outptr, inptr, errptr = popen2.popen3(cmd,bufsize=0)
+        _p = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1); outptr, inptr, errptr = _p.stdout, _p.stdin, _p.stderr
         inptr.flush()
         #should these be kept for any reason?
         lineList = []
@@ -2055,7 +2055,7 @@ class ADShowBindingSite(MVCommand):
 
     def setupUndoBefore(self, docking):
         #???color???
-        if type(docking)==bytes:
+        if type(docking)==str:
             docking = self.vf.dockings[docking]
         if not hasattr(docking, 'macroMol'):
             return 
@@ -3164,7 +3164,7 @@ class ADMakeAllGrids(MVCommand):
             ifd.append({'name': 'spaceLab',
                         'widgetType':tkinter.Label,
                         'text':'spacing: ',
-                        #'gridcfg':{'sticky':Tkinter.W, 'columnspan':5}})
+                        #'gridcfg':{'sticky':tkinter.W, 'columnspan':5}})
                         'gridcfg':{'sticky':tkinter.W, 'row':-1,'column':3,
                             'columnspan':2}})
             ifd.append({'widgetType': tkinter.Label,
@@ -4221,9 +4221,9 @@ class ClusterDockingChooser(MoleculeChooser):
                             'mode':self.mode,
                             'entries':entries})
         if not (modal or blocking):
-            #self.ifd.append({'widgetType':Tkinter.Button,
+            #self.ifd.append({'widgetType':tkinter.Button,
                             #'text':'Show Conformation',
-                            #'gridcfg':{'sticky': Tkinter.E+Tkinter.W,'columnspan':2},
+                            #'gridcfg':{'sticky': tkinter.E+tkinter.W,'columnspan':2},
                             #'command':self.show_cb})
             self.ifd.append({'widgetType':tkinter.Button,
                             'text':'Write Current Coords',
@@ -4848,12 +4848,12 @@ class ADMacroLigandChart(MVCommand):
                     'variable':self.sortChoice},
                 'gridcfg':{'sticky':tkinter.E}})
         #ifd.append({'name': 'colBut',
-                #'widgetType':Tkinter.Radiobutton,
+                #'widgetType':tkinter.Radiobutton,
                 #'wcfg':{'text':'column', 
                     ##'command':CallBackFunction(self.showOptions,ifd), 
                     #'value':'column',
                     #'variable':self.sortChoice},
-                #'gridcfg':{'sticky':Tkinter.W, 'row': -1, 'column':1}})
+                #'gridcfg':{'sticky':tkinter.W, 'row': -1, 'column':1}})
         ifd.append({ 'widgetType':tkinter.Label,
                 'wcfg':{'text':'Using as Keys:'},
                 'gridcfg':{'sticky':tkinter.W+tkinter.E}})
@@ -4867,12 +4867,12 @@ class ADMacroLigandChart(MVCommand):
                 'gridcfg':{'sticky':tkinter.E}})
         #rowList=map(lambda x: 'row'+str(x),range(1,len(self.ifd.entryByRow)))
         #ifd.append({'name': 'rowChoices',
-                #'widgetType':Tkinter.Radiobutton,
+                #'widgetType':tkinter.Radiobutton,
                 #'listtext':rowList,
                 #'defaultValue':self.rowChoice.get(),
                 #'groupedBy':10,
                 #'wcfg':{'variable':self.rowChoice},
-                #'gridcfg':{'sticky':Tkinter.W,'row':3, 'column':1}})
+                #'gridcfg':{'sticky':tkinter.W,'row':3, 'column':1}})
         vals = self.vf.getUserInput(ifd)
         if self.sortChoice.get()=='row':
             direction='row'
@@ -5496,10 +5496,10 @@ class ADDockingChooser(MVCommand):
         if hasattr(d, 'clusterer'):
             self.chooser= ClusterDockingChooser(self.vf, self.mode, self.title)
             #self.chooser.ifd.append({'name':'Select Cluster Button',
-                                    #'widgetType':Tkinter.Button,
+                                    #'widgetType':tkinter.Button,
                                     #'text': 'Select',
                                     #'wcfg':{'bd':6},
-                                    #'gridcfg':{'sticky':Tkinter.E+Tkinter.W},
+                                    #'gridcfg':{'sticky':tkinter.E+tkinter.W},
                                     #'command': CallBackFunction(self.selectDockingCluster_cb,self.chooser)})                
             self.form = self.chooser.go(modal=0, blocking=0)
             if not self.form:
@@ -5507,10 +5507,10 @@ class ADDockingChooser(MVCommand):
         #elif d.ch.modelList:
         #    self.chooser= ModelDockingChooser(self.vf, self.mode, self.title)
         #    #self.chooser.ifd.append({'name':'Select Model Button',
-        #                            #'widgetType':Tkinter.Button,
+        #                            #'widgetType':tkinter.Button,
         #                            #'text': 'Select',
         #                            #'wcfg':{'bd':6},
-        #                            #'gridcfg':{'sticky':Tkinter.E+Tkinter.W},
+        #                            #'gridcfg':{'sticky':tkinter.E+tkinter.W},
         #                            #'command': CallBackFunction(self.selectDockingModel_cb,self.chooser)})                
         #    self.form = self.chooser.go(modal=0, blocking=0)
         else:
@@ -5541,7 +5541,7 @@ class ADDockingChooser(MVCommand):
     def doit(self, nodes):
         ##self.lastCmdLog = self.logString(nodes)
 
-        if type(nodes)==bytes:
+        if type(nodes)==str:
             nodes = self.vf.Mols.NodesFromName(nodes)
 
         if issubclass(nodes.__class__, TreeNode):
@@ -5931,7 +5931,7 @@ class StatesPlayerWidget:
         form.showVar = form.ifd.entryByName['selectCB']['variable']
         ctr2 = ifd.entryByName['colorType']['widget']
         entF2 = ctr2.component('entryfield')
-        #all this to get a handle to the Tkinter.Entry buried in the pww
+        #all this to get a handle to the tkinter.Entry buried in the pww
         form.ent3 = entF2._entryFieldEntry
         form.ent3.bind('<Return>', self.updateColor, '+')
         form.ent3.config(width=8)

@@ -750,7 +750,7 @@ panel of the corresponding Pmv command"""
         groupMaster = w.interior()
 
         # add argument option menu
-##         self.argVar = Tkinter.StringVar()
+##         self.argVar = tkinter.StringVar()
 ##         self.argOptMenu = Pmw.OptionMenu(
 ##             groupMaster, labelpos = 'w',
 ##             label_text = 'Argument to be used passed to chained command:',

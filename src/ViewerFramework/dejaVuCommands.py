@@ -609,7 +609,7 @@ class CenterGeom(Command):
 Geom can be either a tring or an instance of a DejaVu.Geom.Geom
 The point3D is given in the global coodinates system.
 """
-        if type(object)==bytes:
+        if type(object)==str:
             vi = self.vf.GUI.VIEWER
             object = vi.FindObjectByName(object)
         self.doitWrapper(*(object, point), **kw)
@@ -772,9 +772,9 @@ class AlignGeoms(Command):
 
     def __call__(self, geom1, vertInd1, geom2, vertInd2, **kw):
         """describe this command for a programmer"""
-        if type(geom1) is bytes :
+        if type(geom1) is str :
             geom1 = self.vf.GUI.VIEWER.FindObjectByName(geom1)
-        if type(geom2) is bytes :
+        if type(geom2) is str :
             geom2 = self.vf.GUI.VIEWER.FindObjectByName(geom2)
         self.doitWrapper(*(geom1, vertInd1, geom2, vertInd2), **kw)
 
@@ -1129,7 +1129,7 @@ class CreateColorMap(Command):
         if not viewer:
             viewer = self.vf.GUI.VIEWER
 
-        if ramp and type(ramp) is bytes:
+        if ramp and type(ramp) is str:
             #ramp can only be a string
             ramp = eval(ramp + '()')
 
@@ -1184,7 +1184,7 @@ class ColorMapEditor(Command):
     def buildFormDescr(self, formName):
         if formName == 'editCM':
             self.interpOn = tkinter.IntVar()
-            #self.id = Tkinter.StringVar()
+            #self.id = tkinter.StringVar()
             self.showLabels = tkinter.IntVar()
             self.showLabels.set(1)
             ifd = InputFormDescr(title = 'Select Color Map To Edit')
@@ -1230,7 +1230,7 @@ class ColorMapEditor(Command):
 
     def doit(self, cmap, viewer=None):
         
-        if type(cmap) is bytes:
+        if type(cmap) is str:
             if cmap in self.vf.colorMaps:
                 cmap=self.vf.colorMaps[cmap]
             else:
@@ -1255,7 +1255,7 @@ class ColorMapEditor(Command):
         None <- showCMGUI(cmap='cmap', **kw)
         cmap:         ColorMap or its name
         """
-        if type(cmap) is bytes:
+        if type(cmap) is str:
             if cmap not in list(self.vf.colorMaps.keys()):
                 print('unknown color map name: ', cmap)
                 return 'ERROR'
@@ -1303,7 +1303,7 @@ class EditColorMap(Command):
         None <- editCM(cmap, ramp=None, mini=None,
                  maxi=None, name=None, **kw)
         """
-        if type(cmap) is bytes:
+        if type(cmap) is str:
             if cmap not in list(self.vf.colorMaps.keys()):
                 print('unknown color map name: ', cmap)
                 return 'ERROR'
@@ -1877,7 +1877,7 @@ BMP, EPS, GIF, IM, JPEG, PNG, PPM, TIFF or TIF, PDF.
 
 
     def checkDependencies(self, vf):
-        import Image
+        from PIL import Image
 
   
     def doit(self, filename, transparentbg):
@@ -2279,7 +2279,7 @@ class setbackgroundcolorCommand(Command):
 None <-----setbackgroundcolorCommand(color)
 \ncolor : background color
 """
-        if type(color) == bytes:
+        if type(color) == str:
             return "Error: color type can't be string"
         elif hasattr(color, '__len__') is False:
             return "Error: color should have length"

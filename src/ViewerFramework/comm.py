@@ -121,7 +121,7 @@ class Comm:
             func(name, msg)
 
     def hangupClient(self, client):
-        if type(client) == bytes:
+        if type(client) == str:
             cl = self.clients[client][0]
         else:
             cl = client
@@ -183,7 +183,7 @@ class Comm:
 
 
     def disconnectFromServer(self, server):
-        if type(server) == bytes:
+        if type(server) == str:
             cl = self.serverSockets[server]
         else:
             cl = server

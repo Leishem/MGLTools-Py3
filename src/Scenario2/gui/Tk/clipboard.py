@@ -27,7 +27,7 @@ class ClipboardGUI:
         ClipboardGUIObject <- ClipboardGUI(clipboard, master=None)
 
         clipboard is an instance of a Clipboard object
-        master is a Tk container object. If master is None a Tkinter.Toplevel
+        master is a Tk container object. If master is None a tkinter.Toplevel
         object is created
 
         This object registers interest in AddMAAToClipBoardEvent and

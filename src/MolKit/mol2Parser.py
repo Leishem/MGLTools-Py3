@@ -350,7 +350,7 @@ class Mol2Parser(MoleculeParser):
                 else:
                     chainID = 'default'
 
-            elif type(subst_chain[atmline[7]]) is bytes:
+            elif type(subst_chain[atmline[7]]) is str:
                 # that is to say that only chains has this substructure name.
                 chainID = subst_chain[atmline[7]]
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os
-from string import find, strip
+from mglcompat.pystring import find, strip
 
 from MolKit import Read
 from MolKit.molecule import AtomSet

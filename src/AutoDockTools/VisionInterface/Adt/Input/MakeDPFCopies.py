@@ -47,7 +47,7 @@ class MakeDPFCopies(NetworkNode):
     file_path = dpf_file.fullpath
 
     if not(os.path.exists(file_path)):
-        print "ERROR: DPF template file " + file_path + " does not exist!"
+        print("ERROR: DPF template file " + file_path + " does not exist!")
         return 'stop'
 
     name_list = set()
@@ -65,8 +65,9 @@ class MakeDPFCopies(NetworkNode):
 
         if not(os.path.exists(dst)):
             shutil.copyfile(file_path, dst)
-  
+
 
     self.outputData(dpf_list=dpf_list)
+
 """
         self.setFunction(code)

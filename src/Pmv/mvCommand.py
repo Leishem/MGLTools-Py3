@@ -474,7 +474,7 @@ moelcular fragment name.
 
     def __call__(self, nodes, topCommand=0, **kw):
         # we do not want this command to log or undo itself
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
 
         if 'topCommand' not in kw: kw['topCommand'] = topCommand
@@ -522,7 +522,7 @@ matrices.
         # we do not want this command to log or undo itself
         kw['topCommand']=0
         kw['busyIdle']=1
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
             nodes = self.vf.expandNodes(nodes)
         self.doitWrapper(*(nodes,), **kw)
@@ -637,7 +637,7 @@ class MVSetSelectionLevel(MVCommand):
         MVCommand.undo(self, **kw)
     
     def doit(self, Klass, KlassSet=None):
-        if type(Klass)==bytes:
+        if type(Klass)==str:
             if Klass in list(self.levelDict.keys()):
                 Klass = self.levelDict[Klass]
             else:

@@ -307,7 +307,7 @@ class StringSelectorGUI(tkinter.Frame):
         self.showCurrent = tkinter.IntVar()
         self.showCurrent.set(0)
         #for n in ['showCurrent']:
-        #    exec('self.'+ n + '= Tkinter.IntVar()')
+        #    exec('self.'+ n + '= tkinter.IntVar()')
         #    exec('self.'+ n + '.set(0)')
 
 
@@ -758,7 +758,7 @@ class StringSelectorGUI(tkinter.Frame):
     def buildGUI(self):
         #first build Frames
         #which set up Menubar and rest
-        #self.MBFrame = Tkinter.Frame(self.master, relief='raised')
+        #self.MBFrame = tkinter.Frame(self.master, relief='raised')
         #widStrings =  ['MBFrame', 'WidFrame']
         self.buildFrame('topFrame' ) 
         self.buildFrame('buttonFrame' )
@@ -814,7 +814,7 @@ class StringSelectorGUI(tkinter.Frame):
                 buildMenuCmd = widDict.get('buildMenuCmd')
                 if buildMenuCmd: del widDict['buildMenuCmd']
 
-                #if w==Tkinter.Menubutton: master = self.MBFrame
+                #if w==tkinter.Menubutton: master = self.MBFrame
                 #else: master = self.WidFrame
                 newW = w(*(master,), **widDict['wcfg'])
 

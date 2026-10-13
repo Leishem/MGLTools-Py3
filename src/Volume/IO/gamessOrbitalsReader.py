@@ -1,7 +1,7 @@
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 import mglcompat.oldnumeric as Numeric
-from string import split
+from mglcompat.pystring import split
 
 class ReadGamessOrbitals:
     """Read a rawiv binary file"""

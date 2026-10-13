@@ -895,35 +895,35 @@ class ColorChooser(Chooser):
     ##                 self.root.deiconify()
     ##                 self.saveHidden = 0
     ##         else:
-    ##             self.root = Tkinter.Toplevel()
-    ##             self.saveFrame = Tkinter.Frame(self.root, )
-    ##             groupFrame = Tkinter.Frame(self.saveFrame)
+    ##             self.root = tkinter.Toplevel()
+    ##             self.saveFrame = tkinter.Frame(self.root, )
+    ##             groupFrame = tkinter.Frame(self.saveFrame)
     ##             self.groupEntry = Pmw.EntryField(groupFrame,
     ##                                              label_text='Group name:',
     ##                                              labelpos='w',
     ##                                              value=self.colorsName)
-    ##             label = Tkinter.Label(groupFrame, text="\t\t",
+    ##             label = tkinter.Label(groupFrame, text="\t\t",
     ##                                   )
     ##             self.groupEntry.pack(side='left')
     ##             label.pack(side='right', fill='x', expand=1)
     ##             groupFrame.pack(fill='x', expand=1)
 
-    ##             fileFrame = Tkinter.Frame(self.saveFrame)
+    ##             fileFrame = tkinter.Frame(self.saveFrame)
 
     ##             self.fileEntry = Pmw.EntryField(fileFrame, 
     ##                                             label_text='Python File name:',
     ##                                             labelpos='w',
     ##                                             value=self.customFilename)
 
-    ##             browseBut = Tkinter.Button(fileFrame, text='Browse',
+    ##             browseBut = tkinter.Button(fileFrame, text='Browse',
     ##                                        command=self.browse)
     ##             self.fileEntry.pack(side='left')
     ##             browseBut.pack(side='right', fill='x', expand=1)
     ##             fileFrame.pack(fill='x', expand=1)
 
-    ##             buttonFrame = Tkinter.Frame(self.saveFrame)
-    ##             ok = Tkinter.Button(buttonFrame, text='OK', command=self.ok)
-    ##             cancel = Tkinter.Button(buttonFrame, text='Cancel',
+    ##             buttonFrame = tkinter.Frame(self.saveFrame)
+    ##             ok = tkinter.Button(buttonFrame, text='OK', command=self.ok)
+    ##             cancel = tkinter.Button(buttonFrame, text='Cancel',
     ##                                     command=self.cancel)
     ##             ok.pack(side='left', fill='x',expand=1)
     ##             cancel.pack(side='right', fill='x', expand=1)

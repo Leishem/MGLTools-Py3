@@ -730,7 +730,7 @@ every time the widget value is set/modified"""
 
     def setType(self, Type):
 
-        assert type(Type) in [bytes, type],\
+        assert type(Type) in [str, type],\
                "Illegal type for datatype. Expected %s or %s, got %s"%(
                    type('a'), type(type), type(Type) )
         

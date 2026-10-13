@@ -22,7 +22,7 @@ except:
 from opengltk.OpenGL import GL
 from time import time
 import _thread
-from string import split, find ,replace
+from mglcompat.pystring import split, find ,replace
 import types
 from os import path
 from math import sqrt
@@ -485,7 +485,7 @@ class SLCommand(MVCommand):
                         })
 
 
-##              idf.append({'widgetType':Tkinter.Label,
+##              idf.append({'widgetType':tkinter.Label,
 ##                          'wcfg': {'text':'Recompute Bspt for objects:'},
 ##                          'gridcfg':{'sticky':'we', 'columnspan':4,
 ##                                     'pady': 5}
@@ -821,7 +821,7 @@ class SLCommand(MVCommand):
 ##                      ipg = self.obj_dict[ obj_fullnames[ind] ]['obj']
 ##                      if isinstance(ipg, IndexedPolygons):
 ##                          #ask the user :
-##                          root = Tkinter.Toplevel()
+##                          root = tkinter.Toplevel()
 ##                          root.withdraw()
 ##                          from SimpleDialog import SimpleDialog
 ##                          ans = SimpleDialog(root, text="Object %s exists. Overwrite it?"% (obj_fullnames[ind],),

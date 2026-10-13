@@ -437,7 +437,7 @@ class AutoGridIsoSurface(MVCommand):
         self.vf.setIsovalue(grid.name, value)
                 
     def doit(self, grid):
-        if type(grid)==bytes:
+        if type(grid)==str:
             grid = self.vf.grids[grid]
         if grid.srf:
             msg= "this grid already has a surface"

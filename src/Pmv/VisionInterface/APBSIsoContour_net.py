@@ -219,7 +219,7 @@ try:
         stepsize = Numeric.array(grid3D.stepSize).astype('f')
         # add 1 dimension for time steps amd 1 for multiple variables
         if data.dtype.char!=Numeric.Float32:
-            print 'converting from ', data.dtype.char
+            print('converting from ', data.dtype.char)
             data = data.astype('f')#Numeric.Float32)
 
         self.newgrid3D = Numeric.ascontiguousarray(Numeric.reshape( Numeric.transpose(data),
@@ -227,7 +227,7 @@ try:
         # destroy the ConDataset structure
         if self.data:
             isocontour.delDatasetReg(self.data)
-            
+
         self.data = isocontour.newDatasetRegFloat3D(            self.newgrid3D, origin, stepsize)
 
         w = self.inputPortByName['isovalue'].widget
@@ -258,6 +258,7 @@ try:
         if grid3D.crystal:
             vert = grid3D.crystal.toCartesian(vert) 
         self.outputData(coords=vert, indices=tri, normals=-norm, isovalue=isovalue)
+
 """
     Left_Isocontour_7.configure(function=code)
 except:
@@ -288,7 +289,7 @@ calculatesignatures=None, verbosity=None):
         stepsize = Numeric.array(grid3D.stepSize).astype('f')
         # add 1 dimension for time steps amd 1 for multiple variables
         if data.dtype.char!=Numeric.Float32:
-            print 'converting from ', data.dtype.char
+            print('converting from ', data.dtype.char)
             data = data.astype('f')#Numeric.Float32)
 
         self.newgrid3D = Numeric.ascontiguousarray(Numeric.reshape( Numeric.transpose(data),
@@ -296,7 +297,7 @@ calculatesignatures=None, verbosity=None):
         # destroy the ConDataset structure
         if self.data:
             isocontour.delDatasetReg(self.data)
-            
+
         self.data = isocontour.newDatasetRegFloat3D(            self.newgrid3D, origin, stepsize)
 
         w = self.inputPortByName['isovalue'].widget
@@ -327,6 +328,7 @@ calculatesignatures=None, verbosity=None):
         if grid3D.crystal:
             vert = grid3D.crystal.toCartesian(vert) 
         self.outputData(coords=vert, indices=tri, normals=norm, isovalue=isovalue)
+
 
 
 

@@ -584,16 +584,16 @@ one from the list below\n '_' are not accepted.",
 #                        'tooltip':"""When checked surfaces will be computed using all atoms (seelcted or not) of
 #each molecule.  If unchecked, the unselected atoms are ignored during the
 #calculation.""",
-#                        'widgetType':Tkinter.Checkbutton,
+#                        'widgetType':tkinter.Checkbutton,
 #                        'defaultValue': defaultValues['perMol'],
 #                        'wcfg':{'text':'Per Molecule',
-#                                'variable':Tkinter.IntVar(),
+#                                'variable':tkinter.IntVar(),
 #                                'command':self.perMol_cb},
 #                        'gridcfg':{'sticky':'we'}
 #                        })
 #            
 #            idf.append({'name':'saveSel',
-#                        'widgetType':Tkinter.Button,
+#                        'widgetType':tkinter.Button,
 #                        'tooltip':"""This button allows the user to save the current selection as a set.
 #The name of the msms surface will be used as the name of the set""",
 #                        'wcfg':{'text':'Save Current Selection As Set',

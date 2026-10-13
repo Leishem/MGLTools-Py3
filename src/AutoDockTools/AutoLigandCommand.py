@@ -470,7 +470,7 @@ Harris R, Olson AJ, Goodsell DS.  Proteins. (2008) 70 1506..
                 })
                 
         #Connected Fill
-#        ifd.append({'widgetType':Tkinter.Label,
+#        ifd.append({'widgetType':tkinter.Label,
 #                'name':'label',
 #                'parent':'Scan',
 #                'wcfg':{'text':"""Results from the Scan mode will 

@@ -49,11 +49,12 @@ class PreparedStructureBrowser(NetworkNode):
     receptor_file = os.path.abspath(prepared_structure_file)
 
     if not(os.path.exists(prepared_structure_file)):
-        print "ERROR: prepared structure file " + prepared_structure_file + " does not exist!"
+        print("ERROR: prepared structure file " + prepared_structure_file + " does not exist!")
         return 'stop'
 
     receptor_obj = receptor(prepared_structure_file)
 
     self.outputData(receptor_obj=receptor_obj)
+
 """
         self.setFunction(code)

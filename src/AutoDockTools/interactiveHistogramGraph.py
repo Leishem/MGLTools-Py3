@@ -11,7 +11,7 @@
 
 import sys
 import tkinter
-from Canvas import Line, CanvasText, Rectangle
+from mglcompat.tkCanvas import Line, CanvasText, Rectangle
 import tkinter.filedialog
 import math, os; from mglcompat import pystring as string
 
@@ -781,7 +781,7 @@ if __name__== '__main__':
 #ehist.get_input_from_energies('ebind_top.hist')
 #nodeList = ehist.histogram.array
 #import Tkinter
-#root = Tkinter.Tk()
+#root = tkinter.Tk()
 #histNB = InteractiveHistogramGraph('test', master=root, nodeList=nodeList)
 
 

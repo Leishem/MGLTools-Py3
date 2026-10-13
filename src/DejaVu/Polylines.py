@@ -16,7 +16,7 @@ from opengltk.OpenGL import GL
 from opengltk.extent import _gllib as gllib
 
 from .Geom import Geom
-import datamodel, viewerConst, types
+from . import datamodel, viewerConst; import types
 import mglcompat.oldnumeric as Numeric
 from .viewerFns import checkKeywords
 
@@ -66,7 +66,7 @@ updateOwnGui=True : allow to update owngui at the end this func
 
         if num is None:
             num = self.materials[GL.GL_FRONT].diff
-        elif type(num) is bytes:
+        elif type(num) is str:
             num = getattr(self.materials[GL.GL_FRONT], num)
 
         if face is None:

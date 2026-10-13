@@ -93,7 +93,7 @@ from tkinter.simpledialog import SimpleDialog
 
 import mglcompat.oldnumeric as Numeric
 import types, tkinter, math, os, Pmw, tkinter.messagebox
-from string import split, find
+from mglcompat.pystring import split, find
 
 #create global geometries for this module
 from DejaVu.Spheres import Spheres
@@ -392,7 +392,7 @@ class AdtSetMode(MVCommand):
 
 
     def doit(self, ModeStr, **kw):
-        if type(ModeStr)!=bytes:
+        if type(ModeStr)!=str:
             return "ERROR"
         if ModeStr not in self.levels:
             msg = ModeStr + "string does not map to a valid level"
@@ -2884,7 +2884,7 @@ switched:1->0 and 0->1
                    'command':self.setNoActiveTors_cb},
                 'gridcfg':{'sticky':'we', 'columnspan':2}}),
         ##ifd.append({'name':'forceTorsLab',
-            ##'widgetType':Tkinter.Label,
+            ##'widgetType':tkinter.Label,
             ##'wcfg':{'text':"(to force possible activity:\npress 'Shift' while picking a red bond\nNB:must not be in a ring)"},
             ##'gridcfg':{'sticky':'w' + 'e'}}),
         ifd.append({'name':'done',
@@ -3513,7 +3513,7 @@ if ask_outfile=0, outputfile name is name of molecule + '.out.pdbqt'
         if hasattr(self, 'form'):
             self.form.withdraw()
         dict = self.vf.atorsDict
-        if type(mol)==bytes:
+        if type(mol)==str:
             #if there are any Mols, try to get this one
             if len(self.vf.Mols) and mol in self.vf.Mols.name:
                 mol = self.vf.Mols.NodesFromName(mol)
@@ -3716,10 +3716,10 @@ def initModule(vf):
             for item in list(vf.GUI.menuBars['AutoTools41Bar'].menubuttons.values()):
                 item.configure(background = 'tan')
 #        if not hasattr(vf.GUI, 'ligandLabel'):
-#            vf.GUI.ligandLabelLabel = Tkinter.Label(vf.GUI.adtFrame, \
+#            vf.GUI.ligandLabelLabel = tkinter.Label(vf.GUI.adtFrame, \
 #                            text="Ligand:", bg='tan')
 #            vf.GUI.ligandLabelLabel.pack(side='left')
-#            vf.GUI.ligandLabel=Tkinter.Label(vf.GUI.adtFrame, text="None", width=4,
+#            vf.GUI.ligandLabel=tkinter.Label(vf.GUI.adtFrame, text="None", width=4,
 #                                     relief='sunken', borderwidth=1,
 #                                     anchor='w' )
 #            vf.GUI.ligandLabel.pack(side='left')

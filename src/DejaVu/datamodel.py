@@ -100,7 +100,7 @@ class ValuesArray:
         """Create an instance, with a name and (shape or data)"""
 
 
-        assert type(name) == bytes
+        assert type(name) == str
 
         if shape is not None and data is not None:
             raise AttributeError("need shape or data attribute")
@@ -370,7 +370,7 @@ class Set:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
         """add a scalar property"""
 
-        assert type(name) == bytes
+        assert type(name) == str
         if name in list(self.properties.keys()):
             raise ValueError('Property name already used')
         p = ScalarProperties(name, data, shape, datatype)
@@ -383,7 +383,7 @@ class Set:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
         """add a vector property"""
 
-        assert type(name) == bytes
+        assert type(name) == str
         if name in list(self.properties.keys()):
             raise ValueError('Property name already used')
         p = VectorProperties(name, data, shape, datatype)

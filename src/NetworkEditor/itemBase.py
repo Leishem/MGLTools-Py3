@@ -227,7 +227,7 @@ class ParamPanel:
         Pmw.Balloon(self.mainFrame).bind(self.applyButton,"Run node and subnetwork") #tooltip
         self.applyButton.pack(side='left', fill='x', expand=1)
         
-        #self.dismissButton = Tkinter.Button(self.mainFrame, text="Dismiss",
+        #self.dismissButton = tkinter.Button(self.mainFrame, text="Dismiss",
         #                                    command=self.dismissFun)
         #Pmw.Balloon(self.mainFrame).bind(self.dismissButton,"keep visible values") #tooltip
         #self.dismissButton.pack(side='left')
@@ -388,7 +388,7 @@ a Canvas geometry representing this item.
         
         self.paramPanel = None
         self.iconMaster = None # canvas on which this item is placed
-        self.id = None     # Tkinter.Canvas primitive ID that will correspond
+        self.id = None     # tkinter.Canvas primitive ID that will correspond
                            # to this node
         self.iconTag = None# unique tag shared by all primitives used to
                            # draw this node's icon

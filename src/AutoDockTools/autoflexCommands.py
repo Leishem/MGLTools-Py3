@@ -1065,7 +1065,7 @@ class AF_EditHinge(MVCommand, MVAtomICOM):
         if not hasattr(self,'form'):
             ifd = self.ifd = InputFormDescr(title="Edit Atoms to be moved by current Hinge by:")
             #ifd.append({'name': 'testLab',
-            #    'widgetType':Tkinter.Label,
+            #    'widgetType':tkinter.Label,
             #    'wcfg':{'text':'Mode:'},
             #    'gridcfg':{'columnspan':3,'sticky':'w'}})
             ifd.append({'widgetType':tkinter.Radiobutton,
@@ -1078,7 +1078,7 @@ class AF_EditHinge(MVCommand, MVAtomICOM):
                     'variable':self.mode,
                     'value': 'remove'},
                 'gridcfg':{'row':-1,'sticky':'we'}})
-            #ifd.append({'widgetType':Tkinter.Button,
+            #ifd.append({'widgetType':tkinter.Button,
             #    'wcfg':{'text':'Close', 'command':self.close_cb},
             #    'gridcfg':{'sticky':'we', 'columnspan':2}})
             self.form = self.vf.getUserInput(ifd, modal=0, blocking=0)
@@ -1345,18 +1345,18 @@ class AF_SetHinge(MVCommand, MVAtomICOM):
                             'value':'cursel',
                             'command':self.updateHinge},  #1
                     'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':3}}),
-#        ifd.append({'widgetType':Tkinter.Checkbutton,
+#        ifd.append({'widgetType':tkinter.Checkbutton,
 #                    'name':'pt1CB',
 #                    'wcfg':{ 'text':'adjust  x y z coords of hingePts ',
 #                            'command':self.adjustPt_cb},
-#                    'gridcfg':{'sticky':Tkinter.W}}),
-#        ifd.append({'widgetType':Tkinter.Checkbutton,
+#                    'gridcfg':{'sticky':tkinter.W}}),
+#        ifd.append({'widgetType':tkinter.Checkbutton,
 #                    'name':'editLastHingeCB',
 #                    'wcfg':{'variable':self.editAtomsToMove,
 #                            'text':'edit atoms to move',
 #                            'command':self.editAtomsToMove_cb},
-#                    'gridcfg':{'sticky':Tkinter.W}}),
-##                    'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':3}}),
+#                    'gridcfg':{'sticky':tkinter.W}}),
+##                    'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':3}}),
 #        ifd.append({'name':'xval_tw',
 #            'widgetType':ThumbWheel,
 #            'wType':ThumbWheel,
@@ -1480,14 +1480,14 @@ class AF_SetHinge(MVCommand, MVAtomICOM):
                             'value':'set',
                             'command':self.updateBase},
                     'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':5}})
-                    #'gridcfg':{'sticky':Tkinter.W}})
+                    #'gridcfg':{'sticky':tkinter.W}})
         ifd.append({'widgetType':tkinter.Checkbutton,
                     'name':'editLastHingeCB',
                     'wcfg':{'variable':self.editAtomsToMove,
                             'text':'edit atoms to move',
                             'command':self.editAtomsToMove_cb},
                     'gridcfg':{'sticky':tkinter.W}})
-                    #'gridcfg':{'sticky':Tkinter.W, 'row':-1, 'column':2}}),
+                    #'gridcfg':{'sticky':tkinter.W, 'row':-1, 'column':2}}),
         ifd.append({'name':'selectB',
                     'widgetType':tkinter.Button,
                     'wcfg':{'text':'Set Hinge',
@@ -2753,10 +2753,10 @@ def initModule(vf):
 #            vf.GUI.ligandLabel.pack_forget()
 #            vf.GUI.ligandLabel.pack(side='left')
 #        else:
-#            vf.GUI.ligandLabelLabel = Tkinter.Label(vf.GUI.adtFrame, \
+#            vf.GUI.ligandLabelLabel = tkinter.Label(vf.GUI.adtFrame, \
 #                            text="Ligand:", bg='tan')
 #            vf.GUI.ligandLabelLabel.pack(side='left')
-#            vf.GUI.ligandLabel=Tkinter.Label(vf.GUI.adtFrame, text="None", width=4,
+#            vf.GUI.ligandLabel=tkinter.Label(vf.GUI.adtFrame, text="None", width=4,
 #                                     relief='sunken', borderwidth=1,
 #                                     anchor='w' )
 #            vf.GUI.ligandLabel.pack(side='left')
@@ -2766,10 +2766,10 @@ def initModule(vf):
 #            vf.GUI.receptorLabel.pack_forget()
 #            vf.GUI.receptorLabel.pack(side='left')
 #        else:
-#            vf.GUI.receptorLabelLabel = Tkinter.Label(vf.GUI.adtFrame, \
+#            vf.GUI.receptorLabelLabel = tkinter.Label(vf.GUI.adtFrame, \
 #                            text="Receptor:", bg='tan')
 #            vf.GUI.receptorLabelLabel.pack(side='left')
-#            vf.GUI.receptorLabel=Tkinter.Label(vf.GUI.adtFrame, text="None", width=4,
+#            vf.GUI.receptorLabel=tkinter.Label(vf.GUI.adtFrame, text="None", width=4,
 #                                     relief='sunken', borderwidth=1,
 #                                     anchor='w' )
 #            vf.GUI.receptorLabel.pack(side='left')

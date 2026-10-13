@@ -413,14 +413,15 @@ Output Ports
         if not output_file_url:
             self.outputData(URL = self.outurl)
             return
-        print outputURL, self.outurl
+        print(outputURL, self.outurl)
         if not outputURL:
-            import urllib
-            opener = urllib.FancyURLopener({})
+            import urllib.request, urllib.parse, urllib.error
+            opener = urllib.request.FancyURLopener({})
             in_file = opener.open(output_file_url)
             self.outputData(URL = self.outurl, output_file_url = in_file.read())
         else:
             self.outputData(URL = self.outurl, output_file_url=output_file_url)
+
 """     
         if code:
             self.setFunction(code)
@@ -465,23 +466,23 @@ Output Ports
     import time
     from time import strftime
 
-    opener = urllib.FancyURLopener({})
+    opener = urllib.request.FancyURLopener({})
     try:
         infile = opener.open(url)
     except IOError:
         s = -1
         while s == -1:
             try:
-                urllib.urlopen(url)
+                urllib.request.urlopen(url)
                 infile = opener.open(url)
                 s = 0
             except IOError:
                 t = strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                 cte = time.mktime(datetime.now().timetuple())
                 ete = cte + 30
-                print "WARNING: " + t + " cannot connect to " + url
-                print "         Are you connected to the internet?"
-                print "         Will try again in about 30 seconds"
+                print("WARNING: " + t + " cannot connect to " + url)
+                print("         Are you connected to the internet?")
+                print("         Will try again in about 30 seconds")
                 while time.mktime(datetime.now().timetuple()) < ete:
                     if self.opalNode._vpe is not None:
                         self.opalNode._vpe.updateGuiCycle()
@@ -492,6 +493,7 @@ Output Ports
         pass
 
     self.outputData(output=infile.read())
+
 
 """
         if code:
@@ -540,14 +542,14 @@ Output Ports
 
     if filename == None or filename == "":
         filename = os.path.basename(url)
-        
+
     filename = os.path.abspath(filename)     
 
     if overwrite == 0 and os.path.exists(filename):
         fdir = os.path.dirname(filename)
         filename = tempfile.mktemp(prefix=filename+'.', dir=fdir)
 
-    opener = urllib.FancyURLopener({})
+    opener = urllib.request.FancyURLopener({})
 
 
     try:
@@ -556,16 +558,16 @@ Output Ports
         s = -1
         while s == -1:
             try:
-                urllib.urlopen(url)
+                urllib.request.urlopen(url)
                 infile = opener.open(url)
                 s = 0
             except IOError:
                 t = strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                 cte = time.mktime(datetime.now().timetuple())
                 ete = cte + 30
-                print "WARNING: " + t + " cannot connect to " + url
-                print "         Are you connected to the internet?"
-                print "         Will try again in about 30 seconds"
+                print("WARNING: " + t + " cannot connect to " + url)
+                print("         Are you connected to the internet?")
+                print("         Will try again in about 30 seconds")
                 while time.mktime(datetime.now().timetuple()) < ete:
                     if self.opalNode._vpe is not None:
                         self.opalNode._vpe.updateGuiCycle()
@@ -579,6 +581,7 @@ Output Ports
     f.write(infile.read())
     f.close()
     self.outputData(filename=filename)
+
 """
         if code:
             self.setFunction(code)
@@ -745,11 +748,12 @@ Output Ports
                     break
 
             if found == False:
-                print "ERROR: No matching URL found in the list"
+                print("ERROR: No matching URL found in the list")
                 url = ""
 
             pass
             self.outputData(url=url)
+
 """
         if code:
             self.setFunction(code)

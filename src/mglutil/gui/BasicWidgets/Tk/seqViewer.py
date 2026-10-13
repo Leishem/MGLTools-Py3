@@ -53,14 +53,14 @@ class AlignmentEditor(tkinter.Frame):
         
 
     def createGUI(self):
-        #self.widgetArea = Tkinter.Frame(self, borderwidth=2, relief='sunken')
+        #self.widgetArea = tkinter.Frame(self, borderwidth=2, relief='sunken')
         #if self.hasGUI:
         #    return
         if self.Master is None:
             master = tkinter.Toplevel(self.Master)
             master.title('Alignment Editor')
         else:
-        #    master = Tkinter.Toplevel(self.Master)
+        #    master = tkinter.Toplevel(self.Master)
             master = self.Master
         tkinter.Frame.__init__(self ,master)
         tkinter.Pack.config(self, expand=1, fill=tkinter.BOTH)

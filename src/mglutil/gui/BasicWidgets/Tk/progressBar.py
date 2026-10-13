@@ -60,7 +60,7 @@ INSTANCIATION:
     Example: mybar = ProgressBar()
     Additional init options:
         master: the Tkinter master of this widget. If master is None, the
-                master will be set to Tkinter.Toplevel()
+                master will be set to tkinter.Toplevel()
         height: the height of the progress bar (not of the entire widget)
                 in pixel
         width:  the width of the progress bar (not the entire widget)

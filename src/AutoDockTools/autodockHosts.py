@@ -13,7 +13,7 @@
 #
 #
 
-import UserDict
+import collections as UserDict
 
 class AutoDockHosts(UserDict.UserDict):
 

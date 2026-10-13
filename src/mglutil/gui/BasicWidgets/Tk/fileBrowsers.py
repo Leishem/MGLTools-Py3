@@ -1,4 +1,4 @@
-import user
+from mglcompat import pyuser as user
 import tkinter.filedialog, os
 
 

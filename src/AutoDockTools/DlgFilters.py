@@ -24,8 +24,8 @@ Assorted classes of filters for use in selecting subgroups of AutoDock Virtual S
 filter_instance.filter(dlg) returns True/False 
 
 """
-from string import strip
-from numpy import oldnumeric as Numeric
+from mglcompat.pystring import strip
+import mglcompat.oldnumeric as Numeric
 
 class Filter:
     """

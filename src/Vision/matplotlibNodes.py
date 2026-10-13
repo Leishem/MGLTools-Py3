@@ -309,7 +309,7 @@ class MPLBaseNE(NetworkNode):
             ax.set_frame_on(kw['frameon'])
 
         if "title" in kw:    
-            if type(kw['title'])==bytes:
+            if type(kw['title'])==str:
                 ax.set_title(kw['title'])
             else:
                 print('Set title as Object')
@@ -1001,7 +1001,7 @@ alphaFace, alphaEdge, frameon, hold):
     figure.figurePatch.set_alpha(alphaEdge)
     self.canvas.draw() # force a draw
 
-    import Image
+    from PIL import Image
     im = self.canvas.buffer_rgba(0,0)
     ima = Image.frombuffer("RGBA", (w, h), im)
     ima = ima.transpose(Image.FLIP_TOP_BOTTOM)
@@ -1988,7 +1988,7 @@ dash_joinstyle, drawAreaDef):
     try:
        from pytz import common_timezones
     except:
-       print  "Could not import pytz "
+       print("Could not import pytz ")
        return
     self.axes.clear() 
     self.setDrawAreaDef(drawAreaDef)
@@ -2007,9 +2007,10 @@ dash_joinstyle, drawAreaDef):
             l.set_solid_capstyle(solid_capstyle)
             l.set_dash_capstyle(dash_capstyle)
             l.set_dash_joinstyle(dash_joinstyle)
-            
+
     self.canvas.draw()
     self.outputData(plot=self.axes)
+
 """
         self.setFunction(code)
 

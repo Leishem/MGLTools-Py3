@@ -31,7 +31,7 @@ from mglcompat.pytypes import StringType, ListType
 import Pmw
 import os, sys
 from mglcompat.oldnumeric import array, fabs, maximum
-from string import find, replace, split
+from mglcompat.pystring import find, replace, split
 from MolKit.tree import TreeNode, TreeNodeSet
 import tkinter.messagebox
 from mglutil.util.callback import CallbackFunction

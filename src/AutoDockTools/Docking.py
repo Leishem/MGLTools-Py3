@@ -23,7 +23,7 @@ This Object is the result of an AutoDock job.
 
 """
 import os, glob, time, sys
-from string import replace, rfind, find, strip
+from mglcompat.pystring import replace, rfind, find, strip
 
 from MolKit.pdbParser import PdbqParser, PdbqtParser
 from MolKit.protein import Residue, ResidueSet

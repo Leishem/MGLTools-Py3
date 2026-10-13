@@ -19,18 +19,18 @@ from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 
 ##      def onAddCmdToViewer(self):
 ##          self.dpo = DockingParameters.DockingParameters()
-##          self.num_params = Tkinter.StringVar()
+##          self.num_params = tkinter.StringVar()
 ##      self.num_params.set('3')
-##          self.base_dpf_name = Tkinter.StringVar()
+##          self.base_dpf_name = tkinter.StringVar()
 ##      self.parameters = []
 ##      self.first_values = []
 ##      self.last_value = []
 ##      self.step_value = []
 ##      for i in range(10):
-##          self.first_values.append(Tkinter.StringVar())
-##          self.last_values.append(Tkinter.StringVar())
-##          self.step_values.append(Tkinter.StringVar())
-##          self.parameter.append(Tkinter.StringVar())
+##          self.first_values.append(tkinter.StringVar())
+##          self.last_values.append(tkinter.StringVar())
+##          self.step_values.append(tkinter.StringVar())
+##          self.parameter.append(tkinter.StringVar())
 
 
 ##      def guiCallback(self):
@@ -73,12 +73,12 @@ from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 ##      def buildMenu(self, mB, nameList, varDict, oldvarDict, cmd):
 ##          for i in nameList:
 ##              if i not in varDict.keys():
-##                  varDict[i]=Tkinter.IntVar()
+##                  varDict[i]=tkinter.IntVar()
 ##                  oldvarDict[i]=0
 ##          if hasattr(mB, 'menu'):
 ##              mB.menu.delete(1,'end')
 ##          else:
-##              mB.menu = Tkinter.Menu(mB)
+##              mB.menu = tkinter.Menu(mB)
 ##              mB['menu']=mB.menu
 ##          #PACK all the entries
 ##          for i in varDict.keys():
@@ -114,24 +114,24 @@ from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 ##      self.ifd = ifd = InputFormDescr(title='Parameter Search')
 ##      # append new dicts to the ifd list
 ##      # one-widget-one-dict (generally)
-##      ifd.append({ 'widgetType'   : Tkinter.Entry,
+##      ifd.append({ 'widgetType'   : tkinter.Entry,
 ##               'label'        : "Number of Paramters",
 ##               'textvariable' : self.num_params,
-##               'gridcfg' : { 'sticky' : Tkinter.W,
+##               'gridcfg' : { 'sticky' : tkinter.W,
 ##                     'columnspan' : 2 }
 ##               })
-##      ifd.append({ 'widgetType'   : Tkinter.Entry,
+##      ifd.append({ 'widgetType'   : tkinter.Entry,
 ##               'label'        : "Base DPF",
 ##               'textvariable' : self.base_dpf_name,
-##               'gridcfg' : { 'sticky' : Tkinter.E,
+##               'gridcfg' : { 'sticky' : tkinter.E,
 ##                     'columnspan' : 2,
 ##                     'row' : -1,
 ##                     'column' : 2 }
 ##               })
-##      ifd.append({ 'widgetType'   : Tkinter.Button,
+##      ifd.append({ 'widgetType'   : tkinter.Button,
 ##               'text'         : "Browse",
 ##               'command'      : self.browse_cb,
-##               'gridcfg' : { 'sticky' : Tkinter.E,
+##               'gridcfg' : { 'sticky' : tkinter.E,
 ##                     'columnspan' : 1,
 ##                     'row' : -1,
 ##                     'column' : 4 }
@@ -139,28 +139,28 @@ from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 ##      #
 ##      # Throw up some labels for the widgets to follow
 ##      #
-##      ifd.append({ 'widgetType'   : Tkinter.Label,
+##      ifd.append({ 'widgetType'   : tkinter.Label,
 ##               'text'         : "Parameter",
-##               'gridcfg' : { 'sticky' : Tkinter.W + Tkinter.E,
+##               'gridcfg' : { 'sticky' : tkinter.W + tkinter.E,
 ##                     'columnspan' : 1 }
 ##               })
-##      ifd.append({ 'widgetType'   : Tkinter.Label,
+##      ifd.append({ 'widgetType'   : tkinter.Label,
 ##               'text'         : "First Value",
-##               'gridcfg' : { 'sticky' : Tkinter.W + Tkinter.E,
+##               'gridcfg' : { 'sticky' : tkinter.W + tkinter.E,
 ##                     'columnspan' : 1,
 ##                     'row' : -1,
 ##                     'column' : 1 }
 ##               })
-##      ifd.append({ 'widgetType'   : Tkinter.Label,
+##      ifd.append({ 'widgetType'   : tkinter.Label,
 ##               'text'         : "Last Value",
-##               'gridcfg' : { 'sticky' : Tkinter.W + Tkinter.E,
+##               'gridcfg' : { 'sticky' : tkinter.W + tkinter.E,
 ##                     'columnspan' : 1,
 ##                     'row' : -1,
 ##                     'column' : 2 }
 ##               })
-##      ifd.append({ 'widgetType'   : Tkinter.Label,
+##      ifd.append({ 'widgetType'   : tkinter.Label,
 ##               'text'         : "Step Value",
-##               'gridcfg' : { 'sticky' : Tkinter.W + Tkinter.E,
+##               'gridcfg' : { 'sticky' : tkinter.W + tkinter.E,
 ##                     'columnspan' : 1,
 ##                     'row' : -1,
 ##                     'column' : 3 }
@@ -172,26 +172,26 @@ from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 ##               'textvariable' : self.parameters,
 ##               'wcfg' : {'items' : self.dpo.docking_parameter_list,
 ##                     'listbox_height' : 1},
-##               'gridcfg' : { 'sticky' : Tkinter.W,
+##               'gridcfg' : { 'sticky' : tkinter.W,
 ##                     'columnspan' : 1 }
 ##               })
-##      ifd.append({ 'widgetType'   : Tkinter.Entry,
+##      ifd.append({ 'widgetType'   : tkinter.Entry,
 ##               'textvariable' : self.first_value,
-##               'gridcfg' : { 'sticky' : Tkinter.W,
+##               'gridcfg' : { 'sticky' : tkinter.W,
 ##                     'columnspan' : 1,
 ##                     'row' : -1,
 ##                     'column' : 1 }
 ##               })
-##      ifd.append({ 'widgetType'   : Tkinter.Entry,
+##      ifd.append({ 'widgetType'   : tkinter.Entry,
 ##               'textvariable' : self.last_value,
-##               'gridcfg' : { 'sticky' : Tkinter.W,
+##               'gridcfg' : { 'sticky' : tkinter.W,
 ##                     'columnspan' : 1,
 ##                     'row' : -1,
 ##                     'column' : 2 }
 ##               })
-##      ifd.append({ 'widgetType'   : Tkinter.Entry,
+##      ifd.append({ 'widgetType'   : tkinter.Entry,
 ##               'textvariable' : self.step_value,
-##               'gridcfg' : { 'sticky' : Tkinter.W,
+##               'gridcfg' : { 'sticky' : tkinter.W,
 ##                     'columnspan' : 1,
 ##                     'row' : -1,
 ##                     'column' : 3 }
@@ -200,16 +200,16 @@ from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 ##      #
 ##      # 
 ##      #
-##      ifd.append({ 'widgetType'   : Tkinter.Button,
+##      ifd.append({ 'widgetType'   : tkinter.Button,
 ##               'text'         : "Doit",
 ##               'command'      : self.doit_cb,
-##               'gridcfg' : { 'sticky' : Tkinter.W + Tkinter.E,
+##               'gridcfg' : { 'sticky' : tkinter.W + tkinter.E,
 ##                     'columnspan' : 1 }
 ##               })
-##      ifd.append({ 'widgetType'   : Tkinter.Button,
+##      ifd.append({ 'widgetType'   : tkinter.Button,
 ##               'text'         : "Dismiss",
 ##               'command'      : self.dismiss_cb,
-##               'gridcfg' : { 'sticky' : Tkinter.W + Tkinter.E,
+##               'gridcfg' : { 'sticky' : tkinter.W + tkinter.E,
 ##                     'columnspan' : 1,
 ##                     'row' : -1,
 ##                     'column' : 1 }

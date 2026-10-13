@@ -1,7 +1,7 @@
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
-import Image
-import ImageFilter
+from PIL import Image
+from PIL import ImageFilter
 from opengltk.OpenGL import GL
 import math
 import mglcompat.oldnumeric as Numeric

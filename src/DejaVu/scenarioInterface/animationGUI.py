@@ -1278,7 +1278,7 @@ class orientationGUI:
     def addOrientButton(self, maa):
         master = self.MAAContainer.interior()
         if hasattr(maa, 'ims') and maa.ims is not None:
-            import ImageTk
+            from PIL import ImageTk
             photo = ImageTk.PhotoImage(maa.ims)
         else:
             self.viewer.master.lift()

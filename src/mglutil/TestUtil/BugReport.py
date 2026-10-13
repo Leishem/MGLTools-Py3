@@ -10,7 +10,7 @@
 ##$Id: BugReport.py,v 1.16.2.1 2011/06/06 21:06:18 sargis Exp $
 
 import tkinter, Pmw
-from string import join
+from mglcompat.pystring import join
 import webbrowser,os,sys
 from mglcompat.pytypes import StringType
 from tkinter import *

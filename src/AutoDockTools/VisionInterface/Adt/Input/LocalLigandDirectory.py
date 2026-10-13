@@ -247,7 +247,7 @@ class LocalLigandDirectory(MacroNode):
         input_directory = os.path.abspath(directory)
 
         if not(os.path.exists(input_directory)):
-            print "ERROR: ligand input directory " + input_directory + " does not exist"
+            print("ERROR: ligand input directory " + input_directory + " does not exist")
             return '''stop'''
 
         output_directory = os.path.abspath('''.''')
@@ -266,6 +266,7 @@ class LocalLigandDirectory(MacroNode):
 
 ## to ouput data on port output_basedir use
 ## self.outputData(output_basedir=data)
+
 
 """
             get_paths_9.configure(function=code)

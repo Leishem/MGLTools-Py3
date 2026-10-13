@@ -5,7 +5,7 @@
 #
 
 from os.path import splitext, basename
-from string import split, strip, digits, lower, find
+from mglcompat.pystring import split, strip, digits, lower, find
 from MolKit.moleculeWriter import MoleculeWriter
 from MolKit.pdbWriter import PdbWriter
 from MolKit.tree import TreeNode, TreeNodeSet

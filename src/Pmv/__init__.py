@@ -4,7 +4,7 @@ import os
 import sys
 import getopt
 import time
-from string import split
+from mglcompat.pystring import split
 
 from Support.version import __version__
 from mglutil import __revision__

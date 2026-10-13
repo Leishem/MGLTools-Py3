@@ -52,7 +52,7 @@ class InteractiveInputFormBuilder(tkinter.Frame):
 
         self.createMenus()
         self.widgetArea = tkinter.Frame(borderwidth=2, relief = 'sunken')
-##          self.widgetArea.pack(side=Tkinter.RIGHT, expand=1, fill ='both')
+##          self.widgetArea.pack(side=tkinter.RIGHT, expand=1, fill ='both')
 
     def createMenus(self):
         self.mBar = tkinter.Frame(self, relief=tkinter.RAISED, borderwidth=2)

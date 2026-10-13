@@ -27,7 +27,7 @@ from MolKit.tree import TreeNode, TreeNodeSet, TreeNodeSetSelector
 from MolKit.molecule import Molecule, MoleculeSet, Atom, AtomSet, Bond
 import re
 from mglcompat.pytypes import NoneType, StringType, IntType, TupleType, FloatType, ListType
-from string import split, upper, find
+from mglcompat.pystring import split, upper, find
 from mglcompat.oldnumeric import sum
 global bhtreeFlag
 try:

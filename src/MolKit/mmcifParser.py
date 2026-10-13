@@ -19,7 +19,7 @@ Example:
     
 from os.path import splitext, basename
 import types, sys
-from string import split, strip, digits, lower, find
+from mglcompat.pystring import split, strip, digits, lower, find
 from MolKit.moleculeParser import MoleculeParser
 from MolKit.protein import Protein, Chain, ChainSet, Residue, ResidueSet, ProteinSet
 from MolKit.molecule import Atom, AtomSet, Bond, BondSet, HydrogenBond

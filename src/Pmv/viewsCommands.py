@@ -56,7 +56,7 @@ class ViewsCommand(MVCommand):
                         'widgetType':Pmw.Group,
                         'container':{'viewsContainer':"w.interior()"},
                         'wcfg':{'ring_borderwidth':2,
-                                'tag_pyclass': None, #Tkinter.Button,
+                                'tag_pyclass': None, #tkinter.Button,
                                 #'tag_text':'Save view',
                                 #'tag_command': self.saveView
                                 },

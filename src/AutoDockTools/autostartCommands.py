@@ -37,7 +37,7 @@ from MolKit.molecule import Atom
 from tkinter.simpledialog import SimpleDialog
 import types, tkinter, re; from mglcompat import pystring as string
 import subprocess, os, sys, socket, time, subprocess
-from string import splitfields
+from mglcompat.pystring import splitfields
 
 
 #from threading import Thread
@@ -261,7 +261,7 @@ class ADProcessManager(MVCommand):
             if p not in self.kill.psList:
                 self.kill.psList.append(p)
             self.kill.done = 0  # new process!
-        elif type(p)==bytes: #autogrid4, autodock4, vina..
+        elif type(p)==str: #autogrid4, autodock4, vina..
             if not p in self.kill.pList:
                 self.kill.pList.append(p) 
         else: 
@@ -831,9 +831,9 @@ very similar with a few differences such as programType, title for file browser,
                 'command':self.Close_cb})
             #last the widgets for the Entropia lists:
             #ifd.append({'name':'gpfFilterLab',
-                #'widgetType':Tkinter.Label,
+                #'widgetType':tkinter.Label,
                 #'text': 'gpf file filter',
-                #'gridcfg':{'sticky':Tkinter.E}})
+                #'gridcfg':{'sticky':tkinter.E}})
             ifd.append({'name': 'gpfFilterEnt',
                 'widgetType':tkinter.Entry,
                 'wcfg':{
@@ -842,9 +842,9 @@ very similar with a few differences such as programType, title for file browser,
                 },
                 'gridcfg':{'sticky':tkinter.E}})
             #ifd.append({'name':'pdbqsFilterLab',
-                #'widgetType':Tkinter.Label,
+                #'widgetType':tkinter.Label,
                 #'text': 'pdbqs file filter',
-                #'gridcfg':{'sticky':Tkinter.E,'row':-1,'column':4}})
+                #'gridcfg':{'sticky':tkinter.E,'row':-1,'column':4}})
             ifd.append( {'name': 'pdbqsFilterEnt',
                 'widgetType':tkinter.Entry,
                 'wcfg':{
@@ -853,9 +853,9 @@ very similar with a few differences such as programType, title for file browser,
                 },
                 'gridcfg':{'sticky':tkinter.E,'row':-1,'column':1}})
             #ifd.append({'name':'dpfFilterLab',
-                #'widgetType':Tkinter.Label,
+                #'widgetType':tkinter.Label,
                 #'text': 'dpf file filter',
-                #'gridcfg':{'sticky':Tkinter.E}})
+                #'gridcfg':{'sticky':tkinter.E}})
             ifd.append( {'name': 'dpfFilterEnt',
                 'widgetType':tkinter.Entry,
                 'wcfg':{
@@ -864,9 +864,9 @@ very similar with a few differences such as programType, title for file browser,
                 },
                 'gridcfg':{'sticky':tkinter.E,'row':-1,'column':2}})
             #ifd.append({'name':'pdbqFilterLab',
-                #'widgetType':Tkinter.Label,
+                #'widgetType':tkinter.Label,
                 #'text': 'pdbq file filter',
-                #'gridcfg':{'sticky':Tkinter.E,'row':-1,'column':6}})
+                #'gridcfg':{'sticky':tkinter.E,'row':-1,'column':6}})
             ifd.append( {'name': 'pdbqFilterEnt',
                 'widgetType':tkinter.Entry,
                 'wcfg':{

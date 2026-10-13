@@ -34,10 +34,10 @@ import time
 import sys
 import getopt
 import os
-import user
+from mglcompat import pyuser as user
 import warnings
 import stat
-from string import split
+from mglcompat.pystring import split
 
 #sys.path.insert(0,'.')
 

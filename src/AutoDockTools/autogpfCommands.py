@@ -138,7 +138,7 @@ from .GridParameters import GridParameters, \
 #from AutoDockTools.Objects.GridParameters import GridParameters, grid_parameter_list
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
 import tkinter.simpledialog
-from string import split, find, join, upper, rfind, replace
+from mglcompat.pystring import split, find, join, upper, rfind, replace
 from .MoleculePreparation import ReceptorPreparation, AD4ReceptorPreparation
 
 from .atomTypeTools import AutoDock4_AtomTyper
@@ -1957,7 +1957,7 @@ class SetUpCovalentMap(MVCommand):
                 },
                 'gridcfg':{'sticky':'w','columnspan':4}})
         #ifd.append({'name': 'PickAtom',
-            #'widgetType':Tkinter.Checkbutton,
+            #'widgetType':tkinter.Checkbutton,
             #'text': 'Pick Atom',
             #'variable':self.setPickAtom,
             #'gridcfg':{'sticky':'w','columnspan':2},
@@ -2435,7 +2435,7 @@ class DefineNewAtomParms(MVCommand):
             self.elem.set('')
             self.Rij= tkinter.StringVar(master=self.vf.GUI.ROOT)
             self.epsij= tkinter.StringVar(master=self.vf.GUI.ROOT)
-            ##Tkinter.Widget.bind(self.ifd.form, '<Key>',self.clearElem)
+            ##tkinter.Widget.bind(self.ifd.form, '<Key>',self.clearElem)
 
 
     def guiCallback(self):
@@ -2654,12 +2654,12 @@ class SetBoxParameters(MVCommand):
                 'font':(ensureFontCase('helvetica'),12,'bold')},
             'gridcfg':{'sticky':tkinter.W, 'columnspan':4}})
         #ifd.append( {'name': 'xnumber',
-        #    'widgetType':Tkinter.Scale,
+        #    'widgetType':tkinter.Scale,
         #    'wcfg':{'troughcolor':'red', 'from_':10,'to_':126,
         #            'orient':'horizontal', 'length': '3i',
         #            'resolution':2,
         #            'command':self.updateBoth},
-        #    'gridcfg':{'sticky':Tkinter.W,'columnspan':4}})
+        #    'gridcfg':{'sticky':tkinter.W,'columnspan':4}})
         ifd.append({'name': 'xnumber',
             'wtype':ThumbWheel,
             'widgetType':ThumbWheel,
@@ -2689,12 +2689,12 @@ class SetBoxParameters(MVCommand):
                 'font':(ensureFontCase('helvetica'),12,'bold')},
             'gridcfg':{'sticky':tkinter.W, 'columnspan':4}})
         #ifd.append( {'name': 'ynumber',
-            #'widgetType':Tkinter.Scale,
+            #'widgetType':tkinter.Scale,
             #'wcfg':{'troughcolor':'green', 'from_':10,'to_':126,
                     #'orient':'horizontal', 'length': '3i',
                     #'resolution':2,
                     #'command':self.updateBoth},
-            #'gridcfg':{'sticky':Tkinter.W,'columnspan':4}})
+            #'gridcfg':{'sticky':tkinter.W,'columnspan':4}})
         ifd.append({'name': 'ynumber',
             'wtype':ThumbWheel,
             'widgetType':ThumbWheel,
@@ -2722,12 +2722,12 @@ class SetBoxParameters(MVCommand):
                 'font':(ensureFontCase('helvetica'),12,'bold')},
             'gridcfg':{'sticky':tkinter.W, 'columnspan':4}})
         #ifd.append( {'name': 'znumber',
-        #    'widgetType':Tkinter.Scale,
+        #    'widgetType':tkinter.Scale,
         #    'wcfg':{'troughcolor':'blue', 'from_':10,'to_':126,
         #            'orient':'horizontal', 'length': '3i',
         #            'resolution':2,
         #            'command':self.updateBoth},
-        #    'gridcfg':{'sticky':Tkinter.W,'columnspan':4}})
+        #    'gridcfg':{'sticky':tkinter.W,'columnspan':4}})
         ifd.append({'name': 'znumber',
             'wtype':ThumbWheel,
             'widgetType':ThumbWheel,
@@ -4088,7 +4088,7 @@ if ask_outfile=0, outputfile name is name of molecule + '.out.pdbqt'
         if hasattr(self, 'form'):
             self.form.withdraw()
         dict = self.vf.atorsDict
-        if type(mol)==bytes:
+        if type(mol)==str:
             if len(self.vf.Mols) and mol in self.vf.Mols.name:
                 mol = self.vf.Mols.NodesFromName(mol)
             else:

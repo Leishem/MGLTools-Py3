@@ -53,7 +53,7 @@ class MakeGpfDpfCopies(NetworkNode):
     from AutoDockTools.VisionInterface.Adt.gpf_template import gpf_template
 
     if dpf_file == None and gpf_file == None:
-        print "ERROR: DPF and GPF input missing"
+        print("ERROR: DPF and GPF input missing")
         return 'stop'
 
 
@@ -61,14 +61,14 @@ class MakeGpfDpfCopies(NetworkNode):
         dpf_file_path = dpf_file.fullpath
 
         if not(os.path.exists(dpf_file_path)):
-            print "ERROR: DPF template file " + dpf_file_path + " does not exist!"
+            print("ERROR: DPF template file " + dpf_file_path + " does not exist!")
             return 'stop'
 
     if gpf_file != None:
         gpf_file_path = gpf_file.fullpath
 
         if not(os.path.exists(gpf_file_path)):
-            print "ERROR: GPF template file " + gpf_file_path + " does not exist!"
+            print("ERROR: GPF template file " + gpf_file_path + " does not exist!")
             return 'stop'
 
     name_list = set()
@@ -96,8 +96,9 @@ class MakeGpfDpfCopies(NetworkNode):
 
             if not(os.path.exists(g_dst)):
                 shutil.copyfile(gpf_file_path, g_dst)
-  
+
 
     self.outputData(dpf_list=dpf_list, gpf_list=gpf_list, struct_dir=struct_dir)
+
 """
         self.setFunction(code)

@@ -23,7 +23,7 @@ This Object parses the result of a trajectory AutoDock run and returns a diction
 
 """
 import os
-from string import find, join, replace, split, rfind
+from mglcompat.pystring import find, join, replace, split, rfind
 import re
 from MolKit.pdbParser import PdbqParser
 

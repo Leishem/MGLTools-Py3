@@ -99,7 +99,7 @@ def doit(self, command, filename, topCommand, redraw, setupUndo, log):
             self.deletePort(p, updateSignature=False)
 
         # get arguments description
-        from inspect import getargspec
+        from inspect import getfullargspec as getargspec
         args = getargspec(command.__call__.im_func)
         allNames = args[0][1:] # get rid of self
         defaultValues = args[3]

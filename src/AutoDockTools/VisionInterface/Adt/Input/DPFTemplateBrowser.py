@@ -50,11 +50,12 @@ class DPFTemplateBrowser(NetworkNode):
     dpf_template_file = os.path.abspath(dpf_template_file)
 
     if not(os.path.exists(dpf_template_file)):
-        print "ERROR: DPF template file " + dpf_template_file + " does not exist!"
+        print("ERROR: DPF template file " + dpf_template_file + " does not exist!")
         return 'stop'
 
     dpf_template = dpf_template(dpf_template_file)
 
     self.outputData(dpf_template=dpf_template)
+
 """
         self.setFunction(code)

@@ -623,7 +623,7 @@ geomName is the name of the Geom object in the source code generated.
 
         if num is None:
             num = self.materials[GL.GL_FRONT].diff
-        elif type(num) is bytes:
+        elif type(num) is str:
             num = getattr(self.materials[GL.GL_FRONT], num)
 
         if face is None:
@@ -679,7 +679,7 @@ geomName is the name of the Geom object in the source code generated.
 
         if propNum is None:
             propNum = self.materials[GL.GL_FRONT].diff
-        elif type(propNum) is bytes:
+        elif type(propNum) is str:
             propNum = getattr(self.materials[GL.GL_FRONT], propNum)
 
         f = face
@@ -718,7 +718,7 @@ geomName is the name of the Geom object in the source code generated.
         if not values: return
         if propNum is None:
             propNum = self.materials[GL.GL_FRONT].diff
-        elif type(propNum) is bytes:
+        elif type(propNum) is str:
             propNum = getattr(self.materials[GL.GL_FRONT], propNum)
 
         f = face
@@ -918,7 +918,7 @@ updateOwnGui=True : allow to update owngui at the end this func
             self.vertexSet = datamodel.VertexSet( v, s )
 
         # set default face side and default material property
-        if type(lPf) is bytes:
+        if type(lPf) is str:
             lPf = lPf.lower()
             if lPf == 'none': lPf=GL.GL_NONE
             elif lPf == 'back': lPf=GL.GL_BACK
@@ -982,7 +982,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         if fmode:
            
             redoFlags |= self._redoFlags['redoDisplayListFlag']
-            if type(fmode) == bytes:
+            if type(fmode) == str:
                 fmode = viewerConst.POLYGON_MODES[fmode]
             assert fmode in list(viewerConst.POLYGON_MODES.values())
             self.frontPolyMode = fmode
@@ -997,7 +997,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         bmode = kw.pop( 'backPolyMode', None)
         if bmode is not None:
             redoFlags |= self._redoFlags['redoDisplayListFlag']
-            if type(bmode) == bytes:
+            if type(bmode) == str:
                 bmode = viewerConst.POLYGON_MODES[bmode]
             assert bmode in list(viewerConst.POLYGON_MODES.values())
             self.backPolyMode = bmode
@@ -1013,7 +1013,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         if smode is not None:
            
             redoFlags |= self._redoFlags['redoDisplayListFlag']
-            if type(smode) == bytes:
+            if type(smode) == str:
                 smode = viewerConst.SHADINGS[smode]
             assert smode in list(viewerConst.SHADINGS.values())
             if smode==viewerConst.INHERIT:
@@ -1194,7 +1194,7 @@ updateOwnGui=True : allow to update owngui at the end this func
 
         val = kw.pop( 'culling', None)
         if val is not None:
-            if type(val) is bytes:
+            if type(val) is str:
                 if val.lower()=="inherit": val=viewerConst.INHERIT
                 elif val.lower()=="none": val=GL.GL_NONE
                 elif val.lower()=="front": val=GL.GL_FRONT
@@ -1981,7 +1981,7 @@ Should be call by RedoDisplayList in between glNewList/ glEndList
                       DeprecationWarning, stacklevel=2)
         
         if not mode is None:
-            if type(mode) == bytes:
+            if type(mode) == str:
                 mode = viewerConst.POLYGON_MODES[mode]
             if mode in list(viewerConst.POLYGON_MODES.values()):
                 if face==GL.GL_BACK:

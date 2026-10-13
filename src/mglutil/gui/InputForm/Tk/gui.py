@@ -156,7 +156,7 @@ class ListChooser:
     def add(self, entry, comment=None):
         """add an entry to the list"""
         self.entries.append( (entry, comment) )
-        if type(entry) is not bytes:
+        if type(entry) is not str:
             entry = repr(entry)
         self.lb.insert('end', entry)
         if not comment is None:
@@ -172,7 +172,7 @@ class ListChooser:
             self.entries.append( (entry, comment) )
         else:
             self.entries.insert(pos, (entry, comment))
-        if type(entry) is not bytes:
+        if type(entry) is not str:
             entry = repr(entry)
         self.lb.insert(pos, entry)
 
@@ -235,11 +235,11 @@ from mglcompat import pystring as string
 ##      def __init__(self, tkwcfg={}, tkpackOptions={}, tkpackMode=None):
 
 ##          self.master = None
-##          self.type = Tkinter.Entry
+##          self.type = tkinter.Entry
 ##          self.name = 'NoName'
 ##          self.tkwcfg = tkwcfg
 ##          self.tkpackOptions = tkpackOptions
-##          if tkpackMode==None: self.tkpacker = Tkinter.grid
+##          if tkpackMode==None: self.tkpacker = tkinter.grid
 ##          else: self.tkpackMode = tkpacker
 
 
@@ -284,7 +284,7 @@ class InputFormDescr(UserList):
     * widgetType: This specifies the type of the widget. It is usually a class
         name that can be any of the following
 
-        o any Tkinter widget (Tkinter.Button etc....)
+        o any Tkinter widget (tkinter.Button etc....)
         o any CustomizedWidgets widgets (ListChooser, Dial etc....)
         o any of the Pmw widgets (Pmw.EntryFields....)
     For examples go to any Pmv commands.
@@ -354,17 +354,17 @@ class InputFormDescr(UserList):
     example:
     =========================================================================
 
-        # Build a Tkinter.Button with the text 'hello', the text will be in
+        # Build a tkinter.Button with the text 'hello', the text will be in
         # red, using the font times size 20 and bold, the background will
         # be blue when not activated and green when activated.
         # The foreground will be white when desactivated. The button's relief
         # will be sunken and its borderwidth will be 8 pixel.
         idf = InputFormDescr(title='Button Example')
-        idf.append({'widgetType':Tkinter.Button,
+        idf.append({'widgetType':tkinter.Button,
                     'name':'helloBut',
                     'wcfg':{'text':'Hello','foreground':'White',
                             'background' : 'Blue',
-                            'relief' : Tkinter.SUNKEN,
+                            'relief' : tkinter.SUNKEN,
                             'font':(ensureFontCase('times'),20, 'bold'), 'borderwidth' : 8,
                             'activebackground' : 'Green'},
                      'gridcfg':{'sticky':'we'}})
@@ -412,7 +412,7 @@ required arguments:
               which means that the current form will be a 'slave' of the
               given master
 
-   root    --  If None is specified then a Tkinter.TopLevel object is
+   root    --  If None is specified then a tkinter.TopLevel object is
                created.
 
    descr   -- (instance of InputFormDescr) which is a list of dictionary
@@ -632,7 +632,7 @@ optional arguments :
         
     def autoSize(self):
         self.root.update() # force packing to happen to size are right
-        # self.root can be Tkinter.Frame instance. Frames do not have geometry attribute.
+        # self.root can be tkinter.Frame instance. Frames do not have geometry attribute.
         if hasattr(self.root, "geometry"):
             w = self.root.winfo_reqwidth()
             h = self.root.winfo_reqheight()
@@ -743,7 +743,7 @@ optional arguments :
             # The widget is a container widget
             if 'container' in entry:
                 for key, cont in list(entry['container'].items()):
-                    if type(cont) is bytes:
+                    if type(cont) is str:
                         exec("self.parentName['%s'] = {'container':%s, 'widgets':[]}"%(key,cont))
                         # print self.parentName[key]
                     #elif type(cont) is types.InstanceType:
@@ -912,7 +912,7 @@ optional arguments :
         a Save
         fileBrowser.
         """
-##          wdescr['widgetType'] = Tkinter.Button
+##          wdescr['widgetType'] = tkinter.Button
         if 'typeofwidget' in wdescr:
             wdescr['widgetType'] = wdescr['typeofwidget']
         else:
@@ -1395,7 +1395,7 @@ translation is done in checkValues()
         if container == 'all':
             contNames = list(self.parentName.keys())
 
-        elif type(container) is bytes:
+        elif type(container) is str:
             contNames = [container,]
         else:
             contNames = container
@@ -1462,7 +1462,7 @@ translation is done in checkValues()
                    hasattr(e['widget'],'getcurselection'):
                     res=e['widget'].getcurselection()
                     val = []
-                    if type(res) != bytes:
+                    if type(res) != str:
                         for name in res:
                             val.append( self.PMWnameToReal(e, name) )
                     else:

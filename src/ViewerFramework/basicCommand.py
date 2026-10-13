@@ -33,7 +33,7 @@ from mglutil.util.packageFilePath import findFilePath, \
      findModulesInPackage, getResourceFolderWithVersion
 
 import types, tkinter, Pmw, os, sys, traceback
-from string import join
+from mglcompat.pystring import join
 import tkinter.messagebox
 from ViewerFramework.VFCommand import Command, CommandGUI
 import warnings
@@ -457,14 +457,14 @@ class BrowseCommandsCommand(Command):
                     'gridcfg':{'sticky':'wesn', 'row':-1}})
 
 #        idf.append({'name':'docbutton',
-#                    'widgetType':Tkinter.Checkbutton,
+#                    'widgetType':tkinter.Checkbutton,
 #                    #'parent':'DOCGROUP',
 #                    'defaultValue':0,
 #                    'wcfg':{'text':'Show documentation',
 #                               'onvalue':1,
 #                               'offvalue':0,
 #                               'command':self.showdoc_cb,
-#                               'variable':Tkinter.IntVar()},
+#                               'variable':tkinter.IntVar()},
 #                        'gridcfg':{'sticky':'nw','columnspan':3}})
                     
         idf.append({'name':'DOCGROUP',
@@ -496,7 +496,7 @@ class BrowseCommandsCommand(Command):
                     'gridcfg':{'sticky':'ew', 'row':-1}})
 
 #        idf.append({'name':'loadCmd',
-#                    'widgetType':Tkinter.Button,
+#                    'widgetType':tkinter.Button,
 #                    'wcfg':{'text':'Load Command',
 #                            'command':self.loadCmd_cb},
 #                    'gridcfg':{'sticky':'ew', 'row':-1}})
@@ -508,11 +508,11 @@ class BrowseCommandsCommand(Command):
                     'gridcfg':{'sticky':'ew', 'row':-1}})
 
 #        idf.append({'name':'dismiss',
-#                    'widgetType':Tkinter.Button,
+#                    'widgetType':tkinter.Button,
 #                    'wcfg':{'text':'DISMISS',
 #                            'command':self.dismiss_cb,
 #                           },
-#                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W,'columnspan':3}})
+#                    'gridcfg':{'sticky':tkinter.E+tkinter.W,'columnspan':3}})
 
         return idf
 
@@ -1597,35 +1597,35 @@ class loadMacroCommand(Command):
 ##                     'wcfg':{
 ##                             'command':self.setDefaultEntryName,
 ##                             'title':'Choose a macro'},
-##                     'gridcfg':{'sticky':Tkinter.E+Tkinter.W}} )
+##                     'gridcfg':{'sticky':tkinter.E+tkinter.W}} )
 
-##         ifd.append({'widgetType':Tkinter.Entry,
+##         ifd.append({'widgetType':tkinter.Entry,
 ##                     'defaultValue':'menuRoot',
 ##                     'wcfg':{'label':'menu bar'}, 
-##                     'gridcfg':{'sticky':Tkinter.E}
+##                     'gridcfg':{'sticky':tkinter.E}
 ##                     })
-##         ifd.append({'widgetType':Tkinter.Entry,
+##         ifd.append({'widgetType':tkinter.Entry,
 ##                     'defaultValue':'Macros',
 ##                     'wcfg':{'label':'menu button'}, 
-##                     'gridcfg':{'sticky':Tkinter.E}
+##                     'gridcfg':{'sticky':tkinter.E}
 ##                    })
-##         ifd.append({'widgetType':Tkinter.Entry,
+##         ifd.append({'widgetType':tkinter.Entry,
 ##                     'defaultValue':'',
 ##                     'wcfg':{'label':'menu entry'}, 
-##                     'gridcfg':{'sticky':Tkinter.E}
+##                     'gridcfg':{'sticky':tkinter.E}
 ##                     })
-##         ifd.append({'widgetType':Tkinter.Entry,
+##         ifd.append({'widgetType':tkinter.Entry,
 ##                     'defaultValue':'',
 ##                     'wcfg':{'label':'cascade'}, 
-##                     'gridcfg':{'sticky':Tkinter.E}
+##                     'gridcfg':{'sticky':tkinter.E}
 ##                     })
 ##         ifd.append({'name': 'Load Macro',
-##                     'widgetType':Tkinter.Button,
+##                     'widgetType':tkinter.Button,
 ##                     'text':'Load Macro',
 ##                     'wcfg':{'bd':6},
-##                     'gridcfg':{'sticky':Tkinter.E+Tkinter.W},
+##                     'gridcfg':{'sticky':tkinter.E+tkinter.W},
 ##                     'command': self.loadMacro_cb})
-##         ifd.append({'widgetType':Tkinter.Button,
+##         ifd.append({'widgetType':tkinter.Button,
 ##                     'text':'Dismiss',
 ##                     'command': self.Dismiss_cb})
 
@@ -2034,13 +2034,13 @@ class ExitCommand(Command):
             ##  from ViewerFramework.gui import InputFormDescr
 #            from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 #            self.idf = InputFormDescr(title='Do you wish to Quit?')
-#            self.idf.append({'widgetType':Tkinter.Button,
+#            self.idf.append({'widgetType':tkinter.Button,
 #                        'wcfg':{'text':'QUIT',
 #                                'width':10,
 #                                'command':self.quit_cb},
 #                        'gridcfg':{'sticky':'we'}})
 #            
-#            self.idf.append({'widgetType':Tkinter.Button,
+#            self.idf.append({'widgetType':tkinter.Button,
 #                        'wcfg':{'text':'CANCEL',
 #                                'width':10,
 #                                'command':self.cancel_cb},

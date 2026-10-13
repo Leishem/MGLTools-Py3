@@ -157,9 +157,9 @@ class Vina(MacroNode):
 
         if receptor_obj.type == "local":
             if not(os.path.exists(receptor_file)):
-                print "ERROR: receptor_file " + receptor_file + " does not exist"
+                print("ERROR: receptor_file " + receptor_file + " does not exist")
                 return '''stop'''
-        
+
         pass
         self.outputData(receptor_file=receptor_file, ligand_lib=ligand_lib, filter_file=filter_file)
 ## to ouput data on port receptor_file use
@@ -168,6 +168,7 @@ class Vina(MacroNode):
 ## self.outputData(ligand_lib=data)
 ## to ouput data on port filter_file use
 ## self.outputData(filter_file=data)
+
 
 
 

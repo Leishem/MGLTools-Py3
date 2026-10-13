@@ -189,7 +189,7 @@ class LabelByProperties(MVCommand, MVAtomICOM):
         oldProp = self.properties
         self.properties = [x for x in list(self.selection[0].__dict__.items()) if isinstance(x[1], int) \
                                  or isinstance(x[1], float) or \
-                                 type(x[1]) is bytes]
+                                 type(x[1]) is str]
         # Filter out the private members starting by __.
         self.properties = [x for x in self.properties if x[0][:2]!='__']
         if 'default' not in self.cmdForms: return
@@ -425,7 +425,7 @@ class LabelByProperties(MVCommand, MVAtomICOM):
         kw['only']=only
         kw['negate']=negate
         kw['format']=format
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         self.vf.expandNodes(nodes)
         if 'redraw' not in kw:
@@ -490,7 +490,7 @@ class LabelByProperties(MVCommand, MVAtomICOM):
             mol.geomContainer.atoms[geomName] = set
             propLabels = [""]*len(set)
             for property in properties:
-                if type(property) is bytes:
+                if type(property) is str:
                     try:
                         #newPropLabels = eval('set.%s'%property)
                         newPropLabels = getattr(set, property)
@@ -879,7 +879,7 @@ the current selection:"""
         kw['negate']=negate
         kw['format']=format
         kw['redraw'] = 1
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         self.vf.expandNodes(nodes)
         self.doitWrapper(*(nodes,), **kw)

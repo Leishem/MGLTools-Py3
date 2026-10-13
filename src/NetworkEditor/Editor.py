@@ -470,7 +470,7 @@ start the widget editor, set the required, singleConnection and toolTip
         port = self.obj
         
         ObjectEditor.createForm(self, master)
-        #w = Tkinter.Frame(self.top, relief='groove')
+        #w = tkinter.Frame(self.top, relief='groove')
 
         # add protocol for killing this window
         self.top.master.protocol("WM_DELETE_WINDOW", self.Cancel)
@@ -536,8 +536,8 @@ start the widget editor, set the required, singleConnection and toolTip
 
 ##             # port has a widget add Unbind button
 ##             if port.widget:
-##                 var = Tkinter.IntVar()
-##                 tk = Tkinter.Checkbutton(
+##                 var = tkinter.IntVar()
+##                 tk = tkinter.Checkbutton(
 ##                     w.interior(), text='single connection',
 ##                     variable=var, indicatoron=1)
 ##                 tk.var = var
@@ -870,7 +870,7 @@ start the widget editor, set the required, singleConnection and toolTip
             
 ##              if port.delWtk is None:
 ##                  cb = CallBackFunction( nodeEd.deletePort, port)
-##                  port.delWtk = Tkinter.Checkbutton(nodeEd.ipFrame,command=cb)
+##                  port.delWtk = tkinter.Checkbutton(nodeEd.ipFrame,command=cb)
 ##                  port.delWtk.grid(row=port.number+1, column=4, sticky='ew')
 
 
@@ -1367,7 +1367,7 @@ try:
     # which is an older version and does not fullfill our needs. Need to test
     # if this is such an old version. Here, the EditorWindow constructor has
     # no keyword width and height. We use inspect...
-    from inspect import getargspec
+    from inspect import getfullargspec as getargspec
     args = getargspec(EditorWindow.__init__)[0]
     assert "width" in args, \
            "Older version of idlelib detected! Using Pmw code editor instead."

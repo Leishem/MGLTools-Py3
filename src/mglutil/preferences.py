@@ -19,7 +19,7 @@ This module contains UserPreference class that is used to store user preferences
 import os
 import pickle
 import types
-from UserDict import UserDict
+from collections import UserDict
 from mglutil.util.packageFilePath import getResourceFolderWithVersion
 
 class UserPreference(UserDict):

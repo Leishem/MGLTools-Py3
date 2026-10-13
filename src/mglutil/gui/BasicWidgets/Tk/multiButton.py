@@ -84,7 +84,7 @@ class MultiButtons(tkinter.Frame):
                              #   origName: original names of buttons
                              #   index: number of this button 
                              #   value (value is 0 or 1: on or off)
-                             #   button (value is the Tkinter.Checkbutton)
+                             #   button (value is the tkinter.Checkbutton)
                              #   buttoncfg: dictionary that stored the Tkinter
                              #              checkbox configuration
                              
@@ -122,7 +122,7 @@ class MultiButtons(tkinter.Frame):
             buttoncfg = {} # dict with tkinter data for checkbutton
             dataDict = {}  # dict that stores everything about a button
  
-            if type(data) == bytes:
+            if type(data) == str:
                 origName = data
                 buttonName = data + str(i)
                 buttoncfg['variable'] = tkinter.IntVar()
@@ -282,7 +282,7 @@ or:
        key: 'buttoncfg' and its value is another dictionary where the user
                         can specify any Tkinter Checkbutton options
    Example: valueList=[('apple', {'value':1, buttoncfg:{'command':foo,
-                                     'variable':Tkinter.IntVar()} }), 'banana']
+                                     'variable':tkinter.IntVar()} }), 'banana']
    This example creates 2 buttons and the first button is also checked.
 
 A callback can be specified that is bound to every checkbutton. This function
@@ -367,7 +367,7 @@ USAGE: mb = MultiCheckbuttons(valueList=myList, callback=myCallback)
         """Select buttons using regular expression syntax"""
         if pat is None or pat == '':
             return
-        if type(pat) != bytes:
+        if type(pat) != str:
             return
         pattern = re.compile(pat)
         for tupl in self.buttonList:

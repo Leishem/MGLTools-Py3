@@ -58,30 +58,31 @@ class InputValidation(NetworkNode):
         result_dir = os.path.abspath(receptor_dir + os.sep + '..' + os.sep + receptor_id)
 
         if not(os.path.exists(gpf_file)):
-            print "ERROR: GPF template " + gpf_file + " does not exist!"
+            print("ERROR: GPF template " + gpf_file + " does not exist!")
             return 'stop'
         elif not(os.path.exists(dpf_file)):
-            print "ERROR: DPF template " + dpf_file + " does not exist!"
+            print("ERROR: DPF template " + dpf_file + " does not exist!")
             return 'stop'
 
         pdbqt_loc = receptor_obj.get_ext_loc('pdbqt')
         pqr_loc = receptor_obj.get_ext_loc('pqr')
         pdb_loc = receptor_obj.get_ext_loc('pdb')
-            
+
         if pdbqt_loc == None and pqr_loc == None and pdb_loc == None:
-            print "ERROR: No valid structure file found, none of the following exist"
-            print "    " + pdbqt_loc + ", " + pqr_loc + ", " + pdb_loc
+            print("ERROR: No valid structure file found, none of the following exist")
+            print("    " + pdbqt_loc + ", " + pqr_loc + ", " + pdb_loc)
             return 'stop'
-        
-        print "-------------------------------------------------------"
-        print "     INPUTS THAT WILL BE USED FOR VIRTUAL SCREENING    "
-        print "GPF Template:                  " + GPF_template.fullpath
-        print "DPF Template:                  " + DPF_template.fullpath
-        print "Results will be downloaded to: " + result_dir
-        print "-------------------------------------------------------"
-        
+
+        print("-------------------------------------------------------")
+        print("     INPUTS THAT WILL BE USED FOR VIRTUAL SCREENING    ")
+        print("GPF Template:                  " + GPF_template.fullpath)
+        print("DPF Template:                  " + DPF_template.fullpath)
+        print("Results will be downloaded to: " + result_dir)
+        print("-------------------------------------------------------")
+
         pass
         self.outputData(GPF_template=GPF_template, DPF_template=DPF_template, result_dir=result_dir)
+
 """
         self.configure(function=code)
 

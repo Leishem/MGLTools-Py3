@@ -103,7 +103,7 @@ class ComputeGrids(MacroNode):
         gpf_path = gpf_obj.fullpath
 
         if not(os.path.exists(gpf_path)):
-            print "ERROR: GPF template " + gpf_path + " does not exist!"
+            print("ERROR: GPF template " + gpf_path + " does not exist!")
             return '''stop'''
 
         filter_file = ligands.filter_file
@@ -122,6 +122,7 @@ class ComputeGrids(MacroNode):
 ## self.outputData(ligand_lib=data)
 ## to ouput data on port prepared_receptor use
 ## self.outputData(prepared_receptor=data)
+
 
 
 

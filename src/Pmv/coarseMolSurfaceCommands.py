@@ -437,7 +437,7 @@ class coarseMolSurface(MVCommand):
                     return
 
         if isotype:
-            if type(isotype) == bytes:
+            if type(isotype) == str:
                 self.isovalue_type = isotype
                 if isotype == 'fast approximation':
                     isovalue = self.piecewiseLinearInterpOnIsovalue(self.surf_resolution)

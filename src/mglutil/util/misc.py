@@ -146,7 +146,7 @@ def importMainOrIPythonMain():
 def suppressMultipleQuotes(aString):
     lStringToSimplify = aString
     lSimplifiedString = lStringToSimplify
-    while type(lStringToSimplify) == bytes:
+    while type(lStringToSimplify) == str:
         lSimplifiedString = lStringToSimplify
         try:
            lStringToSimplify = eval(lSimplifiedString)

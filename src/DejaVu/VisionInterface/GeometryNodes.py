@@ -3097,7 +3097,7 @@ name, geoms, instanceMatrices, geomOptions, parent):
 
     if self.selectedGeomIndex is not None:
         g = self.geom()
-        from Image import FLIP_TOP_BOTTOM
+        from PIL.Image import FLIP_TOP_BOTTOM
         g.Set(image=image.transpose(FLIP_TOP_BOTTOM), transparent=True)
         self.outputData(stickerImage=g, allGeometries=self.geoms)
     else:

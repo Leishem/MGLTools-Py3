@@ -19,7 +19,7 @@
 #
 
 import os
-import Image
+from PIL import Image
 from copy import deepcopy
 
 from opengltk.extent import _gllib

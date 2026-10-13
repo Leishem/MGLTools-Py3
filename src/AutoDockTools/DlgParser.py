@@ -25,7 +25,7 @@ This Object parses the result of an AutoDock job and returns a dictionary.
 
 """
 import os
-from string import find, join, replace, split, rfind, strip
+from mglcompat.pystring import find, join, replace, split, rfind, strip
 import re
 import mglcompat.oldnumeric as Numeric
 

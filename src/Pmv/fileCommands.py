@@ -2857,16 +2857,16 @@ Mouse over PDB Cache Directory label to see the path, or click Clear button to r
             self.vf.GUI.ROOT.config(cursor='watch')
 #            if val[ "keyword"]:
 #                from mglutil.gui.BasicWidgets.Tk.multiListbox import MultiListbox
-#                self.root = Tkinter.Toplevel()
+#                self.root = tkinter.Toplevel()
 #                self.root.title("Select PDB file")
 #                self.root.protocol("WM_DELETE_WINDOW", self.hide)
-#                self.PanedWindow = Tkinter.PanedWindow(self.root, handlepad=0,
+#                self.PanedWindow = tkinter.PanedWindow(self.root, handlepad=0,
 #                             handlesize=0,
-#                             orient=Tkinter.VERTICAL,
+#                             orient=tkinter.VERTICAL,
 #                             bd=1,height=2*self.height,width=self.width
 #                             )
 #                
-#                self.PanedWindow.pack(fill=Tkinter.BOTH, expand=1)
+#                self.PanedWindow.pack(fill=tkinter.BOTH, expand=1)
 #                self.mlb = MultiListbox(self.PanedWindow, ((' PDB ID', 9),  
 #                                             ('Information   ', 20)),
 #                                              
@@ -2874,7 +2874,7 @@ Mouse over PDB Cache Directory label to see the path, or click Clear button to r
 #                                             usehullsize = 1,
 #                                             hull_width = self.width)
 #
-#                self.mlb.pack(expand=Tkinter.NO, fill=Tkinter.X)             
+#                self.mlb.pack(expand=tkinter.NO, fill=tkinter.X)             
 #                self.find_list(val["keyword"])
 #                if len(self.listmols)==0:
 #                    self.hide()
@@ -2882,14 +2882,14 @@ Mouse over PDB Cache Directory label to see the path, or click Clear button to r
 #                    return
 #                for m,info in zip(self.listmols,self.information):
 #                    mol_name = m
-#                    self.mlb.insert(Tkinter.END, (m,info))
+#                    self.mlb.insert(tkinter.END, (m,info))
 #                self.PanedWindow.add(self.mlb)
-#                self.ok_b =    Tkinter.Button(self.root, text="Load", 
+#                self.ok_b =    tkinter.Button(self.root, text="Load", 
 #                                      command=self.ok,width=20)   
-#                self.ok_b.pack(fill=Tkinter.X,side = "left")
-#                self.close_b = Tkinter.Button(self.root, text="  Dismiss  ", 
+#                self.ok_b.pack(fill=tkinter.X,side = "left")
+#                self.close_b = tkinter.Button(self.root, text="  Dismiss  ", 
 #                                      command=self.hide,width=20)  
-#                self.close_b.pack(fill=Tkinter.X,side = "left")
+#                self.close_b.pack(fill=tkinter.X,side = "left")
 
             if val['pdbID']:
              if len(val['pdbID']) != 4:

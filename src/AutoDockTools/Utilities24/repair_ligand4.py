@@ -2,7 +2,7 @@
 #!/usr/bin/env python
 
 import os
-from string import find
+from mglcompat.pystring import find
 
 from MolKit import Read
 from MolKit.pdbWriter import PdbqWriter

@@ -318,12 +318,13 @@ class PrepareReceptor(MacroNode):
                 receptor_url = ""
                 receptor_local = pdb
         else:
-            print "*** ERROR: pqr and pqr both missing from receptor object"
-            print receptor_obj.ext_loc
+            print("*** ERROR: pqr and pqr both missing from receptor object")
+            print(receptor_obj.ext_loc)
             return '''stop'''
 
         self.outputData(receptor_obj=value, receptor_url=receptor_url, receptor_local=receptor_local, download_loc=download_loc)
         self.scheduleChildren(portList=[self.getOutputPortByName('''receptor_obj'''), self.getOutputPortByName('''receptor_url'''), self.getOutputPortByName('''receptor_local'''), self.getOutputPortByName('''download_loc''')])
+
 
 
 

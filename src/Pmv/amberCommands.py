@@ -17,7 +17,7 @@ import tkinter, mglcompat.oldnumeric as Numeric
 import Pmw
 import glob
 from math import pi, sqrt, ceil
-from string import split, strip
+from mglcompat.pystring import split, strip
 from os.path import basename, exists
 from mglcompat.pytypes import StringType
 
@@ -906,7 +906,7 @@ class FreezeAtomsAmber94(MVCommand):
         fstr = 'Currently ' + str(frozNum) + ' frozen atoms'
         self.frozenLab.set(fstr)
         ##self.frozenLab.set('Currently 0 frozen atoms')
-        #self.constrLab = Tkinter.StringVar()
+        #self.constrLab = tkinter.StringVar()
         #constrNum = Numeric.add.reduce(self.CurrentAmber94.constrained)
         #cstr = 'Currently ' + str(constrNum) + ' constrained atoms'
         #self.constrLab.set(cstr)

@@ -38,9 +38,9 @@ This Module implements the Camera class and the Fog class.
 
 import os, sys, warnings
 
-import Image
-import ImageFilter
-import ImageChops
+from PIL import Image
+from PIL import ImageFilter
+from PIL import ImageChops
 
 import tkinter.messagebox
 
@@ -351,7 +351,7 @@ class DynamicComboBox(Pmw.ComboBox):
         Pmw.ComboBox._postList(self, event)
 
 
-## class OcclusionCamera(Tkinter.Widget, Tkinter.Misc):
+## class OcclusionCamera(tkinter.Widget, tkinter.Misc):
 
 ##     def orient(self, eyex, eyey, eyez, nx, ny, nz):
 ##         """Place camera at x,y,z and look along vector nx, ny, nz"""
@@ -678,10 +678,10 @@ class DynamicComboBox(Pmw.ComboBox):
 ##                                  # Viewer.ReallyRedraw
 
 ##         self.frameBorderWidth = 3
-##         self.frame = Tkinter.Frame(master, bd=self.frameBorderWidth)
+##         self.frame = tkinter.Frame(master, bd=self.frameBorderWidth)
 ##         cfg = 0
 
-##         self.counterText = Tkinter.Label(self.frame, text='0%')
+##         self.counterText = tkinter.Label(self.frame, text='0%')
 
 ##         self.fovyTW = ThumbWheel(
 ##             self.frame, width=70, height=16, type=float, value=self.fovy,
@@ -692,10 +692,10 @@ class DynamicComboBox(Pmw.ComboBox):
 ##         #self.fovyTW.grid(column=3, row=0)
 ##         self.fovyTW.pack(side='left')
 
-##         self.compute = Tkinter.Button(self.frame, text='compute',
+##         self.compute = tkinter.Button(self.frame, text='compute',
 ##                                       command = self.computeOcclusion_cb)
         
-##         self.guiFrame = Tkinter.Frame(master, bd=self.frameBorderWidth)
+##         self.guiFrame = tkinter.Frame(master, bd=self.frameBorderWidth)
 ##         frame = self.guiFrame
         
 ##         # build geometry chooser
@@ -704,7 +704,7 @@ class DynamicComboBox(Pmw.ComboBox):
 ##         #    if g.visible and len(g.getVertices())>0:
 ##         #        objects.append( (g.fullName, 'no comment available', g) )
 
-##         b = Tkinter.Button(frame, text='Update Geom list',
+##         b = tkinter.Button(frame, text='Update Geom list',
 ##                            command=self.listGeoms)
 ##         b.grid(column=0, row=0)
         
@@ -714,9 +714,9 @@ class DynamicComboBox(Pmw.ComboBox):
 ##             )
 ##         self.chooser.grid(column=0, row=1, rowspan=5)
 
-##         b = Tkinter.Button(frame, text='Add', command=self.addGeoms)
+##         b = tkinter.Button(frame, text='Add', command=self.addGeoms)
 ##         b.grid(column=1, row=1)
-##         b = Tkinter.Button(frame, text='Remove', command=self.removeGeoms)
+##         b = tkinter.Button(frame, text='Remove', command=self.removeGeoms)
 ##         b.grid(column=1, row=2)
         
 ##         self.compOcclusion = ListChooser(
@@ -724,9 +724,9 @@ class DynamicComboBox(Pmw.ComboBox):
 ##             )
 ##         self.compOcclusion.grid(column=2, row=0, rowspan=3)
 
-##         b = Tkinter.Button(frame, text='Add', command=self.addOccluders)
+##         b = tkinter.Button(frame, text='Add', command=self.addOccluders)
 ##         b.grid(column=1, row=4)
-##         b = Tkinter.Button(frame, text='Remove', command=self.removeOccluders)
+##         b = tkinter.Button(frame, text='Remove', command=self.removeOccluders)
 ##         b.grid(column=1, row=5)
         
 ##         self.occluders = ListChooser(
@@ -757,10 +757,10 @@ class DynamicComboBox(Pmw.ComboBox):
 ##             labCfg = {'text':'overall brightness:', 'side':'top'})
 ##         self.offTW.grid(column=3, row=3)
         
-##         self.apply = Tkinter.Button(frame, text='apply occ.',
+##         self.apply = tkinter.Button(frame, text='apply occ.',
 ##                                     command = self.applyOcclusion)
 ##         self.apply.grid(column=3, row=4)
-##         self.remove = Tkinter.Button(frame, text='remove occ.',
+##         self.remove = tkinter.Button(frame, text='remove occ.',
 ##                                      command = self.removeOcclusion)
 ##         self.remove.grid(column=3, row=5)
 
@@ -814,13 +814,13 @@ class DynamicComboBox(Pmw.ComboBox):
 
 ##         from Tkinter import TclError
 ##         try :
-##             Tkinter.Widget.__init__(self, self.frame, 'togl', cnf, kw)
+##             tkinter.Widget.__init__(self, self.frame, 'togl', cnf, kw)
 ##             self.tk.call(self._w, 'makecurrent')
 ##             glDepthFunc(GL_LESS)
 ##         except TclError, e:
 ##             kw.pop('sharecontext')
 ##             # after this line self.master will be set to self frame
-##             Tkinter.Widget.__init__(self, self.frame, 'togl', cnf, kw)
+##             tkinter.Widget.__init__(self, self.frame, 'togl', cnf, kw)
 
 ##             self.tk.call(self._w, 'makecurrent')
 ##             glDepthFunc(GL_LESS)
@@ -1342,7 +1342,7 @@ size camera.width*camera.height*3"""
         """Grabs the detph buffer and returns it as PIL P image"""
         nar = self.GrabFrontBufferAsArray(lock, buffer)
 
-        import Image
+        from PIL import Image
         image = Image.fromstring('RGB', (self.width, self.height),
                                  nar.tobytes())
         #if sys.platform!='win32':
@@ -1390,7 +1390,7 @@ size camera.width*camera.height*3"""
         else:
             zval1 = Numeric.ones(self.width*self.height, 'f')*zmax*255
 
-        import Image
+        from PIL import Image
 
         depthImage = Image.fromstring('L', (self.width, self.height),
                                       zval1.astype('B').tobytes())
@@ -1692,8 +1692,8 @@ This only applies when the camera is in its own top level.
         # if window is a toplevel window
         
         # replaced this test by test for geometry method
-        #if isinstance(, Tkinter.Tk) or \
-        #   isinstance(self.frame.master, Tkinter.Toplevel):
+        #if isinstance(, tkinter.Tk) or \
+        #   isinstance(self.frame.master, tkinter.Toplevel):
         if hasattr(window, 'geometry') and callable(window.geometry):
             # we have to set the geoemtry of the window to be the requested
             # size plus 2 times the border width of the frame containing the
@@ -2798,11 +2798,11 @@ button is pressed. buttonNum can be 1,2,3 or 0 to remove call backs
                 self.viewer.deleteOpenglListAndCallRedrawAndCallDisableGlLighting()
                                                         
 #            if val:
-#                self.imCanvastop = Tkinter.Toplevel()
-#                self.imCanvas = Tkinter.Canvas(self.imCanvastop)
-#                self.imCanvas1 = Tkinter.Canvas(self.imCanvastop)
-#                self.imCanvas2 = Tkinter.Canvas(self.imCanvastop)
-#                self.imCanvas3 = Tkinter.Canvas(self.imCanvastop)
+#                self.imCanvastop = tkinter.Toplevel()
+#                self.imCanvas = tkinter.Canvas(self.imCanvastop)
+#                self.imCanvas1 = tkinter.Canvas(self.imCanvastop)
+#                self.imCanvas2 = tkinter.Canvas(self.imCanvastop)
+#                self.imCanvas3 = tkinter.Canvas(self.imCanvastop)
 #                self.canvasImage = None
 #                self.canvasImage1 = None
 #                self.canvasImage2 = None

@@ -1152,10 +1152,10 @@ class AutoGridSurfaceGui:
                    'gridcfg':{'sticky':tkinter.W,'row':-1,
                       'column':1}}
 ##              entry={'name':'%ssetEnt'%self.grid.name,
-##                  'widgetType':Tkinter.Entry,
+##                  'widgetType':tkinter.Entry,
 ##                  'wcfg':{'width':5},
 ##                  'textvariable':self.setVar,
-##                      'gridcfg':{'sticky':Tkinter.W,'row':-1,'column':1}}
+##                      'gridcfg':{'sticky':tkinter.W,'row':-1,'column':1}}
                 #'commandArgs':form,
                 #'command': self.updateSetVal}
             form.addEntry(entry)
@@ -1189,7 +1189,7 @@ class AutoGridSurfaceGui:
 ##                  'type':float,
 ##                  'wcfg':{'label': " ",'minval':minval,'immediate':1,
 ##                  'maxval':maxval,'init':-0.071, 'sd':'right'},
-##                  'gridcfg':{'sticky':Tkinter.W,'row':-1,
+##                  'gridcfg':{'sticky':tkinter.W,'row':-1,
 ##                  'column':2, 'columnspan':2} }
             
             entry = {'name':'%sSlider'%self.grid.name,

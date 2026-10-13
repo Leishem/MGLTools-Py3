@@ -287,7 +287,7 @@ class Dashboard(MVCommand):
         #vf.registerListener(ClearSelectionEvent, self.handleClearSelection)
 
         # build the tree
-        #master = Tkinter.Toplevel()
+        #master = tkinter.Toplevel()
         #master.withdraw()
         #master.protocol('WM_DELETE_WINDOW',self.hide)
 

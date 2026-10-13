@@ -613,7 +613,7 @@ class MeasureDistanceGUICommand(MeasureGUICommand):
     def __call__(self, atoms, **kw):
         """distance/None<---measureDistanceGC(atoms)
         \natoms --- atom(s)"""
-        if type(atoms) is bytes:
+        if type(atoms) is str:
             self.nodeLogString = "'"+atoms+"'"
         ats = self.vf.expandNodes(atoms)
         if not len(ats): return 'ERROR'
@@ -772,7 +772,7 @@ turned off  and viewer's current object is not Root."""
         """angle/None<---measureAngleGC(atoms)
            \natoms --- atom(s)
            \nangle --- returned when the number of atoms is a multiple of 3"""
-        if type(atoms) is bytes:
+        if type(atoms) is str:
             self.nodeLogString = "'"+atoms+"'"
         ats = self.vf.expandNodes(atoms)
         if not len(ats): return 'ERROR'
@@ -972,7 +972,7 @@ turned off  and viewer's current object is not Root."""
         """torsion/None<-measureTorsionGC(atoms)
         \natoms  --- the atom(s)
         \ntorsion --- returned when the number of atoms is a multiple of 4"""
-        if type(atoms) is bytes:
+        if type(atoms) is str:
             self.nodeLogString = "'"+atoms+"'"
         ats = self.vf.expandNodes(atoms)
         if not len(ats): return 'ERROR'

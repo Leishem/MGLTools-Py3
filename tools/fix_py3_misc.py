@@ -38,6 +38,71 @@ def fix_raise(line):
     return f"{ind}raise RuntimeError({args})" + (f"  {comment}" if comment else "")
 
 
+STRING_FUNCS = {"atoi", "atol", "atof", "split", "splitfields", "rsplit", "join",
+                "joinfields", "strip", "lstrip", "rstrip", "lower", "upper",
+                "swapcase", "capitalize", "replace", "find", "rfind", "index",
+                "rindex", "count", "zfill", "ljust", "rjust", "center",
+                "expandtabs", "maketrans", "translate", "letters", "lowercase",
+                "uppercase"}
+FROM_STRING_RX = re.compile(r"^(\s*)from\s+string\s+import\s+(.+)$")
+MODULE_SWAPS = [
+    # (regex on a whole line, replacement)
+    (re.compile(r"^(\s*)import user\s*$"), r"\1from mglcompat import pyuser as user"),
+    (re.compile(r"^(\s*)import UserDict\s*$"), r"\1import collections as UserDict"),
+    (re.compile(r"^(\s*)import UserList\s*$"), r"\1import collections as UserList"),
+    (re.compile(r"^(\s*)from UserDict import"), r"\1from collections import"),
+    (re.compile(r"^(\s*)from UserList import"), r"\1from collections import"),
+    (re.compile(r"^(\s*)import Canvas\s*$"), r"\1from mglcompat import tkCanvas as Canvas"),
+    (re.compile(r"^(\s*)from Canvas import"), r"\1from mglcompat.tkCanvas import"),
+    (re.compile(r"\binspect\.getargspec\b"), "inspect.getfullargspec"),
+    (re.compile(r"^(\s*)from inspect import getargspec\b"),
+     r"\1from inspect import getfullargspec as getargspec"),
+]
+
+
+PIL_MODULES = {"Image", "ImageTk", "ImageDraw", "ImageFont", "ImageOps",
+               "ImageEnhance", "ImageChops", "ImageFilter", "ImageGrab",
+               "ImageFile", "ImageColor", "ImagePalette", "ImageStat",
+               "ImageSequence", "ImageMath", "PngImagePlugin", "GifImagePlugin"}
+IMPORT_STMT_RX = re.compile(r"^(?P<ind>\s*)import\s+(?P<mods>[\w., ]+?)\s*(?P<tail>(?:#.*)?)$")
+FROM_PIL_RX = re.compile(r"^(\s*)from\s+(" + "|".join(sorted(PIL_MODULES)) + r")\s+import\b")
+
+
+def split_import(line):
+    """'import Image, os, user' -> separate statements for moved modules."""
+    m = IMPORT_STMT_RX.match(line)
+    if not m:
+        return line
+    keep, moved = [], []
+    for item in (x.strip() for x in m.group("mods").split(",")):
+        name, _, alias = item.partition(" as ")
+        name, alias = name.strip(), alias.strip()
+        if name in PIL_MODULES:
+            moved.append(f"from PIL import {name}" + (f" as {alias}" if alias else ""))
+        elif name == "user":
+            moved.append("from mglcompat import pyuser as " + (alias or "user"))
+        else:
+            keep.append(item)
+    if not moved:
+        return line
+    stmts = (["import " + ", ".join(keep)] if keep else []) + moved
+    tail = m.group("tail")
+    return m.group("ind") + "; ".join(stmts) + (("  " + tail) if tail else "")
+
+
+def fix_modules(line):
+    for rx, rep in MODULE_SWAPS:
+        line = rx.sub(rep, line)
+    line = split_import(line)
+    line = FROM_PIL_RX.sub(r"\1from PIL.\2 import", line)
+    m = FROM_STRING_RX.match(line)
+    if m:
+        names = {n.strip().split(" as ")[0] for n in m.group(2).split("#")[0].strip("() ").split(",")}
+        if names & STRING_FUNCS:
+            line = f"{m.group(1)}from mglcompat.pystring import {m.group(2)}"
+    return line
+
+
 def fix_types_import(line):
     m = TYPES_IMPORT_RX.match(line)
     if not m:
@@ -81,7 +146,7 @@ def token_edits(text):
 def fix_file(p):
     text = p.read_text(encoding="utf-8")
     lines = text.split("\n")
-    lines = [fix_types_import(fix_raise(l)) for l in lines]
+    lines = [fix_modules(fix_types_import(fix_raise(l))) for l in lines]
     text2 = "\n".join(lines)
     edits = token_edits(text2)
     if edits:

@@ -190,7 +190,7 @@ class ComputeSplineCommand(MVCommand):
         kw['atmtype'] = atmtype
         kw['curSel'] = curSel
         kw['closedSpline'] = closedSpline
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'" + nodes +"'"
         expnodes = self.vf.expandNodes(nodes)
         if len(expnodes)==0: return
@@ -379,7 +379,7 @@ class ComputeSplineGUICommand(MVCommand):
         kw['atmtype'] = atmtype
         kw['curSel'] = curSel
         kw['closedSpline'] = closedSpline
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'" + nodes +"'"
         nodes = self.vf.expandNodes(nodes)
         if len(nodes)==0: return
@@ -555,7 +555,7 @@ class ExtrudeSplineCommand(MVCommand):
         \ncapsFlag --- Boolean flag to add caps at the end of the spline (default=False)
         \ndisplay --- Boolean flag to call or not the displayExtrudedSpline command default value is True.
         """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
 
         nodes = self.vf.expandNodes(nodes)
@@ -854,7 +854,7 @@ class DisplayExtrudedSplineCommand(DisplayCommand):
         only --- flag when set to 1 only the current selection will be displayed
         \nnegate --- flag when set to 1 undisplay the current selection
         """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
 
         nodes = self.vf.expandNodes(nodes)
@@ -1005,7 +1005,7 @@ class UndisplayExtrudedSplineCommand(DisplayCommand):
         \nRequired Arguments:\n
         nodes --- TreeNodeSet holding the current selection. Can also be a string representing the current selection.
         """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'" + nodes +"'"
         kw['negate']= 1
         self.vf.displayExtrudedSpline(*(nodes,), **kw)
@@ -1249,7 +1249,7 @@ class DisplaySplineAsLineCommand(DisplayCommand):
         \nnegate --- Boolean flag when set to True undisplay the current selection 
         \nlineWidth --- width of the line representing the spline.
         """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
 
         nodes = self.vf.expandNodes(nodes)
@@ -1383,7 +1383,7 @@ class UndisplaySplineAsLineCommand(DisplayCommand):
         nodes --- TreeNodeSet holding the current selection. Can also be a
                 string representing the current selection.
         """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'" + nodes +"'"
         kw['negate']= 1
         if not nodes: return
@@ -1821,7 +1821,7 @@ class ComputeExtrudeSplineCommand(MVCommand):
                   will be displayed
         \nnegate ---  flag when set to 1 undisplay the current selection
         """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         
         if 'redraw' not in kw: kw['redraw']=1

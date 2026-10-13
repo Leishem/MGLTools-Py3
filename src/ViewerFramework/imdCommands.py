@@ -487,10 +487,10 @@ class IMD(Command):
     def imd_recv_fcoords(self, n, coords) :
         return (self.imd_readn(self.sock, coords, 12*n) != 12*n);
 
-    def getType(self,bytes):
+    def getType(self,str):
        types="" 
-       for i in range(len(bytes)):
-           types=types+str(ord(bytes[i]))
+       for i in range(len(str)):
+           types=types+str(ord(str[i]))
        return types
  
     def readInt(self,data):

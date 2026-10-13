@@ -34,7 +34,7 @@ import sys
 from time import time, sleep
 import re
 try:
-    import Image
+    from PIL import Image
 except:
     pass
 
@@ -493,7 +493,7 @@ see also: FindObjectByName"""
         if not master:
             # DISABLE DISPLAY handling as it would require creating a new
             # Tk, and this creates many problems, including that Pmw uses
-            # Tkinter._default_root in many places
+            # tkinter._default_root in many places
             #if screenName is None:
             #    screenName = os.environ.get("DISPLAY", None)
             #if screenName is not None:
@@ -994,7 +994,7 @@ Viewer's"""
 
     def RemovePickingCallback(self, func, modifier=None):
         """Delete function func from the list of picking callbacks"""
-        if type(func)==bytes:
+        if type(func)==str:
             findFunc = self.currentCamera.eventManager.FindFunctionByName
             func = findFunc(func, self.pickingFunctions)
         if not func:
@@ -2068,7 +2068,7 @@ An AssertionError will be raised if ...
                   # if SSAO was on we will now do an additional redraw with
                   # SSAO on only_ssao mode to create the mask
                   if ssaoWasOn:
-                      import ImageFilter, ImageChops
+                      from PIL import ImageFilter; from PIL import ImageChops
                       self.tileRender = False
                       c.ssao = True
                       old = c.SSAO_OPTIONS['only_ssao'][0]

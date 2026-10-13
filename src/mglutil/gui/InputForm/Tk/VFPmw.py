@@ -56,7 +56,7 @@ class VFButtonBox(Pmw.ButtonBox):
     value.
 
     Pmw.ButtonBox constructor arguments:
-    buttontype (default Tkinter.Button)
+    buttontype (default tkinter.Button)
     label_text: default ''
     labelmargin=0
     labelpos=None

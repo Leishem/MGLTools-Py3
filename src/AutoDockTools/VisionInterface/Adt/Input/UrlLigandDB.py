@@ -61,11 +61,12 @@ class UrlLigandDB(NetworkNode):
 #        print "TEST ZIP"
 
     if not(url.startswith('http://kryptonite.nbcr.net/app')):
-         print "ERROR: the URL must be a directory on kryptonite.nbcr.net"
+         print("ERROR: the URL must be a directory on kryptonite.nbcr.net")
          sys.exit()  
- 
-    
+
+
 
     self.outputData(ligDB=ligDB)
+
 """
         self.setFunction(code)

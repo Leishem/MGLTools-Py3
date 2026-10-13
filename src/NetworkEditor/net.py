@@ -669,8 +669,8 @@ Return all the nodes who's name match the name regular expression
 
 ##          import NetworkEditor, os
 ##          file = os.path.join(NetworkEditor.__path__[0], "back1.gif")
-##          self.bg = Tkinter.PhotoImage(file=file)
-##          self.bgId = self.canvas.create_image(0, 0, anchor=Tkinter.NW,
+##          self.bg = tkinter.PhotoImage(file=file)
+##          self.bgId = self.canvas.create_image(0, 0, anchor=tkinter.NW,
 ##                                             image=self.bg)
 
         # bind standard callbacks
@@ -906,7 +906,7 @@ if __name__=='__main__':
          # create communicator
         from NetworkEditor.net import Communicator
         masterNet.communicator = Communicator(masterNet)
-        print 'Communicator listening on port:', masterNet.communicator.port
+        print('Communicator listening on port:', masterNet.communicator.port)
 
         import socket
         f = open(argv[0]+'.sock', 'w')
@@ -924,6 +924,7 @@ if __name__=='__main__':
             mainLoopVisionToRunNetworkAsApplication(masterNet.editor)
         else: # user panel
             mainLoopVisionToRunNetworkAsApplication(masterNet.editor)
+
 
 """
 
@@ -1913,14 +1914,14 @@ returns 3 lists:
 
     
     def expand(self, objects, objectList):
-        if type(objects) == bytes:
+        if type(objects) == str:
             return self.getObjectsFromNames(objects, objectList)
         else:
             return objects
 
         
     def expandNodes(self, objects):
-        if type(objects) == bytes:
+        if type(objects) == str:
             return self.getObjectsFromNames(objects, list(self.nodes.values()))
         else:
             return objects
@@ -1928,7 +1929,7 @@ returns 3 lists:
 
         
     def expandConnections(self, objects):
-        if type(objects) == bytes:
+        if type(objects) == str:
             return self.getObjectsFromNames(objects, self.connections )
         else:
             return objects
@@ -2086,7 +2087,7 @@ if doNotCb is True,  the callbacks afterConnect and beforeConnect ain't called
         assert isinstance(node1, NetworkNodeBase)
         assert isinstance(node2, NetworkNodeBase)
 
-        if type(portNode2) is bytes:
+        if type(portNode2) is str:
             ip = node2.inputPortByName[portNode2]
             if ip is None:
                 return
@@ -2102,7 +2103,7 @@ It can only have one parent node"""%ip.name
             self.rootNodes.remove(node2)
             node2.isRootNode = 0
 
-        if type(portNode1) is bytes:
+        if type(portNode1) is str:
             op = node1.outputPortByName[portNode1]
             if op is None:
                 return
@@ -2330,14 +2331,14 @@ It can only have one parent node"""%ip.name
         assert isinstance(node1, NetworkNodeBase)
         assert isinstance(node2, NetworkNodeBase)
 
-        if type(portNode2) is bytes:
+        if type(portNode2) is str:
             ip = node2.getSpecialInputPortByName(portNode2)
             if ip is None:
                 return
         else:
             ip = node2.specialInputPorts[portNode2]
 
-        if type(portNode1) is bytes:
+        if type(portNode1) is str:
             op = node1.getSpecialOutputPortByName(portNode1)
             if op is None:
                 return
@@ -2609,9 +2610,9 @@ schedule:
         """Delete a connection between port1 (output) and port2 (input).
         Port1 and port2 can be either a port instance or the port name."""
                 
-        if type(port1) == bytes:
+        if type(port1) == str:
             port1 = node1.outputPortByName[port1]
-        if type(port2) == bytes:
+        if type(port2) == str:
             port2 = node2.inputPortByName[port2]
 
         if hasattr(port2,'_validationStatus'):     
@@ -3322,7 +3323,7 @@ if roots is provided: HARD RUN: every nodes in roots will run (and all their chi
                 # previousely we would simple break out of the loop but
                 # this would prevent the excution of nodes in the network that
                 # are not under node and hence should really run
-                if type(status)==bytes and status.lower()=='stop':
+                if type(status)==str and status.lower()=='stop':
                     # node returned 'stop' we have to remove all children
                     # of node from the allNodes list so they will not be run
                     allOK = False

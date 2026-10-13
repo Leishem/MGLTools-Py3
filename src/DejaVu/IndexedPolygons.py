@@ -43,7 +43,7 @@ will be used.
 """
     filename = os.path.splitext(filename)[0]
 
-    from string import split
+    from mglcompat.pystring import split
     f = open(filename+'.indpolvert')
     data = list(map(split, f.readlines()))
     f.close()

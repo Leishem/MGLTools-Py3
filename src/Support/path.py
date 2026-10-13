@@ -3,7 +3,7 @@
 # $Header: /opt/cvs/Support/path.py,v 1.16 2007/11/20 23:24:40 sargis Exp $
 # $Id: path.py,v 1.16 2007/11/20 23:24:40 sargis Exp $
 import os, sys
-from user import home
+from mglcompat.pyuser import home
 from Support.version import __version__
 rc = home + os.sep + ".mgltools" + os.sep + __version__
 

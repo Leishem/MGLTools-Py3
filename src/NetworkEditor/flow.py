@@ -8,13 +8,12 @@
 
 import threading, traceback, time
 
-class ExecutionThread(threading.Thread, threading._Verbose):
+class ExecutionThread(threading.Thread):
     """ class used to schedule a list of nodes in a separate thread.
 """
 
     def __init__(self, net, nodes):
         threading.Thread.__init__(self, name='scheduler')
-        threading._Verbose.__init__(self)
         self.net = net
         self.nodes = nodes
         
@@ -40,7 +39,7 @@ class ExecutionThread(threading.Thread, threading._Verbose):
         net.RunLock.release()
 
 
-class AfterExecution(threading.Thread, threading._Verbose):
+class AfterExecution(threading.Thread):
     """ class used to wait for the end of an execution and call a fucntion
 """
 
@@ -73,8 +72,7 @@ class AfterExecution(threading.Thread, threading._Verbose):
 ##      # simultaneousley
 ##      def __init__(self, roots):
 ##          threading.Thread.__init__(self, name='scheduler')
-##          threading._Verbose.__init__(self)
-##          self.mtstatelock = threading.RLock()
+##  ##          self.mtstatelock = threading.RLock()
 ##          self.waitLock = threading.RLock()
 ##          self.waitCond = threading.Condition(self.waitLock)
 ##          self.threadObjects = []
@@ -377,8 +375,7 @@ class AfterExecution(threading.Thread, threading._Verbose):
 ##  class Queue(threading._Verbose):
 
 ##      def __init__(self, limit):
-##          threading._Verbose.__init__(self)
-##          self.mon = threading.RLock()
+##  ##          self.mon = threading.RLock()
 ##          self.rc = threading.Condition(self.mon)
 ##          self.wc = threading.Condition(self.mon)
 ##          self.limit = limit

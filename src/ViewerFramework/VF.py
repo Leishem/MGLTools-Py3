@@ -1261,16 +1261,16 @@ is added
 ##              from gui import InputFormDescr, CallBackFunction
 ##              import Tkinter
 ##              idf = InputFormDescr("Missing dependencies !")
-##              idf.append({'widgetType': Tkinter.Label,
+##              idf.append({'widgetType': tkinter.Label,
 ##                         'text':"%s can't be loaded, needs  %s module"
 ##                         % (tb[1][-1][7:],command.__class__.__name__),
 ##                          'gridcfg':{'columnspan':2}})
-##              idf.append({'widgetType':Tkinter.Button, 'text':'OK',
+##              idf.append({'widgetType':tkinter.Button, 'text':'OK',
 ##                          'command':CallBackFunction(Ok_cb, idf),
-##                          'gridcfg':{'sticky':Tkinter.W+Tkinter.E}})
-##              idf.append({'widgetType':Tkinter.Button, 'text':'Download',
+##                          'gridcfg':{'sticky':tkinter.W+tkinter.E}})
+##              idf.append({'widgetType':tkinter.Button, 'text':'Download',
 ##                          'command':download_cb,
-##                          'gridcfg':{'row':-1,  'sticky':Tkinter.W+Tkinter.E,
+##                          'gridcfg':{'row':-1,  'sticky':tkinter.W+tkinter.E,
 ##                                     'columnspan':5 }})
 ##              form = self.getUserInput(idf, modal=0, blocking=0)
 
@@ -1464,7 +1464,7 @@ is added
 
     def warningMsg(self, msg, title='WARNING: ', parent = None):
         """None <- warningMsg(msg)"""
-        if type(title) is not bytes:
+        if type(title) is not str:
             title = 'WARNING: '
         if self.hasGui and self.messageFormat=='pop-up':
             tkinter.messagebox.showwarning(title, msg,parent = parent)

@@ -150,8 +150,8 @@ class addGridCommand(Command):
             self.vf.Grid3DCommands.mlb.insert(tkinter.END, (grid_name, 
                                             grid3D.dimensions, grid_type ))
 
-        #self.vf.Grid3DCommands.mlb.selection_clear(0, Tkinter.END)
-        #self.vf.Grid3DCommands.mlb.selection_set(Tkinter.END)
+        #self.vf.Grid3DCommands.mlb.selection_clear(0, tkinter.END)
+        #self.vf.Grid3DCommands.mlb.selection_set(tkinter.END)
         #self.vf.Grid3DAddRemove.select()
                 
 
@@ -1090,7 +1090,7 @@ AddRemoveGUI = CommandGUI()
 AddRemoveGUI.addMenuCommand('menuRoot', 'Grid3D', 'Add/Remove...')
 
 class IGraph(tkinter.Frame):
-    """Extends Tkinter.Frame by adding a canvas with histogram and bars for 
+    """Extends tkinter.Frame by adding a canvas with histogram and bars for 
     isocontouring.
     """
     def __init__(self, master, width = width, height = height, 
@@ -1107,7 +1107,7 @@ class IGraph(tkinter.Frame):
         self.colors = ['red', 'green', 'blue', 'orange']#used in Plot Signature
         self.labelsBarFormat = labelsBarFormat
         tkinter.Frame.__init__(self, master)
-        #Tkinter.Grid.config(self)
+        #tkinter.Grid.config(self)
         self.upperLabel = tkinter.Label(self, text = "(0, 0)",width=20)
         self.upperLabel.grid(row=0, column=0,sticky='we')
         self.log_var = tkinter.IntVar()
@@ -1122,7 +1122,7 @@ class IGraph(tkinter.Frame):
                                           variable=self.sig_var)
         self.sig_cb.grid(row=0, column=2,sticky='e')
 
-        #self.canvasFrame = Tkinter.Frame(self)
+        #self.canvasFrame = tkinter.Frame(self)
         #self.canvasFrame.grid(row=1, column=0,columnspan=4, sticky='wens')
         self.canvas = tkinter.Canvas(self, width=self.width,cursor = 'cross',
                                       highlightbackground = 'blue',
@@ -1147,8 +1147,8 @@ class IGraph(tkinter.Frame):
         tkinter.Widget.bind(self.canvas,'<Button-3>', self.button3)
         tkinter.Widget.bind(self.canvas,'<Shift-Button-1>', self.addBar)
         
-        #Tkinter.Widget.bind(self.canvas, '<Double-Button-1>', self.showDejaVu)        
-        #Tkinter.Widget.bind(self, '<Configure>', self.changeSize)        
+        #tkinter.Widget.bind(self.canvas, '<Double-Button-1>', self.showDejaVu)        
+        #tkinter.Widget.bind(self, '<Configure>', self.changeSize)        
 
         self.valueLabel = {}
         self.bar_text = 'IsoSurf_'
@@ -2166,10 +2166,10 @@ class myLUT(LUT):
                            outline ='black', width=1,
                            fill='white', tags='box')
         #c.create_text(self.right-15, self.bott+10, text=str(xmaxval),
-        #              anchor=Tkinter.W, font=self.font)
-        #c.create_text(self.left, self.bott+11, text=str(xminval), anchor=Tkinter.W,
+        #              anchor=tkinter.W, font=self.font)
+        #c.create_text(self.left, self.bott+11, text=str(xminval), anchor=tkinter.W,
         #              font=self.font)
-        #c.create_text(self.left-3, self.top-7, text=str(ymaxval), anchor=Tkinter.W,
+        #c.create_text(self.left-3, self.top-7, text=str(ymaxval), anchor=tkinter.W,
         #              font=self.font, tags = 'ytext')
         # scale x and y axes 
         self.sclx = (self.right-self.left)/(xmaxval-xminval)
@@ -2271,8 +2271,8 @@ class myTF(TableManager):
         self.heightAdded = 0 #this keeps track the height added when splitting
         self.balloon = Pmw.Balloon(self.master)
         #place menu buttons
-        #mbutton = Tkinter.Menubutton(self.master, text='VolRender - Menu')
-        #mbutton.pack(side=Tkinter.LEFT)
+        #mbutton = tkinter.Menubutton(self.master, text='VolRender - Menu')
+        #mbutton.pack(side=tkinter.LEFT)
         self.menu = tkinter.Menu(self.master, title='VolRender - Menu')
                 
         self.menu.add_command(label="Set Color", command=self.showColormap)
@@ -2325,7 +2325,7 @@ class myTF(TableManager):
                        command=self.closeRGB).grid(columnspan=2)
         self.colormapWin.withdraw()
         self.colormap.callbacks = [self.set_hsv]        
-        #self.Label = Tkinter.Label(self.master, 
+        #self.Label = tkinter.Label(self.master, 
         #                           text="(0,0)")
         #self.Label.pack(anchor='w') 
         
@@ -2425,7 +2425,7 @@ class myTF(TableManager):
         #self.colorMapB.configure(state='active')
             
         #for value in self.ColorMapGUI.buttonFrame.children.values():
-        #    if not isinstance(value,Tkinter.Radiobutton):
+        #    if not isinstance(value,tkinter.Radiobutton):
         #        value.grid_forget()
             
         self.ColorMapGUI.dismiss.configure(command = self.dismissCmap)
@@ -2746,7 +2746,7 @@ class myTF(TableManager):
         root.geometry('%dx%d' % (w,h))
 
     def load_file(self, file):
-        from string import split, atoi
+        from mglcompat.pystring import split, atoi
         of = open(file, 'r')
         line = split(of.readline())
         warning = "Warning: wrong file format. Could not read file %s" %(file,)

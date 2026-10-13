@@ -25,7 +25,7 @@ from ViewerFramework.VFCommand import Command,CommandGUI
 from mglutil.util.packageFilePath import findFilePath, findAllPackages, \
      findModulesInPackage
 import os
-from string import join
+from mglcompat.pystring import join
 global commandslist
 import webbrowser
 # This should open a particular web page.
@@ -1072,21 +1072,21 @@ class ReportBugCommand(Command):
     pass
 ##  class Helpwin:
 ##      def __init__(self, master, contents, title='Help'):
-##          self.__root = root = Tkinter.Toplevel(master, class_='Pynche')
+##          self.__root = root = tkinter.Toplevel(master, class_='Pynche')
 ##          root.protocol('WM_DELETE_WINDOW', self.__withdraw)
 ##          root.title(title)
 ##          root.iconname(title)
-##          self.text = Tkinter.Text(root, relief=Tkinter.SUNKEN,
+##          self.text = tkinter.Text(root, relief=tkinter.SUNKEN,
 ##                                   width=80, height=24)
 ##          self.text.insert(0.0, contents)
-##          scrollbar = Tkinter.Scrollbar(root)
-##          scrollbar.pack(fill=Tkinter.Y, side=Tkinter.RIGHT)
-##          self.text.pack(fill=Tkinter.BOTH, expand=Tkinter.YES)
+##          scrollbar = tkinter.Scrollbar(root)
+##          scrollbar.pack(fill=tkinter.Y, side=tkinter.RIGHT)
+##          self.text.pack(fill=tkinter.BOTH, expand=tkinter.YES)
 ##          self.text.configure(yscrollcommand=(scrollbar, 'set'))
 ##          scrollbar.configure(command=(self.text, 'yview'))
 
-##          okay = Tkinter.Button(root, text='Ok', command=self.__withdraw)
-##          okay.pack(side=Tkinter.BOTTOM, expand=1)
+##          okay = tkinter.Button(root, text='Ok', command=self.__withdraw)
+##          okay.pack(side=tkinter.BOTTOM, expand=1)
 ##          okay.focus_set()
 
 ##      def __withdraw(self, event=None):

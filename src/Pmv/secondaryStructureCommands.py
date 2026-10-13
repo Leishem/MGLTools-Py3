@@ -1965,7 +1965,7 @@ class RibbonCommand(MVCommand):
                   will be displayed
         \nnegate ---  flag when set to 1 undisplay the current selection
         """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         
         if 'redraw' not in kw: kw['redraw']=1

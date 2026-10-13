@@ -103,7 +103,7 @@ class EntropiaParser(ResultParser):
     type_conv = {
         int    : lambda x: int(x),
         float  : lambda x: float(x),
-        bytes : lambda x: x,
+        str : lambda x: x,
         'PercentType'    : lambda x: float(x[:-1]),
         'TimeType'       : lambda x: x
         }

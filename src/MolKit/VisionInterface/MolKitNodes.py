@@ -572,11 +572,12 @@ class ParseCryst1(NetworkNode):
     for mol in molecules:
         p = mol.parser
         if not isinstance(p, PdbParser):
-            print 'WARNING molecule %s was not read from a PDB file'%mol.name
+            print('WARNING molecule %s was not read from a PDB file'%mol.name)
             continue
         p.parse_PDB_CRYST1( p.getRecords(p.allLines, 'CRYST1') )
 
     self.outputData(molecules=molecules)
+
 """
 
         self.setFunction(code)
@@ -687,7 +688,7 @@ class RMSDFromTwoAtomSet(NetworkNode):
             needSorting = True
             break
 
-    
+
     if needSorting:
         tmp = AtomSet()
         names = atomSet2.name
@@ -696,16 +697,17 @@ class RMSDFromTwoAtomSet(NetworkNode):
                 idx = names.index(atom.name)
                 tmp.append(atomSet2[idx])
             except:
-                print atom.name, 'not found in', atomSet2
+                print(atom.name, 'not found in', atomSet2)
         mob = tmp.coords
     else:
         mob = atomSet2.coords
-        
+
     ref = atomSet1.coords
     self.RMSD.setRefCoords(ref)
     rmsd = self.RMSD.computeRMSD(mob)
-    
+
     self.outputData(rmsd=rmsd)
+
 
 """
 
@@ -1072,7 +1074,7 @@ try:
         intats = []
 
         if cutoff is None: cutoff=0.0
-        
+
         # find surface atoms
         for n in atInd:
             surfats[atoms[n-1]]=n-1
@@ -1091,12 +1093,13 @@ try:
             for a in intats:
                 nb = bht.ClosePoints( tuple(a.coords), cutoff, result)
                 if nb:
-                    print 'atom' , a, 'is close'
+                    print('atom' , a, 'is close')
                     surfats[a] = True
                     intats.remove(a)
 
-        self.outputData(surfaceAtoms=AtomSet(surfats.keys()))
+        self.outputData(surfaceAtoms=AtomSet(list(surfats.keys())))
         self.outputData(interiorAtoms=AtomSet(intats))
+
 """
 
             self.setFunction(code)
@@ -1181,12 +1184,12 @@ class AtomsAsMSMS(NetworkNode):
         try:
             radii = atoms.radius
         except:
-            print 'No Radii'
+            print('No Radii')
             return
 
     if max(radii)==0.0:
         return 'STOP'
-        
+
     # create MSMS object
     srf = self.msms = MSMS(coords=atoms.coords, radii=radii )
     srf.atoms = atoms
@@ -1206,6 +1209,7 @@ class AtomsAsMSMS(NetworkNode):
     srf.compute(probe_radius=probe_radius, density=density)
 
     self.outputData(MSMS=srf)
+
 """
 
         self.setFunction(code)
@@ -1786,13 +1790,13 @@ class PublicHttpServer:
 
 
     def setArguments(self, **kw):
-        from string import split
+        from mglcompat.pystring import split
         for k,v in list(kw.items()):
             if k not in list(self.arguments.keys()):
                 raise RuntimeError (k+' is not a valid argument')
             
             if type(v) in (float, int,
-                           int, bytes):
+                           int, str):
                 self.arguments[k] = v
             else:
                 pat = re.compile("[\[,\]\012]")
@@ -1827,7 +1831,7 @@ class MsmsServer(PublicHttpServer):
 
 
     def getTriangles(self, result):
-        from string import split
+        from mglcompat.pystring import split
         import re
         pat = re.compile(',')
         res = re.sub(pat, '', result)

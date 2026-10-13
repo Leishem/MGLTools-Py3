@@ -233,7 +233,7 @@ class MultipleActorsActions:
         else we return None
         """
         import types
-        if type(actor) == bytes:
+        if type(actor) == str:
             name = actor
         else:
             name = actor.name

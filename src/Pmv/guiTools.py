@@ -288,8 +288,8 @@ from tkinter import *
 if TkVersion < 4.0:
     raise ImportError("This version of svkill requires Tk 4.0 or later")
 
-from string import splitfields
-from string import split
+from mglcompat.pystring import splitfields
+from mglcompat.pystring import split
 import subprocess
 import sys,os
 

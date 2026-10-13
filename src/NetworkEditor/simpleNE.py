@@ -152,7 +152,7 @@ from mglcompat import pystring as string
 import re
 import _thread
 import weakref
-import user
+from mglcompat import pyuser as user
 
 from mglutil.util.idleUtil import getShell
 from mglutil.events import EventHandler
@@ -290,8 +290,8 @@ instance of either the node or the connection.
         # option_readfile method and say something meaningful
         # maybe the name and location of the file should be setable in _vprc
         try:
-            if os.path.exists('./Tkinter.defaults'):
-                self.option_readfile('./Tkinter.defaults')
+            if os.path.exists('./tkinter.defaults'):
+                self.option_readfile('./tkinter.defaults')
         except:
             pass
         
@@ -333,7 +333,7 @@ instance of either the node or the connection.
 
         self.withShell = withShell # set to one is an IDLE shell is created
         
-        #self.master.option_readfile('NetworkEditor/Tkinter.defaults')
+        #self.master.option_readfile('NetworkEditor/tkinter.defaults')
 
         self.name = name       # EditorName
 
@@ -367,7 +367,7 @@ instance of either the node or the connection.
                              
         ## USED TO FLASH NETWORK ONCE ONLY
 ##          self.flashNetworkWhenRun = 1
-##          self.flashNetworkWhenRunTk = Tkinter.IntVar()
+##          self.flashNetworkWhenRunTk = tkinter.IntVar()
 ##          self.flashNetworkWhenRunTk.set(self.flashNetworkWhenRun)
 
         self.verbose = 0 # when set to 1 to see prints in stdout
@@ -669,11 +669,11 @@ Legal itemnames: 'All'
         if len(net.selectedNodes):
             menu.entryconfig("Cut", state=tkinter.NORMAL)
             menu.entryconfig("Copy", state=tkinter.NORMAL)
-            #menu.entryconfig("Delete", state=Tkinter.NORMAL)
+            #menu.entryconfig("Delete", state=tkinter.NORMAL)
         else:
             menu.entryconfig("Cut", state=tkinter.DISABLED)
             menu.entryconfig("Copy", state=tkinter.DISABLED)
-            #menu.entryconfig("Delete", state=Tkinter.DISABLED)
+            #menu.entryconfig("Delete", state=tkinter.DISABLED)
 
         if self.private_pasteBuffer:
             menu.entryconfig("Paste", state=tkinter.NORMAL)
@@ -1350,7 +1350,7 @@ deletes a Network object from the editor
         Edit_button.menu.add_separator()
 
         #Edit_button.menu.add('command', label="Undo", command=self.undo)
-        #Edit_button.menu.entryconfig(1, state=Tkinter.DISABLED)
+        #Edit_button.menu.entryconfig(1, state=tkinter.DISABLED)
         Edit_button.menu.add_command(label="Undo", accelerator="ctrl-z",
                                      command=self.undo,
                                      state=tkinter.DISABLED, underline=0)

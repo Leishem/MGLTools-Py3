@@ -993,7 +993,7 @@ Output Ports:
         for l in lines:
             if l[0]=='f':
                 nbf+=1
-                
+
     targetFaces = int(nbf*percent/100.)
 
     from mglutil import process
@@ -1003,7 +1003,7 @@ Output Ports:
     inp, out, err = (p.stdin, p.stdout, p.stderr)
 
     # send input
-    map( lambda x, f=inp: f.write('%s'%x), lines)
+    list(map( lambda x, f=inp: f.write('%s'%x), lines))
     inp.close()
 
     # FIXME we should select on out and err and handle errors
@@ -1012,9 +1012,10 @@ Output Ports:
     #       popslim and if not not load the node
     # read results
     data = out.readlines()
-    print 'propslim reduced from %d  to %d faces'%(nbf,targetFaces)
+    print('propslim reduced from %d  to %d faces'%(nbf,targetFaces))
 
     self.outputData(lines=data)
+
 """
 
         self.setFunction(code)
@@ -1560,8 +1561,8 @@ Output Ports:
 
 try:
     from opengltk.extent import _gllib
-    import Image
-    import ImageChops
+    from PIL import Image
+    from PIL import ImageChops
 
     class ImageViewerNode(NetworkNode):
         """create an instance of an OpenGL-based image viewer
@@ -1758,29 +1759,29 @@ d2off, firstDerivative, secondDerivative, smooth):
         maxi = max(dstrong)
         if maxi!=mini:
             dstrong = ((dstrong-mini)/(maxi-mini))*255
-           
+
         derivcompb = Numeric.fabs(dstrong-255).astype('B')
-        
+
 ##         if smooth:
 ##             from time import time
 ##             t1 = time()
 ##             self.ivi.setImage(derivcompb,width=width, height=height, mode='RGB')
 ##             derivcompb = self.ivi.smooth()
 ##             print time()-t1
-           
+
         outline = Image.fromstring('RGB', (width,height), derivcompb)
         if os.name != 'nt': #sys.platform!='win32':
             outline = outline.transpose(Image.FLIP_TOP_BOTTOM)
 
         if smooth:
             from time import time
-            import ImageFilter, ImageChops
+            from PIL import ImageFilter; from PIL import ImageChops
             t1 = time()
             outlinesmooth = outline.filter(ImageFilter.SMOOTH_MORE)
             #outline = ImageChops.multiply(outline, outlinesmooth)
-            print time()-t1
-            
-        import ImageChops
+            print(time()-t1)
+
+        from PIL import ImageChops
         contouredImage = ImageChops.multiply(image, outline)
 ##         mask = dstrong
 ##         mask.shape = ( width, height, -1)
@@ -1790,6 +1791,7 @@ d2off, firstDerivative, secondDerivative, smooth):
 ##         image.paste(outline, None, maskim)
 
         self.outputData(image=contouredImage, outline=outline)
+
 """
 
             self.setFunction(code)
@@ -3297,12 +3299,13 @@ class SelectAxis(NetworkNode):
     if zaxis: z_rot=1
     else: z_rot=0
     if not xaxis and not yaxis and not zaxis:
-        print"no axis select for rotation!  Using y axis by default"
+        print("no axis select for rotation!  Using y axis by default")
         y_rot=1
 
     rotation=[x_rot,y_rot,z_rot]
-    
+
     self.outputData(rotationAxis=rotation)
+
 """
         self.setFunction(code)
         
@@ -3416,7 +3419,7 @@ class ConnectedComponents0(NetworkNode):
         while flag2:
             for i, fs in enumerate(faces):
                 for v in fs:
-                    if not vdict.has_key(v):
+                    if v not in vdict:
                         vdict[v] = [i]
                     else:
                         vdict[v].append(i)
@@ -3434,7 +3437,7 @@ class ConnectedComponents0(NetworkNode):
                 for vert in Vco:
                     vfs = vdict[vert]
                     for i in vfs:
-                        if fdict.has_key(i):
+                        if i in fdict:
                             flag1 = True
                             fs = fdict.pop(i)
 
@@ -3443,7 +3446,7 @@ class ConnectedComponents0(NetworkNode):
                                 if v not in Vco: 
                                     if v not in _Vco:
                                         _Vco.append(v)
-                                if not  vertinds.has_key(v):
+                                if v not in vertinds:
                                     vertinds[v] = vcount
                                     newverts1.append(verts[v])
                                     fsnew.append(vcount) 
@@ -3456,22 +3459,23 @@ class ConnectedComponents0(NetworkNode):
             newfaces.append(newfaces1)
             newverts.append(newverts1)
             if  len(fdict):
-                faces = fdict.values()
+                faces = list(fdict.values())
                 fdict = {}
                 vdict = {}
                 flag1 = True
             else: flag2 = False
 
         t2 = time()
-        print 'time to find %d connected components : %.2f'%(len(newfaces), t2-t1)
+        print('time to find %d connected components : %.2f'%(len(newfaces), t2-t1))
         from DejaVu.IndexedPolygons import IndexedPolygons
         outgeoms = []
         for i, newfs  in enumerate(newfaces):
             newname = outgeomname+str(i)
-            print 'len faces of %s is %d'%(newname, len(newfs))
+            print('len faces of %s is %d'%(newname, len(newfs)))
             obj = IndexedPolygons(newname, vertices = newverts[i], faces = newfs)
             outgeoms.append(obj)
         self.outputData(outgeoms=outgeoms)
+
 """
                 
         self.setFunction(code)

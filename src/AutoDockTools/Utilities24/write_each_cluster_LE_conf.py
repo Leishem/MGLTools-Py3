@@ -9,7 +9,7 @@ import os, glob
 from MolKit import Read
 from AutoDockTools.Docking import Docking
 from mglutil.math.rmsd import RMSDCalculator
-from string import strip
+from mglcompat.pystring import strip
 
 
 

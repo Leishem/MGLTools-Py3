@@ -152,7 +152,7 @@ class ColorCommand(MVCommand):
         \ngeomsToColor---list of the name of geometries to color,default is 'all'
         """
         if not nodes: return 'ERROR'
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         if not nodes: return 'ERROR'
@@ -554,7 +554,7 @@ class ColorFromPalette(ColorCommand, MVAtomICOM):
            \nnodes --- TreeNodeSet holding the current selection
            \ngeomsToColor --- list of the name of geometries to color,
                          default is 'all'"""
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
 
         nodes = self.vf.expandNodes(nodes)
@@ -1302,7 +1302,7 @@ below.",
                     
 #                idf.append({'name':'loadCM',
 #                            'parent':'cmGroup',
-#                            'widgetType':Tkinter.Button,
+#                            'widgetType':tkinter.Button,
 #                            'tooltip':"Load a new color map",
 #                            'wcfg':{'text':'Load color map',
 #                                    'command':self.loadCM_cb,
@@ -1545,7 +1545,7 @@ below.",
 
         if colormap is None:
             colormap = RGBARamp
-        elif type(colormap) is bytes \
+        elif type(colormap) is str \
           and colormap in self.vf.colorMaps:
             colormap = self.vf.colorMaps[colormap]
         if not isinstance(colormap, ColorMap):
@@ -1664,7 +1664,7 @@ below.",
         kw['colormap'] = colormap
         kw['mini'] = mini
         kw['maxi'] = maxi
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
 
         nodes = self.vf.expandNodes(nodes)
@@ -2105,7 +2105,7 @@ and maxi",
         kw['lambdaFunc'] = lambdaFunc
         kw['colormap'] = colormap
         kw['redraw'] = 1
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = nodes
         nodes = self.vf.expandNodes(nodes)
         if not nodes:
@@ -2147,7 +2147,7 @@ and maxi",
         if atms is None:
             return "ERROR"
         # Get the colormap
-        if type(colormap) is bytes and \
+        if type(colormap) is str and \
            colormap in self.vf.colorMaps:
             colormap = self.vf.colorMaps[colormap]
         elif not isinstance(colormap, ColorMap):

@@ -104,7 +104,7 @@ class MVSelectCommand(MVCommand, MVAtomICOM):
                   nodes is converted to a set of objects of type Klass and
                   current selection level is set to klass   
         """
-        if type(nodes) is bytes:
+        if type(nodes) is str:
            self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         #if len(nodes)==0: return self.selection
@@ -592,7 +592,7 @@ class MVSaveSetCommand(MVCommand):
             name = newname
 
         kw['comments'] = comments
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'" + nodes +"'"
             nodes = self.vf.expandNodes(nodes)
         return self.doitWrapper(*(nodes, name), **kw)
@@ -618,16 +618,16 @@ class MVSaveSetCommand(MVCommand):
 ##         # create the form descriptor
 ##         idf = InputFormDescr(title = 'Set Name')
 ##         idf.append( { 'name': 'setname', 
-##                       'widgetType':Tkinter.Entry,'required':1,
+##                       'widgetType':tkinter.Entry,'required':1,
 ##                       'wcfg':{'label':'Set Name'}} )
 ##         idf.append( {'name': 'comments',
-##                      'widgetType':Tkinter.Entry,
+##                      'widgetType':tkinter.Entry,
 ##                      'defaultValue':'No description',
 ##                      'wcfg':{'label':'Comments'}} )
 ## ##          idf.append( { 'name': 'setname', 'label':'Set Name',
-## ##                        'widgetType':Tkinter.Entry,'required':1} )
+## ##                        'widgetType':tkinter.Entry,'required':1} )
 ## ##          idf.append( {'name': 'comments', 'label':'Comments',
-## ##                       'widgetType':Tkinter.Entry,'defaultValue':'No description'} )
+## ##                       'widgetType':tkinter.Entry,'defaultValue':'No description'} )
 ##         val = self.vf.getUserInput(idf)
         val = self.showForm('saveSet')
         if val:
@@ -703,7 +703,7 @@ class MVCreateSetIfNeeded(MVCommand):
 
         kw['comments'] = comments
         nodes = self.vf.expandNodes(nodes)
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'" + nodes +"'"
         self.doitWrapper(*(nodes, name), **kw)
         
@@ -763,7 +763,7 @@ class MVSelectSetCommand(MVCommand):
         \nonly=0, negate=1: selected set is removed from the selection
         \nonly=1, negate=0: selected set is the only thing selected"""
 
-        if type(setNames)==bytes:
+        if type(setNames)==str:
             names = [setNames]
         else:
             try:
@@ -1009,7 +1009,7 @@ class MVSelectFromStringCommand(MVCommand):
                     'widgetType':tkinter.Entry,
                     'wcfg':{'highlightcolor':'white'}, 
                     'gridcfg':{'sticky':'ew','row':-1, 'column':1, 'columnspan':3} })
-                    #'gridcfg':{'sticky':Tkinter.E,'columnspan':4} })
+                    #'gridcfg':{'sticky':tkinter.E,'columnspan':4} })
         ifd.append({'widgetType':tkinter.Label,
                     'wcfg':{'text': 'Chain'}, 
                     'gridcfg':{'sticky':'w'} })
@@ -1017,10 +1017,10 @@ class MVSelectFromStringCommand(MVCommand):
                     'widgetType':tkinter.Entry,
                     'wcfg':{'highlightcolor':'white'}, 
                     'gridcfg':{'sticky':'ew','row':-1, 'column':1, 'columnspan':3} })
-        #ifd.append({'widgetType':Tkinter.Entry,
+        #ifd.append({'widgetType':tkinter.Entry,
         #            'wcfg':{'label': 'Chain'}, 
         #            'gridcfg':{'sticky':'ew','columnspan':4} })
-        #            #'gridcfg':{'sticky':Tkinter.E, 'columnspan':4} })
+        #            #'gridcfg':{'sticky':tkinter.E, 'columnspan':4} })
         ifd.append({'widgetType':tkinter.Label,
                     'wcfg':{'text': 'Residue'}, 
                     'gridcfg':{'sticky':'w'} })
@@ -1028,10 +1028,10 @@ class MVSelectFromStringCommand(MVCommand):
                     'widgetType':tkinter.Entry,
                     'wcfg':{'highlightcolor':'white'}, 
                     'gridcfg':{'sticky':'ew','row':-1, 'column':1, 'columnspan':3} })
-        #ifd.append({'widgetType':Tkinter.Entry,
+        #ifd.append({'widgetType':tkinter.Entry,
         #            'wcfg':{'label': 'Residue'}, 
         #            'gridcfg':{'sticky':'ew','columnspan':4} })
-        #            #'gridcfg':{'sticky':Tkinter.E, 'columnspan':4} })
+        #            #'gridcfg':{'sticky':tkinter.E, 'columnspan':4} })
         ifd.append({'widgetType':tkinter.Label,
                     'wcfg':{'text': 'Atom'}, 
                     'gridcfg':{'sticky':'w'} })
@@ -1039,10 +1039,10 @@ class MVSelectFromStringCommand(MVCommand):
                     'widgetType':tkinter.Entry,
                     'wcfg':{'highlightcolor':'white'}, 
                     'gridcfg':{'sticky':'ew','row':-1, 'column':1, 'columnspan':3} })
-        #ifd.append({'widgetType':Tkinter.Entry,
+        #ifd.append({'widgetType':tkinter.Entry,
         #            'wcfg':{'label': 'Atom'}, 
         #            'gridcfg':{'sticky':'ew','columnspan':4} })
-        #            #'gridcfg':{'sticky':Tkinter.E,'columnspan':4} })
+        #            #'gridcfg':{'sticky':tkinter.E,'columnspan':4} })
         ifd.append({'name': 'Mol List',
                     'widgetType':tkinter.Menubutton,
                     'wcfg':{ 'text': 'Molecule List ...'},
@@ -1064,9 +1064,9 @@ class MVSelectFromStringCommand(MVCommand):
             'gridcfg':{'sticky':tkinter.W, 'column':4,'row':3,
                  'columnspan':2} })
         #ifd.append({'name': 'Sets List',
-        #            'widgetType':Tkinter.Menubutton,
+        #            'widgetType':tkinter.Menubutton,
         #            'wcfg':{'text': 'Sets List ...'},
-        #            'gridcfg':{'sticky':Tkinter.W, 'column':4,
+        #            'gridcfg':{'sticky':tkinter.W, 'column':4,
         #                       'row':3,'columnspan':2} })
         ifd.append({'name': 'addBut',
                     'widgetType':tkinter.Button,
@@ -1099,17 +1099,17 @@ class MVSelectFromStringCommand(MVCommand):
                                
 
 #        ifd.append({'name': 'Select',
-#                    'widgetType':Tkinter.Button,
+#                    'widgetType':tkinter.Button,
 #                    'wcfg':{'bd':6, 'text': 'Select',
 #                            'command': self.callDoit},
-#                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W,'row':4,
+#                    'gridcfg':{'sticky':tkinter.E+tkinter.W,'row':4,
 #                               'column':0, 'columnspan':4},
 #                    })
 #        ifd.append({'name': 'Deselect',
-#                    'widgetType':Tkinter.Button,
+#                    'widgetType':tkinter.Button,
 #                    'wcfg':{'text': 'Deselect','bd':6,
 #                            'command': self.callDontDoit},
-#                    'gridcfg':{'sticky':Tkinter.E+Tkinter.W,
+#                    'gridcfg':{'sticky':tkinter.E+tkinter.W,
 #                               'row':4,'column':4,
 #                               'columnspan':2},
 #                    })
@@ -2788,7 +2788,7 @@ class SelectNoWaterHeteroAtomsCommand(MVSelectFromStringCommand, MVSelectCommand
             \nintersect -- when True hetero atoms are intersected with current selection
         """
         if nodes is None: nodes = self.vf.Mols
-        if type(nodes) is bytes:
+        if type(nodes) is str:
            self.nodeLogString = "'"+nodes+"'"
         nodes = self.vf.expandNodes(nodes)
         kw['negate']= negate

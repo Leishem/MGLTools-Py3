@@ -22,7 +22,7 @@
 # $Id$
 #
 
-import Image
+from PIL import Image
 import mglcompat.oldnumeric as Numeric
 
 from NetworkEditor.datatypes import AnyArrayType
@@ -53,7 +53,7 @@ class ColorMapType(AnyArrayType):
 
 class TextureType(AnyArrayType):
 
-    from Image import Image
+    from PIL.Image import Image
     def __init__(self, name='texture', datashape=None, color='#995699',
                  shape='rect', width=None, height=None, klass=None):
 

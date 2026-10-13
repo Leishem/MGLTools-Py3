@@ -108,20 +108,20 @@ class AutodockVsCSF(MacroNode):
         dpf = dpf_template_obj.fullpath
 
         if not(os.path.exists(dpf)):
-            print "ERROR: DPF template " + dpf + " does not exist!"
+            print("ERROR: DPF template " + dpf + " does not exist!")
             return '''stop'''
-    
+
         filter_file = ligands.filter_file
-        
+
         if autogrid_results.type == '''url''':
             autogrid_result_url = autogrid_results.path
             autogrid_result_local = ""
         else:
             autogrid_result_url = ""
             autogrid_result_local = autogrid_results.path
-        
+
         ligand_lib = ligands.loc
-        
+
         pass
 
         self.outputData(filter_file=filter_file, ligand_lib=ligand_lib, dpf_template_file=dpf, autogrid_res_url=autogrid_result_url, autogrid_res_local=autogrid_result_local)
@@ -136,6 +136,7 @@ class AutodockVsCSF(MacroNode):
 ## self.outputData(autogrid_res_url=data)
 ## to ouput data on port autogrid_res_local use
 ## self.outputData(autogrid_res_local=data)
+
 
 
 

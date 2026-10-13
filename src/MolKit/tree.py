@@ -344,7 +344,7 @@ sets
     def processStringcS(self, someString):
         from mglcompat import pystring as string
         #in all cases do these things:
-        if type(someString)==bytes:
+        if type(someString)==str:
             #protect [A-Z]
             if someString.find(']')==-1:
                 someString = string.replace(someString, '-', ':')

@@ -267,7 +267,7 @@ class CompoundStringSelector:
         #print "in process with len(nodes)=", len(nodes), ' and criteria=', criteria
         #print "type(criteria)==", type(criteria)
         msg_to_return = ""
-        if type(criteria)==bytes:
+        if type(criteria)==str:
             selected, msg = self.do_op(nodes, criteria, sets=sets)
             #print " back in process with len(selected) = ", len(selected)
             msg_to_return += msg
@@ -387,7 +387,7 @@ class CompoundStringSelector:
         msg_to_return = ''
         first_item = token_list[0]   
         first_type = type(first_item)
-        if first_type==bytes:  #a subselect '(.....)'
+        if first_type==str:  #a subselect '(.....)'
             result, msg = self.get_nodes(nodes, first_item, sets=sets)
         elif first_type==list:  # string/op/-> [string, op, ....]
             result, msg = getSet.select(nodes, first_item[0], sets=sets)

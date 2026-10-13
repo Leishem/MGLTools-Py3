@@ -362,7 +362,7 @@ class Axis(Cylinders):
         """
         if type(color) == tuple and len(color)==3:
             return color
-        if type(color) == bytes:
+        if type(color) == str:
             if color in list(ChooseColor.keys()):
                 return ChooseColor[color]
 
@@ -462,7 +462,7 @@ The default color is white (1,1,1)
 """
         if type(color) == tuple and len(color)==3:
             return color
-        if type(color) == bytes:
+        if type(color) == str:
             if color in list(ChooseColor.keys()):
                 return ChooseColor[color]
 

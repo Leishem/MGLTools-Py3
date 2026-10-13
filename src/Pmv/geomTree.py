@@ -58,7 +58,7 @@ class PmvGeomNode(DejaVuGeomNode):
 
 ## if __name__ == '__main__':
 ## import Tkinter
-## root = Tkinter.Toplevel()
+## root = tkinter.Toplevel()
 ## vi = self.GUI.VIEWER
 
 ## from Pmv.geomTree import PmvGeomNode, PmvGeomTreeWithButtons

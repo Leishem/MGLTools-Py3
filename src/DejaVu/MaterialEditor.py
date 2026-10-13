@@ -401,7 +401,7 @@ of the modifications
 
 #        # guillaume's work in progress
 #        # target
-#        f0 = Tkinter.Frame(f, borderwidth=3, relief = 'ridge')
+#        f0 = tkinter.Frame(f, borderwidth=3, relief = 'ridge')
 #        self.targetOption = Pmw.OptionMenu(f0, 
 #                                          label_text = 'target:',
 #                                          labelpos = 'w',
@@ -1135,6 +1135,6 @@ if __name__=='__main__':
     test.defineMaterial(tropical[0])
     test.setObject(s)
 
-##      root1 = Tkinter.Tk()
+##      root1 = tkinter.Tk()
 ##      cc = ColorChooser(root1, title='Color chooser')
 

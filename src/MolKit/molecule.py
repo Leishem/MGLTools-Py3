@@ -1306,7 +1306,7 @@ class Molecule(TreeNode):
                 match = p[1].search( atom.element )
             if match:  # atom name matches
                 if hasattr(atom.parent, 'type') and \
-                   type(atom.parent.type)==bytes:
+                   type(atom.parent.type)==str:
                     resname = atom.parent.type
                 else:
                     resname = 'XXX'
@@ -1338,7 +1338,7 @@ if united is true large atomic radii are used for atoms which have no hydrogens
             atomSet = self.findType(Atom)
 
         r2 = []
-        strType = bytes
+        strType = str
         curRes = None
         mols = atomSet.top.uniq()
         if len(mols)==1: labeltext = 'Assign Atoms Radii for %s'%mols[0].name

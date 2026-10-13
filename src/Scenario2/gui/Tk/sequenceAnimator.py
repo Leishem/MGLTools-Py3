@@ -28,7 +28,7 @@ class SequenceAnimatorGUI:
         SequenceAnimatorGUI <- SequenceAnimatorGUI(animator, master=None)
 
         animator is an instance of a SequenceAnimator object
-        master is a Tk container object. If master is None a Tkinter.Toplevel
+        master is a Tk container object. If master is None a tkinter.Toplevel
         object is created
 
         This object registers interest in AddMAAToClipBoardEvent and
@@ -243,7 +243,7 @@ class SequenceAnimatorGUI:
         startgroup.pack(side='top')
         
 
-        #self.frameCounter = Tkinter.Label(master, text='Frame 000000')
+        #self.frameCounter = tkinter.Label(master, text='Frame 000000')
         #self.frameCounter.pack(side='top')
         frame = tkinter.Frame(self.master)               
         self.pl = PlayerControls( self.animator, root=frame, #root=self.master,

@@ -2,7 +2,7 @@ from NetworkEditor.items import NetworkNode
 from Vision.StandardNodes import RunFunction
 from idlelib.EditorWindow import EditorWindow
 from IPython.kernel import client
-import tkinter, Image, ImageTk, types, inspect, warnings
+import tkinter, types, inspect, warnings; from PIL import Image; from PIL import ImageTk
 
 def importImageLib(net):
     try:
@@ -81,7 +81,7 @@ class FractalDemo(NetworkNode):
 
         self.nbProc = None
         self.image = None # will be the PIL image
-        self.display = None # will be the Tkinter.Label displaying the image
+        self.display = None # will be the tkinter.Label displaying the image
         self.size = (400, 400) # image size
         self.linesPerCall = 20
 
@@ -273,7 +273,7 @@ outputs:
 
         code = """def doit(self, furl, codeEditor, engineSelection):
 
-    print 'engineSelection:', engineSelection
+    print('engineSelection:', engineSelection)
 
     if self.inputPorts[1].hasNewValidData():
         if codeEditor:
@@ -293,7 +293,7 @@ outputs:
         nbProc = len(procs)
         self.rename('mec_%dproc'%nbProc)
         self.applyCmd()
-    
+
     self.targets = []
     procs = self.mec.get_ids()
     i = 0
@@ -303,6 +303,7 @@ outputs:
         i+=1
     self.mec.targets = self.targets
     self.outputData(mec=self.mec)
+
 """
         self.setFunction(code)
 
@@ -370,7 +371,7 @@ class IPLocalMEC2(IPmecBase):
     
     if self.mec is None:
         # find the fulr of the controller
-        import user, os
+        import os; from mglcompat import pyuser as user
         furlFile = os.path.join(user.home, "_ipython", "security", "ipcontroller-mec.furl")
         f = open(furlFile)
         data = f.readlines()
@@ -461,8 +462,9 @@ outputs:
         self.outputPortsDescr.append(datatype='string', name='varname')
         
         code = """def doit(self, data, varname, mec):
-    print mec.scatter(varname, data)
+    print(mec.scatter(varname, data))
     self.outputData(varname=varname, mec=mec)
+
 """
                 
         self.setFunction(code)
@@ -558,7 +560,8 @@ outputs:
 
         code = """def doit(self, objects, mec):
     for obj in objects:
-        print mec.push(obj)
+        print(mec.push(obj))
+
 """
 
         self.setFunction(code)
@@ -700,7 +703,7 @@ output:
             self.deletePort(p, updateSignature=False)
 
         # get arguments description
-        from inspect import getargspec
+        from inspect import getfullargspec as getargspec
         if hasattr(function, '__call__') and hasattr(function.__call__, 'im_func'): 
             args = getargspec(function.__call__.im_func)
         else:

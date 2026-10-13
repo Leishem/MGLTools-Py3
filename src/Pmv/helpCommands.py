@@ -21,7 +21,7 @@ from mglutil.gui.InputForm.Tk.gui import InputFormDescr
 from mglutil.gui.BasicWidgets.Tk.customizedWidgets import ListChooser, \
      kbScrolledListBox
 from ViewerFramework.VFCommand import Command,CommandGUI
-from string import join
+from mglcompat.pystring import join
 global commandslist
 import webbrowser,os,sys
 from tkinter import *

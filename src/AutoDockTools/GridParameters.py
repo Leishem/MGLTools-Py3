@@ -20,7 +20,7 @@
 #
 
 from .energyConstants import Rij, epsij, SolVol, SolPar, SolCon
-import UserDict
+import collections as UserDict
 import os.path, sys, types, glob; from mglcompat import pystring as string
 from MolKit import Read
 from AutoDockTools.atomTypeTools import AutoDock4_AtomTyper
@@ -418,7 +418,7 @@ class GridParameters(UserDict.UserDict):
             return float(val_str)
         except ValueError:
             pass
-        if type(val_str)==bytes:
+        if type(val_str)==str:
             return val_str
         else:
             raise NotImplementedError("value: %s of unsupport type %s" % (val_str, type(val_str).__name__))
@@ -593,7 +593,7 @@ class GridParameters(UserDict.UserDict):
                 val_str = ""
         elif ((vt==int) or
               (vt==float) or
-              (vt==bytes)):
+              (vt==str)):
             val_str = str(p['value'])
         elif ((vt==list) or
               (vt==tuple)):

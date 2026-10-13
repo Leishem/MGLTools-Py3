@@ -15,7 +15,7 @@
 #
 
 import sys, os
-import Image
+from PIL import Image
 import mglcompat.oldnumeric as Numeric
 import warnings
 
@@ -406,7 +406,7 @@ are powers of 2." (has been tested for Image but not for Numeric array yet - gui
 if __name__ == '__main__':
 
     t = Texture()
-    import Image
+    from PIL import Image
     im = Image.open('lena.jpg')
     t.Set(enable=1, image=im)
 

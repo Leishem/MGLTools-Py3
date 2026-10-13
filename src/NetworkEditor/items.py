@@ -32,7 +32,7 @@ from mglcompat import pystring as string
 import threading
 import os
 import datetime
-import user
+from mglcompat import pyuser as user
 import inspect
 import copy
 import random
@@ -1070,7 +1070,7 @@ configure unchanged widgets."""
                        nodeName, self.inputPortsDescr[portIndex]['name'])
             lines.append(indent+datatxt)
 
-        if type(val)==bytes:
+        if type(val)==str:
             if returnPattern.search(val): #multi - line data
                 datatxt = \
                     '%s.inputPortByName[\'%s\'].widget.set(r"""%s""", run=False)\n'%( 
@@ -1712,7 +1712,7 @@ dependencies: True/False
             if port.hasNewData():
                 newData = 1
             data = port.getData() # returns 'Stop' if bad or missing data
-            if type(data) is bytes:
+            if type(data) is str:
                 if data.lower()=='stop':
                     # turn node outline to missing data color
                     if ed.hasGUI and ed.flashNodesWhenRun:
@@ -3574,7 +3574,7 @@ class FunctionNode(NetworkNode):
         elif ('namedArgs' in kw) is True:
             namedArgs = kw['namedArgs']
 
-        if type(functionOrString) == bytes:
+        if type(functionOrString) == str:
             # we add __main__ to the scope of the local function
             # the folowing code is similar to: "from __main__ import *"
             # but it doesn't raise any warning, and its probably more local
@@ -3587,7 +3587,7 @@ class FunctionNode(NetworkNode):
             if importString is not None:
                 try:
                     lImport = eval(importString)
-                    if lImport == bytes:
+                    if lImport == str:
                         importString = lImport
                 except:
                     pass
@@ -3595,7 +3595,7 @@ class FunctionNode(NetworkNode):
             if ('masternet' in kw) is True:
                 masterNet = kw['masternet']
             lfunctionOrString = functionOrString
-            while type(lfunctionOrString) == bytes:
+            while type(lfunctionOrString) == str:
                 try:
                     function = eval(lfunctionOrString)
                 except NameError:
@@ -3646,7 +3646,7 @@ class FunctionNode(NetworkNode):
         #    self.outputPortsDescr.append(datatype=value, name=key)
 
         # get arguments description
-        from inspect import getargspec
+        from inspect import getfullargspec as getargspec
         if hasattr(function, '__call__') and hasattr(function.__call__, 'im_func'): 
             args = getargspec(function.__call__.__func__)
         else:
@@ -3679,7 +3679,7 @@ class FunctionNode(NetworkNode):
         # create the constructor arguments such that when the node is restored
         # from file it will have all the info it needs
         if functionOrString is not None \
-          and type(functionOrString) == bytes:
+          and type(functionOrString) == str:
             self.constrkw['functionOrString'] = "\'"+suppressMultipleQuotes(functionOrString)+"\'"
             if importString is not None:
                 self.constrkw['importString'] = "\'"+suppressMultipleQuotes(importString)+"\'"
@@ -3715,19 +3715,20 @@ class FunctionNode(NetworkNode):
         posargs.append(locals()[pn])
     # build named arguments
     kw = {}
-    for arg in self.namedArgs.keys():
+    for arg in list(self.namedArgs.keys()):
         kw[arg] = locals()[arg]
     # call function
     try:
         if hasattr(self.function,'__call__') and hasattr(self.function.__call__, 'im_func'):
-            result = apply( self.function.__call__, posargs, kw )
+            result = self.function.__call__(*posargs, **kw)
         else:
-            result = apply( self.function, posargs, kw )
-    except Exception, e:
+            result = self.function(*posargs, **kw)
+    except Exception as e:
         from warnings import warn
         warn(str(e))
         result = None
     self.outputData(result=result)
+
 """
         if code: self.setFunction(code)
         # change signature of compute function
@@ -3799,7 +3800,7 @@ class FunctionNode(NetworkNode):
                         'labelGridCfg':{'sticky':'w'},
                         'labelCfg':{'text':name},
                         }
-                elif type(val) is bytes:
+                elif type(val) is str:
                     dtype = 'string'
                     self.widgetDescr[name] = {
                         'class': 'NEEntry', 'width':10,

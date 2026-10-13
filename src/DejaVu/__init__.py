@@ -101,7 +101,7 @@ dejavurcText = """##############################################################
 #########################################################################
 # To customize DejaVu, you can modify the _dejavurc file:
 # unix: ~/.mgltools/[version number]/DejaVu/_dejavurc
-# windows: \Documents and Settings\(user name)\.mgltools\(version numer)\DejaVu\_dejavurc
+# windows: \\Documents and Settings\\(user name)\\.mgltools\\(version numer)\\DejaVu\\_dejavurc
 # DejaVu will generate it automatically if it doesn't exist.
 # Do not modify the original source file DejaVu/__init__.py
 ##################################################################
@@ -130,7 +130,7 @@ def functionName0(level=1):
     filename = lsf.f_code.co_filename.split(sep)[-1]
     linenumber = lsf.f_lineno
     if True: #filename == 'MaterialEditor.py':
-        print functionname, filename, linenumber
+        print(functionname, filename, linenumber)
 """
 
 def ensureDejaVuResourceFile():

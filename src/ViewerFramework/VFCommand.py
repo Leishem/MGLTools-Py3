@@ -739,7 +739,7 @@ of the pop up window is the name of the command
     def getValNamedArgs(self):
         """
          """
-        from inspect import getargspec
+        from inspect import getfullargspec as getargspec
         args = getargspec(self.__call__.__func__)
         allNames = args[0][1:]
         defaultValues = args[3]
@@ -1239,7 +1239,7 @@ optional arguments :
                which means that the current form will be a 'slave' of the
                given master if None is specified then self.vf.GUI.ROOT
                
-    root    -- if root is not specified a Tkinter.TopLevel will
+    root    -- if root is not specified a tkinter.TopLevel will
                be created.
 
     modal   -- Flag specifying if the form is modal or not. When a form

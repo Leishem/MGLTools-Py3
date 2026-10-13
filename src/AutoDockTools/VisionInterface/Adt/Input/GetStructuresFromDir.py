@@ -51,7 +51,7 @@ class GetStructuresFromDir(NetworkNode):
                 sid = f.rstrip('.pqr')
                 s = sid + '.pdbqt'
                 found = False
- 
+
                 for i in structure_list:
                     if i == s:
                         found = True        
@@ -63,7 +63,7 @@ class GetStructuresFromDir(NetworkNode):
             for f in filenames_pdb:
                 sid = f.rstrip('.pdb')
                 found = False
- 
+
                 for i in structure_list:
                     if i == sid + '.pdb' or i == sid + '.pdbqt':
                         found = True        
@@ -78,20 +78,21 @@ class GetStructuresFromDir(NetworkNode):
             if directory is not None:
                 os.chdir(cwd)
 
-        print "--------------------------------------------------------------"
-        print "The following structures are found in the structure directory:"
+        print("--------------------------------------------------------------")
+        print("The following structures are found in the structure directory:")
 
         count = 0
 
         for i in structure_list:
             count = count + 1
-            print str(count) + '. ' + i
-           
-        print "--------------------------------------------------------------"
-        
+            print(str(count) + '. ' + i)
+
+        print("--------------------------------------------------------------")
+
         pass
 #        self.outputData(structure_list_obj=structure_list_obj, structure_list=structure_list)
         self.outputData(structure_list_obj=structure_list_obj)
+
 """
         self.configure(function=code)
 

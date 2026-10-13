@@ -364,7 +364,7 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
         self.newAngList = tkinter.StringVar()
         self.TAHdata = None
         self.molecule = None
-        #self.bondString = Tkinter.StringVar()
+        #self.bondString = tkinter.StringVar()
         self.callbackDict = {}
         self.callbackDict['measureDistanceGC'] = 'update'
         self.callbackDict['measureAngleGC'] = 'update'
@@ -897,7 +897,7 @@ class SetTorsionGUICommand(MeasureTorsionGUICommand):
                 'command': self.new_Tors},
             'gridcfg':{'sticky':'we','columnspan':2}})
         #ifd.append({'name':'accept',
-                    #'widgetType': Tkinter.Button,
+                    #'widgetType': tkinter.Button,
                     #'wcfg':{'text' : 'Accept',
                             #'command': self.Accept_cb},
                     #'gridcfg':{'sticky':'we'}})

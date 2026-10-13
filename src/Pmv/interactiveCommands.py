@@ -182,7 +182,7 @@ class MVIcomGUI(MVCommand):
             barFrame = bar.interior()
         else:
             barFrame = bar
-        #self.Label = Tkinter.Label(barFrame, text='PCOM: ')
+        #self.Label = tkinter.Label(barFrame, text='PCOM: ')
         #self.Label.pack(side='left')
 
         # get the sorted list of ICOMS
@@ -300,7 +300,7 @@ class MVIcomGUI(MVCommand):
 
 
 ##     def NoMod_cb(self, cmdName):
-##         if isinstance(cmdName, Tkinter.Event):
+##         if isinstance(cmdName, tkinter.Event):
 ##             cmdName = cmdName.widget.get(cmdName.widget.curselection())
 ##         if cmdName=='None' or cmdName is None: cmd=None
 ##         else: cmd = self.vf.commands[cmdName]
@@ -335,7 +335,7 @@ class MVIcomGUI(MVCommand):
 
 
 ##     def Alt_cb(self, cmdName):
-##         if isinstance(cmdName, Tkinter.Event):
+##         if isinstance(cmdName, tkinter.Event):
 ##             cmdName = cmdName.widget.get(cmdName.widget.curselection())
 ##         if cmdName=='None' or cmdName is None: cmd=None
 ##         else: cmd = self.vf.commands[cmdName]

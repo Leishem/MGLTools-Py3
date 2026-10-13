@@ -1,6 +1,6 @@
-from idlelib import PyShell
+from idlelib import pyshell as PyShell
 #from idlelib.PyShell import PyShell, PyShellFileList, use_subprocess
-from idlelib.EditorWindow import fixwordbreaks
+from idlelib.editor import fixwordbreaks
 import tkinter, sys, os
 def getShell(thread, rootTk = None, subprocess = False, debug=False,
              enable_shell=False, enable_edit=True):

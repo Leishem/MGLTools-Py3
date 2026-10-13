@@ -25,7 +25,7 @@
 from opengltk.OpenGL import GL
 from DejaVu.IndexedPolygons import IndexedPolygons
 from DejaVu.viewerFns import checkKeywords
-import DejaVu.datamodel, DejaVu.viewerConst, Numeric
+import DejaVu.datamodel, DejaVu.viewerConst; import mglcompat.oldnumeric as Numeric
 from DejaVu.colorTool import glMaterialWithCheck, resetMaterialMemory
 
 class Quad_strip(IndexedPolygons):

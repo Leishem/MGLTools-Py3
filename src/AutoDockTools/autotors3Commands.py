@@ -210,10 +210,10 @@ def initModule(vf):
                     pass
 
 #        if not hasattr(vf.GUI, 'ligandLabel'):
-#            vf.GUI.ligandLabelLabel = Tkinter.Label(vf.GUI.adtFrame, \
+#            vf.GUI.ligandLabelLabel = tkinter.Label(vf.GUI.adtFrame, \
 #                            text="Ligand:", bg='tan')
 #            vf.GUI.ligandLabelLabel.pack(side='left')
-#            vf.GUI.ligandLabel=Tkinter.Label(vf.GUI.adtFrame, text="None", width=4,
+#            vf.GUI.ligandLabel=tkinter.Label(vf.GUI.adtFrame, text="None", width=4,
 #                                     relief='sunken', borderwidth=1,
 #                                     anchor='w' )
 #            vf.GUI.ligandLabel.pack(side='left')

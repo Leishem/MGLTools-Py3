@@ -40,7 +40,7 @@ mglutilrcText = """#############################################################
 #########################################################################
 # To customize mglutil, you can modify the _mglutilrc file:
 # unix: ~/.mgltools/[version number]/mglutil/_mglutilrc
-# windows: \Documents and Settings\(user name)\.mgltools\(version numer)\mglutil\_mglutilrc
+# windows: \\Documents and Settings\\(user name)\\.mgltools\\(version numer)\\mglutil\\_mglutilrc
 # DejaVu will generate this file automatically if it can't find it
 # Do not modify the original source file
 ##################################################################

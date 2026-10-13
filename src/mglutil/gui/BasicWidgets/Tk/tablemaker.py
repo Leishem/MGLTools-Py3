@@ -17,7 +17,7 @@
 """tablemaker.py module provides widgets (transfer function editor) used
 to edit color and opacity lookup tables.
 Example:
-    root = Tkinter.Tk()
+    root = tkinter.Tk()
     def AlphaCallback(value):
         # value is a 2 element list. value[0]-starting index of alpha
         # entries in the lookup table, value[1] - an integer array containing
@@ -136,7 +136,7 @@ class TableManager:
         editBtn.menu.add_command(label="Delete selected dot",
                                  command=self.del_selected_dot)
 
-        #editBtn.menu.options = Tkinter.Menu(editBtn.menu)
+        #editBtn.menu.options = tkinter.Menu(editBtn.menu)
         #editBtn.menu.add_cascade(label="Options...",
         #                         menu=editBtn.menu.options)
         self.continVar = tkinter.IntVar()
@@ -464,7 +464,7 @@ class TableManager:
         for entry in entries:
             entry.grid(row=0, column=i,sticky='w')
             i = i+1
-##          Tkinter.Button(f, text='Add new', command=self.addIsoVal_cb,
+##          tkinter.Button(f, text='Add new', command=self.addIsoVal_cb,
 ##                         takefocus=0, font=font).grid(row=0, column=i,
 ##                                                      sticky='w') 
 
@@ -993,7 +993,7 @@ class TableManager:
             
 
     def load_file(self, file):
-        from string import split, atoi
+        from mglcompat.pystring import split, atoi
         of = open(file, 'r')
         line = split(of.readline())
         warning = "Warning: wrong file format. Could not read file %s" %(file,)

@@ -206,14 +206,14 @@ width=200          : whe width of the list, in pixels
             master, borderframe=1, #labelpos='n', label_text='main',
             usehullsize=0, hull_width=200, hull_height=400,
             vscrollmode='dynamic', hscrollmode='dynamic')
-##         self.canvas = Tkinter.Canvas(master, width=200, height=400,
+##         self.canvas = tkinter.Canvas(master, width=200, height=400,
 ##                                      borderwidth=2)
         
 ##         canvas=self.canvas
-##         canvas.scrollX = Tkinter.Scrollbar(self.master,
-##                                                 orient=Tkinter.HORIZONTAL)
-##         canvas.scrollY = Tkinter.Scrollbar(self.master,
-##                                                 orient=Tkinter.VERTICAL)
+##         canvas.scrollX = tkinter.Scrollbar(self.master,
+##                                                 orient=tkinter.HORIZONTAL)
+##         canvas.scrollY = tkinter.Scrollbar(self.master,
+##                                                 orient=tkinter.VERTICAL)
 
 ##         canvas['xscrollcommand'] = self.canvas.scrollX.set
 ##         canvas['yscrollcommand'] = self.canvas.scrollY.set
@@ -1117,7 +1117,7 @@ batch   : a set of children nodes added.
         if len(self.children) or self.hasChildren:
             # draw folder and +/-
 ##             folder=canvas.create_image(self.x+OFFSET,self.y,
-##                     image=img, anchor=Tkinter.CENTER) 
+##                     image=img, anchor=tkinter.CENTER) 
 ##             self.canvasIDs.append(folder)
 ##             canvas.lift(folder)
 ##             signBox = canvas.create_rectangle(self.x+OFFSET-25,self.y+5,
@@ -1135,11 +1135,11 @@ batch   : a set of children nodes added.
             canvas.tag_bind(sign, "<1>", self.invoke)            
 ##             canvas.tag_bind(folder,"<Double-Button-1>", self.invoke)
 ##             txt = canvas.create_text(self.x + 2*OFFSET ,self.y,
-##                                      text=caption,anchor=Tkinter.W) 
+##                                      text=caption,anchor=tkinter.W) 
 ##             canvas.lift(txt)
 ##         else:
 ##             txt = canvas.create_text(self.x + OFFSET ,self.y,
-##                                      text=caption,anchor=Tkinter.W)
+##                                      text=caption,anchor=tkinter.W)
         txt = canvas.create_text(self.x + OFFSET ,self.y,
                                  text=caption,anchor=tkinter.W)         
         canvas.tag_bind(txt, "<Button-3>", self.showFullText1_cb)
@@ -1254,7 +1254,7 @@ multi-dimentional array"""
     def rename(self, newName):
         """this function renames the node and updates the caption on canvas """
 
-        if type(newName) is not bytes:
+        if type(newName) is not str:
             return
         self.name = newName
         self.draw()
@@ -1629,7 +1629,7 @@ Creates the canvas used to draw the tree
         self.minus_icon  = ImageTk.PhotoImage( master=master,image=minus_icon)
 
         # create the frame for "History" Label and the two hide/show labels
-        #frame = Tkinter.Frame(master=self.topFrame_1, )
+        #frame = tkinter.Frame(master=self.topFrame_1, )
         #self.showHideHistoryIcon=Label(frame, text="Show History")
         #self.showHideHistoryIcon.pack(side="left", anchor='nw')
         #frame.pack(side='top')
@@ -1950,7 +1950,7 @@ firstExpand_cb : call_back fucntions
             node.tag = [str(node.uniqueID)]
         
             # if parent given as a string, find the Node obj of the parent
-            if type(parent) is bytes:
+            if type(parent) is str:
                 input=parent
                 parent = self.findNodeFromName(parent)
                 if parent is None:
@@ -2075,7 +2075,7 @@ a Node. If no parent is specified this node will become the next root node
             
         else:
             # if parent given as a string, find the Node obj of the parent
-            if type(parent) is bytes:
+            if type(parent) is str:
                 input=parent
                 parent = self.findNodeFromName(parent)
                 if parent is None:
@@ -2130,7 +2130,7 @@ parent should be given as full name of parent node"""
             warn( "Node cannot be None")
             return
         
-        if type(parent) is bytes:
+        if type(parent) is str:
             input=parent
             parent=self.findNodeFromName(parent)
             if parent is None:
@@ -2163,7 +2163,7 @@ parent should be given as full name of parent node"""
         """ Delete a node from the TreeView. 
         Node can be given as the Node object, or full name of the node"""
 
-        if type(node) is bytes:
+        if type(node) is str:
             n = self.findNodeFromName(node)
             if n is None:
                 warn( node+" not found")
@@ -2358,7 +2358,7 @@ parent should be given as full name of parent node"""
         prev_selection=self.GetSelected()
    
         result = False
-        if type(node) is bytes:
+        if type(node) is str:
             fullname=node
         else:
             assert isinstance(node, Node)
@@ -2528,14 +2528,14 @@ newParent: a Node object or fullName of Node, if None, add as new root
         if nodeFrom == None: return
         # if newParent is None: add as new root node
         
-        if type(newParent) is bytes:
+        if type(newParent) is str:
             input=newParent
             newParent = self.findNodeFromName(newParent)
             if newParent is None:
                 warn( "error in moveNode, check name of parent: "+ input  )
                 return
 
-        if type(nodeFrom) is bytes:
+        if type(nodeFrom) is str:
             input=nodeFrom
             nodeFrom = self.findNodeFromName(nodeFrom)
             if nodeFrom is None:

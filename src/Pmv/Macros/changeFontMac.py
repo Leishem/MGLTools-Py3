@@ -14,7 +14,7 @@ def changeFont():
                 except :
                         pass
                 if len(wid.children)==0: return
-                #if wid.__class__==Tkinter.Toplevel: return
+                #if wid.__class__==tkinter.Toplevel: return
                 for item in list(wid.children.values()):
                         makeChange(item, newfont)	
 

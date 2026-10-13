@@ -412,10 +412,10 @@ class ViewerGUI:
 ##             if addScenarioButton:
 ##                 from mglutil.util.packageFilePath import findFilePath
 ##                 icondir = findFilePath('32x32', 'scenario.Icons')
-##                 PI = Tkinter.PhotoImage
+##                 PI = tkinter.PhotoImage
 ##                 self.animatorIcon = PI(file=os.path.join(icondir, "scenario.gif"))
 ##                 icon = self.animatorIcon
-##                 self.scenarioBt = Tkinter.Button(
+##                 self.scenarioBt = tkinter.Button(
 ##                     frame1, image=icon, width=icon.width(), height=icon.height(),
 ##                     command=self.startScenario)
 ##                 self.scenarioBt.pack(side='right', padx=2, pady=2, ipadx=2, ipady=2)
@@ -909,7 +909,7 @@ class ViewerGUI:
                               command=self.ObjMatEdBack_cb,
                               )
         self.MatEdB2.grid(row=0, column=3)
-        #self.inheritVar['inheritMaterial'] = Tkinter.IntVar()
+        #self.inheritVar['inheritMaterial'] = tkinter.IntVar()
         lFunc = CallBackFunction(self.setInherit_cb,
                                  'inheritMaterial',
                                  self.inheritVar['inheritMaterial'])
@@ -1689,7 +1689,7 @@ class ViewerGUI:
         
 
     def getButtonIcon(self):
-        import Image, ImageChops, ImageTk
+        from PIL import Image; from PIL import ImageChops; from PIL import ImageTk
         c = self.viewer.currentCamera
         im = c.GrabFrontBuffer()
         def autocrop(im, bgcolor):
@@ -1920,7 +1920,7 @@ class ViewerGUI:
 
         if isinstance(event, tkinter.Event) and (event.type == '2'):
             lEvent = event.keysym
-        elif type(event) == bytes:
+        elif type(event) == str:
             lEvent = event
         else:
             lEvent = 'None'
@@ -1945,7 +1945,7 @@ class ViewerGUI:
 
     ## def addOcclusionCamera(self):
     ##     from DejaVu.Camera import OcclusionCamera
-    ##     root = Tkinter.Toplevel()
+    ##     root = tkinter.Toplevel()
     ##     root.withdraw()
     ##     root.protocol('WM_DELETE_WINDOW', self.hideOcclusionCamGUI)
  

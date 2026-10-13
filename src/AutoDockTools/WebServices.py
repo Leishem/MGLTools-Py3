@@ -59,34 +59,34 @@ class WebServices(MVCommand):
                                 'columnspan':3}
                      })
 
-#        ifd.append({'widgetType':Tkinter.Label, 'name':'New_User',
+#        ifd.append({'widgetType':tkinter.Label, 'name':'New_User',
 #                    'parent':'LoginGroup', 'wcfg':{'text':'   New Users?',
 #                                           'fg':'Blue','cursor':'hand1'},
 #                    'gridcfg':{'sticky':'w', 'row':1, 'column':0}
 #                    })
-#        ifd.append({'widgetType':Tkinter.Label, 'name':'UserName_Label',
+#        ifd.append({'widgetType':tkinter.Label, 'name':'UserName_Label',
 #                    'parent':'LoginGroup', 'wcfg':{'text':'User Name'},
 #                    'gridcfg':{'sticky':'e', 'row':1, 'column':1}
 #                    })
-#        ifd.append({'widgetType':Tkinter.Entry, 'name':'UserName_Entry',
+#        ifd.append({'widgetType':tkinter.Entry, 'name':'UserName_Entry',
 #                    'parent':'LoginGroup','wcfg':{},
 #                    'gridcfg':{'sticky':'ew', 'row':1, 'column':2}
 #                    })
-#        ifd.append({'widgetType':Tkinter.Label, 'name':'Password_Label',
+#        ifd.append({'widgetType':tkinter.Label, 'name':'Password_Label',
 #                    'parent':'LoginGroup', 'wcfg':{'text':'Password'},
 #                    'gridcfg':{'sticky':'e', 'row':2, 'column':1}
 #                    })
-#        ifd.append({'widgetType':Tkinter.Entry, 'name':'Password_Entry',
+#        ifd.append({'widgetType':tkinter.Entry, 'name':'Password_Entry',
 #                    'parent':'LoginGroup', 'wcfg':{'show':'*'},
 #                    'gridcfg':{'sticky':'ew', 'row':2, 'column':2}
 #                    })
-#        ifd.append({'widgetType':Tkinter.Label, 'name':'Remember_Label',
+#        ifd.append({'widgetType':tkinter.Label, 'name':'Remember_Label',
 #                    'parent':'LoginGroup',
 #                    'wcfg':{'text':'Remember User Name and Password'},
 #                    'gridcfg':{'sticky':'e', 'row':3, 'column':0,'columnspan':2}
 #                    })
-#        self.RememberLogin_var = Tkinter.BooleanVar()
-#        ifd.append({'widgetType':Tkinter.Checkbutton, 'name':'Remember_Checkbutton',
+#        self.RememberLogin_var = tkinter.BooleanVar()
+#        ifd.append({'widgetType':tkinter.Checkbutton, 'name':'Remember_Checkbutton',
 #                    'parent':'LoginGroup', 'variable':self.RememberLogin_var,
 #                    'gridcfg':{'sticky':'w', 'row':3, 'column':2}
 #                    })       
@@ -148,7 +148,7 @@ class WebServices(MVCommand):
                     'gridcfg':{'sticky':'w','row':1, 'column':0,'columnspan':2}
                     })
 
-#        ifd.append({'name': 'ag_before', 'widgetType': Tkinter.Radiobutton,
+#        ifd.append({'name': 'ag_before', 'widgetType': tkinter.Radiobutton,
 #                    'parent':'AutoDock', 'text':'Run AutoGrid first',
 #                    'tooltip':"This option runs AutoGrid Web Services and uses resulting map files for AutoDock",
 #                    'wcfg':{'variable':self.ad_radio,'value':1,'state':'disabled'},
@@ -507,9 +507,9 @@ class WebServices(MVCommand):
                           "Permission denied: " +os.path.join(os.getcwd(),remote_file._name),
                           parent = self.cmdForms['default'].root)
                 return             
-            bytes = int(self._url.headers.dict['content-length'])
+            str = int(self._url.headers.dict['content-length'])
             self._progress_counter = 0
-            self._download_bytes = bytes/100
+            self._download_bytes = str/100
             if self._download_bytes == 0: self._download_bytes = 1
             self.new_download = False
             self.vf.GUI.ROOT.after(1, self.download)

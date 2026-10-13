@@ -147,7 +147,7 @@ updateOwnGui=True : allow to update owngui at the end this func
 
         val = kw.pop( 'name', None)
         if not val is None:
-            assert type(val) == bytes
+            assert type(val) == str
             if self.parent:
                 # make sure name is unique amongst siblings
                 sameName = None

@@ -18,7 +18,7 @@
 import types, mglcompat.oldnumeric as Numeric, os, sys
 import tkinter, Pmw
 import tkinter.filedialog
-from string import strip, split, find
+from mglcompat.pystring import strip, split, find
 
 from opengltk.OpenGL import GL
 from opengltk.extent import _gllib as gllib
@@ -288,7 +288,7 @@ ColorMap.ramp and which can be labeled.
                 master2 = master2.master
             if hasattr(master2, 'master') is True and isinstance(master2.master,tkinter.Widget):
                 master2 = master2.master
-            #Tkinter.Widget.bind(master2, '<Configure>', self.configure_cb)
+            #tkinter.Widget.bind(master2, '<Configure>', self.configure_cb)
             self.inVision = True
         else:
             tkinter.Widget.bind(self.fullWidgetFrame, '<Configure>', self.configure_cb)
@@ -693,7 +693,7 @@ after it's creation
         self.curXLabel.grid(row=4, column=0, sticky='w')
 
         if self.labels is not None:
-            #self.labelsInComboBox = Tkinter.StringVar()
+            #self.labelsInComboBox = tkinter.StringVar()
             self.labelsComboBox = ComboBoxRename(
                                        self.buttonFrame, 
                                        label_text='label',
@@ -1541,11 +1541,11 @@ returns color to be used to draw value and opacity lines in canvas
 
 
 #    def createCMLWidget(self):
-#        self.legend_gui = Tkinter.Toplevel()
+#        self.legend_gui = tkinter.Toplevel()
 #        self.legend_gui.title(self.legend.name)
 #        self.legend_gui.protocol('WM_DELETE_WINDOW', self.legend_gui.withdraw )
 #
-#        frame1 = Tkinter.Frame(self.legend_gui)
+#        frame1 = tkinter.Frame(self.legend_gui)
 #        frame1.pack(side='top')
 #
 #        #unit
@@ -1556,7 +1556,7 @@ returns color to be used to draw value and opacity lines in canvas
 #        self.unitsEnt.pack(side='top', fill='x')
 #
 #        #glf vector font
-#        self.glfFont = Tkinter.StringVar()
+#        self.glfFont = tkinter.StringVar()
 #        self.glfFont.set('chicago1.glf')
 #        self.glfFontCB = Pmw.ComboBox(frame1, label_text='Font    ',
 #                                   labelpos='w',
@@ -1607,9 +1607,9 @@ returns color to be used to draw value and opacity lines in canvas
 #        self.numOfLabelsCtr.pack(side='top')
 #
 #        # Interpolate
-#        self.interpVar = Tkinter.IntVar()
+#        self.interpVar = tkinter.IntVar()
 #        self.interpVar.set(0)
-#        self.checkBoxFrame = Tkinter.Checkbutton(
+#        self.checkBoxFrame = tkinter.Checkbutton(
 #                                frame1, 
 #                                text='Interpolate',
 #                                variable=self.interpVar, 
@@ -1617,9 +1617,9 @@ returns color to be used to draw value and opacity lines in canvas
 #        self.checkBoxFrame.pack(side='top')
 #
 #        # frame
-#        self.frameVar = Tkinter.IntVar()
+#        self.frameVar = tkinter.IntVar()
 #        self.frameVar.set(1)
-#        self.checkBoxFrame = Tkinter.Checkbutton(
+#        self.checkBoxFrame = tkinter.Checkbutton(
 #                                frame1, 
 #                                text='Frame',
 #                                variable=self.frameVar, 
@@ -1627,9 +1627,9 @@ returns color to be used to draw value and opacity lines in canvas
 #        self.checkBoxFrame.pack(side='top')
 #
 #        # invert labels color
-#        self.invertLabelsColorVar = Tkinter.IntVar()
+#        self.invertLabelsColorVar = tkinter.IntVar()
 #        self.invertLabelsColorVar.set(0)
-#        self.checkBoxinvertLabelsColor = Tkinter.Checkbutton(
+#        self.checkBoxinvertLabelsColor = tkinter.Checkbutton(
 #                                frame1, 
 #                                text='Invert labels color',
 #                                variable=self.invertLabelsColorVar, 
@@ -1638,7 +1638,7 @@ returns color to be used to draw value and opacity lines in canvas
 #        self.checkBoxinvertLabelsColor.pack(side='top')
 #
 #        # colormapguiwidget:
-#        self.launchColormapWidget = Tkinter.Button(
+#        self.launchColormapWidget = tkinter.Button(
 #                                        frame1, 
 #                                        text="Show colormap settings",
 #                                        command=self.showColormapSettings_cb )

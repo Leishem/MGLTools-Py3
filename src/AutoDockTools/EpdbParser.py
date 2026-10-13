@@ -23,7 +23,7 @@ This Object parses the result of an AutoDock command mode epdb operation. It bui
 
 """
 import os
-from string import find, join, replace, split, rfind
+from mglcompat.pystring import find, join, replace, split, rfind
 import re
 
 from AutoDockTools.ResultParser import ResultParser

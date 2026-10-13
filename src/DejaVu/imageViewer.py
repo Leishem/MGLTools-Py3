@@ -2,7 +2,7 @@
 
 import tkinter, os
 import mglcompat.oldnumeric as Numeric
-import Image
+from PIL import Image
 from opengltk.OpenGL import GL
 from opengltk.extent import _gllib
 from DejaVu.EventHandler import EventManager

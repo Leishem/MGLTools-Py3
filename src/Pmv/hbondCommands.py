@@ -48,7 +48,7 @@ from Pmv.stringSelectorGUI import StringSelectorGUI
 from PyBabel.util import vec3
 
 import tkinter, mglcompat.oldnumeric as Numeric, math, os; from mglcompat import pystring as string
-from string import strip, split
+from mglcompat.pystring import strip, split
 from mglcompat.pytypes import StringType
 
 from opengltk.OpenGL import GL
@@ -470,7 +470,7 @@ class ShowHBDonorsAcceptors(MVCommand):
                 'aNam', 'sp2D', 'sp3D', 'sp2A', 'sp3A','useSelection']
                 
         for n in varNames:
-            exec('self.'+n+'=Tkinter.IntVar()')
+            exec('self.'+n+'=tkinter.IntVar()')
             exec('self.'+n+'.set(1)')
         self.showDTypeSel = tkinter.IntVar()
         self.showATypeSel = tkinter.IntVar()
@@ -1429,7 +1429,7 @@ class BuildHydrogenBondsGUICommand(MVCommand):
                 'hideASel',  'aS3', 'aO3', 'aO2', 'aO', 'aNpl',
                 'aNam']
         for n in varNames:
-            exec('self.'+n+'=Tkinter.IntVar()')
+            exec('self.'+n+'=tkinter.IntVar()')
             exec('self.'+n+'.set(1)')
 
 
@@ -3400,7 +3400,7 @@ atoms in viewer
 #        if not hasattr(self, 'ifd'):
 #            ifd = self.ifd = InputFormDescr(title = 'Show Hydrogen Bonds as Spheres')
 #            ifd.append({'name': 'hbondLabel',
-#                'widgetType': Tkinter.Label,
+#                'widgetType': tkinter.Label,
 #                'wcfg':{'text': str(len(atNames)) + ' Atoms in hbonds:'},
 #                'gridcfg':{'sticky': 'wens', 'columnspan':2}})
 #            ifd.append({'name': 'atsLC',
@@ -3439,7 +3439,7 @@ atoms in viewer
 #                    'entrypackcfg':{'side':'bottom'}},
 #                'gridcfg':{'sticky':'wens','row':-1, 'column':1}})
 #            ifd.append( {'name':'quality',
-#                'widgetType': Tkinter.Scale,
+#                'widgetType': tkinter.Scale,
 #                'wcfg':{'label':'quality',
 #                    'troughcolor':'green',
 #                     'from_':2, 'to_':20,
@@ -3448,18 +3448,18 @@ atoms in viewer
 #                    'command':self.updateQuality },
 #                'gridcfg':{'sticky':'wens'}})
 #            ifd.append({'name':'changeColorBut',
-#                'widgetType':Tkinter.Button,
+#                'widgetType':tkinter.Button,
 #                'wcfg': { 'text':'Choose color',
 #                    'relief':'flat',
 #                    'command': self.changeColor},
 #                'gridcfg':{'sticky':'wes', 'row':-1, 'column':1}})
 #            ifd.append({'name':'changeVertsBut',
-#                'widgetType':Tkinter.Button,
+#                'widgetType':tkinter.Button,
 #                'wcfg': { 'text':'Set anchors',
 #                    'command': self.changeDVerts},
 #                'gridcfg':{'sticky':'wens'}})
 #            ifd.append({'name':'closeBut',
-#                'widgetType':Tkinter.Button,
+#                'widgetType':tkinter.Button,
 #                'wcfg': { 'text':'Dismiss',
 #                    'command': self.dismiss_cb},
 #                'gridcfg':{'sticky':'wens', 'row':-1, 'column':1}})
@@ -3986,7 +3986,7 @@ atoms in viewer as cylinders
                     'command': self.dismiss_cb},
                 'gridcfg':{'sticky':'wens','columnspan':2 }})
             #ifd.append({'name':'changeVertsBut',
-                #'widgetType':Tkinter.Button,
+                #'widgetType':tkinter.Button,
                 #'wcfg': { 'text':'Set anchors',
                     #'command': self.changeDVerts},
                 #'gridcfg':{'sticky':'wens'}})
@@ -4485,11 +4485,11 @@ atoms in viewer using extruded geometries
                          })
 
             #idf.append({'name':'frontcap',
-                        #'widgetType':Tkinter.Checkbutton,
+                        #'widgetType':tkinter.Checkbutton,
                         #'defaultValue':1,'type':float,
                         #'wcfg':{'text':'front cap',
                                 #'state': 'disabled',
-                                #'variable': Tkinter.IntVar()},
+                                #'variable': tkinter.IntVar()},
                         #'gridcfg':{'sticky':'we'}})
 
             idf.append({'name':'caps',

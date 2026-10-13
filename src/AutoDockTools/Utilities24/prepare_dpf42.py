@@ -14,7 +14,7 @@ from AutoDockTools.DockingParameters import DockingParameters, genetic_algorithm
                 DockingParameter42FileMaker
 
 from AutoDockTools.atomTypeTools import AutoDock4_AtomTyper
-from numpy import oldnumeric as Numeric
+import mglcompat.oldnumeric as Numeric
  
 
 def usage():

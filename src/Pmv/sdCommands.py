@@ -990,7 +990,7 @@ class DisplayMolIndexedPolygons(DisplayCommand):
         if 'redraw' not in kw: kw['redraw']=1
         kw['only'] = only
         kw['negate'] = negate
-        if type(nodes) is bytes:
+        if type(nodes) is str:
             self.nodeLogString = "'"+nodes+"'"
 
         mols = self.vf.expandNodes(nodes)

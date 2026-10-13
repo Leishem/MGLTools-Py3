@@ -10,7 +10,7 @@
 import numpy
 import os, sys
 import tkinter, tkinter.messagebox
-import Pmw, ImageTk
+import Pmw; from PIL import ImageTk
 
 from Pmv.mvCommand import MVCommand
 from ViewerFramework.VFCommand import CommandGUI
@@ -846,7 +846,7 @@ class BeadedRibbonsCommand(MVCommand):
 
             ## Create radio buttons from PROSS and FILE for molecules
             ## that have SS info in file
-            #self.fileProssFrame = f =  Tkinter.Frame(frame1)
+            #self.fileProssFrame = f =  tkinter.Frame(frame1)
             #f.pack(side='top', anchor='w')
             mols = selection.top.uniq()
             self.molModeVars = {}
@@ -955,8 +955,8 @@ class BeadedRibbonsCommand(MVCommand):
                 wheelPad=2, labCfg={'text':'radius:', 'side':'left'})
             helixBeadRadiusw.grid(row=0, column=0, sticky='w', columnspan=2)
             
-            #lab1 = Tkinter.Label(parent, text="colors:", anchor="w",
-            #                     justify=Tkinter.LEFT)
+            #lab1 = tkinter.Label(parent, text="colors:", anchor="w",
+            #                     justify=tkinter.LEFT)
             #lab1.grid(row=1, column=0, sticky='w')
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
@@ -966,8 +966,8 @@ class BeadedRibbonsCommand(MVCommand):
             b.photo = photo
             b.grid(row=0, column=2, sticky='w')
 
-            #lab2 = Tkinter.Label(parent, text="color2:", anchor="w",
-            #                     #justify=Tkinter.LEFT)
+            #lab2 = tkinter.Label(parent, text="color2:", anchor="w",
+            #                     #justify=tkinter.LEFT)
             #lab2.grid(row=1, column=2, sticky='w')
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
@@ -1014,8 +1014,8 @@ class BeadedRibbonsCommand(MVCommand):
             self.sheetWidthw.grid(row=0, column=2, sticky='nw', columnspan=2)
 
             # sheet color icons: 
-            #lab1 = Tkinter.Label(frame3, text="colors:", anchor="w",
-            #                     justify=Tkinter.LEFT)
+            #lab1 = tkinter.Label(frame3, text="colors:", anchor="w",
+            #                     justify=tkinter.LEFT)
             #lab1.grid(row=1, column=0, sticky='nw')
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
@@ -1025,8 +1025,8 @@ class BeadedRibbonsCommand(MVCommand):
             b.photo = photo
             b.grid(row=0, column=4, sticky='nw')
 
-            #lab2 = Tkinter.Label(frame3, text="back faces:", anchor="w",
-            #                     justify=Tkinter.LEFT)
+            #lab2 = tkinter.Label(frame3, text="back faces:", anchor="w",
+            #                     justify=tkinter.LEFT)
             #lab2.grid(row=1, column=2, sticky='nw')
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
@@ -1055,8 +1055,8 @@ class BeadedRibbonsCommand(MVCommand):
                 wheelPad=2, labCfg={'text':'radius:', 'side':'left'})
             self.sheetBeadRadiusw.grid(row=0, column=0, sticky='w')#,
                                        #columnspan=3)
-            #lab1 = Tkinter.Label(parent, text="colors:", anchor="w",
-            #                     justify=Tkinter.LEFT)
+            #lab1 = tkinter.Label(parent, text="colors:", anchor="w",
+            #                     justify=tkinter.LEFT)
             #lab1.grid(row=1, column=0, sticky='w')
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
@@ -1066,8 +1066,8 @@ class BeadedRibbonsCommand(MVCommand):
             b.photo = photo
             b.grid(row=0, column=1, sticky='w')
 
-            #lab2 = Tkinter.Label(parent, text="color2:", anchor="w",
-            #                     justify=Tkinter.LEFT)
+            #lab2 = tkinter.Label(parent, text="color2:", anchor="w",
+            #                     justify=tkinter.LEFT)
             #lab2.grid(row=2, column=0, sticky='w')
             photo = ImageTk.PhotoImage(
                 file=os.path.join(ICONPATH, 'colorChooser20.png'))
