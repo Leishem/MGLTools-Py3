@@ -1,0 +1,12 @@
+include MANIFEST.in
+include version.py
+include bhtree/*.i
+include src/*
+exclude bhtree/bhtreelib.py
+include CVS/*
+include bhtree/CVS/*
+include bhtree/Tests/CVS/*
+include src/CVS/*
+include bhtree/doc.tar.gz
+
+include LICENSE

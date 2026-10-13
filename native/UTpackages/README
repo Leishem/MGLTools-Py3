@@ -1,0 +1,40 @@
+This module builds and installs python extensions of four C++ libraries
+developed in Chandrajit Bajaj's group at UT Austin 
+(HTTP://WWW.ICES.UTEXAS.EDU/CCV).
+This distribution contains the following modules:
+- UTblurDIST(the blurring algorithm extracted  from  the PDB Blurring software);
+- UTisocontourDIST (the isocontouring library);
+- UTUTvolrendDIST  (volume rendering library);
+- UTmeshDIST (Level set Boundary Interior and Exterior Mesher - LBIEMesher).
+These modules contain "setup.py" scripts to build and install UTblur,
+UTisocontour, UTvolrend and UTmesh packages into  
+sys.exec_prefix/lib/python2.4/site-packages/UTpackages 
+(or UserSpecifiedDir/UTpackages).
+
+Distutils are used to wrap the library with SWIG (version 1.3.20 or higher)
+and build the python extensions.
+ 
+To build and install the packages:
+ 
+python2.4 setup.py install
+ 
+This will install UTblur, UTisocontour, UTvolrend and UTmesh packages into  
+sys.exec_prefix/lib/python2.4/site-packages/UTpackages.
+ 
+The install command can be called with the following options:
+ 
+ --install-platlib=UserSpecifiedDir
+        installs the packages in  UserSpecifiedDir/UTpackages
+ --no-compile
+        do not compile .py to .pyc
+ 
+Example:
+   python2.4 setup.py install --install-platlib=/home/myname/myinstalldir
+ 
+To build and install any single package see README file of the package.
+ 
+To build source distribution:
+   python2.4 setup.py sdist
+ 
+To build binary distribution:
+   python2.4 setup.py bdist

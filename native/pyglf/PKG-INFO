@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: pyglf
+Version: 1.5.4
+Summary: GLF library Python extension module. The library is used for displaying text in OpenGL.
+Home-page: http://www.scripps.edu/~sanner/python/packager.html
+Author: Molecular Graphics Laboratory
+Author-email: mgltools@scripps.edu
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN

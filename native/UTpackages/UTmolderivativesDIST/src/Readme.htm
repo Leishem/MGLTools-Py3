@@ -1,0 +1,145 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>MolDerivatives Library</title>
+</head>
+
+<body>
+
+<h1>MolDerivatives Library </h1>
+<h3>part of TexMol, CVC, The University of Texas, Austin</h3>
+<p><i>Dependency:</i> Also uses the UsefulMath Library.</p>
+<hr>
+<h3>Usage:</h3>
+<p><b>Main object: </b></p>
+<p>&nbsp;&nbsp;&nbsp; <b>SumOfGaussiansCurvature</b></p>
+<p><b>Functions:</b></p>
+<blockquote>
+	<p><font color="#008000">SumOfGaussiansCurvature</font>(&nbsp;
+	<font color="#000080">int</font> <i>numberOfGaussians</i>,
+	<font color="#000080">double*</font> <i>gaussianCenters</i>,
+	<font color="#000080">int</font> <i>numberOfGridDivisions</i>,
+	<font color="#000080">double</font> <i>maxFunctionError</i>,
+	<font color="#000080">double</font> <i>blobbiness</i>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<font color="#000080">int</font> <i>numberOfPoints</i>,
+	<font color="#000080">float*</font> <i>points</i>, <font color="#000080">
+	double*</font> <i>HandK</i>, <font color="#000080">double*</font> <i>normals</i>,
+	<font color="#000080">double*</font> <i>k1Vector</i>, <font color="#000080">
+	double*</font> <i>k2Vector</i>)</p>
+	<p>&nbsp;&nbsp;&nbsp; Parameters:</p>
+	<ul>
+		<li><i>numberOfGaussians</i>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Input the 
+		number of Gaussians in the molecule</li>
+		<li><i>gaussianCenters</i>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+		A double array containing the description of the position of the atoms 
+		and its radius as: [x1,y1,z1,r1,&nbsp; x2,y2,z2,r2,&nbsp; x3,y3,z3,r3 
+		...... xn,yn,zn,rn], where<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+		n is equal to <i>numberOfGaussians</i></li>
+		<li><i>numberOfGridDivisions</i>: The number of divisions in the mesh in 
+		which the atoms are embedded to get a space partitioning. This parameter 
+		should depend on the memory<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+		available, but generally, just set it to 10. (Higher = more memory, 
+		faster)</li>
+		<li><i>maxFunctionError</i>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+		Since the Gaussian is theoretically of infinite extent, we need to chop 
+		it somewhere. Use this parameter for controlling the accuracy. For 
+		example, set it to <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+		0.01 or 0.001</li>
+		<li><i>blobbiness</i>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+		Rate of decay for the Gaussians. Say -2.3 to -0.1</li>
+		<li><i>numberOfPoints</i>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+		Number of output points where derivatives are required</li>
+		<li><i>points</i>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+		The set of output positions, (note these are floats) in the form [x<sub>1</sub>,y<sub>1</sub>,z<sub>1</sub>,&nbsp; 
+		x<sub>2</sub>,y<sub>2</sub>,z<sub>2</sub>,&nbsp; x<sub>3</sub>,y<sub>3</sub>,z<sub>3</sub>&nbsp; 
+		... x<sub>m</sub>,y<sub>m</sub>,z<sub>m</sub>], m=<i>numberOfPoints</i></li>
+		<li><i>HandK</i>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+		Array of size <i>numberOfPoints</i>*2</li>
+		<li><i>normals</i>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+		Array of size <i>numberOfPoints</i>*3</li>
+		<li><i>k1Vector</i>, <i>k2Vector</i>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+		Arrays of size <i>numberOfPoints</i>*3</li>
+	</ul>
+	<p><font color="#000080">bool</font> <font color="#008000">initialize</font>( 
+	)</p>
+	<p><font color="#000080">bool</font> <font color="#008000">getCurvatures</font>( 
+	)</p>
+	<p>&nbsp;&nbsp;&nbsp; Call <font color="#008000">initialize</font>( ) before 
+	calling this function. If this function returns true, then the arrays <i>
+	HandK, normals, k1Vector, k2Vector</i> will be filled with the <br>
+&nbsp;&nbsp;&nbsp; [m<sub>1</sub>,g<sub>1</sub>,&nbsp; m<sub>2</sub>,g<sub>2</sub>, 
+	.... m<sub>m</sub>,g<sub>m</sub>], [nx<sub>1</sub>,ny<sub>1</sub>,nz<sub>1</sub>,&nbsp; 
+	nx<sub>2</sub>,ny<sub>2</sub>,nz<sub>2</sub>,&nbsp; nx<sub>m</sub>,ny<sub>m</sub>,nz<sub>m</sub>], 
+	[k1x<sub>1</sub>,k1y<sub>1</sub>,k1z<sub>1</sub>, k1x<sub>2</sub>,k1y<sub>2</sub>,k1z<sub>2</sub>,&nbsp; 
+	k1x<sub>m</sub>,k1y<sub>m</sub>,k1z<sub>m</sub>], [k2x<sub>1</sub>,k2y<sub>1</sub>,k2z<sub>1</sub>, 
+	k2x<sub>2</sub>,k2y<sub>2</sub>,k2z<sub>2</sub>,&nbsp; k2x<sub>m</sub>,k2y<sub>m</sub>,k2z<sub>m</sub>]</p>
+	<p><b>Important:</b> if the surface is flat, we return [0,0,0],[0,0,0] for 
+	the 2 curvature vectors. You can create any 2 vectors perpendicular to the 
+	normal and use them.</p>
+</blockquote>
+<p><b>Miscellaneous functions:</b></p>
+<blockquote>
+	<p><font color="#000080">bool</font> <font color="#008000">write</font>(<font color="#000080">const 
+	char*</font> <i>curvfilename</i>)</p>
+	<p>&nbsp;&nbsp;&nbsp; Parameters:</p>
+	<ul>
+		<li><i>curvfilename</i>: Name of file which will be created and the 
+		mean, gaussian, normals and curvature vectors will be written to.</li>
+	</ul>
+	<p><font color="#000080">bool</font> <font color="#008000">read</font>(
+	<font color="#000080">const char*</font> <i>filename</i>,
+	<font color="#000080">int*</font> <i>numberOfPoints</i>,
+	<font color="#000080">double**</font> <i>HandK</i>, <font color="#000080">
+	double**</font> <i>normals</i>, <font color="#000080">double**</font> <i>
+	k1Vector</i>, <font color="#000080">double**</font> <i>k2Vector</i>);</p>
+	<p>&nbsp;&nbsp;&nbsp; Parameters:</p>
+	<ul>
+		<li><i>filename</i>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+		Name of curvature file to read in</li>
+		<li><i>numberOfPoints</i>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+		The number of points described in the file is returned</li>
+		<li><i>HandK, normals, k1Vector, k2Vector:</i> These arrays will be 
+		allocated and filled if the read is successful. If any dataset was not 
+		present, that pointer will return 0.</li>
+	</ul>
+</blockquote>
+<p>&nbsp;</p>
+<p><b>Files in library:</b></p>
+<blockquote>
+	<p>Curvature.cpp<br>
+	CurvaturesGridVoxel.cpp<br>
+	SumOfGaussiansCurvature.cpp<br>
+	Curvature.h<br>
+	CurvaturesGridVoxel.h<br>
+	SumOfGaussiansCurvature.h</p>
+	<p>&nbsp;</p>
+</blockquote>
+<p><b>Files in required UsefulMath library :</b></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UsefulMath::LinearAlgebra.cpp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UsefulMath::LinearAlgebra.h</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Note:</b> If you have your own 
+eigenvector solver, you can use it in place of this library.</p>
+<p>&nbsp;</p>
+<p><b>Visualizing curvature and normal vectors:</b></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The .curv file can be visualized 
+in TexMol. If you create a surface file (type .raw / .rawc / .rawn / .rawnc / .obj 
+), say <i>a.rawnc</i> and keep the corresponding <i>a.rawnc.curv</i> file in the 
+same directory as the surface file, load up the surface file in TexMol, it will 
+read in the vectors and display them.</p>
+<p>&nbsp;</p>
+<p><b>Example:</b> For an example showing how to use this, please look at&nbsp;
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>CVC :: TexMol :: Blurmaps 
+:: BlurMapsDataManager :: getCurvatures( )</i></p>
+<hr>
+<p>- Vinay Siddavanahalli (skvinay@cs.utexas.edu)</p>
+
+</body>
+
+</html>

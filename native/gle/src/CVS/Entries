@@ -1,0 +1,26 @@
+/COPYING.src/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/README.gutil/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/copy.h/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/ex_alpha.c/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/ex_angle.c/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/ex_cut_round.c/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/ex_raw.c/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/extrude.c/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/extrude.h/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/gle.h/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/intersect.c/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/intersect.h/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/port.h/1.2/Wed Sep 15 18:49:16 2004/-kkv/Trc-1-5-4
+/qmesh.c/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/rot.h/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/rot_prince.c/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/rotate.c/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/round_cap.c/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/segment.c/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/segment.h/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/texgen.c/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/tube_gc.h/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/urotate.c/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/view.c/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+/vvector.h/1.1.1.1/Tue Jun  8 17:32:45 2004/-kkv/Trc-1-5-4
+D

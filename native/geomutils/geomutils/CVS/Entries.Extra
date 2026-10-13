@@ -1,0 +1,10 @@
+/__init__.py///
+/efitlib.i///
+/geomalgorithms.i///
+/geomutils.i///
+/numarr.i///
+/sdf.i///
+/sdf.i.1Darray///
+/sdf.i.floats///
+/surface.py///
+D/Tests///

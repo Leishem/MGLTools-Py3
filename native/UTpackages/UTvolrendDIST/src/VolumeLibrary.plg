@@ -1,0 +1,50 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: VolumeLibrary - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "f:\TEMP\RSPE0.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"Debug/VolumeLibrary.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"F:\users\anthony\NewVolume\VolumeLibrary\Renderer.cpp"
+]
+Creating command line "cl.exe @f:\TEMP\RSPE0.tmp" 
+Creating temporary file "f:\TEMP\RSPE1.tmp" with contents
+[
+/nologo /out:"Debug\VolumeLibrary.lib" 
+.\Debug\ClipCube.obj
+.\Debug\Extent.obj
+.\Debug\FragmentProgramImpl.obj
+.\Debug\MyExtensions.obj
+.\Debug\Paletted2DImpl.obj
+.\Debug\PalettedImpl.obj
+.\Debug\Plane.obj
+.\Debug\Polygon.obj
+.\Debug\PolygonArray.obj
+.\Debug\Renderer.obj
+.\Debug\RendererBase.obj
+.\Debug\RGBABase.obj
+.\Debug\SGIColorTableImpl.obj
+.\Debug\SimpleRGBA2DImpl.obj
+.\Debug\SimpleRGBAImpl.obj
+.\Debug\UnshadedBase.obj
+.\Debug\VolumeRenderer.obj
+.\Debug\VolumeRendererFactory.obj
+.\Debug\FragmentProgramARBImpl.obj
+]
+Creating command line "link.exe -lib @f:\TEMP\RSPE1.tmp"
+<h3>Output Window</h3>
+Compiling...
+Renderer.cpp
+Creating library...
+
+
+
+<h3>Results</h3>
+VolumeLibrary.lib - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

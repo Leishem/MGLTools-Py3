@@ -1,0 +1,31 @@
+This package builds a python extension of the MolDerivatives Library (part of TexMol)
+ developed in Chandrajit Bajaj's group at UT Austin (http://ccvweb.csres.utexas.edu/software). See .src/molderivatives-license.txt for the source code license info.
+Distutils are used to build and install the extension.
+
+SWIG (version swig1.3.20 or higher) is used for generating wrappers.
+(Currently there is no way to specify the version of swig to be used by 
+Distutils - the default version has to be 1.3.20 or the one that automatically generates python shadow classes).
+
+
+To build the extensions and install the package:
+
+   python2.4 setup.py install
+This will:
+- build _molderivatives.so and molderivatives.py(python shadow classes) in 
+./build/lib.<platform_specifier>/UTpackages/UTmolderivatives;
+- install the UTmolderivatives package in
+sys.exec_prefix/lib/python2.4/site-packages/UTpackages.
+
+To specify an installation directory (INSTALL_DIR):
+ python2.4 setup.py install --install-platlib=INSTALL_DIR
+
+
+To build the extension only:
+   python2.4 setup.py build
+This will create ./build directory and build the extension there.
+
+To build source distribution:
+   python2.4 setup.py sdist
+
+To build binary distribution:
+   python2.4 setup.py bdist

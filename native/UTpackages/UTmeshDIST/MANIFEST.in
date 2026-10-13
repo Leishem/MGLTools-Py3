@@ -1,0 +1,11 @@
+include MANIFEST.in
+include src/*.h
+include src/*.cpp
+include src/Mesh-license.txt
+include UTmesh/*.i
+include UTmesh/Tests/head65.rawiv
+exclude UTmesh/lbiemesher.py
+include CVS/*
+include UTmesh/CVS/*
+include UTmesh/Tests/CVS/*
+include src/CVS/*

@@ -1,0 +1,15 @@
+include MANIFEST.in
+include version.py
+include src/*
+include sff/*.i
+include sff/Tests/p1H.pdb
+include sff/Tests/tripeptide.prm
+include sff/doc.tar.gz
+#include CVS directories
+include CVS/*
+include sff/CVS/*
+include sff/Tests/CVS/*
+include sff/src/CVS/*
+include src/CVS/*
+include LICENSE
+

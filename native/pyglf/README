@@ -1,0 +1,27 @@
+This package contains a Distutils interface for building GLF Python 
+extension and creating a source distribution.
+GLF is multiplatforming library for displaying text in OpenGL (see ./src/readme.txt)
+
+SWIG (version 1.3.21 or higher) is used for generating a C wrapper code
+(can be downloaded from www.swig.org).
+
+To build and install the extension:
+	python setup.py install
+This creates glf.py (python shadow classes) and
+_glf.so  in build/lib.<platform_specifier>/pyglf . 
+
+The pyglf package is then installed in 
+sys.exec_prefix/lib/python`Version`/site-packages (default location)
+.
+To specify the install directory use --install-platlib option:
+
+	python setup.py install --install-platlib=INSTALL_DIR
+
+To build the extension only:
+	pythonsetup.py build
+this will build GLF python extension in build/lib.<platform_specifier>/pyglf.
+
+To build the distribution:
+	python setup.py sdist
+
+

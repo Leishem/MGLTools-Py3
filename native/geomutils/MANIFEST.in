@@ -1,0 +1,16 @@
+include MANIFEST.in
+include CVS/*
+include geomutils/*.i
+include geomutils/CVS/*
+include geomutils/Tests/CVS/*
+include geomutils/Tests/Data/CVS/*
+include src/efit/*.h
+include src/geomAlgorithms/*.h
+include src/CVS/*
+include src/efit/CVS/*
+include src/geomAlgorithms/CVS/*
+exclude geomutils/efitlib.py
+exclude geomutils/geomalgorithms.py
+include version.py
+include geomutils/doc.tar.gz
+include LICENSE

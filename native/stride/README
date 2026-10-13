@@ -1,0 +1,31 @@
+This package contains a Distutils interface to build a Python extension and
+create a distribution for Stride library. 
+SWIG (version 1.3.20 or higher) is used/required for generating a C wrapper
+code.
+
+To build the extension and install the package in 'sys.exec_prefix/lib/python2.4/site-packages':
+
+	python2.4 setup.py install
+This will create 'build' directory, generate the extension - 
+_stride.so in './build/lib.<platform_specifier>/stride',
+copy python modules (__init__.py and created by SWIG stride.py) from 
+'./stride' to '.build/lib.<platform_specifier>/stride',
+and install the stride  package in 'sys.exec_prefix/lib/python2.4/site-packages/'.
+
+To build the extension and install the package in a specified directory:
+	python2.4 setup.py install --install-platlib=INSTALL_DIR
+where INSTALL_DIR is the path to a directory where you want to install the
+stride package. 
+
+To build the extension only:
+
+	python2.4 setup.py build_ext
+     		or
+	python2.4 setup.py build
+( this will also copy the pure python code into ./build/lib.<platform_specifier>/stride)
+
+To build the distribution:
+   	python2.4 setup.py sdist
+
+To build binary distribution:
+   	python2.4 setup.py bdist

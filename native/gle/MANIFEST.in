@@ -1,0 +1,13 @@
+include MANIFEST.in
+include version.py
+include src/*.h
+include src/COPYING.src
+include src/README.gutil
+include config.h
+exclude gle/gle.py
+include gle/*.i
+include CVS/*
+include gle/CVS/*
+include src/CVS/*
+include gle/doc.tar.gz
+include LICENSE

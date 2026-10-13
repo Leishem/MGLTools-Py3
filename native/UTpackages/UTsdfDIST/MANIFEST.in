@@ -1,0 +1,9 @@
+include MANIFEST.in
+include src/*
+include UTsdf/*.i
+include UTsdf/Tests/eight.raw
+exclude UTmesh/utsdf.py
+include CVS/*
+include UTsdf/CVS/*
+include UTsdf/Tests/CVS/*
+include src/CVS/*

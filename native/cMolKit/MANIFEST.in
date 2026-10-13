@@ -1,0 +1,9 @@
+include MANIFEST.in
+include cMolKit/*.i
+exclude mglutils/xtcparser.py
+include src/*.h
+
+include CVS/*
+includ src/CVS/*
+include cMolKit/CVS/*
+include LICENSE

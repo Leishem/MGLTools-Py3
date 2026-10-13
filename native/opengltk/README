@@ -1,0 +1,45 @@
+This package contains the interface for building OpenGL python extensions
+with Distutils.
+Distutils uses SWIG for generating C wrapper code (SWIG version 1.3.20 or
+higher is required).
+
+###  To build and install the extensions:
+
+python2.4 setup.py install
+
+This will:
+1. create "build/lib.<platform_specifier>" directory
+2. build _gllib.so, _glulib.so, _glutlib.so, _glxlib.so, _utillib.so
+   ( _*.pyd on Windows) in  "build/lib.<platform_specifier>/opengltk/extent"
+3. copy pure python code from ./opengltk into "build/lib.<platform_specifier>   /opengltk"
+
+4. copy everything from "build" directory into sys.exec_prefix/lib/python2.4/site_packages/
+
+
+The install command can be called with the following options:
+
+ --install-platlib=INSTALL_DIR
+	installs the package in specified INSTALL_DIR directory
+ --no-compile
+	do not compile .py to .pyc
+
+Example:
+   # Unix:
+   python2.4 setup.py install --install-platlib=/home/myname/myinstalldir
+
+   # Windows:
+   python2.4 setup.py install --install-platlib="C:\MyFolder"
+
+
+### To build the extension only:
+   python2.4 setup.py build
+This will perform steps 1-3 of the install command.
+
+### To build source distribution:
+   python2.4 setup.py sdist
+This will generate <pack_name>.tar.gz (<pack_name>.zip on Windows)
+in ./dist directory.
+
+### To build binary distribution:
+   python2.4 setup.py bdist
+

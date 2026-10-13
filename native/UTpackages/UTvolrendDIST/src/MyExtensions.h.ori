@@ -1,0 +1,1142 @@
+/*
+  Copyright 2002-2003 The University of Texas at Austin
+  
+	Authors: Anthony Thane <thanea@ices.utexas.edu>
+	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+
+  This file is part of Volume Rover.
+
+  Volume Rover is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  Volume Rover is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Volume Rover; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+// MyExtensions.h: interface for the MyExtensions class.
+//
+//////////////////////////////////////////////////////////////////////
+
+#if !defined(AFX_MYEXTENSIONS_H__49343774_A350_4447_88BB_ACEDB50325AD__INCLUDED_)
+#define AFX_MYEXTENSIONS_H__49343774_A350_4447_88BB_ACEDB50325AD__INCLUDED_
+
+#if defined(_WIN32) && !defined(APIENTRY) && !defined(__CYGWIN__)
+#define WIN32_LEAN_AND_MEAN 1
+#include <windows.h>
+#endif
+
+#if defined(__APPLE__)
+# include <gl.h>
+# define GL_GLEXT_PROTOTYPES
+# include <glext.h>
+#else
+# define GL_GLEXT_PROTOTYPES
+# include <GL/gl.h>
+# include <GL/glext.h>
+# if defined(WIN32)
+#  include <GL/wglext.h>
+# else
+#  define GLX_GLXEXT_PROTOTYPES
+#  include <GL/glx.h>
+# endif
+#endif
+
+#ifndef APIENTRY
+#define APIENTRY
+#endif
+#ifndef GLAPI
+#define GLAPI extern
+#endif
+
+
+#include "ExtensionPointers.h"
+
+#ifdef DECLARE_STATIC_POINTERS
+#include "StaticExtensionPointers.h"
+#undef DECLARE_STATIC_POINTERS
+#endif
+
+class MyExtensions  
+{
+public:
+	MyExtensions();
+	~MyExtensions();
+
+	static bool checkExtensions(const char* requestedExtensions);
+	bool extensionExists(const char* extension, const char* allExtensions);
+	bool initExtensions(const char* requestedExtensions);
+	bool initExtension(const char* extension);
+
+	// OpenGL version 1.2
+	MYPFNGLBLENDCOLORPROC glBlendColor;
+	MYPFNGLBLENDEQUATIONPROC glBlendEquation;
+	MYPFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
+	MYPFNGLCOLORTABLEPROC glColorTable;
+	MYPFNGLCOLORTABLEPARAMETERFVPROC glColorTableParameterfv;
+	MYPFNGLCOLORTABLEPARAMETERIVPROC glColorTableParameteriv;
+	MYPFNGLCOPYCOLORTABLEPROC glCopyColorTable;
+	MYPFNGLGETCOLORTABLEPROC glGetColorTable;
+	MYPFNGLGETCOLORTABLEPARAMETERFVPROC glGetColorTableParameterfv;
+	MYPFNGLGETCOLORTABLEPARAMETERIVPROC glGetColorTableParameteriv;
+	MYPFNGLCOLORSUBTABLEPROC glColorSubTable;
+	MYPFNGLCOPYCOLORSUBTABLEPROC glCopyColorSubTable;
+	MYPFNGLCONVOLUTIONFILTER1DPROC glConvolutionFilter1D;
+	MYPFNGLCONVOLUTIONFILTER2DPROC glConvolutionFilter2D;
+	MYPFNGLCONVOLUTIONPARAMETERFPROC glConvolutionParameterf;
+	MYPFNGLCONVOLUTIONPARAMETERFVPROC glConvolutionParameterfv;
+	MYPFNGLCONVOLUTIONPARAMETERIPROC glConvolutionParameteri;
+	MYPFNGLCONVOLUTIONPARAMETERIVPROC glConvolutionParameteriv;
+	MYPFNGLCOPYCONVOLUTIONFILTER1DPROC glCopyConvolutionFilter1D;
+	MYPFNGLCOPYCONVOLUTIONFILTER2DPROC glCopyConvolutionFilter2D;
+	MYPFNGLGETCONVOLUTIONFILTERPROC glGetConvolutionFilter;
+	MYPFNGLGETCONVOLUTIONPARAMETERFVPROC glGetConvolutionParameterfv;
+	MYPFNGLGETCONVOLUTIONPARAMETERIVPROC glGetConvolutionParameteriv;
+	MYPFNGLGETSEPARABLEFILTERPROC glGetSeparableFilter;
+	MYPFNGLSEPARABLEFILTER2DPROC glSeparableFilter2D;
+	MYPFNGLGETHISTOGRAMPROC glGetHistogram;
+	MYPFNGLGETHISTOGRAMPARAMETERFVPROC glGetHistogramParameterfv;
+	MYPFNGLGETHISTOGRAMPARAMETERIVPROC glGetHistogramParameteriv;
+	MYPFNGLGETMINMAXPROC glGetMinmax;
+	MYPFNGLGETMINMAXPARAMETERFVPROC glGetMinmaxParameterfv;
+	MYPFNGLGETMINMAXPARAMETERIVPROC glGetMinmaxParameteriv;
+	MYPFNGLHISTOGRAMPROC glHistogram;
+	MYPFNGLMINMAXPROC glMinmax;
+	MYPFNGLRESETHISTOGRAMPROC glResetHistogram;
+	MYPFNGLRESETMINMAXPROC glResetMinmax;
+	MYPFNGLTEXIMAGE3DPROC glTexImage3D;
+	MYPFNGLTEXSUBIMAGE3DPROC glTexSubImage3D;
+	MYPFNGLCOPYTEXSUBIMAGE3DPROC glCopyTexSubImage3D;
+	// End OpenGL version 1.2
+
+	// OpenGL version 1.3
+	MYPFNGLACTIVETEXTUREPROC glActiveTexture;
+	MYPFNGLCLIENTACTIVETEXTUREPROC glClientActiveTexture;
+	MYPFNGLMULTITEXCOORD1DPROC glMultiTexCoord1d;
+	MYPFNGLMULTITEXCOORD1DVPROC glMultiTexCoord1dv;
+	MYPFNGLMULTITEXCOORD1FPROC glMultiTexCoord1f;
+	MYPFNGLMULTITEXCOORD1FVPROC glMultiTexCoord1fv;
+	MYPFNGLMULTITEXCOORD1IPROC glMultiTexCoord1i;
+	MYPFNGLMULTITEXCOORD1IVPROC glMultiTexCoord1iv;
+	MYPFNGLMULTITEXCOORD1SPROC glMultiTexCoord1s;
+	MYPFNGLMULTITEXCOORD1SVPROC glMultiTexCoord1sv;
+	MYPFNGLMULTITEXCOORD2DPROC glMultiTexCoord2d;
+	MYPFNGLMULTITEXCOORD2DVPROC glMultiTexCoord2dv;
+	MYPFNGLMULTITEXCOORD2FPROC glMultiTexCoord2f;
+	MYPFNGLMULTITEXCOORD2FVPROC glMultiTexCoord2fv;
+	MYPFNGLMULTITEXCOORD2IPROC glMultiTexCoord2i;
+	MYPFNGLMULTITEXCOORD2IVPROC glMultiTexCoord2iv;
+	MYPFNGLMULTITEXCOORD2SPROC glMultiTexCoord2s;
+	MYPFNGLMULTITEXCOORD2SVPROC glMultiTexCoord2sv;
+	MYPFNGLMULTITEXCOORD3DPROC glMultiTexCoord3d;
+	MYPFNGLMULTITEXCOORD3DVPROC glMultiTexCoord3dv;
+	MYPFNGLMULTITEXCOORD3FPROC glMultiTexCoord3f;
+	MYPFNGLMULTITEXCOORD3FVPROC glMultiTexCoord3fv;
+	MYPFNGLMULTITEXCOORD3IPROC glMultiTexCoord3i;
+	MYPFNGLMULTITEXCOORD3IVPROC glMultiTexCoord3iv;
+	MYPFNGLMULTITEXCOORD3SPROC glMultiTexCoord3s;
+	MYPFNGLMULTITEXCOORD3SVPROC glMultiTexCoord3sv;
+	MYPFNGLMULTITEXCOORD4DPROC glMultiTexCoord4d;
+	MYPFNGLMULTITEXCOORD4DVPROC glMultiTexCoord4dv;
+	MYPFNGLMULTITEXCOORD4FPROC glMultiTexCoord4f;
+	MYPFNGLMULTITEXCOORD4FVPROC glMultiTexCoord4fv;
+	MYPFNGLMULTITEXCOORD4IPROC glMultiTexCoord4i;
+	MYPFNGLMULTITEXCOORD4IVPROC glMultiTexCoord4iv;
+	MYPFNGLMULTITEXCOORD4SPROC glMultiTexCoord4s;
+	MYPFNGLMULTITEXCOORD4SVPROC glMultiTexCoord4sv;
+	MYPFNGLLOADTRANSPOSEMATRIXFPROC glLoadTransposeMatrixf;
+	MYPFNGLLOADTRANSPOSEMATRIXDPROC glLoadTransposeMatrixd;
+	MYPFNGLMULTTRANSPOSEMATRIXFPROC glMultTransposeMatrixf;
+	MYPFNGLMULTTRANSPOSEMATRIXDPROC glMultTransposeMatrixd;
+	MYPFNGLSAMPLECOVERAGEPROC glSampleCoverage;
+	MYPFNGLCOMPRESSEDTEXIMAGE3DPROC glCompressedTexImage3D;
+	MYPFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D;
+	MYPFNGLCOMPRESSEDTEXIMAGE1DPROC glCompressedTexImage1D;
+	MYPFNGLCOMPRESSEDTEXSUBIMAGE3DPROC glCompressedTexSubImage3D;
+	MYPFNGLCOMPRESSEDTEXSUBIMAGE2DPROC glCompressedTexSubImage2D;
+	MYPFNGLCOMPRESSEDTEXSUBIMAGE1DPROC glCompressedTexSubImage1D;
+	MYPFNGLGETCOMPRESSEDTEXIMAGEPROC glGetCompressedTexImage;
+	// End OpenGL version 1.3
+
+	// OpenGL version 1.4
+	MYPFNGLBLENDFUNCSEPARATEPROC glBlendFuncSeparate;
+	MYPFNGLFOGCOORDFPROC glFogCoordf;
+	MYPFNGLFOGCOORDFVPROC glFogCoordfv;
+	MYPFNGLFOGCOORDDPROC glFogCoordd;
+	MYPFNGLFOGCOORDDVPROC glFogCoorddv;
+	MYPFNGLFOGCOORDPOINTERPROC glFogCoordPointer;
+	MYPFNGLMULTIDRAWARRAYSPROC glMultiDrawArrays;
+	MYPFNGLMULTIDRAWELEMENTSPROC glMultiDrawElements;
+	MYPFNGLPOINTPARAMETERFPROC glPointParameterf;
+	MYPFNGLPOINTPARAMETERFVPROC glPointParameterfv;
+	MYPFNGLPOINTPARAMETERIPROC glPointParameteri;
+	MYPFNGLPOINTPARAMETERIVPROC glPointParameteriv;
+	MYPFNGLSECONDARYCOLOR3BPROC glSecondaryColor3b;
+	MYPFNGLSECONDARYCOLOR3BVPROC glSecondaryColor3bv;
+	MYPFNGLSECONDARYCOLOR3DPROC glSecondaryColor3d;
+	MYPFNGLSECONDARYCOLOR3DVPROC glSecondaryColor3dv;
+	MYPFNGLSECONDARYCOLOR3FPROC glSecondaryColor3f;
+	MYPFNGLSECONDARYCOLOR3FVPROC glSecondaryColor3fv;
+	MYPFNGLSECONDARYCOLOR3IPROC glSecondaryColor3i;
+	MYPFNGLSECONDARYCOLOR3IVPROC glSecondaryColor3iv;
+	MYPFNGLSECONDARYCOLOR3SPROC glSecondaryColor3s;
+	MYPFNGLSECONDARYCOLOR3SVPROC glSecondaryColor3sv;
+	MYPFNGLSECONDARYCOLOR3UBPROC glSecondaryColor3ub;
+	MYPFNGLSECONDARYCOLOR3UBVPROC glSecondaryColor3ubv;
+	MYPFNGLSECONDARYCOLOR3UIPROC glSecondaryColor3ui;
+	MYPFNGLSECONDARYCOLOR3UIVPROC glSecondaryColor3uiv;
+	MYPFNGLSECONDARYCOLOR3USPROC glSecondaryColor3us;
+	MYPFNGLSECONDARYCOLOR3USVPROC glSecondaryColor3usv;
+	MYPFNGLSECONDARYCOLORPOINTERPROC glSecondaryColorPointer;
+	MYPFNGLWINDOWPOS2DPROC glWindowPos2d;
+	MYPFNGLWINDOWPOS2DVPROC glWindowPos2dv;
+	MYPFNGLWINDOWPOS2FPROC glWindowPos2f;
+	MYPFNGLWINDOWPOS2FVPROC glWindowPos2fv;
+	MYPFNGLWINDOWPOS2IPROC glWindowPos2i;
+	MYPFNGLWINDOWPOS2IVPROC glWindowPos2iv;
+	MYPFNGLWINDOWPOS2SPROC glWindowPos2s;
+	MYPFNGLWINDOWPOS2SVPROC glWindowPos2sv;
+	MYPFNGLWINDOWPOS3DPROC glWindowPos3d;
+	MYPFNGLWINDOWPOS3DVPROC glWindowPos3dv;
+	MYPFNGLWINDOWPOS3FPROC glWindowPos3f;
+	MYPFNGLWINDOWPOS3FVPROC glWindowPos3fv;
+	MYPFNGLWINDOWPOS3IPROC glWindowPos3i;
+	MYPFNGLWINDOWPOS3IVPROC glWindowPos3iv;
+	MYPFNGLWINDOWPOS3SPROC glWindowPos3s;
+	MYPFNGLWINDOWPOS3SVPROC glWindowPos3sv;
+	// End OpenGL version 1.4
+
+	// GL_EXT_paletted_texture
+	MYPFNGLCOLORTABLEEXTPROC glColorTableEXT;
+	MYPFNGLGETCOLORTABLEEXTPROC glGetColorTableEXT;
+	MYPFNGLGETCOLORTABLEPARAMETERIVEXTPROC glGetColorTableParameterivEXT;
+	MYPFNGLGETCOLORTABLEPARAMETERFVEXTPROC glGetColorTableParameterfvEXT;
+	// End GL_EXT_paletted_texture
+
+	// GL_ARB_multitexture
+	MYPFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
+	MYPFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
+	MYPFNGLMULTITEXCOORD1DARBPROC glMultiTexCoord1dARB;
+	MYPFNGLMULTITEXCOORD1DVARBPROC glMultiTexCoord1dvARB;
+	MYPFNGLMULTITEXCOORD1FARBPROC glMultiTexCoord1fARB;
+	MYPFNGLMULTITEXCOORD1FVARBPROC glMultiTexCoord1fvARB;
+	MYPFNGLMULTITEXCOORD1IARBPROC glMultiTexCoord1iARB;
+	MYPFNGLMULTITEXCOORD1IVARBPROC glMultiTexCoord1ivARB;
+	MYPFNGLMULTITEXCOORD1SARBPROC glMultiTexCoord1sARB;
+	MYPFNGLMULTITEXCOORD1SVARBPROC glMultiTexCoord1svARB;
+	MYPFNGLMULTITEXCOORD2DARBPROC glMultiTexCoord2dARB;
+	MYPFNGLMULTITEXCOORD2DVARBPROC glMultiTexCoord2dvARB;
+	MYPFNGLMULTITEXCOORD2FARBPROC glMultiTexCoord2fARB;
+	MYPFNGLMULTITEXCOORD2FVARBPROC glMultiTexCoord2fvARB;
+	MYPFNGLMULTITEXCOORD2IARBPROC glMultiTexCoord2iARB;
+	MYPFNGLMULTITEXCOORD2IVARBPROC glMultiTexCoord2ivARB;
+	MYPFNGLMULTITEXCOORD2SARBPROC glMultiTexCoord2sARB;
+	MYPFNGLMULTITEXCOORD2SVARBPROC glMultiTexCoord2svARB;
+	MYPFNGLMULTITEXCOORD3DARBPROC glMultiTexCoord3dARB;
+	MYPFNGLMULTITEXCOORD3DVARBPROC glMultiTexCoord3dvARB;
+	MYPFNGLMULTITEXCOORD3FARBPROC glMultiTexCoord3fARB;
+	MYPFNGLMULTITEXCOORD3FVARBPROC glMultiTexCoord3fvARB;
+	MYPFNGLMULTITEXCOORD3IARBPROC glMultiTexCoord3iARB;
+	MYPFNGLMULTITEXCOORD3IVARBPROC glMultiTexCoord3ivARB;
+	MYPFNGLMULTITEXCOORD3SARBPROC glMultiTexCoord3sARB;
+	MYPFNGLMULTITEXCOORD3SVARBPROC glMultiTexCoord3svARB;
+	MYPFNGLMULTITEXCOORD4DARBPROC glMultiTexCoord4dARB;
+	MYPFNGLMULTITEXCOORD4DVARBPROC glMultiTexCoord4dvARB;
+	MYPFNGLMULTITEXCOORD4FARBPROC glMultiTexCoord4fARB;
+	MYPFNGLMULTITEXCOORD4FVARBPROC glMultiTexCoord4fvARB;
+	MYPFNGLMULTITEXCOORD4IARBPROC glMultiTexCoord4iARB;
+	MYPFNGLMULTITEXCOORD4IVARBPROC glMultiTexCoord4ivARB;
+	MYPFNGLMULTITEXCOORD4SARBPROC glMultiTexCoord4sARB;
+	MYPFNGLMULTITEXCOORD4SVARBPROC glMultiTexCoord4svARB;
+	// End GL_ARB_multitexture
+
+	// GL_SGI_texture_color_table
+	// No new functions.
+	// End GL_SGI_texture_color_table
+
+	// GL_SGI_color_table
+	MYPFNGLCOLORTABLESGIPROC glColorTableSGI;
+	MYPFNGLCOLORTABLEPARAMETERFVSGIPROC glColorTableParameterfvSGI;
+	MYPFNGLCOLORTABLEPARAMETERIVSGIPROC glColorTableParameterivSGI;
+	MYPFNGLCOPYCOLORTABLESGIPROC glCopyColorTableSGI;
+	MYPFNGLGETCOLORTABLESGIPROC glGetColorTableSGI;
+	MYPFNGLGETCOLORTABLEPARAMETERFVSGIPROC glGetColorTableParameterfvSGI;
+	MYPFNGLGETCOLORTABLEPARAMETERIVSGIPROC glGetColorTableParameterivSGI;
+	// End GL_SGI_color_table
+
+	// GL_SGIS_texture_edge_clamp
+	// No new functions.
+	// End GL_SGIS_texture_edge_clamp
+
+	// GL_EXT_texture3D
+	MYPFNGLTEXIMAGE3DEXTPROC glTexImage3DEXT;
+	MYPFNGLTEXSUBIMAGE3DEXTPROC glTexSubImage3DEXT;
+	// End GL_EXT_texture3D
+
+	// GL_NV_fragment_program
+	MYPFNGLPROGRAMNAMEDPARAMETER4FNVPROC glProgramNamedParameter4fNV;
+	MYPFNGLPROGRAMNAMEDPARAMETER4DNVPROC glProgramNamedParameter4dNV;
+	MYPFNGLPROGRAMNAMEDPARAMETER4FVNVPROC glProgramNamedParameter4fvNV;
+	MYPFNGLPROGRAMNAMEDPARAMETER4DVNVPROC glProgramNamedParameter4dvNV;
+	MYPFNGLGETPROGRAMNAMEDPARAMETERFVNVPROC glGetProgramNamedParameterfvNV;
+	MYPFNGLGETPROGRAMNAMEDPARAMETERDVNVPROC glGetProgramNamedParameterdvNV;
+	// End GL_NV_fragment_program
+
+	// GL_NV_vertex_program
+	MYPFNGLAREPROGRAMSRESIDENTNVPROC glAreProgramsResidentNV;
+	MYPFNGLBINDPROGRAMNVPROC glBindProgramNV;
+	MYPFNGLDELETEPROGRAMSNVPROC glDeleteProgramsNV;
+	MYPFNGLEXECUTEPROGRAMNVPROC glExecuteProgramNV;
+	MYPFNGLGENPROGRAMSNVPROC glGenProgramsNV;
+	MYPFNGLGETPROGRAMPARAMETERDVNVPROC glGetProgramParameterdvNV;
+	MYPFNGLGETPROGRAMPARAMETERFVNVPROC glGetProgramParameterfvNV;
+	MYPFNGLGETPROGRAMIVNVPROC glGetProgramivNV;
+	MYPFNGLGETPROGRAMSTRINGNVPROC glGetProgramStringNV;
+	MYPFNGLGETTRACKMATRIXIVNVPROC glGetTrackMatrixivNV;
+	MYPFNGLGETVERTEXATTRIBDVNVPROC glGetVertexAttribdvNV;
+	MYPFNGLGETVERTEXATTRIBFVNVPROC glGetVertexAttribfvNV;
+	MYPFNGLGETVERTEXATTRIBIVNVPROC glGetVertexAttribivNV;
+	MYPFNGLGETVERTEXATTRIBPOINTERVNVPROC glGetVertexAttribPointervNV;
+	MYPFNGLISPROGRAMNVPROC glIsProgramNV;
+	MYPFNGLLOADPROGRAMNVPROC glLoadProgramNV;
+	MYPFNGLPROGRAMPARAMETER4DNVPROC glProgramParameter4dNV;
+	MYPFNGLPROGRAMPARAMETER4DVNVPROC glProgramParameter4dvNV;
+	MYPFNGLPROGRAMPARAMETER4FNVPROC glProgramParameter4fNV;
+	MYPFNGLPROGRAMPARAMETER4FVNVPROC glProgramParameter4fvNV;
+	MYPFNGLPROGRAMPARAMETERS4DVNVPROC glProgramParameters4dvNV;
+	MYPFNGLPROGRAMPARAMETERS4FVNVPROC glProgramParameters4fvNV;
+	MYPFNGLREQUESTRESIDENTPROGRAMSNVPROC glRequestResidentProgramsNV;
+	MYPFNGLTRACKMATRIXNVPROC glTrackMatrixNV;
+	MYPFNGLVERTEXATTRIBPOINTERNVPROC glVertexAttribPointerNV;
+	MYPFNGLVERTEXATTRIB1DNVPROC glVertexAttrib1dNV;
+	MYPFNGLVERTEXATTRIB1DVNVPROC glVertexAttrib1dvNV;
+	MYPFNGLVERTEXATTRIB1FNVPROC glVertexAttrib1fNV;
+	MYPFNGLVERTEXATTRIB1FVNVPROC glVertexAttrib1fvNV;
+	MYPFNGLVERTEXATTRIB1SNVPROC glVertexAttrib1sNV;
+	MYPFNGLVERTEXATTRIB1SVNVPROC glVertexAttrib1svNV;
+	MYPFNGLVERTEXATTRIB2DNVPROC glVertexAttrib2dNV;
+	MYPFNGLVERTEXATTRIB2DVNVPROC glVertexAttrib2dvNV;
+	MYPFNGLVERTEXATTRIB2FNVPROC glVertexAttrib2fNV;
+	MYPFNGLVERTEXATTRIB2FVNVPROC glVertexAttrib2fvNV;
+	MYPFNGLVERTEXATTRIB2SNVPROC glVertexAttrib2sNV;
+	MYPFNGLVERTEXATTRIB2SVNVPROC glVertexAttrib2svNV;
+	MYPFNGLVERTEXATTRIB3DNVPROC glVertexAttrib3dNV;
+	MYPFNGLVERTEXATTRIB3DVNVPROC glVertexAttrib3dvNV;
+	MYPFNGLVERTEXATTRIB3FNVPROC glVertexAttrib3fNV;
+	MYPFNGLVERTEXATTRIB3FVNVPROC glVertexAttrib3fvNV;
+	MYPFNGLVERTEXATTRIB3SNVPROC glVertexAttrib3sNV;
+	MYPFNGLVERTEXATTRIB3SVNVPROC glVertexAttrib3svNV;
+	MYPFNGLVERTEXATTRIB4DNVPROC glVertexAttrib4dNV;
+	MYPFNGLVERTEXATTRIB4DVNVPROC glVertexAttrib4dvNV;
+	MYPFNGLVERTEXATTRIB4FNVPROC glVertexAttrib4fNV;
+	MYPFNGLVERTEXATTRIB4FVNVPROC glVertexAttrib4fvNV;
+	MYPFNGLVERTEXATTRIB4SNVPROC glVertexAttrib4sNV;
+	MYPFNGLVERTEXATTRIB4SVNVPROC glVertexAttrib4svNV;
+	MYPFNGLVERTEXATTRIB4UBNVPROC glVertexAttrib4ubNV;
+	MYPFNGLVERTEXATTRIB4UBVNVPROC glVertexAttrib4ubvNV;
+	MYPFNGLVERTEXATTRIBS1DVNVPROC glVertexAttribs1dvNV;
+	MYPFNGLVERTEXATTRIBS1FVNVPROC glVertexAttribs1fvNV;
+	MYPFNGLVERTEXATTRIBS1SVNVPROC glVertexAttribs1svNV;
+	MYPFNGLVERTEXATTRIBS2DVNVPROC glVertexAttribs2dvNV;
+	MYPFNGLVERTEXATTRIBS2FVNVPROC glVertexAttribs2fvNV;
+	MYPFNGLVERTEXATTRIBS2SVNVPROC glVertexAttribs2svNV;
+	MYPFNGLVERTEXATTRIBS3DVNVPROC glVertexAttribs3dvNV;
+	MYPFNGLVERTEXATTRIBS3FVNVPROC glVertexAttribs3fvNV;
+	MYPFNGLVERTEXATTRIBS3SVNVPROC glVertexAttribs3svNV;
+	MYPFNGLVERTEXATTRIBS4DVNVPROC glVertexAttribs4dvNV;
+	MYPFNGLVERTEXATTRIBS4FVNVPROC glVertexAttribs4fvNV;
+	MYPFNGLVERTEXATTRIBS4SVNVPROC glVertexAttribs4svNV;
+	MYPFNGLVERTEXATTRIBS4UBVNVPROC glVertexAttribs4ubvNV;
+	// End GL_NV_vertex_program
+
+	// GL_ARB_vertex_program
+	MYPFNGLVERTEXATTRIB1DARBPROC glVertexAttrib1dARB;
+	MYPFNGLVERTEXATTRIB1DVARBPROC glVertexAttrib1dvARB;
+	MYPFNGLVERTEXATTRIB1FARBPROC glVertexAttrib1fARB;
+	MYPFNGLVERTEXATTRIB1FVARBPROC glVertexAttrib1fvARB;
+	MYPFNGLVERTEXATTRIB1SARBPROC glVertexAttrib1sARB;
+	MYPFNGLVERTEXATTRIB1SVARBPROC glVertexAttrib1svARB;
+	MYPFNGLVERTEXATTRIB2DARBPROC glVertexAttrib2dARB;
+	MYPFNGLVERTEXATTRIB2DVARBPROC glVertexAttrib2dvARB;
+	MYPFNGLVERTEXATTRIB2FARBPROC glVertexAttrib2fARB;
+	MYPFNGLVERTEXATTRIB2FVARBPROC glVertexAttrib2fvARB;
+	MYPFNGLVERTEXATTRIB2SARBPROC glVertexAttrib2sARB;
+	MYPFNGLVERTEXATTRIB2SVARBPROC glVertexAttrib2svARB;
+	MYPFNGLVERTEXATTRIB3DARBPROC glVertexAttrib3dARB;
+	MYPFNGLVERTEXATTRIB3DVARBPROC glVertexAttrib3dvARB;
+	MYPFNGLVERTEXATTRIB3FARBPROC glVertexAttrib3fARB;
+	MYPFNGLVERTEXATTRIB3FVARBPROC glVertexAttrib3fvARB;
+	MYPFNGLVERTEXATTRIB3SARBPROC glVertexAttrib3sARB;
+	MYPFNGLVERTEXATTRIB3SVARBPROC glVertexAttrib3svARB;
+	MYPFNGLVERTEXATTRIB4NBVARBPROC glVertexAttrib4NbvARB;
+	MYPFNGLVERTEXATTRIB4NIVARBPROC glVertexAttrib4NivARB;
+	MYPFNGLVERTEXATTRIB4NSVARBPROC glVertexAttrib4NsvARB;
+	MYPFNGLVERTEXATTRIB4NUBARBPROC glVertexAttrib4NubARB;
+	MYPFNGLVERTEXATTRIB4NUBVARBPROC glVertexAttrib4NubvARB;
+	MYPFNGLVERTEXATTRIB4NUIVARBPROC glVertexAttrib4NuivARB;
+	MYPFNGLVERTEXATTRIB4NUSVARBPROC glVertexAttrib4NusvARB;
+	MYPFNGLVERTEXATTRIB4BVARBPROC glVertexAttrib4bvARB;
+	MYPFNGLVERTEXATTRIB4DARBPROC glVertexAttrib4dARB;
+	MYPFNGLVERTEXATTRIB4DVARBPROC glVertexAttrib4dvARB;
+	MYPFNGLVERTEXATTRIB4FARBPROC glVertexAttrib4fARB;
+	MYPFNGLVERTEXATTRIB4FVARBPROC glVertexAttrib4fvARB;
+	MYPFNGLVERTEXATTRIB4IVARBPROC glVertexAttrib4ivARB;
+	MYPFNGLVERTEXATTRIB4SARBPROC glVertexAttrib4sARB;
+	MYPFNGLVERTEXATTRIB4SVARBPROC glVertexAttrib4svARB;
+	MYPFNGLVERTEXATTRIB4UBVARBPROC glVertexAttrib4ubvARB;
+	MYPFNGLVERTEXATTRIB4UIVARBPROC glVertexAttrib4uivARB;
+	MYPFNGLVERTEXATTRIB4USVARBPROC glVertexAttrib4usvARB;
+	MYPFNGLVERTEXATTRIBPOINTERARBPROC glVertexAttribPointerARB;
+	MYPFNGLENABLEVERTEXATTRIBARRAYARBPROC glEnableVertexAttribArrayARB;
+	MYPFNGLDISABLEVERTEXATTRIBARRAYARBPROC glDisableVertexAttribArrayARB;
+	MYPFNGLPROGRAMSTRINGARBPROC glProgramStringARB;
+	MYPFNGLBINDPROGRAMARBPROC glBindProgramARB;
+	MYPFNGLDELETEPROGRAMSARBPROC glDeleteProgramsARB;
+	MYPFNGLGENPROGRAMSARBPROC glGenProgramsARB;
+	MYPFNGLPROGRAMENVPARAMETER4DARBPROC glProgramEnvParameter4dARB;
+	MYPFNGLPROGRAMENVPARAMETER4DVARBPROC glProgramEnvParameter4dvARB;
+	MYPFNGLPROGRAMENVPARAMETER4FARBPROC glProgramEnvParameter4fARB;
+	MYPFNGLPROGRAMENVPARAMETER4FVARBPROC glProgramEnvParameter4fvARB;
+	MYPFNGLPROGRAMLOCALPARAMETER4DARBPROC glProgramLocalParameter4dARB;
+	MYPFNGLPROGRAMLOCALPARAMETER4DVARBPROC glProgramLocalParameter4dvARB;
+	MYPFNGLPROGRAMLOCALPARAMETER4FARBPROC glProgramLocalParameter4fARB;
+	MYPFNGLPROGRAMLOCALPARAMETER4FVARBPROC glProgramLocalParameter4fvARB;
+	MYPFNGLGETPROGRAMENVPARAMETERDVARBPROC glGetProgramEnvParameterdvARB;
+	MYPFNGLGETPROGRAMENVPARAMETERFVARBPROC glGetProgramEnvParameterfvARB;
+	MYPFNGLGETPROGRAMLOCALPARAMETERDVARBPROC glGetProgramLocalParameterdvARB;
+	MYPFNGLGETPROGRAMLOCALPARAMETERFVARBPROC glGetProgramLocalParameterfvARB;
+	MYPFNGLGETPROGRAMIVARBPROC glGetProgramivARB;
+	MYPFNGLGETPROGRAMSTRINGARBPROC glGetProgramStringARB;
+	MYPFNGLGETVERTEXATTRIBDVARBPROC glGetVertexAttribdvARB;
+	MYPFNGLGETVERTEXATTRIBFVARBPROC glGetVertexAttribfvARB;
+	MYPFNGLGETVERTEXATTRIBIVARBPROC glGetVertexAttribivARB;
+	MYPFNGLGETVERTEXATTRIBPOINTERVARBPROC glGetVertexAttribPointervARB;
+	MYPFNGLISPROGRAMARBPROC glIsProgramARB;
+	// End GL_ARB_vertex_program
+
+	// GL_ARB_fragment_program
+	// No new functions.
+	// End GL_ARB_fragment_program
+
+#if defined(WIN32)
+	/// WGL extensions follows
+
+	// WGL_ARB_pixel_format
+	MYPFNWGLGETPIXELFORMATATTRIBIVARBPROC wglGetPixelFormatAttribivARB;
+	MYPFNWGLGETPIXELFORMATATTRIBFVARBPROC wglGetPixelFormatAttribfvARB;
+	MYPFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;
+	// End WGL_ARB_pixel_format
+
+	// WGL_ARB_pbuffer
+	MYPFNWGLCREATEPBUFFERARBPROC wglCreatePbufferARB;
+	MYPFNWGLGETPBUFFERDCARBPROC wglGetPbufferDCARB;
+	MYPFNWGLRELEASEPBUFFERDCARBPROC wglReleasePbufferDCARB;
+	MYPFNWGLDESTROYPBUFFERARBPROC wglDestroyPbufferARB;
+	MYPFNWGLQUERYPBUFFERARBPROC wglQueryPbufferARB;
+	// End WGL_ARB_pbuffer
+
+	// WGL_ARB_render_texture
+	MYPFNWGLBINDTEXIMAGEARBPROC wglBindTexImageARB;
+	MYPFNWGLRELEASETEXIMAGEARBPROC wglReleaseTexImageARB;
+	MYPFNWGLSETPBUFFERATTRIBARBPROC wglSetPbufferAttribARB;
+	// End WGL_ARB_render_texture
+
+	// WGL_ARB_extensions_string
+	MYPFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB;
+	// End WGL_ARB_extensions_string
+
+#endif // defined(WIN32)
+
+protected:
+	void initPointersToZero();
+	static const char* EatWhiteSpace(const char* str);
+	static const char* EatNonWhiteSpace(const char* str);
+	static const char* getExtensionStringPrivate();
+	static const char* getSystemExtensions();
+
+};
+
+// declare the extensions that we support and prepare the constants
+
+#ifndef GL_VERSION_1_2
+#define GL_VERSION_1_2                    1
+#define GL_UNSIGNED_BYTE_3_3_2            0x8032
+#define GL_UNSIGNED_SHORT_4_4_4_4         0x8033
+#define GL_UNSIGNED_SHORT_5_5_5_1         0x8034
+#define GL_UNSIGNED_INT_8_8_8_8           0x8035
+#define GL_UNSIGNED_INT_10_10_10_2        0x8036
+#define GL_RESCALE_NORMAL                 0x803A
+#define GL_TEXTURE_BINDING_3D             0x806A
+#define GL_PACK_SKIP_IMAGES               0x806B
+#define GL_PACK_IMAGE_HEIGHT              0x806C
+#define GL_UNPACK_SKIP_IMAGES             0x806D
+#define GL_UNPACK_IMAGE_HEIGHT            0x806E
+#define GL_TEXTURE_3D                     0x806F
+#define GL_PROXY_TEXTURE_3D               0x8070
+#define GL_TEXTURE_DEPTH                  0x8071
+#define GL_TEXTURE_WRAP_R                 0x8072
+#define GL_MAX_3D_TEXTURE_SIZE            0x8073
+#define GL_UNSIGNED_BYTE_2_3_3_REV        0x8362
+#define GL_UNSIGNED_SHORT_5_6_5           0x8363
+#define GL_UNSIGNED_SHORT_5_6_5_REV       0x8364
+#define GL_UNSIGNED_SHORT_4_4_4_4_REV     0x8365
+#define GL_UNSIGNED_SHORT_1_5_5_5_REV     0x8366
+#define GL_UNSIGNED_INT_8_8_8_8_REV       0x8367
+#define GL_UNSIGNED_INT_2_10_10_10_REV    0x8368
+#define GL_BGR                            0x80E0
+#define GL_BGRA                           0x80E1
+#define GL_MAX_ELEMENTS_VERTICES          0x80E8
+#define GL_MAX_ELEMENTS_INDICES           0x80E9
+#define GL_CLAMP_TO_EDGE                  0x812F
+#define GL_TEXTURE_MIN_LOD                0x813A
+#define GL_TEXTURE_MAX_LOD                0x813B
+#define GL_TEXTURE_BASE_LEVEL             0x813C
+#define GL_TEXTURE_MAX_LEVEL              0x813D
+#define GL_LIGHT_MODEL_COLOR_CONTROL      0x81F8
+#define GL_SINGLE_COLOR                   0x81F9
+#define GL_SEPARATE_SPECULAR_COLOR        0x81FA
+#define GL_SMOOTH_POINT_SIZE_RANGE        0x0B12
+#define GL_SMOOTH_POINT_SIZE_GRANULARITY  0x0B13
+#define GL_SMOOTH_LINE_WIDTH_RANGE        0x0B22
+#define GL_SMOOTH_LINE_WIDTH_GRANULARITY  0x0B23
+#define GL_ALIASED_POINT_SIZE_RANGE       0x846D
+#define GL_ALIASED_LINE_WIDTH_RANGE       0x846E
+#endif
+
+#ifndef GL_VERSION_1_3
+#define GL_VERSION_1_3                    1
+#define GL_TEXTURE0                       0x84C0
+#define GL_TEXTURE1                       0x84C1
+#define GL_TEXTURE2                       0x84C2
+#define GL_TEXTURE3                       0x84C3
+#define GL_TEXTURE4                       0x84C4
+#define GL_TEXTURE5                       0x84C5
+#define GL_TEXTURE6                       0x84C6
+#define GL_TEXTURE7                       0x84C7
+#define GL_TEXTURE8                       0x84C8
+#define GL_TEXTURE9                       0x84C9
+#define GL_TEXTURE10                      0x84CA
+#define GL_TEXTURE11                      0x84CB
+#define GL_TEXTURE12                      0x84CC
+#define GL_TEXTURE13                      0x84CD
+#define GL_TEXTURE14                      0x84CE
+#define GL_TEXTURE15                      0x84CF
+#define GL_TEXTURE16                      0x84D0
+#define GL_TEXTURE17                      0x84D1
+#define GL_TEXTURE18                      0x84D2
+#define GL_TEXTURE19                      0x84D3
+#define GL_TEXTURE20                      0x84D4
+#define GL_TEXTURE21                      0x84D5
+#define GL_TEXTURE22                      0x84D6
+#define GL_TEXTURE23                      0x84D7
+#define GL_TEXTURE24                      0x84D8
+#define GL_TEXTURE25                      0x84D9
+#define GL_TEXTURE26                      0x84DA
+#define GL_TEXTURE27                      0x84DB
+#define GL_TEXTURE28                      0x84DC
+#define GL_TEXTURE29                      0x84DD
+#define GL_TEXTURE30                      0x84DE
+#define GL_TEXTURE31                      0x84DF
+#define GL_ACTIVE_TEXTURE                 0x84E0
+#define GL_CLIENT_ACTIVE_TEXTURE          0x84E1
+#define GL_MAX_TEXTURE_UNITS              0x84E2
+#define GL_TRANSPOSE_MODELVIEW_MATRIX     0x84E3
+#define GL_TRANSPOSE_PROJECTION_MATRIX    0x84E4
+#define GL_TRANSPOSE_TEXTURE_MATRIX       0x84E5
+#define GL_TRANSPOSE_COLOR_MATRIX         0x84E6
+#define GL_MULTISAMPLE                    0x809D
+#define GL_SAMPLE_ALPHA_TO_COVERAGE       0x809E
+#define GL_SAMPLE_ALPHA_TO_ONE            0x809F
+#define GL_SAMPLE_COVERAGE                0x80A0
+#define GL_SAMPLE_BUFFERS                 0x80A8
+#define GL_SAMPLES                        0x80A9
+#define GL_SAMPLE_COVERAGE_VALUE          0x80AA
+#define GL_SAMPLE_COVERAGE_INVERT         0x80AB
+#define GL_MULTISAMPLE_BIT                0x20000000
+#define GL_NORMAL_MAP                     0x8511
+#define GL_REFLECTION_MAP                 0x8512
+#define GL_TEXTURE_CUBE_MAP               0x8513
+#define GL_TEXTURE_BINDING_CUBE_MAP       0x8514
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_X    0x8515
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_X    0x8516
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_Y    0x8517
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Y    0x8518
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_Z    0x8519
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Z    0x851A
+#define GL_PROXY_TEXTURE_CUBE_MAP         0x851B
+#define GL_MAX_CUBE_MAP_TEXTURE_SIZE      0x851C
+#define GL_COMPRESSED_ALPHA               0x84E9
+#define GL_COMPRESSED_LUMINANCE           0x84EA
+#define GL_COMPRESSED_LUMINANCE_ALPHA     0x84EB
+#define GL_COMPRESSED_INTENSITY           0x84EC
+#define GL_COMPRESSED_RGB                 0x84ED
+#define GL_COMPRESSED_RGBA                0x84EE
+#define GL_TEXTURE_COMPRESSION_HINT       0x84EF
+#define GL_TEXTURE_COMPRESSED_IMAGE_SIZE  0x86A0
+#define GL_TEXTURE_COMPRESSED             0x86A1
+#define GL_NUM_COMPRESSED_TEXTURE_FORMATS 0x86A2
+#define GL_COMPRESSED_TEXTURE_FORMATS     0x86A3
+#define GL_CLAMP_TO_BORDER                0x812D
+#define GL_CLAMP_TO_BORDER_SGIS           0x812D
+#define GL_COMBINE                        0x8570
+#define GL_COMBINE_RGB                    0x8571
+#define GL_COMBINE_ALPHA                  0x8572
+#define GL_SOURCE0_RGB                    0x8580
+#define GL_SOURCE1_RGB                    0x8581
+#define GL_SOURCE2_RGB                    0x8582
+#define GL_SOURCE0_ALPHA                  0x8588
+#define GL_SOURCE1_ALPHA                  0x8589
+#define GL_SOURCE2_ALPHA                  0x858A
+#define GL_OPERAND0_RGB                   0x8590
+#define GL_OPERAND1_RGB                   0x8591
+#define GL_OPERAND2_RGB                   0x8592
+#define GL_OPERAND0_ALPHA                 0x8598
+#define GL_OPERAND1_ALPHA                 0x8599
+#define GL_OPERAND2_ALPHA                 0x859A
+#define GL_RGB_SCALE                      0x8573
+#define GL_ADD_SIGNED                     0x8574
+#define GL_INTERPOLATE                    0x8575
+#define GL_SUBTRACT                       0x84E7
+#define GL_CONSTANT                       0x8576
+#define GL_PRIMARY_COLOR                  0x8577
+#define GL_PREVIOUS                       0x8578
+#define GL_DOT3_RGB                       0x86AE
+#define GL_DOT3_RGBA                      0x86AF
+#endif
+
+#ifndef GL_VERSION_1_4
+#define GL_VERSION_1_4                    1
+#define GL_BLEND_DST_RGB                  0x80C8
+#define GL_BLEND_SRC_RGB                  0x80C9
+#define GL_BLEND_DST_ALPHA                0x80CA
+#define GL_BLEND_SRC_ALPHA                0x80CB
+#define GL_POINT_SIZE_MIN                 0x8126
+#define GL_POINT_SIZE_MAX                 0x8127
+#define GL_POINT_FADE_THRESHOLD_SIZE      0x8128
+#define GL_POINT_DISTANCE_ATTENUATION     0x8129
+#define GL_GENERATE_MIPMAP                0x8191
+#define GL_GENERATE_MIPMAP_HINT           0x8192
+#define GL_DEPTH_COMPONENT16              0x81A5
+#define GL_DEPTH_COMPONENT24              0x81A6
+#define GL_DEPTH_COMPONENT32              0x81A7
+#define GL_MIRRORED_REPEAT                0x8370
+#define GL_FOG_COORDINATE_SOURCE          0x8450
+#define GL_FOG_COORDINATE                 0x8451
+#define GL_FRAGMENT_DEPTH                 0x8452
+#define GL_CURRENT_FOG_COORDINATE         0x8453
+#define GL_FOG_COORDINATE_ARRAY_TYPE      0x8454
+#define GL_FOG_COORDINATE_ARRAY_STRIDE    0x8455
+#define GL_FOG_COORDINATE_ARRAY_POINTER   0x8456
+#define GL_FOG_COORDINATE_ARRAY           0x8457
+#define GL_COLOR_SUM                      0x8458
+#define GL_CURRENT_SECONDARY_COLOR        0x8459
+#define GL_SECONDARY_COLOR_ARRAY_SIZE     0x845A
+#define GL_SECONDARY_COLOR_ARRAY_TYPE     0x845B
+#define GL_SECONDARY_COLOR_ARRAY_STRIDE   0x845C
+#define GL_SECONDARY_COLOR_ARRAY_POINTER  0x845D
+#define GL_SECONDARY_COLOR_ARRAY          0x845E
+#define GL_MAX_TEXTURE_LOD_BIAS           0x84FD
+#define GL_TEXTURE_FILTER_CONTROL         0x8500
+#define GL_TEXTURE_LOD_BIAS               0x8501
+#define GL_INCR_WRAP                      0x8507
+#define GL_DECR_WRAP                      0x8508
+#define GL_TEXTURE_DEPTH_SIZE             0x884A
+#define GL_DEPTH_TEXTURE_MODE             0x884B
+#define GL_TEXTURE_COMPARE_MODE           0x884C
+#define GL_TEXTURE_COMPARE_FUNC           0x884D
+#define GL_COMPARE_R_TO_TEXTURE           0x884E
+#endif
+
+#ifndef GL_ARB_imaging
+#define GL_CONSTANT_COLOR                 0x8001
+#define GL_ONE_MINUS_CONSTANT_COLOR       0x8002
+#define GL_CONSTANT_ALPHA                 0x8003
+#define GL_ONE_MINUS_CONSTANT_ALPHA       0x8004
+#define GL_BLEND_COLOR                    0x8005
+#define GL_FUNC_ADD                       0x8006
+#define GL_MIN                            0x8007
+#define GL_MAX                            0x8008
+#define GL_BLEND_EQUATION                 0x8009
+#define GL_FUNC_SUBTRACT                  0x800A
+#define GL_FUNC_REVERSE_SUBTRACT          0x800B
+#define GL_CONVOLUTION_1D                 0x8010
+#define GL_CONVOLUTION_2D                 0x8011
+#define GL_SEPARABLE_2D                   0x8012
+#define GL_CONVOLUTION_BORDER_MODE        0x8013
+#define GL_CONVOLUTION_FILTER_SCALE       0x8014
+#define GL_CONVOLUTION_FILTER_BIAS        0x8015
+#define GL_REDUCE                         0x8016
+#define GL_CONVOLUTION_FORMAT             0x8017
+#define GL_CONVOLUTION_WIDTH              0x8018
+#define GL_CONVOLUTION_HEIGHT             0x8019
+#define GL_MAX_CONVOLUTION_WIDTH          0x801A
+#define GL_MAX_CONVOLUTION_HEIGHT         0x801B
+#define GL_POST_CONVOLUTION_RED_SCALE     0x801C
+#define GL_POST_CONVOLUTION_GREEN_SCALE   0x801D
+#define GL_POST_CONVOLUTION_BLUE_SCALE    0x801E
+#define GL_POST_CONVOLUTION_ALPHA_SCALE   0x801F
+#define GL_POST_CONVOLUTION_RED_BIAS      0x8020
+#define GL_POST_CONVOLUTION_GREEN_BIAS    0x8021
+#define GL_POST_CONVOLUTION_BLUE_BIAS     0x8022
+#define GL_POST_CONVOLUTION_ALPHA_BIAS    0x8023
+#define GL_HISTOGRAM                      0x8024
+#define GL_PROXY_HISTOGRAM                0x8025
+#define GL_HISTOGRAM_WIDTH                0x8026
+#define GL_HISTOGRAM_FORMAT               0x8027
+#define GL_HISTOGRAM_RED_SIZE             0x8028
+#define GL_HISTOGRAM_GREEN_SIZE           0x8029
+#define GL_HISTOGRAM_BLUE_SIZE            0x802A
+#define GL_HISTOGRAM_ALPHA_SIZE           0x802B
+#define GL_HISTOGRAM_LUMINANCE_SIZE       0x802C
+#define GL_HISTOGRAM_SINK                 0x802D
+#define GL_MINMAX                         0x802E
+#define GL_MINMAX_FORMAT                  0x802F
+#define GL_MINMAX_SINK                    0x8030
+#define GL_TABLE_TOO_LARGE                0x8031
+#define GL_COLOR_MATRIX                   0x80B1
+#define GL_COLOR_MATRIX_STACK_DEPTH       0x80B2
+#define GL_MAX_COLOR_MATRIX_STACK_DEPTH   0x80B3
+#define GL_POST_COLOR_MATRIX_RED_SCALE    0x80B4
+#define GL_POST_COLOR_MATRIX_GREEN_SCALE  0x80B5
+#define GL_POST_COLOR_MATRIX_BLUE_SCALE   0x80B6
+#define GL_POST_COLOR_MATRIX_ALPHA_SCALE  0x80B7
+#define GL_POST_COLOR_MATRIX_RED_BIAS     0x80B8
+#define GL_POST_COLOR_MATRIX_GREEN_BIAS   0x80B9
+#define GL_POST_COLOR_MATRIX_BLUE_BIAS    0x80BA
+#define GL_POST_COLOR_MATRIX_ALPHA_BIAS   0x80BB
+#define GL_COLOR_TABLE                    0x80D0
+#define GL_POST_CONVOLUTION_COLOR_TABLE   0x80D1
+#define GL_POST_COLOR_MATRIX_COLOR_TABLE  0x80D2
+#define GL_PROXY_COLOR_TABLE              0x80D3
+#define GL_PROXY_POST_CONVOLUTION_COLOR_TABLE 0x80D4
+#define GL_PROXY_POST_COLOR_MATRIX_COLOR_TABLE 0x80D5
+#define GL_COLOR_TABLE_SCALE              0x80D6
+#define GL_COLOR_TABLE_BIAS               0x80D7
+#define GL_COLOR_TABLE_FORMAT             0x80D8
+#define GL_COLOR_TABLE_WIDTH              0x80D9
+#define GL_COLOR_TABLE_RED_SIZE           0x80DA
+#define GL_COLOR_TABLE_GREEN_SIZE         0x80DB
+#define GL_COLOR_TABLE_BLUE_SIZE          0x80DC
+#define GL_COLOR_TABLE_ALPHA_SIZE         0x80DD
+#define GL_COLOR_TABLE_LUMINANCE_SIZE     0x80DE
+#define GL_COLOR_TABLE_INTENSITY_SIZE     0x80DF
+#define GL_CONSTANT_BORDER                0x8151
+#define GL_REPLICATE_BORDER               0x8153
+#define GL_CONVOLUTION_BORDER_COLOR       0x8154
+#endif
+
+#ifndef GL_EXT_paletted_texture
+#define GL_EXT_paletted_texture           1
+#define GL_COLOR_INDEX1_EXT               0x80E2
+#define GL_COLOR_INDEX2_EXT               0x80E3
+#define GL_COLOR_INDEX4_EXT               0x80E4
+#define GL_COLOR_INDEX8_EXT               0x80E5
+#define GL_COLOR_INDEX12_EXT              0x80E6
+#define GL_COLOR_INDEX16_EXT              0x80E7
+#define GL_TEXTURE_INDEX_SIZE_EXT         0x80ED
+#endif
+
+#ifndef GL_ARB_multitexture
+#define GL_ARB_multitexture               1
+#define GL_TEXTURE0_ARB                   0x84C0
+#define GL_TEXTURE1_ARB                   0x84C1
+#define GL_TEXTURE2_ARB                   0x84C2
+#define GL_TEXTURE3_ARB                   0x84C3
+#define GL_TEXTURE4_ARB                   0x84C4
+#define GL_TEXTURE5_ARB                   0x84C5
+#define GL_TEXTURE6_ARB                   0x84C6
+#define GL_TEXTURE7_ARB                   0x84C7
+#define GL_TEXTURE8_ARB                   0x84C8
+#define GL_TEXTURE9_ARB                   0x84C9
+#define GL_TEXTURE10_ARB                  0x84CA
+#define GL_TEXTURE11_ARB                  0x84CB
+#define GL_TEXTURE12_ARB                  0x84CC
+#define GL_TEXTURE13_ARB                  0x84CD
+#define GL_TEXTURE14_ARB                  0x84CE
+#define GL_TEXTURE15_ARB                  0x84CF
+#define GL_TEXTURE16_ARB                  0x84D0
+#define GL_TEXTURE17_ARB                  0x84D1
+#define GL_TEXTURE18_ARB                  0x84D2
+#define GL_TEXTURE19_ARB                  0x84D3
+#define GL_TEXTURE20_ARB                  0x84D4
+#define GL_TEXTURE21_ARB                  0x84D5
+#define GL_TEXTURE22_ARB                  0x84D6
+#define GL_TEXTURE23_ARB                  0x84D7
+#define GL_TEXTURE24_ARB                  0x84D8
+#define GL_TEXTURE25_ARB                  0x84D9
+#define GL_TEXTURE26_ARB                  0x84DA
+#define GL_TEXTURE27_ARB                  0x84DB
+#define GL_TEXTURE28_ARB                  0x84DC
+#define GL_TEXTURE29_ARB                  0x84DD
+#define GL_TEXTURE30_ARB                  0x84DE
+#define GL_TEXTURE31_ARB                  0x84DF
+#define GL_ACTIVE_TEXTURE_ARB             0x84E0
+#define GL_CLIENT_ACTIVE_TEXTURE_ARB      0x84E1
+#define GL_MAX_TEXTURE_UNITS_ARB          0x84E2
+#endif
+
+#ifndef GL_SGI_texture_color_table
+#define GL_SGI_texture_color_table        1
+#define GL_TEXTURE_COLOR_TABLE_SGI        0x80BC
+#define GL_PROXY_TEXTURE_COLOR_TABLE_SGI  0x80BD
+#endif
+
+#ifndef GL_SGI_color_table
+#define GL_SGI_color_table                1
+#define GL_COLOR_TABLE_SGI                0x80D0
+#define GL_POST_CONVOLUTION_COLOR_TABLE_SGI 0x80D1
+#define GL_POST_COLOR_MATRIX_COLOR_TABLE_SGI 0x80D2
+#define GL_PROXY_COLOR_TABLE_SGI          0x80D3
+#define GL_PROXY_POST_CONVOLUTION_COLOR_TABLE_SGI 0x80D4
+#define GL_PROXY_POST_COLOR_MATRIX_COLOR_TABLE_SGI 0x80D5
+#define GL_COLOR_TABLE_SCALE_SGI          0x80D6
+#define GL_COLOR_TABLE_BIAS_SGI           0x80D7
+#define GL_COLOR_TABLE_FORMAT_SGI         0x80D8
+#define GL_COLOR_TABLE_WIDTH_SGI          0x80D9
+#define GL_COLOR_TABLE_RED_SIZE_SGI       0x80DA
+#define GL_COLOR_TABLE_GREEN_SIZE_SGI     0x80DB
+#define GL_COLOR_TABLE_BLUE_SIZE_SGI      0x80DC
+#define GL_COLOR_TABLE_ALPHA_SIZE_SGI     0x80DD
+#define GL_COLOR_TABLE_LUMINANCE_SIZE_SGI 0x80DE
+#define GL_COLOR_TABLE_INTENSITY_SIZE_SGI 0x80DF
+#endif
+
+#ifndef GL_SGIS_texture_edge_clamp
+#define GL_SGIS_texture_edge_clamp        1
+#define GL_CLAMP_TO_EDGE_SGIS             0x812F
+#endif
+
+#ifndef GL_EXT_texture3D
+#define GL_EXT_texture3D                  1
+#define GL_PACK_SKIP_IMAGES_EXT           0x806B
+#define GL_PACK_IMAGE_HEIGHT_EXT          0x806C
+#define GL_UNPACK_SKIP_IMAGES_EXT         0x806D
+#define GL_UNPACK_IMAGE_HEIGHT_EXT        0x806E
+#define GL_TEXTURE_3D_EXT                 0x806F
+#define GL_PROXY_TEXTURE_3D_EXT           0x8070
+#define GL_TEXTURE_DEPTH_EXT              0x8071
+#define GL_TEXTURE_WRAP_R_EXT             0x8072
+#define GL_MAX_3D_TEXTURE_SIZE_EXT        0x8073
+#endif
+
+#ifndef GL_NV_fragment_program
+#define GL_NV_fragment_program            1
+#define GL_MAX_FRAGMENT_PROGRAM_LOCAL_PARAMETERS_NV 0x8868
+#define GL_FRAGMENT_PROGRAM_NV            0x8870
+#define GL_MAX_TEXTURE_COORDS_NV          0x8871
+#define GL_MAX_TEXTURE_IMAGE_UNITS_NV     0x8872
+#define GL_FRAGMENT_PROGRAM_BINDING_NV    0x8873
+#define GL_PROGRAM_ERROR_STRING_NV        0x8874
+#endif
+
+#ifndef GL_NV_vertex_program
+#define GL_NV_vertex_program              1
+#define GL_VERTEX_PROGRAM_NV              0x8620
+#define GL_VERTEX_STATE_PROGRAM_NV        0x8621
+#define GL_ATTRIB_ARRAY_SIZE_NV           0x8623
+#define GL_ATTRIB_ARRAY_STRIDE_NV         0x8624
+#define GL_ATTRIB_ARRAY_TYPE_NV           0x8625
+#define GL_CURRENT_ATTRIB_NV              0x8626
+#define GL_PROGRAM_LENGTH_NV              0x8627
+#define GL_PROGRAM_STRING_NV              0x8628
+#define GL_MODELVIEW_PROJECTION_NV        0x8629
+#define GL_IDENTITY_NV                    0x862A
+#define GL_INVERSE_NV                     0x862B
+#define GL_TRANSPOSE_NV                   0x862C
+#define GL_INVERSE_TRANSPOSE_NV           0x862D
+#define GL_MAX_TRACK_MATRIX_STACK_DEPTH_NV 0x862E
+#define GL_MAX_TRACK_MATRICES_NV          0x862F
+#define GL_MATRIX0_NV                     0x8630
+#define GL_MATRIX1_NV                     0x8631
+#define GL_MATRIX2_NV                     0x8632
+#define GL_MATRIX3_NV                     0x8633
+#define GL_MATRIX4_NV                     0x8634
+#define GL_MATRIX5_NV                     0x8635
+#define GL_MATRIX6_NV                     0x8636
+#define GL_MATRIX7_NV                     0x8637
+#define GL_CURRENT_MATRIX_STACK_DEPTH_NV  0x8640
+#define GL_CURRENT_MATRIX_NV              0x8641
+#define GL_VERTEX_PROGRAM_POINT_SIZE_NV   0x8642
+#define GL_VERTEX_PROGRAM_TWO_SIDE_NV     0x8643
+#define GL_PROGRAM_PARAMETER_NV           0x8644
+#define GL_ATTRIB_ARRAY_POINTER_NV        0x8645
+#define GL_PROGRAM_TARGET_NV              0x8646
+#define GL_PROGRAM_RESIDENT_NV            0x8647
+#define GL_TRACK_MATRIX_NV                0x8648
+#define GL_TRACK_MATRIX_TRANSFORM_NV      0x8649
+#define GL_VERTEX_PROGRAM_BINDING_NV      0x864A
+#define GL_PROGRAM_ERROR_POSITION_NV      0x864B
+#define GL_VERTEX_ATTRIB_ARRAY0_NV        0x8650
+#define GL_VERTEX_ATTRIB_ARRAY1_NV        0x8651
+#define GL_VERTEX_ATTRIB_ARRAY2_NV        0x8652
+#define GL_VERTEX_ATTRIB_ARRAY3_NV        0x8653
+#define GL_VERTEX_ATTRIB_ARRAY4_NV        0x8654
+#define GL_VERTEX_ATTRIB_ARRAY5_NV        0x8655
+#define GL_VERTEX_ATTRIB_ARRAY6_NV        0x8656
+#define GL_VERTEX_ATTRIB_ARRAY7_NV        0x8657
+#define GL_VERTEX_ATTRIB_ARRAY8_NV        0x8658
+#define GL_VERTEX_ATTRIB_ARRAY9_NV        0x8659
+#define GL_VERTEX_ATTRIB_ARRAY10_NV       0x865A
+#define GL_VERTEX_ATTRIB_ARRAY11_NV       0x865B
+#define GL_VERTEX_ATTRIB_ARRAY12_NV       0x865C
+#define GL_VERTEX_ATTRIB_ARRAY13_NV       0x865D
+#define GL_VERTEX_ATTRIB_ARRAY14_NV       0x865E
+#define GL_VERTEX_ATTRIB_ARRAY15_NV       0x865F
+#define GL_MAP1_VERTEX_ATTRIB0_4_NV       0x8660
+#define GL_MAP1_VERTEX_ATTRIB1_4_NV       0x8661
+#define GL_MAP1_VERTEX_ATTRIB2_4_NV       0x8662
+#define GL_MAP1_VERTEX_ATTRIB3_4_NV       0x8663
+#define GL_MAP1_VERTEX_ATTRIB4_4_NV       0x8664
+#define GL_MAP1_VERTEX_ATTRIB5_4_NV       0x8665
+#define GL_MAP1_VERTEX_ATTRIB6_4_NV       0x8666
+#define GL_MAP1_VERTEX_ATTRIB7_4_NV       0x8667
+#define GL_MAP1_VERTEX_ATTRIB8_4_NV       0x8668
+#define GL_MAP1_VERTEX_ATTRIB9_4_NV       0x8669
+#define GL_MAP1_VERTEX_ATTRIB10_4_NV      0x866A
+#define GL_MAP1_VERTEX_ATTRIB11_4_NV      0x866B
+#define GL_MAP1_VERTEX_ATTRIB12_4_NV      0x866C
+#define GL_MAP1_VERTEX_ATTRIB13_4_NV      0x866D
+#define GL_MAP1_VERTEX_ATTRIB14_4_NV      0x866E
+#define GL_MAP1_VERTEX_ATTRIB15_4_NV      0x866F
+#define GL_MAP2_VERTEX_ATTRIB0_4_NV       0x8670
+#define GL_MAP2_VERTEX_ATTRIB1_4_NV       0x8671
+#define GL_MAP2_VERTEX_ATTRIB2_4_NV       0x8672
+#define GL_MAP2_VERTEX_ATTRIB3_4_NV       0x8673
+#define GL_MAP2_VERTEX_ATTRIB4_4_NV       0x8674
+#define GL_MAP2_VERTEX_ATTRIB5_4_NV       0x8675
+#define GL_MAP2_VERTEX_ATTRIB6_4_NV       0x8676
+#define GL_MAP2_VERTEX_ATTRIB7_4_NV       0x8677
+#define GL_MAP2_VERTEX_ATTRIB8_4_NV       0x8678
+#define GL_MAP2_VERTEX_ATTRIB9_4_NV       0x8679
+#define GL_MAP2_VERTEX_ATTRIB10_4_NV      0x867A
+#define GL_MAP2_VERTEX_ATTRIB11_4_NV      0x867B
+#define GL_MAP2_VERTEX_ATTRIB12_4_NV      0x867C
+#define GL_MAP2_VERTEX_ATTRIB13_4_NV      0x867D
+#define GL_MAP2_VERTEX_ATTRIB14_4_NV      0x867E
+#define GL_MAP2_VERTEX_ATTRIB15_4_NV      0x867F
+#endif
+
+#ifndef GL_ARB_vertex_program
+#define GL_ARB_vertex_program             1
+#define GL_COLOR_SUM_ARB                  0x8458
+#define GL_VERTEX_PROGRAM_ARB             0x8620
+#define GL_VERTEX_ATTRIB_ARRAY_ENABLED_ARB 0x8622
+#define GL_VERTEX_ATTRIB_ARRAY_SIZE_ARB   0x8623
+#define GL_VERTEX_ATTRIB_ARRAY_STRIDE_ARB 0x8624
+#define GL_VERTEX_ATTRIB_ARRAY_TYPE_ARB   0x8625
+#define GL_CURRENT_VERTEX_ATTRIB_ARB      0x8626
+#define GL_PROGRAM_LENGTH_ARB             0x8627
+#define GL_PROGRAM_STRING_ARB             0x8628
+#define GL_MAX_PROGRAM_MATRIX_STACK_DEPTH_ARB 0x862E
+#define GL_MAX_PROGRAM_MATRICES_ARB       0x862F
+#define GL_CURRENT_MATRIX_STACK_DEPTH_ARB 0x8640
+#define GL_CURRENT_MATRIX_ARB             0x8641
+#define GL_VERTEX_PROGRAM_POINT_SIZE_ARB  0x8642
+#define GL_VERTEX_PROGRAM_TWO_SIDE_ARB    0x8643
+#define GL_VERTEX_ATTRIB_ARRAY_POINTER_ARB 0x8645
+#define GL_PROGRAM_ERROR_POSITION_ARB     0x864B
+#define GL_PROGRAM_BINDING_ARB            0x8677
+#define GL_MAX_VERTEX_ATTRIBS_ARB         0x8869
+#define GL_VERTEX_ATTRIB_ARRAY_NORMALIZED_ARB 0x886A
+#define GL_PROGRAM_ERROR_STRING_ARB       0x8874
+#define GL_PROGRAM_FORMAT_ASCII_ARB       0x8875
+#define GL_PROGRAM_FORMAT_ARB             0x8876
+#define GL_PROGRAM_INSTRUCTIONS_ARB       0x88A0
+#define GL_MAX_PROGRAM_INSTRUCTIONS_ARB   0x88A1
+#define GL_PROGRAM_NATIVE_INSTRUCTIONS_ARB 0x88A2
+#define GL_MAX_PROGRAM_NATIVE_INSTRUCTIONS_ARB 0x88A3
+#define GL_PROGRAM_TEMPORARIES_ARB        0x88A4
+#define GL_MAX_PROGRAM_TEMPORARIES_ARB    0x88A5
+#define GL_PROGRAM_NATIVE_TEMPORARIES_ARB 0x88A6
+#define GL_MAX_PROGRAM_NATIVE_TEMPORARIES_ARB 0x88A7
+#define GL_PROGRAM_PARAMETERS_ARB         0x88A8
+#define GL_MAX_PROGRAM_PARAMETERS_ARB     0x88A9
+#define GL_PROGRAM_NATIVE_PARAMETERS_ARB  0x88AA
+#define GL_MAX_PROGRAM_NATIVE_PARAMETERS_ARB 0x88AB
+#define GL_PROGRAM_ATTRIBS_ARB            0x88AC
+#define GL_MAX_PROGRAM_ATTRIBS_ARB        0x88AD
+#define GL_PROGRAM_NATIVE_ATTRIBS_ARB     0x88AE
+#define GL_MAX_PROGRAM_NATIVE_ATTRIBS_ARB 0x88AF
+#define GL_PROGRAM_ADDRESS_REGISTERS_ARB  0x88B0
+#define GL_MAX_PROGRAM_ADDRESS_REGISTERS_ARB 0x88B1
+#define GL_PROGRAM_NATIVE_ADDRESS_REGISTERS_ARB 0x88B2
+#define GL_MAX_PROGRAM_NATIVE_ADDRESS_REGISTERS_ARB 0x88B3
+#define GL_MAX_PROGRAM_LOCAL_PARAMETERS_ARB 0x88B4
+#define GL_MAX_PROGRAM_ENV_PARAMETERS_ARB 0x88B5
+#define GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB 0x88B6
+#define GL_TRANSPOSE_CURRENT_MATRIX_ARB   0x88B7
+#define GL_MATRIX0_ARB                    0x88C0
+#define GL_MATRIX1_ARB                    0x88C1
+#define GL_MATRIX2_ARB                    0x88C2
+#define GL_MATRIX3_ARB                    0x88C3
+#define GL_MATRIX4_ARB                    0x88C4
+#define GL_MATRIX5_ARB                    0x88C5
+#define GL_MATRIX6_ARB                    0x88C6
+#define GL_MATRIX7_ARB                    0x88C7
+#define GL_MATRIX8_ARB                    0x88C8
+#define GL_MATRIX9_ARB                    0x88C9
+#define GL_MATRIX10_ARB                   0x88CA
+#define GL_MATRIX11_ARB                   0x88CB
+#define GL_MATRIX12_ARB                   0x88CC
+#define GL_MATRIX13_ARB                   0x88CD
+#define GL_MATRIX14_ARB                   0x88CE
+#define GL_MATRIX15_ARB                   0x88CF
+#define GL_MATRIX16_ARB                   0x88D0
+#define GL_MATRIX17_ARB                   0x88D1
+#define GL_MATRIX18_ARB                   0x88D2
+#define GL_MATRIX19_ARB                   0x88D3
+#define GL_MATRIX20_ARB                   0x88D4
+#define GL_MATRIX21_ARB                   0x88D5
+#define GL_MATRIX22_ARB                   0x88D6
+#define GL_MATRIX23_ARB                   0x88D7
+#define GL_MATRIX24_ARB                   0x88D8
+#define GL_MATRIX25_ARB                   0x88D9
+#define GL_MATRIX26_ARB                   0x88DA
+#define GL_MATRIX27_ARB                   0x88DB
+#define GL_MATRIX28_ARB                   0x88DC
+#define GL_MATRIX29_ARB                   0x88DD
+#define GL_MATRIX30_ARB                   0x88DE
+#define GL_MATRIX31_ARB                   0x88DF
+#endif
+
+#ifndef GL_ARB_fragment_program
+#define GL_ARB_fragment_program           1
+#define GL_FRAGMENT_PROGRAM_ARB           0x8804
+#define GL_PROGRAM_ALU_INSTRUCTIONS_ARB   0x8805
+#define GL_PROGRAM_TEX_INSTRUCTIONS_ARB   0x8806
+#define GL_PROGRAM_TEX_INDIRECTIONS_ARB   0x8807
+#define GL_PROGRAM_NATIVE_ALU_INSTRUCTIONS_ARB 0x8808
+#define GL_PROGRAM_NATIVE_TEX_INSTRUCTIONS_ARB 0x8809
+#define GL_PROGRAM_NATIVE_TEX_INDIRECTIONS_ARB 0x880A
+#define GL_MAX_PROGRAM_ALU_INSTRUCTIONS_ARB 0x880B
+#define GL_MAX_PROGRAM_TEX_INSTRUCTIONS_ARB 0x880C
+#define GL_MAX_PROGRAM_TEX_INDIRECTIONS_ARB 0x880D
+#define GL_MAX_PROGRAM_NATIVE_ALU_INSTRUCTIONS_ARB 0x880E
+#define GL_MAX_PROGRAM_NATIVE_TEX_INSTRUCTIONS_ARB 0x880F
+#define GL_MAX_PROGRAM_NATIVE_TEX_INDIRECTIONS_ARB 0x8810
+#define GL_MAX_TEXTURE_COORDS_ARB         0x8871
+#define GL_MAX_TEXTURE_IMAGE_UNITS_ARB    0x8872
+#endif
+
+
+/// WGL extensions follow
+#if defined(WIN32)
+
+#ifndef WGL_ARB_pixel_format
+#define WGL_ARB_pixel_format           1
+#define WGL_NUMBER_PIXEL_FORMATS_ARB   0x2000
+#define WGL_DRAW_TO_WINDOW_ARB         0x2001
+#define WGL_DRAW_TO_BITMAP_ARB         0x2002
+#define WGL_ACCELERATION_ARB           0x2003
+#define WGL_NEED_PALETTE_ARB           0x2004
+#define WGL_NEED_SYSTEM_PALETTE_ARB    0x2005
+#define WGL_SWAP_LAYER_BUFFERS_ARB     0x2006
+#define WGL_SWAP_METHOD_ARB            0x2007
+#define WGL_NUMBER_OVERLAYS_ARB        0x2008
+#define WGL_NUMBER_UNDERLAYS_ARB       0x2009
+#define WGL_TRANSPARENT_ARB            0x200A
+#define WGL_TRANSPARENT_RED_VALUE_ARB  0x2037
+#define WGL_TRANSPARENT_GREEN_VALUE_ARB 0x2038
+#define WGL_TRANSPARENT_BLUE_VALUE_ARB 0x2039
+#define WGL_TRANSPARENT_ALPHA_VALUE_ARB 0x203A
+#define WGL_TRANSPARENT_INDEX_VALUE_ARB 0x203B
+#define WGL_SHARE_DEPTH_ARB            0x200C
+#define WGL_SHARE_STENCIL_ARB          0x200D
+#define WGL_SHARE_ACCUM_ARB            0x200E
+#define WGL_SUPPORT_GDI_ARB            0x200F
+#define WGL_SUPPORT_OPENGL_ARB         0x2010
+#define WGL_DOUBLE_BUFFER_ARB          0x2011
+#define WGL_STEREO_ARB                 0x2012
+#define WGL_PIXEL_TYPE_ARB             0x2013
+#define WGL_COLOR_BITS_ARB             0x2014
+#define WGL_RED_BITS_ARB               0x2015
+#define WGL_RED_SHIFT_ARB              0x2016
+#define WGL_GREEN_BITS_ARB             0x2017
+#define WGL_GREEN_SHIFT_ARB            0x2018
+#define WGL_BLUE_BITS_ARB              0x2019
+#define WGL_BLUE_SHIFT_ARB             0x201A
+#define WGL_ALPHA_BITS_ARB             0x201B
+#define WGL_ALPHA_SHIFT_ARB            0x201C
+#define WGL_ACCUM_BITS_ARB             0x201D
+#define WGL_ACCUM_RED_BITS_ARB         0x201E
+#define WGL_ACCUM_GREEN_BITS_ARB       0x201F
+#define WGL_ACCUM_BLUE_BITS_ARB        0x2020
+#define WGL_ACCUM_ALPHA_BITS_ARB       0x2021
+#define WGL_DEPTH_BITS_ARB             0x2022
+#define WGL_STENCIL_BITS_ARB           0x2023
+#define WGL_AUX_BUFFERS_ARB            0x2024
+#define WGL_NO_ACCELERATION_ARB        0x2025
+#define WGL_GENERIC_ACCELERATION_ARB   0x2026
+#define WGL_FULL_ACCELERATION_ARB      0x2027
+#define WGL_SWAP_EXCHANGE_ARB          0x2028
+#define WGL_SWAP_COPY_ARB              0x2029
+#define WGL_SWAP_UNDEFINED_ARB         0x202A
+#define WGL_TYPE_RGBA_ARB              0x202B
+#define WGL_TYPE_COLORINDEX_ARB        0x202C
+#endif
+
+#ifndef WGL_ARB_pbuffer
+#define WGL_ARB_pbuffer                1
+#define WGL_DRAW_TO_PBUFFER_ARB        0x202D
+#define WGL_MAX_PBUFFER_PIXELS_ARB     0x202E
+#define WGL_MAX_PBUFFER_WIDTH_ARB      0x202F
+#define WGL_MAX_PBUFFER_HEIGHT_ARB     0x2030
+#define WGL_PBUFFER_LARGEST_ARB        0x2033
+#define WGL_PBUFFER_WIDTH_ARB          0x2034
+#define WGL_PBUFFER_HEIGHT_ARB         0x2035
+#define WGL_PBUFFER_LOST_ARB           0x2036
+#endif
+
+#ifndef WGL_ARB_render_texture
+#define WGL_ARB_render_texture         1
+#define WGL_BIND_TO_TEXTURE_RGB_ARB    0x2070
+#define WGL_BIND_TO_TEXTURE_RGBA_ARB   0x2071
+#define WGL_TEXTURE_FORMAT_ARB         0x2072
+#define WGL_TEXTURE_TARGET_ARB         0x2073
+#define WGL_MIPMAP_TEXTURE_ARB         0x2074
+#define WGL_TEXTURE_RGB_ARB            0x2075
+#define WGL_TEXTURE_RGBA_ARB           0x2076
+#define WGL_NO_TEXTURE_ARB             0x2077
+#define WGL_TEXTURE_CUBE_MAP_ARB       0x2078
+#define WGL_TEXTURE_1D_ARB             0x2079
+#define WGL_TEXTURE_2D_ARB             0x207A
+#define WGL_MIPMAP_LEVEL_ARB           0x207B
+#define WGL_CUBE_MAP_FACE_ARB          0x207C
+#define WGL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB 0x207D
+#define WGL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB 0x207E
+#define WGL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB 0x207F
+#define WGL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB 0x2080
+#define WGL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB 0x2081
+#define WGL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB 0x2082
+#define WGL_FRONT_LEFT_ARB             0x2083
+#define WGL_FRONT_RIGHT_ARB            0x2084
+#define WGL_BACK_LEFT_ARB              0x2085
+#define WGL_BACK_RIGHT_ARB             0x2086
+#define WGL_AUX0_ARB                   0x2087
+#define WGL_AUX1_ARB                   0x2088
+#define WGL_AUX2_ARB                   0x2089
+#define WGL_AUX3_ARB                   0x208A
+#define WGL_AUX4_ARB                   0x208B
+#define WGL_AUX5_ARB                   0x208C
+#define WGL_AUX6_ARB                   0x208D
+#define WGL_AUX7_ARB                   0x208E
+#define WGL_AUX8_ARB                   0x208F
+#define WGL_AUX9_ARB                   0x2090
+#endif
+
+#ifndef WGL_ARB_extensions_string
+#define WGL_ARB_extensions_string      1
+#endif
+
+#endif // defined(WIN32)
+
+
+
+#endif // !defined(AFX_MYEXTENSIONS_H__49343774_A350_4447_88BB_ACEDB50325AD__INCLUDED_)

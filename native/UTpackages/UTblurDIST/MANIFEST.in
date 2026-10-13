@@ -1,0 +1,6 @@
+include MANIFEST.in
+include UTblur/*.i
+include UTblur/Blur-license.txt
+exclude UTblur/blur.py
+include CVS/*
+include UTblur/CVS/*

@@ -1,0 +1,9 @@
+/__init__.py///
+/doauto.py///
+/gl_auto.py///
+/gl_deprec.py///
+/gl_wrapper.py///
+/gle_wrapper.py///
+/glu_wrapper.py///
+/glx_wrapper.py///
+/smap_wrapper.py///

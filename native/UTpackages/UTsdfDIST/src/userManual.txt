@@ -1,0 +1,39 @@
+Users Manual for SDF (LINUX v. 2.0)
+written by KLC (mailto: ckl@ices.utexas.edu)
+
+Introduction:
+This library can generate the Signed Distance Function fields. In the current release (v.2.0), it can generate functions only on uniform grids.
+Compared to ver1.0, this version significantly improves the run-time speed for SDF computation.
+
+Inputs:
+The inputs to the library are as follows:
+	A set of parameters that can tweak the quality of the SDF. These are described here:
+	Size: this is the resolution of the volume grid. It has to be a power of 2 (64,128,256 etc)
+	Flip Normals: setting this parameter to 1 checks the orientation of the input surface and flips the normals of the triangles to a uniform side
+	InsideZero: setting this parameter to 1 causes the sign inside the volume to be negative and outside as positive.
+	Input file: the input surface is specified here. It is given in the .RAW format (http://www.ices.utexas.edu/cvc/). Note that the surface has to be a closed surface
+
+	
+Output:
+The library outputs a voluemtric grid of the dimensions (size+1)^3.
+
+
+Sample Files:
+A sample input file in the ASCII .RAW format is included in this distribution. The source file <testing.cpp> shows a sample example on how to use the library.
+
+
+Source Code:
+All the relevant source files are included in this distrubution. 
+
+
+Installation:
+The release is pretty much platform independant. To compile it with a GNU compiler, please refer to the makefile alongwith this distribution.
+The project workspaces for the MSVC6.0 are also included in the distribution
+
+Makefiles :
+	(i) Makefile - generates sdfLib.a ( see sdfLib.h for available
+	               functions generating SDF )
+	(ii) MakefileApp - compiles sample application code testing.cpp
+
+Reporting Bugs:
+In case of any errors, please send an email to ckl@ices.utexas.edu

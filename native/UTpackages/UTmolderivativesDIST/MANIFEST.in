@@ -1,0 +1,12 @@
+include MANIFEST.in
+include UTmolderivatives/*.i
+exclude UTmolderivatives/molderivatives.py
+include src/Curvatures/*
+include src/UsefulMath/*
+include src/molderivatives-license.txt 
+include src/Readme.htm
+include CVS/*
+include UTmolderivatives/CVS/*
+include src/CVS/*
+include src/Curvatures/CVS/*
+include src/UsefulMath/CVS/*

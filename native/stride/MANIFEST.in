@@ -1,0 +1,13 @@
+include MANIFEST.in
+include version.py
+include stride/*.i
+include include/*
+include stride/Tests/1crn.pdb
+exclude stride/stride.py
+include stride/doc.tar.gz
+#include CVS directories
+include CVS/*
+include include/CVS/*
+include src/CVS/*
+include stride/CVS/*
+include stride/Tests/CVS/*

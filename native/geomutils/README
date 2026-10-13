@@ -1,0 +1,26 @@
+This package builds _geomutilslib.so library and installs it in
+<sys.exec_prefix>/lib/python2.4/site-packages/geomutils/   directory.
+Distutils are used to build and install the extension.
+"setup.cfg" file can be  used to specify the installation directory( other than the default one).
+SWIG (version swig1.3.20 or higher) is used for generating wrappers.
+(Currently there is no way to specify the version of swig to be used by 
+Distutils - the default version has to be 1.3.20 or the one that automatically generates python shadow classes).
+
+To buid the extension:
+
+python2.4 setup.py build_ext
+
+This puts the .py and .so into automatically generated directory build/lib_platform.
+ 
+To install:
+
+python2.4 setup.py install
+
+ 
+The 'inplace' option tells the Distutils to put the .so into the current
+directory:
+
+python2.4 setup.py build_ext --inplace
+
+To create MANIFEST:
+python2.4 setup.py sdist --manifest-only

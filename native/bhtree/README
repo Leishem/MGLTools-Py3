@@ -1,0 +1,26 @@
+This package contains a Distutils interface for building bhtree Python 
+extension and creating a source distribution.
+SWIG (version 1.3.20 or higher) is used for generating a C wrapper code
+(can be downloaded from www.swig.org).
+
+To build and install the extension:
+	python2.4 setup.py install
+This creates bhtreelib.py (python shadow classes) and
+_bhtreelib.so  in build/lib.<platform_specifier>/bhtree . 
+bhtree/Tests is copied to build/lib.<platform_specifier>/bhtree.
+The bhtree package is then installed in 
+sys.exec_prefix/lib/python2.4/site-packages.
+To specify the install directory use --install-platlib option:
+	python2.4 setup.py install --install-platlib=INSTALL_DIR
+
+To build the extension only:
+	python2.4 setup.py build
+this will build bhtree python extension in build/lib.<platform_specifier>/bhtree.
+
+To build the distribution:
+	python2.4 setup.py sdist
+
+
+Testing of the installed package:
+	tester bhtree
+

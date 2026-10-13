@@ -1,0 +1,35 @@
+# Microsoft Developer Studio Generated Dependency File, included by VolumeLibrary.mak
+
+.\OpenGLVolumeClipCube.cpp : \
+	".\LookupTables.h"\
+	".\OpenGLVolumeClipCube.h"\
+	".\OpenGLVolumePlane.h"\
+	".\OpenGLVolumePolygon.h"\
+	
+
+.\OpenGLVolumePlane.cpp : \
+	".\OpenGLVolumePlane.h"\
+	
+
+.\OpenGLVolumePolygon.cpp : \
+	".\OpenGLVolumePolygon.h"\
+	
+
+.\OpenGLVolumeRenderer.cpp : \
+	".\glh_extensions.h"\
+	".\glh_genext.h"\
+	".\OpenGLVolumeClipCube.h"\
+	".\OpenGLVolumePlane.h"\
+	".\OpenGLVolumePolygon.h"\
+	".\OpenGLVolumeRenderer.h"\
+	"c:\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	"c:\program files\microsoft visual studio\vc98\include\gl\glext.h"\
+	"c:\program files\microsoft visual studio\vc98\include\gl\wglext.h"\
+	
+
+.\VolumeRenderer.cpp : \
+	".\OpenGLVolumePlane.h"\
+	".\OpenGLVolumeRenderer.h"\
+	".\VolumeRenderer.h"\
+	"c:\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	

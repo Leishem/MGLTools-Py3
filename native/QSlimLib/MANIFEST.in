@@ -1,0 +1,22 @@
+include MANIFEST.in
+include COPYING_QSlimLib.txt
+include version.py
+include src/*.txt
+include src/libgfx/*.txt
+include src/libgfx/src/*
+include src/libgfx/include/gfx/*.h
+include src/libgfx/include/gfx/config.h.in
+include src/mixkit/*
+include QSlimLib/*.i
+exclude QSlimLib/qslimlib.py
+#include CVS directories
+include CVS/*
+include QSlimLib/CVS/*
+include QSlimLib/Tests/CVS/*
+include src/CVS/*
+include src/libgfx/CVS/*
+include src/libgfx/include/CVS/*
+include src/libgfx/include/gfx/CVS/*
+include src/libgfx/src/CVS/*
+include src/mixkit/CVS/*
+include LICENSE

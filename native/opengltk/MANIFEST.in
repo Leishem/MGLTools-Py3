@@ -1,0 +1,48 @@
+# This is a template to create MANIFEST - list of files included 
+# in the distribution.
+
+include MANIFEST.in
+#include Togl/*
+include Togl/*.c
+include Togl/*.h
+include Togl/*.rgba
+include Togl/*.rgb
+include Togl/version*
+include Togl/*.tcl
+include Togl/LICENSE
+include Togl/*.html
+include Togl/README.stubs
+include include/tcltk/*
+include include/tcltk/unix/*
+include include/tcltk/X11/*
+include opengltk/extent/*.i
+include opengltk/extent/glsigsub.py
+include opengltk/extent/callback.h
+include opengltk/extent/opengltk.h 
+include opengltk/extent/utilplus.h
+include opengltk/extent/pythonplus.h
+include opengltk/extent/pythonplus.c
+include opengltk/extent/glext_mgltools.h
+exclude opengltk/extent/*lib.py
+include opengltk/OpenGL/Tk/Togl/pkgIndex.tcl.unix
+include opengltk/OpenGL/Tk/Togl/pkgIndex.tcl.win32
+include tools/*.py
+include opengltk/doc.tar.gz
+include include/*.h
+include include/X11/*.h
+include GL/*.h
+#include CVS directories
+include CVS/*
+include Togl/CVS/*
+include include/CVS/*
+include include/X11/CVS/*
+include opengltk/CVS/*
+include opengltk/OpenGL/CVS/*
+include opengltk/OpenGL/Tk/CVS/*
+include opengltk/OpenGL/Tk/Togl/CVS/*
+include opengltk/Tests/CVS/*
+include opengltk/extent/CVS/*
+include opengltk/wrapper/CVS/*
+include tools/CVS/*
+include version.py
+include LICENSE

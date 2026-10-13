@@ -1,0 +1,1 @@
+g++ -o test.exe testing.cpp sdfLib.a -lm

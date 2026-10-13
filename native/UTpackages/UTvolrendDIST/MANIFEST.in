@@ -1,0 +1,18 @@
+# This list all other files to be included in the distribution
+# which are not python modules
+# include, exclude.... which are not described in the setup.py.
+include MANIFEST.in
+# list of the non python module to be included in the distribution
+include UTvolrend/*.i
+include UTvolrend/CVS/*
+include UTvolrend/Tests/*.py
+include UTvolrend/Tests/CVS/*
+include UTvolrend/Tests/*.rawiv
+include UTvolrend/Tests/*.map
+exclude UTvolrend/UTVolumeLibrary.py
+include src/*
+include src/CVS/*
+include CVS/*
+
+
+

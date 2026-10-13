@@ -1,0 +1,7 @@
+include MANIFEST.in
+include src/*
+include docs/*
+include pyglf/*.i
+include pyglf/fonts/*
+exclude pyglf/glf.py
+include LICENSE

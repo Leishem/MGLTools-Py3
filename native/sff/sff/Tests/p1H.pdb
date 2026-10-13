@@ -1,0 +1,45 @@
+REMARK   4 XXXX COMPLIES WITH FORMAT V. 2.0, 15-APR-1996
+ATOM      1  N   THR     1      17.047  14.099   3.625  1.00 13.79      1CRN N  
+ATOM      2  H1  THR     1      17.914  14.119   3.088  1.00  0.00      1CRN H  
+ATOM      3  H2  THR     1      16.958  14.895   4.257  1.00  0.00      1CRN H  
+ATOM      4  H3  THR     1      16.224  14.286   3.051  1.00  0.00      1CRN H  
+ATOM      5  CA  THR     1      16.967  12.784   4.338  1.00 10.80      1CRN C  
+ATOM      6  HA  THR     1      17.000  11.939   3.612  1.00  0.00      1CRN H  
+ATOM      7  CB  THR     1      18.170  12.703   5.337  1.00 13.02      1CRN C  
+ATOM      8  HB  THR     1      18.134  13.632   5.953  1.00  0.00      1CRN H  
+ATOM      9  CG2 THR     1      18.150  11.546   6.304  1.00 14.23      1CRN C  
+ATOM     10 1HG2 THR     1      19.007  11.488   7.015  1.00  0.00      1CRN H  
+ATOM     11 2HG2 THR     1      18.058  10.586   5.744  1.00  0.00      1CRN H  
+ATOM     12 3HG2 THR     1      17.188  11.541   6.869  1.00  0.00      1CRN H  
+ATOM     13  OG1 THR     1      19.334  12.829   4.463  1.00 15.06      1CRN O  
+ATOM     14  HG1 THR     1      20.064  12.780   5.069  1.00  0.00      1CRN H  
+ATOM     15  C   THR     1      15.685  12.755   5.133  1.00  9.19      1CRN C  
+ATOM     16  O   THR     1      15.268  13.825   5.594  1.00  9.85      1CRN O  
+ATOM     17  N   THR     2      15.115  11.555   5.265  1.00  7.81      1CRN N  
+ATOM     18  H   THR     2      15.524  10.726   4.834  1.00  0.00      1CRN H  
+ATOM     19  CA  THR     2      13.856  11.469   6.066  1.00  8.31      1CRN C  
+ATOM     20  HA  THR     2      13.501  12.504   6.280  1.00  0.00      1CRN H  
+ATOM     21  CB  THR     2      12.732  10.711   5.261  1.00 10.32      1CRN C  
+ATOM     22  HB  THR     2      11.794  10.602   5.854  1.00  0.00      1CRN H  
+ATOM     23  CG2 THR     2      12.484  11.442   3.895  1.00 11.90      1CRN C  
+ATOM     24 1HG2 THR     2      11.689  10.906   3.326  1.00  0.00      1CRN H  
+ATOM     25 2HG2 THR     2      13.421  11.558   3.303  1.00  0.00      1CRN H  
+ATOM     26 3HG2 THR     2      12.248  12.523   4.032  1.00  0.00      1CRN H  
+ATOM     27  OG1 THR     2      13.308   9.439   4.926  1.00 12.81      1CRN O  
+ATOM     28  HG1 THR     2      12.631   8.982   4.441  1.00  0.00      1CRN H  
+ATOM     29  C   THR     2      14.164  10.785   7.379  1.00  5.80      1CRN C  
+ATOM     30  O   THR     2      14.993   9.862   7.443  1.00  6.94      1CRN O  
+ATOM     31  N   CYS     3      13.488  11.241   8.417  1.00  5.24      1CRN N  
+ATOM     32  H   CYS     3      12.817  11.995   8.269  1.00  0.00      1CRN H  
+ATOM     33  CA  CYS     3      13.660  10.707   9.787  1.00  5.39      1CRN C  
+ATOM     34  HA  CYS     3      14.252   9.762   9.757  1.00  0.00      1CRN H  
+ATOM     35  CB  CYS     3      14.368  11.748  10.691  1.00  5.99      1CRN C  
+ATOM     36  HB2 CYS     3      14.555  11.317  11.702  1.00  0.00      1CRN H  
+ATOM     37  HB3 CYS     3      13.663  12.570  10.958  1.00  0.00      1CRN H  
+ATOM     38  SG  CYS     3      15.885  12.426  10.016  1.00  7.01      1CRN S  
+ATOM     39  HSG CYS     3      16.149  13.226  11.045  1.00  0.00      1CRN H  
+ATOM     40  C   CYS     3      12.269  10.431  10.323  1.00  4.45      1CRN C  
+ATOM     41  O   CYS     3      11.393  11.308  10.185  1.00  6.54      1CRN O  
+ATOM     42  OXT CYS     3      12.026   9.383  10.917  1.00  6.54      1CRN O  
+MASTER        1    0    0    0    0    0    0    0   41    0    0    0
+END

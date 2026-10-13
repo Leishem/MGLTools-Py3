@@ -1,0 +1,25 @@
+                           sff version 0.1
+
+SFF stands for simple force field. It is a C implementation of the 
+amber force field made by Tom Macke and David Case.
+
+This package exposes a wrapped version of the prm structure which holds the
+Amber parameters needed for an Amber calculation. It also exposes the mme 
+and md functions to perform molecular mechanics and dynamics respectively.
+
+BUILDING:
+
+building this package requires SWIG v1.3.20 and python2.4
+	python2.4 setup.py install
+this will build SFF python extension in build/lib.<platform_specifier>/sff
+and install the sff package into sys.exec_prefix/lib/python2.4/site-packages.
+To specify the install directory use --install-platlib option:
+	python2.4 setup.py install --install-platlib=INSTALL_DIR
+
+To build the extension only:
+	python2.4 setup.py build
+this will build SFF python extension in build/lib.<platform_specifier>/sff.
+
+To build the distribution:
+	python2.4 setup.py sdist
+ 
