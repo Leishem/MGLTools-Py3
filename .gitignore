@@ -11,3 +11,4 @@ dist-win/
 dist-*/
 *.whl
 *.zip
+HANDOFF.md

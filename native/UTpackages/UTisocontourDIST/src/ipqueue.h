@@ -17,6 +17,9 @@
 #define __IPQUEUE_H
 
 #include <math.h>
+#ifndef _WIN32
+#include <unistd.h>  /* sleep */
+#endif
 #include "basic.h"
 #include "bin.h"
 #include "hash.h"
