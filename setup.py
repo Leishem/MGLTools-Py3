@@ -234,7 +234,10 @@ def make_ext(spec):
                    "-Wno-error=implicit-function-declaration",
                    "-Wno-error=implicit-int",
                    "-Wno-error=incompatible-function-pointer-types",
-                   "-Wno-error=int-conversion"]
+                   "-Wno-error=int-conversion",
+                   "-Wno-error=return-type",
+                   "-Wno-register",                      # C++17 removed 'register'
+                   "-Wno-error=c++11-narrowing"]
     # Python 2 C-API aliases (and Windows GL macros) for every translation unit
     force = ["/FImgl_py2compat.h"] if WIN else ["-include", "mgl_py2compat.h"]
     ext = Extension(spec["name"], sources=[], include_dirs=inc,
