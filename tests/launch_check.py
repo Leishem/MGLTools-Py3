@@ -10,13 +10,24 @@ self.displaySticksAndBalls("hsg1", log=0)  # noqa: F821
 
 
 def _shot_and_quit(mv=self, out=out, ImageGrab=ImageGrab, os=os):  # noqa: F821
-    r = mv.GUI.ROOT
-    r.update()
-    ImageGrab.grab(bbox=(r.winfo_rootx(), r.winfo_rooty(),
-                         r.winfo_rootx() + r.winfo_width(),
-                         r.winfo_rooty() + r.winfo_height())).save(out)
-    print("LAUNCH_OK", out, flush=True)
-    os._exit(0)
+    try:
+        r = mv.GUI.ROOT
+        r.update()
+        try:
+            img = ImageGrab.grab(bbox=(r.winfo_rootx(), r.winfo_rooty(),
+                                 r.winfo_rootx() + r.winfo_width(),
+                                 r.winfo_rooty() + r.winfo_height()))
+        except Exception:
+            try:
+                img = ImageGrab.grab()
+            except Exception:
+                img = mv.GUI.VIEWER.currentCamera.GrabFrontBuffer()
+        img.save(out)
+        print("LAUNCH_OK", out, flush=True)
+    except Exception as e:
+        print("LAUNCH_ERROR", e, flush=True)
+    finally:
+        os._exit(0)
 
 
 self.GUI.ROOT.after(4000, _shot_and_quit)  # noqa: F821
