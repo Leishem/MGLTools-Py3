@@ -1,0 +1,58 @@
+# Native ARM builds. GitHub's ARM runners (ubuntu-24.04-arm, windows-11-arm)
+# are free for public repositories only; run manually when available.
+name: arm-builds
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # tkinter-gl ships TkGL for macOS, Linux and Windows x64 only; build the
+  # Windows ARM64 DLL from source (same recipe as 3-manifolds/TkGL's CI).
+  tkgl-windows-arm64:
+    runs-on: windows-11-arm
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: 3-manifolds/TkGL
+      - uses: msys2/setup-msys2@v2
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: arm64
+      - name: Fetch Tcl/Tk 8.6 sources
+        run: ci/windows/fetch_tcltk8.sh
+        shell: msys2 {0}
+      - name: Build Tcl
+        working-directory: tcl8/win
+        shell: cmd
+        run: |
+          nmake -f makefile.vc
+          nmake INSTALLDIR=..\..\TclTk8 -f makefile.vc install
+      - name: Build Tk
+        working-directory: tk8/win
+        shell: cmd
+        run: |
+          nmake TCLDIR=..\..\tcl8 -f makefile.vc
+          nmake INSTALLDIR=..\..\TclTk8 -f makefile.vc install
+      - name: Build TkGL
+        working-directory: win
+        shell: cmd
+        run: nmake TCLDIR=..\tcl8 TKDIR=..\tk8 -f makefile.vc
+      - name: Collect
+        shell: bash
+        run: |
+          mkdir -p tkgl
+          cp win/Release*/*.dll win/Release*/pkgIndex.tcl tkgl/ || cp win/Release*/*.* tkgl/
+          ls -la tkgl
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tkgl-win32-arm64
+          path: tkgl
+
+  windows-arm64:
+    needs: tkgl-windows-arm64
+    uses: ./.github/workflows/build-one.yml
+    with: { name: windows-arm64, os: windows-11-arm, gui: mesa, tkgl-artifact: tkgl-win32-arm64 }
+
+  linux-arm64:
+    uses: ./.github/workflows/build-one.yml
+    with: { name: linux-arm64, os: ubuntu-24.04-arm, gui: xvfb }

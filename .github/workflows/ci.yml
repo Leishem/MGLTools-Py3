@@ -6,131 +6,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  # tkinter-gl ships TkGL for macOS, Linux and Windows x64 only; build the
-  # Windows ARM64 DLL from source (same recipe as 3-manifolds/TkGL's CI).
-  tkgl-windows-arm64:
-    runs-on: windows-11-arm
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          repository: 3-manifolds/TkGL
-      - uses: msys2/setup-msys2@v2
-      - uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: arm64
-      - name: Fetch Tcl/Tk 8.6 sources
-        run: ci/windows/fetch_tcltk8.sh
-        shell: msys2 {0}
-      - name: Build Tcl
-        working-directory: tcl8/win
-        shell: cmd
-        run: |
-          nmake -f makefile.vc
-          nmake INSTALLDIR=..\..\TclTk8 -f makefile.vc install
-      - name: Build Tk
-        working-directory: tk8/win
-        shell: cmd
-        run: |
-          nmake TCLDIR=..\..\tcl8 -f makefile.vc
-          nmake INSTALLDIR=..\..\TclTk8 -f makefile.vc install
-      - name: Build TkGL
-        working-directory: win
-        shell: cmd
-        run: nmake TCLDIR=..\tcl8 TKDIR=..\tk8 -f makefile.vc
-      - name: Collect
-        shell: bash
-        run: |
-          mkdir -p tkgl
-          cp win/Release*/*.dll win/Release*/pkgIndex.tcl tkgl/ || cp win/Release*/*.* tkgl/
-          ls -la tkgl
-      - uses: actions/upload-artifact@v4
-        with:
-          name: tkgl-win32-arm64
-          path: tkgl
+  linux-x86_64:
+    uses: ./.github/workflows/build-one.yml
+    with: { name: linux-x86_64, os: ubuntu-24.04, gui: xvfb }
 
-  build:
-    name: ${{ matrix.name }}
-    needs: [tkgl-windows-arm64]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { name: linux-x86_64,  os: ubuntu-24.04,     gui: xvfb }
-          - { name: linux-arm64,   os: ubuntu-24.04-arm, gui: xvfb }
-          - { name: macos-arm64,   os: macos-14,         gui: native }
-          - { name: windows-x64,   os: windows-2022,     gui: mesa }
-          - { name: windows-arm64, os: windows-11-arm,   gui: mesa }
-    steps:
-      - uses: actions/checkout@v4
+  macos-arm64:
+    uses: ./.github/workflows/build-one.yml
+    with: { name: macos-arm64, os: macos-14, gui: native }
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Linux system packages
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev libtirpc-dev \
-            xvfb libgl1-mesa-dri mesa-utils
-
-      - name: Bundle TkGL for Windows ARM64
-        if: matrix.name == 'windows-arm64'
-        continue-on-error: true
-        uses: actions/download-artifact@v4
-        with:
-          name: tkgl-win32-arm64
-          path: src/opengltk/OpenGL/Tk/tkgl/win32-arm64
-
-      - name: Build wheel
-        run: |
-          python -m pip install -U pip build
-          python -m build --wheel --outdir dist
-
-      - name: Install wheel
-        shell: bash
-        run: python -m pip install dist/*.whl pytest
-
-      - name: Tests (installed package)
-        run: python -m pytest -v
-
-      - name: Mesa OpenGL for Windows (software renderer)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $rel = Invoke-RestMethod https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest
-          $asset = $rel.assets | Where-Object { $_.name -like '*release-msvc.7z' } | Select-Object -First 1
-          Invoke-WebRequest $asset.browser_download_url -OutFile mesa.7z
-          7z x mesa.7z -omesa | Out-Null
-          $arch = if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') { 'arm64' } else { 'x64' }
-          $pydir = Split-Path (python -c "import sys; print(sys.executable)")
-          if (Test-Path "mesa/$arch") {
-            Copy-Item mesa/$arch/*.dll $pydir
-            "MESA_OK=1" | Out-File -Append $env:GITHUB_ENV
-          } else { "no Mesa build for $arch" }
-
-      - name: GUI smoke test (Linux, Xvfb)
-        if: matrix.gui == 'xvfb'
-        run: xvfb-run -a -s "-screen 0 1600x1000x24 +extension GLX" python -W ignore tests/gui_smoke.py gui-out
-        env:
-          LIBGL_ALWAYS_SOFTWARE: "1"
-
-      - name: GUI smoke test (macOS)
-        if: matrix.gui == 'native'
-        run: python -W ignore tests/gui_smoke.py gui-out
-
-      - name: GUI smoke test (Windows, Mesa llvmpipe)
-        if: matrix.gui == 'mesa' && env.MESA_OK == '1'
-        run: python -W ignore tests/gui_smoke.py gui-out
-        env:
-          GALLIUM_DRIVER: llvmpipe
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: mgltools-${{ matrix.name }}
-          path: |
-            dist/*.whl
-            gui-out
+  windows-x64:
+    uses: ./.github/workflows/build-one.yml
+    with: { name: windows-x64, os: windows-2022, gui: mesa }

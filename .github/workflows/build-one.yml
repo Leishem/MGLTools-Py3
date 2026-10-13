@@ -1,0 +1,87 @@
+# Build the wheel on one platform, run the test suite against the installed
+# wheel, run the GUI smoke test, and upload the wheel + screenshots.
+name: build-one
+
+on:
+  workflow_call:
+    inputs:
+      name: { type: string, required: true }
+      os: { type: string, required: true }
+      gui: { type: string, required: true }        # xvfb | native | mesa | none
+      tkgl-artifact: { type: string, default: "" }  # bundle a TkGL build
+
+jobs:
+  build:
+    name: ${{ inputs.name }}
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Linux system packages
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev libtirpc-dev \
+            xvfb libgl1-mesa-dri mesa-utils
+
+      - name: Bundle TkGL build
+        if: inputs.tkgl-artifact != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.tkgl-artifact }}
+          path: src/opengltk/OpenGL/Tk/tkgl/win32-arm64
+
+      - name: Build wheel
+        run: |
+          python -m pip install -U pip build
+          python -m build --wheel --outdir dist
+
+      - name: Install wheel
+        shell: bash
+        run: python -m pip install dist/*.whl pytest
+
+      - name: Tests (installed package)
+        run: python -m pytest -v
+
+      - name: Mesa OpenGL for Windows (software renderer)
+        if: runner.os == 'Windows' && inputs.gui == 'mesa'
+        shell: pwsh
+        run: |
+          $rel = Invoke-RestMethod https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest
+          $asset = $rel.assets | Where-Object { $_.name -like '*release-msvc.7z' } | Select-Object -First 1
+          Invoke-WebRequest $asset.browser_download_url -OutFile mesa.7z
+          7z x mesa.7z -omesa | Out-Null
+          $arch = if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') { 'arm64' } else { 'x64' }
+          $pydir = Split-Path (python -c "import sys; print(sys.executable)")
+          if (Test-Path "mesa/$arch") {
+            Copy-Item mesa/$arch/*.dll $pydir
+            "MESA_OK=1" | Out-File -Append $env:GITHUB_ENV
+          } else { "no Mesa build for $arch" }
+
+      - name: GUI smoke test (Xvfb)
+        if: inputs.gui == 'xvfb'
+        run: xvfb-run -a -s "-screen 0 1600x1000x24 +extension GLX" python -W ignore tests/gui_smoke.py gui-out
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+
+      - name: GUI smoke test (native display)
+        if: inputs.gui == 'native'
+        run: python -W ignore tests/gui_smoke.py gui-out
+
+      - name: GUI smoke test (Windows, Mesa llvmpipe)
+        if: inputs.gui == 'mesa' && env.MESA_OK == '1'
+        run: python -W ignore tests/gui_smoke.py gui-out
+        env:
+          GALLIUM_DRIVER: llvmpipe
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mgltools-${{ inputs.name }}
+          path: |
+            dist/*.whl
+            gui-out
