@@ -139,11 +139,18 @@ if mols:
               _np.unique(h, return_counts=True))
     step("cpk highlight info", hl_info)
     step("CPK screenshot", lambda: shot("3_cpk"))
+    # hide the atoms first, otherwise the CPK spheres cover the ribbon
+    step("undisplay CPK", lambda: mv.displayCPK("hsg1", negate=True, log=0))
+    step("undisplay sticks", lambda: mv.displaySticksAndBalls("hsg1", negate=True, log=0))
+    step("undisplay lines", lambda: mv.displayLines("hsg1", negate=True, log=0))
     step("ribbon (secondary structure)", lambda: mv.ribbon("hsg1", log=0))
+    step("color ribbon by secondary structure",
+         lambda: mv.colorBySecondaryStructure("hsg1", ['secondarystructure'], log=0))
     step("ribbon screenshot", lambda: shot("4_ribbon"))
+    step("undisplay ribbon", lambda: mv.displayExtrudedSS("hsg1", negate=True, log=0))
+    step("display lines", lambda: mv.displayLines("hsg1", log=0))
     step("select residues ARG8", lambda: mv.select("hsg1::ARG8", log=0))
     step("color by atom type", lambda: mv.colorByAtomType("hsg1", ['lines'], log=0))
-    step("undisplay CPK", lambda: mv.displayCPK("hsg1", negate=True, log=0))
     step("computeMSMS (molecular surface)",
          lambda: mv.computeMSMS("hsg1", surfName="MSMS-MOL", pRadius=1.5,
                                 density=3.0, log=0))
