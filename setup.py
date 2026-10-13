@@ -229,7 +229,12 @@ def make_ext(spec):
         # on macOS but still supported (legacy 2.1 profile)
         inc.insert(0, n("common", "macos"))
         macros.append(("GL_SILENCE_DEPRECATION", None))
-        cflags += ["-Wno-deprecated-declarations"]
+        cflags += ["-Wno-deprecated-declarations",
+                   # 1990s/2000s C: Apple clang makes these errors, gcc warns
+                   "-Wno-error=implicit-function-declaration",
+                   "-Wno-error=implicit-int",
+                   "-Wno-error=incompatible-function-pointer-types",
+                   "-Wno-error=int-conversion"]
     # Python 2 C-API aliases (and Windows GL macros) for every translation unit
     force = ["/FImgl_py2compat.h"] if WIN else ["-include", "mgl_py2compat.h"]
     ext = Extension(spec["name"], sources=[], include_dirs=inc,
