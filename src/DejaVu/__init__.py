@@ -81,7 +81,11 @@ def loadTogl(master):
     """Load the Tk OpenGL widget (TkGL, Togl-compatible) into master's
     Tcl interpreter and return its version."""
     from opengltk.OpenGL.Tk import loadTkgl
-    return loadTkgl(master)
+    version = loadTkgl(master)
+    # X11: keep stray GLX errors (e.g. swaps on unmapped windows) non-fatal
+    from mglcompat import x11errors
+    x11errors.install()
+    return version
 
 dejavurcText = """########################################################################
 #

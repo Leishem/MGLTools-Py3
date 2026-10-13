@@ -99,6 +99,15 @@ if mols:
     step("ribbon screenshot", lambda: shot("4_ribbon"))
     step("select residues ARG8", lambda: mv.select("hsg1::ARG8", log=0))
     step("color by atom type", lambda: mv.colorByAtomType("hsg1", ['lines'], log=0))
+    step("undisplay CPK", lambda: mv.displayCPK("hsg1", negate=True, log=0))
+    step("computeMSMS (molecular surface)",
+         lambda: mv.computeMSMS("hsg1", surfName="MSMS-MOL", pRadius=1.5,
+                                density=3.0, log=0))
+    step("surface area info", lambda: print(
+        "      ", mv.GUI.VIEWER and
+        mv.Mols[0].geomContainer.msms["MSMS-MOL"][0].info()))
+    step("color surface by atom type",
+         lambda: mv.colorByAtomType("hsg1", ['MSMS-MOL'], log=0))
 
 step("full window screenshot", lambda: os.system(
     f"import -window root {OUT / '0_window.png'} 2>/dev/null"))

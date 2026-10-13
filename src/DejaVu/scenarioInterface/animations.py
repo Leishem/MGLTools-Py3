@@ -973,7 +973,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                 if nvert1 != nvert2:
                     mod[k] = ('vertices', vv1, vv2) 
                 else:
-                    #if numpy.alltrue(numpy.equal(vv1, vv2)) != True:
+                    #if numpy.all(numpy.equal(vv1, vv2)) != True:
                     if not comparefloats(vv1, vv2): 
                         mod[k] = ('vertices', vv1, vv2)
             elif k == "vnormals":
@@ -1034,7 +1034,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
                     mod[k] = (tuple, s1[k], s2[k])
             elif k == "radii":
                 if type(s1[k])==numpy.ndarray:
-                    #if len(s1[k]) != len(s2[k]) or numpy.alltrue(numpy.equal(s1[k], s2[k])) != True:
+                    #if len(s1[k]) != len(s2[k]) or numpy.all(numpy.equal(s1[k], s2[k])) != True:
                     if len(s1[k]) != len(s2[k]) or comparefloats(s1[k], s2[k]) != True:
                         mod[k] = ("radii", s1[k], s2[k])
                 else:
@@ -2068,7 +2068,7 @@ class OrientationMAA(RedrawMAA):
 ##             elif type(val) == numpy.ndarray:
 ##                 maxlen = max(maxlen, len(val.flat))
 ##         numpy.set_printoptions(threshold = maxlen, precision=4)
-        numpy.set_string_function(numarr2str)
+        numpy.set_printoptions(override_repr=numarr2str) if hasattr(numpy, "set_string_function") is False else numpy.set_string_function(numarr2str)
         #print "maxlen", maxlen
         lines += tabs + """rendering=%s\n""" % (self.rendering)
         lines += tabs + """orient=%s\n""" % self.orient2string()
@@ -2081,7 +2081,7 @@ class OrientationMAA(RedrawMAA):
         lines += newtabs + """print sys.exc_info()[1]\n"""
         #numpy.set_printoptions(threshold=oldopts["threshold"], precision=oldopts["precision"])
         from numpy import array_repr
-        numpy.set_string_function(array_repr)
+        numpy.set_printoptions(override_repr=None) if hasattr(numpy, "set_string_function") is False else numpy.set_string_function(array_repr)
         
         return lines
 

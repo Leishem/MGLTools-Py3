@@ -423,7 +423,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                     else:
                         for i in range(lencol):
                             if colxf[i] is not None:
-                                if bool(numpy.alltrue(colxf[i] == colyf[i])) is False:
+                                if bool(numpy.all(colxf[i] == colyf[i])) is False:
                                     idem = False
                                     break
         if idem is True:
@@ -440,7 +440,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                     else:
                         for i in range(lencol):
                             if colxb[i] is not None:
-                                if bool(numpy.alltrue(colxb[i] == colyb[i])) is False:
+                                if bool(numpy.all(colxb[i] == colyb[i])) is False:
                                     idem = False
                                     break
         

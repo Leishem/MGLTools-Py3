@@ -767,11 +767,11 @@ every time the widget value is set/modified"""
     def setMin(self, min):
         if min is not None:
             assert type(min) in [int, float,
-                                 numpy.int, numpy.int8, numpy.int16,
+                                 int, numpy.int8, numpy.int16,
                                  numpy.int32, numpy.int64,
                                  numpy.uint, numpy.uint8, numpy.uint16,
                                  numpy.uint32, numpy.uint64,
-                                 numpy.float, numpy.float32, numpy.float64],\
+                                 float, numpy.float32, numpy.float64],\
                  "Illegal type for minimum. Expected type %s or %s, got %s"%(
                      type(0), type(0.0), type(min) )
             
@@ -809,11 +809,11 @@ every time the widget value is set/modified"""
     def setMax(self, max):
         if max is not None:
             assert type(max) in [int, float,
-                                 numpy.int, numpy.int8, numpy.int16,
+                                 int, numpy.int8, numpy.int16,
                                  numpy.int32, numpy.int64,
                                  numpy.uint, numpy.uint8, numpy.uint16,
                                  numpy.uint32, numpy.uint64,
-                                 numpy.float, numpy.float32, numpy.float64],\
+                                 float, numpy.float32, numpy.float64],\
                  "Illegal type for maximum. Expected type %s or %s, got %s"%(
                      type(0), type(0.0), type(max) )
              
@@ -849,7 +849,7 @@ every time the widget value is set/modified"""
 
     def setPrecision(self, val):
         assert type(val) in [int, float,
-                                 numpy.int, numpy.float32],\
+                                 int, numpy.float32],\
                "Illegal type for precision. Expected type %s or %s, got %s"%(
                      type(0), type(0.0), type(val) )
         val = int(val)

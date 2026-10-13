@@ -600,7 +600,7 @@ class AnimationNotebook:
                 #(see DejaVuscenarioInterface.animations.py/SnapshotMAAGroup.getSourceCode() )
                 #lines += tab+ """maas.append(maa%d)\n""" % i
                 imstr = maa.ims.tobytes()
-                imarr = numpy.fromstring( imstr, 'B').tolist()
+                imarr = numpy.frombuffer( imstr if isinstance(imstr, bytes) else imstr.encode('latin-1'), 'B').tolist()
                 #lines +=  tab+ """imstr%d = '%s'\n""" % (i, imstr)
                 lines +=  tab+ """imstr%d = %s\n""" % (i, imarr)
                 #lines +=  tab+ """maa%d.ims = Image.frombytes('RGB', (50, 50), imstr%d)\n"""% (i,i)
@@ -716,7 +716,7 @@ class AnimationNotebook:
                 lines += maasrc + """\n"""
                 lines += tab+ """maas.append(snapshot%d)\n""" % i
                 imstr = maagroup.ims.tobytes()
-                imarr = numpy.fromstring( imstr, 'B').tolist()
+                imarr = numpy.frombuffer( imstr if isinstance(imstr, bytes) else imstr.encode('latin-1'), 'B').tolist()
                 lines +=  tab+ """imstr%d = %s\n""" % (i, imarr)
                 lines +=  tab+ """snapshot%d.ims = Image.frombytes('RGB', (50, 50), array(imstr%d, 'B').tobytes() )\n"""% (i,i)
                 f.writelines(lines)

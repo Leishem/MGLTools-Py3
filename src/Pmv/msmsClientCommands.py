@@ -151,8 +151,8 @@ class MSMSClient:
         #self.vf = vf
         self.faces = faces
         self.indices = indices
-        self.vfloat =  numpy.zeros((len(self.indices), 6), dtype=numpy.float)
-        self.vint =  numpy.zeros((len(self.indices), 3), dtype=numpy.int)
+        self.vfloat =  numpy.zeros((len(self.indices), 6), dtype=float)
+        self.vint =  numpy.zeros((len(self.indices), 3), dtype=int)
 
         for index, atomIndex in enumerate(self.indices):
             self.vfloat[index] = [vf[index][3], vf[index][4], vf[index][5],

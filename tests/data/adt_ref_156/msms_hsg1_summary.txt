@@ -1,0 +1,7 @@
+natoms 1641
+nvert 24799
+ntri 49598
+a_ses_area 9317.813
+a_sas_area 10940.258
+n_ses_area 9420.211
+n_ses_volume 30467.543

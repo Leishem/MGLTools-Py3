@@ -2437,7 +2437,7 @@ class myTF(TableManager):
         ramp = Numeric.array(colorMap.ramp)
         self.cmd.alpha_cb([0,(240.*ramp[:,3]).astype('string')])
         self.cmd.vf.GUI.VIEWER.ReallyRedraw()
-        self.cmd.color_cb([0,ramp[:,:3].astype(numpy.float)])
+        self.cmd.color_cb([0,ramp[:,:3].astype(float)])
         
     
     def setMin(self, text):
