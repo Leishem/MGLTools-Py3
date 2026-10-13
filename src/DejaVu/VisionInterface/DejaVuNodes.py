@@ -1613,13 +1613,13 @@ try:
             
         if operator == 'FirstDerivative':
             outdata = self.ivi.firstDerivative()
-            out = Image.fromstring('RGB', (self.ivi.width, self.ivi.height),
+            out = Image.frombytes('RGB', (self.ivi.width, self.ivi.height),
                                    outdata)
             self.outputPorts[1].setDataType('image', tagModified=False)
 
         elif operator == 'SecondDerivative':
             outata = self.ivi.secondDerivative()
-            out = Image.fromstring('RGB', (self.ivi.width, self.ivi.height),
+            out = Image.frombytes('RGB', (self.ivi.width, self.ivi.height),
                                     outdata)
             self.outputPorts[1].setDataType('image', tagModified=False)
 
@@ -1771,7 +1771,7 @@ d2off, firstDerivative, secondDerivative, smooth):
 ##             derivcompb = self.ivi.smooth()
 ##             print time()-t1
 
-        outline = Image.fromstring('RGB', (width,height), derivcompb)
+        outline = Image.frombytes('RGB', (width,height), derivcompb)
         if os.name != 'nt': #sys.platform!='win32':
             outline = outline.transpose(Image.FLIP_TOP_BOTTOM)
 
@@ -1788,7 +1788,7 @@ d2off, firstDerivative, secondDerivative, smooth):
 ##         mask = dstrong
 ##         mask.shape = ( width, height, -1)
 ##         maskr = Numeric.array(mask[:,:,0]).astype('B')
-##         maskim = Image.fromstring('L', (width,height), maskr)
+##         maskim = Image.frombytes('L', (width,height), maskr)
 ##         maskim = maskim.transpose(Image.FLIP_TOP_BOTTOM)
 ##         image.paste(outline, None, maskim)
 

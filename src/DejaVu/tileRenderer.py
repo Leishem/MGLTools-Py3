@@ -353,7 +353,7 @@ class TRctx:
 ##          gllib.glReadPixels(srcX, srcY, srcWidth, srcHeight,
 ##                             self.ImageFormat, self.ImageType, self.oneTileRenderBuffer)
 ##          import Image, sys
-##          im = Image.fromstring('RGB', (srcWidth, srcHeight),
+##          im = Image.frombytes('RGB', (srcWidth, srcHeight),
 ##                                self.oneTileRenderBuffer) 
 ##          if sys.platform!='win32':
 ##             im = im.transpose(Image.FLIP_TOP_BOTTOM)

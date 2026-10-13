@@ -116,7 +116,7 @@ class toPIL(NetworkNode):
         Aim = Numeric.reshape(Aim, (1, w*h*c))
         Aim = Aim.astype(Numeric.UnsignedInt8)
 
-        result = Image.fromstring('RGB', (image.width,image.height), Aim.tobytes())
+        result = Image.frombytes('RGB', (image.width,image.height), Aim.tobytes())
         
         self.outputData(outImage=result)\n"""
 
@@ -162,7 +162,7 @@ class TkDisplay(NetworkNode):
         Aim = Numeric.reshape(Aim, (1, w*h*c))
         Aim = Aim.astype(Numeric.UnsignedInt8)
 
-        PILimage = Image.fromstring('RGB', (w,h), Aim.tobytes())
+        PILimage = Image.frombytes('RGB', (w,h), Aim.tobytes())
 
         # This code from PILNodes.py written by Michel Sanner
         if PILimage:

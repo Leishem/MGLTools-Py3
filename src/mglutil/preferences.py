@@ -43,7 +43,7 @@ class UserPreference(UserDict):
         self.settings = {}
         if os.path.exists(self.resourceFile):
             try:
-                pkl_file = open(self.resourceFile)
+                pkl_file = open(self.resourceFile, 'rb')
                 self.settings = pickle.load(pkl_file)
                 pkl_file.close()
             except Exception as inst:
@@ -131,26 +131,26 @@ class UserPreference(UserDict):
             return
         settings = {}        
         if os.path.exists(self.resourceFile):
-            pkl_file = open(self.resourceFile)
+            pkl_file = open(self.resourceFile, 'rb')
             settings = pickle.load(pkl_file)
             pkl_file.close()
         for key, value in list(settings.items()):
             self.set(key, value)
         
     def saveAllSettings(self):
-        output = open(self.resourceFile, 'w')
+        output = open(self.resourceFile, 'wb')
         pickle.dump(self.settings, output)
         output.close()
     
     def saveSingleSetting(self, name, value):
         if os.path.exists(self.resourceFile):
-            pkl_file = open(self.resourceFile)
+            pkl_file = open(self.resourceFile, 'rb')
             settings = pickle.load(pkl_file)
             pkl_file.close()
         else:
             settings = {}
         settings[name] = value
-        output = open(self.resourceFile, 'w')
+        output = open(self.resourceFile, 'wb')
         pickle.dump(settings, output)
         output.close()
         

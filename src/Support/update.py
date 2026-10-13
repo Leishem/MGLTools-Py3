@@ -169,7 +169,7 @@ class Update:
             self.cancel()
             return            
         
-        regDict = pickle.load(open(self.rc + os.sep + ".registration"))
+        regDict = pickle.load(open(self.rc + os.sep + ".registration", 'rb'))
         UserID = regDict['UserID']
 
         update_url = self.baseURL

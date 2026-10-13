@@ -75,7 +75,7 @@ class PixelMap2D:
         #'RGB' requires a tuple (r,g,b) where r,g,b are ints in range 0-255
         #'RGBA' requires a tuple (r,g,b,a) where r,g,b,a are ints in range 0-255
         values = self.cmap.Map(self.results.ravel())
-        self.image = Image.fromstring('RGBA', (self.x_number,self.y_number), 
+        self.image = Image.frombytes('RGBA', (self.x_number,self.y_number), 
                                 (values*255).astype('B').tobytes())
         self.image.show()
 
@@ -88,9 +88,9 @@ class PixelMap2D:
         self.vals.append(self.maxi)
         values = self.cmap.Map(vals)
         if horizontal:
-            self.legend = Image.fromstring('RGBA', (steps, 1), (values*255).astype('B').tobytes())
+            self.legend = Image.frombytes('RGBA', (steps, 1), (values*255).astype('B').tobytes())
         else:
-            self.legend = Image.fromstring('RGBA', (1,steps), (values*255).astype('B').tobytes())
+            self.legend = Image.frombytes('RGBA', (1,steps), (values*255).astype('B').tobytes())
         self.legend.show()
 
 

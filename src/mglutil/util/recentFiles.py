@@ -19,7 +19,7 @@ class RecentFiles:
             filePath += os.sep + "mglutil" + os.sep + "recent.pkl"
         if os.path.exists(filePath):
             try:
-                self.categories = pickle.load(open(filePath))
+                self.categories = pickle.load(open(filePath, 'rb'))
             except Exception as inst:
                 #print inst
                 #print "Couldn't Load Recent Files."
@@ -73,11 +73,11 @@ class RecentFiles:
         self.dumpCategories()
         
     def dumpCategories(self, filePath=None):
-        """Calls pickle.dump(self.categories, open(filePath,'w'))"""
+        """Calls pickle.dump(self.categories, open(filePath,'wb'))"""
         if not filePath:
             filePath = self.resourceFilePath
         try:
-            pickle.dump(self.categories, open(filePath,'w'))
+            pickle.dump(self.categories, open(filePath,'wb'))
         except Exception as inst:
             print("Failed to save recent files")
             print(inst)

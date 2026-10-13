@@ -72,5 +72,27 @@ def install():
 
     tkinter.Variable.__init__ = var_init
 
+    # Python 2 named unnamed widgets repr(id(widget)) (".1234.5678"); Python 3
+    # uses ".!toplevel.!label". MGLTools passes widgets where Tk expects canvas
+    # tags, and Tk 8.6 parses '!' in a tag as the NOT operator. Use numeric
+    # names again, from a counter: id() values get reused once a Python widget
+    # object dies while its Tk window lives on (DejaVu's throwaway tkgl probes),
+    # which would hand a new widget the path of an existing window.
+    import itertools
+    _ids = itertools.count(1000000)
+    _setup = tkinter.BaseWidget._setup
+
+    def setup(self, master, cnf):
+        if 'name' not in cnf:
+            cnf = dict(cnf)
+            cnf['name'] = str(next(_ids))
+        return _setup(self, master, cnf)
+
+    tkinter.BaseWidget._setup = setup
+
+    # tk_menuBar was a no-op kept for compatibility in Python 2's tkinter.
+    if not hasattr(tkinter.Misc, 'tk_menuBar'):
+        tkinter.Misc.tk_menuBar = lambda self, *args: None
+
 
 install()

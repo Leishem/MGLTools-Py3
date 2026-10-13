@@ -38,8 +38,10 @@ def step(name, fn):
 
 def make_viewer():
     from tkinter import Tk
-    root = Tk()
+    root = Tk(sync=bool(os.environ.get("MGL_X11_SYNC")))
     root.withdraw()
+    from mglcompat import x11errors
+    x11errors.install()
     from Pmv.moleculeViewer import MoleculeViewer
     mv = MoleculeViewer(logMode='no', customizer=None, master=root,
                         title="AutoDockTools", withShell=0, verbose=False, gui=True)
@@ -54,6 +56,17 @@ for mod in ("autotors41Commands", "autogpf41Commands", "autodpf41Commands",
             "autostart41Commands", "autoanalyze41Commands"):
     step(f"load ADT {mod}",
          lambda m=mod: mv.browseCommands(m, commands=None, package='AutoDockTools'))
+
+def show_window():
+    # what runADT does once everything is built
+    from AutoDockTools import setADTmode
+    setADTmode("AD4.2", mv)
+    mv.GUI.naturalSize()
+    mv.GUI.ROOT.deiconify()
+    mv.GUI.ROOT.update()
+
+
+step("show main window (setADTmode, deiconify)", show_window)
 
 info = step("GL context info", lambda: {
     "vendor": __import__("opengltk.OpenGL.GL", fromlist=["x"]).glGetString(0x1F00),

@@ -78,7 +78,7 @@ class OpalCache:
 
     def getCache(self, url, dir):
         file = os.path.join(dir, self.getFileName(url))
-        params = pickle.load(open(file))
+        params = pickle.load(open(file, 'rb'))
         
         return params
 

@@ -19,9 +19,11 @@ if sys.platform.startswith("linux"):
 
 import OpenGL  # noqa: E402
 
-# opengltk raised on GL errors after every call; keep that by default but
-# allow turning it off for speed (MGL_GL_ERROR_CHECKING=0).
-OpenGL.ERROR_CHECKING = os.environ.get("MGL_GL_ERROR_CHECKING", "1") != "0"
+# Per-call glGetError checking is opt-in (MGL_GL_ERROR_CHECKING=1). DejaVu
+# issues GL calls on widgets before Tk maps them; old drivers ignored those,
+# Mesa/modern drivers flag GL_INVALID_FRAMEBUFFER_OPERATION, and PyOpenGL
+# would turn each into an exception. Off is also much faster.
+OpenGL.ERROR_CHECKING = os.environ.get("MGL_GL_ERROR_CHECKING", "0") == "1"
 OpenGL.ERROR_ON_COPY = False
 
 CRITICAL_DEPENDENCIES = ['numpy', 'OpenGL']

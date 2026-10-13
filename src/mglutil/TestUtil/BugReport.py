@@ -44,7 +44,7 @@ class BugReportCommand:
         if os.path.exists(registration):
             import pickle
             try:
-                desccont += "\n UserID: " + pickle.load(open(registration))['UserID'].strip()
+                desccont += "\n UserID: " + pickle.load(open(registration, 'rb'))['UserID'].strip()
             except Exception as inst:
                 warnings.warn(inst)
                 desccont += "\n Unregistered User"

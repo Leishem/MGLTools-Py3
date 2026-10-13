@@ -97,11 +97,11 @@ Output: Image"""
     
     from PIL import Image
     if lenarray == 1:
-        im = Image.fromstring('L', (width, height), nar.tobytes()) 
+        im = Image.frombytes('L', (width, height), nar.tobytes()) 
     elif lenarray == 3:
-        im = Image.fromstring('RGB', (width, height), nar.tobytes()) 
+        im = Image.frombytes('RGB', (width, height), nar.tobytes()) 
     elif lenarray == 4:
-        im = Image.fromstring('RGBA', (width, height), nar.tobytes()) 
+        im = Image.frombytes('RGBA', (width, height), nar.tobytes()) 
     if im:
         self.outputData(image=im)
 """
@@ -199,7 +199,7 @@ class GetFrontBuffer(NetworkNode):
         #GL.glReadPixels( 0, 0, width, height, GL.GL_RGB, bar)
 
         bar = GL.glReadPixels( 0, 0, width, height, GL.GL_RGB, GL_GL_UBYTE)
-        im = Image.fromstring('RGB', (width,height), bar)
+        im = Image.frombytes('RGB', (width,height), bar)
         #FIXME we have to destroy bar .. but how ?
 
         # for some reason refount is 2
@@ -258,7 +258,7 @@ class GetZBuffer(NetworkNode):
         zmin = min(zval)
         zval1 = 255 * (old_div((zval-zmin), (zmax-zmin)))
         ds = zval1.astype('c').tobytes()
-        depthImage = Image.fromstring('P', (width, height), ds)
+        depthImage = Image.frombytes('P', (width, height), ds)
 
         return depthImage.transpose(Image.FLIP_TOP_BOTTOM)
 

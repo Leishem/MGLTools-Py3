@@ -2215,10 +2215,10 @@ Synopsis:
                 atm.ballRad = bRad
                 atm.ballScale = bScale
             _set = mol.geomContainer.atoms['balls']
-            if len(_set)>mol.allAtoms:
+            if len(_set)>len(mol.allAtoms):
                 _set = mol.allAtoms
                 mol.geomContainer.atoms['balls'] = _set
-            if len(mol.geomContainer.atoms['balls']) > mol.allAtoms:
+            if len(mol.geomContainer.atoms['balls']) > len(mol.allAtoms):
                 mol.geomContainer.atoms['balls'] = mol.allAtoms
 
              ## case noballs:

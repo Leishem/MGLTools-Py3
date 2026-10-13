@@ -2953,7 +2953,7 @@ Mouse over PDB Cache Directory label to see the path, or click Clear button to r
     def checkCache(self, threshold = 1024*1024):
         size = self.getCacheSize()
         maxSize = self.vf.userpref['PDB Cache Storage (MB)']['value']
-        if size > maxSize:
+        if size is not None and size > maxSize:  # py2: None > int was False
             folder = self.getPDBCachedir()
             if not folder: return
             folder_size = 0

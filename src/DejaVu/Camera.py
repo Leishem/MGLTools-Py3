@@ -1003,7 +1003,7 @@ class DynamicComboBox(Pmw.ComboBox):
 
 ##         import Image
 
-##         depthImage = Image.fromstring('L', (self.width, self.height),
+##         depthImage = Image.frombytes('L', (self.width, self.height),
 ##                                       zval1.astype('B').tobytes())
 
 
@@ -1345,7 +1345,7 @@ size camera.width*camera.height*3"""
         nar = self.GrabFrontBufferAsArray(lock, buffer)
 
         from PIL import Image
-        image = Image.fromstring('RGB', (self.width, self.height),
+        image = Image.frombytes('RGB', (self.width, self.height),
                                  nar.tobytes())
         #if sys.platform!='win32':
         image = image.transpose(Image.FLIP_TOP_BOTTOM)
@@ -1394,7 +1394,7 @@ size camera.width*camera.height*3"""
 
         from PIL import Image
 
-        depthImage = Image.fromstring('L', (self.width, self.height),
+        depthImage = Image.frombytes('L', (self.width, self.height),
                                       zval1.astype('B').tobytes())
 
         #if sys.platform!='win32':
@@ -1913,12 +1913,16 @@ This only applies when the camera is in its own top level.
         from opengltk.exception import GLerror
         try:
             tkinter.Widget.__init__(self, self.frame, 'tkgl', cnf, kw)
-            try:
-                GL.glAccum(GL.GL_LOAD, 1.0)
-                viewer.accumBuffersError = False
-            except GLerror:
+            if kw.get('accum'):
+                # only meaningful when accum buffers were requested (opt-in);
+                # with GL error checking off glAccum never raises
+                try:
+                    GL.glAccum(GL.GL_LOAD, 1.0)
+                    viewer.accumBuffersError = False
+                except GLerror:
+                    viewer.accumBuffersError = True
+            else:
                 viewer.accumBuffersError = True
-                #viewer.accumBuffersError = False
         except tkinter.TclError as e:
             print("Warning: disabling accumulation buffers", e)
             kw.pop('accum')
@@ -4837,7 +4841,7 @@ for all instances of obj
 
         if self.viewer.tileRender is False:
             zbuf = self.GrabZBuffer(lock=False, flipTopBottom=False)
-            #imageZbuf = Image.fromstring('L', (self.width, self.height), zbuf.tobytes() )
+            #imageZbuf = Image.frombytes('L', (self.width, self.height), zbuf.tobytes() )
             #imageZbuf.save("zbuf.png")
         else:
             zbuf = self.GrabZBuffer(lock=False, flipTopBottom=False,
@@ -5225,11 +5229,11 @@ void main(void)
 #                             GL.GL_STENCIL_INDEX, GL.GL_UNSIGNED_INT,
 #                             lStencil)
 #        print "lStencil", lStencil[0] # background is 254 # fill is 255
-#        lStencilImage = Image.fromstring('L', (self.width, self.height), 
+#        lStencilImage = Image.frombytes('L', (self.width, self.height), 
 #                                       lStencil.astype('uint8').tobytes() )
 #        lStencilImage.save("lStencil.png")
 #        zbuf = self.GrabZBuffer(lock=False, flipTopBottom=False)
-#        imageZbuf = Image.fromstring('L', (self.width, self.height), zbuf.tobytes() )
+#        imageZbuf = Image.frombytes('L', (self.width, self.height), zbuf.tobytes() )
 #        imageZbuf.save("lZbuff.png")
 
         # to draw only the highlight zone from the stencil buffer

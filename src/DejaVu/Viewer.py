@@ -2053,7 +2053,7 @@ An AssertionError will be raised if ...
                     GL.glPopMatrix()
                     GL.glMatrixMode(GL.GL_MODELVIEW)
 
-                    im[i] = Image.fromstring('RGB', ( self.tileRenderFinalWidth,
+                    im[i] = Image.frombytes('RGB', ( self.tileRenderFinalWidth,
                                                   self.tileRenderFinalHeight),
                                           self.tileRenderBuffer[i]) 
                     if os.name != 'nt': #sys.platform!='win32':
@@ -2205,7 +2205,8 @@ An AssertionError will be raised if ...
             #print '================= Release'
             self.redrawLock.acquire(0)
             self.redrawLock.release()
-        self.suspendRedraw = False
+            # reset even when a redraw raised, or rendering stops for good
+            self.suspendRedraw = False
         if self.autoRedraw:
             self.master.after(10, self.postNextRedrawCheck)
         return True

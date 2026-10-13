@@ -21,7 +21,7 @@ class Outline:
     def getFrontBuffer(self):
         s = GL.glReadPixels( 0, 0, self.w, self.h, GL.GL_RGB,
                              GL.GL_UNSIGNED_BYTE, 3*self.w*self.h)
-        im = Image.fromstring('RGB', (self.w,self.h), s) 
+        im = Image.frombytes('RGB', (self.w,self.h), s) 
         return im
 
         
@@ -42,7 +42,7 @@ class Outline:
         zmin = min(zval)
         zval1 = 255 * (old_div((zval-zmin), (zmax-zmin)))
         ds = zval1.astype('c').tobytes()
-        self.depthImage = Image.fromstring('P', (self.w,self.h), ds)
+        self.depthImage = Image.frombytes('P', (self.w,self.h), ds)
 
         # detect edges in depth image
         self.depthImage.draft("RGB", self.depthImage.size)
@@ -106,13 +106,13 @@ class Outline:
 #        self.deriv = Numeric.choose( Numeric.greater(self.fstD,self.sndD),
 #                                     (self.fstD,self.sndD) )
 
-        self.fstDim = Image.fromstring('P', (self.w,self.h),
+        self.fstDim = Image.frombytes('P', (self.w,self.h),
                                        self.fstD.tobytes())
 
-        self.sndDim = Image.fromstring('P', (self.w,self.h),
+        self.sndDim = Image.frombytes('P', (self.w,self.h),
                                        self.sndD.tobytes())
         
-        self.derivim = Image.fromstring('P', (self.w,self.h),
+        self.derivim = Image.frombytes('P', (self.w,self.h),
                                         self.deriv.tobytes() )
 
     def fill(self, cutOff):

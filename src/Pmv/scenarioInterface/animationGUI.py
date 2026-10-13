@@ -603,8 +603,8 @@ class AnimationNotebook:
                 imarr = numpy.fromstring( imstr, 'B').tolist()
                 #lines +=  tab+ """imstr%d = '%s'\n""" % (i, imstr)
                 lines +=  tab+ """imstr%d = %s\n""" % (i, imarr)
-                #lines +=  tab+ """maa%d.ims = Image.fromstring('RGB', (50, 50), imstr%d)\n"""% (i,i)
-                lines +=  tab+ """maa%d.ims = Image.fromstring('RGB', (50, 50), array(imstr%d, 'B').tobytes() )\n"""% (i,i)
+                #lines +=  tab+ """maa%d.ims = Image.frombytes('RGB', (50, 50), imstr%d)\n"""% (i,i)
+                lines +=  tab+ """maa%d.ims = Image.frombytes('RGB', (50, 50), array(imstr%d, 'B').tobytes() )\n"""% (i,i)
                 lines +=  tab+ """AniMol.loadSnapshot(maa%d)\n""" % (i,)
                 lines += tab+ """AniMol.loadedMaas[%d] = maa%d\n""" % (i,i)
                 for ii , _maa in enumerate(self.seqAnim.maas):
@@ -718,7 +718,7 @@ class AnimationNotebook:
                 imstr = maagroup.ims.tobytes()
                 imarr = numpy.fromstring( imstr, 'B').tolist()
                 lines +=  tab+ """imstr%d = %s\n""" % (i, imarr)
-                lines +=  tab+ """snapshot%d.ims = Image.fromstring('RGB', (50, 50), array(imstr%d, 'B').tobytes() )\n"""% (i,i)
+                lines +=  tab+ """snapshot%d.ims = Image.frombytes('RGB', (50, 50), array(imstr%d, 'B').tobytes() )\n"""% (i,i)
                 f.writelines(lines)
 
         #f.writelines(lines)

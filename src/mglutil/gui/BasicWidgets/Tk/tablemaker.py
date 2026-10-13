@@ -947,7 +947,7 @@ class TableManager:
         if not file:
             file = self.ask_save_file([("LUT Files","*.lut")], 'Save LUT')
         if file:
-            of = open(file, 'w')
+            of = open(file, 'wb')
             pickle.dump(self.intervals_list, of)
             for lut in self.lut_list:
                 data = [lut.points, lut.shapes, lut.color_arr]
@@ -1193,7 +1193,7 @@ class TableManager:
         self.load_file(file)
 
     def load_file_old(self, file):
-        of = open(file, 'r')
+        of = open(file, 'rb')
         try:
             intervals = pickle.load(of)
         except:

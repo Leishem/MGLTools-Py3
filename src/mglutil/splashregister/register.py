@@ -350,7 +350,7 @@ class Register_User:
                     regfile = tmpRegFile
                     break
         
-        regDict = pickle.load(open(regfile))
+        regDict = pickle.load(open(regfile, 'rb'))
         regDict['Version'] = Version
         form_dict = {}
         form_dict['UserID'] = regDict['UserID']
