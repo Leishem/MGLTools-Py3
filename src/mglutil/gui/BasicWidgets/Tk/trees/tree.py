@@ -12,7 +12,9 @@
 
 The speed comes from only drawing visibles parts of the tree.
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 import os, sys, types, Pmw
 from PIL import Image, ImageTk
 from weakref import ref
@@ -234,7 +236,7 @@ label or icon.
                                                     directory=directory)
         self.expandedIcon = self.iconsManager.get("1downarrow.png",
                                                   directory=directory)
-        self.iconHalfWidth = self.collapsedIcon.width()/2 
+        self.iconHalfWidth = old_div(self.collapsedIcon.width(),2) 
         self.selectedNodes = []
         self.selectionHistory = [] # used to undo selection operations
         self.nodeHeight = nodeHeight
@@ -336,7 +338,7 @@ label or icon.
                 if v:
                     # compute percentage of motion
                     total = self.nbLines+(self.headerHeight/float(self.nodeHeight))
-                    percent = self.firstVisibleNodeLineNum/total
+                    percent = old_div(self.firstVisibleNodeLineNum,total)
                     ScrolledCanvas.yview_moveto(self, percent)
                     self.redraw()
 
@@ -388,7 +390,7 @@ label or icon.
 
         if args[1] == "pages":
             # FIXME we scroll the whole thing one page
-            linesPerPage = int(args[0]) * (height / self.nodeHeight)
+            linesPerPage = int(args[0]) * (old_div(height, self.nodeHeight))
             self.yview_scroll(linesPerPage, "units")
         else: # it is a unit scroll of args[0] units
             v = self.scrollView(int(args[0]))

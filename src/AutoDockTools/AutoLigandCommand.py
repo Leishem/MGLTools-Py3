@@ -1,7 +1,9 @@
+from __future__ import division
 # Authors: Sargis Dallakyan and Rodney Harris 
 # $Header: /opt/cvs/python/packages/share1.5/AutoDockTools/AutoLigandCommand.py,v 1.24.4.2 2011/01/06 21:18:25 rhuey Exp $
 #
 # $Id: AutoLigandCommand.py,v 1.24.4.2 2011/01/06 21:18:25 rhuey Exp $
+from mglcompat.pydiv import old_div
 from ViewerFramework.VFCommand import CommandGUI
 from Pmv.mvCommand import MVCommand, MVAtomICOM
 import Pmw, os, glob, sys, tkinter.messagebox, tkinter, subprocess, tkinter.filedialog
@@ -588,9 +590,9 @@ Harris R, Olson AJ, Goodsell DS.  Proteins. (2008) 70 1506..
                 centerY = float(tmp[2])
                 centerZ = float(tmp[3])
         #this variables are the same used in AutoLigand.py
-        self.xcent = int(dimX/2)
-        self.ycent = int(dimY/2)
-        self.zcent = int(dimZ/2)        
+        self.xcent = int(old_div(dimX,2))
+        self.ycent = int(old_div(dimY,2))
+        self.zcent = int(old_div(dimZ,2))        
         self.centerx = centerX
         self.centery = centerY
         self.centerz = centerZ

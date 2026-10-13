@@ -21,6 +21,8 @@ table widget for navigating between grids.
 
 See http://mgltools.scripps.edu/documentation/tutorial/volume-rendering for more info. 
 """
+from __future__ import division
+from mglcompat.pydiv import old_div
 import sys
 import re, types, os, math, pickle
 import tkinter, Pmw, tkinter.filedialog, tkinter.messagebox
@@ -708,7 +710,7 @@ class Grid3DCommands(Command):
                     self.vf.Grid3DIsocontour.doit(grid, name=tag, 
                                                  isovalue=grid.isoLastX[tag], 
                                                  invertNormals=invertNormals, 
-                                          material=(r/255., g/255., b/255, 0.5))    
+                                          material=(r/255., g/255., old_div(b,255), 0.5))    
             if '_X_Slice' in gridSettings:
                 grid._X_Slice  = gridSettings['_X_Slice']
                 grid._X_Vis  = gridSettings['_X_Vis']
@@ -1205,7 +1207,7 @@ class IGraph(tkinter.Frame):
             sig.getFy(y)
             max_y = max(y)
             min_y = min(y)
-            a_y = (self.offset_y1 - self.height + self.offset_y2)/(max_y - min_y)
+            a_y = old_div((self.offset_y1 - self.height + self.offset_y2),(max_y - min_y))
             b_y = self.height - self.offset_y2 - a_y*min_y
             coords = []
             for i in range(len(x)):
@@ -1298,9 +1300,9 @@ class IGraph(tkinter.Frame):
         self.plot_signature()
         
     def onMouseOver(self, event):
-        x = (event.x - self.b_x)/self.a_x
+        x = old_div((event.x - self.b_x),self.a_x)
         x = (self.labelsBarFormat)%x
-        y = (event.y - self.b_y)/self.a_y
+        y = old_div((event.y - self.b_y),self.a_y)
         y = (self.labelsBarFormat)%y
         self.upperLabel.configure(text = "( " + x + " , " + y + " )")
         
@@ -1332,7 +1334,7 @@ class IGraph(tkinter.Frame):
         self.canvas.create_rectangle(x - 1, self.offset_y1, x + 1, 
                                      self.height - self.offset_y2 + 2, 
                                      tag=tag, fill='red', activefill='gray68')
-        val = (x - self.b_x)/self.a_x
+        val = old_div((x - self.b_x),self.a_x)
         lv = (self.labelsBarFormat)%val
         self.valueLabel[tag] = self.canvas.create_text(x,
                               self.height - self.offset_y2+15, text=lv, tag=tag)
@@ -1346,7 +1348,7 @@ class IGraph(tkinter.Frame):
         if doit:
             self.cmd.doit(self.cmd.grid, name=tag, isovalue=val, 
                           invertNormals=invertNormals, 
-                          material=(r/255., g/255., b/255, alpha))
+                          material=(r/255., g/255., old_div(b,255), alpha))
         self.canvas.itemconfig(tag, fill=color)    
         
     def addBar(self, event):
@@ -1434,7 +1436,7 @@ class IGraph(tkinter.Frame):
             self.onMouseOver(event)
             return
 
-        val = (x - self.b_x)/self.a_x
+        val = old_div((x - self.b_x),self.a_x)
         invertNormals = False
         if val<0:
             invertNormals = True        
@@ -1460,7 +1462,7 @@ class IGraph(tkinter.Frame):
             x = self.width       
         tag = self.last_tag
         delta_x = x - self.a_x*self.cmd.grid.isoLastX[tag] - self.b_x
-        val = (x - self.b_x)/self.a_x      
+        val = old_div((x - self.b_x),self.a_x)      
         invertNormals = False
         if val<0:
             invertNormals = True        
@@ -2172,8 +2174,8 @@ class myLUT(LUT):
         #c.create_text(self.left-3, self.top-7, text=str(ymaxval), anchor=tkinter.W,
         #              font=self.font, tags = 'ytext')
         # scale x and y axes 
-        self.sclx = (self.right-self.left)/(xmaxval-xminval)
-        self.scly = (self.bott-self.top)/ymaxval
+        self.sclx = old_div((self.right-self.left),(xmaxval-xminval))
+        self.scly = old_div((self.bott-self.top),ymaxval)
         self.delta = self.sclx+1e-6
         ##          c.create_line(self.left,self.bott,self.right,
         ##                        self.bott, width = 2, fill='black', tags=('line','line0'))
@@ -2243,14 +2245,14 @@ class myLUT(LUT):
             print('Error: min and max for the X axis are equal ', self.max_x)
             self.a_x = 10000000000000000000000000000000000000000
         else:
-            self.a_x = (self.right - self.left -1 )/(self.max_x - self.min_x)
+            self.a_x = old_div((self.right - self.left -1 ),(self.max_x - self.min_x))
         self.b_x = -self.a_x*self.min_x + self.left + 1
         bottom = self.bott 
         if self.max_y == self.min_y:
             print('Error: min and max for the Y axis are equal ', self.max_y)
             self.a_y = 10000000000000000000000000000000000000000
         else:
-            self.a_y = (-bottom + self.top)/(self.max_y - self.min_y)
+            self.a_y = old_div((-bottom + self.top),(self.max_y - self.min_y))
         self.b_y = bottom - self.a_y*self.min_y
 
 from DejaVu.colorTool import RGBARamp        
@@ -2856,11 +2858,11 @@ class myTF(TableManager):
             self.canvas_list.append(lut.canvas)
             if d != 1 :
                 lut.calculate_points(values[i],
-                                     [x/d for x in alphas[i]])
+                                     [old_div(x,d) for x in alphas[i]])
             else:
                 lut.calculate_points(values[i], alphas[i])
             lut.shapes = shapes[i]
-            colors_size = (len(colors[i])/3, 3)
+            colors_size = (old_div(len(colors[i]),3), 3)
             #print "colors_size: ", len(colors[i]), colors_size
             lut.color_arr = Numeric.reshape(Numeric.array(colors[i], 'f'),
                                             colors_size)

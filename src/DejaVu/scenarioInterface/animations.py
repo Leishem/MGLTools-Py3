@@ -2,7 +2,9 @@
 This module provide objects building DejaVu animation in the form of
 MultipleActorsActions objects
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 import math, numpy, copy
 
 from Scenario2.multipleActorsActions import MultipleActorsActions, MAAGroup
@@ -1258,7 +1260,7 @@ class RenderingTransitionMAA(MultipleActorsActions):
         vt = Numeric.dot(verts1, numpy.transpose(mat))[:, :3]
         triv = Numeric.take(vt, faces.astype('i'))
         nn = faces.shape[1] * 1.
-        trig = Numeric.sum(triv,1)/nn
+        trig = old_div(Numeric.sum(triv,1),nn)
         trigz = trig[:,2]  #triangle's center of gravity z value
         
         ind = Numeric.argsort(trigz) # sorted indices
@@ -2160,7 +2162,7 @@ class SnapshotMAAGroup(MAAGroup):
         orient = self.orient = self.orientMaa.getCurrentOrient()
         self.orientMaa.removeNonRedrawActors()
         kf1, kf2 = self.kfpos
-        self.orientMaa.makeMAA([kf1, kf2/3, 2*kf2/3, kf2], orient=orient)
+        self.orientMaa.makeMAA([kf1, old_div(kf2,3), old_div(2*kf2,3), kf2], orient=orient)
 
     def recordRendering(self):
         #print self.name, "record rendering"
@@ -2178,7 +2180,7 @@ class SnapshotMAAGroup(MAAGroup):
         #print "Setting keyframePositions:", keyPos
         assert len(keyPos) == 2
         nbframes = keyPos[1]
-        self.orientMaa.setKeyframePositions([0, nbframes/3, 2*nbframes/3, nbframes])
+        self.orientMaa.setKeyframePositions([0, old_div(nbframes,3), old_div(2*nbframes,3), nbframes])
         self.kfpos = self.renderMaa.kfpos = keyPos
         self.firstPosition, self.lastPosition = keyPos
         #print "firstPosition:", self.firstPosition, "lastPosition:", self.lastPosition
@@ -3209,7 +3211,7 @@ class RockMAA(RotationMAA):
         self.easeOutStart = easeOutStart        
         self.direction = direction
 
-        angleIncr = float(angle) / (nbFrames/4)
+        angleIncr = float(angle) / (old_div(nbFrames,4))
         p1 = (0,0,0)
         p2 = vector
         mat0 = rotax(p1, p2, 0)
@@ -3221,9 +3223,9 @@ class RockMAA(RotationMAA):
         for obj in self.objects:
             actor = getActor(obj, 'concatRotation')
             kf0 = KF( 0 , quat1)  # identity matrix at frame 0
-            kf1 = KF( nbFrames/4, quat0)
-            kf2 = KF( (nbFrames/4)*2, quat2)
-            kf3 = KF( (nbFrames*3)/4, quat0)
+            kf1 = KF( old_div(nbFrames,4), quat0)
+            kf2 = KF( (old_div(nbFrames,4))*2, quat2)
+            kf3 = KF( old_div((nbFrames*3),4), quat0)
             kf4 = KF( (nbFrames-1), quat1)
             
             i1 = Interval( kf0, kf1, generator = actor.behaviorList,
@@ -3647,7 +3649,7 @@ class FocusMAA(RedrawMAA):
         self.fieldOfView = fieldOfView
         diff_fovy =  cam.fovyNeutral - fieldOfView
         k0 = KFAutoCurrentValue( p1, actor)
-        k1 = KF( p2, fieldOfView + (self.nbFrames-1)*diff_fovy/self.nbFrames)
+        k1 = KF( p2, fieldOfView + old_div((self.nbFrames-1)*diff_fovy,self.nbFrames))
         actor.addIntervals( [ Interval(k0,k1), Interval(k1,k2)])
         self.AddActions( actor, actor.actions )
 

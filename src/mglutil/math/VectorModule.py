@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ##  Copyright 1997-1999 by Konrad Hinsen, except as noted below.
@@ -24,6 +25,7 @@
 # Last revision: 1999-7-23
 #
 
+from mglcompat.pydiv import old_div
 _undocumented = 1
 
 from mglcompat.pyclasses import CmpMixin, cmp
@@ -194,9 +196,9 @@ class Vector(CmpMixin):
         "Returns the angle to vector |other|."
         if not isVector(other):
             raise TypeError("Angle between vector and non-vector")
-        cosa = Numeric.add.reduce(self.array*other.array) / \
+        cosa = old_div(Numeric.add.reduce(self.array*other.array), \
                Numeric.sqrt(Numeric.add.reduce(self.array*self.array) * \
-                            Numeric.add.reduce(other.array*other.array))
+                            Numeric.add.reduce(other.array*other.array)))
         cosa = max(-1.,min(1.,cosa))
         return Numeric.arccos(cosa)
 

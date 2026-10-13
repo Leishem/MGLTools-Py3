@@ -24,7 +24,9 @@ Assorted classes of filters for use in selecting subgroups of AutoDock Virtual S
 filter_instance.filter(docking) returns True/False 
 
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 class Filter:
     """
         Base class for object to screen docking results
@@ -115,7 +117,7 @@ class ClusterPercentageFilter(Filter):
             #find largest cluster in this docking
             if len(cl)>largest_cl:
                 largest_cl = len(cl)
-        percent = 100.*(largest_cl/(1.0*num_conf))
+        percent = 100.*(old_div(largest_cl,(1.0*num_conf)))
         return percent > self.cluster_percentage
 
 

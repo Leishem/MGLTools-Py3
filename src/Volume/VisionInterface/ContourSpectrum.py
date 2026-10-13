@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
@@ -21,6 +22,7 @@
 #
 
 # third party packages 
+from mglcompat.pydiv import old_div
 import types
 import tkinter
 import mglcompat.oldnumeric as Numeric
@@ -1013,7 +1015,7 @@ every time the widget value is set/modified"""
 
             self.rangex = range = maxi-mini
             if range != 0:
-                x = (((x-mini)/range)*self.widthMinusOne).astype('i')
+                x = ((old_div((x-mini),range))*self.widthMinusOne).astype('i')
 
             y = Numeric.zeros( (s.nval,), 'f')
             s.getFy(y)
@@ -1041,7 +1043,7 @@ every time the widget value is set/modified"""
         for i in range(4):
             h = self.height-1.
             if maxi != 0 and self.maxFun[i] != 0:
-                self.yratios.append( (h/maxi)*(maxi/self.maxFun[i]) )
+                self.yratios.append( (old_div(h,maxi))*(old_div(maxi,self.maxFun[i])) )
             else:
                 self.yratios.append( 0 )
 

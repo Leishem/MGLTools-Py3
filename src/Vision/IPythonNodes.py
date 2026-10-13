@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 from NetworkEditor.items import NetworkNode
 from Vision.StandardNodes import RunFunction
 from idlelib.EditorWindow import EditorWindow
@@ -35,8 +37,8 @@ def computeLine(yrange):
         for x in range( int(width) ):
 
             #Calculate the (x,y) in the plane from the (x,y) in the BMP
-            thisX = bounds[0] + (x/width)*dx
-            thisY = (y/height)*dy
+            thisX = bounds[0] + (old_div(x,width))*dx
+            thisY = (old_div(y,height))*dy
             thisY += bounds[1]
 
             #Create a complex # representation of this point

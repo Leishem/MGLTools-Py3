@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
@@ -22,6 +23,7 @@
 # $Id: MaterialEditor.py,v 1.57.4.3 2012/11/09 18:57:14 annao Exp $
 #
 
+from mglcompat.pydiv import old_div
 import tkinter, os, math
 import mglcompat.oldnumeric as Numeric
 import Pmw
@@ -228,12 +230,12 @@ etc ...
         width = self.winfo_width()
         height = self.winfo_height()
         if width > height:
-          xo = (width-height)/2
+          xo = old_div((width-height),2)
           yo = 0
           size = height
         else:
           xo = 0
-          yo = (height-width)/2
+          yo = old_div((height-width),2)
           size = width
         GL.glViewport(xo, yo, size, size)
 
@@ -928,8 +930,8 @@ class ColorWheel:
         self.x = 0
         self.y = 0
         self.radius = 55
-        cx = self.cx = self.width/2 + 3
-        cy = self.cy = self.height/2 + 3
+        cx = self.cx = old_div(self.width,2) + 3
+        cy = self.cy = old_div(self.height,2) + 3
 
         self.cursor = self.cwcanvas.create_line(
             cx-3, cy-3, cx-3, cy+3, cx+3,cy+3, cx+3, cy-3, cx-3, cy-3 )
@@ -944,10 +946,10 @@ class ColorWheel:
         if __debug__:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
         # find the saturation based on distance
-        s = math.sqrt(x*x + y*y) / self.radius
+        s = old_div(math.sqrt(x*x + y*y), self.radius)
         if s > 1.0:
-            x = x / s
-            y = y / s
+            x = old_div(x, s)
+            y = old_div(y, s)
             s = 1.0
 
         # now find the hue based on the angle 
@@ -955,7 +957,7 @@ class ColorWheel:
             angle = math.atan2(y, x)
             if angle < 0.0:
                 angle = angle + (2.*math.pi)
-            h = 1. - angle / (2.0 * math.pi)
+            h = 1. - old_div(angle, (2.0 * math.pi))
         else:
             h = 0
 

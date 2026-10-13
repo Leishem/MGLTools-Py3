@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -13,6 +14,7 @@
 # $Id: mvCommand.py,v 1.53.2.4 2011/06/13 17:44:30 sanner Exp $
 #
 
+from mglcompat.pydiv import old_div
 import types, mglcompat.oldnumeric as Numeric, warnings
 
 from ViewerFramework.VFCommand import Command, CommandGUI, \
@@ -504,9 +506,9 @@ matrices.
             g[1] += v[1]
             g[2] += v[2]
             i+=1
-        g[0] = g[0]/i
-        g[1] = g[1]/i
-        g[2] = g[2]/i
+        g[0] = old_div(g[0],i)
+        g[1] = old_div(g[1],i)
+        g[2] = old_div(g[2],i)
 
         vi = self.vf.GUI.VIEWER
         if vi.redirectTransformToRoot or vi.currentObject == vi.rootObject:

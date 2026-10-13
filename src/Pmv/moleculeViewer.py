@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -13,6 +14,7 @@
 #
 # $Id: moleculeViewer.py,v 1.246.2.16 2012/11/05 21:45:22 annao Exp $
 #
+from mglcompat.pydiv import old_div
 from mglcompat.pyclasses import OldStyleProperty
 import shutil, tarfile
 
@@ -1215,7 +1217,7 @@ application"""
             #check for same size monitors
             for w1 in knownWidth:
                 if width%w1==0:
-                    widths[width/w1] = [w1]
+                    widths[old_div(width,w1)] = [w1]
                     if w1<mini: mini = w1
             # check for 2 monitors with with different size
             for i, w1 in enumerate(knownWidth[:-1]):

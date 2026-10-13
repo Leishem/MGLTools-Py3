@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #######################################################################
@@ -23,6 +24,7 @@
 #
 
 
+from mglcompat.pydiv import old_div
 import tkinter
 import mglcompat.oldnumeric as Numeric, math, types
 import warnings
@@ -4289,7 +4291,7 @@ inner_isoval, inner_error, outersurf, crossection, planeX, planeZ):
             lenv =  len(vertset)
             if lenv:
                 faceset = Numeric.arange( lenv) #create faces for vertset
-                faceset.shape = (lenv/3 , 3)
+                faceset.shape = (old_div(lenv,3) , 3)
                 #from DejaVu.utils import RemoveDuplicatedVertices
                 vs1, fs1 = self.removeDuplicatedVertices(vertset, faceset, noremove)
                 #print "RemoveDuplicatedVertices: oldverts: %d, newverts: %d"%(len(vertset), len(vs1))

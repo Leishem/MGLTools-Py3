@@ -43,7 +43,9 @@ Python reimplementation of Brian Paul's TR (tile Rendering) library
  * 6. Delete the tile rendering context when finished:
  *       trDelete(t);
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 TR_VERSION = "1.1"
 TR_MAJOR_VERSION = 1
 TR_MINOR_VERSION = 1
@@ -129,10 +131,10 @@ class TRctx:
    #Misc setup including computing number of tiles (rows and columns).
 
    def setup(self):
-      self.Columns = (self.ImageWidth + self.TileWidthNB - 1) / \
-                     self.TileWidthNB
-      self.Rows = (self.ImageHeight + self.TileHeightNB - 1) / \
-                  self.TileHeightNB;
+      self.Columns = old_div((self.ImageWidth + self.TileWidthNB - 1), \
+                     self.TileWidthNB)
+      self.Rows = old_div((self.ImageHeight + self.TileHeightNB - 1), \
+                  self.TileHeightNB);
       self.CurrentTile = 0
 
       assert(self.Columns >= 0)
@@ -251,10 +253,10 @@ class TRctx:
 
       # which tile (by row and column) we're about to render
       if self.RowOrder==TR_BOTTOM_TO_TOP:
-         self.CurrentRow = self.CurrentTile / self.Columns
+         self.CurrentRow = old_div(self.CurrentTile, self.Columns)
          self.CurrentColumn = self.CurrentTile % self.Columns
       elif self.RowOrder==TR_TOP_TO_BOTTOM:
-         self.CurrentRow = self.Rows - (self.CurrentTile / self.Columns) - 1
+         self.CurrentRow = self.Rows - (old_div(self.CurrentTile, self.Columns)) - 1
          self.CurrentColumn = self.CurrentTile % self.Columns
       else:
          raise RuntimeError
@@ -289,16 +291,15 @@ class TRctx:
       GL.glLoadIdentity()
 
       # compute projection parameters
-      self.tileleft = left = self.Left + (self.Right - self.Left) \
-                      * (self.CurrentColumn * self.TileWidthNB - border) \
-                      / self.ImageWidth
-      self.tileright = right = left + (self.Right - self.Left) * \
-                       self.TileWidth / self.ImageWidth
-      self.tilebottom = bottom = self.Bottom + (self.Top - self.Bottom) \
-                        * (self.CurrentRow * self.TileHeightNB - border) / \
-                        self.ImageHeight
-      self.tiletop = top = bottom + (self.Top - self.Bottom) * self.TileHeight / \
-                     self.ImageHeight
+      self.tileleft = left = self.Left + old_div((self.Right - self.Left) \
+                      * (self.CurrentColumn * self.TileWidthNB - border), self.ImageWidth)
+      self.tileright = right = left + old_div((self.Right - self.Left) * \
+                       self.TileWidth, self.ImageWidth)
+      self.tilebottom = bottom = self.Bottom + old_div((self.Top - self.Bottom) \
+                        * (self.CurrentRow * self.TileHeightNB - border), \
+                        self.ImageHeight)
+      self.tiletop = top = bottom + old_div((self.Top - self.Bottom) * self.TileHeight, \
+                     self.ImageHeight)
 
       if self.Perspective:
          GL.glFrustum(float(left), float(right),

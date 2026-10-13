@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -8,6 +9,7 @@
 #
 #############################################################################
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric, math
 import mglcompat.oldnumeric.linear_algebra as LinearAlgebra
 from mglutil.math.rmsd import RMSDCalculator
@@ -73,8 +75,8 @@ class RigidfitBodyAligner:
 
         #
         # 1. Compute centroids:
-        refCentroid = Numeric.sum(refCoords)/ len(refCoords)
-        mobileCentroid = Numeric.sum(mobileCoords)/ len(mobileCoords)
+        refCentroid = old_div(Numeric.sum(refCoords), len(refCoords))
+        mobileCentroid = old_div(Numeric.sum(mobileCoords), len(mobileCoords))
 
         #
         # 2. Wolfgang Kabsch's method for rotation matrix rot:
@@ -113,11 +115,11 @@ class RigidfitBodyAligner:
 
         norm = math.sqrt(b[0][0]*b[0][0] + b[0][1]*b[0][1] + b[0][2]*b[0][2])
         if math.fabs(norm)<1.0e-20: return -1, -1
-        b[0] = b[0]/norm
+        b[0] = old_div(b[0],norm)
 
         norm = math.sqrt(b[1][0]*b[1][0] + b[1][1]*b[1][1] + b[1][2]*b[1][2])
         if math.fabs(norm)<1.0e-20: return -1, -1
-        b[1] = b[1]/norm
+        b[1] = old_div(b[1],norm)
 
         # vvmult(b[0],b[1],b[2])
         b[2][0] = b[0][1]*b[1][2] - b[0][2]*b[1][1]

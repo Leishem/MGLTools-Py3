@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -14,6 +15,7 @@
 #
 
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric
 from . import viewerConst
 from opengltk.extent import _gllib as gllib
@@ -232,14 +234,14 @@ def ToHSV(rgb):
     maxi = max(rgb[:3])
     mini = min(rgb[:3])
 
-    if maxi > 0.0001: s = (maxi - mini)/maxi
+    if maxi > 0.0001: s = old_div((maxi - mini),maxi)
     else: s = 0.0
     if s < 0.0001: h = 0.0
     else:
         delta = maxi - mini
-        if r == maxi: h = (g - b)/delta
-        elif g == maxi: h = 2.0 + (b - r)/delta
-        elif b == maxi: h = 4.0 + (r - g)/delta
+        if r == maxi: h = old_div((g - b),delta)
+        elif g == maxi: h = 2.0 + old_div((b - r),delta)
+        elif b == maxi: h = 4.0 + old_div((r - g),delta)
         h = h/6.0
         if h < 0.0: h = h + 1.0
 
@@ -271,7 +273,7 @@ def Map(values, colorMap, mini=None, maxi=None):
         ind = Numeric.ones( values.shape )
     else:
         colrange = cmap.shape[0]-1
-        ind = ((values-mini) * colrange) / valrange
+        ind = old_div(((values-mini) * colrange), valrange)
     col = Numeric.take(colorMap, ind.astype(viewerConst.IPRECISION))
     return col
 
@@ -310,7 +312,7 @@ def HSVRamp(size=256, upperValue=.6666666666666667):
     h = []
     v = upperValue
     if size > 1:
-        step = v/(size-1)
+        step = old_div(v,(size-1))
     else:
         step = v
     for i in range(size):
@@ -350,7 +352,7 @@ def RGBARamp(size=256, upperValue=.6666666666666667):
 
 def RedWhiteBlueRamp(size=256):
     ramp = Numeric.ones( (size, 3), 'f')
-    mid = size/2
+    mid = old_div(size,2)
     incr = 1./(mid-1)
     for i in range(mid):
         ramp[i][1] = i*incr
@@ -362,7 +364,7 @@ def RedWhiteBlueRamp(size=256):
 
 def RedWhiteBlueARamp(size=256):
     ramp = Numeric.ones( (size, 4), 'f')
-    mid = size/2
+    mid = old_div(size,2)
     incr = 1./(mid-1)
     for i in range(mid):
         ramp[i][1] = i*incr
@@ -434,11 +436,11 @@ if __name__ == '__main__':
         print('10000 hsv->rgb')
         for i in range(100):
                 for j in range(100):
-                        d = rgb( (i/100, j/100, (i+j)/100) )
+                        d = rgb( (old_div(i,100), old_div(j,100), old_div((i+j),100)) )
 
         print('10000 rgb->hsv')
         for i in range(100):
                 for j in range(100):
-                        d = hsv( (i/100, j/100, (i+j)/100) )
+                        d = hsv( (old_div(i,100), old_div(j,100), old_div((i+j),100)) )
 
         cmap = RGBRamp()

@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
@@ -15,6 +16,7 @@
 
 
 #from MolKit.molecule import Atom, AtomSet, Bond
+from mglcompat.pydiv import old_div
 from sff.amber import AmberParm
 
 import mglcompat.oldnumeric as Numeric, types
@@ -458,7 +460,7 @@ class Parm:
         dict['Natyp'] = len(aL)
 
         dict['Ntype2d'] = ntypes*ntypes
-        dict['Nttyp'] = ntypes * (ntypes+1)/2
+        dict['Nttyp'] = old_div(ntypes * (ntypes+1),2)
         if maxResLen > dict['Nmxrs']:
             dict['Nmxrs'] = maxResLen
 
@@ -822,7 +824,7 @@ class Parm:
         for t in dtlist:
             index = int(t[-1])
             val = dihedTypes[t[:-2]][index] # remove the '_x'
-            pk.append(val[1]/val[0])
+            pk.append(old_div(val[1],val[0]))
             phase.append(val[2]*torad)
             pn.append(fabs(val[3]))
 
@@ -1294,7 +1296,7 @@ class Parm:
         ntypes = dict['Ntypes']
         dict['Nat3'] = natom * 3
         dict['Ntype2d'] = ntypes ** 2
-        nttyp = dict['Nttyp'] = ntypes * (ntypes+1)/2
+        nttyp = dict['Nttyp'] = old_div(ntypes * (ntypes+1),2)
 
         # read IGRAPH->AtomNames
         numIGRAPH = int(ceil((natom*1.)/20.))

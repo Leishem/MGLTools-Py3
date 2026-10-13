@@ -8,8 +8,10 @@ inverse4X4
 rotVectToVect
 interpolate3DTransform
 """
+from __future__ import division
 
 
+from mglcompat.pydiv import old_div
 from math import pi, sin, cos, sqrt
 import mglcompat.oldnumeric as N
 degtorad = pi/180.
@@ -46,7 +48,7 @@ def rotax( a, b, tau, transpose=1 ):
     s = v[0]*v[0]+v[1]*v[1]+v[2]*v[2]
     if s > 0.0:
         s = sqrt(s)
-        v = [v[0]/s, v[1]/s, v[2]/s]
+        v = [old_div(v[0],s), old_div(v[1],s), old_div(v[2],s)]
     else:
         val = sqrt(1.0/3.0)
         v = (val, val, val)
@@ -199,18 +201,18 @@ def mat_to_quat(matrix,transpose=1):
         idx = max(diagonal)[1]
         if idx == 0:
             S  = sqrt(1.0 + matrix[0] - matrix[5] - matrix[10])*2
-            Qy = (matrix[1] + matrix[4] ) / S
-            Qz = (matrix[2] + matrix[8] ) / S
+            Qy = old_div((matrix[1] + matrix[4] ), S)
+            Qz = old_div((matrix[2] + matrix[8] ), S)
             Qx = N.sqrt(1-Qy*Qy-Qz*Qz)
         elif idx==5:
             S  = sqrt( 1.0 + matrix[5] - matrix[0] - matrix[10] )*2
-            Qx = (matrix[1] + matrix[4] ) / S
-            Qz = (matrix[6] + matrix[9] ) / S
+            Qx = old_div((matrix[1] + matrix[4] ), S)
+            Qz = old_div((matrix[6] + matrix[9] ), S)
             Qy = N.sqrt(1-Qx*Qx-Qz*Qz)
         elif idx==10:
             S  = sqrt( 1.0 + matrix[10] - matrix[0] - matrix[5] )*2
-            Qx = (matrix[2] + matrix[8] ) / S
-            Qy = (matrix[6] + matrix[9] ) / S
+            Qx = old_div((matrix[2] + matrix[8] ), S)
+            Qy = old_div((matrix[6] + matrix[9] ), S)
             Qz = N.sqrt(1-Qx*Qx-Qy*Qy)
     # check if identity or not
     if Qw != 1.:
@@ -218,13 +220,13 @@ def mat_to_quat(matrix,transpose=1):
         theta = angle*360./N.pi
         Z = sqrt(Qx*Qx + Qy*Qy + Qz*Qz)
         if transpose:
-            Qx = -Qx/Z
-            Qy = -Qy/Z
-            Qz = -Qz/Z
+            Qx = old_div(-Qx,Z)
+            Qy = old_div(-Qy,Z)
+            Qz = old_div(-Qz,Z)
         else:
-            Qx = Qx/Z
-            Qy = Qy/Z
-            Qz = Qz/Z                
+            Qx = old_div(Qx,Z)
+            Qy = old_div(Qy,Z)
+            Qz = old_div(Qz,Z)                
         Qw = theta
         return [Qx,Qy,Qz,Qw]
     else:
@@ -286,9 +288,9 @@ function will complain and return none
     if(fabs(angle) < 0.0005):
         sa = 1
     if angle > 180.:
-        vector=[-qB[0]/sa, -qB[1]/sa, -qB[2]/sa]
+        vector=[old_div(-qB[0],sa), old_div(-qB[1],sa), old_div(-qB[2],sa)]
     else:
-        vector=[qB[0]/sa, qB[1]/sa, qB[2]/sa]
+        vector=[old_div(qB[0],sa), old_div(qB[1],sa), old_div(qB[2],sa)]
     tranMat = transf[3,:3]
 
     # check if the transformation is a hinge motion
@@ -298,7 +300,7 @@ function will complain and return none
     a2= a[0]*a[0] + a[1]*a[1] + a[2]*a[2]
     b2= b[0]*b[0] + b[1]*b[1] + b[2]*b[2]
     c2= c[0]*c[0] + c[1]*c[1] + c[2]*c[2]
-    theta = acos((c2-a2-b2)/(2* sqrt(a2*b2))) / pi * 180
+    theta = old_div(acos(old_div((c2-a2-b2),(2* sqrt(a2*b2)))), pi) * 180
     if fabs(theta -90) > 1e-4:
         raise ValueError("The given transformation is not a hinge motion")
         return None, None, None
@@ -354,17 +356,17 @@ p = 0.9 means apply M2 first, then apply 50% of M'.  M' is the transformation
     prevMat = nextMat = N.identity(4,'f')
     if offset == -1:
         prevMat = matrixList[-1]
-        p = percent/indexList[-1]
+        p = old_div(percent,indexList[-1])
         return _interpolateMat(matrixList[-1], p)
     elif offset == 0:
         nextMat = matrixList[0]
-        p = percent/indexList[0]
+        p = old_div(percent,indexList[0])
         return _interpolateMat(N.array(matrixList[0]), p)
     else:
         prevMat = matrixList[offset-1]
         nextMat = matrixList[offset]
-        p = (percent-indexList[offset-1])/(
-                                    indexList[offset]-indexList[offset-1])
+        p = old_div((percent-indexList[offset-1]),(
+                                    indexList[offset]-indexList[offset-1]))
         from mglcompat.oldnumeric.linear_algebra import inverse
         M = N.dot(inverse(prevMat), nextMat)
         Mat = _interpolateMat(M, p)
@@ -390,7 +392,7 @@ def interpolate3DTransform1(matrixList, indexList, percent):
     nextMat = matrixList[i]
     from mglcompat.oldnumeric.linear_algebra import inverse
     M = N.dot(inverse(prevMat), nextMat)
-    p = (percent-indexList[i-1]) / (indexList[i]-indexList[i-1])
+    p = old_div((percent-indexList[i-1]), (indexList[i]-indexList[i-1]))
     Mat = _interpolateMat(M, p)
     return N.dot(prevMat, Mat)
 

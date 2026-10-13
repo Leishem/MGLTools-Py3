@@ -1,3 +1,4 @@
+from __future__ import division
 ########################################################################
 #
 # Date: Nov 2001 Authors: Daniel Stoffler, Michel Sanner
@@ -9,6 +10,7 @@
 #
 #########################################################################
 
+from mglcompat.pydiv import old_div
 from NetworkEditor.widgets import TkPortWidget, PortWidget
 from mglutil.gui.BasicWidgets.Tk.xyzGUI import xyzGUI
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
@@ -117,7 +119,7 @@ class NormVectEntry(VectEntry):
                           self.point[1]*self.point[1]+\
                           self.point[2]*self.point[2])
             if n == 0.0: self.point = [0.0, 0.0, 1.0]
-            else: v = [self.point[0]/n, self.point[1]/n, self.point[2]/n]
+            else: v = [old_div(self.point[0],n), old_div(self.point[1],n), old_div(self.point[2],n)]
             self.point = v
             self.text = repr(self.point[0])+' '+repr(self.point[1])+' '+\
                         repr(self.point[2])

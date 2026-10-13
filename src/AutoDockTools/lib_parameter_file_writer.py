@@ -1,9 +1,11 @@
+from __future__ import division
 #
 # 
 #
 # $Id: lib_parameter_file_writer.py,v 1.4 2004/08/25 20:44:33 rhuey Exp $
 #
 
+from mglcompat.pydiv import old_div
 import os, glob; from mglcompat import pystring as string
 from MolKit import Read
 from AutoDockTools.GridParameters import GridParameters, grid_parameter_list
@@ -64,7 +66,7 @@ class LibraryGpfWriter:
     def write(self, gpo):
         #set types in groups of 6 + write
         outputlist = []
-        number_of_files = len(self.alltypes)/6 + 1
+        number_of_files = old_div(len(self.alltypes),6) + 1
         ctr = 0
         last = 6
         for i in range(number_of_files):

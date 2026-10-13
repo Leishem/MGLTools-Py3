@@ -1,5 +1,7 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric
 import numpy
 
@@ -117,7 +119,7 @@ data attribute is used as data
         for i in range(data.shape[0]):
             for j in range(data.shape[1]):
                 for k in range(data.shape[2]):
-                    data[i][j][k] = (data[i][j][k]-mymean)/mystdev
+                    data[i][j][k] = old_div((data[i][j][k]-mymean),mystdev)
         self.header['amean'] = mymean
         self.header['arms'] = mystdev
         self.header['amax'] = mymax
@@ -163,8 +165,8 @@ of a box in the grid.
         # find the center of the box, go to each edge, then set the edges
         # in relation to the grid3D origin
         for i in (0,1,2):
-            inds1[i] = ( Box.center[i] - bside[i]*0.5 - origin[i] ) / stepSize[i]
-            inds2[i] = ( Box.center[i] + bside[i]*0.5 - origin[i] ) / stepSize[i]
+            inds1[i] = old_div(( Box.center[i] - bside[i]*0.5 - origin[i] ), stepSize[i])
+            inds2[i] = old_div(( Box.center[i] + bside[i]*0.5 - origin[i] ), stepSize[i])
             
         return inds1,inds2
         
@@ -186,7 +188,7 @@ same stepSize.
 
         shape1 = grid.data.shape
         for i in (0,1,2):
-            bc1[i] = ( origin1[i] - origin[i] ) / stepSize[i]
+            bc1[i] = old_div(( origin1[i] - origin[i] ), stepSize[i])
             bc2[i] = bc1[i] + shape1[i] - 1
 
         shape = self.data.shape

@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -14,6 +15,7 @@
 # $Id: Clip.py,v 1.47.2.2 2011/06/16 17:18:48 sanner Exp $
 #
 
+from mglcompat.pydiv import old_div
 from opengltk.OpenGL import GL
 from opengltk.extent.utillib import glCleanRotMat
 from mglutil.math.rotax import rotVectToVect
@@ -102,8 +104,8 @@ class ClippingPlane(Transformable):
         GL.glMultMatrixf(self.object.Ri)
         GL.glMultMatrixf(upd)
         GL.glMultMatrixf(self.object.MatrixRotInv)
-        self.Si = self.Si * self.object.Si / (self.object.scale *
-                                              self.object.MatrixScale)
+        self.Si = old_div(self.Si * self.object.Si, (self.object.scale *
+                                              self.object.MatrixScale))
 
         self.Ri = Numeric.array(GL.glGetDoublev(GL.GL_MODELVIEW_MATRIX)).astype('f')
         GL.glPopMatrix()

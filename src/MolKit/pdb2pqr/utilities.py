@@ -7,7 +7,9 @@
     Todd Dolinsky (todd@ccb.wustl.edu)
     Washington University in St. Louis
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 __date__ = "23 September 2003"
 __author__ = "Todd Dolinsky"
 SMALL = 1.0e-7
@@ -97,7 +99,7 @@ class Matrix:
         # Solve Ly = b, where y = Ux
         
         for i in range(m):
-            mult = 1/L.info[i][i]
+            mult = old_div(1,L.info[i][i])
             sum = b[i]
             for j in range(0,i):
                 sum -= L.info[i][j] * y[j]
@@ -107,7 +109,7 @@ class Matrix:
         
         for i in range(m):
             rev = (m-1) - i
-            mult = 1/U.info[rev][rev]
+            mult = old_div(1,U.info[rev][rev])
             sum = y[rev]
             for j in range(0,i):
                 j = (m-1) - j
@@ -312,9 +314,9 @@ def normalize(coords):
     list = []
     dist = sqrt(pow(coords[0],2) + pow(coords[1],2) + pow(coords[2],2))
     if dist > SMALL:
-        a = coords[0]/dist
-        b = coords[1]/dist
-        c = coords[2]/dist
+        a = old_div(coords[0],dist)
+        b = old_div(coords[1],dist)
+        c = old_div(coords[2],dist)
         list = [a,b,c]
     else:
         list = coords
@@ -413,23 +415,23 @@ def placeOxygen(CA, C, N):
     #         [  vec2[0]    vec2[1]  vec2[2]    ]  =  [val2]
     
 
-    fac1 = -1 * planeeq[0]/vec1[0]
+    fac1 = old_div(-1 * planeeq[0],vec1[0])
     new1 = [0, fac1*vec1[1]+planeeq[1], fac1*vec1[2]+planeeq[2]]
     val1 = fac1*val1+sum
     
-    fac2 = -1 * planeeq[0]/vec2[0]
+    fac2 = old_div(-1 * planeeq[0],vec2[0])
     new2 = [0, fac2*vec2[1]+planeeq[1], fac2*vec2[2]+planeeq[2]]
     val2 = fac2*val2+sum
     
-    fac3 = -1 * new1[1]/new2[1]
+    fac3 = old_div(-1 * new1[1],new2[1])
     newest = [0,0,fac3*new2[2]+new1[2]]
     val2 = fac3*val2+val1
 
     # Step 4: Backfill in to find the results
     
-    z = val2/newest[2]
-    y = (val1 - z*new1[2])/new1[1]
-    x = (sum - z*planeeq[2] - y*planeeq[1])/planeeq[0]
+    z = old_div(val2,newest[2])
+    y = old_div((val1 - z*new1[2]),new1[1])
+    x = old_div((sum - z*planeeq[2] - y*planeeq[1]),planeeq[0])
 
     location = [x,y,z]
     return location

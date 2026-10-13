@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr, InputForm, \
 CallBackFunction
 from mglutil.gui.BasicWidgets.Tk.thumbwheel import ThumbWheel
@@ -996,7 +998,7 @@ class coarseMolSurface(MVCommand):
         y1 = Y[i-1]
         y2 = Y[i]
         dy = y2-y1
-        return y1 + ((x-x1)/dx)*dy
+        return y1 + (old_div((x-x1),dx))*dy
 
 
 coarseMolSurfaceGUI = CommandGUI()

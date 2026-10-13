@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
@@ -20,6 +21,7 @@
 # 4 - include support for DIFFUSE_AND_AMBIENT
 # 6 - KNOWN BUG: color (0,0,0) per vertex does seem to work
 
+from mglcompat.pydiv import old_div
 import numpy
 import mglcompat.oldnumeric as Numeric, math, sys
 from mglcompat.oldnumeric import array
@@ -371,16 +373,16 @@ updateOwnGui=True : allow to update owngui at the end this func
         if sz <= 0.0: return
         sz = math.sqrt(sz)
         sz2 = sz * .5
-        valueCos = (y[2]-x[2])/sz
+        valueCos = old_div((y[2]-x[2]),sz)
         valueCos = min(valueCos, 1)
         valueCos = max(valueCos, -1)
-        rx = -180.0*math.acos(valueCos)/math.pi
+        rx = old_div(-180.0*math.acos(valueCos),math.pi)
         dx = y[0]-x[0]
         dy = y[1]-x[1]
         if math.fabs(dx) < 0.00001 and math.fabs(dy) < 0.00001:
             rz = 0.0
         else:
-            rz = -180.0*math.atan2(dx,dy)/math.pi
+            rz = old_div(-180.0*math.atan2(dx,dy),math.pi)
 
         GL.glPushMatrix()
         GL.glTranslatef(float(x[0]),float(x[1]),float(x[2]))
@@ -497,16 +499,16 @@ updateOwnGui=True : allow to update owngui at the end this func
         if sz <= 0.0: return
         sz = math.sqrt(sz)
 
-        valueCos = (y[2]-x[2])/sz
+        valueCos = old_div((y[2]-x[2]),sz)
         valueCos = min(valueCos, 1)
         valueCos = max(valueCos, -1)
-        rx = -180.0*math.acos(valueCos)/math.pi
+        rx = old_div(-180.0*math.acos(valueCos),math.pi)
         dx = y[0]-x[0]
         dy = y[1]-x[1]
         if math.fabs(dx) < 0.00001 and math.fabs(dy) < 0.00001:
             rz = 0.0
         else:
-            rz = -180.0*math.atan2(dx,dy)/math.pi
+            rz = old_div(-180.0*math.atan2(dx,dy),math.pi)
 
         GL.glPushMatrix()
         GL.glTranslatef(float(x[0]),float(x[1]),float(x[2]))
@@ -570,7 +572,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         self.npoly = npoly
 
         a = -math.pi                 # starting angle
-        d = 2*math.pi / npoly         # increment
+        d = old_div(2*math.pi, npoly)         # increment
 
         for i in range(npoly+1):
             n[i][0] = v[i][0][0] = v[i][1][0] = math.cos(a)
@@ -599,7 +601,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         f = []
 
         a = -math.pi                  # starting angle
-        d = 2*math.pi / quality  # increment
+        d = old_div(2*math.pi, quality)  # increment
 
         # compute vertices
         for i in range(quality):
@@ -684,14 +686,14 @@ updateOwnGui=True : allow to update owngui at the end this func
             if sz <= 0.0: return
             sz = math.sqrt(sz)
 
-            rx = -180.0*math.acos((pt1[2]-pt0[2])/sz)/math.pi
+            rx = old_div(-180.0*math.acos(old_div((pt1[2]-pt0[2]),sz)),math.pi)
             dx = pt1[0]-pt0[0]
             dy = pt1[1]-pt0[1]
 
             if math.fabs(dx) < 0.00001 and math.fabs(dy) < 0.00001:
                 rz = 0.0
             else:
-                rz = -180.0*math.atan2(dx,dy)/math.pi
+                rz = old_div(-180.0*math.atan2(dx,dy),math.pi)
 
             # prepare rotations matrices of current cylinder
             Rx = Transformation(quaternion=[1,0,0,rx])

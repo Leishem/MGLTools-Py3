@@ -1,3 +1,4 @@
+from __future__ import division
 ########################################################################
 #
 # Date: Febuary 2006 Authors: Guillaume Vareille, Michel Sanner
@@ -20,6 +21,7 @@
 # $Id$
 #
 
+from mglcompat.pydiv import old_div
 from copy import deepcopy
 
 from opengltk.OpenGL import GL
@@ -51,8 +53,8 @@ def drawSelfOrientedLegend(
                     tile=None,
                     ):   
 
-    lRoomLeftToViewportCenter = fullWidth / 2
-    lRoombelowViewportCenter = fullHeight / 2
+    lRoomLeftToViewportCenter = old_div(fullWidth, 2)
+    lRoombelowViewportCenter = old_div(fullHeight, 2)
 
     twiceFontHeight = 2*fontScale
     
@@ -75,7 +77,7 @@ def drawSelfOrientedLegend(
                 if roomBelowLegend < 0:
                     roomBelowLegend = 0   
         else: # 2 and 3
-            if fullHeight-roomBelowLegend > roomLeftToLegend + (fullHeight/8): #2
+            if fullHeight-roomBelowLegend > roomLeftToLegend + (old_div(fullHeight,8)): #2
                 #print "2"
                 lVerticalLegend=True
                 lLeftOrBelowLabels=False
@@ -93,7 +95,7 @@ def drawSelfOrientedLegend(
                     roomBelowLegend = fullHeight  
     else:
         if roomBelowLegend < lRoombelowViewportCenter: # 6 and 7
-            if roomBelowLegend + (fullWidth/8) < fullWidth-roomLeftToLegend: #7
+            if roomBelowLegend + (old_div(fullWidth,8)) < fullWidth-roomLeftToLegend: #7
                 #print "7"
                 lVerticalLegend=False
                 lLeftOrBelowLabels=False
@@ -237,7 +239,7 @@ def drawLegendLabelName(
     lMaxNameUnitWidth = max(lNameWidth, lUnitWidth)
 
     # deducted values
-    fontScaleHalf = fontScale/2
+    fontScaleHalf = old_div(fontScale,2)
     if verticalLegend is True:
         lRoomToLegendCloseLongSide = roomLeftToLegend
         lRoomToLegendCloseShortSide = roomBelowLegend
@@ -304,8 +306,8 @@ def drawLegendLabelName(
 
     # calculate frame size
     lMaxWidth = max(lMaxLabelsWidth + legendShortSide, lMaxNameUnitWidth)
-    lMaxNameUnitHeightHalf = lMaxNameUnitHeight/2
-    legendShortSideHalf = legendShortSide/2
+    lMaxNameUnitHeightHalf = old_div(lMaxNameUnitHeight,2)
+    legendShortSideHalf = old_div(legendShortSide,2)
     if verticalLegend is True:
         if leftOrBelowLabels is False:
             lPt1 = (lRoomToLegendCloseLongSide,
@@ -475,16 +477,16 @@ def drawLegendLabelName(
                 if leftOrBelowLabels:
                     GL.glTranslatef(
                         float(lRoomLeftToLabel+fontScale-lLabelsWidth[i]),
-                        float(roomBelowLegend-(lLabelsHeight[i]/2+lLabelsMinAndMax[i][1])+lStep),
+                        float(roomBelowLegend-(old_div(lLabelsHeight[i],2)+lLabelsMinAndMax[i][1])+lStep),
                         0)
                 else:
                     GL.glTranslatef(
                         float(lRoomLeftToLabel+fontScale),
-                        float(roomBelowLegend-(lLabelsHeight[i]/2+lLabelsMinAndMax[i][1])+lStep),
+                        float(roomBelowLegend-(old_div(lLabelsHeight[i],2)+lLabelsMinAndMax[i][1])+lStep),
                         0)
             else:
                 GL.glTranslatef(
-                    float(roomLeftToLegend-(lLabelsWidth[i]/2)+fontScale+lStep),
+                    float(roomLeftToLegend-(old_div(lLabelsWidth[i],2))+fontScale+lStep),
                     float(lRoomBelowLabel-lLabelsMinAndMax[i][1]),
                     0)
             GL.glScalef(float(fontScale), float(fontScale), 1);
@@ -621,7 +623,7 @@ def drawLegendOnly(
         #draw a bunch of quads as background
         lCheckerSquareSize = legendShortSide * .5
         if lCheckerSquareSize != 0:
-            nbquads = int(legendLongSide / lCheckerSquareSize)
+            nbquads = int(old_div(legendLongSide, lCheckerSquareSize))
         else:
             nbquads = 1
         c1 = ( 0.1, 0.1, 0.1 )

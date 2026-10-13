@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 from ViewerFramework.VFCommand import Command, CommandGUI
 from DejaVu.Spheres import Spheres
 from DejaVu.Arrows import Arrows
@@ -45,7 +47,7 @@ class Handler(Command):
     def getTargetCenter(self):
         self.target.setConformation(self.slot)
         coords = Numeric.array(self.target.coords)#self.allAtoms.coords
-        center = sum(coords)/(len(coords)*1.0)
+        center = old_div(sum(coords),(len(coords)*1.0))
         center = list(center)
         for i in range(3):
             center[i] = round(center[i], 4)
@@ -143,7 +145,7 @@ class Handler(Command):
             if targetpos == None : return Numeric.array([0.,0.,0.])
         force =  - Numeric.array(pos[0]) +  targetpos
         d=math.sqrt(Numeric.sum(force*force))
-        return force*1/(d*d)
+        return old_div(force*1,(d*d))
         #else : return Numeric.array([0.,0.,0.])
 
     def getSteered(self):

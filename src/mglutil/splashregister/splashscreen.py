@@ -1,7 +1,9 @@
+from __future__ import division
 # This module handles Splash Screen
 # $Header: /opt/cvs/python/packages/share1.5/mglutil/splashregister/splashscreen.py,v 1.22 2008/04/16 18:19:20 annao Exp $
 # $Date: 2008/04/16 18:19:20 $
 # $Id: splashscreen.py,v 1.22 2008/04/16 18:19:20 annao Exp $
+from mglcompat.pydiv import old_div
 from mglutil.gui.BasicWidgets.Tk.progressBar import ProgressBar
 from mglutil.util.packageFilePath import getResourceFolderWithVersion, findFilePath
 from mglutil.util.misc import ensureFontCase
@@ -60,8 +62,8 @@ class SplashScreen:
             if self.timing_data:
                 for data in self.timing_data:
                     self.percent += int(data)
-                self.percent = int( self.percent/len(self.timing_data) ) 
-                self.percent = 100 / self.percent        
+                self.percent = int( old_div(self.percent,len(self.timing_data)) ) 
+                self.percent = old_div(100, self.percent)        
         if self.percent == 0: self.percent = 1    
         self.counter = 0
 
@@ -103,8 +105,8 @@ click these buttons again in the future. Thanks."""
         screenwidth = self.splash_win.winfo_screenwidth()
         if screenwidth > 2000:
             screenwidth = 1000
-        x = (screenwidth - width) / 2 - self.splash_win.winfo_vrootx()
-        y = (self.splash_win.winfo_screenheight() - height) / 4 - \
+        x = old_div((screenwidth - width), 2) - self.splash_win.winfo_vrootx()
+        y = old_div((self.splash_win.winfo_screenheight() - height), 4) - \
                                                     self.splash_win.winfo_vrooty()
         if x < 0:
             x = 0

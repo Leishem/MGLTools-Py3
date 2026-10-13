@@ -27,7 +27,9 @@ These  objects are created through the addInputPort and addOutputPort methods
 of the NetworkNode2 object. They are not intended to be created by a user
 or a programer
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 import types
 import mglcompat.oldnumeric as Numeric
 import tkinter, Pmw
@@ -224,8 +226,8 @@ class Port(NetworkItems):
 
         if ed.hasGUI:
             if self.iconTag is not None: # port is visible
-                self.halfPortWidth = self.datatypeObject['width'] / 2
-                self.halfPortHeight = self.datatypeObject['height'] / 2
+                self.halfPortWidth = old_div(self.datatypeObject['width'], 2)
+                self.halfPortHeight = old_div(self.datatypeObject['height'], 2)
                 self.deleteIcon()
                 self.createIcon()
 
@@ -261,7 +263,7 @@ class Port(NetworkItems):
 
     def getCenterCoords(self):
         bb = self.node.iconMaster.bbox(self.id)
-        return (bb[0]+bb[2])/2, (bb[1]+bb[3])/2
+        return old_div((bb[0]+bb[2]),2), old_div((bb[1]+bb[3]),2)
 
 
     def buildIcons(self, resize=True):
@@ -271,8 +273,8 @@ class Port(NetworkItems):
             self.width = self.datatypeObject['width']
         if self.height is None:
             self.height = self.datatypeObject['height']
-        self.halfPortWidth = self.width/2     
-        self.halfPortHeight = self.height/2
+        self.halfPortWidth = old_div(self.width,2)     
+        self.halfPortHeight = old_div(self.height,2)
         if self.shape is not None:
             self.datatypeObject['shape'] = self.shape
         if self.color is not None:
@@ -576,7 +578,7 @@ class Port(NetworkItems):
                 outline = lOutlineColor )
         elif shape in [1, 'triang', 'triang1']:
             self.id = self.iconTag = canvas.create_polygon(
-                pcx-(h/2)+2, pcy-w+2, pcx-h-2, pcy+w-2, pcx+h+2, pcy+w-2,
+                pcx-(old_div(h,2))+2, pcy-w+2, pcx-h-2, pcy+w-2, pcx+h+2, pcy+w-2,
                 tags=tuple(ptags+[self.node.id]), fill=color,
                 outline = lOutlineColor )
 
@@ -594,8 +596,8 @@ class Port(NetworkItems):
 
         else: #elif shape in [4, 'pentagon']:
             self.id = self.iconTag = canvas.create_polygon(
-                pcx-(h/2)+1, pcy-w+2, pcx-h-4, pcy+w/2-4, pcx-h/2-2, pcy+w-2,
-                pcx+h/2, pcy+w-2, pcx+h+2, pcy+w/2-4,
+                pcx-(old_div(h,2))+1, pcy-w+2, pcx-h-4, pcy+old_div(w,2)-4, pcx-old_div(h,2)-2, pcy+w-2,
+                pcx+old_div(h,2), pcy+w-2, pcx+h+2, pcy+old_div(w,2)-4,
                 tags=tuple(ptags+[self.node.id]), fill=color,
                 outline = lOutlineColor )
 
@@ -691,7 +693,7 @@ Note: relposx is the center of a port icon, not the left or right edge
         for i in items:
             if self.id==i: continue
             ci = getc(i)
-            c.append( ( (ci[0]+ci[2])/2, (ci[1]+ci[3])/2 ) )
+            c.append( ( old_div((ci[0]+ci[2]),2), old_div((ci[1]+ci[3]),2) ) )
             il.append(i)
         return Numeric.array(c, 'i'), il
 
@@ -740,13 +742,13 @@ datatype  : datatype (string or data type object)
         for k,v in list(kw.items()):
             if k == 'width':
                 handledOps[k] = v
-                if v/2 != self.halfPortWidth:
-                    self.halfPortWidth = v/2
+                if old_div(v,2) != self.halfPortWidth:
+                    self.halfPortWidth = old_div(v,2)
                     changeIcon = 1
             elif k=='height':
                 handledOps[k] = v
-                if v/2 != self.halfPortHeight:
-                    self.halfPortHeight = v/2
+                if old_div(v,2) != self.halfPortHeight:
+                    self.halfPortHeight = old_div(v,2)
                     changeIcon = 1
             elif k == 'name':
                 v = v.replace(' ', '_')

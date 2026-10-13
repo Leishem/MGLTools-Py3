@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -14,6 +15,7 @@
 # $Id: msmsCommands.py,v 1.149.2.9 2011/10/12 23:38:42 sanner Exp $
 #
 
+from mglcompat.pydiv import old_div
 import itertools
 import types, os
 import tkinter, Pmw
@@ -1571,7 +1573,7 @@ class ComputeMSMSApprox(ComputeMSMS):
         def getSphere(atoms):
             """get the center and radius of the sphere for a set of atoms"""
             coords = atoms.coords
-            g = Numeric.sum(coords)/len(atoms)
+            g = old_div(Numeric.sum(coords),len(atoms))
             dist = Numeric.subtract(coords, g)
             dist = Numeric.sum(dist*dist, 1)
             maxd = max(dist)
@@ -1771,13 +1773,13 @@ class MsmsNPR(MVCommand):
         mat = geom.GetMatrix()[ :3, :3 ]
         nt = Numeric.dot( vf[:, 3:6], Numeric.transpose(mat) )
         norm = Numeric.sqrt( Numeric.add.reduce(nt*nt, 1))
-        ci = nt[ : , 2] / norm
+        ci = old_div(nt[ : , 2], norm)
         from DejaVu import colorTool
         cmap = Numeric.ones( (255,4), 'f' )
         self.width=60
         self.vf.GUI.VIEWER.cameras[0].Set(color=(1.,1.,1.), tagModified=False)
         for i in range(self.width):
-            v = i/self.width
+            v = old_div(i,self.width)
             cmap[127-i] = (v,v,v,1.)
             cmap[127+i] = (v,v,v,1.)
         outlineCol = colorTool.Map(ci, cmap)

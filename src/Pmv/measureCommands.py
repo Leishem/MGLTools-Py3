@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -13,6 +14,7 @@
 #
 # $Id: measureCommands.py,v 1.52 2010/11/15 23:32:03 sanner Exp $
 #
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric, math, types
 from Pmv.mvCommand import MVCommand, MVAtomICOM
 from DejaVu.Geom import Geom
@@ -135,12 +137,12 @@ class MeasureAngle(MeasureAtomCommand):
         distance1 = math.sqrt(Numeric.sum(v1*v1))
         v2 = Numeric.array(c3) - Numeric.array(c2)
         distance2 = math.sqrt(Numeric.sum(v2*v2))
-        sca = Numeric.dot(v1, v2)/(distance1*distance2)
+        sca = old_div(Numeric.dot(v1, v2),(distance1*distance2))
         if sca<-1.0: 
             sca = -1.0
         elif sca>1.0: 
             sca = 1.0
-        return math.acos(sca)*180/math.pi
+        return old_div(math.acos(sca)*180,math.pi)
 
     
     def doit(self, atom1, atom2, atom3):
@@ -213,7 +215,7 @@ class MeasureTorsion(MeasureAtomCommand):
         if dd<0.001 or de<0.001:
             raise ValueError ( 'Torsion angle undefined, degenerate points')
 
-        vv = Numeric.dot(c, d) / (dd*de);
+        vv = old_div(Numeric.dot(c, d), (dd*de));
         if vv<1.0: tang=vv
         else: tang= 1.0
         if tang<-1.0: tang=-1.0
@@ -841,7 +843,7 @@ turned off  and viewer's current object is not Root."""
             #rebuild arcNormals, arcVectors, arcCenters
             #labelCenters, labelStrs, 
             #this gets done lenATs/3 times
-            numItems = len(self.atomList)/3
+            numItems = old_div(len(self.atomList),3)
             for i in range(numItems):
                 at0 = self.atomList[i*3]
                 at1 = self.atomList[i*3+1]
@@ -884,9 +886,9 @@ turned off  and viewer's current object is not Root."""
         l2 = math.sqrt(Numeric.sum(v2*v2))
         #FIXME
         #protect against divide by 0
-        n = self.vvmult(v1/l1,v2/l2)
-        n = n/math.sqrt(Numeric.sum(n*n))
-        return -v2/l2, n.astype('f')
+        n = self.vvmult(old_div(v1,l1),old_div(v2,l2))
+        n = old_div(n,math.sqrt(Numeric.sum(n*n)))
+        return old_div(-v2,l2), n.astype('f')
 
         
 
@@ -1031,7 +1033,7 @@ turned off  and viewer's current object is not Root."""
             self.labelStrs=[]
             #labelCenters, labelStrs, 
             #this gets done lenATs/4 times
-            numItems = len(self.atomList)/4
+            numItems = old_div(len(self.atomList),4)
             for i in range(numItems):
                 at0 = self.atomList[i*4]
                 at1 = self.atomList[i*4+1]

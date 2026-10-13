@@ -1,3 +1,4 @@
+from __future__ import division
 #########################################################################
 #
 # Date: Nov. 2001  Author: Michel Sanner, Daniel Stoffler
@@ -13,6 +14,7 @@
 #
 #########################################################################
 
+from mglcompat.pydiv import old_div
 import sys, os
 import types
 import tkinter
@@ -93,20 +95,16 @@ class UserPanel:
 
         widget.widgetFrame.place(relx=relx, rely=rely, anchor=tkinter.CENTER)
         if labelSide == 'left':
-            labelx = .5 * widget.widgetFrame.winfo_width() \
-                 / widget.widgetFrame.master.winfo_width()
+            labelx = old_div(.5 * widget.widgetFrame.winfo_width(), widget.widgetFrame.master.winfo_width())
             widget.tklabel.place(relx=relx-labelx, rely=rely, anchor='e')
         elif labelSide == 'right':
-            labelx = .5 * widget.widgetFrame.winfo_width() \
-                 / widget.widgetFrame.master.winfo_width()
+            labelx = old_div(.5 * widget.widgetFrame.winfo_width(), widget.widgetFrame.master.winfo_width())
             widget.tklabel.place(relx=relx+labelx, rely=rely, anchor='w')
         elif labelSide == 'top':
-            labely = .5 * widget.widgetFrame.winfo_height() \
-                 / widget.widgetFrame.master.winfo_height()
+            labely = old_div(.5 * widget.widgetFrame.winfo_height(), widget.widgetFrame.master.winfo_height())
             widget.tklabel.place(relx=relx, rely=rely-labely, anchor='s')
         elif labelSide == 'bottom':
-            labely = .5 * widget.widgetFrame.winfo_height() \
-                 / widget.widgetFrame.master.winfo_height()
+            labely = old_div(.5 * widget.widgetFrame.winfo_height(), widget.widgetFrame.master.winfo_height())
             widget.tklabel.place(relx=relx, rely=rely+labely, anchor='n')
         else:
             warnings.warn('Wrong side for label')

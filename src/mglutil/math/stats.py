@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 import warnings
 
 def stats(values):
@@ -21,7 +23,7 @@ def stats(values):
             if v>maxi:
                 maxi = v
         mean = float(sum)/npts
-        stdev = sqrt(( sumsq - (sum*sum/float(npts)))/(npts-1))
+        stdev = sqrt(old_div(( sumsq - (sum*sum/float(npts))),(npts-1)))
         return mini, maxi, mean, stdev
 
     else:

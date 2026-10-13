@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -12,6 +13,7 @@
 #
 # $Id: extrusionCommands.py,v 1.45.2.1 2012/06/20 20:58:59 sanner Exp $
 #
+from mglcompat.pydiv import old_div
 import itertools
 import tkinter, mglcompat.oldnumeric as Numeric,Pmw
 import types; from mglcompat import pystring as string
@@ -372,11 +374,11 @@ class DisplayPath3DCommand(MVCommand):
             propIndex = geom.name
         # chords = residues[0].parent.sheet2D.chords
         chords = residues[0].parent.sheet2D['ssSheet2D'].chords
-        col = [residues[0].atoms[0].colors['path'],]*(chords/2+1)
+        col = [residues[0].atoms[0].colors['path'],]*(old_div(chords,2)+1)
         for r in residues[1:-1]:
             col = col + ([r.atoms[0].colors['path'],]*chords)
 
-        col = col + [residues[-1].atoms[0].colors['path'],]*(chords+chords/2)
+        col = col + [residues[-1].atoms[0].colors['path'],]*(chords+old_div(chords,2))
         # here need to compute the number of colors corresponding to the
         # number of vertices. 
         return col
@@ -389,16 +391,16 @@ class DisplayPath3DCommand(MVCommand):
         lengthPath = chain.sheet2D['ssSheet2D'].path.shape[0]
         #chords = chain.sheet2D.chords
         #lengthPath = chain.sheet2D.path.shape[0]
-        if vi < (chords/2 + 1 ):
+        if vi < (old_div(chords,2) + 1 ):
             # first residue
             resIndex = 0
         elif vi > ((lengthPath-1)-\
-                        (chords + chords/2)):
+                        (chords + old_div(chords,2))):
             # last residue
             resIndex = len(chain.residues)-1
         else:
             # all the other nbchords
-            resIndex = (vi-(2+ chords/2))/chords + 1
+            resIndex = old_div((vi-(2+ old_div(chords,2))),chords) + 1
 
         return resIndex
 
@@ -415,14 +417,14 @@ class DisplayPath3DCommand(MVCommand):
         lengthPath = chain.sheet2D['ssSheet2D'].path.shape[0]
         if residueindex == 0:
             fromPts = 0
-            toPts = chords/2 + 2
+            toPts = old_div(chords,2) + 2
 
         elif residueindex == len(chain.residues)-1:
-            fromPts = (residueindex-1) * chords + chords/2 +1
+            fromPts = (residueindex-1) * chords + old_div(chords,2) +1
             toPts = lengthPath-1
 
         else:
-            fromPts = (residueindex-1) * chords + chords/2 +1
+            fromPts = (residueindex-1) * chords + old_div(chords,2) +1
             toPts = fromPts + chords +1
 
         return fromPts,toPts

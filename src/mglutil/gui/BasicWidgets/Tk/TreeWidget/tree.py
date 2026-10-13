@@ -22,6 +22,8 @@ This module provides 4 classes. TK based GUI (graphical user interface) of
    the list is mainteined by FIFO principle (first in, first out), unless locked by user
   
 """
+from __future__ import division
+from mglcompat.pydiv import old_div
 import sys
 import os
 import tkinter, types
@@ -88,7 +90,7 @@ Draw the ListItem Object on canvas.
             #self.canvasIDs=[]
             
         if self.list.selection == self:
-            idx = (self.y*OFFSET -2 + OFFSET/2)/OFFSET
+            idx = old_div((self.y*OFFSET -2 + old_div(OFFSET,2)),OFFSET)
 
             if idx <1 or idx > self.list.length:
                 return
@@ -100,8 +102,8 @@ Draw the ListItem Object on canvas.
 
             if self.highlight is not None:
                 box=canvas.create_rectangle(
-                    2+OFFSET, 2+OFFSET * idx - OFFSET/2,
-                    400, 2+OFFSET * (idx+1) -OFFSET/2, 
+                    2+OFFSET, 2+OFFSET * idx - old_div(OFFSET,2),
+                    400, 2+OFFSET * (idx+1) -old_div(OFFSET,2), 
                     fill = self.highlight, outline="")
 
             self.list.selectionBox = box
@@ -1338,7 +1340,7 @@ put a folder is node has children"""
                 yoff=0
 
             selectionBox = canvas.create_rectangle(
-                1, self.y - OFFSET/2, bb[2]-yoff, self.y+OFFSET/2, 
+                1, self.y - old_div(OFFSET,2), bb[2]-yoff, self.y+old_div(OFFSET,2), 
                 tags="selected",
                 fill = "yellow")
             canvas.lower(selectionBox)
@@ -2402,7 +2404,7 @@ parent should be given as full name of parent node"""
 """
         y = n.y - OFFSET + 0.0
         bb = self.canvas.bbox(tkinter.ALL)
-        self.canvas.yview_moveto(y/bb[3])
+        self.canvas.yview_moveto(old_div(y,bb[3]))
         
         
     def deSelect(self):

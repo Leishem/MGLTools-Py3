@@ -1,12 +1,14 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 from matplotlib.pylab import *
 
 def findZero(i,x,y1,y2):
      im1 = i-1
-     m1 = (y1[i] - y1[im1])/(x[i] - x[im1])
-     m2 = (y2[i] - y2[im1])/(x[i] - x[im1])
+     m1 = old_div((y1[i] - y1[im1]),(x[i] - x[im1]))
+     m2 = old_div((y2[i] - y2[im1]),(x[i] - x[im1]))
      b1 = y1[im1] - m1*x[im1]
      b2 = y2[im1] - m2*x[im1]
-     xZero = (b1 - b2)/(m2 - m1)
+     xZero = old_div((b1 - b2),(m2 - m1))
      yZero = m1*xZero + b1
      return (xZero, yZero)
 

@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -14,6 +15,7 @@
 # $Id: colorUtil.py,v 1.15 2007/07/24 17:30:40 vareille Exp $
 #
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric, math
 from types import FunctionType
 
@@ -187,18 +189,18 @@ HSL results = 0 - 1
     var_Min = min( R, G, B )    
     var_Max = max( R, G, B )    
     del_Max = var_Max - var_Min             
-    L = ( var_Max + var_Min ) / 2
+    L = old_div(( var_Max + var_Min ), 2)
     if del_Max == 0: 
        H = 0                               
        S = 0
     else:
        if L < .5:
-           S = del_Max / ( var_Max + var_Min )
+           S = old_div(del_Max, ( var_Max + var_Min ))
        else:
-           S = del_Max / ( 2. - var_Max - var_Min )
-       del_R = ( ( ( var_Max - R ) / 6. ) + ( del_Max / 2. ) ) / del_Max
-       del_G = ( ( ( var_Max - G ) / 6. ) + ( del_Max / 2. ) ) / del_Max
-       del_B = ( ( ( var_Max - B ) / 6. ) + ( del_Max / 2. ) ) / del_Max
+           S = old_div(del_Max, ( 2. - var_Max - var_Min ))
+       del_R = old_div(( ( ( var_Max - R ) / 6. ) + ( del_Max / 2. ) ), del_Max)
+       del_G = old_div(( ( ( var_Max - G ) / 6. ) + ( del_Max / 2. ) ), del_Max)
+       del_B = old_div(( ( ( var_Max - B ) / 6. ) + ( del_Max / 2. ) ), del_Max)
        if R == var_Max:
            H = del_B - del_G
        elif G == var_Max:
@@ -259,10 +261,10 @@ and returns a the corresponding HSV triplet (0.0 to 1.0)
             newCol = Numeric.array([r,g,b], 'f')
             assert min(newCol) >=0.0
             assert max(newCol) <=255.0
-            col= Numeric.array(newCol,'f')/255
+            col= old_div(Numeric.array(newCol,'f'),255)
     elif mode == "RGB":
         assert len(col)==3
-        if flag255: col =  Numeric.array(col,'f')/255
+        if flag255: col =  old_div(Numeric.array(col,'f'),255)
     else:
         print("color mode should be 'HEX' or 'RGB'")
     maxi = max(col)
@@ -270,14 +272,14 @@ and returns a the corresponding HSV triplet (0.0 to 1.0)
     r,g,b = col
     assert maxi<= 1.0 
     assert mini >= 0.0
-    if maxi > 0.0001: s = (maxi - mini)/maxi
+    if maxi > 0.0001: s = old_div((maxi - mini),maxi)
     else: s = 0.0
     if s < 0.0001: h = 0.0
     else:
         delta = maxi - mini
-        if r == maxi: h = (g - b)/delta
-        elif g == maxi: h = 2.0 + (b - r)/delta
-        elif b == maxi: h = 4.0 + (r - g)/delta
+        if r == maxi: h = old_div((g - b),delta)
+        elif g == maxi: h = 2.0 + old_div((b - r),delta)
+        elif b == maxi: h = 4.0 + old_div((r - g),delta)
         h = h/6.0
         if h < 0.0: h = h + 1.0
 

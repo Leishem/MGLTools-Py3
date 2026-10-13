@@ -4,6 +4,8 @@
 #
 # $Header: /opt/cvs/python/packages/share1.5/AutoDockTools/Utilities24/compute_rms_between_methods.py,v 1.5 2007/10/09 17:30:07 annao Exp $
 #
+from __future__ import division
+from mglcompat.pydiv import old_div
 import os, glob
 import mglcompat.oldnumeric as Numeric
 from math import sqrt
@@ -17,8 +19,8 @@ def dist(coords1, coords2):
     """return distance between two atoms, a and b.
     """
     npts = len(coords1)
-    pt1 = Numeric.add.reduce(coords1)/npts
-    pt2 = Numeric.add.reduce(coords2)/npts
+    pt1 = old_div(Numeric.add.reduce(coords1),npts)
+    pt2 = old_div(Numeric.add.reduce(coords2),npts)
     d = Numeric.array(pt1) - Numeric.array(pt2)
     return sqrt(Numeric.sum(d*d))
 

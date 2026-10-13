@@ -19,7 +19,9 @@ This module implements the classes Atom, AtomSet, Bond, BondSet and Molecule.
 The class Molecule is expected to be specialized to represent molecular
 structures with higher level of hierarchies (see protein.py)
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 import itertools
 import types, re; from mglcompat import pystring as string
 #import misc
@@ -421,7 +423,7 @@ class Atom(TreeNode):
             # get the alternate coords.
             coords = [self.coords,] + self.alternate.coords
             # compute the average as a list of coords.
-            avCoords = (sum(coords)/len(coords)).tolist()
+            avCoords = (old_div(sum(coords),len(coords))).tolist()
         else:
             # only one coords.
             avCoords = self.coords
@@ -732,7 +734,7 @@ class Bond:
 
         # Normalize this vector,
         a1len = sqrt(sum(a1sum*a1sum))
-        a1norm = a1sum/a1len
+        a1norm = old_div(a1sum,a1len)
         v1 = atm1.dispVec = 0.20*a1norm
 
         if a2vect2 is None:
@@ -743,7 +745,7 @@ class Bond:
             a2sum = a2vect1 + a2vect2
         # Normalize this vector,
         a2len = sqrt(sum(a2sum*a2sum))
-        a2norm = a2sum/a1len
+        a2norm = old_div(a2sum,a1len)
         v2 = atm2.dispVec = 0.20 * a2norm
 
         # make sure they are on the same side
@@ -758,7 +760,7 @@ class Bond:
                 a2sum = a2vect1 - a2vect2
             # Normalize this vector,
             a2len = sqrt(sum(a2sum*a2sum))
-            a2norm = a2sum/a1len
+            a2norm = old_div(a2sum,a1len)
             v2 = atm2.dispVec = 0.20 * a2norm
 
     def getSecondVector(self, oriAtm, endAtm):
@@ -1564,7 +1566,7 @@ if united is true large atomic radii are used for atoms which have no hydrogens
     def getCenter(self):
         """sets self.center<-getCenter(self)"""
         coords = self.allAtoms.coords
-        self.center = sum(coords)/(len(coords)*1.0)
+        self.center = old_div(sum(coords),(len(coords)*1.0))
         self.center = list(self.center)
         for i in range(3):
             self.center[i] = round(self.center[i], 4)

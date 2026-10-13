@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -13,6 +14,7 @@
 #$Id: customizedWidgets.py,v 1.51.2.1 2011/08/18 18:34:33 sanner Exp $
 #
 
+from mglcompat.pydiv import old_div
 import sys
 import tkinter, Pmw
 import types
@@ -901,7 +903,7 @@ class SliderWidget(CallbackFunctions):
         if incr:
             self.incrCanvas = round(incr*self.cst)
 
-        if withValue: m = self.height / 2
+        if withValue: m = old_div(self.height, 2)
         else: m = int(self.height * 0.75)
         self.middle = m
 
@@ -982,7 +984,7 @@ class SliderWidget(CallbackFunctions):
         # compute the new value
         val = self.min+self.cst1 * x
         if self.incrCanvas:
-            val = round(val/self.incr)*self.incr
+            val = round(old_div(val,self.incr))*self.incr
         if val<self.min: val = self.min
         elif val>self.max: val = self.max
 
@@ -1013,7 +1015,7 @@ class SliderWidget(CallbackFunctions):
             elif val>self.max: val = self.max
         
         if self.incrCanvas:
-            val = round(val/self.incr)*self.incr
+            val = round(old_div(val,self.incr))*self.incr
         self.val = val
 
         self.DrawCursor()
@@ -1067,7 +1069,7 @@ class SliderWidget(CallbackFunctions):
 
     def _ComputeCst(self, event=None):
         """Conversion factor between values and pixels"""
-        self.cst = 1.0*(self.right-self.left) / (self.max-self.min)
+        self.cst = old_div(1.0*(self.right-self.left), (self.max-self.min))
         self.cst1 = 1.0 / self.cst
 
 
@@ -1137,7 +1139,7 @@ class SliderWidget(CallbackFunctions):
                 if height != self.height:
                     self.draw.configure(height=height)
                     self.height = height
-                    if self.withValue: m = height / 2
+                    if self.withValue: m = old_div(height, 2)
                     else: m = int(height * 0.75)
                     self.middle = m
                     l = self.left
@@ -1172,7 +1174,7 @@ class SliderWidget(CallbackFunctions):
                         if height != self.height:
                             self.draw.configure(height=height)
                             self.height = height
-                        m = self.height / 2
+                        m = old_div(self.height, 2)
                         y = m+10
                         fnt='-*-helvetica-medium-r-narrow-*-*-120-*-*-*-*-*-*'
                         sv = (self.labelsCursorFormat)%withval
@@ -1300,7 +1302,7 @@ class ExtendedSliderWidget(SliderWidget):
         # Problem with the lookup
         val =  x
         if self.incrCanvas:
-            val = round(val/self.incr)*self.incr
+            val = round(old_div(val,self.incr))*self.incr
         if val<self.min: val = self.min
         elif val>self.max: val = self.max
         # check if redraw and callback are needed

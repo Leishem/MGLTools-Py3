@@ -20,12 +20,14 @@ ICOM      : Base class to implement Picking command for application dercived
             from ViewerFramework. Picking command are bound to the picking event.
 
 """
+from __future__ import division
 
 # $Header: /opt/cvs/python/packages/share1.5/ViewerFramework/VFCommand.py,v 1.99.2.1 2011/06/22 21:27:46 sargis Exp $
 #
 # $Id: VFCommand.py,v 1.99.2.1 2011/06/22 21:27:46 sargis Exp $
 #
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric
 import os, types, tkinter, Pmw, warnings; from mglcompat import pystring as string #, webbrowser
 import tkinter.messagebox
@@ -1355,7 +1357,7 @@ optional arguments :
                     # make sure the upper left dorner is visible
                     dum,x0,y0 = geom.split('+')
                     w,h = [int(x) for x in dum.split('x')]
-                    posx = int(x0)+(w/2)
+                    posx = int(x0)+(old_div(w,2))
                     posy = int(y0)+15
                     form.root.geometry("+%d+%d"%(posx,posy))
                 if not (modal or blocking):

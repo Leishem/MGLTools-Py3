@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 from mglutil.gui.BasicWidgets.Tk.trees.TreeWithButtons import \
      ColumnDescriptor ,TreeWithButtons, NodeWithButtons
 from MolKit.molecule import MolecularSystem
@@ -428,7 +430,7 @@ class MolFragNodeWithButtons(NodeWithButtons):
         lab = GlfLabels(
             'flashLabel', fontStyle='solid3d', fontTranslation=(0,0,3.),
             fontScales=(sca*.3,sca*.3, .1), pickable=0, labels=[name],
-            vertices=[numpy.sum(coords, 0)/len(coords)], visible=0)
+            vertices=[old_div(numpy.sum(coords, 0),len(coords))], visible=0)
         vi.AddObject(lab)
         lab.applyStrokes()
 

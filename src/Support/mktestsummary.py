@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 import os, sys
 import time
 import stat
@@ -159,7 +161,7 @@ def getTestSummaryResults(testroot, testreportdir):
             results[test]['failed'] = testerrors
             results[test]['errtxt'] = errtxt
 
-    perc = numerrors/numtests*100.0
+    perc = old_div(numerrors,numtests)*100.0
     if len(noreports):
         endstr = "No test report for the following module(s) (tests possibly crashed): \n"
         for f in noreports:

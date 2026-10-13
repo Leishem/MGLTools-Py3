@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #########################################################################
@@ -11,6 +12,7 @@
 #
 #########################################################################
 
+from mglcompat.pydiv import old_div
 import tkinter
 import math
 import types
@@ -234,10 +236,10 @@ every time the widget value is set/modified"""
     def setArrow(self, size=None):
         if size is not None:
             self.setSize(size)
-        aS = self.size/40
+        aS = old_div(self.size,40)
         self.arrowLength = max(3, 3*aS) # arrow head length
         self.arrowWidth = max(2, aS)    # half the arrow body width
-        self.arrowBorderwidth = max(1, self.arrowWidth/2)  # width of arrow
+        self.arrowBorderwidth = max(1, old_div(self.arrowWidth,2))  # width of arrow
                                                            # shadow lines
         self.arrowHeadWidth = 2*self.arrowWidth # width of arrow head base
 
@@ -264,7 +266,7 @@ every time the widget value is set/modified"""
     
         n = math.sqrt(dx*dx+dy*dy)
         if n == 0.0: v = [0.0, 0.0]
-        else: v = [dx/n, dy/n]
+        else: v = [old_div(dx,n), old_div(dy,n)]
 
         # find the cosine of the angle between new hand position and previous
         # hand position
@@ -327,7 +329,7 @@ every time the widget value is set/modified"""
         # snap to closest increment
         if self.increment is not None and self.increment != 0. and not force:
             offset = self.offsetValue%self.increment
-            dval = round(val/self.increment) * self.increment
+            dval = round(old_div(val,self.increment)) * self.increment
 
             if val < dval:
                 dval = dval + offset - self.increment
@@ -421,8 +423,8 @@ every time the widget value is set/modified"""
 
         self.canvas = tkinter.Canvas(self.frame, width=size+2, height=size+2)
 
-        self.xm = self.ym = size/2+2
-        self.rad = size/2
+        self.xm = self.ym = old_div(size,2)+2
+        self.rad = old_div(size,2)
         self.radNoArrow = self.rad-self.arrowLength
         self.vector = [0, 1]
         x1 = self.xm + self.vector[0]*self.rad
@@ -445,9 +447,9 @@ every time the widget value is set/modified"""
                                                    fill='white',
                                              width = self.arrowBorderwidth )
 
-        r = size/20
+        r = old_div(size,20)
         off = self.arrowBorderwidth
-        canvas.create_oval(self.xm-r,self.ym-r-off/2,self.xm+r,self.ym+r-off/2,
+        canvas.create_oval(self.xm-r,self.ym-r-old_div(off,2),self.xm+r,self.ym+r-old_div(off,2),
                            fill='#DDDDDD', outline='white')
 
         canvas.create_oval(self.xm-r,self.ym-r+off,self.xm+r,self.ym+r+off,
@@ -789,8 +791,8 @@ every time the widget value is set/modified"""
         
         self.oneTurn = oneTurn
         self.threeSixtyOver1turn = 360./oneTurn
-        self.piOver1turn = math.pi/oneTurn
-        self.oneTurnOver2pi = oneTurn / (2*math.pi)
+        self.piOver1turn = old_div(math.pi,oneTurn)
+        self.oneTurnOver2pi = old_div(oneTurn, (2*math.pi))
 
         if self.opPanel:
             self.opPanel.updateDisplay()

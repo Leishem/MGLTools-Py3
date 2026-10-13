@@ -1,9 +1,11 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
 # $Header: /opt/cvs/python/packages/share1.5/mglutil/math/transformation.py,v 1.45 2007/07/24 17:30:40 vareille Exp $
 #
 
+from mglcompat.pydiv import old_div
 import math
 import mglcompat.oldnumeric as Numeric
 from mglutil.math import rotax
@@ -82,8 +84,8 @@ class Quaternion:
 
     def inverse(self):
         """Get the multiplicative inverse of a quaternion"""
-        real = self.real/self.magnitude()
-        pure = -self.pure/self.magnitude()
+        real = old_div(self.real,self.magnitude())
+        pure = old_div(-self.pure,self.magnitude())
         return Quaternion((real,pure))
 
 
@@ -92,8 +94,8 @@ class Quaternion:
         magnitude
         """
         M = N.sqrt(self.magnitude())
-        self.pure = self.pure/M
-        self.real = self.real/M
+        self.pure = old_div(self.pure,M)
+        self.real = old_div(self.real,M)
 
 
 
@@ -128,8 +130,8 @@ class UnitQuaternion(Quaternion):
     def normal(self):
         if self.real!=1.:
             theta = N.arccos(self.real)
-            vector = self.pure/N.sin(theta)
-            vector = vector/N.sqrt(N.innerproduct(vector,vector))
+            vector = old_div(self.pure,N.sin(theta))
+            vector = old_div(vector,N.sqrt(N.innerproduct(vector,vector)))
             self.pure = N.sin(theta)*vector
         else:
             self.pure = N.zeros(3,'f')
@@ -142,8 +144,8 @@ class UnitQuaternion(Quaternion):
         if self.real != 1.:
             #if it is not the identity
             theta = N.arccos(self.real)
-            angle = 360*theta/N.pi
-            xyz = self.pure/N.sin(theta)
+            angle = old_div(360*theta,N.pi)
+            xyz = old_div(self.pure,N.sin(theta))
         else:
             #if it is the identity
             angle = 0.
@@ -171,8 +173,8 @@ class UnitQuaternion(Quaternion):
         """Given a quaternion, compute axis and angle.
 """
         theta = N.arccos(self.real)
-        angle = 360*theta/N.pi
-        xyz = self.pure/N.sin(theta)
+        angle = old_div(360*theta,N.pi)
+        xyz = old_div(self.pure,N.sin(theta))
         return xyz, angle
 
 
@@ -246,8 +248,8 @@ class Transformation(UnitQuaternion):
         #  first check for identity quaternion to avoid nans
         if self.real != 1:
             theta = N.arccos(self.real)
-            angle = 360*theta/N.pi
-            xyz = self.pure/N.sin(theta)
+            angle = old_div(360*theta,N.pi)
+            xyz = old_div(self.pure,N.sin(theta))
         else:
             angle = 0.
             xyz = self.pure
@@ -262,8 +264,8 @@ class Transformation(UnitQuaternion):
         """
         if self.real != 1:
             theta = N.arccos(self.real)
-            angle = 360*theta/N.pi
-            xyz = self.pure/N.sin(theta)
+            angle = old_div(360*theta,N.pi)
+            xyz = old_div(self.pure,N.sin(theta))
         else:
             angle = 0.
             xyz = self.pure
@@ -385,14 +387,14 @@ class Transformation(UnitQuaternion):
             #need the direction to determine which way to draw the line
             trans = Vector(self.trans[:3])
             theta = N.arccos(self.real)
-            axis = self.pure/N.sin(theta)
+            axis = old_div(self.pure,N.sin(theta))
             axis = Vector(axis)
             screw = (trans*axis)
             tpar = screw*axis
             tper = trans - tpar
             cpt1 = tper/2.
             length = tper.length()
-            height = length/(2*N.tan(theta))
+            height = old_div(length,(2*N.tan(theta)))
             cpt2 = height*(axis.cross(tper)).normal()
             point = cpt1+cpt2
             if center:

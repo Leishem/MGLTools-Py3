@@ -1,3 +1,4 @@
+from __future__ import division
 ########################################################################
 #
 # Copyright: Sargis Dallakyan (sargis@scripps.edu), 
@@ -12,6 +13,7 @@
 #
 # $Id: msExposureCommands.py,v 1.2 2008/10/01 19:11:27 sargis Exp $
 #
+from mglcompat.pydiv import old_div
 from Pmv.mvCommand import MVCommand
 import mslib
 import numpy
@@ -44,7 +46,7 @@ class ComputeAtomSESExposure(ComputeExposure):
         for atom in atoms:
             surfaceArea = 4*math.pi*atom.radius*atom.radius
             if atom.ses_area > 0.0:
-                atom.ses_ratio = (atom.ses_area * 100) / surfaceArea
+                atom.ses_ratio = old_div((atom.ses_area * 100), surfaceArea)
             else:
                 atom.ses_ratio = 0.0
 
@@ -53,7 +55,7 @@ class ComputeAtomSASExposure(ComputeExposure):
         for atom in atoms:
             surfaceArea = 4*math.pi*(atom.radius+1.5)*(atom.radius+1.5)
             if atom.sas_area > 0.0:
-                atom.sas_ratio = (atom.sas_area * 100) / surfaceArea
+                atom.sas_ratio = old_div((atom.sas_area * 100), surfaceArea)
             else:
                 atom.sas_ratio = 0.0
         
@@ -66,7 +68,7 @@ class ComputeResidueSESExposure(ComputeExposure):
           m.compute()
           m.compute_ses_area()
           if r.ses_area > 0.0:
-              r.ses_ratio = (r.ses_area * 100) / m.sesr.fst.a_ses_area
+              r.ses_ratio = old_div((r.ses_area * 100), m.sesr.fst.a_ses_area)
           else:
               r.ses_ratio = 0.0
 
@@ -79,7 +81,7 @@ class ComputeResidueSASExposure(ComputeExposure):
           m.compute()
           m.compute_ses_area()
           if r.ses_area > 0.0:
-              r.sas_ratio = (r.sas_area * 100) / m.sesr.fst.a_sas_area
+              r.sas_ratio = old_div((r.sas_area * 100), m.sesr.fst.a_sas_area)
           else:
               r.sas_ratio = 0.0
 
@@ -92,7 +94,7 @@ class ComputeChainSESExposure(ComputeExposure):
           m.compute()
           m.compute_ses_area()
           if chain.ses_area > 0.0:
-              chain.ses_ratio = (chain.ses_area * 100) / m.sesr.fst.a_sas_area
+              chain.ses_ratio = old_div((chain.ses_area * 100), m.sesr.fst.a_sas_area)
           else:
               chain.ses_ratio = 0.0
 
@@ -105,7 +107,7 @@ class ComputeChainSASExposure(ComputeExposure):
           m.compute()
           m.compute_ses_area()
           if chain.ses_area > 0.0:
-              chain.sas_ratio = (chain.sas_area * 100) / m.sesr.fst.a_sas_area
+              chain.sas_ratio = old_div((chain.sas_area * 100), m.sesr.fst.a_sas_area)
           else:
               chain.sas_ratio = 0.0
 

@@ -38,9 +38,11 @@ example:
 reimplmentation of Babel1.6 in Python by Michel Sanner April 2000
 Original code by W. Patrick Walters and Matthew T. Stahl 
 """
+from __future__ import division
 
 
 
+from mglcompat.pydiv import old_div
 from mglcompat import pystring as string
 
 from .babelAtomTypes import babel_types
@@ -229,7 +231,7 @@ class AtomHybridization:
               angle1 = bond_angle(k.coords, a.coords, l.coords)
               angle2 = bond_angle(k.coords, a.coords, m.coords)
               angle3 = bond_angle(l.coords, a.coords, m.coords)
-              avg_angle = (angle1 + angle2 + angle3)/3
+              avg_angle = old_div((angle1 + angle2 + angle3),3)
 
               if a.babel_type[0] =='C' and a.element == 'C':
                   if avg_angle < SP3_MAX: a.babel_type="C3"

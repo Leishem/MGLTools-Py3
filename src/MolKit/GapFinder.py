@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
@@ -15,6 +16,7 @@
 
 
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric, math, types
 from .molecule import Atom, AtomSet
 from .protein import Residue
@@ -130,7 +132,7 @@ class FindGap:
             for dis in distances:
                 sum =sum+dis
             #finding mean    
-            mean =sum/len(distances)
+            mean =old_div(sum,len(distances))
             if mean>4.00:
                 mean=3.50
             self.distsquares =0
@@ -142,7 +144,7 @@ class FindGap:
                 self.distsquares=math.pow((dist-mean),2)
                 self.midval=self.midval+self.distsquares
             if len(distances)>1:
-                self.midval1 =    self.midval/(len(distances)-1)
+                self.midval1 =    old_div(self.midval,(len(distances)-1))
             if len(distances)==1:
                 mean= distances[0]
                 self.stddev=0

@@ -10,6 +10,8 @@ An interpolator object has values for the first and last positions (firstVal , l
 This object implements the getValue(fraction) which will return
 the value corresponding to the the position (a fraction of the range 0.0 ... 1.0)
 """
+from __future__ import division
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric
 from math import acos, sqrt, sin, cos, pi
 from copy import copy
@@ -338,19 +340,19 @@ The getValue method has to be implemented to compute the appropriate value
             a = 0.0
             b = easeOutStart
             
-        v0 = 2/(1+b-a)          # constant velocity attained
+        v0 = old_div(2,(1+b-a))          # constant velocity attained
         if fraction<=a:
             if a==0:
                 return 0
             else:
-                d = v0*fraction*fraction/(2*a);
+                d = old_div(v0*fraction*fraction,(2*a));
         else:
-            d = v0*a/2
+            d = old_div(v0*a,2)
             if fraction<=b:
                 d += (fraction-a)*v0
             else:
                 d += (b-a)*v0
-                d += (fraction-fraction*fraction/2-b+b*b/2)*v0/(1-b)
+                d += old_div((fraction-old_div(fraction*fraction,2)-b+old_div(b*b,2))*v0,(1-b))
 
         return d # distance from 0 in range(0, 1)
 
@@ -822,8 +824,8 @@ class RotationInterpolator(Interpolator):
             qm = [(qa[0] * 0.5 + qb[0] * 0.5), (qa[1] * 0.5 + qb[1] * 0.5),
                   (qa[2] * 0.5 + qb[2] * 0.5), (qa[3]* 0.5 + qb[3] * 0.5)]
             return qm
-        ratioA = sin((1 - t) * halfTheta) / sinHalfTheta
-        ratioB = sin(t * halfTheta) / sinHalfTheta
+        ratioA = old_div(sin((1 - t) * halfTheta), sinHalfTheta)
+        ratioB = old_div(sin(t * halfTheta), sinHalfTheta)
         #calculate Quaternion.
         qm = [(qa[0] * ratioA + qb[0] * ratioB), (qa[1] * ratioA + qb[1] * ratioB),
               (qa[2] * ratioA + qb[2] * ratioB), (qa[3] * ratioA + qb[3] * ratioB)]
@@ -1132,29 +1134,29 @@ def matToQuaternion(mat):
     trace = 1 + mat[0] + mat[5] + mat[10]
     if trace > 0.00000001:
       S = sqrt(trace) * 2
-      X = ( mat[9] - mat[6] ) / S
-      Y = ( mat[2] - mat[8] ) / S
-      Z = ( mat[4] - mat[1] ) / S
+      X = old_div(( mat[9] - mat[6] ), S)
+      Y = old_div(( mat[2] - mat[8] ), S)
+      Z = old_div(( mat[4] - mat[1] ), S)
       W = 0.25 * S
     else:
         if  mat[0] > mat[5] and mat[0] > mat[10]:      
             S  = sqrt( 1.0 + mat[0] - mat[5] - mat[10] ) * 2
             X = 0.25 * S
-            Y = (mat[4] + mat[1] ) / S
-            Z = (mat[2] + mat[8] ) / S
-            W = (mat[9] - mat[6] ) / S
+            Y = old_div((mat[4] + mat[1] ), S)
+            Z = old_div((mat[2] + mat[8] ), S)
+            W = old_div((mat[9] - mat[6] ), S)
         elif mat[5] > mat[10] : 
             S  = sqrt( 1.0 + mat[5] - mat[0] - mat[10] ) * 2
-            X = (mat[4] + mat[1] ) / S
+            X = old_div((mat[4] + mat[1] ), S)
             Y = 0.25 * S
-            Z = (mat[9] + mat[6] ) / S
-            W = (mat[2] - mat[8] ) / S
+            Z = old_div((mat[9] + mat[6] ), S)
+            W = old_div((mat[2] - mat[8] ), S)
         else:		       
             S  = sqrt( 1.0 + mat[10] - mat[0] - mat[5] ) * 2
-            X = (mat[2] + mat[8] ) / S
-            Y = (mat[9] + mat[6] ) / S
+            X = old_div((mat[2] + mat[8] ), S)
+            Y = old_div((mat[9] + mat[6] ), S)
             Z = 0.25 * S
-            W = (mat[4] - mat[1] ) / S
+            W = old_div((mat[4] - mat[1] ), S)
     
 
       #The quaternion is then defined as:
@@ -1179,7 +1181,7 @@ def quatToMatrix(q):
     sqz = z*z
 
     #invs (inverse square length) is only required if quaternion is not already normalised
-    invs = 1 / (sqx + sqy + sqz + sqw)
+    invs = old_div(1, (sqx + sqy + sqz + sqw))
     m = numpy.zeros((4,4), 'f')
     m[0][0] = ( sqx - sqy - sqz + sqw)*invs  #since sqw + sqx + sqy + sqz =1/invs*invs
     m[1][1] = (-sqx + sqy - sqz + sqw)*invs 

@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -14,6 +15,7 @@
 # $Id: Transformable.py,v 1.51 2010/04/15 21:09:00 autin Exp $
 #
 
+from mglcompat.pydiv import old_div
 from opengltk.OpenGL import GL
 from opengltk.OpenGL.GLU import gluProject
 from opengltk.extent.utillib import glCleanRotMat
@@ -113,9 +115,9 @@ class Transformable:
         mat = Numeric.reshape(m, (4,4))
         rot = Numeric.identity(4).astype('f')
         rot[:3,:3] = mat[:3,:3].astype('f')
-        rot[:,0] = (rot[:,0]/scale0).astype('f')
-        rot[:,1] = (rot[:,1]/scale1).astype('f')
-        rot[:,2] = (rot[:,2]/scale2).astype('f')
+        rot[:,0] = (old_div(rot[:,0],scale0)).astype('f')
+        rot[:,1] = (old_div(rot[:,1],scale1)).astype('f')
+        rot[:,2] = (old_div(rot[:,2],scale2)).astype('f')
         if cleanup:
             rot = glCleanRotMat(rot.ravel())
         rot.shape = (16,)
@@ -406,7 +408,7 @@ instance is a list of integer instance indices for all parents
         m = Numeric.reshape(Numeric.transpose(m), (16,)).astype('f')
         rot, transl, scale = self.Decompose4x4(m)
         sc = Numeric.concatenate((Numeric.reshape(scale,(3,1)), [[1]]))
-        n = Numeric.reshape(rot, (4,4))/sc
+        n = old_div(Numeric.reshape(rot, (4,4)),sc)
         tr = Numeric.dot(n, (transl[0], transl[1], transl[2],1) )
         n[:3,3] = -tr[:3].astype('f')
         return n
@@ -433,8 +435,8 @@ instance is a list of integer instance indices for all parents
                     upd = Numeric.reshape( Numeric.transpose(m), (16, ) )
                     GL.glMultMatrixf(upd)                
                     GL.glMultMatrixf(parent.MatrixRotInv)                
-                    self.Si = self.Si / parent.scale
-                    self.Si = self.Si / parent.MatrixScale
+                    self.Si = old_div(self.Si, parent.scale)
+                    self.Si = old_div(self.Si, parent.MatrixScale)
                     # we have to test here because we need to take into
                     # account the first parent that does not inherit while
                     # building R and Ri
@@ -447,7 +449,7 @@ instance is a list of integer instance indices for all parents
             m = Numeric.reshape( camera.rotation, (4,4) )
             upd = Numeric.reshape( Numeric.transpose(m), (16, ) )
             GL.glMultMatrixf(upd)
-            self.Si = self.Si / camera.scale
+            self.Si = old_div(self.Si, camera.scale)
 
         self.Ri = Numeric.array(GL.glGetDoublev(GL.GL_MODELVIEW_MATRIX)).astype('f')
         GL.glPopMatrix()

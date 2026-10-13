@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 import os
 import tkinter, Pmw
 
@@ -483,7 +485,7 @@ class OrientationMAAEditor(MAAEditorWithSpeed):
         
         val = MAAEditorWithSpeed.getValues(self).get('nbFrames',None)
         if val:
-            self._3intw.setentry("%d %d %d"%(val/3, 2*val/3, val))
+            self._3intw.setentry("%d %d %d"%(old_div(val,3), old_div(2*val,3), val))
 
 
     def getValues(self):

@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 import weakref
 from time import time
 
@@ -534,7 +536,7 @@ class MultipleActorsActions:
         director.setValuesAt(at)
         director.viewerRedraw()
         dtime = time() - self._timeStart
-        fraction = min(1.0, dtime/self._duration)
+        fraction = min(1.0, old_div(dtime,self._duration))
         frameT = int(fraction*self._nbFrames)
         self.frameCounter += 1
         at = max(frameT, self.frameCounter)

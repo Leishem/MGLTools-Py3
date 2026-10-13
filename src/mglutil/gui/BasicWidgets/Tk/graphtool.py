@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ##############################################################################
@@ -17,6 +18,7 @@
 #app=GraphApp(root)
 #app.caluculate_ramp() returns current ramp
 #from ViewerFramework.VFCommand import Command, CommandGUI
+from mglcompat.pydiv import old_div
 from tkinter import *
 import tkinter
 import tkinter.filedialog
@@ -1009,7 +1011,7 @@ every time the widget value is set/modified"""
                 max_list=max(list_pixels_count)
                 if max_list==0:
                     return
-                val=i*200/max_list
+                val=old_div(i*200,max_list)
                 c.append(val)
            
            for i in range(0,len(c)):

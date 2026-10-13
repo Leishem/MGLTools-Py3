@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
@@ -13,6 +14,7 @@
 #
 
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric, math
 from .scorer import DistDepPairwiseScorer
 
@@ -57,7 +59,7 @@ class DesolvationRefImpl(DistDepPairwiseScorer):
         Stouten @@ Document this @@
         """
         sigma = 3.6
-        minus_inv_two_sigma_sqd = -1.0 / (2.0*(sigma*sigma))
+        minus_inv_two_sigma_sqd = old_div(-1.0, (2.0*(sigma*sigma)))
         exponent = minus_inv_two_sigma_sqd*(distance*distance)
         ddsol = math.e**exponent
         return ddsol
@@ -183,7 +185,7 @@ class NewDesolvationRefImpl(DistDepPairwiseScorer):
         Stouten @@ Document this @@
         """
         sigma = 3.6
-        minus_inv_two_sigma_sqd = -1.0 / (2.0*(sigma*sigma))
+        minus_inv_two_sigma_sqd = old_div(-1.0, (2.0*(sigma*sigma)))
         exponent = minus_inv_two_sigma_sqd*(distance*distance)
         ddsol = math.e**exponent
         return ddsol

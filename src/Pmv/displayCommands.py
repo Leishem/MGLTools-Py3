@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ###########################################################################
@@ -14,6 +15,7 @@
 # $Id: displayCommands.py,v 1.213.2.4 2012/06/14 19:30:33 rhuey Exp $
 #
 
+from mglcompat.pydiv import old_div
 import itertools
 import warnings
 import traceback, math
@@ -4832,13 +4834,13 @@ class DisplayInteractionsCommand(MVCommand):
                 for first,second in cation_pi: 
                     #either (atom, list of atoms) OR (list, atom)
                     if type(first)==ListType:
-                        center1 = (Numeric.add.reduce(AtomSet(first).coords)/len(first)).tolist()
+                        center1 = (old_div(Numeric.add.reduce(AtomSet(first).coords),len(first))).tolist()
                         radii.append(0.7)
                     else:
                         center1 = (first.coords)
                         radii.append(0.1)
                     if type(second)==ListType:
-                        center2 = (Numeric.add.reduce(AtomSet(second).coords)/len(second)).tolist()
+                        center2 = (old_div(Numeric.add.reduce(AtomSet(second).coords),len(second))).tolist()
                         radii.append(0.7)
                     else:
                         center2 = (second.coords)
@@ -4856,13 +4858,13 @@ class DisplayInteractionsCommand(MVCommand):
             if len(pi_cation):
                 for first,second in pi_cation: #either (atom, list of atoms)
                     if type(first)==ListType:
-                        center1 = (Numeric.add.reduce(AtomSet(first).coords)/len(first)).tolist()
+                        center1 = (old_div(Numeric.add.reduce(AtomSet(first).coords),len(first))).tolist()
                         radii.append(0.7)
                     else:
                         center1 = (first.coords)
                         radii.append(0.1)
                     if type(second)==ListType:
-                        center2 = (Numeric.add.reduce(AtomSet(second).coords)/len(second)).tolist()
+                        center2 = (old_div(Numeric.add.reduce(AtomSet(second).coords),len(second))).tolist()
                         radii.append(0.7)
                     else:
                         center2 = (second.coords)
@@ -4894,8 +4896,8 @@ class DisplayInteractionsCommand(MVCommand):
             faces = []
             ctr = 0
             for first,second in pi_pi: #either (atom, list of atoms)
-                center1 = (Numeric.add.reduce(first.coords)/len(first)).tolist()
-                center2 = (Numeric.add.reduce(second.coords)/len(second)).tolist()
+                center1 = (old_div(Numeric.add.reduce(first.coords),len(first))).tolist()
+                center2 = (old_div(Numeric.add.reduce(second.coords),len(second))).tolist()
                 faces.append((ctr,ctr+1))
                 verts.append(center1)
                 verts.append(center2)

@@ -1,3 +1,4 @@
+from __future__ import division
 #############################################################################
 #
 # Author: Sophie COON, Michel F. SANNER
@@ -11,6 +12,7 @@
 #$Id: colorWidgets.py,v 1.27.2.7 2011/04/26 20:34:41 sargis Exp $
 #
 
+from mglcompat.pydiv import old_div
 import tkinter, Pmw, os
 import mglcompat.oldnumeric as Numeric
 from mglcompat.pytypes import ListType, TupleType
@@ -58,8 +60,8 @@ class ColorWheel:
         self.x = 0
         self.y = 0
         self.radius = 55
-        cx = self.cx = self.width/2 + 3
-        cy = self.cy = self.height/2 + 3
+        cx = self.cx = old_div(self.width,2) + 3
+        cy = self.cy = old_div(self.height,2) + 3
 
         self.cursor = self.cwcanvas.create_line(
             
@@ -73,10 +75,10 @@ class ColorWheel:
 
     def _MoveCursor(self, x, y, trigger=1):
         # find the saturation based on distance
-        s = math.sqrt(x*x + y*y) / self.radius
+        s = old_div(math.sqrt(x*x + y*y), self.radius)
         if s > 1.0:
-            x = x / s
-            y = y / s
+            x = old_div(x, s)
+            y = old_div(y, s)
             s = 1.0
 
         # now find the hue based on the angle 
@@ -84,7 +86,7 @@ class ColorWheel:
             angle = math.atan2(y, x)
             if angle < 0.0:
                 angle = angle + (2.*math.pi)
-            h = 1. - angle / (2.0 * math.pi)
+            h = 1. - old_div(angle, (2.0 * math.pi))
         else:
             h = 0
         # check if redraw and callback are needed
@@ -1159,7 +1161,7 @@ class PaletteChooser():
                 indicatoron=0, selectcolor=col,
                 width=5, height=1, command=self.selectColor)
             row = index%4
-            b.grid(row=index/5, column=index%5)
+            b.grid(row=old_div(index,5), column=index%5)
             self.buttons.append(b)
                     
         if self.ownmaster:

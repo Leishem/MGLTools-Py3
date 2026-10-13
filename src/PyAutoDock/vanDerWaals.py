@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
@@ -13,6 +14,7 @@
 #
 
 
+from mglcompat.pydiv import old_div
 import math
 import mglcompat.oldnumeric as Numeric
 
@@ -179,7 +181,7 @@ class VanDerWaalsRefImpl(DistDepPairwiseScorer, HBondVDWSmoothing):
         if Rij==0.0:
             return 0.
         # now compute the vdw energy
-        tmpconst = epsij/(exp_A - exp_B)
+        tmpconst = old_div(epsij,(exp_A - exp_B))
         dist = self.smooth_dist(dist, Rij)
         cA = tmpconst * Rij**exp_A * exp_B
         cB = tmpconst * Rij**exp_B * exp_A
@@ -188,7 +190,7 @@ class VanDerWaalsRefImpl(DistDepPairwiseScorer, HBondVDWSmoothing):
         # (MS) FIXME: it happens that rA or rB becomes 0.0 and we get
         # ZeroDivisionError: float division
         try:
-            energy = cA/rA - cB/rB
+            energy = old_div(cA,rA) - old_div(cB,rB)
         except ZeroDivisionError:
             return 99999.9
         #return min(EINTCLAMP, cA/rA - cB/rB)
@@ -285,13 +287,13 @@ manage only checking a required attr once per entity_sets.)
         epsij = self.epsij[elm_a+elm_b]
         Rij = self.Rij[elm_a+elm_b]
         # now compute the vdw energy
-        tmpconst = epsij/(exp_A - exp_B)
+        tmpconst = old_div(epsij,(exp_A - exp_B))
         sm_dist = self.smooth_dist(dist, Rij)
         cA = tmpconst * Rij**exp_A * exp_B
         cB = tmpconst * Rij**exp_B * exp_A
         rB = sm_dist**exp_B
         rA = sm_dist**exp_A
-        energy = cA/rA - cB/rB
+        energy = old_div(cA,rA) - old_div(cB,rB)
 
         # maybe get H bond scale factor
         if ((elm_a in ['N', 'O', 'S'] and elm_b == 'H') or
@@ -336,7 +338,7 @@ class HBondVectorCalculator:
     def normalize(self, a, magnitude=None):
         if magnitude is None:
             magnitude = self.magnitude(a)
-        return [ a[0]/magnitude, a[1]/magnitude, a[2]/magnitude]
+        return [ old_div(a[0],magnitude), old_div(a[1],magnitude), old_div(a[2],magnitude)]
     def scale(self, a, scale):
         return [ a[0]*scale, a[1]*scale, a[2]*scale]
     def vector_sum(self, a, b):
@@ -920,7 +922,7 @@ manage only checking a required attr once per entity_sets.)
         epsij = self.get_epsij(elm_a, elm_b)
         Rij = self.get_Rij(elm_a, elm_b)
         # now compute the vdw energy
-        tmpconst = epsij/(exp_A - exp_B)
+        tmpconst = old_div(epsij,(exp_A - exp_B))
         dist = self.smooth_dist(dist, Rij)
         cA = tmpconst * Rij**exp_A * exp_B
         cB = tmpconst * Rij**exp_B * exp_A
@@ -929,7 +931,7 @@ manage only checking a required attr once per entity_sets.)
         # (MS) FIXME: it happens that rA or rB becomes 0.0 and we get
         # ZeroDivisionError: float division
         try:
-            energy = cA/rA - cB/rB
+            energy = old_div(cA,rA) - old_div(cB,rB)
         except ZeroDivisionError:
             return 99999.9
         #return min(EINTCLAMP, cA/rA - cB/rB)
@@ -1063,13 +1065,13 @@ manage only checking a required attr once per entity_sets.)
         Rij = self.Rij[elm_a + elm_b]
         
         # now compute the vdw energy
-        tmpconst = epsij/(exp_A - exp_B)
+        tmpconst = old_div(epsij,(exp_A - exp_B))
         sm_dist = self.smooth_dist(dist, Rij)
         cA = tmpconst * Rij**exp_A * exp_B
         cB = tmpconst * Rij**exp_B * exp_A
         rB = sm_dist**exp_B
         rA = sm_dist**exp_A
-        energy = cA/rA - cB/rB
+        energy = old_div(cA,rA) - old_div(cB,rB)
 
         # maybe get H bond scale factor
         Hramp = 1.0
@@ -1314,7 +1316,7 @@ class NewVanDerWaalsRefImpl(DistDepPairwiseScorer, HBondVDWSmoothing):
         if Rij==0.0:
             return 0.0
         # now compute the vdw energy
-        tmpconst = epsij/(exp_A - exp_B)
+        tmpconst = old_div(epsij,(exp_A - exp_B))
         dist = self.smooth_dist(dist, Rij)
         cA = tmpconst * Rij**exp_A * exp_B
         cB = tmpconst * Rij**exp_B * exp_A
@@ -1323,7 +1325,7 @@ class NewVanDerWaalsRefImpl(DistDepPairwiseScorer, HBondVDWSmoothing):
         # (MS) FIXME: it happens that rA or rB becomes 0.0 and we get
         # ZeroDivisionError: float division
         try:
-            energy = cA/rA - cB/rB
+            energy = old_div(cA,rA) - old_div(cB,rB)
         except ZeroDivisionError:
             return 99999.9
         #return min(EINTCLAMP, cA/rA - cB/rB)
@@ -1409,7 +1411,7 @@ class NewHydrogenBonding12_10RefImpl(DistDepPairwiseScorer, HBondVDWSmoothing):
         epsij = self.epsij[elm_a + elm_b]
         Rij = self.Rij[elm_a + elm_b]
         # now compute the vdw energy
-        tmpconst = epsij/(exp_A - exp_B)
+        tmpconst = old_div(epsij,(exp_A - exp_B))
         ##NO SMOOTHING
         ##dist = self.smooth_dist(dist, Rij)
         cA = tmpconst * Rij**exp_A * exp_B
@@ -1419,7 +1421,7 @@ class NewHydrogenBonding12_10RefImpl(DistDepPairwiseScorer, HBondVDWSmoothing):
         # (MS) FIXME: it happens that rA or rB becomes 0.0 and we get
         # ZeroDivisionError: float division
         try:
-            energy = cA/rA - cB/rB
+            energy = old_div(cA,rA) - old_div(cB,rB)
         except ZeroDivisionError:
             return 99999.9
         #return min(EINTCLAMP, cA/rA - cB/rB)
@@ -1570,7 +1572,7 @@ class NewVanDerWaalsHybridWeights(DistDepPairwiseScorer, HBondVDWSmoothing):
         epsij = self.get_epsij(elm_a, elm_b)
         Rij = self.get_Rij(elm_a, elm_b)
         # now compute the vdw energy
-        tmpconst = epsij/(exp_A - exp_B)
+        tmpconst = old_div(epsij,(exp_A - exp_B))
         dist = self.smooth_dist(dist, Rij)
         cA = tmpconst * Rij**exp_A * exp_B
         cB = tmpconst * Rij**exp_B * exp_A
@@ -1579,7 +1581,7 @@ class NewVanDerWaalsHybridWeights(DistDepPairwiseScorer, HBondVDWSmoothing):
         # (MS) FIXME: it happens that rA or rB becomes 0.0 and we get
         # ZeroDivisionError: float division
         try:
-            energy = cA/rA - cB/rB
+            energy = old_div(cA,rA) - old_div(cB,rB)
         except ZeroDivisionError:
             return 99999.9
         #return min(EINTCLAMP, cA/rA - cB/rB)

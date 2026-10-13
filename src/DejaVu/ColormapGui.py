@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -15,6 +16,7 @@
 # $Id$
 #
 
+from mglcompat.pydiv import old_div
 import types, mglcompat.oldnumeric as Numeric, os, sys
 import tkinter, Pmw
 import tkinter.filedialog
@@ -971,7 +973,7 @@ after it's creation
         x = max(self.xoffset, x)
         if Y < j:
             Y = j
-        y = int ( (Y-j) / self.linesPerRampValue)
+        y = int ( old_div((Y-j), self.linesPerRampValue))
         if y < 0:
             y = 0
         self.startx = x
@@ -1010,7 +1012,7 @@ after it's creation
         x = max(self.xoffset, x)
         if Y < j:
             Y = j
-        y = int ( (Y-j) / self.linesPerRampValue)
+        y = int ( old_div((Y-j), self.linesPerRampValue))
         if y < 0:
             y = 0
         elif self.startx is None:
@@ -1038,7 +1040,7 @@ after it's creation
             rat = float(dx)/float(dy)
             if Y > self.startY:
                 for Yl in range(self.startY, Y+1):
-                    yl = int ( (Yl-j) / self.linesPerRampValue)
+                    yl = int ( old_div((Yl-j), self.linesPerRampValue))
                     ddx = int(rat*(Yl-self.startY)) + self.startx
                     lineIndex = self.lengthRamp-1-yl
                     #print "lineIndex 1 ...", lineIndex 
@@ -1057,7 +1059,7 @@ after it's creation
                     self.updateRGBMap(ddx, lineIndex)
             else:
                 for Yl in range(self.startY, Y-1, -1):
-                    yl = int ( (Yl-j) / self.linesPerRampValue)
+                    yl = int ( old_div((Yl-j), self.linesPerRampValue))
                     ddx = int(rat*(Yl-self.startY)) + self.startx
                     lineIndex = self.lengthRamp-1-yl
                     #print "lineIndex 2 ...", lineIndex 
@@ -1090,7 +1092,7 @@ after it's creation
         x = max(self.xoffset, x)
         if Y < j:
             Y = j
-        y = int ( (Y-j) / self.linesPerRampValue)
+        y = int ( old_div((Y-j), self.linesPerRampValue))
         if y < 0:
             y = 0
         self.startx = x
@@ -1105,7 +1107,7 @@ after it's creation
         x = max(self.xoffset, x)
         if Y < j:
             Y = j
-        y = int ( (Y-j) / self.linesPerRampValue)
+        y = int ( old_div((Y-j), self.linesPerRampValue))
         if y < 0:
             y = 0
         elif self.startx is None:
@@ -1116,7 +1118,7 @@ after it's creation
             c.delete(self.straightLine[1])
 
         dy = Y-self.startY
-        if abs(dy) < (self.linesPerRampValue/2):
+        if abs(dy) < (old_div(self.linesPerRampValue,2)):
             return
 
         straightLineBlack = c.create_line( 
@@ -1149,7 +1151,7 @@ after it's creation
         x = max(self.xoffset, x)
         if Y < j:
             Y = j
-        y = int ( (Y-j) / self.linesPerRampValue)
+        y = int ( old_div((Y-j), self.linesPerRampValue))
         if y < 0:
             y = 0
         elif self.startx is None:
@@ -1157,7 +1159,7 @@ after it's creation
         dx = x-self.startx
         dY = Y-self.startY
         dy = y-self.starty
-        if abs(dY) < (self.linesPerRampValue/2):
+        if abs(dY) < (old_div(self.linesPerRampValue,2)):
             return
         rat = float(dx)/float(dy)
         if y > self.starty:
@@ -1903,7 +1905,7 @@ newVals is list of new rightXValues for that column
             range = self.guiMaxi-self.guiMini
             return (float(self.height-y)/(self.height-1))*range + self.guiMini
         else:
-            return int((self.height-y)/self.linesPerRampValue)
+            return int(old_div((self.height-y),self.linesPerRampValue))
 
 
     def indexAtY(self, y):
@@ -1912,7 +1914,7 @@ newVals is list of new rightXValues for that column
         Y = min(j+self.height-1, y)
         if Y < j:
             Y = j
-        y = int ( (Y-j) / self.linesPerRampValue)
+        y = int ( old_div((Y-j), self.linesPerRampValue))
         return y
 
 
@@ -1920,7 +1922,7 @@ newVals is list of new rightXValues for that column
         x = event.x# - self.canvasStart
         x = max(x, self.xoffset)
         x = min(x, self.width)
-        val = (x-self.xoffset)/self.xrange
+        val = old_div((x-self.xoffset),self.xrange)
         self.curxTk.set("%4.2f"%val)
         lVal = self.valueAtY(event.y)
         if lVal is not None:
@@ -1942,13 +1944,13 @@ newVals is list of new rightXValues for that column
         cur_val[1] = self.currentSat[y]
 
         if self.current=='Hue':
-            h = ((self.width-x)/self.xrange) * .999 #*.6666666667
+            h = (old_div((self.width-x),self.xrange)) * .999 #*.6666666667
             cur_val[0] = round(h, 3)
         else:
             #use keyList = ['Sat', 'Val', 'Opa']
             keyList = self.idList[1:]
             ind = keyList.index(self.current) + 1
-            h = (x-self.xoffset)/self.xrange
+            h = old_div((x-self.xoffset),self.xrange)
             cur_val[ind] = round(h, 3)
         self.guiRamp[y] = list(HSLA2RGBA_list(cur_val))
 

@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 from .tree import Tree, Node
 from tkinter import Tk, Label, ALL, Menu, IntVar, StringVar, Toplevel, TclError
 from Pmw import Balloon
@@ -326,7 +328,7 @@ attribute describing the hierarchy."""
         # add column background
         if number%2:
             _id = self.canvas.create_rectangle(
-                x+number*cw-cw/2, 0, x+number*cw+cw/2, 10000,
+                x+number*cw-old_div(cw,2), 0, x+number*cw+old_div(cw,2), 10000,
                 tags=('backgroundStripes',), fill='#EEEEEE', outline='#EEEEEE')
             
         # add title and icon
@@ -466,9 +468,9 @@ class NodeWithButtons(Node):
         #print 'AAAAAAAAAAAAA', text, clength, tree.treeWidth, x, bb
         if clength > tree.treeWidth:
             # remove characters in the center until it is short enough
-            mid = len(text)/2
+            mid = old_div(len(text),2)
             off = 1
-            maxOff = len(text)/2
+            maxOff = old_div(len(text),2)
             ctext = '...'
             while clength > tree.treeWidth and off <maxOff:
                 off += 1
@@ -523,9 +525,9 @@ class NodeWithButtons(Node):
                 continue
 
             xo = x+i*cw
-            cw2 = cw/2
+            cw2 = old_div(cw,2)
             midx = xo+cw2
-            midy = y + tree.fontSize/2 + 2
+            midy = y + old_div(tree.fontSize,2) + 2
             cid1 = None
             color = col.color
             width = 1
@@ -560,8 +562,8 @@ class NodeWithButtons(Node):
 
             else:
                 shape = col.buttonShape
-                sx2 = cw/2-2
-                sy2 = tree.fontSize/2
+                sx2 = old_div(cw,2)-2
+                sy2 = old_div(tree.fontSize,2)
                 fill = col.buttonColors
                 from MolKit.listSet import ListSet
                 if shape=='circle':

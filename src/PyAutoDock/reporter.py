@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
@@ -7,6 +8,7 @@
 #
 
 
+from mglcompat.pydiv import old_div
 import math
 import mglcompat.oldnumeric as Numeric
 from mglcompat import pystring as string
@@ -174,7 +176,7 @@ class PerAtomTypeReporter:
             ctr = 0
             for tp in self.atomtypes:
                 ll = dict[tp]
-                av = Numeric.add.reduce(ll)/len(ll)
+                av = old_div(Numeric.add.reduce(ll),len(ll))
                 mx = max(ll)
                 mn = min(ll)
                 print(" % 2s % 6.3f % 6.3f % 6.3f "%(tp, av, mx, mn))
@@ -192,7 +194,7 @@ class PerAtomTypeReporter:
             ctr = 0
             for tp in self.atomtypes:
                 ll = dict[tp]
-                av = Numeric.add.reduce(ll)/len(ll)
+                av = old_div(Numeric.add.reduce(ll),len(ll))
                 mx = max(ll)
                 mn = min(ll)
                 ostr = ostr + " % 2s % 6.3f % 6.3f % 6.3f "%(tp, av, mx, mn)
@@ -235,9 +237,9 @@ class ReporterTest(unittest.TestCase):
             self.assertEqual(float1, float2)
         else:
             try:
-                eps = abs((float1/float2) - 1.0)
+                eps = abs((old_div(float1,float2)) - 1.0)
             except ZeroDivisionError:
-                eps = abs((float2/float1) - 1.0)
+                eps = abs((old_div(float2,float1)) - 1.0)
             self.assertEqual((eps < self.err_epsilon), True,
                               msg="%f != %f; eps=%f" % (float1, float2, eps))
     # 1 method, 2 names

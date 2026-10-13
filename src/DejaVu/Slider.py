@@ -57,6 +57,7 @@ Examples:
     sl2.Set(5.2)
     sl3.Set(100.0)
 """
+from __future__ import division
 #
 # $Header: /opt/cvs/python/packages/share1.5/DejaVu/Slider.py,v 1.8 2007/04/27 21:36:36 vareille Exp $
 #
@@ -64,6 +65,7 @@ Examples:
 #
 
 #from Tkinter import *
+from mglcompat.pydiv import old_div
 import tkinter
 from .EventHandler import CallbackFunctions
 import types
@@ -115,7 +117,7 @@ class Slider(CallbackFunctions):
         val = self.min+self.cst1 * x
         if self.incrCanvas:
             #valType = type(val)
-            val = round(val/self.incr)*self.incr
+            val = round(old_div(val,self.incr))*self.incr
             val = eval(self.cursortype+'('+str(val)+')')
             #if minType is types.IntType:
                 #val = int(val)
@@ -135,7 +137,7 @@ class Slider(CallbackFunctions):
         elif val>self.max: val = self.max
         if self.incrCanvas:
             #valType = type(val)
-            val = round(val/self.incr)*self.incr
+            val = round(old_div(val,self.incr))*self.incr
             val = eval(self.cursortype+'('+str(val)+')')
             #if valType is types.IntType:
                 #val = int(val)
@@ -168,7 +170,7 @@ class Slider(CallbackFunctions):
 
     def _ComputeCst(self, event=None):
         """Conversion factor between values and pixels"""
-        self.cst = (self.right-self.left) / (self.max-self.min)
+        self.cst = old_div((self.right-self.left), (self.max-self.min))
         self.cst1 = 1.0 / self.cst
 
 
@@ -216,7 +218,7 @@ class Slider(CallbackFunctions):
         if incr:
             self.incrCanvas = round(incr*self.cst)
 
-        if withValue: m = self.height / 2
+        if withValue: m = old_div(self.height, 2)
         else: m = int(self.height * 0.75)
         self.middle = m
 

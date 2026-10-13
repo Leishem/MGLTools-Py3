@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 
@@ -15,6 +16,7 @@
 #
 
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric, math
 
 from opengltk.OpenGL import GL
@@ -78,13 +80,13 @@ class Triangle2D(Shape2D):
     """ Class derived from Shape2D describing a Triangle."""
     def __init__(self, side = 1.0, vertDup=0, firstDup = 0 ):
         self.side = side
-        x = side/2
-        y1 = -side/(2*math.sqrt(3))
-        y2 = side/math.sqrt(3)
+        x = old_div(side,2)
+        y1 = old_div(-side,(2*math.sqrt(3)))
+        y2 = old_div(side,math.sqrt(3))
         if not vertDup:
             pts = ( (-x, y1, 1), (0, y2, 1), (x, y1, 1) )
-            norms = ((-math.sqrt(3)/2, -.5, 0), (0, 1, 0),
-                      (math.sqrt(3)/2, -.5, 0),  )
+            norms = ((old_div(-math.sqrt(3),2), -.5, 0), (0, 1, 0),
+                      (old_div(math.sqrt(3),2), -.5, 0),  )
         else:
             pts   = ( (-x, y1 , 1)    , (-x, y1, 1),
                       ( 0, y2 , 1)    , ( 0, y2, 1),
@@ -132,12 +134,12 @@ class Ellipse2D(Shape2D):
         # z = x1*y2 - x2*y1
 
         for i in range( quality ):
-            circle[i][0] = 2*demiGrandAxis*math.cos( i*2*math.pi/quality)
-            circle[i][1] = -2*demiSmallAxis*math.sin( i*2*math.pi/quality)
+            circle[i][0] = 2*demiGrandAxis*math.cos( old_div(i*2*math.pi,quality))
+            circle[i][1] = -2*demiSmallAxis*math.sin( old_div(i*2*math.pi,quality))
             circle[i][2] = 1
 
-            circleNormal[i][0] = math.cos( i*2*math.pi/quality )
-            circleNormal[i][1] = -math.sin( i*2*math.pi/quality )
+            circleNormal[i][0] = math.cos( old_div(i*2*math.pi,quality) )
+            circleNormal[i][1] = -math.sin( old_div(i*2*math.pi,quality) )
             circleNormal[i][2] = 0
 
         if vertDup:

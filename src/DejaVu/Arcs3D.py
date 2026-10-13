@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -14,6 +15,7 @@
 # $Id: Arcs3D.py,v 1.29 2008/11/20 00:54:16 vareille Exp $
 #
 
+from mglcompat.pydiv import old_div
 from opengltk.OpenGL import GL
 import math, mglcompat.oldnumeric as Numeric, types
 from math import sqrt, fabs, pi, cos, sin, acos, atan2
@@ -144,8 +146,8 @@ updateOwnGui=True : allow to update owngui at the end this func
                 vec = self.vectors[i]
 
             angRad = ang*pi*0.00555555555556
-            nsegments = int(ang/self.degreesPerSegment) + 1
-            d = angRad / nsegments # increment
+            nsegments = int(old_div(ang,self.degreesPerSegment)) + 1
+            d = old_div(angRad, nsegments) # increment
             a = 0		   # starting angle
             
             GL.glNormal3fv(norm.astype('f'))
@@ -295,7 +297,7 @@ updateOwnGui=True : allow to update owngui at the end this func
 
         angRad = angle*pi*0.00555555555556
         a = -pi 		# starting angle
-        d = angRad / nsegments 	# increment
+        d = old_div(angRad, nsegments) 	# increment
 
         for i in range(nsegments+1):
             self.n[i][0] = self.v[i][0] = cos(a)
@@ -317,8 +319,8 @@ updateOwnGui=True : allow to update owngui at the end this func
         sz = sqrt(sz)
         if sz==0.0:
             return
-        rx = -180.0*acos((y[2]-x[2])/sz)/pi
-        rz = -180.0*atan2(y[0]-x[0],y[1]-x[1])/pi
+        rx = old_div(-180.0*acos(old_div((y[2]-x[2]),sz)),pi)
+        rz = old_div(-180.0*atan2(y[0]-x[0],y[1]-x[1]),pi)
 
         GL.glPushMatrix()
         GL.glTranslatef(float(x[0]),float(x[1]),float(x[2]))

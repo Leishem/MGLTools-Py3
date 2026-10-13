@@ -1,3 +1,4 @@
+from __future__ import division
 ############################################################################
 #
 # Authors: William Lindstrom, Ruth Huey
@@ -10,6 +11,7 @@
 # $Id: electrostatics.py,v 1.3 2004/07/23 00:54:46 lindy Exp $
 #
 
+from mglcompat.pydiv import old_div
 import math
 from .scorer import DistDepPairwiseScorer
 
@@ -73,7 +75,7 @@ class ElectrostaticsRefImpl(DistDepPairwiseScorer):
         B = epsilon0 - A
 
         # epsilon is a unitless scaling factor 
-        epsilon = A + B / (1.0 + k*math.e**(-lambda_*B*distance))
+        epsilon = A + old_div(B, (1.0 + k*math.e**(-lambda_*B*distance)))
         return epsilon
     
 
@@ -96,7 +98,7 @@ class ElectrostaticsRefImpl(DistDepPairwiseScorer):
         epsilon = self.get_dddp(dist)
         factor = 332. # 4*pi*esp0*units conversions
         if dist != 0.0:
-            return (factor*q1*q2) / (epsilon*dist) # kcal/mole
+            return old_div((factor*q1*q2), (epsilon*dist)) # kcal/mole
         else: return 0.
 
 

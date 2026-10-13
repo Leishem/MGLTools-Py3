@@ -56,9 +56,11 @@ example:
 reimplmentation of Babel1.6 in Python by Michel Sanner April 2000
 Original code by W. Patrick Walters and Matthew T. Stahl 
 """
+from __future__ import division
 
 
 
+from mglcompat.pydiv import old_div
 import math; from mglcompat import pystring as string
 
 from .babelAtomTypes import babel_types
@@ -405,7 +407,7 @@ class BondOrder:
             bond.bondOrder = 1
             dist = distance(a1.coords, a2.coords)
             cov_sum = a1.babel_bond_ord_rad + a2.babel_bond_ord_rad
-            ratio = dist/cov_sum
+            ratio = old_div(dist,cov_sum)
             if ratio < SINGLE_DOUBLE_CUTOFF:
                 bond.bondOrder = 2
 
@@ -416,7 +418,7 @@ class BondOrder:
             bond.bondOrder = 1
             dist = distance(a1.coords, a2.coords)
             cov_sum = a1.babel_bond_ord_rad + a2.babel_bond_ord_rad
-            ratio = dist/cov_sum
+            ratio = old_div(dist,cov_sum)
             if ratio < SINGLE_DOUBLE_CUTOFF:
                 bond.bondOrder = 2
 
@@ -427,7 +429,7 @@ class BondOrder:
             bond.bondOrder = 1
             dist = distance(a1.coords, a2.coords)
             cov_sum = a1.babel_bond_ord_rad + a2.babel_bond_ord_rad
-            ratio = dist/cov_sum
+            ratio = old_div(dist,cov_sum)
             if ratio < SINGLE_DOUBLE_CUTOFF:
                 bond.bondOrder = 2
 
@@ -438,7 +440,7 @@ class BondOrder:
             bond.bondOrder = 1
             dist = distance(a1.coords, a2.coords)
             cov_sum = a1.babel_bond_ord_rad + a2.babel_bond_ord_rad
-            ratio = dist/cov_sum
+            ratio = old_div(dist,cov_sum)
             if ratio < SINGLE_DOUBLE_CUTOFF:
                 bond.bondOrder = 2
 
@@ -449,7 +451,7 @@ class BondOrder:
             bond.bondOrder = 1
             dist = distance(a1.coords, a2.coords)
             cov_sum = a1.babel_bond_ord_rad + a2.babel_bond_ord_rad
-            ratio = dist/cov_sum
+            ratio = old_div(dist,cov_sum)
             if ratio < SINGLE_DOUBLE_CUTOFF:
                 bond.bondOrder = 2
 
@@ -463,7 +465,7 @@ class BondOrder:
             a2 = b.atom2
             dist = distance(a1.coords, a2.coords)
             cov_sum = a1.babel_bond_ord_rad + a2.babel_bond_ord_rad
-            ratio = dist/cov_sum
+            ratio = old_div(dist,cov_sum)
             start_type = converter.convert(a1.babel_type, "all_caps")
             end_type = converter.convert(a2.babel_type, "all_caps")
 

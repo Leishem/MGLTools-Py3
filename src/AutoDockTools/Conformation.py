@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
@@ -8,6 +9,7 @@
 # $Header: /opt/cvs/python/packages/share1.5/AutoDockTools/Conformation.py,v 1.47 2009/01/09 19:53:49 rhuey Exp $
 #
 
+from mglcompat.pydiv import old_div
 import math
 from mglcompat import pystring as string
 import mglcompat.oldnumeric as Numeric
@@ -359,7 +361,7 @@ def getAngle(at1, at2, at3 ):
     v2 = Numeric.array(pt3 - pt2)
     dist1 = math.sqrt(Numeric.sum(v1*v1))
     dist2 = math.sqrt(Numeric.sum(v2*v2))
-    sca = Numeric.dot(v1, v2)/(dist1*dist2)
+    sca = old_div(Numeric.dot(v1, v2),(dist1*dist2))
     if sca>1.0:
         sca = 1.0
     elif sca<-1.0:
@@ -531,7 +533,7 @@ class ConformationHandler:
             if not hasattr(self.mol, 'lenNonHAtoms'):
                 self.mol.lenNonHAtoms = len(self.mol.allAtoms.get(lambda x: x.element!='H'))
             if self.mol.lenNonHAtoms>0:
-                newConformation.ligand_efficiency = round(binding_energy/self.mol.lenNonHAtoms, 2)
+                newConformation.ligand_efficiency = round(old_div(binding_energy,self.mol.lenNonHAtoms), 2)
             # now append to our list
             self.conformations.append(newConformation)
             self.original_conformations = self.conformations

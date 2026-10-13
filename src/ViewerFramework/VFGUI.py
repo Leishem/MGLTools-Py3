@@ -11,6 +11,7 @@ This module implements the class viewerFrameworkGUI.
 This class provides support for extending the GUI of a Viewer derived from the
 ViewerFramework base class
 """
+from __future__ import division
 
 # $Header: /opt/cvs/python/packages/share1.5/ViewerFramework/VFGUI.py,v 1.187.2.4 2013/06/07 21:51:00 annao Exp $
 #
@@ -18,6 +19,7 @@ ViewerFramework base class
 #
 
 
+from mglcompat.pydiv import old_div
 import tkinter, _thread, Pmw, types; from mglcompat import pystring as string
 from PIL import Image, ImageTk
 try:
@@ -561,7 +563,7 @@ class ViewerFrameworkGUI:
         workspace = self.workspace
         nbSteps = 10.
         w = self.collapseToolsW.winfo_width()
-        dx = (width-w)/(nbSteps-1)
+        dx = old_div((width-w),(nbSteps-1))
         for i in range(int(nbSteps)):
             w = width - i*dx
             workspace.configurepane('ToolsNoteBook', size=int(w))
@@ -575,7 +577,7 @@ class ViewerFrameworkGUI:
             return
         workspace = self.workspace
         nbSteps = 10
-        dx = (width-10)/(nbSteps-1)
+        dx = old_div((width-10),(nbSteps-1))
         for i in range(nbSteps):
             w = 10 + i*dx
             workspace.configurepane('ToolsNoteBook', size=int(w))

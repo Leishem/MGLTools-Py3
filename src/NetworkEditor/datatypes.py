@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
@@ -17,6 +18,7 @@
 #
 #########################################################################
 
+from mglcompat.pydiv import old_div
 import types
 import mglcompat.oldnumeric as Numeric
 import warnings
@@ -724,7 +726,7 @@ existingTypeName: must be a registered name
             if shape == 'circle' or shape == 'square':
                 height = width
             else:
-                height = 2 * width / 3
+                height = old_div(2 * width, 3)
         instance = basicInstance.__class__(
                          name=synonymName, datashape=datashape,
                          color=color, shape=shape, width=width, height=height)

@@ -18,13 +18,15 @@
 reimplementation of lincrv.c in python MS April 2000
 original code from Graphics Gem V pp220-222  Ken Shoemake, 1994
 """
+from __future__ import division
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric
 from copy import deepcopy
 
 # Perform a generic vector unary operation.
 
 def lerp(t, a0, a1, p0, p1):
-    t0 = (a1-t)/(a1-a0)
+    t0 = old_div((a1-t),(a1-a0))
     t1=1-t0
     p = t0*p0 + t1*p1
     return p.astype('f')
@@ -77,7 +79,7 @@ def DialASpline( t, a, p, m=3, n=4, work=None, Cn=2, interp=1):
             for i in range(lo, hi-j+1):
 ##                  work[i] = lerp(t,a[i],a[i+j],work[i],work[i+1])
 ##                  print work[i]
-                t0 = (a[i+j]-t)/(a[i+j]-a[i])
+                t0 = old_div((a[i+j]-t),(a[i+j]-a[i]))
                 t1 = 1-t0
                 work[i] = (t0*work[i]+t1*work[i+1]).astype('f')
         h = 1+Cn-drop
@@ -95,7 +97,7 @@ def DialASpline( t, a, p, m=3, n=4, work=None, Cn=2, interp=1):
         tmp = 1+Cn-j
         for i in range( h-1, j-1, -1 ):
             #work[lo+i+1] = lerp(t,a[lo+i],a[lo+i+tmp],work[lo+i],work[lo+i+1])
-            t0 = (a[lo+i+tmp]-t)/(a[lo+i+tmp]-a[lo+i])
+            t0 = old_div((a[lo+i+tmp]-t),(a[lo+i+tmp]-a[lo+i]))
             t1 = 1-t0
             work[lo+i+1] = (t0*work[lo+i]+t1*work[lo+i+1]).astype('f')
     val = deepcopy(work[lo+h][::-1])
@@ -212,7 +214,7 @@ class SplineObject:
             #print 'in  approximation'
             Kts = [0,1]
             interp = 0
-            Kts = Kts*((length)/2)
+            Kts = Kts*(old_div((length),2))
             Kts.sort()
             Kts.append(999999999999999.99)
 

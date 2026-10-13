@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 #$Id: rotate_molecule.py,v 1.2 2007/10/08 18:13:30 rhuey Exp $
+from __future__ import division
+from mglcompat.pydiv import old_div
 import os 
 from MolKit import Read
 from MolKit.pdbWriter import PdbWriter, PdbqsWriter, PdbqWriter, PdbqtWriter
@@ -105,9 +107,9 @@ if __name__ == '__main__':
     else:
         print('Sorry! Unable to write this filetype->', filetype)
 
-    center = Numeric.add.reduce(mol.allAtoms.coords)/len(mol.allAtoms)
+    center = old_div(Numeric.add.reduce(mol.allAtoms.coords),len(mol.allAtoms))
     crds = Numeric.array(mol.allAtoms.coords)
-    center = Numeric.add.reduce(crds)/len(mol.allAtoms)
+    center = old_div(Numeric.add.reduce(crds),len(mol.allAtoms))
     crds = crds - center
     crds = crds.tolist()
     mol.allAtoms.updateCoords(crds)

@@ -42,7 +42,9 @@
 
     ----------------------------
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 __date__ = "28 February 2006"
 __author__ = "Todd Dolinsky"
 SMALL = 1.0e-7
@@ -354,9 +356,9 @@ def normalize(coords):
     list = []
     dist = math.sqrt(pow(coords[0],2) + pow(coords[1],2) + pow(coords[2],2))
     if dist > SMALL:
-        a = coords[0]/dist
-        b = coords[1]/dist
-        c = coords[2]/dist
+        a = old_div(coords[0],dist)
+        b = old_div(coords[1],dist)
+        c = old_div(coords[2],dist)
         list = [a,b,c]
     else:
         list = coords

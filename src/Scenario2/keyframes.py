@@ -1,6 +1,8 @@
+from __future__ import division
 ##
 ##  Author Michel F. Sanner Jan 2009
 ##
+from mglcompat.pydiv import old_div
 class ValueObject:
     """Object holding a value associated with a keyframe
     """
@@ -513,7 +515,7 @@ class Interval(LinkedList):
             if frame==self.kf2.pos:
                 fraction = 1.0
             else:
-                fraction = (frame-first)/(nbFrames-1)
+                fraction = old_div((frame-first),(nbFrames-1))
 
             #try:
             #    return self.valGen.getValue(fraction, h, dy)

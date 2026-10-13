@@ -23,7 +23,9 @@
     Washington University in St. Louis
 
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 __date__ = "30 September 2003"
 __author__ = "David Heisterberg, Jan Labanowski, Jens Erik Nielsen, Todd Dolinsky"
 
@@ -269,7 +271,7 @@ def jacobi(a, nrot):
                 onorm = onorm + abs(a[i][j])
 
         if dnorm != 0:
-            if onorm/dnorm <= 1e-12: break
+            if old_div(onorm,dnorm) <= 1e-12: break
             
         for j in range(1,4):
             for i in range(j):
@@ -277,9 +279,9 @@ def jacobi(a, nrot):
                 if abs(b) > 0.0:
                     dma = d[j] - d[i]
                     if abs(dma) + abs(b) <= abs(dma):
-                        t = b / dma
+                        t = old_div(b, dma)
                     else:
-                        q = 0.5 * dma/b
+                        q = old_div(0.5 * dma,b)
                         t = 1.0/(abs(q) + math.sqrt(1 + q*q))
                         if q < 0:
                             t = t * -1
@@ -378,7 +380,7 @@ def center(numpoints, refcoords):
         refcenter[2] += refcoords[i][2]
 
     for i in range(3):
-        refcenter[i] = refcenter[i] / numpoints
+        refcenter[i] = old_div(refcenter[i], numpoints)
         
     for i in range(numpoints):
         relcoords.append([])

@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -14,6 +15,7 @@
 # $Id: Box.py,v 1.36 2009/09/03 19:24:15 annao Exp $
 #
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric
 from opengltk.OpenGL import GL
 
@@ -339,8 +341,8 @@ updateOwnGui=True : allow to update owngui at the end this func
             self.xside = side
             self.yside = side
             self.zside = side
-            pt1=tuple(Numeric.add(center,(side/2.,side/2,side/2)))
-            pt0=tuple(Numeric.subtract(center,(side/2,side/2,side/2)))
+            pt1=tuple(Numeric.add(center,(side/2.,old_div(side,2),old_div(side,2))))
+            pt0=tuple(Numeric.subtract(center,(old_div(side,2),old_div(side,2),old_div(side,2))))
             x1,y1,z1 = pt1
             x0,y0,z0 = pt0
         #built list of 8 pts

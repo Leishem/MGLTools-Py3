@@ -20,7 +20,9 @@
 This module implements classes which select bonds based on a list of criteria.
 They return the selected bonds as a BondSet
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 from MolKit.molecule import Bond, BondSet, AtomSet
 from PyBabel.cycle import RingFinder
 from PyBabel.bo import BondOrder
@@ -411,7 +413,7 @@ class AromaticCycleBondSelector2(BondSelector):
                 #theta is the critical test for planarity:
                 #if angle between 2 nrms is 0, atoms are planar
                 #NB>test is comparing theta,cos(angle), w/zero
-                bnd.theta = Numeric.dot(p,q)/(psize*qsize)
+                bnd.theta = old_div(Numeric.dot(p,q),(psize*qsize))
             #NB: REPEAT STUFF FROM HERE TO THE END IF aromaticCutOff changes
             ct = 0
             for bnd in blist:

@@ -1,3 +1,4 @@
+from __future__ import division
 # Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
@@ -19,6 +20,7 @@
 #
 #
 
+from mglcompat.pydiv import old_div
 import warnings
 import re
 import tkinter, Pmw, tkinter.filedialog
@@ -2051,7 +2053,7 @@ We re-write the first line with all port names as arguments.
         # compute center (x,y) of canvas window
         # add a window below text for widgets
         self.nodeWidgetTkId = widgetWin = canvas.create_window(
-            bb[0]+(w/2), bb[3]+ self.progBarH +(h/2),
+            bb[0]+(old_div(w,2)), bb[3]+ self.progBarH +(old_div(h,2)),
             tags=tags, window=widgetFrame )
         if self.selected:
             canvas.addtag_withtag('selected', widgetWin)
@@ -3138,7 +3140,7 @@ class NetworkConnection(NetworkItems):
         if len(coords)==12:
             coords[4] = coords[4]+dx
             coords[6] = coords[6]+dx
-            if y > ((coords[5]+coords[7])/2):
+            if y > (old_div((coords[5]+coords[7]),2)):
                 coords[3] = coords[3]+dy
                 coords[5] = coords[5]+dy
             else:
@@ -3325,7 +3327,7 @@ class NetworkConnection(NetworkItems):
         c = self.iconMaster
         maxi = float(c.winfo_rgb('white')[0])
         rgb = c.winfo_rgb(colorTk)
-        base = ( rgb[0]/maxi*255, rgb[1]/maxi*255, rgb[2]/maxi*255 )
+        base = ( old_div(rgb[0],maxi)*255, old_div(rgb[1],maxi)*255, old_div(rgb[2],maxi)*255 )
         dark = "#%02x%02x%02x"%(base[0]*0.6,base[1]*0.6,base[2]*0.6)
         light = "#%02x%02x%02x"%(base[0]*0.8,base[1]*0.8,base[2]*0.8)
         return dark, light

@@ -1,9 +1,11 @@
+from __future__ import division
 #
 # $Header: /opt/cvs/python/packages/share1.5/Pmv/viewsCommands.py,v 1.4 2009/10/16 23:18:01 annao Exp $
 # 
 # $Id: viewsCommands.py,v 1.4 2009/10/16 23:18:01 annao Exp $
 #
 
+from mglcompat.pydiv import old_div
 import os, sys
 from Pmv.mvCommand import MVCommand
 from mglutil.gui.InputForm.Tk.gui import InputFormDescr
@@ -75,7 +77,7 @@ class ViewsCommand(MVCommand):
         y = self.form.master.winfo_y()
         w = self.form.master.winfo_width()
         h = self.form.master.winfo_height()
-        self.form.root.geometry("+%d+%d" % (x+w/2, y+h))
+        self.form.root.geometry("+%d+%d" % (x+old_div(w,2), y+h))
 
                                 
     def saveView(self):
@@ -90,7 +92,7 @@ class ViewsCommand(MVCommand):
         if lHalfObject == 0.:
             lHalfObject = 1.
         from scenario.interpolators import matToQuaternion, quatToMatrix
-        dist = lHalfObject / math.tan(c.fovyNeutral/2*math.pi/180.0)
+        dist = old_div(lHalfObject, math.tan(old_div(c.fovyNeutral,2)*math.pi/180.0))
         lookFrom = c.nearDefault+dist+lHalfObject
         
         view = self.views[name] = {
@@ -133,7 +135,7 @@ class ViewsCommand(MVCommand):
         self.viewsBalloon.bind(b, name)
         b.name = name
         #print "row=", 1+(len(self.views)-1)/5, "column=", (len(self.views)-1)%5
-        b.grid(row=1+(len(self.views)-1)/5, column=(len(self.views)-1)%5, sticky='w')
+        b.grid(row=1+old_div((len(self.views)-1),5), column=(len(self.views)-1)%5, sticky='w')
         self.form.autoSize()
         b.bind('<Button-3>', CallBackFunction( self.showViewMenu_cb, name))
         self.allViews = self.allViews + 1
@@ -277,7 +279,7 @@ class ViewsCommand(MVCommand):
                     # seem to be stored in "last created, first in the list" order
                     buttons.reverse()
                     for i, b in enumerate(buttons):
-                        b.grid(row=1+ i/5, column= i%5, sticky='w')
+                        b.grid(row=1+ old_div(i,5), column= i%5, sticky='w')
                     self.form.autoSize()
                     # remove the view entry from self.views and self.viewsDirectors:
                     self.views.pop(name)

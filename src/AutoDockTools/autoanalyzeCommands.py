@@ -72,6 +72,8 @@ After the selected docking log file is parsed, the user can:
     * Dockings can be deleted via 'Delete Docking Log'
 
 """
+from __future__ import division
+from mglcompat.pydiv import old_div
 import types, tkinter, subprocess, os, copy, glob, time
 from mglcompat.pystring import find, join, replace, split, rfind, strip
 import mglcompat.oldnumeric as Numeric, math
@@ -988,10 +990,10 @@ class ADReadVSResult(MVCommand):
                     centers = []
                     ctr = 0
                     for first,second in pi_pi_list:
-                        center1 = (Numeric.add.reduce(first.coords)/len(first)).tolist() 
+                        center1 = (old_div(Numeric.add.reduce(first.coords),len(first))).tolist() 
                         radii.append(0.7)
                         vertices.append(center1)
-                        center2 = (Numeric.add.reduce(second.coords)/len(second)).tolist() 
+                        center2 = (old_div(Numeric.add.reduce(second.coords),len(second))).tolist() 
                         radii.append(0.7)
                         vertices.append(center2)
                         faces.append((ctr,ctr+1))
@@ -1008,13 +1010,13 @@ class ADReadVSResult(MVCommand):
                     ctr = 0
                     for first,second in pi_cation_list:
                         if hasattr(first, '__len__'):
-                            center1 = (Numeric.add.reduce(first.coords)/len(first)).tolist()
+                            center1 = (old_div(Numeric.add.reduce(first.coords),len(first))).tolist()
                             radii.append(0.7)
                         else:
                             center1 = (first.coords)
                             radii.append(0.1)
                         if hasattr(second, '__len__'): #<AtomSet instance> holding 6 Atom, "ZINC02026663_vs:d:<0>:C6,C7,C3..."
-                            center2 = (Numeric.add.reduce(second.coords)/len(second)).tolist()
+                            center2 = (old_div(Numeric.add.reduce(second.coords),len(second))).tolist()
                             radii.append(0.7)
                         else:
                             center2 = (second.coords)
@@ -1875,12 +1877,12 @@ class ADSeeSpots(MVCommand):
             ind = int(ind)
             for c in docking.ch.conformations:
                 center = Numeric.add.reduce(Numeric.array(c.getCoords()[:-ind])).astype('f')
-                this_vert = (center/(num)).tolist()
+                this_vert = (old_div(center,(num))).tolist()
                 verts.append(this_vert)
         else:
             for c in docking.ch.conformations:
                 center = Numeric.add.reduce(Numeric.array(c.getCoords())).astype('f')
-                this_vert = (center/(num)).tolist()
+                this_vert = (old_div(center,(num))).tolist()
                 verts.append(this_vert)
         return verts
 
@@ -2966,13 +2968,13 @@ class ADShowBindingSite(MVCommand):
                 for first,second in cation_pi: 
                     #either (atom, list of atoms) OR (list, atom)
                     if type(first)==list:
-                        center1 = (Numeric.add.reduce(AtomSet(first).coords)/len(first)).tolist()
+                        center1 = (old_div(Numeric.add.reduce(AtomSet(first).coords),len(first))).tolist()
                         radii.append(0.7)
                     else:
                         center1 = (first.coords)
                         radii.append(0.1)
                     if type(second)==list:
-                        center2 = (Numeric.add.reduce(AtomSet(second).coords)/len(second)).tolist()
+                        center2 = (old_div(Numeric.add.reduce(AtomSet(second).coords),len(second))).tolist()
                         radii.append(0.7)
                     else:
                         center2 = (second.coords)
@@ -2990,13 +2992,13 @@ class ADShowBindingSite(MVCommand):
             if len(pi_cation):
                 for first,second in pi_cation: #either (atom, list of atoms)
                     if type(first)==list:
-                        center1 = (Numeric.add.reduce(AtomSet(first).coords)/len(first)).tolist()
+                        center1 = (old_div(Numeric.add.reduce(AtomSet(first).coords),len(first))).tolist()
                         radii.append(0.7)
                     else:
                         center1 = (first.coords)
                         radii.append(0.1)
                     if type(second)==list:
-                        center2 = (Numeric.add.reduce(AtomSet(second).coords)/len(second)).tolist()
+                        center2 = (old_div(Numeric.add.reduce(AtomSet(second).coords),len(second))).tolist()
                         radii.append(0.7)
                     else:
                         center2 = (second.coords)
@@ -3034,16 +3036,16 @@ class ADShowBindingSite(MVCommand):
             ctr = 0
             for first, second in pi_pi: #either (atom, list of atoms)
                 #print "processing pi_pi"
-                center1 = (Numeric.add.reduce(first.coords)/len(first)).tolist()
-                center2 = (Numeric.add.reduce(second.coords)/len(second)).tolist()
+                center1 = (old_div(Numeric.add.reduce(first.coords),len(first))).tolist()
+                center2 = (old_div(Numeric.add.reduce(second.coords),len(second))).tolist()
                 faces.append((ctr,ctr+1))
                 verts.append(center1)
                 verts.append(center2)
                 ctr += 2
             for first, second in t_shaped: #either (atom, list of atoms)
                 #print "processing t_shaped"
-                center1 = (Numeric.add.reduce(first.coords)/len(first)).tolist()
-                center2 = (Numeric.add.reduce(second.coords)/len(second)).tolist()
+                center1 = (old_div(Numeric.add.reduce(first.coords),len(first))).tolist()
+                center2 = (old_div(Numeric.add.reduce(second.coords),len(second))).tolist()
                 faces.append((ctr,ctr+1))
                 verts.append(center1)
                 verts.append(center2)

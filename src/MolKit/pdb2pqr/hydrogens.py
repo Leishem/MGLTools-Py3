@@ -11,7 +11,9 @@
     Ported to Python by Todd Dolinsky (todd@ccb.wustl.edu)
     Washington University in St. Louis
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 __date__ = "8 March 2004"
 __author__ = "Jens Erik Nielsen, Todd Dolinsky"
 
@@ -408,7 +410,7 @@ class hydrogenRoutines:
                                 
                     # Cool the system
            
-                    if step > steps/2 and energy < (bestenergy + 5.0):
+                    if step > old_div(steps,2) and energy < (bestenergy + 5.0):
                         maxenergy = bestenergy + 5
 
                 # Now switch to best energy
@@ -634,7 +636,7 @@ class hydrogenRoutines:
             
                     dist = distance(donorhatom.getCoords(), acceptor.getCoords())
                     if dist > max_dha_dist and dist < max_ele_dist: # Are the Hs too far?
-                        energy += max_ele_energy/(dist*dist)
+                        energy += old_div(max_ele_energy,(dist*dist))
                         continue
                     
                     hdist = distance(donorhatom.getCoords(), acceptorhatom.getCoords())
@@ -644,11 +646,11 @@ class hydrogenRoutines:
                     
                     angle1 = self.getHbondangle(acceptor, donor, donorhatom)
                     if angle1 <= maxangle:
-                        angleterm = (maxangle - angle1)/maxangle
+                        angleterm = old_div((maxangle - angle1),maxangle)
                         angle2 = self.getHbondangle(donorhatom, acceptorhatom, acceptor)
                         if angle2 < 110.0: angle2 = 1.0
                         else: angle2=-1.0/110.0*(angle2-110.0)
-                        energy+=max_hbond_energy/pow(dist,3)*angleterm*angle2
+                        energy+=old_div(max_hbond_energy,pow(dist,3))*angleterm*angle2
                     
             return energy
 
@@ -664,13 +666,13 @@ class hydrogenRoutines:
                 
                 dist = distance(donorhatom.getCoords(), acceptor.getCoords())
                 if dist > max_dha_dist and dist < max_ele_dist: # Or too far?
-                    energy += max_ele_energy/(dist*dist)               
+                    energy += old_div(max_ele_energy,(dist*dist))               
                     continue
               
                 angle1 = self.getHbondangle(acceptor, donor, donorhatom)
                 if angle1 <= maxangle:
-                    angleterm = (maxangle - angle1)/maxangle
-                    energy += max_hbond_energy/pow(dist,2)*angleterm
+                    angleterm = old_div((maxangle - angle1),maxangle)
+                    energy += old_div(max_hbond_energy,pow(dist,2))*angleterm
                   
             return energy
 
@@ -962,9 +964,9 @@ class hydrogenRoutines:
                 if bestaccdist >= (b + r):
                     # Then H1 is perfectly placed on the vector
                     vec = subtract(bestacc.getCoords(), oxygen.getCoords())
-                    x = oxygen.get("x") + b/bestaccdist * vec[0]
-                    y = oxygen.get("y") + b/bestaccdist * vec[1]
-                    z = oxygen.get("z") + b/bestaccdist * vec[2]
+                    x = oxygen.get("x") + old_div(b,bestaccdist) * vec[0]
+                    y = oxygen.get("y") + old_div(b,bestaccdist) * vec[1]
+                    z = oxygen.get("z") + old_div(b,bestaccdist) * vec[2]
                     newcoords = [x,y,z]
                     residue.createAtom("H1",newcoords,"HETATM")
                     
@@ -972,7 +974,7 @@ class hydrogenRoutines:
                     # Minimize the H-O-A angle 
                     defcoords, refcoords = [], []
                     R = distance(oxygen.getCoords(), bestacc.getCoords())
-                    psi = acos((b*b + R*R - r*r)/(2*b*R))
+                    psi = acos(old_div((b*b + R*R - r*r),(2*b*R)))
                     
                     defcoords.append([0,0,0])
                     refcoords.append(oxygen.getCoords())
@@ -981,7 +983,7 @@ class hydrogenRoutines:
                     
                     y = random()
                     while y > sin(psi):
-                        y = y/2
+                        y = old_div(y,2)
                     z = sqrt(sin(psi)*sin(psi) - y*y)
                         
                     defatomcoords = [cos(psi), y, z]
@@ -1211,9 +1213,9 @@ class hydrogenRoutines:
                 if bestaccdist >= (b + r):
                     # Then H1 is perfectly placed on the vector
                     vec = subtract(bestacc.getCoords(), oxygen.getCoords())
-                    x = oxygen.get("x") + b/bestaccdist * vec[0]
-                    y = oxygen.get("y") + b/bestaccdist * vec[1]
-                    z = oxygen.get("z") + b/bestaccdist * vec[2]
+                    x = oxygen.get("x") + old_div(b,bestaccdist) * vec[0]
+                    y = oxygen.get("y") + old_div(b,bestaccdist) * vec[1]
+                    z = oxygen.get("z") + old_div(b,bestaccdist) * vec[2]
                     newcoords = [x,y,z]
                     residue.createAtom("H1",newcoords,"HETATM")
                     
@@ -1221,7 +1223,7 @@ class hydrogenRoutines:
                     # Minimize the H-O-A angle 
                     defcoords, refcoords = [], []
                     R = distance(oxygen.getCoords(), bestacc.getCoords())
-                    psi = acos((b*b + R*R - r*r)/(2*b*R))
+                    psi = acos(old_div((b*b + R*R - r*r),(2*b*R)))
                     
                     defcoords.append([0,0,0])
                     refcoords.append(oxygen.getCoords())
@@ -1230,7 +1232,7 @@ class hydrogenRoutines:
                     
                     y = random()
                     while y > sin(psi):
-                        y = y/2
+                        y = old_div(y,2)
                     z = sqrt(sin(psi)*sin(psi) - y*y)
                         
                     defatomcoords = [cos(psi), y, z]

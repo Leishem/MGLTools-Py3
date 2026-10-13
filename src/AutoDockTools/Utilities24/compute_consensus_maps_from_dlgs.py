@@ -6,6 +6,8 @@
 #
 # $Id: compute_consensus_maps_from_dlgs.py,v 1.8 2007/10/09 17:30:07 annao Exp $
 #
+from __future__ import division
+from mglcompat.pydiv import old_div
 import os, glob, mglcompat.oldnumeric as Numeric, math
 from AutoDockTools.Docking import Docking
 from PyAutoDock.AutoGrid import GridMap
@@ -211,7 +213,7 @@ if __name__ == '__main__':
     xcen, ycen, zcen = d.dlo_list[0].parser.center_pt
     #for the output maps...
     # nxgrid=nygrid=nzgrid=npts  ??is this required??
-    nxpts = nypts = nzpts = int(num_pts)/2 * 2 + 1 #ensure an odd integer
+    nxpts = nypts = nzpts = old_div(int(num_pts),2) * 2 + 1 #ensure an odd integer
     npts = (nxpts, nypts, nzpts)
     macroStem = d.dlo_list[0].macroStem
     # build list of all atom types
@@ -242,7 +244,7 @@ if __name__ == '__main__':
         for c in confs:
             d.ch.set_conformation(c)
             deltaG = c.binding_energy
-            c.ddG = e**(-deltaG/RT)
+            c.ddG = e**(old_div(-deltaG,RT))
             totalEnergy += c.ddG
     #compute the probability of the individual conf._pi = c.ddG/totalEnergy
     print("computing the individual conf._pi")
@@ -262,7 +264,7 @@ if __name__ == '__main__':
             else:
                 confs = [d.ch.conformations[0]]
         for c in confs:
-            c._pi = c.ddG/totalEnergy
+            c._pi = old_div(c.ddG,totalEnergy)
     #compute the probability of finding an atom at a specific pt in the maps
     print("totalEnergy=", totalEnergy)
     print("computing the individual atom probabilities")
@@ -288,17 +290,17 @@ if __name__ == '__main__':
                 #go to nearest pt in grid
                 #FIX #1
                 x,y,z = atom.coords
-                numxcells = nxpts/2  #integer division
-                numycells = nypts/2  #integer division
-                numzcells = nzpts/2  #integer division
+                numxcells = old_div(nxpts,2)  #integer division
+                numycells = old_div(nypts,2)  #integer division
+                numzcells = old_div(nzpts,2)  #integer division
                 #6/22: version3
                 info_lo = (xcen - numxcells*spacing,
                             ycen - numycells*spacing, 
                             zcen - numzcells *spacing)
                 #using lower back pt of cube, i think
-                thispt = (int((x-info_lo[0])/spacing),
-                          int((y-info_lo[1])/spacing),
-                          int((z-info_lo[2])/spacing))
+                thispt = (int(old_div((x-info_lo[0]),spacing)),
+                          int(old_div((y-info_lo[1]),spacing)),
+                          int(old_div((z-info_lo[2]),spacing)))
                 #4/8:version 2
                 #thispt = [  int(x/spacing-xcen+ spacing/2.0 +numxcells), 
                 #            int(y/spacing-ycen+ spacing/2.0 +numycells), 
@@ -353,7 +355,7 @@ if __name__ == '__main__':
                     for x in range(nxpts):
                         value = nmap[x,y,z]
                         #if value<10:
-                        nmap[x,y,z] = value/rng
+                        nmap[x,y,z] = old_div(value,rng)
                         #nmap[x,y,z] = 2.*value/rng
             MAPS[t] = nmap
     #write out the maps

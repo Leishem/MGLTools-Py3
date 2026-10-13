@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
@@ -8,6 +9,7 @@
 
 
 # implements classes to read and play GROMACS trajectory files
+from mglcompat.pydiv import old_div
 import warnings
 import os
 from MolKit.trajParser import trrParser, xtcParser
@@ -499,7 +501,7 @@ class TrajPlayer(Player):
             newLines.append(allLines[0])
             newLines.append(allLines[1])
             for l in allLines[2:natoms+2]:
-                cc = coords[ctr]/10
+                cc = old_div(coords[ctr],10)
                 newLines.append(l[:20] +'%8.3f%8.3f%8.3f'%(cc[0],cc[1],cc[2])+ l[44:])
                 ctr = ctr+1
             for l in allLines[natoms+2:]:
@@ -543,7 +545,7 @@ class TrajPlayer(Player):
                 fptr.write(liglines[0])
                 fptr.write(liglines[1])
                 for l in liglines[2:natoms+2]:
-                    cc = coords[ctr]/10
+                    cc = old_div(coords[ctr],10)
                     fptr.write(l[:20] +'%8.3f%8.3f%8.3f'%(cc[0],cc[1],cc[2])+ l[44:])
                     ctr +=1
             for l in liglines[natoms+2:]:

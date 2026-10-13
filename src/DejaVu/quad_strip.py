@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
@@ -22,6 +23,7 @@
 # $Id: quad_strip.py,v 1.29 2009/03/23 23:18:51 vareille Exp $
 #
 
+from mglcompat.pydiv import old_div
 from opengltk.OpenGL import GL
 from DejaVu.IndexedPolygons import IndexedPolygons
 from DejaVu.viewerFns import checkKeywords
@@ -358,7 +360,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                 if n:
                     if self.shading==GL.GL_FLAT:
                         if i > 1 and i%2==0:
-                            GL.glNormal3dv(n[(self.stripBegin[stripNum-1]+i-(2*stripNum))/2])
+                            GL.glNormal3dv(n[old_div((self.stripBegin[stripNum-1]+i-(2*stripNum)),2)])
                     elif self.shading==GL.GL_SMOOTH:
                         GL.glNormal3dv(n[self.stripBegin[stripNum-1]+i])
                     else:
@@ -369,8 +371,8 @@ updateOwnGui=True : allow to update owngui at the end this func
                     if frontMat:
                         if frontMatBind[noCol] == PER_FACE:
                             if i > 1 and i%2==0:
-                                if self.isNewColor(c=frontMat[noCol][(self.stripBegin[stripNum-1]+i-(2*stripNum))/2]):
-                                    GL.glColor4fv(frontMat[noCol][(self.stripBegin[stripNum-1]+i-(2*stripNum))/2])
+                                if self.isNewColor(c=frontMat[noCol][old_div((self.stripBegin[stripNum-1]+i-(2*stripNum)),2)]):
+                                    GL.glColor4fv(frontMat[noCol][old_div((self.stripBegin[stripNum-1]+i-(2*stripNum)),2)])
 
                 else:
                     if frontMat:
@@ -379,7 +381,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                                 if i > 1 and i%2==0:
                                     glMaterialWithCheck( face,
                                                          propConst[k],
-              frontMat[k][(self.stripBegin[stripNum-1]+i-(2*stripNum))/2] )
+              frontMat[k][old_div((self.stripBegin[stripNum-1]+i-(2*stripNum)),2)] )
 
                     if backMat and not self.frontAndBack:
                         for k in range(5):
@@ -387,7 +389,7 @@ updateOwnGui=True : allow to update owngui at the end this func
                                 if i > 1 and i%2==0:
                                     glMaterialWithCheck( GL.GL_BACK,
                                                          propConst[k],
-               backMat[k][(self.stripBegin[stripNum-1]+i-(2*stripNum))/2] )
+               backMat[k][old_div((self.stripBegin[stripNum-1]+i-(2*stripNum)),2)] )
 
 
                 #  per vertex material properties

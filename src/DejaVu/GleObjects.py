@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -13,6 +14,7 @@
 # $Id: GleObjects.py,v 1.32.4.1 2011/02/25 21:05:50 annao Exp $
 #
 
+from mglcompat.pydiv import old_div
 try:
     import gle
 except:
@@ -96,7 +98,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         i = 0
         for f in faces:
             for n in range(ntr):
-                if (n/2)*2 == n:
+                if (old_div(n,2))*2 == n:
                     new_faces[i] = [f[n], f[n+1], f[n+2]]
                 else:
                     new_faces[i] = [f[n+2], f[n+1], f[n]]

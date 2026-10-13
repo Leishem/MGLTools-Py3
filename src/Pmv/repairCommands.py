@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ############################################################################
@@ -14,6 +15,7 @@
 #
 
 
+from mglcompat.pydiv import old_div
 import itertools
 from ViewerFramework.VFCommand import CommandGUI
 from Pmv.moleculeViewer import AddAtomsEvent, DeleteAtomsEvent
@@ -536,7 +538,7 @@ class CheckForCloseContactsGUICommand(MVCommand):
                 c2 = Numeric.array(cAt.coords, 'f')
                 #newCenter = tuple((c1 + c2)/2.0)
                 labelVerts.append(tuple((c1 + c2)/2.0))
-                j = thisAtCtr/2
+                j = old_div(thisAtCtr,2)
                 labelStrs.append(str(round(distDict[at][j],3)))
                 r2 = cAt.vdwRadius
                 if distDict[at][j]<(r1+r2)*colorCutOff:
@@ -1928,7 +1930,7 @@ would have in an intact chain.
             #v1 = Numeric.array(vec3(cH1, c, b_length ))
             v1 = Numeric.array(vec3(c4.coords, c2.coords, b_length))
             u = v + v1
-            u = u/math.sqrt(u[0]*u[0] + u[1]*u[1] + u[2]*u[2])
+            u = old_div(u,math.sqrt(u[0]*u[0] + u[1]*u[1] + u[2]*u[2]))
             #this is normalising u,
             #maybe vec3 has a method to do this?
             #c is atom.coords
@@ -1950,7 +1952,7 @@ would have in an intact chain.
             v = vec3(c2.coords, c)
             v1 = vec3(cH1, c, b_length )
             s = [ v[0]+v1[0], v[1]+v1[1], v[2]+v1[2] ]
-            mag = b_length / math.sqrt( s[0]*s[0] + s[1]*s[1] + s[2]*s[2])
+            mag = old_div(b_length, math.sqrt( s[0]*s[0] + s[1]*s[1] + s[2]*s[2]))
             cH2 = [c[0] + (s[0]*mag), c[1] + (s[1]*mag), c[2] + (s[2]*mag)]
 
         ch1 = [round(cH1[0],4), round(cH1[1],4), round(cH1[2],4)]

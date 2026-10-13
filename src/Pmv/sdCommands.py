@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
@@ -21,6 +22,7 @@
 # $Id: sdCommands.py,v 1.80 2009/09/09 18:09:53 sanner Exp $
 #
 
+from mglcompat.pydiv import old_div
 import itertools
 import Pmv 
 import Pmw
@@ -284,13 +286,13 @@ class ReadMolIndexedPolygons(MVCommand):
             pname = os.path.split(vertfile)[0]
             datapath = Pmv.__path__[0]+'/data'
             nvertices= len(vertdata)
-            if (nvertices-2)/10. == (nvertices-2)/10: # dual icosohedral?
-                level = (nvertices-2)/10
+            if (nvertices-2)/10. == old_div((nvertices-2),10): # dual icosohedral?
+                level = old_div((nvertices-2),10)
                 trifiles = (os.path.join(datapath,'ico.%d.tri' % level),
                             os.path.join(pname,'ico.%d.tri' % level))
                 #print "Tesselation is simple icosohedral at %d subdivision level" % level
-            elif nvertices/20. == nvertices/20: # icosohedral?
-                level = (nvertices)/20
+            elif nvertices/20. == old_div(nvertices,20): # icosohedral?
+                level = old_div((nvertices),20)
                 trifiles = (os.path.join(datapath,'%d.poly.tri' % level),
                             os.path.join(pname,'%d.poly.tri' % level))
                 #print "Tesselation is dual icosohedral at %d subdivision level" % level
@@ -1848,7 +1850,7 @@ class ReadTransformations(MVCommand):
             if center:
                 if center == 'Center on Molecule':
                     ats = mol.allAtoms
-                    mol.centerR = N.sum(ats.coords)/len(ats.coords)
+                    mol.centerR = old_div(N.sum(ats.coords),len(ats.coords))
                 elif center == 'Center on Selection':
                     sel = self.vf.getSelection()
                     ats = self.vf.getNodesByMolecule(sel, Atom)[1]
@@ -1857,7 +1859,7 @@ class ReadTransformations(MVCommand):
                     for set in ats:
                         coordsum = coordsum + N.sum(set.coords)
                         Ncoords = Ncoords + len(set.coords)
-                    mol.centerR = coordsum/Ncoords
+                    mol.centerR = old_div(coordsum,Ncoords)
                 else:
                     mol.centerR = N.array(center)
             #set up the transforms to and from the center of rotation
@@ -1959,9 +1961,9 @@ class SelectVertex(Command, ICOM):
             g[1] += v[1]
             g[2] += v[2]
             i+=1
-        g[0] = g[0]/i
-        g[1] = g[1]/i
-        g[2] = g[2]/i
+        g[0] = old_div(g[0],i)
+        g[1] = old_div(g[1],i)
+        g[2] = old_div(g[2],i)
         self.vf.centerGeom( 'root', g, topCommand=0, log=1, setupUndo=1)
 
 

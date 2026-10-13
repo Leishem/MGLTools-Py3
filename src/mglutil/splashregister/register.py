@@ -1,8 +1,10 @@
+from __future__ import division
 # This module handles User Registration
 # $Author: annao $
 # $Header: /opt/cvs/python/packages/share1.5/mglutil/splashregister/register.py,v 1.21.2.6 2014/09/16 23:20:40 annao Exp $
 # $Date: 2014/09/16 23:20:40 $
 # $Id: register.py,v 1.21.2.6 2014/09/16 23:20:40 annao Exp $
+from mglcompat.pydiv import old_div
 import tkinter, tkinter.messagebox, Pmw
 import os, sys, socket, http.client, urllib.request, urllib.parse, urllib.error, pickle, time, shutil
 from mglutil.util.packageFilePath import getResourceFolderWithVersion, getResourceFolder
@@ -15,8 +17,8 @@ class Register_User:
         self.master = master
         #font = self.master.option_get('font', '*')
         #self.master.option_add('*font',"Times 12 bold")
-        x = self.master.winfo_screenwidth()/6
-        y = self.master.winfo_screenheight()/6        
+        x = old_div(self.master.winfo_screenwidth(),6)
+        y = old_div(self.master.winfo_screenheight(),6)        
         geometry = '+%d+%d' % ( x, y)
         self.master.geometry(geometry)
         #self.master.config(font="Helvetica 10 bold italic")

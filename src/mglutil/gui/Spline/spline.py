@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
@@ -9,6 +10,7 @@
 #(l1,h1)=(lowslope,highslope)
 #sp.spline_points gives list of spline points
 
+from mglcompat.pydiv import old_div
 from mglcompat.oldnumeric import *
 import math
 from mglcompat.pytypes import *
@@ -45,14 +47,14 @@ class Spline:
                     self.slopes=[]
                     if slopes[0][0]==None:
                         _slope_low=None
-                        _slope_high=slopes[0][1][1]/slopes[0][1][0]
+                        _slope_high=old_div(slopes[0][1][1],slopes[0][1][0])
                         self.slopes.append((_slope_low,_slope_high))
                     for s in slopes[1:-1]:
-                        _slope_low=s[0][1]/s[0][0]
-                        _slope_high=s[1][1]/s[1][0]
+                        _slope_low=old_div(s[0][1],s[0][0])
+                        _slope_high=old_div(s[1][1],s[1][0])
                         self.slopes.append((_slope_low,_slope_high))
                     if slopes[-1][1]==None:
-                        _slope_low=slopes[-1][0][1]/slopes[-1][0][0]
+                        _slope_low=old_div(slopes[-1][0][1],slopes[-1][0][0])
                         _slope_high=None
                         self.slopes.append((_slope_low,_slope_high))
                 else:   
@@ -77,14 +79,14 @@ class Spline:
             
             if sll:
                 vx,vy = sll
-                n  =  30/sqrt(vx*vx+vy*vy)
+                n  =  old_div(30,sqrt(vx*vx+vy*vy))
                 vx *=  n
                 vy *=  n
                 new_points.append((p[0]+vx,p[1]+vy))
                 new_points.append(p)
             if slr:
                 vx,vy = slr
-                n  =  30/sqrt(vx*vx+vy*vy)
+                n  =  old_div(30,sqrt(vx*vx+vy*vy))
                 vx *=  n
                 vy *=  n
                 new_points.append(p)

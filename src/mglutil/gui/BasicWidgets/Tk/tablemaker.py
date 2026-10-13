@@ -32,7 +32,9 @@ Example:
     t = TableManager(master=root, xmaxval=255, xminval = 0, ymaxval=4095,
                      alphaCallback=AlphaCallback, colorCallback=ColorCallback)
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 SelectPointTxt="Clicking the left mouse button on a dot selects it.\n"
 SetOpacityTxt = "Dragging a dot with the left mouse button modifies\nthe  opacity.\n"
 SetColorTxt = "Left clicking or moving the circle in the area labeled\n Hue/Saturation changes the color of the selected dot.\n The red-green-blue-opacity values can be directly typed\n in the text entries.\n"
@@ -863,10 +865,10 @@ class TableManager:
 ##                  return
             else:
                 new_points.insert(2,
-                       (new_points[1][0]+(new_points[2][0]-new_points[1][0])/2,
-                       new_points[1][1]+(new_points[2][1]-new_points[1][1])/2))
+                       (new_points[1][0]+old_div((new_points[2][0]-new_points[1][0]),2),
+                       new_points[1][1]+old_div((new_points[2][1]-new_points[1][1]),2)))
                 new_values.insert(2,
-                       int(round((new_points[2][0]-left)/sclx))+min_val )
+                       int(round(old_div((new_points[2][0]-left),sclx)))+min_val )
                 new_shapes = [0,1,3,4]
         else:
             if new_shapes[-2]-new_shapes[-3] == 1:
@@ -880,11 +882,11 @@ class TableManager:
                 else:
                     new_points.insert(v_len-2,
                                       (new_points[-3][0]+
-                                       (new_points[-2][0]-new_points[-3][0])/2,
+                                       old_div((new_points[-2][0]-new_points[-3][0]),2),
                                        new_points[-3][1]+
-                                      (new_points[-2][1]-new_points[-3][1])/2))
+                                      old_div((new_points[-2][1]-new_points[-3][1]),2)))
                     new_values.insert(v_len-2,
-                             int(round((new_points[-3][0]-left)/sclx))+min_val)
+                             int(round(old_div((new_points[-3][0]-left),sclx)))+min_val)
                     new_shapes[-2] = new_shapes[-2]+1
                     new_shapes[-1] = new_shapes[-1]+1
             if new_shapes[2]-new_shapes[1] == 1:
@@ -898,10 +900,10 @@ class TableManager:
                     new_shapes = [x-2 for x in new_shapes]
                 else:
                     new_points.insert(2,
-                       (new_points[1][0]+(new_points[2][0]-new_points[1][0])/2,
-                       new_points[1][1]+(new_points[2][1]-new_points[1][1])/2))
+                       (new_points[1][0]+old_div((new_points[2][0]-new_points[1][0]),2),
+                       new_points[1][1]+old_div((new_points[2][1]-new_points[1][1]),2)))
                     new_values.insert(2,
-                             int(round((new_points[2][0]-left)/sclx))+min_val )
+                             int(round(old_div((new_points[2][0]-left),sclx)))+min_val )
                     for i in range(2, len(new_shapes)):
                         new_shapes[i] = new_shapes[i]+1
         lut.shapes = new_shapes
@@ -1103,11 +1105,11 @@ class TableManager:
             self.canvas_list.append(lut.canvas)
             if d != 1 :
                 lut.calculate_points(values[i],
-                                     [x/d for x in alphas[i]])
+                                     [old_div(x,d) for x in alphas[i]])
             else:
                 lut.calculate_points(values[i], alphas[i])
             lut.shapes = shapes[i]
-            colors_size = (len(colors[i])/3, 3)
+            colors_size = (old_div(len(colors[i]),3), 3)
             #print "colors_size: ", len(colors[i]), colors_size
             lut.color_arr = Numeric.reshape(Numeric.array(colors[i], 'f'),
                                             colors_size)
@@ -1158,7 +1160,7 @@ class TableManager:
                     for i in range(len(data)):
                         file.write("%d %d %d %d %.3f\n"%(i,data[i][0],
                                                       data[i][1],data[i][2],
-                                                      data[i][3]/ymaxval) )
+                                                      old_div(data[i][3],ymaxval)) )
                     file.close()
         else:
             return
@@ -1345,7 +1347,7 @@ class TableManager:
         lut.draw_initshape(xminval = 0, xmaxval=xmaxval,
                            num_of_entries=xmaxval+1, gray=0, reverse = reverse)
         lut.values = [lut.xminval, lut.xminval,
-                      lut.xminval+ xmaxval/2,
+                      lut.xminval+ old_div(xmaxval,2),
                        lut.xmaxval, lut.xmaxval]
         lut.callbacks['setalpha']([lut.xminval, lut.alpha_arr])
         lut.callbacks['setcolor']([lut.xminval, lut.color_arr])
@@ -1580,8 +1582,8 @@ class LUT:
                       font=self.font, tags = 'ytext')
         
         # scale x and y axes 
-        self.sclx = (self.right-self.left)/(xmaxval-xminval)
-        self.scly = (self.bott-self.top)/ymaxval
+        self.sclx = old_div((self.right-self.left),(xmaxval-xminval))
+        self.scly = old_div((self.bott-self.top),ymaxval)
         self.delta = self.sclx+1e-6
 ##          c.create_line(self.left,self.bott,self.right,
 ##                        self.bott, width = 2, fill='black', tags=('line','line0'))
@@ -1638,12 +1640,12 @@ class LUT:
         if not reverse:
             for i in range(arr_len):
                 #self.alpha_arr[i] = (xminval+i)*d
-                self.alpha_arr[i] = ymaxval * (xminval+i)/ n
+                self.alpha_arr[i] = old_div(ymaxval * (xminval+i), n)
         else:
             j = arr_len-1
             for i in range(arr_len):
                 #self.alpha_arr[i] = (xminval+j)*d
-                self.alpha_arr[i] = ymaxval * (xminval+j)/n
+                self.alpha_arr[i] = old_div(ymaxval * (xminval+j),n)
                 j=j-1
 ##          print self.alpha_arr[0], self.alpha_arr[-1]
 
@@ -1659,13 +1661,13 @@ class LUT:
         self.compute_alpha_ramp(xminval, num_of_entries, arr_len, reverse)
         first_dot = (self.left,self.bott-self.scly*self.alpha_arr[0] )
         last_dot = (self.right,self.bott-self.scly*self.alpha_arr[-1])
-        mid_dot = (self.left+(self.right-self.left)/2,
-                   first_dot[1]-(first_dot[1]-last_dot[1])/2)
+        mid_dot = (self.left+old_div((self.right-self.left),2),
+                   first_dot[1]-old_div((first_dot[1]-last_dot[1]),2))
         self.points = [(self.left,self.bott),
                        first_dot, mid_dot, last_dot,
                        (self.right, self.bott)]
         #print 'points=', self.points
-        self.values = [xminval, xminval, xminval+(xmaxval-xminval)/2,
+        self.values = [xminval, xminval, xminval+old_div((xmaxval-xminval),2),
                        xmaxval, xmaxval]
         self.shapes = [0,1,3,4]
         if gray:
@@ -1680,7 +1682,7 @@ class LUT:
             xmaxval = self.xmaxval
         n = self.num_of_entries/256.
 ##          print 'n=',n
-        j = int(xminval/n)
+        j = int(old_div(xminval,n))
         k=0
         for i in range(xminval, xmaxval+1):
             if i%n == 0 and i != xminval : j = j+1 
@@ -1802,8 +1804,8 @@ class LUT:
         # update list of values and list of points
         xminval =self.xminval
         tkcolors = []
-        val_x1 = int(round((x1-self.left)/self.sclx))+xminval
-        val_x2 = val_x1+int(round((x2-x1)/self.sclx))        
+        val_x1 = int(round(old_div((x1-self.left),self.sclx)))+xminval
+        val_x2 = val_x1+int(round(old_div((x2-x1),self.sclx)))        
         for j, point, val in ([i,(x1,bott),val_x1], [i+1,(x1_1,y),val_x1+1],\
                          [i+2,(x2_1,y),val_x2-1], [i+3,(x2,bott),val_x2]):
             tkcolors.append(colorUtil.TkColor(self.color_arr[val-xminval]))
@@ -1842,7 +1844,7 @@ class LUT:
             c.lift('dot%d'%(ind+5,))
             
         # calculate alphas
-        val_y = round((bott-y)/self.scly)
+        val_y = round(old_div((bott-y),self.scly))
         for j in range(val_x1+1-xminval, val_x2-xminval):
             self.alpha_arr[j] = val_y
         
@@ -2026,7 +2028,7 @@ class LUT:
                     i = i + 1
 
     def update_yaxis(self, ymaxval):
-        self.scly = (self.bott-self.top)/ymaxval
+        self.scly = old_div((self.bott-self.top),ymaxval)
         self.canvas.itemconfigure('ytext', text = str(ymaxval))
         #self.alpha_arr = (self.alpha_arr*ymaxval/self.ymaxval).astype(Numeric.Int16)
         self.alpha_arr = Numeric.clip(self.alpha_arr, 0, ymaxval).astype(Numeric.Int16)
@@ -2191,7 +2193,7 @@ class LUT:
         xminval = self.xminval
         scalars = self.scalars
         alphas = self.alphas
-        scalars[1] = int(round((X-self.left)/self.sclx))+xminval
+        scalars[1] = int(round(old_div((X-self.left),self.sclx)))+xminval
         if scalars[1] >= scalars[2]:
             if scalars[2] == self.xmaxval:
                 scalars[1] = self.xmaxval
@@ -2202,7 +2204,7 @@ class LUT:
                 scalars[1] = xminval
             else:
                 scalars[1] = scalars[0]+1
-        self.alphas[1] = round((self.bott-Y)/self.scly)
+        self.alphas[1] = round(old_div((self.bott-Y),self.scly))
         self.values[self.curr_ind] = scalars[1]
         self.compute_rgba(scalars, alphas)
         # update entry fields on the form
@@ -2219,11 +2221,11 @@ class LUT:
         red3, green3, blue3 = self.color_arr[sc2]
         d = scalars[0]-scalars[1]
         if d != 0 :
-            K = (alphas[0]-alphas[1])/d
+            K = old_div((alphas[0]-alphas[1]),d)
             C = alphas[0]-K*scalars[0]
-            Kr = (red1-red2)/d
-            Kg = (green1-green2)/d
-            Kb = (blue1-blue2)/d
+            Kr = old_div((red1-red2),d)
+            Kg = old_div((green1-green2),d)
+            Kb = old_div((blue1-blue2),d)
             Cr = red1-Kr*scalars[0]
             Cg = green1-Kg *scalars[0]
             Cb = blue1-Kb*scalars[0]
@@ -2236,11 +2238,11 @@ class LUT:
                                                     Kb*s+Cb)).astype('f'))
         d = scalars[1]-scalars[2]
         if d != 0 :
-            K = (alphas[1]-alphas[2])/d
+            K = old_div((alphas[1]-alphas[2]),d)
             C = alphas[1]-K*scalars[1]
-            Kr = (red2-red3)/d
-            Kg = (green2-green3)/d
-            Kb = (blue2-blue3)/d
+            Kr = old_div((red2-red3),d)
+            Kg = old_div((green2-green3),d)
+            Kb = old_div((blue2-blue3),d)
             Cr = red2-Kr*scalars[1]
             Cg = green2-Kg *scalars[1]
             Cb = blue2-Kb*scalars[1]
@@ -2337,8 +2339,8 @@ class LUT:
         if x <= self.left: x = self.left
         elif x >= self.right: x = self.right
         # calculate new scalar value and opacity of moved point 
-        val = int(round((x-self.left)/self.sclx))+ self.xminval
-        alpha = int(round((self.bott-y)/self.scly))
+        val = int(round(old_div((x-self.left),self.sclx)))+ self.xminval
+        alpha = int(round(old_div((self.bott-y),self.scly)))
         self.doMoveIsoVal(x, y ,val, alpha)
         self.callbacks['entries'](iso_val=val, iso_y=alpha)
 
@@ -2458,18 +2460,18 @@ class LUT:
         scalars = [self.values[curr_ind-1], self.values[curr_ind],
                    self.values[curr_ind+1]]
         alphas = [self.alpha_arr[scalars[0]-xminval],
-                  round((self.bott-Y)/self.scly),
+                  round(old_div((self.bott-Y),self.scly)),
                   self.alpha_arr[scalars[2]-xminval]]
         d = scalars[0]-scalars[1]
         if d != 0 :
-            K = (alphas[0]-alphas[1])/d
+            K = old_div((alphas[0]-alphas[1]),d)
             C = alphas[0]-K*scalars[0]
             s = Numeric.arange(scalars[0], scalars[1])
             self.alpha_arr[scalars[0]-xminval:scalars[1]-xminval] =\
                     (K*s+C).astype(Numeric.Int16)
         d = scalars[1]-scalars[2]
         if d != 0 :
-            K = (alphas[1]-alphas[2])/d
+            K = old_div((alphas[1]-alphas[2]),d)
             C = alphas[1]-K*scalars[1]
             s = Numeric.arange(scalars[1], scalars[2])
             self.alpha_arr[scalars[1]-xminval:scalars[2]-xminval] =\
@@ -2556,7 +2558,7 @@ class LUT:
         scalars = [self.values[curr_ind-1], value,
                    self.values[curr_ind+1]]
         alphas = [self.alpha_arr[scalars[0]-self.xminval],
-                  round((self.bott-y)/self.scly),
+                  round(old_div((self.bott-y),self.scly)),
                   #self.alpha_arr[old_val-self.xminval],
                   self.alpha_arr[scalars[2]-self.xminval]]
         self.curr_color = list(self.color_arr[old_val-self.xminval])
@@ -2716,7 +2718,7 @@ class LUT:
             old_valx1 = self.old_valx1
             len_list = len(self.alpha_list)
             # get new value(scalar) of the first point of the shape 
-            new_valx1 = int(round((x1-self.left)/self.sclx))+self.xminval
+            new_valx1 = int(round(old_div((x1-self.left),self.sclx)))+self.xminval
             delta = old_valx1-new_valx1
             end = new_valx1+len_list-1 
             xminval = self.xminval
@@ -2782,7 +2784,7 @@ class LUT:
         if self.counter%20 == 0:
             diff = self.old_valx1 - self.values[self.select_shape[0]]
         else:
-            diff = int(round(dist/sclx)) 
+            diff = int(round(old_div(dist,sclx))) 
         for k in self.select_shape:
             self.points[k] = (self.points[k][0]+dist, self.points[k][1])
             self.values[k] = self.values[k]+diff
@@ -2909,7 +2911,7 @@ class LUT:
             return
         if curr_coords[0] == curr_coords[2]:
             x = curr_coords[0]
-        curr_val = int(round((x-self.left)/self.sclx))+self.xminval
+        curr_val = int(round(old_div((x-self.left),self.sclx)))+self.xminval
         if curr_val == self.values[curr_ind+1]:
             curr_val = self.values[curr_ind+1]-1
         elif curr_val == self.values[curr_ind]:
@@ -3002,7 +3004,7 @@ class LUT:
         xminval = self.xminval
         d = self.scalars[0]-self.scalars[2]
         if d == 0: return
-        K = (self.alphas[0]-self.alphas[2])/d
+        K = old_div((self.alphas[0]-self.alphas[2]),d)
         C = self.alphas[0]-K*self.scalars[0]
         for s in range(self.scalars[0], self.scalars[2]):
             self.alpha_arr[s-xminval] = K*s+C
@@ -3117,9 +3119,9 @@ class LUT:
             red3, green3, blue3 = self.color_arr[scalar3]
             d = scalar1-scalar2
             if d != 0:
-                Kr = (red1-red2)/d
-                Kg = (green1-green2)/d
-                Kb = (blue1-blue2)/d
+                Kr = old_div((red1-red2),d)
+                Kg = old_div((green1-green2),d)
+                Kb = old_div((blue1-blue2),d)
                 Cr = red1-Kr*scalar1
                 Cg = green1-Kg *scalar1
                 Cb = blue1-Kb*scalar1
@@ -3129,9 +3131,9 @@ class LUT:
                                                     Kb*s+Cb)).astype('f'))
             d = scalar2-scalar3
             if d != 0:
-                Kr = (red2-red3)/d
-                Kg = (green2-green3)/d
-                Kb = (blue2-blue3)/d
+                Kr = old_div((red2-red3),d)
+                Kg = old_div((green2-green3),d)
+                Kb = old_div((blue2-blue3),d)
                 Cr = red2-Kr*scalar2
                 Cg = green2-Kg *scalar2
                 Cb = blue2-Kb*scalar2
@@ -3245,9 +3247,9 @@ class LUT:
         blue2 = self.color_arr[scalar2][2]
         d = scalar2-scalar1
         if d == 0: return [scalar1, scalar2, Numeric.zeros((0,3),'f')]
-        r = (red2-red1)/d
-        g = (green2-green1)/d
-        b = (blue2-blue1)/d
+        r = old_div((red2-red1),d)
+        g = old_div((green2-green1),d)
+        b = old_div((blue2-blue1),d)
         s = Numeric.arange(d)
         self.color_arr[scalar1:scalar2] = \
           Numeric.transpose(Numeric.array((r*s+red1,
@@ -3312,7 +3314,7 @@ class LUT:
         if not values:
             values = []
             for point in self.points:
-                s = int(round((point[0]-left)/self.sclx))+xminval
+                s = int(round(old_div((point[0]-left),self.sclx)))+xminval
                 if s > self.xmaxval: s = self.xmaxval
                 values.append(s)
             
@@ -3321,7 +3323,7 @@ class LUT:
         if not alphas_points:
             alphas_points = []
             for point in self.points:
-                alphas_points.append(round((bott-point[1])/scly))
+                alphas_points.append(round(old_div((bott-point[1]),scly)))
 ##          print 'values=', values
         k=0
         for j in range(len(alphas_points)-1):
@@ -3329,7 +3331,7 @@ class LUT:
             if d == 0:
 ##                  print 'values[%s],[%s]:%s,%s'%(j,j+1,values[j],values[j+1]), 'd=0'
                 continue
-            K = (alphas_points[j]-alphas_points[j+1])/d
+            K = old_div((alphas_points[j]-alphas_points[j+1]),d)
             C = alphas_points[j]-K*values[j]
             for s in range(values[j], values[j+1]):
                 self.alpha_arr[k] = K*s+C
@@ -3376,9 +3378,9 @@ class Colormap(CallbackFunctions):
         self.img = tkinter.PhotoImage(file=file, master=master)
         width = self.img.width()
         height = self.img.height()
-        self.axis_len = max(width, height)/2
-        self.X0 = width/2
-        self.Y0 = height/2
+        self.axis_len = old_div(max(width, height),2)
+        self.X0 = old_div(width,2)
+        self.Y0 = old_div(height,2)
         self.lastx = self.X0
         self.lasty = self.Y0
         self.hsv =[0.0, 0.0, 0.0]
@@ -3431,14 +3433,14 @@ class Colormap(CallbackFunctions):
         
     def get_hsv(self, X, Y):
         if X!= 0 or Y!=0:
-            hue = math.acos(X/math.sqrt(X*X+Y*Y))
+            hue = math.acos(old_div(X,math.sqrt(X*X+Y*Y)))
             if Y < 0:
                 hue = 2*_PI-hue
         else: hue = 0
-        hue = hue/(2*_PI)
+        hue = old_div(hue,(2*_PI))
         dist = math.sqrt(X*X+Y*Y)
         if dist > self.axis_len: dist = self.axis_len
-        sat = dist/self.axis_len
+        sat = old_div(dist,self.axis_len)
         val = self.scale.get()
         if hue > 1.0: hue = 1.0
         elif hue < 0.0 : hue = 0.0

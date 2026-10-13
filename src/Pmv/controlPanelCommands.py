@@ -1,3 +1,4 @@
+from __future__ import division
 ###########################################################################
 #
 # Author: Michel F. SANNER, Yong Zhao
@@ -39,6 +40,7 @@
 ## Tree customization  stuff
 ##
 ##########################################################################
+from mglcompat.pydiv import old_div
 import tkinter, os, Pmw, types, re
 from PIL import Image, ImageTk
 
@@ -78,7 +80,7 @@ class NodeWithCheckbuttons(Node):
         canvas = self.tree.scrolledCanvas.interior()
         tree = self.tree
         dx = self.x-self.tree.offx
-        level = dx/OFFSET
+        level = old_div(dx,OFFSET)
         col = ['gray75', 'red', 'cyan', 'green', 'yellow']
 
         for i in range(tree.nbColumns):

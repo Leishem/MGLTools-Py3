@@ -25,6 +25,7 @@
 
 This Module implements the Camera class and the Fog class.
 """
+from __future__ import division
 
 ## NOTE about share context and sharelist keyword arguments to Camera
 ##   By default ane new Camera will share its context with camaera 0
@@ -36,6 +37,7 @@ This Module implements the Camera class and the Fog class.
 ## All display list are created in the context of the Camera 0 which is the
 ## one activated in ReallyRedraw when display list are created.
 
+from mglcompat.pydiv import old_div
 import os, sys, warnings
 
 from PIL import Image
@@ -1266,13 +1268,13 @@ This dictionary can be passed to the Set method to restore the object's state
         fl = frustrumlength = sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2])
 
         # compute unit vector in viewing direction
-        viewDir1 = v/fl
+        viewDir1 = old_div(v,fl)
 
         # project center of bb to view direction
         # and measure length from lookfrom to projected point
         bbCenter = (bb[1]+bb[0])*.5
         u = bbCenter-lf
-        u1 = u/sqrt(numpy.sum(u*u))
+        u1 = old_div(u,sqrt(numpy.sum(u*u)))
         cosAlpha = numpy.dot(viewDir1, u1)
         v = u*cosAlpha
         l = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]) # length from lookFrom
@@ -1280,7 +1282,7 @@ This dictionary can be passed to the Set method to restore the object's state
         # subtract from this distance
         halfDiag = bbCenter-bb[1]
         rad = sqrt(numpy.sum(halfDiag*halfDiag))
-        d = rad/sqrt(3)
+        d = old_div(rad,sqrt(3))
         
         v = (l-d*.5)*viewDir1
         start = sqrt(numpy.sum(v*v))
@@ -1386,7 +1388,7 @@ size camera.width*camera.height*3"""
         if zmax is None:
             zmax = max(deptharray)
         if (zmax!=zmin):
-            zval1 = 255 * ((deptharray-zmin) / (zmax-zmin))
+            zval1 = 255 * (old_div((deptharray-zmin), (zmax-zmin)))
         else:
             zval1 = Numeric.ones(self.width*self.height, 'f')*zmax*255
 
@@ -1542,7 +1544,7 @@ Transparent background is only supported in 'png' format.
         m = Numeric.reshape(Numeric.transpose(m), (16,)).astype('f')
         rot, transl, scale = self.Decompose4x4(m)
         sc = Numeric.concatenate((Numeric.reshape(scale,(3,1)), [[1]]))
-        n = Numeric.reshape(rot, (4,4))/sc
+        n = old_div(Numeric.reshape(rot, (4,4)),sc)
         tr = Numeric.dot(n, (transl[0], transl[1], transl[2],1) )
         n[:3,3] = -tr[:3]
         return n        
@@ -3026,7 +3028,7 @@ enableStereo must be set to True in:
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
         """Compute left, right, top, bottom from field of view"""
         d = self.near + (self.far - self.near)*0.5
-        self.fovy = (math.atan(self.top/d) * 360.0) / math.pi
+        self.fovy = old_div((math.atan(old_div(self.top,d)) * 360.0), math.pi)
         self.SetupProjectionMatrix()
         
 
@@ -3125,8 +3127,8 @@ enableStereo must be set to True in:
         xwsize = right - left
         ywsize = top - bottom
 
-        dx = -(pixdx*xwsize/viewport[2] + eyedx*near/focus)
-        dy = -(pixdy*ywsize/viewport[3] + eyedy*near/focus)
+        dx = -(old_div(pixdx*xwsize,viewport[2]) + old_div(eyedx*near,focus))
+        dy = -(old_div(pixdy*ywsize,viewport[3]) + old_div(eyedy*near,focus))
 
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
@@ -3158,7 +3160,7 @@ enableStereo must be set to True in:
 
         fov2 = self.fovy*pi / 360.0;
         if top is None:
-            top = self.near / (cos(fov2) / sin(fov2))
+            top = old_div(self.near, (old_div(cos(fov2), sin(fov2))))
         if bottom is None:
             bottom = -top
         if right is None:
@@ -3342,7 +3344,7 @@ lines is used
          if hasattr(DejaVu, 'functionName'): DejaVu.functionName()
         self.tk.call(self._w, 'makecurrent')
 
-        glViewport(0, 0, self.width/10, self.height/10)
+        glViewport(0, 0, old_div(self.width,10), old_div(self.height,10))
 
         glMatrixMode (GL_PROJECTION)
         glPushMatrix()
@@ -3397,10 +3399,10 @@ lines is used
         pickWinSize = 10
         
         if math.fabs(dx) < pickWinSize: dx=pickWinSize
-        else: x = x1 + (dx/2)
+        else: x = x1 + (old_div(dx,2))
 
         if math.fabs(dy) < pickWinSize: dy=pickWinSize
-        else: y = y1 + (dy/2)
+        else: y = y1 + (old_div(dy,2))
 
         if dx==pickWinSize and dy==pickWinSize:
             mode = 'pick'
@@ -4043,7 +4045,7 @@ lines is used
                 m = Numeric.dot( inv, obj.GetMatrix() )
                 vert = obj.vertexSet.vertices * m
                 vertsel = Numeric.take( vert, vertInd )
-                g = g + Numeric.sum(vertsel)/len(vertsel)
+                g = g + old_div(Numeric.sum(vertsel),len(vertsel))
 
         object.SetPivot( g )
 
@@ -4616,7 +4618,7 @@ for all instances of obj
                 glPopMatrix()
 
             elif self.stereoMode.endswith('_CROSS'):
-                halfWidth = self.width/2
+                halfWidth = old_div(self.width,2)
                 
                 # setup GL state for camera
                 glPushMatrix()
@@ -4647,7 +4649,7 @@ for all instances of obj
                 glPopMatrix()
                 glViewport(0, 0, int(self.width), int(self.height))
             elif self.stereoMode.endswith('_STRAIGHT'):
-                halfWidth = self.width/2
+                halfWidth = old_div(self.width,2)
 
                 # setup GL state for camera
                 glPushMatrix()
@@ -5036,8 +5038,8 @@ for all instances of obj
                     W = self.right-self.left # width in world coordinates
                     H = self.top-self.bottom # height in world coordinates
                     glPushMatrix()
-                    glTranslatef (self.jitter[i][0]*W/self.width,
-                                  self.jitter[i][1]*H/self.height,
+                    glTranslatef (old_div(self.jitter[i][0]*W,self.width),
+                                  old_div(self.jitter[i][1]*H,self.height),
                                   0.0)
                     self._RedrawCamera()
                     glPopMatrix()

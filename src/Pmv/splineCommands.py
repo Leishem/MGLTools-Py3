@@ -1,3 +1,4 @@
+from __future__ import division
 #############################################################################
 #
 # Author: Sophie COON, Michel F. SANNER
@@ -13,6 +14,7 @@
 #
 #
 
+from mglcompat.pydiv import old_div
 import itertools
 from mglutil.util.misc import ensureFontCase
 
@@ -478,36 +480,36 @@ class ExtrudeSplineCommand(MVCommand):
         for v in vertInd:
             # 1- needs to know what is the corresponding index of the picked
             # vertex in the path3D
-            splinePts = v/(2*lshape)
+            splinePts = old_div(v,(2*lshape))
             # 2- need to convert that index into an atom indices in the
             # set of
             # atoms used as control points to compute the spline.
             if closed == 0:
-                if splinePts>=nbchords/2 and \
-                   splinePts <(lastVertices)*nbchords - nbchords/2:
+                if splinePts>=old_div(nbchords,2) and \
+                   splinePts <(lastVertices)*nbchords - old_div(nbchords,2):
                     # normal points
-                    atmIndex = (splinePts-nbchords/2)/nbchords + 1
+                    atmIndex = old_div((splinePts-old_div(nbchords,2)),nbchords) + 1
             
             
-                elif splinePts<nbchords/2:
+                elif splinePts<old_div(nbchords,2):
                     atmIndex = 0
 
-                elif splinePts >= (lastVertices)*nbchords - nbchords/2:
+                elif splinePts >= (lastVertices)*nbchords - old_div(nbchords,2):
                     atmIndex = -1
 
             elif closed == 1:
                 
-                lastIndex = (lastVertices)*nbchords - nbchords/2
-                if splinePts>=nbchords/2 and \
+                lastIndex = (lastVertices)*nbchords - old_div(nbchords,2)
+                if splinePts>=old_div(nbchords,2) and \
                    splinePts <lastIndex:
                     # normal points
-                    atmIndex = (splinePts-nbchords/2)/nbchords + 1
+                    atmIndex = old_div((splinePts-old_div(nbchords,2)),nbchords) + 1
             
                 elif splinePts >= lastIndex and \
                      splinePts < lastIndex + nbchords:
                     atmIndex = -1
 
-                elif splinePts<nbchords/2 or \
+                elif splinePts<old_div(nbchords,2) or \
                      splinePts >= lastIndex + nbchords:
                     atmIndex = 0
                 
@@ -528,9 +530,9 @@ class ExtrudeSplineCommand(MVCommand):
             if closed == 0:
                 if a==ctlAtms[0] or a == ctlAtms[-1]:
                     if geom.capsFlag == 1:
-                        nbchords = geom.spline[0].nbchords/2 + 1
+                        nbchords = old_div(geom.spline[0].nbchords,2) + 1
                     else:
-                        nbchords = geom.spline[0].nbchords/2
+                        nbchords = old_div(geom.spline[0].nbchords,2)
 
                 else:
                     nbchords = geom.spline[0].nbchords
@@ -916,7 +918,7 @@ class DisplayExtrudedSplineCommand(DisplayCommand):
                 atmIndex = ctlAtms.index(a)
                 if atmIndex == 0:
                     # 1s point
-                    length = nbchords/2
+                    length = old_div(nbchords,2)
 
                     for n in range(length):
                         # last 2 strips and 2 first strips
@@ -928,8 +930,8 @@ class DisplayExtrudedSplineCommand(DisplayCommand):
                     if closed:
                         # 2 first faces and 3 last.
                         index = len(ctlAtms)
-                        start = (index - 1)*nbchords + nbchords/2 
-                        for n in range(nbchords/2):
+                        start = (index - 1)*nbchords + old_div(nbchords,2) 
+                        for n in range(old_div(nbchords,2)):
                             sB = (start +n)*dlshape
                             sE = sB+dlshape
                             stripBegin.append(sB)
@@ -940,11 +942,11 @@ class DisplayExtrudedSplineCommand(DisplayCommand):
                     if closed ==1:
                         length = nbchords
                     elif caps == 1:
-                        length = nbchords/2+2
+                        length = old_div(nbchords,2)+2
                     else:
-                        length = nbchords/2
+                        length = old_div(nbchords,2)
 
-                    start = (atmIndex-1)*nbchords + nbchords/2    
+                    start = (atmIndex-1)*nbchords + old_div(nbchords,2)    
                     for n in range(length):
                         sB = (start + n)*dlshape
                         stripBegin.append(sB)
@@ -952,7 +954,7 @@ class DisplayExtrudedSplineCommand(DisplayCommand):
                         stripEnd.append(sE)
 
                 else:
-                    start = (atmIndex-1)*nbchords + nbchords/2
+                    start = (atmIndex-1)*nbchords + old_div(nbchords,2)
                     for n in range(nbchords):
                         sB = (start + n)*dlshape
                         sE = sB+dlshape
@@ -1107,29 +1109,29 @@ class DisplaySplineAsLineCommand(DisplayCommand):
             # 2- need to convert that index into an atom indices in the
             # set
             if not closed:
-                if splinePts>=nbchords/2 and \
-                   splinePts <(lastVertices)*nbchords - nbchords/2:
+                if splinePts>=old_div(nbchords,2) and \
+                   splinePts <(lastVertices)*nbchords - old_div(nbchords,2):
                     # normal points
-                    atmIndex = (splinePts-nbchords/2)/nbchords + 1
+                    atmIndex = old_div((splinePts-old_div(nbchords,2)),nbchords) + 1
             
             
-                elif splinePts<nbchords/2:
+                elif splinePts<old_div(nbchords,2):
                     atmIndex = 0
 
-                elif splinePts >= (lastVertices)*nbchords - nbchords/2:
+                elif splinePts >= (lastVertices)*nbchords - old_div(nbchords,2):
                     atmIndex = -1
 
             else:
-                lastIndex = (lastVertices)*nbchords - nbchords/2
-                if splinePts>=nbchords/2 and \
+                lastIndex = (lastVertices)*nbchords - old_div(nbchords,2)
+                if splinePts>=old_div(nbchords,2) and \
                    splinePts <lastIndex:
                     # normal points
-                    atmIndex = (splinePts-nbchords/2)/nbchords + 1
+                    atmIndex = old_div((splinePts-old_div(nbchords,2)),nbchords) + 1
             
                 elif splinePts >= lastIndex and \
                      splinePts < lastIndex + nbchords:
                     atmIndex = -1
-                elif splinePts<nbchords/2 or \
+                elif splinePts<old_div(nbchords,2) or \
                      splinePts >= lastIndex + nbchords:
                     atmIndex = 0
 
@@ -1155,7 +1157,7 @@ class DisplaySplineAsLineCommand(DisplayCommand):
         for a in atoms:
             if not closed:
                 if a==ctlAtms[0] or a == ctlAtms[-1]:
-                    nbchords = geom.spline[0].nbchords/2
+                    nbchords = old_div(geom.spline[0].nbchords,2)
                 else:
                     nbchords = geom.spline[0].nbchords
             else:
@@ -1307,30 +1309,30 @@ class DisplaySplineAsLineCommand(DisplayCommand):
                 if atmIndex == 0:
                     # first point or last points only have 2 faces.
                     start = atmIndex
-                    end = nbchords/2
+                    end = old_div(nbchords,2)
                     for x in range(start, end):
                         faces.append((x, x+1))
 
                     if closed ==1:
                         index = len(ctlAtms)
-                        start = (index - 1)*nbchords + nbchords/2
-                        end = start + nbchords/2
+                        start = (index - 1)*nbchords + old_div(nbchords,2)
+                        end = start + old_div(nbchords,2)
                         for x in range(start, end):
                             faces.append((x, x+1))
                         
                 elif atmIndex == len(ctlAtms)-1:
-                    start = (atmIndex-1)*nbchords + nbchords/2
+                    start = (atmIndex-1)*nbchords + old_div(nbchords,2)
                     if closed ==1:
                         end = start+nbchords
                     else:
-                        end =  start + nbchords/2
+                        end =  start + old_div(nbchords,2)
 
                     for x in range(start, end):
                         faces.append((x, x+1))
                     
                 else:
                     
-                    start = (atmIndex-1)*nbchords + nbchords/2
+                    start = (atmIndex-1)*nbchords + old_div(nbchords,2)
                     end = start + nbchords
                     for x in range(start, end):
                         faces.append((x, x+1))

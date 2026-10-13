@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 import os
 from mglcompat import pystring as string
 import math
@@ -257,7 +259,7 @@ class Optimize:
 
             dist = distance(donorhatom.getCoords(), acceptor.getCoords())
             if dist > max_dha_dist and dist < max_ele_dist: 
-                energy += max_ele_energy/(dist*dist)
+                energy += old_div(max_ele_energy,(dist*dist))
                 continue
 
             if acceptorhs != []:
@@ -277,11 +279,11 @@ class Optimize:
                     
                     angle1 = self.getHbondangle(acceptor, donor, donorhatom)
                     if angle1 <= maxangle:
-                        angleterm = (maxangle - angle1)/maxangle
+                        angleterm = old_div((maxangle - angle1),maxangle)
                         angle2 = self.getHbondangle(donorhatom, acceptorhatom, acceptor)
                         if angle2 < 110.0: angle2 = 1.0
                         else: angle2 = (110.0 - angle2)/110.0
-                        energy += max_hbond_energy/pow(dist,3)*angleterm*angle2
+                        energy += old_div(max_hbond_energy,pow(dist,3))*angleterm*angle2
 
             else:
 
@@ -289,8 +291,8 @@ class Optimize:
               
                 angle1 = self.getHbondangle(acceptor, donor, donorhatom)
                 if angle1 <= maxangle:
-                    angleterm = (maxangle - angle1)/maxangle
-                    energy += max_hbond_energy/pow(dist,2)*angleterm
+                    angleterm = old_div((maxangle - angle1),maxangle)
+                    energy += old_div(max_hbond_energy,pow(dist,2))*angleterm
                   
             return energy
                 
@@ -314,7 +316,7 @@ class Optimize:
         dist = distance(atom.getCoords(), closeatom.getCoords())
 
         for i in range(3):
-            newcoords.append(vec[i]/dist + atom.getCoords()[i])
+            newcoords.append(old_div(vec[i],dist) + atom.getCoords()[i])
             
         residue.createAtom(addname, newcoords)
         newatom = residue.getAtom(addname)
@@ -1359,7 +1361,7 @@ class Water(Optimize):
                 dist = distance(atom.getCoords(), closeatom.getCoords())
 
                 for i in range(3):
-                    newcoords.append(vec[i]/dist + atom.getCoords()[i])
+                    newcoords.append(old_div(vec[i],dist) + atom.getCoords()[i])
                 
             else:
                 newcoords = add(atom.getCoords(), [1.0, 0.0, 0.0])      

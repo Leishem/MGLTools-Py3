@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -14,6 +15,7 @@
 # $Id: drawShape.py,v 1.2 2007/07/24 17:30:37 vareille Exp $
 #
 
+from mglcompat.pydiv import old_div
 import tkinter, mglcompat.oldnumeric as Numeric
 from DejaVu.IndexedPolygons import IndexedPolygons
 
@@ -131,8 +133,8 @@ class DrawShape:
             for i in range(len(points)+repeat):
                 xsum = xsum + points[i][0]
                 ysum = ysum + points[i][1]
-            xcenter = xsum/(len(points)+repeat)
-            ycenter = ysum/(len(points)+repeat)
+            xcenter = old_div(xsum,(len(points)+repeat))
+            ycenter = old_div(ysum,(len(points)+repeat))
             origin = (xcenter, ycenter)
             points = points - origin
             points[:,1:] = points[:,1:]*-1
@@ -147,12 +149,12 @@ class DrawShape:
                 diff = points[i+1] - points[i]
                 if diff[1]==0:
                     normals[i][0] = 0.0
-                    normals[i][1] = diff[0]/abs(diff[0])
+                    normals[i][1] = old_div(diff[0],abs(diff[0]))
                 else:
-                    slope = -diff[0]/diff[1]
-                    size = -math.sqrt(1+slope**2)*(diff[1]/abs(diff[1]))
+                    slope = old_div(-diff[0],diff[1])
+                    size = -math.sqrt(1+slope**2)*(old_div(diff[1],abs(diff[1])))
                     normals[i][0] = 1.0/size
-                    normals[i][1] = slope/size
+                    normals[i][1] = old_div(slope,size)
             
             # duplicate vertices
             if self.dup.get():
@@ -171,7 +173,7 @@ class DrawShape:
                 self.points = points
                 self.normals = Numeric.zeros((len(points), 3)).astype('f')
                 for i in range(len(points)-1):
-                    n = (normals[i-1]+normals[i])/2
+                    n = old_div((normals[i-1]+normals[i]),2)
                     self.normals[i] = n.astype('f')
                 self.normals[len(points)-1] = self.normals[0]
             print(self.points)

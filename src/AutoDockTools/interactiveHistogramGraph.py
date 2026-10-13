@@ -1,3 +1,4 @@
+from __future__ import division
 #############################################################################
 # 
 # Graph class: 
@@ -9,6 +10,7 @@
 #############################################################################
 
 
+from mglcompat.pydiv import old_div
 import sys
 import tkinter
 from mglcompat.tkCanvas import Line, CanvasText, Rectangle
@@ -320,10 +322,10 @@ class InteractiveGraphBuilder(tkinter.Frame):
         text2 = [text_width[1], -text_height[0]]
         self.p1 = p1
         self.p2 = p2
-        scale = ((self.plotarea_size[0]-text1[0]-text2[0]) / \
-                 (p2[0]-p1[0]),
-                 (self.plotarea_size[1]-text1[1]-text2[1]) / \
-                 (p2[1]-p1[1]))
+        scale = (old_div((self.plotarea_size[0]-text1[0]-text2[0]), \
+                 (p2[0]-p1[0])),
+                 old_div((self.plotarea_size[1]-text1[1]-text2[1]), \
+                 (p2[1]-p1[1])))
         shift = ((-p1[0]*scale[0]) + self.plotarea_origin[0] + \
                  text1[0],
                  (-p1[1]*scale[1]) + self.plotarea_origin[1] + \
@@ -333,18 +335,18 @@ class InteractiveGraphBuilder(tkinter.Frame):
         graphics.fitToScale(scale, shift, p1, p2)
         graphics.buildIcons(self) 
         if self.label_text:
-            pt1 = self.plotarea_origin[0] + self.width/2
+            pt1 = self.plotarea_origin[0] + old_div(self.width,2)
             pt2 = (self.height + self.plotarea_size[1])/2.0
             self.draw.create_text(pt1,pt2,text=self.label_text,anchor='s',font=self.font)
         if self.xlabel_text:
-            pt1 = self.plotarea_origin[0] + self.width/2
+            pt1 = self.plotarea_origin[0] + old_div(self.width,2)
             pt2 = self.plotarea_origin[1] - self.spacing
             self.draw.create_text(pt1,pt2,text=self.xlabel_text,anchor='n',font=self.font)
         if self.ylabel_text:
             pt1 = (self.plotarea_origin[0] - self.visibleOriginX)/3.0
             #pt1 = self.plotarea_origin[0]
             #pt1 = self.plotarea_origin[0] + self.spacing/8
-            pt2 = self.plotarea_origin[1]/2
+            pt2 = old_div(self.plotarea_origin[1],2)
             self.draw.create_text(pt1,pt2,text=self.ylabel_text,anchor='w',font=self.font)
         self.last_drawn = graphics
 
@@ -449,7 +451,7 @@ class InteractiveGraphBuilder(tkinter.Frame):
             digits = -int(power)
             format = '%'+repr(digits+2)+'.'+repr(digits)+'f'
         ticks = []
-        t = -grid*math.floor(-lower/grid)
+        t = -grid*math.floor(old_div(-lower,grid))
         while t <= upper and len(ticks) < 200:
             #ticks.append(t, format % (t,))
             if form=='float':

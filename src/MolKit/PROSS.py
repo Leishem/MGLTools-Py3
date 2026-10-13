@@ -15,7 +15,9 @@ grid will work for PROSS. Give your choice as an argument (see USAGE below).
 Date: September 2004
 Author: Pat Fleming, pat.fleming@jhu.edu
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 USAGE = """
 python PROSS.py pdbfile [oldmeso | fgmeso]
 Choose old mesostate definitions or finegrained mesostate definitions.
@@ -353,8 +355,8 @@ def res_rc(r1, r2, r3=180, mcodes=None):
     elif r1>180.0 or r2>180.0 or r3>180.0:
         return INVALID
 
-    ir1 = -int(PHI_OFF) + int(round((r1+PHI_OFF)/DELTA )) * int(DELTA)
-    ir2 = -int(PSI_OFF) + int(round((r2+PSI_OFF)/DELTA )) * int(DELTA)
+    ir1 = -int(PHI_OFF) + int(round(old_div((r1+PHI_OFF),DELTA) )) * int(DELTA)
+    ir2 = -int(PSI_OFF) + int(round(old_div((r2+PSI_OFF),DELTA) )) * int(DELTA)
 
     while ir1 <= -180: ir1 = ir1 + 360
     while ir1 >   180: ir1 = ir1 - 360
@@ -461,7 +463,7 @@ def _rc_find(codes, pattern, mcodes=None):
     try:
         while 1:
             mat = next(it)
-            matches.append((mat.start()/CODE_LENGTH, mat.end()/CODE_LENGTH))
+            matches.append((old_div(mat.start(),CODE_LENGTH), old_div(mat.end(),CODE_LENGTH)))
     except StopIteration:
         pass
 
@@ -1350,7 +1352,7 @@ class Atom3d:
         
         v12 = x1*x2 + y1*y2 + z1*z2
         
-        ang = v12/sqrt(v11*v22)
+        ang = old_div(v12,sqrt(v11*v22))
         
         if ang >= 1.0:
             return 0.0
@@ -1382,7 +1384,7 @@ class Atom3d:
         v11 = vn13x**2 + vn13y**2 + vn13z**2
         v22 = vn24x**2 + vn24y**2 + vn24z**2
 
-        ang = v12/sqrt(v11*v22)
+        ang = old_div(v12,sqrt(v11*v22))
         if ang >= 1.0:
             return 0.0
         elif ang <= -1.0:

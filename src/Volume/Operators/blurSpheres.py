@@ -1,5 +1,7 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric
 
 def blurSpheres(coords, elist, totmass, box=0, apix=1.0,res=1.5, solv=False):
@@ -47,7 +49,7 @@ def blurSpheres(coords, elist, totmass, box=0, apix=1.0,res=1.5, solv=False):
   if box<5:
     box=ceil(rmax)
     box/=apix
-    box=4*((box-1)/4+2) # round up to nearest 4 then add 4
+    box=4*(old_div((box-1),4)+2) # round up to nearest 4 then add 4
     box*=2
   box = int(box)
   
@@ -60,9 +62,9 @@ def blurSpheres(coords, elist, totmass, box=0, apix=1.0,res=1.5, solv=False):
   # a=ln(2)*pi^2/res^2	for res defined at Y=0.5
   # a=pi^2/res^2	for res defined at Y=1/e is used in this program
   
-  rp=res/apix
-  rp=sqrt(pi/rp)  # constant for gaussian falloff
-  kn=(rp/pi)**1.5
+  rp=old_div(res,apix)
+  rp=sqrt(old_div(pi,rp))  # constant for gaussian falloff
+  kn=(old_div(rp,pi))**1.5
   w=round(res*3.0/apix)
 ##   if w<3:
 ##     print "insufficient sampling for this resolution. Decrease apix."
@@ -80,9 +82,9 @@ def blurSpheres(coords, elist, totmass, box=0, apix=1.0,res=1.5, solv=False):
     x-=g[0]
     y-=g[1]
     z-=g[2]
-    xx=(x/apix)+b2
-    yy=(y/apix)+b2
-    zz=(z/apix)+b2
+    xx=(old_div(x,apix))+b2
+    yy=(old_div(y,apix))+b2
+    zz=(old_div(z,apix))+b2
     xmin=int(round(xx-w))
     xmax=int(round(xx+w))
     ymin=int(round(yy-w))

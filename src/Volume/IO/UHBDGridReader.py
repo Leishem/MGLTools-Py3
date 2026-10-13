@@ -1,5 +1,7 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric
 from Volume.Grid3D import Grid3DF
 
@@ -47,7 +49,7 @@ class UHBDReaderASCII:
         for i in range(dims[0]):
             ii, ij, ik = list(map( int, lines[curline].split() ))
             assert (ii-1)==i
-            nblines = dimyz/6
+            nblines = old_div(dimyz,6)
             curline += 1
             for j in range(nblines):
                 data.flat[curdata:curdata+6] = list(map( float,

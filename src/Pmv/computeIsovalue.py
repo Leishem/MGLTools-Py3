@@ -1,5 +1,7 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
+from mglcompat.pydiv import old_div
 from geomutils.surface import findComponents, meshVolume, triangleArea
 try:
     from UTpackages.UTisocontour import isocontour
@@ -97,9 +99,9 @@ def blurCoordsRadii(coords, radii, blobbyness=-0.1, res=0.5,
     resX = resY = resZ = res
     if not dims:
         minb, maxb = blur.getBoundingBox(coords, radii, blobbyness, padding)
-        Xdim = int(round( (maxb[0] - minb[0])/resX + 1))
-        Ydim = int(round( (maxb[1] - minb[1])/resY + 1))
-        Zdim = int(round( (maxb[2] - minb[2])/resZ + 1))
+        Xdim = int(round( old_div((maxb[0] - minb[0]),resX) + 1))
+        Ydim = int(round( old_div((maxb[1] - minb[1]),resY) + 1))
+        Zdim = int(round( old_div((maxb[2] - minb[2]),resZ) + 1))
     else:
         Xdim, Ydim, Zdim = dims
     print("Xdim = %d, Ydim =%d, Zdim = %d"%(Xdim, Ydim, Zdim))
@@ -347,7 +349,7 @@ def decimate(vert, tri, normals, density=1.0):
 
     # print len(vert), area, len(tri), int(len(tri)*len(vert)/area)
     area = meshArea(vert, tri)
-    tface = int(min(len(tri), int(len(tri)*area/len(vert)))*density)
+    tface = int(min(len(tri), int(old_div(len(tri)*area,len(vert))))*density)
 
     model.slim_to_target(tface)
     numFaces = model.num_valid_faces()

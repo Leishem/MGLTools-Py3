@@ -1,8 +1,10 @@
+from __future__ import division
 
 #
 #$Id: splineGUI.py,v 1.21 2007/07/13 19:07:41 sowjanya Exp $
 
 
+from mglcompat.pydiv import old_div
 import tkinter
 from math import sqrt
 from mglutil.util.callback import CallbackFunction
@@ -175,12 +177,12 @@ rightClick to tie or untie normals.
             if sll: # draw vector on left side of the point
                 vx, vy  =  sll
                 if len(self.slopes_lengths)<ind+1:
-                    n  =  30/sqrt(vx*vx+vy*vy)
+                    n  =  old_div(30,sqrt(vx*vx+vy*vy))
                 else:
-                     n  =  30/sqrt(vx*vx+vy*vy)
+                     n  =  old_div(30,sqrt(vx*vx+vy*vy))
                      
                      if round(n)!=round(self.slopes_lengths[ind][0]):
-                        n= self.slopes_lengths[ind][0]/sqrt(vx*vx+vy*vy)
+                        n= old_div(self.slopes_lengths[ind][0],sqrt(vx*vx+vy*vy))
                 vx *=  n
                 vy *=  n
                 Ry = ry-vy
@@ -199,7 +201,7 @@ rightClick to tie or untie normals.
                 lid  =  self.canvas.create_line(Rx, Ry, rx, ry,
                                         fill = 'black', tags = (tag,
                                         uid,"left","ln"))
-                tid = self.canvas.create_text((Rx+10, Ry+10),text = round(vy/vx,1), tags = (tag, uid,"left","tx"))
+                tid = self.canvas.create_text((Rx+10, Ry+10),text = round(old_div(vy,vx),1), tags = (tag, uid,"left","tx"))
                 sid  =  self.canvas.create_oval(Rx-ptRad, Ry-ptRad,
                                         Rx+ptRad, Ry+ptRad,
                                         fill = 'green', tags = (tag,
@@ -218,11 +220,11 @@ rightClick to tie or untie normals.
             if slr:
                 vx, vy  =  slr
                 if len(self.slopes_lengths)<ind+1:
-                    n  =  30/sqrt(vx*vx+vy*vy)
+                    n  =  old_div(30,sqrt(vx*vx+vy*vy))
                 else:
-                    n  =  30/sqrt(vx*vx+vy*vy)
+                    n  =  old_div(30,sqrt(vx*vx+vy*vy))
                     if round(n)!=round(self.slopes_lengths[ind][1]):
-                        n= self.slopes_lengths[ind][1]/sqrt(vx*vx+vy*vy)
+                        n= old_div(self.slopes_lengths[ind][1],sqrt(vx*vx+vy*vy))
                     
                 
                 
@@ -246,7 +248,7 @@ rightClick to tie or untie normals.
                 lid  =  self.canvas.create_line(rx, ry, Rx, Ry,
                                         fill = 'black', tags = (tag,
                                         uid,"right","ln"))
-                tid = self.canvas.create_text((Rx+10, Ry+10),text = round(vy/vx,1), tags = (tag, uid,"right","tx"))
+                tid = self.canvas.create_text((Rx+10, Ry+10),text = round(old_div(vy,vx),1), tags = (tag, uid,"right","tx"))
                 
                 sid  =  self.canvas.create_oval(Rx-ptRad, Ry-ptRad,
                                         Rx+ptRad, Ry+ptRad,
@@ -704,7 +706,7 @@ rightClick to tie or untie normals.
             self.lid = c.create_line((x,y),(self.line_coords[2],self.line_coords[3]),tags = (tag,uid,"left","ln"))
             
             _current_slope_length = sqrt((self.line_coords[2]-x)*(self.line_coords[2]-x)+(self.line_coords[3]-y)*(self.line_coords[3]-y))
-            _current_slope  =  (self.line_coords[3] - y)/(self.line_coords[2] - x)
+            _current_slope  =  old_div((self.line_coords[3] - y),(self.line_coords[2] - x))
             self.tid = self.canvas.create_text((x+10,y+10),text = round(_current_slope,1), tags = (tag, uid,"left","tx"))
             #considering radius of point
             if  (round(self.line_coords[2]),round(self.line_coords[3])) in cpts :
@@ -963,7 +965,7 @@ rightClick to tie or untie normals.
             #drawing line and text
             self.lid  =  c.create_line((self.line_coords[0],self.line_coords[1]),(x,y),tags = (tag,uid,"right","ln"))
             _current_slope_length = sqrt((x-self.line_coords[0])*(x-self.line_coords[0])+(y-self.line_coords[1])*(y-self.line_coords[1]))
-            _current_slope  =  (y-self.line_coords[1])/(x-self.line_coords[0])
+            _current_slope  =  old_div((y-self.line_coords[1]),(x-self.line_coords[0]))
             self.tid = c.create_text((x+10,y+10),text = round(_current_slope,1), tags = (tag, uid,"right","tx"))
             #considering radius of point
             if (round(self.line_coords[0]),round(self.line_coords[1])) in cpts:

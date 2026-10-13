@@ -10,7 +10,9 @@
 #########################################################################
 
 """This module subclasses widgets such as the Pmw Notebook """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 import sys, os
 import Pmw
 import tkinter
@@ -267,8 +269,7 @@ show/hide notebook pages without destroying them."""
                     # the tabs exactly equals the available width,
                     # without rounding errors.
                     cumTabReqWidth = cumTabReqWidth + pageInfo['tabreqwidth']
-                    tmp = (2*cumTabReqWidth*availableWidth + sumTabReqWidth) \
-                            / (2 * sumTabReqWidth)
+                    tmp = old_div((2*cumTabReqWidth*availableWidth + sumTabReqWidth), (2 * sumTabReqWidth))
                     tabwidth = tmp - cumTabWidth
                     cumTabWidth = tmp
 

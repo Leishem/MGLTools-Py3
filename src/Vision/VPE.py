@@ -1,3 +1,4 @@
+from __future__ import division
 #########################################################################
 #
 # Date: Nov. 2001  Author: Daniel Stoffler, Michel F. Sanner
@@ -20,6 +21,7 @@
 # $Id: VPE.py,v 1.230.4.2 2012/02/27 20:21:04 sanner Exp $
 #
 
+from mglcompat.pydiv import old_div
 from mglcompat.pyclasses import cmp
 import re
 import sys
@@ -2430,8 +2432,8 @@ onto the network editor canvas."""
                             n2.scaleSum = .6
                         else:
                             n2.scaleSum = .7
-                        ip.halfPortWidth = ip.datatypeObject['width']/2
-                        ip.halfPortHeight = ip.datatypeObject['height']/2
+                        ip.halfPortWidth = old_div(ip.datatypeObject['width'],2)
+                        ip.halfPortHeight = old_div(ip.datatypeObject['height'],2)
                         ip.createIcon(pcx=14+12*i, pcy=pcy)
                         i += 1
                 except Exception as e:
@@ -2452,8 +2454,8 @@ onto the network editor canvas."""
                         n2.scaleSum = .6
                     else:
                         n2.scaleSum = .7
-                    op.halfPortWidth = op.datatypeObject['width']/ 2
-                    op.halfPortHeight = op.datatypeObject['height']/2
+                    op.halfPortWidth = old_div(op.datatypeObject['width'], 2)
+                    op.halfPortHeight = old_div(op.datatypeObject['height'],2)
                     op.createIcon(pcx=14+12*j, pcy=pcy)
                     j += 1
                 except Exception as e:

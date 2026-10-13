@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # $Header: /opt/cvs/python/packages/share1.5/AutoDockTools/Utilities24/energy_average_maps.py,v 1.4 2009/03/23 16:40:44 rhuey Exp $
+from __future__ import division
+from mglcompat.pydiv import old_div
 import glob, math
 
 if __name__ == '__main__':
@@ -87,12 +89,12 @@ if __name__ == '__main__':
             for s in all_stems:
                 val = all_lines[s][t][i]
                 vals.append(val)
-                wval = math.e**(-1.*val/rt)
+                wval = math.e**(old_div(-1.*val,rt))
                 wvals.append(wval)
                 wtot+= wval #add this value
             for j in range(len(all_stems)):
                 if wtot!=0:    #if it is, eboltz stays 0
-                    eboltz += vals[j] * wvals[j]/wtot
+                    eboltz += old_div(vals[j] * wvals[j],wtot)
             all_wt_values.append(eboltz)
         #default map_stem is 'weighted'
         fn = map_stem + '.'+ t +'.map'

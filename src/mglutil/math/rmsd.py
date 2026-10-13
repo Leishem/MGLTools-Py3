@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -13,6 +14,7 @@
 # $Header: /opt/cvs/python/packages/share1.5/mglutil/math/rmsd.py,v 1.6 2007/07/24 17:30:40 vareille Exp $
 #
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric
 import math
 
@@ -42,5 +44,5 @@ class RMSDCalculator:
         deltaVect = Numeric.array(self.refCoords) - Numeric.array(listCoords)
         distSquaredVect = Numeric.sum(Numeric.transpose(deltaVect*deltaVect))
         self.distVect = Numeric.sqrt(distSquaredVect)
-        self.rmsd = math.sqrt(Numeric.sum(distSquaredVect)/len(self.refCoords))
+        self.rmsd = math.sqrt(old_div(Numeric.sum(distSquaredVect),len(self.refCoords)))
         return self.rmsd

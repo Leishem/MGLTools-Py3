@@ -1,3 +1,4 @@
+from __future__ import division
 #############################################################################
 #
 # Author: Michel F. SANNER
@@ -11,6 +12,7 @@
 #
 # $Id: extendedSlider.py,v 1.6 2003/08/29 18:07:13 sophiec Exp $
 #
+from mglcompat.pydiv import old_div
 import tkinter
 from DejaVu.Slider import Slider
 import types
@@ -27,7 +29,7 @@ class ExtendedSlider(Slider):
         #minType = type(self.min)
         val = self.min+self.cst1 * x
         if self.incrCanvas:
-            val = round(val/self.incr)*self.incr
+            val = round(old_div(val,self.incr))*self.incr
             val = eval(self.cursortype+'('+str(val)+')')
             #if minType is types.IntType:
                 #val = int(val)
@@ -42,7 +44,7 @@ class ExtendedSlider(Slider):
         val =  x
         #valType = type(val)
         if self.incrCanvas:
-            val = round(val/self.incr)*self.incr
+            val = round(old_div(val,self.incr))*self.incr
             val = eval(self.cursortype+'('+str(val)+')')
             #if valType is types.IntType:
                 #val  = int(val)
@@ -59,7 +61,7 @@ class ExtendedSlider(Slider):
         if val<self.min: val = self.min
         elif val>self.max: val = self.max
         if self.incrCanvas:
-            val = round(val/self.incr)*self.incr
+            val = round(old_div(val,self.incr))*self.incr
         self.val = val
         self.DrawCursor()
         if update: self.Callbacks()

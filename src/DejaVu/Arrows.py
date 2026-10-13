@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -15,6 +16,7 @@
 ##
 # class to draw a arrow in DejaVu
 ##
+from mglcompat.pydiv import old_div
 from opengltk.OpenGL import GL
 import mglcompat.oldnumeric as Numeric
 from mglcompat.oldnumeric import array
@@ -174,7 +176,7 @@ updateOwnGui=True : allow to update owngui at the end this func
         self.v = Numeric.zeros( ((npoly+2),3), 'f')
 
         a = -math.pi 		# starting angle
-        d = 2*math.pi / npoly 	# increment
+        d = old_div(2*math.pi, npoly) 	# increment
 
         # coord of 1st point of arrow
         self.v[0][0] = 0.
@@ -205,13 +207,13 @@ updateOwnGui=True : allow to update owngui at the end this func
         if sz <= 0.0: return
         sz = math.sqrt(sz)
 
-        rx = -180.0*math.acos((y[2]-x[2])/sz)/math.pi
+        rx = old_div(-180.0*math.acos(old_div((y[2]-x[2]),sz)),math.pi)
         dx = y[0]-x[0]
         dy = y[1]-x[1]
         if math.fabs(dx) < 0.00001 and math.fabs(dy) < 0.00001:
             rz = 0.0
         else:
-            rz = -180.0*math.atan2(dx,dy)/math.pi
+            rz = old_div(-180.0*math.atan2(dx,dy),math.pi)
 
         GL.glPushMatrix()
         GL.glTranslatef(float(x[0]),float(x[1]),float(x[2]))
@@ -380,12 +382,12 @@ class Axis(Cylinders):
         if distance < 0.000001:
             warn("The two points specified are too close.")
             return
-        half = vector * (length / distance/2.0) 
+        half = vector * (old_div(length, distance)/2.0) 
         head= center + half
         tail= center - half
         # the arrow's length is 10% of shaft
         summit = center + vector *  \
-                 (length / distance /2.0 * 1.2)
+                 (old_div(length, distance) /2.0 * 1.2)
 ##
 ##                    |\
 ##  |-----------------| \    
@@ -394,7 +396,7 @@ class Axis(Cylinders):
 ## d_tail,       d_head
 ##  tail           head      summit
 
-        d_half = vector * ((length+0.0001) / distance/2.0)
+        d_half = vector * (old_div((length+0.0001), distance)/2.0)
         d_tail= center - d_half               
         d_head= center + d_half
         head=head.tolist()
@@ -538,12 +540,12 @@ The default color is white (1,1,1)
         if distance < 0.000001:
             warn("The two points specified are too close.")
             return
-        half = vector * (length / distance/2.0) 
+        half = vector * (old_div(length, distance)/2.0) 
         head= center + half
         tail= center - half
         # the arrow's length is 10% of shaft
         summit = center + vector *  \
-                 (length / distance /2.0 * 1.2)
+                 (old_div(length, distance) /2.0 * 1.2)
 
 ##
 ##                    |\
@@ -553,7 +555,7 @@ The default color is white (1,1,1)
 ## d_tail,       d_head
 ##  tail           head      summit
 
-        d_half = vector * ((length+0.0001) / distance/2.0)
+        d_half = vector * (old_div((length+0.0001), distance)/2.0)
         d_tail= center - d_half               
         d_head= center + d_half
         head=head.tolist()

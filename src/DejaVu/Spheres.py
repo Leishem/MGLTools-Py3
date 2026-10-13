@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -18,6 +19,7 @@
 # $Id: Spheres.py,v 1.105.2.1 2011/03/03 19:30:29 sanner Exp $
 #
 
+from mglcompat.pydiv import old_div
 import warnings
 import mglcompat.oldnumeric as Numeric, math
 
@@ -716,7 +718,7 @@ class TriangulateIcos:
         if d == 0.0:
             print('Zero length vector!')
             return
-        return [v[0] / d, v[1] / d, v[2] / d]
+        return [old_div(v[0], d), old_div(v[1], d), old_div(v[2], d)]
 
 
     def getVertices(self, quality=0):

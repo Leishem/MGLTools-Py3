@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
@@ -22,6 +23,7 @@
 # $Id: DejaVuNodes.py,v 1.301 2010/03/30 01:12:39 sanner Exp $
 #
 
+from mglcompat.pydiv import old_div
 import types
 import warnings
 from mglcompat import pystring as string
@@ -699,7 +701,7 @@ Output Ports:
         # this assert just because the test bellow commented out was weird
         assert crestLines is True or crestLines is False
         
-        f.write('%d\n%d\n%d\n%d\n'%( len(verts)/3, len(faces)/3,
+        f.write('%d\n%d\n%d\n%d\n'%( old_div(len(verts),3), old_div(len(faces),3),
                                      neighborhoodSize,
                                      crestLines ))
                                      #crestLines==True ))

@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -14,6 +15,7 @@
 # $Id: Ribbon.py,v 1.14 2008/10/03 19:28:29 sargis Exp $
 #
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric
 
 def cross( b, c):
@@ -121,7 +123,7 @@ def ribbon2D( nrib, ribwid, nchords, offset, natoms, coords, isHelix,
     coords = Numeric.array(coords)
     
     # C Strand separation and half
-    nres = natoms/2;
+    nres = old_div(natoms,2);
 
 ##     ctrl = Numeric.zeros( (nres, nrib, 4), 'd')
     # MS changes
@@ -133,7 +135,7 @@ def ribbon2D( nrib, ribwid, nchords, offset, natoms, coords, isHelix,
     H = Numeric.zeros( (3,), 'd')
 
     if natoms<=0: return None
-    if nrib > 1: drib = ribwid / (nrib-1)
+    if nrib > 1: drib = old_div(ribwid, (nrib-1))
     rib2 = (nrib+1)*0.5
 
     for nr in range(nres):

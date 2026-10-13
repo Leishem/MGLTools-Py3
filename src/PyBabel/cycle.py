@@ -47,10 +47,12 @@ example:
 
 Michel Sanner April 2000
 """
+from __future__ import division
 
 
 
 
+from mglcompat.pydiv import old_div
 class RingFinder:
     """ """
     def __init__(self):
@@ -102,7 +104,7 @@ class RingFinder:
         self.allRingAtoms = {} # dict with keys being all atoms in cycles
         self.allRingBonds = {} # dict with keys being all bonds in cycles
         self.ringCount = 0     # number of cycles
-        maxLevel = maxSize/2 + 1
+        maxLevel = old_div(maxSize,2) + 1
 
         # tag all bonds that cannot be in cycles, i.e. they connect an atom
         # having only 1 neighbor (recursively)
@@ -155,7 +157,7 @@ class RingFinder:
                         # starting a last of cycles woth even number of atoms
                         # and one before last of rinfs with odd number of at.
                         l = len(ra)
-                        if (l/2*2) != l:
+                        if (old_div(l,2)*2) != l:
                             end = l-1 # odd -> skip last
                         else:
                             end = l-2 # end, use last

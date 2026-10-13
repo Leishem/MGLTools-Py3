@@ -1,3 +1,4 @@
+from __future__ import division
 #########################################################################
 #
 # Date: Apr 2003 Authors: Daniel Stoffler
@@ -8,6 +9,7 @@
 #
 #########################################################################
 
+from mglcompat.pydiv import old_div
 import tkinter
 
 class ProgressBarConf:
@@ -163,7 +165,7 @@ THE SET METHOD
         self.setHeight()
         # create the progress label geometry
         self.progressLabel = self.canvas.create_text(
-            int(self.width/2), int((self.height/2)+1), text="0%")
+            int(old_div(self.width,2)), int((old_div(self.height,2))+1), text="0%")
         self.canvas.itemconfig(self.progressLabel, fill='white')
         # create the text label geometry
         self.label = tkinter.Label(self.frame, text='', width=20)
@@ -232,7 +234,7 @@ THE SET METHOD
             if self.max == 0:
                 progress = 100
             else:
-                progress = (100.*self.incrementCounter)/self.max
+                progress = old_div((100.*self.incrementCounter),self.max)
             if (progress-self.progress)> self.granularity:
                 self.progress = progress
                 self.setBar()
@@ -276,8 +278,8 @@ THE SET METHOD
             text = self.label.cget('text')+' '+text
             self.canvas.itemconfig(self.progressLabel,
                                    text=text)
-            self.canvas.coords(self.progressLabel, int(self.width/2),
-                               int(self.height/2)+1)
+            self.canvas.coords(self.progressLabel, int(old_div(self.width,2)),
+                               int(old_div(self.height,2))+1)
         # update idletasks
         self.canvas.update_idletasks()
 

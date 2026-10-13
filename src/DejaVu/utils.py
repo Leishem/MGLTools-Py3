@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 def RemoveDuplicatedVertices(vertices, faces, vnorms = None):
     """Remove duplicated vertices and re-index the polygonal faces such that
 they share vertices
@@ -24,9 +26,9 @@ they share vertices
             if vnorms is not None:
                 vn1 = normList[nind]
                 vn2 = vnorms[i]
-                normList[nind] = [(vn1[0] +vn2[0])/2,
-                                   (vn1[1] +vn2[1])/2,
-                                   (vn1[2] +vn2[2])/2 ]
+                normList[nind] = [old_div((vn1[0] +vn2[0]),2),
+                                   old_div((vn1[1] +vn2[1]),2),
+                                   old_div((vn1[2] +vn2[2]),2) ]
 
     faceList = []
     for f in faces:

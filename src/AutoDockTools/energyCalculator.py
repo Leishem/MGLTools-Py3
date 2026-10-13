@@ -18,7 +18,9 @@
 """
 This class calculates the AutoDock internal energy for a set of atoms.
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric
 from math import sqrt
 from AutoDockTools.energyConstants import Rij, epsij
@@ -202,7 +204,7 @@ class EnergyCalculator:
         ep = epsij[key]
         n = 12
         m = 6
-        energy = (m/(n-m))*ep*r_eq**n/(r**n) - (n/(n-m))*ep*r_eq**m/r**m
+        energy = old_div((old_div(m,(n-m)))*ep*r_eq**n,(r**n)) - old_div((old_div(n,(n-m)))*ep*r_eq**m,r**m)
         #energy = m*epsilon*r_eq**n/(r**n)/(n-m) - n*epsilon*r_eq**m/r**m/(n-m)
         return  energy
 

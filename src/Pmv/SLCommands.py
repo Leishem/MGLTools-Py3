@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
@@ -6,6 +7,7 @@
 # $Id: SLCommands.py,v 1.33 2009/10/16 23:18:01 annao Exp $
 #
 
+from mglcompat.pydiv import old_div
 import itertools
 import tkinter, mglcompat.oldnumeric as Numeric, Pmw
 from DejaVu.IndexedPolygons import IndexedPolygons
@@ -46,7 +48,7 @@ def triangle_normal(p1, p2, p3):
     v[2] = v1[0]*v2[1] - v1[1]*v2[0]
     norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2])
     if (norm>1.0e-8): 
-        for i in range(3): v[i] = v[i] /norm
+        for i in range(3): v[i] = old_div(v[i],norm)
     else:
         for i in range(3): v[i] = 0.0
     return v
@@ -928,7 +930,7 @@ class SLCommand(MVCommand):
         i = 0
         for f in faces:
             for n in range(ntr):
-                if (n/2)*2 == n:
+                if (old_div(n,2))*2 == n:
                     new_faces[i] = [f[n], f[n+1], f[n+2]]
                 else:
                     new_faces[i] = [f[n+2], f[n+1], f[n]]

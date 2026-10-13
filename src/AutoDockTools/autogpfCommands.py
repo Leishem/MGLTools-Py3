@@ -108,6 +108,8 @@ written, it is automatically loaded. Otherwise, the user can select any *.gpf
 file to edit from a file browser.
     
 """
+from __future__ import division
+from mglcompat.pydiv import old_div
 from ViewerFramework.VFCommand import CommandGUI
 from Pmv.moleculeViewer import AddAtomsEvent
 #from ViewerFramework.VF import ModificationEvent
@@ -805,7 +807,7 @@ def getSideLengths(mol, spacing):
     maxo = Numeric.maximum.reduce(c)
     mino = Numeric.minimum.reduce(c)
     sideLengths = maxo-mino
-    mol.npts = sideLengths/(spacing*1.0)
+    mol.npts = old_div(sideLengths,(spacing*1.0))
     #FIX THIS:
     #should use center:
     #mino+(maxo-mino)/2.0
@@ -4315,7 +4317,7 @@ class Gpf4MacroInit(MVCommand):
                 print('set GPF_FLEXRES_TYPES to', self.vf.GPF_FLEXRES_TYPES)
             residues = mol.chains.residues - flexRESIDUES
             #set up both receptor types and flexres types here
-            mol.center = Numeric.add.reduce(residues.atoms.coords)/len(residues.atoms)
+            mol.center = old_div(Numeric.add.reduce(residues.atoms.coords),len(residues.atoms))
             errCharge, resList = self.vf.checkResCharges(residues)
             fD = self.vf.flexDict
             if 'rigid_filename' in fD:

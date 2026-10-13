@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -13,6 +14,7 @@
 #
 #$Id: MapData.py,v 1.12 2007/07/24 17:30:45 vareille Exp $
 #
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric , struct
 from time import time
 from math import log
@@ -26,7 +28,7 @@ def isPowerOf2(num):
     power = 0
     while ntemp > 1:
         if ntemp % 2 != 0: result = 0
-        ntemp = ntemp/2
+        ntemp = old_div(ntemp,2)
         power = power + 1
     if result == 1:
         return 1, power
@@ -204,7 +206,7 @@ class MapGridData:
         
         assert data_limit[1]-data_limit[0]
         k = float (val_limit[1]-val_limit[0])
-        k = k / (data_limit[1]**par-data_limit[0]**par)
+        k = old_div(k, (data_limit[1]**par-data_limit[0]**par))
         c = val_limit[1]-k*data_limit[1]**par
         return (k,c)
 
@@ -370,7 +372,7 @@ class MapData :
         """ Computes coefficients for linear mapping"""
         
         assert data_limit[1]-data_limit[0]
-        k=(val_limit[1]-val_limit[0])/(data_limit[1]**par-data_limit[0]**par)
+        k=old_div((val_limit[1]-val_limit[0]),(data_limit[1]**par-data_limit[0]**par))
         c=val_limit[1]-k*data_limit[1]**par
         return (k,c)
 

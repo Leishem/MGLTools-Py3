@@ -6,6 +6,8 @@
 #
 # University College Dublin & Washington University St. Louis 2004-2006
 #
+from __future__ import division
+from mglcompat.pydiv import old_div
 __date__="16 August 2005"
 __author__="Jens Erik Nielsen, Todd Dolinsky"
 
@@ -602,14 +604,14 @@ class pKaRoutines:
                 all_states.sort()
                 for state in all_states:
                     if self.is_charged(pKa,titration,state)==1:
-                        dpKa_desolv=(pKa.desolvation[state]-pKa.desolvation[ref_state])/ln10
-                        dpKa_backgr=(pKa.background[state]-pKa.background[ref_state])/ln10
+                        dpKa_desolv=old_div((pKa.desolvation[state]-pKa.desolvation[ref_state]),ln10)
+                        dpKa_backgr=old_div((pKa.background[state]-pKa.background[ref_state]),ln10)
                         intpKa=titration.modelpKa+dpKa_desolv+dpKa_backgr
                         print('Energy difference for %s -> %s [reference state] is %5.2f pKa units' %(state,ref_state,intpKa))
                         pKa.intrinsic_pKa[state]=intpKa
                     else:
-                        dpKa_desolv=(pKa.desolvation[state]-pKa.desolvation[ref_state])/ln10
-                        dpKa_backgr=(pKa.background[state]-pKa.background[ref_state])/ln10
+                        dpKa_desolv=old_div((pKa.desolvation[state]-pKa.desolvation[ref_state]),ln10)
+                        dpKa_backgr=old_div((pKa.background[state]-pKa.background[ref_state]),ln10)
                         dpKa=dpKa_desolv+dpKa_backgr
                         print('Energy difference for %s -> %s [reference state] is %5.2f kT' %(state,ref_state,dpKa))
                         pKa.intrinsic_pKa[state]=dpKa

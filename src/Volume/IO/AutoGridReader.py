@@ -1,5 +1,7 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as N
 import os, math; from mglcompat import pystring as string
 from struct import unpack
@@ -45,8 +47,8 @@ class ReadAutoGrid:
         #print "shape***:",self.data.shape
         #print "origin***:",CENTER
         
-        origin = (CENTER[0]-(nx/2)*SPACING, CENTER[1]-(ny/2)*SPACING,
-                  CENTER[2]-(nz/2)*SPACING)
+        origin = (CENTER[0]-(old_div(nx,2))*SPACING, CENTER[1]-(old_div(ny,2))*SPACING,
+                  CENTER[2]-(old_div(nz,2))*SPACING)
         stepSize = (SPACING,SPACING,SPACING)
         
         #def __init__(self, data, origin, stepSize, header):

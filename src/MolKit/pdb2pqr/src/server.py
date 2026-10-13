@@ -42,7 +42,9 @@
 
     ----------------------------
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 __date__   = "17 March 2007"
 __author__ = "Todd Dolinsky"
 
@@ -159,7 +161,7 @@ def cleanTmpdir():
             count += 1
         
     newdir.sort()
-    size = size / (1024.0 * 1024.0)
+    size = old_div(size, (1024.0 * 1024.0))
     
     newcount = 0
     if size >= LIMIT:

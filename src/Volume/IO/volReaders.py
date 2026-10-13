@@ -1,5 +1,7 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
+from mglcompat.pydiv import old_div
 import math
 from struct import pack, unpack, calcsize
 import mglcompat.oldnumeric as Numeric
@@ -274,13 +276,13 @@ By default the data is normalized.
             self.data = Numeric.ascontiguousarray(Numeric.transpose(ndata), ndata.dtype.char)
             if normalize:
                 tcode = self.data.dtype.char
-                self.data = ((self.data-amean)/arms).astype(tcode)
+                self.data = (old_div((self.data-amean),arms)).astype(tcode)
         elif (mapc==3 and mapr==2 and maps==1):  #C style z-fastest
             #print 'C style'
             ndata.shape = (ns,nr,nc)
             if normalize:
                 tcode = self.data.dtype.char
-                self.data = ((self.data-amean)/arms).astype(tcode)
+                self.data = (old_div((self.data-amean),arms)).astype(tcode)
         else:
             #print 'Generic style'
             dims = [0,0,0]
@@ -298,7 +300,7 @@ By default the data is normalized.
                         cc[cmapc] = k
                         val = ndata.flat[l]
                         if normalize:
-                            val = (val-amean)/arms
+                            val = old_div((val-amean),arms)
                         nndata[cc[0], cc[1], cc[2]] = val
                         l+=1
             self.data = nndata
@@ -306,8 +308,8 @@ By default the data is normalized.
         if normalize:
             h['amean'] = 0.0
             h['arms'] = 1.0
-            h['amin'] = (h['amin']-amean)/arms
-            h['amax'] = (h['amax']-amean)/arms
+            h['amin'] = old_div((h['amin']-amean),arms)
+            h['amax'] = old_div((h['amax']-amean),arms)
 
         # we compute the origin and stepSize in Crystal space coordinates
         # the isocontour operates in this space and the result of
@@ -564,13 +566,13 @@ class ReadMRC(VolumeReaderBase):
             self.data = Numeric.ascontiguousarray(Numeric.transpose(ndata), ndata.dtype.char)
             if normalize:
                 tcode = self.data.dtype.char
-                self.data = ((self.data-amean)/arms).astype(tcode)
+                self.data = (old_div((self.data-amean),arms)).astype(tcode)
         elif (mapc==3 and mapr==2 and maps==1):  #C style z-fastest
             #print 'C style'
             ndata.shape = (ns,nr,nc)
             if normalize:
                 tcode = self.data.dtype.char
-                self.data = ((self.data-amean)/arms).astype(tcode)
+                self.data = (old_div((self.data-amean),arms)).astype(tcode)
         else:
             #print 'Generic style'
             dims = [0,0,0]
@@ -588,7 +590,7 @@ class ReadMRC(VolumeReaderBase):
                         cc[cmapc] = k
                         val = ndata.flat[l]
                         if normalize:
-                            val = (val-amean)/arms
+                            val = old_div((val-amean),arms)
                         nndata[cc[0], cc[1], cc[2]] = val
                         l+=1
             self.data = nndata
@@ -596,8 +598,8 @@ class ReadMRC(VolumeReaderBase):
         if normalize:
             h['amean'] = 0.0
             h['arms'] = 1.0
-            h['amin'] = (h['amin']-amean)/arms
-            h['amax'] = (h['amax']-amean)/arms
+            h['amin'] = old_div((h['amin']-amean),arms)
+            h['amax'] = old_div((h['amax']-amean),arms)
 
 
         # we compute the origin and stepSize in Crystal space coordinates
@@ -1394,7 +1396,7 @@ class ReadRawiv(VolumeReaderBase):
         l = myfile.read() # read the rest of the file
         myfile.close()
         nbytes = len(l)
-        elsize = nbytes/size
+        elsize = old_div(nbytes,size)
         if elsize == 1:
             mode = 1
         elif elsize == 4:
@@ -1702,9 +1704,9 @@ class ReadFLDBinary(VolumeReaderBase):
         origin.append(self.min_ext[2]) 
 
         stepSize = []
-        stepSize.append((self.max_ext[0]-self.min_ext[0])/(self.dim1-1)) 
-        stepSize.append((self.max_ext[1]-self.min_ext[1])/(self.dim2-1)) 
-        stepSize.append((self.max_ext[2]-self.min_ext[2])/(self.dim3-1)) 
+        stepSize.append(old_div((self.max_ext[0]-self.min_ext[0]),(self.dim1-1))) 
+        stepSize.append(old_div((self.max_ext[1]-self.min_ext[1]),(self.dim2-1))) 
+        stepSize.append(old_div((self.max_ext[2]-self.min_ext[2]),(self.dim3-1))) 
         g = self.gridType(data, origin, stepSize, self.comment)
         return g
 if __name__=='__main__':

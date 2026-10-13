@@ -1,3 +1,4 @@
+from __future__ import division
 #############################################################################
 #
 # Author: Michel F. SANNER
@@ -11,6 +12,7 @@
 # 
 # $Id: stylesCommands.py,v 1.11 2010/10/29 21:45:49 sanner Exp $
 #
+from mglcompat.pydiv import old_div
 from mglutil.util.callback import CallbackFunction
 import tkinter, Pmw, os
 from Pmv.mvCommand import MVCommand, MVCommandGUI
@@ -121,7 +123,7 @@ if len(stack): setRendering(self.GUI.VIEWER, stack.pop(), True)
         textw = canvas.create_text(
             0, 0, anchor='nw', text=text, justify='left')
         bb = canvas.bbox(textw)
-        canvas.create_image(w/2, h/2+bb[3]+10, image=photo)
+        canvas.create_image(old_div(w,2), old_div(h,2)+bb[3]+10, image=photo)
         canvas.pack(expand=1, fill='both')
         bb = canvas.bbox('all')
         top.geometry("%dx%d+%d+%d"%(bb[2],bb[3], event.x_root, event.y_root))

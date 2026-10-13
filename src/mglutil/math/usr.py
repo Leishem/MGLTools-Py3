@@ -13,7 +13,9 @@ Implements method described in:
   Ballester, PJ & Richards, WG (2007) Proc.R.Soc.A
   doi:10.1098/rspa.2007.1823
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as N
 import math
 
@@ -43,7 +45,7 @@ def mean_var_skew(data):
     var = N.add.reduce((data - mean)**2)/float(num-1)
     #
     std = math.sqrt(var)
-    skew = N.add.reduce( (data - mean)**3)/(float(num-1)* std**3)
+    skew = old_div(N.add.reduce( (data - mean)**3),(float(num-1)* std**3))
     return mean, var, skew
 
         
@@ -87,7 +89,7 @@ def usr_similarity(x, y):
     num = float(x.shape[0])
     y = N.array(y)
     # normalized and montonically inverted Manhattan distance
-    return num/(num + N.add.reduce(N.absolute(x-y)))
+    return old_div(num,(num + N.add.reduce(N.absolute(x-y))))
 
 
 def print_usr_desc(val):

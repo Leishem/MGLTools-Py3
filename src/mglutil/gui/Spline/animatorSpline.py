@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
@@ -6,6 +7,7 @@
 #$Id: animatorSpline.py,v 1.5 2007/07/24 17:30:40 vareille Exp $
 
 
+from mglcompat.pydiv import old_div
 from .splineGUI import splineGUI
 from .spline import Spline
 from mglutil.util.callback import CallbackFunction
@@ -87,7 +89,7 @@ class AnimatorSpline(splineGUI):
         spline_points = self.spline_points
         p = self.getCoords(fraction)
         y = p[1]
-        value = (self.endvalue)*(y/self.range_end)
+        value = (self.endvalue)*(old_div(y,self.range_end))
         return val
         
     def getCoords(self,fraction):
@@ -108,7 +110,7 @@ class AnimatorSpline(splineGUI):
         """returns value for coords"""
         y = coords[-1]
         rng = self.range_end-(self.range_begin)
-        result = self.range_begin+rng*((self.viewport[1]-float(y))/(self.viewport[1]-self.viewport[0]))
+        result = self.range_begin+rng*(old_div((self.viewport[1]-float(y)),(self.viewport[1]-self.viewport[0])))
         return result
 
     def getValuesForAllFourPoints(self):
@@ -127,7 +129,7 @@ class AnimatorSpline(splineGUI):
         newlist.append(pl[1]+2)
         rng = self.range_end-(self.range_begin)
         for p in newlist:
-            result = self.range_begin+rng*((self.viewport[1]-p)/(self.viewport[1]-self.viewport[0]))
+            result = self.range_begin+rng*(old_div((self.viewport[1]-p),(self.viewport[1]-self.viewport[0])))
             if result<self.range_begin:
                 result  = self.range_begin
             if result > self.range_end:

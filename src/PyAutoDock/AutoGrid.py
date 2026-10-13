@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #
@@ -6,6 +7,7 @@
 #
 #
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric, os; from mglcompat import pystring as string
 
 from MolKit.molecule import Atom, AtomSet
@@ -38,9 +40,9 @@ class GridMap:
         ent = self.entity
 
         
-        for z in range(-(npts[2]/2), npts[2]/2 + 1):
-            for y in range(-(npts[1]/2), npts[1]/2 + 1):
-                for x in range(-(npts[0]/2), npts[0]/2 + 1):
+        for z in range(-(old_div(npts[2],2)), old_div(npts[2],2) + 1):
+            for y in range(-(old_div(npts[1],2)), old_div(npts[1],2) + 1):
+                for x in range(-(old_div(npts[0],2)), old_div(npts[0],2) + 1):
                     ent._coords[ent.conformation] = [x*sp+cen[0],
                                                      y*sp+cen[1],
                                                      z*sp+cen[2]]
@@ -229,9 +231,9 @@ class AutoGrid:
         xpts, ypts,zpts = self.grid_map.npts
         
         spacing = self.grid_map.spacing
-        x_extent = int(xpts/2) * spacing 
-        y_extent = int(ypts/2) * spacing
-        z_extent = int(zpts/2) * spacing
+        x_extent = int(old_div(xpts,2)) * spacing 
+        y_extent = int(old_div(ypts,2)) * spacing
+        z_extent = int(old_div(zpts,2)) * spacing
 
         xcen, ycen, zcen = self.grid_map.center
 

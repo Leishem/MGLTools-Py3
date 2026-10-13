@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 from DejaVu.IndexedPolygons import IndexedPolygons
 from Volume.Grid3D import Grid3D
 
@@ -23,7 +25,7 @@ It returns a new IndexedPolygons geometry with the triangles for which
 
         # compute the voxel on which each vertex falls
         # array of indiced into grid for the vertices
-        vertInd = ((vertices-origin)/stepSize).astype('i')
+        vertInd = (old_div((vertices-origin),stepSize)).astype('i')
 
         # select the vertices on voxels that have a value True
         selVert = []

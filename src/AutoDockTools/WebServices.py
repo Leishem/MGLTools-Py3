@@ -1,7 +1,9 @@
+from __future__ import division
 #$Header: /opt/cvs/python/packages/share1.5/AutoDockTools/WebServices.py,v 1.21 2009/08/12 21:40:05 lclement Exp $
 #$Id: WebServices.py,v 1.21 2009/08/12 21:40:05 lclement Exp $
 # Author: Sargis Dallakyan (sargis@scripps.edu)
 
+from mglcompat.pydiv import old_div
 import tkinter, Pmw, os, http.client, webbrowser, urllib.request, urllib.parse, urllib.error, re
 from ViewerFramework.VFCommand import CommandGUI, Command
 from Pmv.mvCommand import MVCommand
@@ -509,7 +511,7 @@ class WebServices(MVCommand):
                 return             
             str = int(self._url.headers.dict['content-length'])
             self._progress_counter = 0
-            self._download_bytes = str/100
+            self._download_bytes = old_div(str,100)
             if self._download_bytes == 0: self._download_bytes = 1
             self.new_download = False
             self.vf.GUI.ROOT.after(1, self.download)

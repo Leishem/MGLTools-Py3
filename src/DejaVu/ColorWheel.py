@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -14,6 +15,7 @@
 # $Id: ColorWheel.py,v 1.10 2008/12/11 00:24:02 vareille Exp $
 #
 
+from mglcompat.pydiv import old_div
 import types
 import tkinter
 import mglcompat.oldnumeric as Numeric
@@ -31,8 +33,8 @@ class ColorWheel(CallbackFunctions):
         """Compute vertex coordinates to draw the wheel's color patches"""
 
         # makes the master circle
-        r = float(self.radius / self.circles)
-        angle = 2.0 * math.pi / self.stripes
+        r = float(old_div(self.radius, self.circles))
+        angle = old_div(2.0 * math.pi, self.stripes)
         c = Numeric.zeros( (self.stripes+1,2),'f' )
         c[0][0] = c[self.stripes][0] = r;
         c[0][1] = c[self.stripes][1] = 0.0;
@@ -43,8 +45,8 @@ class ColorWheel(CallbackFunctions):
         # now build the color wheel geometry
 
         # center point
-        self.centerX = self.width / 2
-        self.centerY = self.height / 2
+        self.centerX = old_div(self.width, 2)
+        self.centerY = old_div(self.height, 2)
         self.c[0][0] = self.centerX
         self.c[0][1] = self.centerY
 
@@ -118,17 +120,17 @@ class ColorWheel(CallbackFunctions):
 
     def _MoveCursor(self, x, y):
         # find the saturation based on distance
-        s = math.sqrt(x*x + y*y) / self.radius
+        s = old_div(math.sqrt(x*x + y*y), self.radius)
         if s > 1.0:
             s = 1.0
-            x = x / s
-            y = y / s
+            x = old_div(x, s)
+            y = old_div(y, s)
 
         # now find the hue based on the angle 
         if x or y:
             angle = math.atan2(y, x)
             if angle < 0.0: angle = angle + (2.0 * math.pi)
-            h = angle / (2.0 * math.pi)
+            h = old_div(angle, (2.0 * math.pi))
         else:
             h = 0
 
@@ -229,9 +231,9 @@ class ColorWheel(CallbackFunctions):
         self.height = height
         self.wheelPad = wheelPad
         if radius is None:
-            self.radius = max(width,height) / 2
+            self.radius = old_div(max(width,height), 2)
         else:
-            self.radius = min( max(width,height) / 2, self.radius )
+            self.radius = min( old_div(max(width,height), 2), self.radius )
         self.circles = circles
         self.stripes = stripes
         self.wysiwyg = wysiwyg

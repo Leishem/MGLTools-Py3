@@ -1,9 +1,11 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #!/usr/bin/env python
 #
 # $Id: pixelMap2D.py,v 1.4 2007/10/08 18:16:25 rhuey Exp $
 
+from mglcompat.pydiv import old_div
 from DejaVu.colorTool import TkColor, RedWhiteRamp
 from DejaVu.colorMap import ColorMap
 import mglcompat.oldnumeric as Numeric; from PIL import Image
@@ -79,7 +81,7 @@ class PixelMap2D:
 
 
     def show_legend(self, steps=20, horizontal=True):
-        delta = (self.maxi-self.mini)/(steps-1)
+        delta = old_div((self.maxi-self.mini),(steps-1))
         vals = self.vals= []
         for i in range(steps-1):
             vals.append(self.mini+i*delta)

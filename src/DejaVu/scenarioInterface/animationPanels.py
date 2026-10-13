@@ -1,7 +1,9 @@
+from __future__ import division
 ##
 ## GUI panels for creation Actions or MAA for example used in
 ## PMV/scenarioInterface/animationGui.py AnimationNotebook
 ##
+from mglcompat.pydiv import old_div
 import tkinter, Pmw
 from Scenario2.multipleActorsActions import MultipleActorsActions
 from mglutil.util.callback import CallbackFunction
@@ -120,7 +122,7 @@ class AnimationPanel:
         b.configure(text = text)
             
         nbuttons = len(self.maas)-1
-        row = nbuttons/4
+        row = old_div(nbuttons,4)
         col = nbuttons%4
 
         b.grid(row = row, column = col, sticky = 'w')
@@ -197,7 +199,7 @@ class AnimationPanel:
         nb = 4
         for i, b in enumerate(buttons):
             #print b.maa.name, "row", i/nb, "column", i%nb
-            b.grid(row=i/nb, column= i%nb, sticky='w')
+            b.grid(row=old_div(i,nb), column= i%nb, sticky='w')
         if maa in self.maas:
             self.maas.remove(maa)
         if position != None:

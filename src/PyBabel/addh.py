@@ -60,8 +60,10 @@ example:
 reimplmentation of Babel1.6 in Python by Michel Sanner April 2000
 Original code by W. Patrick Walters and Matthew T. Stahl 
 """
+from __future__ import division
 
 
+from mglcompat.pydiv import old_div
 import math
 
 from .atomTypes import TypeConverter
@@ -272,7 +274,7 @@ class AddHydrogens:
         n = [ n[0]*SQRT_TWO_THIRDS, n[1]*SQRT_TWO_THIRDS,n[2]*SQRT_TWO_THIRDS ]
 
         h1 = [ s[0]+n[0], s[1]+n[1], s[2]+n[2] ]
-        mag= b_length / math.sqrt( h1[0]*h1[0] + h1[1]*h1[1] + h1[2]*h1[2])
+        mag= old_div(b_length, math.sqrt( h1[0]*h1[0] + h1[1]*h1[1] + h1[2]*h1[2]))
         cH1 = [c[0] + (h1[0]*mag), c[1] + (h1[1]*mag), c[2] + (h1[2]*mag)]
 
         atomic_number, type = self.type_added_hydrogen(atom)
@@ -346,7 +348,7 @@ class AddHydrogens:
               m[1][0] + m[1][1] + m[1][2],
               m[2][0] + m[2][1] + m[2][2] ]
 
-        mag= b_length / math.sqrt( s[0]*s[0] + s[1]*s[1] + s[2]*s[2])
+        mag= old_div(b_length, math.sqrt( s[0]*s[0] + s[1]*s[1] + s[2]*s[2]))
         cH = [c[0]+ (s[0]*mag), c[1] + (s[1]*mag), c[2] + (s[2]*mag)]
 
         atomic_number, type = self.type_added_hydrogen(atom)
@@ -378,11 +380,11 @@ class AddHydrogens:
         n = [ n[0]*SQRT_TWO_THIRDS, n[1]*SQRT_TWO_THIRDS,n[2]*SQRT_TWO_THIRDS ]
 
         h1 = [ s[0]+n[0], s[1]+n[1], s[2]+n[2] ]
-        mag= b_length / math.sqrt( h1[0]*h1[0] + h1[1]*h1[1] + h1[2]*h1[2])
+        mag= old_div(b_length, math.sqrt( h1[0]*h1[0] + h1[1]*h1[1] + h1[2]*h1[2]))
         cH1 = [c[0] + (h1[0]*mag), c[1] + (h1[1]*mag), c[2] + (h1[2]*mag)]
 
         h2 = [ s[0]-n[0], s[1]-n[1], s[2]-n[2] ]
-        mag= b_length / math.sqrt( h2[0]*h2[0] + h2[1]*h2[1] + h2[2]*h2[2])
+        mag= old_div(b_length, math.sqrt( h2[0]*h2[0] + h2[1]*h2[1] + h2[2]*h2[2]))
         cH2 = [c[0] + (h2[0]*mag), c[1] + (h2[1]*mag), c[2] + (h2[2]*mag)]
 
         atomic_number, type = self.type_added_hydrogen(atom)
@@ -404,7 +406,7 @@ class AddHydrogens:
         v = vec3(c2.coords, c )
         v1 = vec3(c3.coords, c )
         s = [ v[0]+v1[0], v[1]+v1[1], v[2]+v1[2] ]
-        mag= b_length / math.sqrt( s[0]*s[0] + s[1]*s[1] + s[2]*s[2])
+        mag= old_div(b_length, math.sqrt( s[0]*s[0] + s[1]*s[1] + s[2]*s[2]))
 
         coordsH = [c[0] + (s[0]*mag), c[1] + (s[1]*mag), c[2] + (s[2]*mag)]
 
@@ -474,7 +476,7 @@ class AddHydrogens:
             v = vec3(c2.coords, c)
             v1 = vec3(cH1, c, b_length )
             s = [ v[0]+v1[0], v[1]+v1[1], v[2]+v1[2] ]
-            mag= b_length / math.sqrt( s[0]*s[0] + s[1]*s[1] + s[2]*s[2])
+            mag= old_div(b_length, math.sqrt( s[0]*s[0] + s[1]*s[1] + s[2]*s[2]))
             cH2 = [c[0] + (s[0]*mag), c[1] + (s[1]*mag), c[2] + (s[2]*mag)]
 
         atomic_number, htype = self.type_added_hydrogen(atom)

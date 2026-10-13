@@ -1,5 +1,7 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
+from mglcompat.pydiv import old_div
 def sesExposurePercent():
     """Compute the percentage of solvent exposed surface for each amino acide.
 After running this macro, each residue has the 2 following members:
@@ -48,7 +50,7 @@ atoms are ignored
       m.compute_ses_area()
       srfList.append(m)
       if r.ses_area > 0.0:
-          r.ses_ratio = (r.ses_area * 100) / m.sesr.fst.a_ses_area
+          r.ses_ratio = old_div((r.ses_area * 100), m.sesr.fst.a_ses_area)
       else:
           r.ses_ratio = 0.0
 

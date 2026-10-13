@@ -1,4 +1,6 @@
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 import tkinter.colorchooser
 import tkinter
 T = tkinter
@@ -87,8 +89,8 @@ class MovableWidget:
 
     def place(self, widget, x=None, y=None, w=None, h=None, **kw):
         gs = self.gs
-        if x: kw['x'] = (x/gs)*gs
-        if y: kw['y'] = (y/gs)*gs
+        if x: kw['x'] = (old_div(x,gs))*gs
+        if y: kw['y'] = (old_div(y,gs))*gs
         if w: kw['width'] = w
         if h: kw['height'] = h
 ##          print kw['x'], kw['y'], self.posx, self.posy

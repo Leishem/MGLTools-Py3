@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 import random
 import numpy
 from math import sqrt
@@ -63,7 +65,7 @@ class Cluster:
             centroid_coords.append(0.0)
             for p in self.points:
                 centroid_coords[i] = centroid_coords[i]+p.coords[i]
-            centroid_coords[i] = centroid_coords[i]/len(self.points)
+            centroid_coords[i] = old_div(centroid_coords[i],len(self.points))
         # Return a Point object using the average coordinates
         return Point(centroid_coords)
 

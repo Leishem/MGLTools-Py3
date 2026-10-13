@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -12,6 +13,7 @@
 #############################################################################
 
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric; N = Numeric
 
 class Histogram:
@@ -46,7 +48,7 @@ class Histogram:
             self.min, self.max = range
         self.min = self.min+0.
         self.max = self.max+0.
-        self.bin_width = (self.max-self.min)/nbins
+        self.bin_width = old_div((self.max-self.min),nbins)
         if self.bin_width==0:
             print('range is 0 so set bin_width to 1.')
             self.bin_width = 1.
@@ -69,7 +71,7 @@ class Histogram:
         default range of the histogram, which is fixed when the
         histogram is created.
         """
-        n = (len(data)+999)/1000
+        n = old_div((len(data)+999),1000)
         for i in range(n):
             self._addData(data[1000*i:1000*(i+1)])
 
@@ -77,7 +79,7 @@ class Histogram:
         data = N.array(data, N.Float)
         data = N.repeat(data, N.logical_and(N.less_equal(data, self.max),
                                             N.greater_equal(data, self.min)))
-        data = N.floor((data - self.min)/self.bin_width).astype(N.Int)
+        data = N.floor(old_div((data - self.min),self.bin_width)).astype(N.Int)
         self.rIdata = data
         nbins = self.array.shape[0]
         histo = N.add.reduce(N.equal(N.arange(nbins)[:,N.NewAxis], data), -1)
@@ -86,7 +88,7 @@ class Histogram:
 
     def normalize(self, norm=1.):
         "Scales all counts by the same factor such that their sum is |norm|."
-        self.array[:, 1] = norm*self.array[:, 1]/N.add.reduce(self.array[:, 1])
+        self.array[:, 1] = old_div(norm*self.array[:, 1],N.add.reduce(self.array[:, 1]))
 
 
 class HistogramRI(Histogram):
@@ -106,7 +108,7 @@ class HistogramRI(Histogram):
         data = N.array(self.data, N.Float)
         data = N.repeat(data, N.logical_and(N.less_equal(data, self.max),
                     N.greater_equal(data, self.min)))
-        data = N.floor((data-self.min)/self.bin_width).astype(N.Int)
+        data = N.floor(old_div((data-self.min),self.bin_width)).astype(N.Int)
         self.cRI_data = data
         #check for pt outside of nbins
         #sometimes max point falls outside of right-most bin

@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #########################################################################
@@ -26,6 +27,7 @@
 # - use axes rather than subplot
 #
 
+from mglcompat.pydiv import old_div
 try:
     import matplotlib
 except:
@@ -2232,7 +2234,7 @@ Output:
             elif data[sortind[-1]]==x: return data, [sortind[-1]]
             elif len(sortind)==2: return data, sortind
             else:
-                mid = len(sortind)/2
+                mid = old_div(len(sortind),2)
                 if fabs(data[sortind[mid]]-x)<eps:
                     if fabs(data[sortind[0]]-x)<eps:
                         return data, sortind[:mid]

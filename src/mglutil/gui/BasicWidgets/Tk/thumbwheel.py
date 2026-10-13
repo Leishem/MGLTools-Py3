@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #########################################################################
@@ -11,6 +12,7 @@
 #
 #########################################################################
 
+from mglcompat.pydiv import old_div
 import tkinter
 import mglcompat.oldnumeric as Numeric
 import math
@@ -323,9 +325,9 @@ every time the widget value is set/modified"""
         else:
             lEventNum = event.num
         if lEventNum == 4:
-            self.computeNewValue(self.oneTurn/10)
+            self.computeNewValue(old_div(self.oneTurn,10))
         else:
-            self.computeNewValue(-self.oneTurn/10)
+            self.computeNewValue(old_div(-self.oneTurn,10))
 
 
     def get(self):
@@ -343,7 +345,7 @@ every time the widget value is set/modified"""
         h = self.canvas.winfo_reqheight()
         w = self.canvas.winfo_reqwidth()
         self.valueLabel.place(in_=self.canvas, x=(w-wl)*.5, y=((h-hl)*0.5)-
-                              self.height/4)
+                              old_div(self.height,4))
         self.valueLabel.configure(text=self.labelFormat%self.value)
 
 
@@ -400,7 +402,7 @@ every time the widget value is set/modified"""
         self.deltaVal = self.value - oldval
 
         # self.angle is used in drawLines()
-        self.angle = val/self.oneTurnOver2pi
+        self.angle = old_div(val,self.oneTurnOver2pi)
         self.drawLines()
 
         if self.showLabel>0: # ALWAYS
@@ -537,13 +539,13 @@ every time the widget value is set/modified"""
         xsin = Numeric.sin(self.circlePtsAngles)
         if self.orient=='horizontal':
             w = self.innerbox[2] - self.innerbox[0]
-            r = w/2
+            r = old_div(w,2)
             c = self.innerbox[0] + r
             y1 = self.innerbox[1]
             y2 = self.innerbox[3]
         else:
             w = self.innerbox[3] - self.innerbox[1]
-            r = w/2
+            r = old_div(w,2)
             c = self.innerbox[1] + r
             y1 = self.innerbox[0]
             y2 = self.innerbox[2]
@@ -869,8 +871,8 @@ every time the widget value is set/modified"""
 
         self.oneTurn = oneTurn
         self.threeSixtyOver1turn = 360./oneTurn
-        self.piOver1turn = math.pi/oneTurn
-        self.oneTurnOver2pi = oneTurn / (2*math.pi)
+        self.piOver1turn = old_div(math.pi,oneTurn)
+        self.oneTurnOver2pi = old_div(oneTurn, (2*math.pi))
         if self.opPanel:
             self.opPanel.updateDisplay()
         

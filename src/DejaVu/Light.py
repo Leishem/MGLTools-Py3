@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -13,6 +14,7 @@
 # $Id: Light.py,v 1.42.4.1 2012/11/02 17:43:17 sanner Exp $
 #
 
+from mglcompat.pydiv import old_div
 from opengltk.OpenGL import GL,GLU
 from opengltk.extent.utillib import glCleanRotMat
 
@@ -522,7 +524,7 @@ This dictionary can be passed to the Set method to restore the object's state
         GL.glVertex3f ( float(camera.lookAt[0]),float(camera.lookAt[1]),float(camera.lookAt[2]) )
         v = camera.lookAt + self.direction[:3]
         nv = sqrt(Numeric.add.reduce(v*v))
-        v = (v/nv)*self.length
+        v = (old_div(v,nv))*self.length
         GL.glVertex3f ( float(v[0]), float(v[1]), float(v[2]) )
         GL.glEnd()
 

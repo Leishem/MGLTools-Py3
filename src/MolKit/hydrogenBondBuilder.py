@@ -19,6 +19,8 @@ This module implements the HydrogenBondBuilder class which builds hydrogen
 bonds between appropriate atoms.
 
 """
+from __future__ import division
+from mglcompat.pydiv import old_div
 def getHBAtoms(mol):
     """
     Function to identify donor and acceptor atoms for hydrogen bonds
@@ -128,7 +130,7 @@ def getAngle(ac, hat, don ):
     v2 = Numeric.array(pt3 - pt2)
     dist1 = math.sqrt(Numeric.sum(v1*v1))
     dist2 = math.sqrt(Numeric.sum(v2*v2))
-    sca = Numeric.dot(v1, v2)/(dist1*dist2)
+    sca = old_div(Numeric.dot(v1, v2),(dist1*dist2))
     if sca>1.0:
         sca = 1.0
     elif sca<-1.0:

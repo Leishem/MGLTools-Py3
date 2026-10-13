@@ -45,6 +45,7 @@
 
     ----------------------------
 """
+from __future__ import division
 
 # User - Definable Variables: Default values
 
@@ -69,6 +70,7 @@
 # TFAC_SPARC  = 5e-4          # Number of sec/unkown for setup/solve on 400
                               # MHz UltraSPARC II CPU -- VERY ROUGH ESTIMATE
 
+from mglcompat.pydiv import old_div
 import sys; from mglcompat import pystring as string
 from sys import stdout
 from math import log
@@ -164,7 +166,7 @@ class Psize:
     def setCenter(self, maxlen, minlen):
         """ Compute molecule center """
         for i in range(3):
-            self.cen[i] = (maxlen[i] + minlen[i]) / 2
+            self.cen[i] = old_div((maxlen[i] + minlen[i]), 2)
         return self.cen
 
 
@@ -172,8 +174,8 @@ class Psize:
         """ Compute mesh grid points, assuming 4 levels in MG hierarchy """
         tn = [0,0,0]
         for i in range(3):
-            tn[i] = int(flen[i]/self.constants["SPACE"] + 0.5)
-            self.n[i] = 32*(int((tn[i] - 1) / 32 + 0.5)) + 1
+            tn[i] = int(old_div(flen[i],self.constants["SPACE"]) + 0.5)
+            self.n[i] = 32*(int(old_div((tn[i] - 1), 32) + 0.5)) + 1
             if self.n[i] < 33:
                 self.n[i] = 33
         return self.n
@@ -187,11 +189,11 @@ class Psize:
         for i in range(3):
             nsmall.append(n[i])
         while 1:
-            nsmem = 200.0 * nsmall[0] * nsmall[1] * nsmall[2] / 1024 / 1024
+            nsmem = old_div(old_div(200.0 * nsmall[0] * nsmall[1] * nsmall[2], 1024), 1024)
             if nsmem < self.constants["GMEMCEIL"]: break
             else:
                 i = nsmall.index(max(nsmall))
-                nsmall[i] = 32 * ((nsmall[i] - 1)/32 - 1) + 1
+                nsmall[i] = 32 * (old_div((nsmall[i] - 1),32) - 1) + 1
                 if nsmall <= 0:
                     stdout.write("You picked a memory ceiling that is too small\n")
                     sys.exit(0)        
@@ -206,7 +208,7 @@ class Psize:
         zofac = 1 + 2 * self.constants["OFAC"]
         for i in range(3):
             self.np[i] = n[i]/float(nsmall[i])
-            if self.np[i] > 1: self.np[i] = int(zofac*n[1]/nsmall[i] + 1.0)
+            if self.np[i] > 1: self.np[i] = int(old_div(zofac*n[1],nsmall[i]) + 1.0)
         return self.np
                                                 
     def setFocus(self, flen, np, clen):
@@ -215,7 +217,7 @@ class Psize:
 
         nfoc = [0,0,0]
         for i in range(3):
-            nfoc[i] = int(log((flen[i]/np[i])/clen[i])/log(self.constants["REDFAC"]) + 1.0)
+            nfoc[i] = int(old_div(log(old_div((old_div(flen[i],np[i])),clen[i])),log(self.constants["REDFAC"])) + 1.0)
         nfocus = nfoc[0]
         if nfoc[1] > nfocus: nfocus = nfoc[1]
         if nfoc[2] > nfocus: nfocus = nfoc[2]
@@ -288,8 +290,8 @@ class Psize:
 
             # Compute memory requirements
 
-            nsmem = 200.0 * nsmall[0] * nsmall[1] * nsmall[2] / 1024 / 1024
-            gmem = 200.0 * n[0] * n[1] * n[2] / 1024 / 1024
+            nsmem = old_div(old_div(200.0 * nsmall[0] * nsmall[1] * nsmall[2], 1024), 1024)
+            gmem = old_div(old_div(200.0 * n[0] * n[1] * n[2], 1024), 1024)
             
             # Calculate VERY ROUGH wall clock times
 
@@ -319,18 +321,18 @@ clen[1], clen[2])
                 str = str + "Total processors required = %i\n" % (np[0]*np[1]*np[2])
                 str = str + "Proc. grid = %i x %i x %i\n" % (np[0], np[1], np[2])
                 str = str + "Grid pts. on each proc. = %i x %i x %i\n" % (nsmall[0], nsmall[1], nsmall[2])
-                xglob = np[0]*round(nsmall[0]/(1 + 2*self.constants["OFAC"]) - .001)
-                yglob = np[1]*round(nsmall[1]/(1 + 2*self.constants["OFAC"]) - .001)
-                zglob = np[2]*round(nsmall[2]/(1 + 2*self.constants["OFAC"]) - .001)
+                xglob = np[0]*round(old_div(nsmall[0],(1 + 2*self.constants["OFAC"])) - .001)
+                yglob = np[1]*round(old_div(nsmall[1],(1 + 2*self.constants["OFAC"])) - .001)
+                zglob = np[2]*round(old_div(nsmall[2],(1 + 2*self.constants["OFAC"])) - .001)
                 if np[0] == 1: xglob = nsmall[0]
                 if np[1] == 1: yglob = nsmall[1]
                 if np[2] == 1: zglob = nsmall[2]
-                str = str + "Fine mesh spacing = %g x %g x %g A\n" % (flen[0]/(xglob-1), flen[1]/(yglob-1), flen[2]/(zglob-1))
+                str = str + "Fine mesh spacing = %g x %g x %g A\n" % (old_div(flen[0],(xglob-1)), old_div(flen[1],(yglob-1)), old_div(flen[2],(zglob-1)))
                 str = str + "Estimated mem. required for parallel solve = %.3f MB/proc.\n" % nsmem
                 ntot = nsmall[0]*nsmall[1]*nsmall[2]
 
             else:
-                str = str + "Fine mesh spacing = %g x %g x %g A\n" % (flen[0]/(n[0]-1), flen[1]/(n[1]-1), flen[2]/(n[2]-1))
+                str = str + "Fine mesh spacing = %g x %g x %g A\n" % (old_div(flen[0],(n[0]-1)), old_div(flen[1],(n[1]-1)), old_div(flen[2],(n[2]-1)))
                 str = str + "Estimated mem. required for sequential solve = %.3f MB\n" % gmem
                 ntot = n[0]*n[1]*n[2]
 
@@ -338,9 +340,9 @@ clen[1], clen[2])
 
             str = str + "\n"
             str = str + "################# ESTIMATED REQUIREMENTS ####################\n"
-            str = str + "Memory per processor                   = %.3f MB\n" % (200.0*ntot/1024/1024)
-            str = str + "Grid storage requirements (ASCII)      = %.3f MB\n" % (8.0*12*np[0]*np[1]*np[2]*ntot/1024/1024)
-            str = str + "Grid storage requirements (XDR)        = %.3f MB\n" % (8.0*ntot*np[0]*np[1]*np[2]/1024/1024)
+            str = str + "Memory per processor                   = %.3f MB\n" % (old_div(old_div(200.0*ntot,1024),1024))
+            str = str + "Grid storage requirements (ASCII)      = %.3f MB\n" % (old_div(old_div(8.0*12*np[0]*np[1]*np[2]*ntot,1024),1024))
+            str = str + "Grid storage requirements (XDR)        = %.3f MB\n" % (old_div(old_div(8.0*ntot*np[0]*np[1]*np[2],1024),1024))
             str = str + "Time to solve on 667 MHz EV67 Alpha    = %.3f sec\n" % tsolve_alpha
             str = str + "Time to solve on 500 MHz PIII Xeon     = %.3f sec\n" % tsolve_xeon
             str = str + "Time to solve on 400 MHz UltraSparc II = %.3f sec\n" % tsolve_sparc

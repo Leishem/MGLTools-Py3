@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ##  Copyright 1997-1999 by Konrad Hinsen, except as noted below.
@@ -23,6 +24,7 @@
 # Last revision: 1999-7-23
 #
 
+from mglcompat.pydiv import old_div
 _undocumented = 1
 
 from mglcompat.pyclasses import CmpMixin, cmp
@@ -105,7 +107,7 @@ class Tensor(CmpMixin):
         if isTensor(other):
             raise TypeError("Can't divide by a tensor")
         else:
-            return Tensor(self.array/(1.*other), 1)
+            return Tensor(old_div(self.array,(1.*other)), 1)
 
     def __rdiv__(self, other):
         raise TypeError("Can't divide by a tensor")

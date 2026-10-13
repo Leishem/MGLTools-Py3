@@ -1,6 +1,8 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 
+from mglcompat.pydiv import old_div
 class SphereMask:
     """Build a discrete grid of voxels representing a sphere
 """
@@ -125,13 +127,13 @@ each dimentsion.
         #i=0
         for p in centers:
             self.positions.append( [
-                int(round((p[0]-gridOrigin[0])/gridSpacing[0])),
-                int(round((p[1]-gridOrigin[1])/gridSpacing[1])),
-                int(round((p[2]-gridOrigin[2])/gridSpacing[2])) ] )
+                int(round(old_div((p[0]-gridOrigin[0]),gridSpacing[0]))),
+                int(round(old_div((p[1]-gridOrigin[1]),gridSpacing[1]))),
+                int(round(old_div((p[2]-gridOrigin[2]),gridSpacing[2]))) ] )
             #print i, p, self.positions[-1]
             #i += 1
         for r in radii:
-            dr = round(r/self.minSpacing)
+            dr = round(old_div(r,self.minSpacing))
             if dr not in self.sphereMasks:
                 self.sphereMasks[dr] = SphereMask( dr )
 
@@ -141,10 +143,10 @@ each dimentsion.
         i=0
         for p, r in zip(self.positions, radii):
             #print i
-            smallMap = self.sphereMasks[round(r/self.minSpacing)].grid
-            offx = smallMap.shape[0]/2
-            offy = smallMap.shape[0]/2
-            offz = smallMap.shape[0]/2
+            smallMap = self.sphereMasks[round(old_div(r,self.minSpacing))].grid
+            offx = old_div(smallMap.shape[0],2)
+            offy = old_div(smallMap.shape[0],2)
+            offz = old_div(smallMap.shape[0],2)
             #print 'off', offx, offy, offz
             px1 = p[0]-offx
             px2 = p[0]+offx+1

@@ -1,5 +1,7 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
+from mglcompat.pydiv import old_div
 from PIL import Image
 from PIL import ImageFilter
 from opengltk.OpenGL import GL
@@ -38,7 +40,7 @@ class Outline:
         zval = Numeric.array(struct.unpack('%df'%self.w*self.h, depthString))
         zmax = max(zval)
         zmin = min(zval)
-        zval1 = 255 * ((zval-zmin) / (zmax-zmin))
+        zval1 = 255 * (old_div((zval-zmin), (zmax-zmin)))
         ds = zval1.astype('c').tobytes()
         self.depthImage = Image.fromstring('P', (self.w,self.h), ds)
 

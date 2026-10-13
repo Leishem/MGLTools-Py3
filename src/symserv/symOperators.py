@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
@@ -15,6 +16,7 @@
 #
 #########################################################################
 
+from mglcompat.pydiv import old_div
 from mglutil.math.rotax import rotax
 from mglutil.math.transformation import Transformation
 import numpy
@@ -336,7 +338,7 @@ arguments:
 
     def normalize(self, v):
         nv = float(math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]))
-        return (v[0]/nv, v[1]/nv, v[2]/nv)
+        return (old_div(v[0],nv), old_div(v[1],nv), old_div(v[2],nv))
 
     
     def set(self, vector=None, point=None, angle=None, hrise=None,
@@ -738,7 +740,7 @@ class CenterOfMass:
         if self.coords is None:
             return [0., 0., 0.]
         else:
-            self.coords=list(Numeric.sum(self.coords)/len(self.coords))
+            self.coords=list(old_div(Numeric.sum(self.coords),len(self.coords)))
             return self.coords
 
 

@@ -1,3 +1,4 @@
+from __future__ import division
 ########################################################################
 #
 # Date: 2000 Author: Michel F. SANNER
@@ -19,6 +20,7 @@
 # $Id: Trackball.py,v 1.59 2010/09/28 15:47:38 sanner Exp $
 #
 
+from mglcompat.pydiv import old_div
 import tkinter
 import Pmw
 import math
@@ -110,8 +112,8 @@ class Trackball:
         self.spinAxis = [0., 1., 0.]
         self.spinAnglePerFrame = .5
         self.rockAngle = 30
-        self.numOfFrameRock = abs(self.rockAngle / self.spinAnglePerFrame)
-        self.rockCount = self.numOfFrameRock / 2
+        self.numOfFrameRock = abs(old_div(self.rockAngle, self.spinAnglePerFrame))
+        self.rockCount = old_div(self.numOfFrameRock, 2)
         if updateSpinGui is True:
             self.updateSpinGui()
         if self.cancelId != 0:
@@ -368,7 +370,7 @@ and the Z translation corresponding to the latest mouse motion
             v = self.camera().viewer
             v.timeButtonUp = time()
             if self.reportFrameRate:
-                print(v.numberOfRedraws / (v.timeButtonUp - v.timeButtonDown))
+                print(old_div(v.numberOfRedraws, (v.timeButtonUp - v.timeButtonDown)))
             for c in v.cameras:
                 for func in c.onButtonUpCBlist:
                     #print "MouseButtonUp func", func
@@ -412,14 +414,14 @@ and the Z translation corresponding to the latest mouse motion
                     #are not the same as those in transformation.py
                     lUnitQuat = UnitQuaternion( data=(self.tb.quat[3], self.tb.quat[:-1] ) )
                     self.spinAxis, lAngle = lUnitQuat.getAxisAndAngleDegres()
-                    self.spinAnglePerFrame = lAngle / 4
+                    self.spinAnglePerFrame = old_div(lAngle, 4)
                     self.spinGui.anglePerFrameThumbwheel.set(self.spinAnglePerFrame, update=0)
                     self.spinGui.vectorGUI.vector = list(self.spinAxis)
                     self.spinGui.vectorGUI.setEntries()
                     self.spinGui.rockAngleThumbwheel.set(120, update=0)
                     self.setWithSpinGui()
                     self.lastSpinVar = self.spinVar.get()
-                    self.rockCount = self.numOfFrameRock / 2
+                    self.rockCount = old_div(self.numOfFrameRock, 2)
                     self.spinCycle()
                 elif self.cancelId != 0:
                     c.restoreAA(None)
@@ -445,7 +447,7 @@ and the Z translation corresponding to the latest mouse motion
         if   (self.cancelId == 0) \
           or (self.lastSpinVar != lCurrentSpinVar):
             if lCurrentSpinVar in [0, 1]:
-                self.rockCount = self.numOfFrameRock / 2
+                self.rockCount = old_div(self.numOfFrameRock, 2)
             self.spinRotationMat = self.makeSpinRotationMat(
                                         self.spinAxis, 
                                         self.spinAnglePerFrame
@@ -511,7 +513,7 @@ and the Z translation corresponding to the latest mouse motion
             elif self.lastSpinVar == 3:
                 self.cancelId = c.after(10, self.oscillateCycle)
             elif self.lastSpinVar == 1:
-                self.rockCount = self.numOfFrameRock / 2                    
+                self.rockCount = old_div(self.numOfFrameRock, 2)                    
                 self.cancelId = c.after(10, self.spinCycle)
             else:
                 c.restoreAA(None)      
@@ -538,7 +540,7 @@ and the Z translation corresponding to the latest mouse motion
                 else:
                     self.rockCount += 1
 
-                lAtenuationFactor = math.sin(3.14159*self.rockCount/lNumOfFrameRock) * 1.57
+                lAtenuationFactor = math.sin(old_div(3.14159*self.rockCount,lNumOfFrameRock)) * 1.57
                 self.spinRotationMat = self.makeSpinRotationMat(
                                                 self.spinAxis, 
                                                 self.spinAnglePerFrame*lAtenuationFactor
@@ -554,7 +556,7 @@ and the Z translation corresponding to the latest mouse motion
                                                 )
                 self.cancelId = c.after(10, self.bounceCycle)
             elif self.lastSpinVar == 1:
-                self.rockCount = self.numOfFrameRock / 2                    
+                self.rockCount = old_div(self.numOfFrameRock, 2)                    
                 self.spinRotationMat = self.makeSpinRotationMat(
                                                 self.spinAxis, 
                                                 self.spinAnglePerFrame
@@ -742,6 +744,6 @@ stop: left click
             self.spinAnglePerFrame = - self.spinGui.anglePerFrameThumbwheel.get()
         else:
             self.spinAnglePerFrame = self.spinGui.anglePerFrameThumbwheel.get()
-        self.numOfFrameRock = abs(self.rockAngle / self.spinAnglePerFrame)
+        self.numOfFrameRock = abs(old_div(self.rockAngle, self.spinAnglePerFrame))
         self.spinAxis = self.spinGui.vectorGUI.vector
         self.spinRotationMat = self.makeSpinRotationMat(self.spinAxis, self.spinAnglePerFrame)

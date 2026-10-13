@@ -24,6 +24,8 @@ Assorted classes of filters for use in selecting subgroups of AutoDock Virtual S
 filter_instance.filter(dlg) returns True/False 
 
 """
+from __future__ import division
+from mglcompat.pydiv import old_div
 from mglcompat.pystring import strip
 import mglcompat.oldnumeric as Numeric
 
@@ -149,7 +151,7 @@ class ClusterPercentageFilter(Filter):
                     largest_clu_size = this_clu
             elif nl_list[0]==nl[:-1]:
                 break
-        percent = 100.*(largest_clu_size/total_clu)
+        percent = 100.*(old_div(largest_clu_size,total_clu))
         #print "percent =", percent, " self.cluster_percentage=", self.cluster_percentage
         return percent >= self.cluster_percentage
 
@@ -299,7 +301,7 @@ class LigandEfficiencyFilter(Filter):
                 break
         ll = lines[i+9].split()
         best_energy = float(ll[6])
-        lig_eff = float(round(best_energy/num_lig_atoms, 4))
+        lig_eff = float(round(old_div(best_energy,num_lig_atoms), 4))
         if self.verbose: print(" ligand efficiency = ", lig_eff)
         return lig_eff<=self.ligand_efficiency
 

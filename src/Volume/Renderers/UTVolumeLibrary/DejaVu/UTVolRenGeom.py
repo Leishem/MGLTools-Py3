@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -14,6 +15,7 @@
 # $Id $
 #
 
+from mglcompat.pydiv import old_div
 import sys, time; from mglcompat import pystring as string
 from opengltk.OpenGL import GL
 import mglcompat.oldnumeric as Numeric
@@ -313,13 +315,13 @@ class UTVolRenGeom(VolumeGeom):
                 matrix, cleanup=False)
 
             # set utvolgeom's Matrix components
-            self.MatrixScale = (self.MatrixScale[0], self.MatrixScale[1]/ry,
-                                self.MatrixScale[2]/rz)
+            self.MatrixScale = (self.MatrixScale[0], old_div(self.MatrixScale[1],ry),
+                                old_div(self.MatrixScale[2],rz))
 
             origin = grid.crystal.toCartesian(grid.origin)
             self.MatrixTransl = (origin[0]+MatrixTransl[0]+dims[0]*0.5*x,
-                                 origin[1]+MatrixTransl[1]+dims[1]*0.5*y/ry,
-                                 origin[2]+MatrixTransl[2]+dims[2]*0.5*z/rz)
+                                 origin[1]+MatrixTransl[1]+old_div(dims[1]*0.5*y,ry),
+                                 origin[2]+MatrixTransl[2]+old_div(dims[2]*0.5*z,rz))
             #o = grid.origin
             #t1 = cryst.toFractional(MatrixTransl)
             #t2 = (0.5, 0.5, 0.5)

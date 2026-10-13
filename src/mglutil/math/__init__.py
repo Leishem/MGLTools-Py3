@@ -1,5 +1,7 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric
 N=Numeric
 import types
@@ -21,10 +23,10 @@ def norm (A):
 """
     if type(A) == list:
         A=Numeric.array(A,'f')
-        res= A/Numeric.sqrt(Numeric.dot(A,A))
+        res= old_div(A,Numeric.sqrt(Numeric.dot(A,A)))
         return res.tolist()    
     elif type(A)==Numeric.ArrayType:    
-        return A/Numeric.sqrt(Numeric.dot(A,A))    
+        return old_div(A,Numeric.sqrt(Numeric.dot(A,A)))    
     else:
         print("Need a list or Numeric array")
         return None
@@ -32,4 +34,4 @@ def norm (A):
 def getCenter(coords):
     """ get center of all the coords """
     coords=N.array(coords, 'f')    
-    return (N.sum(coords)/len(coords)).tolist()
+    return (old_div(N.sum(coords),len(coords))).tolist()

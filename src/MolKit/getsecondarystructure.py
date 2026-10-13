@@ -19,7 +19,9 @@ These classes are expected to be specialized in getting  the informations on
 the secondary Structure of a protein and create a secondarystructureset for a
 chain
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 from mglcompat.pyclasses import cmp
 from MolKit.protein import Helix, Strand, Turn, Coil,\
      SecondaryStructureSet, Residue, ResidueSet
@@ -400,8 +402,8 @@ class GetSecondaryStructureFromPross(GetSecondaryStructure):
         elif r1>180.0 or r2>180.0 or r3>180.0:
             return INVALID
 
-        ir1 = -int(PHI_OFF) + int(round((r1+PHI_OFF)/DELTA )) * int(DELTA)
-        ir2 = -int(PSI_OFF) + int(round((r2+PSI_OFF)/DELTA )) * int(DELTA)
+        ir1 = -int(PHI_OFF) + int(round(old_div((r1+PHI_OFF),DELTA) )) * int(DELTA)
+        ir2 = -int(PSI_OFF) + int(round(old_div((r2+PSI_OFF),DELTA) )) * int(DELTA)
 
         while ir1 <= -180: ir1 = ir1 + 360
         while ir1 >   180: ir1 = ir1 - 360
@@ -547,7 +549,7 @@ class GetSecondaryStructureFromPross(GetSecondaryStructure):
         try:
             while 1:
                 mat = next(it)
-                matches.append((mat.start()/CODE_LENGTH, mat.end()/CODE_LENGTH))
+                matches.append((old_div(mat.start(),CODE_LENGTH), old_div(mat.end(),CODE_LENGTH)))
         except StopIteration:
             pass
 

@@ -15,8 +15,10 @@
 """
 This module implements a bunch of objects useful for user interaction
 """
+from __future__ import division
 #from DejaVu.extendedSlider import ExtendedSlider
 #from DejaVu.Slider import Slider
+from mglcompat.pydiv import old_div
 import tkinter
 import tkinter.scrolledtext
 import Pmw
@@ -1052,7 +1054,7 @@ translation is done in checkValues()
             groupedBy=e['groupedBy']
         else:
             groupedBy = len(e['listtext'])
-        number=len(e['listtext'])/groupedBy
+        number=old_div(len(e['listtext']),groupedBy)
 
         if len(e['listtext'])%groupedBy != 0:
             number=number+1

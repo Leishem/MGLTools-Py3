@@ -18,11 +18,13 @@ a ViewerFramework class or ViewerFramework derived class.
    - UndoCommand
    - ResetUndoCommand.
 """
+from __future__ import division
 
 # $Header: /opt/cvs/python/packages/share1.5/ViewerFramework/basicCommand.py,v 1.139.2.4 2013/06/07 21:55:33 annao Exp $
 #
 # $Id: basicCommand.py,v 1.139.2.4 2013/06/07 21:55:33 annao Exp $
 #
+from mglcompat.pydiv import old_div
 import itertools
 import os, sys, subprocess
 
@@ -636,7 +638,7 @@ class BrowseCommandsCommand(Command):
                 x = string.split(docstring," ")
                 #formatting documenation
                 if len(x)>10:
-                    docw.configure(listbox_height=len(x)/10)
+                    docw.configure(listbox_height=old_div(len(x),10))
                 else:
                     docw.configure(listbox_height=1)
             
@@ -703,7 +705,7 @@ class BrowseCommandsCommand(Command):
                          x = string.split(docstring," ")
                          #formatting documenation
                          if len(x)>10:
-                            docw.configure(listbox_height=len(x)/10)
+                            docw.configure(listbox_height=old_div(len(x),10))
                          else:
                             docw.configure(listbox_height=1)
                     
@@ -767,7 +769,7 @@ class BrowseCommandsCommand(Command):
                          x = string.split(docstring," ")
                          #formatting documenation
                          if len(x)>10:
-                            docw.configure(listbox_height=len(x)/10)
+                            docw.configure(listbox_height=old_div(len(x),10))
                          else:
                             docw.configure(listbox_height=1)
                     
@@ -804,7 +806,7 @@ class BrowseCommandsCommand(Command):
                         d.append(docstring)
                         x = string.split(docstring," ")
                         if len(x)>10:
-                            docw.configure(listbox_height=len(x)/10)
+                            docw.configure(listbox_height=old_div(len(x),10))
                         else:
                             docw.configure(listbox_height=1)
                                

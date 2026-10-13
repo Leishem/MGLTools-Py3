@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -14,6 +15,7 @@
 # $Id: Texture.py,v 1.28 2009/06/18 20:05:19 sargis Exp $
 #
 
+from mglcompat.pydiv import old_div
 import sys, os
 from PIL import Image
 import mglcompat.oldnumeric as Numeric
@@ -258,7 +260,7 @@ are powers of 2." (has been tested for Image but not for Numeric array yet - gui
             l = len(im.shape)
             if l==2:
                 w=im.shape[0] - 2*b
-                q, r  = divmod(math.log(w)/math.log(2), 1)
+                q, r  = divmod(old_div(math.log(w),math.log(2)), 1)
                 if r != 0.0:
                     raise ValueError("Image width must be 2**m +2b")
                 self.dim = GL.GL_TEXTURE_1D
@@ -267,11 +269,11 @@ are powers of 2." (has been tested for Image but not for Numeric array yet - gui
 
             elif l==3:
                 w=im.shape[0] - 2*b
-                q, r  = divmod(math.log(w)/math.log(2), 1)
+                q, r  = divmod(old_div(math.log(w),math.log(2)), 1)
                 if r != 0.0:
                     raise ValueError("Image width must be 2**m +2b")
                 h=im.shape[1] -2*b
-                q, r  = divmod(math.log(h)/math.log(2), 1)
+                q, r  = divmod(old_div(math.log(h),math.log(2)), 1)
                 if r != 0.0:
                     raise ValueError("Image height must be 2**m +2b")
                 self.dim = GL.GL_TEXTURE_2D

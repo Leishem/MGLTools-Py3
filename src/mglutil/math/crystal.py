@@ -1,5 +1,7 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
+from mglcompat.pydiv import old_div
 import mglcompat.oldnumeric as Numeric, types
 
 def EulerAnglesToMat( angles ):
@@ -86,17 +88,17 @@ class Crystal:
         ga=angles[2]*degtor
         vol= length[0]* length[1]* length[2] *sqrt(1.-cos(al)*cos(al)-cos(be)*cos(be)
                           -cos(ga)*cos(ga)+2.*(cos(al)*cos(be)*cos(ga)))
-        lAs=(length[1]* length[2]*sin(al))/vol
-        bs=(length[0]* length[2]*sin(be))/vol
-        cs=(length[0]* length[1]*sin(ga))/vol
-        cosals=(cos(be)*cos(ga)-cos(al))/(sin(be)*sin(ga))
-        cosbes=(cos(ga)*cos(al)-cos(be))/(sin(ga)*sin(al))
-        cosgas=(cos(al)*cos(be)-cos(ga))/(sin(al)*sin(be))
+        lAs=old_div((length[1]* length[2]*sin(al)),vol)
+        bs=old_div((length[0]* length[2]*sin(be)),vol)
+        cs=old_div((length[0]* length[1]*sin(ga)),vol)
+        cosals=old_div((cos(be)*cos(ga)-cos(al)),(sin(be)*sin(ga)))
+        cosbes=old_div((cos(ga)*cos(al)-cos(be)),(sin(ga)*sin(al)))
+        cosgas=old_div((cos(al)*cos(be)-cos(ga)),(sin(al)*sin(be)))
 
         ut = Numeric.identity(3).astype('f')
         # sabgs1 = sqrt(1.0-cos(al)*cos(al))
         ut[0][0]=1./length[0]
-        ut[0][1]= -(cos(ga))/(sin(ga)*length[0])
+        ut[0][1]= old_div(-(cos(ga)),(sin(ga)*length[0]))
         # ut[0][2]= -(cos(ga)*sin(be)*cosals + cos(be)*sin(ga))/ */
         #	(sin(be)*sabgs1*sin(ga)*a) */
         ut[0][2]= lAs * cosbes
@@ -132,7 +134,7 @@ class Crystal:
               mat[0][0]*mat[2][1]*mat[1][2]-mat[2][0]*mat[1][1]*mat[0][2]
         for i in (0,1,2):
             for j in (0,1,2):
-                imat[j][i]=dmat[j][i]/det
+                imat[j][i]=old_div(dmat[j][i],det)
 
         return Numeric.transpose(imat)
 

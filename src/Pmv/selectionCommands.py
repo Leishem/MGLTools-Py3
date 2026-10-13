@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -13,6 +14,7 @@
 #
 # $Id: selectionCommands.py,v 1.165.2.9 2011/10/05 17:24:57 sargis Exp $
 #
+from mglcompat.pydiv import old_div
 import itertools
 from ViewerFramework.VF import VFEvent
 
@@ -2483,7 +2485,7 @@ class MVSelectSphericalRegion(MVCommand):
                 else:
                     #use average of coords of current selection here
                     npts = len(nodes)
-                    self.centerList = [Numeric.array(Numeric.add.reduce(tcoords)/npts).tolist(),]
+                    self.centerList = [Numeric.array(old_div(Numeric.add.reduce(tcoords),npts)).tolist(),]
         elif val == 'xyz':
             pt = [float(self.xval.get()), float(self.yval.get()), float(self.zval.get())]
             self.cenCross.Set(vertices = (pt,))

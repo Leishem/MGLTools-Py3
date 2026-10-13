@@ -1,3 +1,4 @@
+from __future__ import division
 #
 # $Header: /opt/cvs/python/packages/share1.5/Pmv/beadedRibbonsCommands.py,v 1.17.2.3 2011/11/11 23:59:04 annao Exp $
 #
@@ -7,6 +8,7 @@
 ## KNOWN issues
 ## after restoring form a session, compute->beaded Ribbon does not restore chcek button for strands
 ##
+from mglcompat.pydiv import old_div
 import numpy
 import os, sys
 import tkinter, tkinter.messagebox
@@ -308,7 +310,7 @@ class BeadedRibbonsCommand(MVCommand):
 
             # set length of taper in number of points along the path
             if taperLength is None:
-                c2 = chords / 2
+                c2 = old_div(chords, 2)
             else:
                 c2 = taperLength
 
@@ -413,7 +415,7 @@ class BeadedRibbonsCommand(MVCommand):
                             x1, y1, z1 = p1[i]
                             x2, y2, z2 = p2[i]
                             x, y, z = p[i]
-                            q = (sca + ((1.0 - sca) * (i - c2) / length)) * width
+                            q = (sca + (old_div((1.0 - sca) * (i - c2), length))) * width
                             #print 'Sheet body', i, q
                             vx1, vy1, vz1 = (x1 - x) * q, (y1 - y) * q, (z1 - z) * q
                             vx2, vy2, vz2 = (x2 - x) * q, (y2 - y) * q, (z2 - z) * q
@@ -509,7 +511,7 @@ class BeadedRibbonsCommand(MVCommand):
                                 vnormals=poln, faces=polf,
                                 inheritCulling=False, culling='None')
                         # check face normal to make sure back faces are inside
-                        mid = start + (end - start) / 2
+                        mid = start + old_div((end - start), 2)
                         x1, y1, z1 = path[mid]
                         x2, y2, z2 = path[mid + 1]
                         dbase = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1)
@@ -721,14 +723,14 @@ class BeadedRibbonsCommand(MVCommand):
         # all other by nbchords.
         if residueindex == 0:
             fromPts = 0
-            toPts = chords / 2 + 2
+            toPts = old_div(chords, 2) + 2
 
         elif residueindex == lastResIndex:
-            fromPts = (residueindex - 1) * chords + chords / 2 + 1
+            fromPts = (residueindex - 1) * chords + old_div(chords, 2) + 1
             toPts = lengthPath - 1
 
         else:
-            fromPts = (residueindex - 1) * chords + chords / 2 + 1
+            fromPts = (residueindex - 1) * chords + old_div(chords, 2) + 1
             toPts = fromPts + chords + 1
 
         toPts = toPts#-self.gapEnd
@@ -839,7 +841,7 @@ class BeadedRibbonsCommand(MVCommand):
             
             self.taperLengthw = taperLengthw = ThumbWheel(frame1,
                 showLabel=1, width=70, height=16, type=int,
-                value=qualityw.get() / 2, callback=self.rebuild,
+                value=old_div(qualityw.get(), 2), callback=self.rebuild,
                 continuous=False, oneTurn=10, min=0,
                 wheelPad=2, labCfg={'text':'taperLength:', 'side':'left'})
             taperLengthw.pack(side='top', anchor='w', padx=5, pady=5)

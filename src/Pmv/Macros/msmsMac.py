@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 import itertools
 #
 # WARNING: a comment is required after the fucntion prototype
@@ -76,7 +78,7 @@ def avgPercentageOfExposedSurface():
             if hasattr(a, 'atom_ses_area'):
                 if hasattr(a, 'ses_area'):
                     if a.ses_area>0.0:
-                        a.percentSesArea = a.ses_area*100/a.atom_ses_area
+                        a.percentSesArea = old_div(a.ses_area*100,a.atom_ses_area)
                         sumSES = sumSES+a.percentSesArea
                         nbSES = nbSES + 1
                     else:
@@ -84,14 +86,14 @@ def avgPercentageOfExposedSurface():
             if hasattr(a, 'atom_sas_area'):
                 if hasattr(a, 'sas_area'):
                     if a.ses_area>0.0:
-                        a.percentSasArea = a.sas_area*100/a.atom_sas_area
+                        a.percentSasArea = old_div(a.sas_area*100,a.atom_sas_area)
                         sumSAS = sumSAS+a.percentSasArea
                         nbSAS = nbSAS + 1
                     else:
                         a.percentSasArea = 0.0
         if nbSES>0:
-            m.avgPercentSES = sumSES/nbSES
-            m.avgPercentSAS = sumSAS/nbSAS
+            m.avgPercentSES = old_div(sumSES,nbSES)
+            m.avgPercentSAS = old_div(sumSAS,nbSAS)
             print("average percentage of exposed surface for %s: SES %f SAS %f"%(m.name,m.avgPercentSES,m.avgPercentSAS))
 
 def cavityVolume():

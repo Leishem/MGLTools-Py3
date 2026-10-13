@@ -1,3 +1,4 @@
+from __future__ import division
 ########################################################################
 #                       AutoLigand                         
 #                Author:  Rodney M. Harris                 
@@ -9,6 +10,7 @@
 # $Header: /opt/cvs/python/packages/share1.5/AutoDockTools/AutoLigand.py,v 1.10 2009/10/01 17:12:27 sargis Exp $
 #
 # $Id: AutoLigand.py,v 1.10 2009/10/01 17:12:27 sargis Exp $
+from mglcompat.pydiv import old_div
 import sys; from mglcompat import pystring as string
 import getopt
 try:
@@ -218,7 +220,7 @@ print('total grid points = ', total_points)
 # GUI
 if movie:
         print("output progress file = data.pkl")
-        data = [int(nx/2), int(ny/2), int(nz/2),
+        data = [int(old_div(nx,2)), int(old_div(ny,2)), int(old_div(nz,2)),
                     centerx, centery, centerz,
                     spacing]
         pickle.dump(data, output, -1)
@@ -576,9 +578,9 @@ def setstate(worstpoint,flood):
                                         Q.append((d,apx,apy,apz-1))
         return contig
 # find the center node
-xcent = int(nx/2)
-ycent = int(ny/2)
-zcent = int(nz/2)
+xcent = int(old_div(nx,2))
+ycent = int(old_div(ny,2))
+zcent = int(old_div(nz,2))
 if start_point_flag == 0:
         print('done loading affinity maps, now track through all points and find (ten) best start points')
 if start_point_flag == 2:
@@ -672,7 +674,7 @@ if start_point_flag == 0:
                                         TotalVolume.append(point)
                 NumberVolumePoints = len(TotalVolume)
                 volangstrom = NumberVolumePoints * (spacing**3)
-                epv = TotalEnergy/volangstrom
+                epv = old_div(TotalEnergy,volangstrom)
                 fillpoint = [epv,startpoint[1],startpoint[2],startpoint[3],fill]
                 fullmesh.append(fillpoint)
         fullmesh.sort()
@@ -714,9 +716,9 @@ if start_point_flag == 1:
                         for i in range(-4,5):
                                 dist = sqrt((i**2)+(j**2)+(k**2))
                                 StartPointModList.append([dist,i,j,k])
-        xpt = xcent + int((x_input - centerx)/spacing)
-        ypt = ycent + int((y_input - centery)/spacing)
-        zpt = zcent + int((z_input - centerz)/spacing)
+        xpt = xcent + int(old_div((x_input - centerx),spacing))
+        ypt = ycent + int(old_div((y_input - centery),spacing))
+        zpt = zcent + int(old_div((z_input - centerz),spacing))
         for SPML in StartPointModList:
                 if xpt+SPML[1] >= nx-1 or xpt+SPML[1] <= 0:
                         continue
@@ -760,9 +762,9 @@ for meshpoint in mesh:
                                         StartPointModList.append([dist,i,j,k])
                 # generate the first startpoint from the input xyz
                 testmesh = []
-                xpt = xcent + int((x_input - centerx)/spacing)
-                ypt = ycent + int((y_input - centery)/spacing)
-                zpt = zcent + int((z_input - centerz)/spacing)
+                xpt = xcent + int(old_div((x_input - centerx),spacing))
+                ypt = ycent + int(old_div((y_input - centery),spacing))
+                zpt = zcent + int(old_div((z_input - centerz),spacing))
                 for SPML in StartPointModList:
                         if xpt+SPML[1] >= nx-1 or xpt+SPML[1] <= 0:
                                 continue
@@ -783,9 +785,9 @@ for meshpoint in mesh:
                 print('first user point loaded')
                 # generate the second startpoint from the input xyz
                 testmesh = []
-                xpt = xcent + int((x2_input - centerx)/spacing)
-                ypt = ycent + int((y2_input - centery)/spacing)
-                zpt = zcent + int((z2_input - centerz)/spacing)
+                xpt = xcent + int(old_div((x2_input - centerx),spacing))
+                ypt = ycent + int(old_div((y2_input - centery),spacing))
+                zpt = zcent + int(old_div((z2_input - centerz),spacing))
                 for SPML in StartPointModList:
                         if xpt+SPML[1] >= nx-1 or xpt+SPML[1] <= 0:
                                 continue
@@ -1002,7 +1004,7 @@ for meshpoint in mesh:
                                         TotalVolume.append(point)
                 NumberVolumePoints = len(TotalVolume)
                 volangstrom = NumberVolumePoints * (spacing**3)
-                ThisEPV = TotalEnergy/volangstrom
+                ThisEPV = old_div(TotalEnergy,volangstrom)
                 while bestpoint[0] < worstpoint[0]:
                         # GUI
                         if movie:
@@ -1110,7 +1112,7 @@ for meshpoint in mesh:
                                                         TotalVolume.append(point)
                                 NumberVolumePoints = len(TotalVolume)
                                 volangstrom = NumberVolumePoints * (spacing**3)
-                                epv = TotalEnergy/volangstrom
+                                epv = old_div(TotalEnergy,volangstrom)
                                 if epv > ThisEPV:
                                         EPVloopcount = EPVloopcount + 1
                                         bestpoint = nbor[EPVloopcount]
@@ -1371,7 +1373,7 @@ for meshpoint in mesh:
                                 TotalVolume.append(point)
         NumberVolumePoints = len(TotalVolume)
         volangstrom = NumberVolumePoints * (spacing**3)
-        epv = TotalEnergy/volangstrom
+        epv = old_div(TotalEnergy,volangstrom)
         OUTcount = OUTcount + 1
         OUTlist.append([epv,volangstrom,OUTcount])
 

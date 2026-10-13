@@ -43,7 +43,9 @@
     ----------------------------
 
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 __date__ = "28 February 2006"
 __author__ = "Jens Erik Nielsen, Todd Dolinsky"
 
@@ -1253,7 +1255,7 @@ class Routines:
 
         # Run PropKa
 
-        numatoms = int(txtlen) / linelen
+        numatoms = old_div(int(txtlen), linelen)
 
         runPKA(numatoms, txt, outname)
         
@@ -1430,14 +1432,14 @@ class Cells:
         """
         size = self.cellsize
         x = atom.get("x")
-        if x < 0: x = (int(x)-1)/size*size
-        else: x = int(x)/size*size
+        if x < 0: x = old_div((int(x)-1),size)*size
+        else: x = old_div(int(x),size)*size
         y = atom.get("y")
-        if y < 0: y = (int(y)-1)/size*size
-        else: y = int(y)/size*size
+        if y < 0: y = old_div((int(y)-1),size)*size
+        else: y = old_div(int(y),size)*size
         z = atom.get("z")
-        if z < 0: z = (int(z)-1)/size*size
-        else: z = int(z)/size*size
+        if z < 0: z = old_div((int(z)-1),size)*size
+        else: z = old_div(int(z),size)*size
         key = (x,y,z)
         try:
             self.cellmap[key].append(atom)

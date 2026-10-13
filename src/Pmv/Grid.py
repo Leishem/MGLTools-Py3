@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -22,6 +23,7 @@
 #
 ######################################################################
 
+from mglcompat.pydiv import old_div
 from mglcompat.pyclasses import CmpMixin, cmp
 import itertools
 from mglcompat.oldnumeric import *
@@ -401,7 +403,7 @@ class GridPointSet(Set):
     def index2coordinate(self):
         # coor = ( index - centerIndex) * spacing + center
         CI =array(self.GridObj.shape)
-        CI = (CI - 1)/2
+        CI = old_div((CI - 1),2)
         center = array(self.GridObj.CENTER)
         return (array(self.DataObj)-CI)*self.GridObj.SPACING+center
 
@@ -518,7 +520,7 @@ class Grid:
         cen = array(self.CENTER).astype('f')
         dim = array(self.NELEMENTS).astype('f')
         span = array(self.SPACING).astype('f')
-        orig = cen -((dim-1)/2)*span
+        orig = cen -(old_div((dim-1),2))*span
 
         #NB:
         #for x-perpendicular slice, 
@@ -603,7 +605,7 @@ class Grid:
         center = array(self.CENTER).astype('f')
         dim = array(self.shape).astype('f')
         span = array(self.SPACING).astype('f')
-        orig = center - ((dim-1)/2)*span
+        orig = center - (old_div((dim-1),2))*span
         #print 'span*step,)*3=', (span*step,)*3
         if stepthree:
             self.the_data = isocontour.newDatasetRegFloat3D(self.daSmall,
@@ -660,7 +662,7 @@ class Grid:
         base = self.base
         Index = []
         for i in range(length):
-            xyz = index / base[i]
+            xyz = old_div(index, base[i])
             index = index - xyz*base[i]
             Index.append(xyz)
         res.append(tuple(Index))
@@ -676,7 +678,7 @@ class Grid:
             index = int(index)
             Index = []
             for i in range(length):
-                xyz = index / base[i]
+                xyz = old_div(index, base[i])
                 index = index - xyz*base[i]
                 Index.append(xyz)
             Indices.append(tuple(Index))
@@ -873,7 +875,7 @@ class Grid:
         if value > MAX: return length
 
         # determine the order of value
-        middle = ( begin + end ) /2
+        middle = old_div(( begin + end ),2)
         while begin < end:
             pos = sortIndex[middle]
             if self.array.flat[pos] == value:
@@ -882,7 +884,7 @@ class Grid:
                 end = middle
             else:
                 begin = middle + 1
-            middle = ( begin + end ) /2
+            middle = old_div(( begin + end ),2)
         return  middle
 
     # get the value of the ith element 
@@ -899,7 +901,7 @@ class Grid:
     def distribution(self,intervals = 100,MIN=None,MAX = None,tick =0):
         if MIN == None: MIN = self.findMinValue()
         if MAX == None: MAX = self.findMaxValue()
-        step = ( MAX - MIN) / intervals
+        step = old_div(( MAX - MIN), intervals)
         varray1 = arange(intervals)* step + MIN
         varray2 = arange(1,intervals+1)* step + MIN
         result = list(map( self.findGridNumbers, varray1, varray2 ))
@@ -920,8 +922,8 @@ class Grid:
         if hasattr(self, 'box'): 
             return
         sh=array(self.shape)
-        sh2=(sh-1)/2
-        pt1=(sh-1)/2*self.SPACING
+        sh2=old_div((sh-1),2)
+        pt1=old_div((sh-1),2)*self.SPACING
         pt2=0.0-pt1
         if hasattr(self, 'GRID_DATA_FILE'):
             nstr=string.split(self.GRID_DATA_FILE,'.')[0]+'_box'
@@ -952,7 +954,7 @@ class Grid:
 
         if not self.geom:
             x, y, z = self.shape
-            (rx,ry,rz)=( (x-1)/2 , (y-1)/2, (z-1)/2 )
+            (rx,ry,rz)=( old_div((x-1),2) , old_div((y-1),2), old_div((z-1),2) )
             #self.corners = ((0,0,0), (x,0,0), (0, y, 0), (x,y,0),
                     #(0,0,z), (x,0,z), (0, y, z), (x,y,z))
             self.corners = ((-rx,ry,rz),(rx,ry,rz),(-rx,-ry,rz),
@@ -1042,15 +1044,15 @@ class AutoGrid(Grid):
     def index2coordinate(self, index):
         # coor = ( index - centerIndex) * spacing + center
         CI =array(self.shape)
-        CI = (CI - 1)/2
+        CI = old_div((CI - 1),2)
         center = array(self.CENTER)
         return tuple ((array(index)-CI)*self.SPACING+center)
 
     def coordinate2index( self, coordinate):
         c = array(self.CENTER)
         CI =array(self.shape)
-        CI = (CI - 1)/2
-        return tuple( map(int,(array(coordinate)-c)/self.SPACING+CI) )
+        CI = old_div((CI - 1),2)
+        return tuple( map(int,old_div((array(coordinate)-c),self.SPACING)+CI) )
         
     def display(self, viewer=None):
         Grid.display(self,viewer=viewer)
@@ -1058,7 +1060,7 @@ class AutoGrid(Grid):
         GL.glPushMatrix()
         GL.glLoadIdentity()
         GL.glScalef( float(scale), float(scale), float(scale))
-        center = array( self.CENTER ) / scale
+        center = old_div(array( self.CENTER ), scale)
         GL.glTranslatef(float(center[0]), float(center[1]), float(center[2]))
         GL.glMultMatrixf(self.geom.Matrix)
         self.geom.Matrix = GL.glGetDoublev(GL.GL_MODELVIEW_MATRIX)
@@ -1501,12 +1503,12 @@ class AutoGridSliceGui:
         axisIndex=self.axisList.index(axis)
         tcolors=['red','green','blue']
         minval = 0
-        maxval = (self.grd.NELEMENTS[axisIndex]-1)/(self.grd.step*1.0)
+        maxval = old_div((self.grd.NELEMENTS[axisIndex]-1),(self.grd.step*1.0))
         entry={'name':'%sScale'%key,
             'widgetType':tkinter.Scale,
             'wcfg':{'from':minval,'orient':'horizontal','sliderrelief':'sunken',
                 'sliderlength':'6','length':'2.5i',
-                'tickinterval':maxval/2,
+                'tickinterval':old_div(maxval,2),
                 'troughcolor':tcolors[axisIndex],
                 'to':maxval,'command':CallBackFunction(self.CallBack,extKey,axis)},
             'gridcfg':{'sticky':'we','row':-1,'column':1, 'columnspan':4} }

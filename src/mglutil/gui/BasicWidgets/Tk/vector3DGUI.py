@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #########################################################################
@@ -11,6 +12,7 @@
 #
 #########################################################################
 
+from mglcompat.pydiv import old_div
 import tkinter, mglcompat.oldnumeric as Numeric, math; from mglcompat import pystring as string
     
 from mglutil.math.rotax import rotax
@@ -65,7 +67,7 @@ class vectorGUI(tkinter.Frame, KeyboardModifierMonitor):
         self.lockPrecision = lockPrecision
         self.lockMode = lockMode
 
-        self.r = self.size/2
+        self.r = old_div(self.size,2)
         self.r2 = self.r*self.r
 
         self.drawShadowX = 0
@@ -150,7 +152,7 @@ class vectorGUI(tkinter.Frame, KeyboardModifierMonitor):
         # compute rotation angle
         a = self.lastPt3D
         b = (xc, yc, math.sqrt(z2))
-        ang = math.acos((a[0]*b[0]+a[1]*b[1]+a[2]*b[2])/self.r2)
+        ang = math.acos(old_div((a[0]*b[0]+a[1]*b[1]+a[2]*b[2]),self.r2))
         if self.mode=='XY':
             #compute rotation axis
             rotaxis = Numeric.array( (a[1]*b[2] - a[2]*b[1],
@@ -332,7 +334,7 @@ class vectorGUI(tkinter.Frame, KeyboardModifierMonitor):
         # compute normalized vector
         n = math.sqrt(valX*valX+valY*valY+valZ*valZ)
         if n == 0.0: v = [0.0, 0.0, 1.0]
-        else: v = [valX/n, valY/n, valZ/n]
+        else: v = [old_div(valX,n), old_div(valY,n), old_div(valZ,n)]
         self.vector = v
         self.setEntries()
         self.drawVector()
@@ -347,7 +349,7 @@ class vectorGUI(tkinter.Frame, KeyboardModifierMonitor):
         # compute normalized vector
         n = math.sqrt(valX*valX+valY*valY+valZ*valZ)
         if n == 0.0: v = [0.0, 0.0, 1.0]
-        else: v = [valX/n, valY/n, valZ/n]
+        else: v = [old_div(valX,n), old_div(valY,n), old_div(valZ,n)]
         self.vector = v
         self.setEntries()
         self.drawVector()
@@ -457,9 +459,9 @@ class vectorGUI(tkinter.Frame, KeyboardModifierMonitor):
 
         xm = self.xm = ym = self.ym = self.r
         self.canvas.create_oval(0, 0, size, size)
-        self.canvas.create_oval(xm-(xm/4), 0, xm+(xm/4), size,
+        self.canvas.create_oval(xm-(old_div(xm,4)), 0, xm+(old_div(xm,4)), size,
                                 tags='verticalCircle')
-        self.canvas.create_oval(0, ym-(ym/4), size, ym+(ym/4),
+        self.canvas.create_oval(0, ym-(old_div(ym,4)), size, ym+(old_div(ym,4)),
                                 tags='horizontalCircle')
 
         # apply viewing transformation to vector
@@ -509,7 +511,7 @@ class vectorGUI(tkinter.Frame, KeyboardModifierMonitor):
         # compute normalized vector
         n = math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2])
         if n == 0.0: v = [0.0, 0.0, 1.0]
-        else: v = [v[0]/n, v[1]/n, v[2]/n]
+        else: v = [old_div(v[0],n), old_div(v[1],n), old_div(v[2],n)]
         self.vector = v
         self.setEntries()
         self.drawVector()

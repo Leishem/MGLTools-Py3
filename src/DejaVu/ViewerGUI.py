@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -15,6 +16,7 @@
 # $Id: ViewerGUI.py,v 1.233.2.8 2012/10/31 22:26:54 mgltools Exp $
 #
  
+from mglcompat.pydiv import old_div
 import types, numpy
 from tkinter import *
 import tkinter
@@ -1664,7 +1666,7 @@ class ViewerGUI:
         import math
         from scenario.interpolators import matToQuaternion, quatToMatrix
 
-        dist = lHalfObject / math.tan(c.fovyNeutral/2*math.pi/180.0)
+        dist = old_div(lHalfObject, math.tan(old_div(c.fovyNeutral,2)*math.pi/180.0))
         lookFrom = c.nearDefault+dist+lHalfObject
         
         self.orients[name] = {
@@ -1763,7 +1765,7 @@ class ViewerGUI:
             buttons = frame.grid_slaves()
             buttons.reverse()
             for i, b in enumerate(buttons):
-                b.grid(row=1+ i/5, column= i%5, sticky='w')
+                b.grid(row=1+ old_div(i,5), column= i%5, sticky='w')
             self.propertyNoteBook.setnaturalsize(pageNames=('Bookmarks',))
             self.reprMem.pop(name)
 
@@ -1825,7 +1827,7 @@ class ViewerGUI:
         self.viewsBalloon.bind(b, name)
         b.name = name
         b.configure(command = CallBackFunction( self.restoreRepr, name, b))
-        b.grid(row=1+(len(self.reprMem)-1)/5, column=(len(self.reprMem)-1)%5, sticky='w')
+        b.grid(row=1+old_div((len(self.reprMem)-1),5), column=(len(self.reprMem)-1)%5, sticky='w')
         self.propertyNoteBook.setnaturalsize(pageNames=('Bookmarks',))
         self.sframe.pack()
         b.bind('<Button-3>', CallBackFunction( self.showReprMenu_cb, name))
@@ -2666,8 +2668,8 @@ class ViewerGUI:
             elif propname == 'scissor':
                 if propval:
                     c = self.viewer.currentCamera
-                    w = c.width/4
-                    h = c.height/4
+                    w = old_div(c.width,4)
+                    h = old_div(c.height,4)
                     obj.Set( scissor = propval,
                              scissorX = w, scissorY = h,
                              scissorW = 2*w,
@@ -3128,13 +3130,13 @@ class ViewerGUI:
             for g in obj.AllObjects():
                 ve = g.getVertices()
                 if len(ve):
-                    verts += numpy.sum(ve, 0)/len(ve)
+                    verts += old_div(numpy.sum(ve, 0),len(ve))
                     i += 1
-            center = verts/i
+            center = old_div(verts,i)
         else:
             ve = obj.getVertices()
             if len(ve):
-                center = numpy.sum(ve, 0)/len(ve)
+                center = old_div(numpy.sum(ve, 0),len(ve))
 
         # center clipping plane
         if center is not None:

@@ -104,7 +104,9 @@ This Module facilitates producing a docking parameter file for AutoDock. The ste
 (A checkbutton, "DONE", allows the user to withdraw the autoTools menuBar)
     
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 import os, mglcompat.oldnumeric as Numeric
 import Pmw
 
@@ -1055,7 +1057,7 @@ def setDpoFields(ligand, dpo):
             k_list = key_list[:ind]
             atom_ct = k_list.count("ATOM") + k_list.count("HETATM")
             ats = ligand.allAtoms[:atom_ct]
-            center = list(Numeric.sum(ats.coords)/(len(ats)*1.0))
+            center = list(old_div(Numeric.sum(ats.coords),(len(ats)*1.0)))
             for i in range(3):
                 center[i] = round(center[i], 4)
             ligand.center = center

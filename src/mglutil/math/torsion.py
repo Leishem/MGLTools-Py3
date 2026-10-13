@@ -1,7 +1,9 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #taken from Pmv/measureCommands.py
 
+from mglcompat.pydiv import old_div
 def torsion( x1, x2, x3, x4):
     """
     Compute the torsion angle between x1, x2, x3, x4.
@@ -37,7 +39,7 @@ def torsion( x1, x2, x3, x4):
     if dd<0.001 or de<0.001:
         raise ValueError ( 'Torsion angle undefined, degenerate points')
 
-    vv = Numeric.dot(c, d) / (dd*de);
+    vv = old_div(Numeric.dot(c, d), (dd*de));
     if vv<1.0: tang=vv
     else: tang= 1.0
     if tang<-1.0: tang=-1.0

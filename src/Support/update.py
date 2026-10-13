@@ -1,7 +1,9 @@
+from __future__ import division
 # This modules handels updates for MGLTools
 # Author: Sargis Dallakyan (sargis at scripps.edu)
 # $Header: /opt/cvs/Support/update.py,v 1.37.4.1 2011/05/24 22:57:20 annao Exp $
 # $Id: update.py,v 1.37.4.1 2011/05/24 22:57:20 annao Exp $
+from mglcompat.pydiv import old_div
 import os, sys, platform, urllib.request, urllib.parse, urllib.error, tarfile, unzip, tkinter, Pmw
 from tkinter.filedialog import *
 from tkinter.messagebox import *
@@ -225,7 +227,7 @@ class Update:
         url_file =  urllib.request.FancyURLopener().open(update_url)
         if self.master:
             upload_size = url_file.headers['content-length']
-            per_size = int(upload_size)/99
+            per_size = old_div(int(upload_size),99)
             self.progressBar.configure(labeltext="Progress ...")
             self.master.update()
             for i in range(101):

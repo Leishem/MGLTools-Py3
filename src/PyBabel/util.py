@@ -14,6 +14,7 @@ This file defines constants and a few functions used throughout the package
 reimplmentation of Babel1.6 in Python by Michel Sanner April 2000
 Original code by W. Patrick Walters and Matthew T. Stahl 
 """
+from __future__ import division
 
 #
 # $Header: /opt/cvs/python/packages/share1.5/PyBabel/util.py,v 1.3 2010/10/29 17:05:26 sargis Exp $
@@ -22,6 +23,7 @@ Original code by W. Patrick Walters and Matthew T. Stahl
 #
 
 
+from mglcompat.pydiv import old_div
 import math
 
 RAD_TO_DEG = 180.0/math.pi
@@ -46,9 +48,9 @@ def bond_angle(a, b, c):
     if dist == 0: # SD 2010 - http://mgl.scripps.edu/forum/viewtopic.php?f=11&t=245&p=1882
         raise ZeroDivisionError("Input used:", a, b, c)
 
-    cos_theta = ( (a[0] - b[0]) * (c[0] - b[0]) +
+    cos_theta = old_div(( (a[0] - b[0]) * (c[0] - b[0]) +
                   (a[1] - b[1]) * (c[1] - b[1]) +
-                  (a[2] - b[2]) * (c[2] - b[2]) ) / dist
+                  (a[2] - b[2]) * (c[2] - b[2]) ), dist)
     if cos_theta  + 1.0 < 0.0001: angle = 180.0
     else: angle = (math.acos(cos_theta)) * RAD_TO_DEG
     return angle
@@ -108,7 +110,7 @@ def vec3(a, b, norm=1.0):
     dx = b[0]-a[0]
     dy = b[1]-a[1]
     dz = b[2]-a[2]
-    l = norm / math.sqrt( dx*dx + dy*dy +dz*dz)
+    l = old_div(norm, math.sqrt( dx*dx + dy*dy +dz*dz))
     return [dx*l, dy*l, dz*l] 
 
 

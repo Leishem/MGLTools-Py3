@@ -1,3 +1,5 @@
+from __future__ import division
+from mglcompat.pydiv import old_div
 from time import time
 from mglutil.math.rotax import rotax, rotVectToVect
 import numpy
@@ -32,7 +34,7 @@ def lengthOfProjectedVects(v1, v2):
     x1,y1,z1 = v1
     x2,y2,z2 = v2
     nv2 = sqrt(x2*x2 + y2*y2 + z2*z2)
-    s = ( (x1*x2) + (y1*y2) + (z1*z2) ) / nv2
+    s = old_div(( (x1*x2) + (y1*y2) + (z1*z2) ), nv2)
     vpx, vpy, vpz = s*x2, s*y2,s*z2
     return sqrt(( vpx*vpx + vpy*vpy + vpz*vpz))
 
@@ -101,8 +103,8 @@ def angleBetweenVecsDeg(v1, v2):
     x2,y2,z2 = v2
     n1 = vlen(v1)
     n2 = vlen(v2)
-    arad = acos( (( x1*x2 ) + (y1*y2) + (z1*z2)) / (n1*n2) )
-    return 180 * arad /pi
+    arad = acos( old_div((( x1*x2 ) + (y1*y2) + (z1*z2)), (n1*n2)) )
+    return old_div(180 * arad,pi)
 
 def ccw(poly):
     n = len(poly)
@@ -212,11 +214,11 @@ def capMesh(vertices, edges, faces, faceEdges, pp, pno, minDist=0.01):
     lpno = vlen(pno)
     nlco1 = numpy.sqrt( numpy.sum( nv1*nv1, 1 ) )
     denom = nlco1*lpno # what id denom is 0. i.e proj=0
-    arad1 = numpy.arccos( numpy.sum( nco1*pno, 1) / denom )# * 180 / pi
+    arad1 = numpy.arccos( old_div(numpy.sum( nco1*pno, 1), denom) )# * 180 / pi
 
     nlco2 = numpy.sqrt( numpy.sum( nv2*nv2, 1 ) )
     denom = nlco2*lpno # what id denom is 0. i.e proj=0
-    arad2 = numpy.arccos( numpy.sum( nco2*pno, 1) / denom )# * 180 / pi
+    arad2 = numpy.arccos( old_div(numpy.sum( nco2*pno, 1), denom) )# * 180 / pi
 
     verts = []
     contourVerts = {}

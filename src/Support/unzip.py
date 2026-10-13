@@ -18,7 +18,9 @@
 
     By Doug Tolton
 """
+from __future__ import division
 
+from mglcompat.pydiv import old_div
 import sys
 import zipfile
 import os
@@ -41,15 +43,15 @@ class unzip:
 
         num_files = len(zf.namelist())
         percent = self.percent
-        divisions = 100 / percent
-        perc = int(num_files / divisions)
+        divisions = old_div(100, percent)
+        perc = int(old_div(num_files, divisions))
 
         # extract files to directoryectory structure
         for i, name in enumerate(zf.namelist()):
             if self.verbose == True:
                 print("Extracting %s" % name)
             elif perc > 0 and (i % perc) == 0 and i > 0:
-                complete = int (i / perc) * percent
+                complete = int (old_div(i, perc)) * percent
                 print("%s%% complete" % complete)
 
             if not name.endswith('/'):

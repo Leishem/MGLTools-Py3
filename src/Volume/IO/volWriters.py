@@ -1,5 +1,7 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
+from mglcompat.pydiv import old_div
 from struct import pack
 import mglcompat.oldnumeric as Numeric
 from Volume.Grid3D import Grid3DUC, Grid3DSI, Grid3DF
@@ -25,7 +27,7 @@ class WriteCCP4(VolumeWriterBase):
         
         nstart = [0,0,0]
         for i in (0,1,2):
-            nstart[i] = round(grid3D.origin[i] / grid3D.stepSize[i])
+            nstart[i] = round(old_div(grid3D.origin[i], grid3D.stepSize[i]))
 
         if 'nx' in header:
             ncstart = round(header['nx']*grid3D.origin[2])
@@ -135,9 +137,9 @@ class WriteRawiv:
             return
 
         if not stepSize:
-            stepSizeX = (maxX - minX)/(nx-1.)
-            stepSizeY = (maxY - minY)/(ny-1.)
-            stepSizeZ = (maxZ - minZ)/(nz-1.)
+            stepSizeX = old_div((maxX - minX),(nx-1.))
+            stepSizeY = old_div((maxY - minY),(ny-1.))
+            stepSizeZ = old_div((maxZ - minZ),(nz-1.))
         else:
             try:
                 l = len(stepSize)

@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 ########################################################################
@@ -22,6 +23,7 @@
 # $Id: Viewer.py,v 1.354.2.12 2012/11/09 22:53:51 annao Exp $
 #
 
+from mglcompat.pydiv import old_div
 import warnings
 import _thread, threading
 import os
@@ -1138,7 +1140,7 @@ Viewer's"""
                 lHalfObject = 1.
             c = self.currentCamera
             c.Set(fov=c.fovyNeutral)
-            lNewDist = lHalfObject / math.tan(c.fovy/2*math.pi/180.0)
+            lNewDist = old_div(lHalfObject, math.tan(old_div(c.fovy,2)*math.pi/180.0))
             c.lookFrom = Numeric.array( ( 0., 0., c.nearDefault+lNewDist+lHalfObject ) )
             c.lookAt = Numeric.array((0.,0.,0.))
             c.direction = c.lookAt - c.lookFrom
@@ -1223,12 +1225,12 @@ in "redirect transform to root" mode, root is recentered on the selected geometr
         cam = self.currentCamera
         dtime = time() - self.focusTimeStart
         steps = self.steps
-        i = (dtime/self.focusDuration)*steps
+        i = (old_div(dtime,self.focusDuration))*steps
         cam.Set(fov=cam.fovy + self.diff_fovy/float(steps))
         self.rootObject.ConcatTranslation( self.diffVect[:3]/float(steps))
-        lNewDist = self.lHalfObject / math.tan(cam.fovy/2*math.pi/180.0)
+        lNewDist = old_div(self.lHalfObject, math.tan(old_div(cam.fovy,2)*math.pi/180.0))
         newDist = cam.nearDefault+lNewDist+self.lHalfObject
-        dist = self.oldLookFrom*(steps-i-1.)/steps + newDist*(i+1.)/steps
+        dist = old_div(self.oldLookFrom*(steps-i-1.),steps) + old_div(newDist*(i+1.),steps)
         cam.lookFrom = Numeric.array( ( 0., 0., dist ) )            
         cam.direction = cam.lookAt - cam.lookFrom 
         self.OneRedraw()
@@ -1253,7 +1255,7 @@ in "redirect transform to root" mode, root is recentered on the selected geometr
         self.oldLookFrom = cam.lookFrom[2]
         if self.lastFrameTime == 0:
             self.OneRedraw()
-        self.steps = int(2/self.lastFrameTime)
+        self.steps = int(old_div(2,self.lastFrameTime))
 
         self.diff_fovy =  cam.fovyNeutral - cam.fovy
         cam.lookAt = Numeric.array((0.,0.,0.))
@@ -1315,7 +1317,7 @@ in "redirect transform to root" mode, root is recentered on the selected geometr
         # find out how many steps we want to use
         if self.lastFrameTime == 0:
             self.OneRedraw()      
-        steps = int(2/self.lastFrameTime)
+        steps = int(old_div(2,self.lastFrameTime))
         steps = 1
         
         # compute delta fovy to go to neutral
@@ -1348,9 +1350,9 @@ in "redirect transform to root" mode, root is recentered on the selected geometr
             #print i, cam.near, cam.far, delta
             cam.Set(fov=cam.fovy + diff_fovy/float(steps))
             self.rootObject.ConcatTranslation( delta )
-            lNewDist = lHalfObject / math.tan( cam.fovy*.5*toRad )
+            lNewDist = old_div(lHalfObject, math.tan( cam.fovy*.5*toRad ))
             newDist = cam.nearDefault+lNewDist+lHalfObject
-            dist = oldLookFrom*(steps-i-1.)/steps + newDist*(i+1.)/steps
+            dist = old_div(oldLookFrom*(steps-i-1.),steps) + old_div(newDist*(i+1.),steps)
             #print dist, newDist*(i+1.)/steps, oldLookFrom*(steps-i-1.)/steps
             cam.lookFrom = Numeric.array( ( 0., 0., dist ) )
             cam.direction = cam.lookAt - cam.lookFrom 
@@ -1961,7 +1963,7 @@ An AssertionError will be raised if ...
                 self.tileRenderFinalHeight = h
 
                 if c.stereoMode.startswith('SIDE_BY_SIDE'):
-                    self.tileRenderFinalWidth = w/2
+                    self.tileRenderFinalWidth = old_div(w,2)
                     numOfPasses = 2
                     self.tileRenderBuffer = [None, None]
                     im = [None, None]
@@ -2425,7 +2427,7 @@ Comon2d3dObject')
 #        self.Redraw()
 
         c = self.currentCamera
-        lFovyFactor = c.fovy / c.fovyNeutral
+        lFovyFactor = old_div(c.fovy, c.fovyNeutral)
         if lFovyFactor > 1:
             lFovyFactor = math.pow(lFovyFactor, 1.5)
         lDistanceFactor = (c.far - c.near)  * .001
@@ -2443,7 +2445,7 @@ Comon2d3dObject')
         """Add the translation trans to the current object
 """
         c = self.currentCamera
-        lFovyFactor = c.fovy / c.fovyNeutral
+        lFovyFactor = old_div(c.fovy, c.fovyNeutral)
         if lFovyFactor > 1:
             lFovyFactor = math.pow(lFovyFactor, 1.5)
         lDistanceFactor = (c.far - c.near)  * .001
@@ -2463,7 +2465,7 @@ Comon2d3dObject')
 """
         if isinstance(self.currentObject, Transformable):
             c = self.currentCamera
-            lFovyFactor = c.fovy / c.fovyNeutral
+            lFovyFactor = old_div(c.fovy, c.fovyNeutral)
             if lFovyFactor > 1:
                 lFovyFactor = math.pow(lFovyFactor, 1.5)
             lDistanceFactor = (c.far - c.near)  * .001
@@ -2482,7 +2484,7 @@ Comon2d3dObject')
 """
         if isinstance(self.currentObject, Transformable):
             c = self.currentCamera
-            lFovyFactor = c.fovy / c.fovyNeutral
+            lFovyFactor = old_div(c.fovy, c.fovyNeutral)
             if lFovyFactor > 1:
                 lFovyFactor = math.pow(lFovyFactor, 1.5)
             lDistanceFactor = (c.far - c.near)  * .001

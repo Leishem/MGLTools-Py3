@@ -1,3 +1,4 @@
+from __future__ import division
 #
 # $Header: /opt/cvs/python/packages/share1.5/MolKit/trajParser.py,v 1.2 2006/10/17 18:22:13 annao Exp $
 #
@@ -6,6 +7,7 @@
 
 ## This module implements classes for parsing GROMACS trajectory files
 
+from mglcompat.pydiv import old_div
 from struct import calcsize
 from xdrlib import Unpacker
 DIM = 3
@@ -46,13 +48,13 @@ class trrParser:
 
         nflsize=0;
         if h["box_size"]:
-            nflsize = h["box_size"]/(DIM*DIM);
+            nflsize = old_div(h["box_size"],(DIM*DIM));
         elif h["x_size"]:
-            nflsize = h["x_size"]/(h["natoms"]*DIM);
+            nflsize = old_div(h["x_size"],(h["natoms"]*DIM));
         elif h["v_size"]:
-            nflsize = h["v_size"]/(h["natoms"]*DIM);
+            nflsize = old_div(h["v_size"],(h["natoms"]*DIM));
         elif h["f_size"]:
-            nflsize = h["f_size"]/(h["natoms"]*DIM);
+            nflsize = old_div(h["f_size"],(h["natoms"]*DIM));
         else: 
             print("Can not determine precision of trr file")
   

@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -13,6 +14,7 @@
 # $Id: extruder.py,v 1.38.2.2 2011/12/06 23:00:45 autin Exp $
 #
 
+from mglcompat.pydiv import old_div
 import numpy
 import mglcompat.oldnumeric as Numeric
 import math
@@ -66,7 +68,7 @@ class Sheet2D:
         beg = beg * Numeric.reshape( self.smooth[:,first], (self.nrib,1,4) )
         # compute vectors from first to second point for each rib
         # and divide by number of intervals
-        vec =  (self.smooth[:,last] -  self.smooth[:,first]) / nPts
+        vec =  old_div((self.smooth[:,last] -  self.smooth[:,first]), nPts)
 
         # resize vector
         vec1 = Numeric.resize( vec[0], (nPts, 4) )
@@ -106,7 +108,7 @@ class Sheet2D:
 
     def computeNormals(self):
         normals = self.smooth[1,:,:3] - self.smooth[0,:,:3]
-        normals = normals/self.width
+        normals = old_div(normals,self.width)
         normals = normals.astype('f')
         return normals
 
@@ -124,7 +126,7 @@ def getAverage(elements):
     average = Numeric.array([0,0,0])
     for el in elements:
         average = average + Numeric.array(el)
-    average = average/len(elements)
+    average = old_div(average,len(elements))
     average = list(average)
     return average
 
@@ -290,7 +292,7 @@ class ExtrudeObject:
                                             # duplicate to build the caps.
         for n in range(1, lenarrow+1):
             d[n] = d[n-1] + self.dist(path[-n], path[-n-1])
-        d = d*widtharrow/d[lenarrow] - abs(self.shape.contpts[0][0])
+        d = old_div(d*widtharrow,d[lenarrow]) - abs(self.shape.contpts[0][0])
 
         # We apply the translation to the vertices that belongs to the arrow
         # and reorganize them in the array of points so the array contains
@@ -303,9 +305,9 @@ class ExtrudeObject:
             v = (uvector*d[s]).astype('f')
             
             for j in range(ls):
-                if j < (ls)/2 or j >= ls:
+                if j < old_div((ls),2) or j >= ls:
                     pts[(lp-s+2)*ls+j] = pts[(lp-s-1)*ls+j]-v
-                elif j >= (ls)/2 and j < ls:
+                elif j >= old_div((ls),2) and j < ls:
                      pts[(lp-s+2)*ls+j] = pts[(lp-s-1)*ls+j]+v
 
         # build bloc2
@@ -351,8 +353,8 @@ class ExtrudeObject:
                 #2- BLOC2 : Only two faces to close the back of the arrow.
                 i = lp - self.larrow
                 faces.append((i*ls, i*ls+2, i*ls+ls+2, i*ls+ls))
-                faces.append((i*ls+ls/2, i*ls+ls/2+2,
-                              i*ls+ls/2+ls+2, i*ls+ls+ls/2))
+                faces.append((i*ls+old_div(ls,2), i*ls+old_div(ls,2)+2,
+                              i*ls+old_div(ls,2)+ls+2, i*ls+ls+old_div(ls,2)))
 
                 #3- BLOC3: cf drawing above.
                 faces = self.buildFaces(faces=faces,
@@ -421,8 +423,8 @@ class ExtrudeObject:
                 #VERIFY!!!!
                 i = lp - self.larrow
                 faces.append((i*ls, i*ls+1, i*ls+ls+1, i*ls+ls))
-                faces.append((i*ls+ls/2, i*ls+ls/2+1,
-                              i*ls+ls/2+ls+1, i*ls+ls+ls/2))
+                faces.append((i*ls+old_div(ls,2), i*ls+old_div(ls,2)+1,
+                              i*ls+old_div(ls,2)+ls+1, i*ls+ls+old_div(ls,2)))
 
                 #3- BLOC3: cf drawing above.
                 faces = self.buildFaces(faces=faces,
@@ -527,7 +529,7 @@ class ExtrudeObject:
         lp = len(path)
         la = self.larrow
         lnew = lp-la
-        if self.shape.vertDup==1: numf = (ls-1)/2
+        if self.shape.vertDup==1: numf = old_div((ls-1),2)
         else: numf = ls-1
         arrfaces = faces[-(la+3)*numf:]
         # glQuadNormals need all the vertices of the secondarystructure but
@@ -553,7 +555,7 @@ class ExtrudeObject:
         """
 
         nfaces = self.shape.lenShape
-        if self.shape.vertDup==1: nfaces = nfaces/2
+        if self.shape.vertDup==1: nfaces = old_div(nfaces,2)
         properties = Numeric.array(properties).astype('f')
         self.properties = getattr(self, propName)
         for r in range(len(resIndices)):
@@ -568,7 +570,7 @@ class ExtrudeObject:
         one color. """
 
         nfaces = self.shape.lenShape
-        if self.shape.vertDup==1: nfaces = nfaces/2
+        if self.shape.vertDup==1: nfaces = old_div(nfaces,2)
 
         assert len(properties)==nfaces
         c = 0
@@ -741,16 +743,16 @@ class ExtrudeSSElt(ExtrudeObject):
         """ return the index of the residue to which a point in the path
         belongs."""
         
-        if respts < (self.chords/2 + 1 ):
+        if respts < (old_div(self.chords,2) + 1 ):
             # first residue
             resIndex = 0
         elif respts > ((self.lengthPath-1)-\
-                        (self.chords + self.chords/2)):
+                        (self.chords + old_div(self.chords,2))):
             # last residue
             resIndex = self.lastResIndex
         else:
             # all the other nbchords
-            resIndex = (respts-(2+ self.chords/2))/self.chords + 1
+            resIndex = old_div((respts-(2+ old_div(self.chords,2))),self.chords) + 1
         
 
         return resIndex
@@ -765,14 +767,14 @@ class ExtrudeSSElt(ExtrudeObject):
         # all other by nbchords.
         if residueindex == 0:
             fromPts = 0
-            toPts = self.chords/2 + 2
+            toPts = old_div(self.chords,2) + 2
 
         elif residueindex == self.lastResIndex:
-            fromPts = (residueindex-1) * self.chords + self.chords/2+1
+            fromPts = (residueindex-1) * self.chords + old_div(self.chords,2)+1
             toPts = self.lengthPath-1
 
         else:
-            fromPts = (residueindex-1) * self.chords + self.chords/2+1
+            fromPts = (residueindex-1) * self.chords + old_div(self.chords,2)+1
             toPts = fromPts + self.chords +1
 
         toPts = toPts-self.gapEnd
@@ -791,7 +793,7 @@ class ExtrudeSSElt(ExtrudeObject):
             #print ss, 'REMOVING last RES'
         ls = self.shape.lenShape
         nfaces = ls
-        if self.shape.vertDup==1: nfaces = (ls)/2
+        if self.shape.vertDup==1: nfaces = old_div((ls),2)
         residueFaces = []
         resSet.sort()
         
@@ -835,7 +837,7 @@ class ExtrudeSSElt(ExtrudeObject):
 
         ls = self.shape.lenShape
         nfaces = ls
-        if self.shape.vertDup==1: nfaces = (ls)/2
+        if self.shape.vertDup==1: nfaces = old_div((ls),2)
         # res are the residues used to build the sheet 2D. 
         prop = []
         resProperty = getattr(self, propName).tolist()
@@ -878,7 +880,7 @@ class ExtrudeSSElt(ExtrudeObject):
         assert len(propVect)==len(ResSet)
         ls = self.shape.lenShape
         nfaces = ls
-        if self.shape.vertDup==1: nfaces = (ls)/2
+        if self.shape.vertDup==1: nfaces = old_div((ls),2)
         firstLastIndices = []
         properties = []
         i=0
@@ -925,7 +927,7 @@ class ExtrudeSSElt(ExtrudeObject):
         ls = self.shape.lenShape
         # find the section number of the path3D to which the picked
         # vertex belongs to
-        pickedEstimate = vertex/ls
+        pickedEstimate = old_div(vertex,ls)
         # number of section that have been added to the path3D.
         extraSection = 0
         # len(self.paths3D)-1 because there is a section shared by
@@ -946,11 +948,11 @@ class ExtrudeSSElt(ExtrudeObject):
                     # extraSection added for the arrow to see if the vertex
                     # is in caps. The cap extraSection have been added at the
                     # end.
-                    pickedEstimate = pointsLeft/(ls+1)
+                    pickedEstimate = old_div(pointsLeft,(ls+1))
                     pickedSection = pickedEstimate
             else:
                 pointsLeft = vertex-(len(self.path3D)+extraSection)*ls
-                pickedEstimate = pointsLeft/(ls+1)
+                pickedEstimate = old_div(pointsLeft,(ls+1))
                 pickedSection = pickedEstimate
 
             if pickedEstimate==1:
@@ -971,12 +973,12 @@ class ExtrudeSSElt(ExtrudeObject):
         resIndex = index - self.indexStart
 
         # remove first section because only represented by self.chords/2 + 1
-        p = ((self.lengthPath-1)-(self.chords + self.chords/2))
-        if pickedSection < self.chords/2+2:
+        p = ((self.lengthPath-1)-(self.chords + old_div(self.chords,2)))
+        if pickedSection < old_div(self.chords,2)+2:
             resIndex = 0
 
         elif pickedSection >((self.lengthPath-1)-\
-                        (self.chords + self.chords/2)):
+                        (self.chords + old_div(self.chords,2))):
             resIndex = self.lastResIndex
 
         if resIndex==-1: resIndex=0

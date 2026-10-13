@@ -1,3 +1,4 @@
+from __future__ import division
 ## Automatically adapted for mglcompat.oldnumeric Jul 23, 2007 by 
 
 #############################################################################
@@ -13,6 +14,7 @@
 #
 # $Id: Displayable.py,v 1.57 2010/11/24 19:24:00 sanner Exp $
 #
+from mglcompat.pydiv import old_div
 from math import pi, exp, sin
 from time import time
 
@@ -279,8 +281,8 @@ class Displayable:
     ## version of flashing using after(ms, func)
     def _fadeOutT(self):
         dtime = time() - self.flashStartTime
-        fraction = min(1.0, dtime/self.flashOutDuration)
-        val =  exp(1.)/exp(1.+2*fraction)
+        fraction = min(1.0, old_div(dtime,self.flashOutDuration))
+        val =  old_div(exp(1.),exp(1.+2*fraction))
         print(fraction, val)
         self.Set(opacity=val)
         self._setTransparent('implicit')
@@ -302,7 +304,7 @@ class Displayable:
 
     def _fadeInT(self):
         dtime = time() - self.flashStartTime
-        fraction = min(1.0, dtime/self.flashInDuration)
+        fraction = min(1.0, old_div(dtime,self.flashInDuration))
         val = fraction*pi*.5
         vi = self.viewer
         #print fraction, val
@@ -326,20 +328,20 @@ class Displayable:
 
     def _flashT(self):
         dtime = time() - self.flashStartTime
-        fraction = dtime/self.flashInDuration
+        fraction = old_div(dtime,self.flashInDuration)
         if fraction < 1.0: # we are in fade in mode
             val = fraction*pi*.5
             
         else: # We are in fade out mode
             dtime -= self.flashInDuration
-            fraction = dtime/self.flashSolidDuration
+            fraction = old_div(dtime,self.flashSolidDuration)
             if fraction < 1.0: # we are in solid mode
                 val = 1.0
             else: # we are in fade out mode
                 
                dtime -= self.flashSolidDuration
-               fraction = min(1., dtime/self.flashOutDuration)
-               val =  exp(1.)/exp(1.+2*fraction)
+               fraction = min(1., old_div(dtime,self.flashOutDuration))
+               val =  old_div(exp(1.),exp(1.+2*fraction))
 
         vi = self.viewer
         #print fraction, val
@@ -371,7 +373,7 @@ class Displayable:
     def fadeOut(self, nbf=25):
         vi = self.viewer
         for i in numpy.arange(1., 3., 2./nbf):
-            val = exp(1.)/exp(i)
+            val = old_div(exp(1.),exp(i))
             self.Set(opacity=val)
             self._setTransparent('implicit')
             vi.OneRedraw()
@@ -384,7 +386,7 @@ class Displayable:
         self._setTransparent('implicit')
         self.viewer.OneRedraw()
         vi = self.viewer
-        for i in numpy.arange(0, pi*.5, (pi*.5)/nbf):
+        for i in numpy.arange(0, pi*.5, old_div((pi*.5),nbf)):
             val = sin(i)
             self.Set(opacity=val)
             self._setTransparent('implicit')
