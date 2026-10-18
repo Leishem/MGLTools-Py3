@@ -211,7 +211,7 @@ class AutoDockMoleculePreparation:
         #MODE SWITCH 2: adding charges????  ||NOT IN USE||
         if debug: print("self.chargeType=", self.chargeType)
         if self.chargeType is None:
-            len_zero_charges = len([x for x in mol.chains.residues.atoms if x.charge==0])
+            len_zero_charges = len([x for x in mol.chains.residues.atoms if hasattr(x, 'charge') and x.charge==0])
             if len_zero_charges==len(mol.allAtoms):
                 print("WARNING: all atoms in '%s' had zero charges! Adding gasteiger charges..."%mol.name)
                 chargeCalculator = self.chargeCalculator = GasteigerChargeCalculator()

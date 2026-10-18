@@ -1781,7 +1781,9 @@ class Dpf4LigandChooser(MVCommand):
             if len(aromaticCs):
                 self.vf.color(aromaticCs,((0.,1.,0.),),['lines'],topCommand=0, redraw=1)
             if ask:
-                self.vf.ADdpf4_initLigand.guiCallback()
+                init_cmd = getattr(self.vf, 'ADdpf4_initLigand', getattr(self.vf, 'AD41dpf_initLigand', None))
+                if init_cmd:
+                    init_cmd.guiCallback()
             else:
                 d = {}
                 if hasattr(lig, 'outputfile'):
@@ -1795,7 +1797,7 @@ class Dpf4LigandChooser(MVCommand):
                         w[a.autodock_element] = 1
                     ligtypes = list(w.keys())
                     ligtypes.sort()
-                    ligtypestr = ligtypes[0]
+                    lig_type_str = ligtypes[0]
                     for t in ligtypes[1:]:
                         lig_type_str = lig_type_str + " " + t
                     d['ligand_types'] = lig_type_str
@@ -1852,7 +1854,9 @@ class Dpf4LigPDBQReader(MVCommand):
             aromaticCs = AtomSet([x for x in ligand.allAtoms if x.autodock_element=='A'])
             if len(aromaticCs):
                 self.vf.color(aromaticCs,((0.,1.,0.),),['lines'],topCommand=0, redraw=1)
-            self.vf.ADdpf4_initLigand.guiCallback()
+            init_cmd = getattr(self.vf, 'ADdpf4_initLigand', getattr(self.vf, 'AD41dpf_initLigand', None))
+            if init_cmd:
+                init_cmd.guiCallback()
 
         
 Dpf4LigPDBQReaderGUI = CommandGUI()

@@ -166,45 +166,49 @@ class ADKill(Kill):
 
 
     def do_update(self, pList=['autodock4'], hosts=None):
-        if not hosts: return
-        self.hosts=hosts
+        if not hosts: return []
+        self.hosts = hosts
         self.pList = pList
         format = self.format_list[self.format.get()][1]
         view = self.view_list[self.view.get()][1]
-        self.frame.list.delete(0,tkinter.AtEnd())
+        new_lines = []
+        finished_items = []
         for item in self.psList: 
             if hasattr(item, 'poll'):
-                if item.poll()==None:
+                if item.poll() is None:
                     # still computing
-                    cmdStr =  item.command
-                    #'./autodock4  -p ./ind_long.dpf -l ./ind_long.dlg&'
-                    prog = cmdStr.split()[0].split(os.pathsep)[-1]  #@@ ?ok on windows??
-                    #prog = cmdStr.split()[0].split('/')[-1]  #@@?what about windows
-                    line = "%d  pts/1 %s %s \n" %(item.pid, prog, self.hosts[0]) #@@
-                    #?CHECK that line is not already there before inserting it ?
-                    duplicate = 0
-                    for INDEX in range(self.frame.list.size()):
-                        if self.frame.list.get(INDEX)==line:
-                            #@@#print "DUPLICATE: found ", line, " at index=", INDEX
-                            found = 1
-                            duplicate = 1
-                            break
-                    if not duplicate: self.frame.list.insert(0,line)
+                    cmdStr = item.command
+                    prog = os.path.basename(cmdStr.split()[0])
+                    line = "%d  pts/1 %s %s \n" % (item.pid, prog, self.hosts[0])
+                    new_lines.append(line)
                 else:
-                    if item in self.psList:
-                        self.psList.remove(item)
-                    if len(self.psList)==0: 
-                        self.done = 1
-                        self.manager.adUpdate()
-        if not self.done:
-            self.after(100, self.manager.adUpdate)
-            # ?always show this?
-            if not self.master.winfo_ismapped() and not self.quit: 
-                self.master.deiconify()
+                    finished_items.append(item)
+            else:
+                finished_items.append(item)
+        for item in finished_items:
+            if item in self.psList:
+                self.psList.remove(item)
+        if len(self.psList) == 0:
+            self.done = 1
+
+        # Only update listbox if contents changed to prevent flickering
+        current_lines = [self.frame.list.get(INDEX) for INDEX in range(self.frame.list.size())]
+        if current_lines != new_lines:
+            self.frame.list.delete(0, tkinter.END)
+            for line in new_lines:
+                self.frame.list.insert(tkinter.END, line)
+
+        return self.hosts
         
 
     def quit(self, event=None):
         self.quit = 1
+        if hasattr(self, 'manager') and hasattr(self.manager, '_after_id') and self.manager._after_id:
+            try:
+                self.after_cancel(self.manager._after_id)
+            except Exception:
+                pass
+            self.manager._after_id = None
         self.master.withdraw()
 
 
@@ -226,6 +230,7 @@ class ADProcessManager(MVCommand):
         self.kill.vf = self.vf
         self.kill.manager = self
         self.kill.done = 1
+        self._after_id = None
 
     def __init__(self):
         MVCommand.__init__(self)
@@ -234,6 +239,7 @@ class ADProcessManager(MVCommand):
         import AutoDockTools
         self.hostDict = AutoDockTools.hostDict
         self.currentHosts=None
+        self._after_id = None
         self.processCts = {}
         for item in ['autogrid4', 'autodock4', 'vina']:
             self.processCts[item] = 0
@@ -261,32 +267,53 @@ class ADProcessManager(MVCommand):
             if p not in self.kill.psList:
                 self.kill.psList.append(p)
             self.kill.done = 0  # new process!
+            self.kill.quit = 0
         elif type(p)==str: #autogrid4, autodock4, vina..
             if not p in self.kill.pList:
                 self.kill.pList.append(p) 
         else: 
             raise RuntimeError('unknown process type: ', p)
-        if not self.kill.master.winfo_ismapped() and not self.kill.done:
-            self.kill.master.deiconify()
+        if not self.top.winfo_ismapped() and not self.kill.done:
+            self.top.deiconify()
 
     def adUpdate(self):
-        #currentHosts should be all hosts of all active jobs
-        if not self.currentHosts: self.currentHosts=[]
-        self.currentHosts = self.kill.do_update(self.kill.pList,self.currentHosts)
-        if not self.top.winfo_ismapped():
-            self.top.deiconify()
+        # Cancel any pending timer to ensure single-timer execution
+        if hasattr(self, '_after_id') and self._after_id:
+            try:
+                self.kill.after_cancel(self._after_id)
+            except Exception:
+                pass
+            self._after_id = None
+
         if self.kill.done:
-            self.top.withdraw()
-        elif len(self.kill.psList)==1 and self.kill.psList[0].poll() is not None:
-            self.kill.done = 1
-            self.kill.do_update(self.kill.pList, self.kill.psList)
-        else:
-            self.kill.after(100,self.adUpdate)
+            if self.top.winfo_ismapped():
+                self.top.withdraw()
+            return
+
+        if not self.currentHosts:
+            self.currentHosts = []
+        self.currentHosts = self.kill.do_update(self.kill.pList, self.currentHosts)
+
+        if self.kill.done:
+            if self.top.winfo_ismapped():
+                self.top.withdraw()
+            return
+
+        if not self.top.winfo_ismapped() and not self.kill.quit:
+            self.top.deiconify()
+
+        self._after_id = self.kill.after(1000, self.adUpdate)
 
     def guiCallback(self, event=None):
-        if not self.top.winfo_ismapped():
+        if hasattr(self, '_after_id') and self._after_id:
+            try:
+                self.kill.after_cancel(self._after_id)
+            except Exception:
+                pass
+            self._after_id = None
+        if not self.top.winfo_ismapped() and not self.kill.quit:
             self.top.deiconify()
-        self.kill.after(100, self.adUpdate)
+        self._after_id = self.kill.after(500, self.adUpdate)
 
     def __call__(self, **kw):
         if not self.top.winfo_ismapped():
@@ -296,7 +323,13 @@ class ADProcessManager(MVCommand):
     def doit(self):
         #kill
         #@@#print 'killed'
-        self.kill.after(100, self.adUpdate)
+        if hasattr(self, '_after_id') and self._after_id:
+            try:
+                self.kill.after_cancel(self._after_id)
+            except Exception:
+                pass
+            self._after_id = None
+        self._after_id = self.kill.after(500, self.adUpdate)
 
 ADProcessManagerGUI=CommandGUI()
 ADProcessManagerGUI.addMenuCommand('AutoToolsBar', menuText['StartMB'], menuText['processManagerMB'])

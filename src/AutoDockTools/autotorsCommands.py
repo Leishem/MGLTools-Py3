@@ -629,7 +629,7 @@ nodes:ligand for autodock
             if useTorTree:
                 root = mol.ROOT
             cleanup = "nphs_lps"
-            if self.vf.userpref['Automerge NPHS']['value']==0:
+            if 'Automerge NPHS' in self.vf.userpref and self.vf.userpref['Automerge NPHS']['value']==0:
                 cleanup = "lps"
             initLPO(mol, cleanup=cleanup)
             title = "summary for " + mol.name
@@ -764,7 +764,7 @@ filename:file to read to get ligand for autodock
             mol.buildBondsByDistance()
 
         cleanup = "nphs_lps"
-        if self.vf.userpref['Automerge NPHS']['value']==0:
+        if 'Automerge NPHS' in self.vf.userpref and self.vf.userpref['Automerge NPHS']['value']==0:
             cleanup = "lps"
         initLPO(mol, cleanup=cleanup)
         title = "summary for " + mol.name
@@ -876,7 +876,7 @@ nodes:ligand for autodock4
         self.vf.atorsDict['molecule'] = mol
         if not hasattr(mol, 'LPO') or mol.LPO.version==3:
             cleanup = "nphs_lps"
-            if self.vf.userpref['Automerge NPHS']['value']==0:
+            if 'Automerge NPHS' in self.vf.userpref and self.vf.userpref['Automerge NPHS']['value']==0:
                 cleanup = "lps"
             initLPO4(mol, cleanup=cleanup)
             title = "summary for " + mol.name
@@ -1017,7 +1017,7 @@ filename:file to read to get ligand for autodock
             mol.buildBondsByDistance()
 
         cleanup = "nphs_lps"
-        if self.vf.userpref['Automerge NPHS']['value']==0:
+        if 'Automerge NPHS' in self.vf.userpref and self.vf.userpref['Automerge NPHS']['value']==0:
             cleanup = "lps"
         initLPO4(mol, cleanup=cleanup)
         title = "summary for " + mol.name
@@ -2754,7 +2754,7 @@ switched:1->0 and 0->1
         mol = dict['molecule']
         if not hasattr(mol, 'LPO'):
             cleanup = "nphs_lps"
-            if self.vf.userpref['Automerge NPHS']['value']==0:
+            if 'Automerge NPHS' in self.vf.userpref and self.vf.userpref['Automerge NPHS']['value']==0:
                 cleanup = "lps"
             initLPO(mol, cleanup=cleanup)
             title = "summary for " + mol.name
@@ -2821,7 +2821,7 @@ switched:1->0 and 0->1
         if not hasattr(mol, 'LPO'):
             print(' formatting ', mol.name, ' for autotors')
             cleanup = "nphs_lps"
-            if self.vf.userpref['Automerge NPHS']['value']==0:
+            if 'Automerge NPHS' in self.vf.userpref and self.vf.userpref['Automerge NPHS']['value']==0:
                 cleanup = "lps"
             initLPO(mol, cleanup=cleanup)
             print("initLPO #4")
@@ -3538,7 +3538,7 @@ if ask_outfile=0, outputfile name is name of molecule + '.out.pdbqt'
         assert isinstance(mol, TreeNodeSet)
         mol = mol[0]
         cleanup = "nphs_lps"
-        if self.vf.userpref['Automerge NPHS']['value']==0:
+        if 'Automerge NPHS' in self.vf.userpref and self.vf.userpref['Automerge NPHS']['value']==0:
             cleanup = "lps"
         initLPO4(mol, mode='automatic', root='auto', outputfilename=outfile,
                     cleanup=cleanup)

@@ -1,9 +1,17 @@
-from idlelib import pyshell as PyShell
-#from idlelib.PyShell import PyShell, PyShellFileList, use_subprocess
-from idlelib.editor import fixwordbreaks
+try:
+    from idlelib import pyshell as PyShell
+    #from idlelib.PyShell import PyShell, PyShellFileList, use_subprocess
+    from idlelib.editor import fixwordbreaks
+except ImportError:
+    PyShell = None
+    def fixwordbreaks(root):
+        pass
 import tkinter, sys, os
 def getShell(thread, rootTk = None, subprocess = False, debug=False,
              enable_shell=False, enable_edit=True):
+    if PyShell is None:
+        print("Warning: idlelib is not installed. Interactive Python shell is disabled.")
+        return None
     """
     This function creates and returns a shell PyShell instance
     required arguments:

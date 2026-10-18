@@ -3888,13 +3888,13 @@ class ADGetDLG(MVCommand):
         #        self.vf.ADanalyze_showHistogram.canvas.delete(item)
         #        self.vf.ADanalyze_showHistogram.buildIt()
 
-        modelLen = str(len(d.ch.conformations))
+        modelLen = len(d.ch.conformations)
 
         if not addToPrevious:
-            msg = 'Read '+ modelLen + ' docked conformations from '  + filename +'\n' 
+            msg = 'Read '+ str(modelLen) + ' docked conformations from '  + filename +'\n' 
             if modelLen>1: msg = msg + '\nUse Analyze->Conformations->Play... to view'
         else:
-            msg = 'read ' + os.path.basename(dlgFile) +'\n\t->'+ modelLen
+            msg = 'read ' + os.path.basename(dlgFile) +'\n\t->'+ str(modelLen)
         if hasattr(d, 'warnings') and len(d.warnings):
             msg = msg +  "\n\nType 'self.docked.warnings' in python shell to list " + str(len(d.warnings))+ " warning message(s) from dlg"
         self.vf.warningMsg(msg)
@@ -6431,7 +6431,15 @@ class ShowAutoDockStates(ShowAutoDockStatesBaseCmd):
             self.warningMsg("This is vina result. Please use keyboard arrow keys to view docked results")
             return 'ERROR'
         #need to build a molList
-        index = self.molList.index(mol)
+        self.buildMolList()
+        if mol in self.molList:
+            index = self.molList.index(mol)
+        elif hasattr(mol, 'name') and mol.name in [m.name for m in self.molList]:
+            index = [m.name for m in self.molList].index(mol.name)
+        elif len(self.dockings):
+            index = 0
+        else:
+            return 'ERROR'
         docking = self.dockings[index]
         #mol = docking.ligMol
         mol.stop = 0
@@ -6907,7 +6915,15 @@ class ShowAutoDockClusteringStates(ShowAutoDockStatesBaseCmd):
         #    for k, d in self.vf.dockings.items():
         #       self.molList.append(d.ligMol)
         #       self.dockings.append(d)
-        ind = self.molList.index(mol)
+        self.buildMolList()
+        if mol in self.molList:
+            ind = self.molList.index(mol)
+        elif hasattr(mol, 'name') and mol.name in [m.name for m in self.molList]:
+            ind = [m.name for m in self.molList].index(mol.name)
+        elif len(self.dockings):
+            ind = 0
+        else:
+            return 'ERROR'
         docking = self.dockings[ind]
         mol.stop2 = 0
         docking_has_clusterer = hasattr(docking, 'clusterer')

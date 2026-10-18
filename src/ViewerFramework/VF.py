@@ -711,7 +711,11 @@ event has to be a class subclassing VFEvent
                 c.fillSelectionBox = new
 
     def fillDelayValidate(self, value):
-        return (value > 0 and value < 10000)
+        try:
+            val = int(value)
+            return (val > 0 and val < 10000)
+        except (ValueError, TypeError):
+            return 0
 
     def fillSelectionBoxDelayPref_cb(self, name, old, new):
         if self.hasGui:
@@ -1351,7 +1355,7 @@ is added
                     types=types, title=title, multiple=multiple)
             
 
-            if file is () or file is None: # this is returned if one click on the file list and
+            if file == () or file is None: # this is returned if one click on the file list and
                            # then clicks Cancel
                 return
         else:
@@ -1388,7 +1392,7 @@ is added
             file = self.GUI.askFileSave(self.GUI.ROOT, idir=idir, ifile=ifile,
                                         types=types, title=title,
                                         defaultextension=defaultextension)
-            if file is () or file is None: # this is returned if one clcik on the file list and
+            if file == () or file is None: # this is returned if one clcik on the file list and
                            # then clicks Cancel
                 return
         else:

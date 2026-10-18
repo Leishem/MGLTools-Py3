@@ -243,6 +243,8 @@ def initModule(vf):
         vf.addCommand(dict['cmd'], dict['name'], dict['gui'])
     if not hasattr(vf, 'ADdpf_setDpo'):
         vf.addCommand(DpfSetDpo(), 'ADdpf_setDpo', None)
+    if hasattr(vf, 'AD41dpf_initLigand') and not hasattr(vf, 'ADdpf4_initLigand'):
+        vf.ADdpf4_initLigand = vf.AD41dpf_initLigand
 
     if vf.hasGui and 'AutoTools41Bar' in list(vf.GUI.menuBars.keys()):
         for item in list(vf.GUI.menuBars['AutoTools41Bar'].menubuttons.values()):

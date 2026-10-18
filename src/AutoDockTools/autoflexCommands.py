@@ -140,6 +140,8 @@ class AF_MacroReader(MVCommand):
         mollist = self.vf.readPDBQT(macroFile, topCommand=0)
         if not len(mollist): return 'ERROR'
         mol = mollist[0]
+        if not len(mol.allAtoms.bonds[0]):
+            mol.buildBondsByDistance()
         mol.allAtoms.used = 0
         dict = self.vf.flexDict
         dict['macrofilename'] = macroFile
@@ -214,6 +216,8 @@ class AF_MacroChooser(MVCommand):
         nodes = self.vf.expandNodes(nodes)
         if not len(nodes): return 'ERROR'
         mol = nodes[0]
+        if not len(mol.allAtoms.bonds[0]):
+            mol.buildBondsByDistance()
         mol.allAtoms.used=0
         #if mol is from a pdbqt file, do not need to add 'q' or 't'
         filetype = os.path.splitext(os.path.basename(mol.parser.filename))[1]
@@ -247,15 +251,16 @@ class AF_MacroChooser(MVCommand):
             beforeLen = len(mol.allAtoms)
             if 'automerge_nphs' in list(kw.keys()):
                 self.vf.mergeNPHSGC(mol.allAtoms)
-            else:
-                nphs_msg="There appear to be some nonpolar hydrogen in "+ mol.name+ "  Do you wish to merge them to conform to AutoDock4 atom types? "
-            d = SimpleDialog(self.vf.GUI.ROOT, text=nphs_msg,
-                buttons=['No', 'Yes'], default=1,
-                title="Merge Non-polar Hydrogens?")
-            mergeNPHS = d.go()
-            if mergeNPHS:
-                self.vf.mergeNPHSGC(mol.allAtoms)
                 lenNPHS = beforeLen - len(mol.allAtoms)
+            elif self.vf.hasGui:
+                nphs_msg="There appear to be some nonpolar hydrogen in "+ mol.name+ "  Do you wish to merge them to conform to AutoDock4 atom types? "
+                d = SimpleDialog(self.vf.GUI.ROOT, text=nphs_msg,
+                    buttons=['No', 'Yes'], default=1,
+                    title="Merge Non-polar Hydrogens?")
+                mergeNPHS = d.go()
+                if mergeNPHS:
+                    self.vf.mergeNPHSGC(mol.allAtoms)
+                    lenNPHS = beforeLen - len(mol.allAtoms)
             if lenNPHS:
                 msg = msg + " and merged " + str(lenNPHS) + " non-polar hydrogens"
         if len(msg):
@@ -354,6 +359,8 @@ class AF_SelectResidues(MVCommand):
     def doit(self, nodes):
         flex_residues = self.vf.expandNodes(nodes)
         if not len(flex_residues): return 'ERROR'
+        if not len(flex_residues[0].top.allAtoms.bonds[0]):
+            flex_residues[0].top.buildBondsByDistance()
 
         #remove all prolines
         proList = ResidueSet([x for x in flex_residues if x.type=='PRO'])
@@ -493,6 +500,7 @@ class AF_ProcessResidues(SetRotatableBonds, MVBondICOM):
         self.save2 = None
         self.guiUp = 0
         self.pickLevel = 'parts'
+        self.pTatomset = AtomSet()
 
 
     def onAddCmdToViewer(self):
@@ -562,8 +570,11 @@ class AF_ProcessResidues(SetRotatableBonds, MVBondICOM):
         self.currentNodes=nodes.sideChain
         self.vf.displayLines(self.currentNodes, topCommand=0)
         self.vf.displayLines(self.currentNodes, only=1, topCommand=0, redraw=1)
-        pTbndset = self.currentNodes.bonds[0].get(lambda x:x.activeTors==1)
-        pTatomset = (pTbndset.atom1 + pTbndset.atom2).uniq()
+        pTbndset = self.currentNodes.bonds[0].get(lambda x: hasattr(x, 'activeTors') and x.activeTors==1)
+        if pTbndset is not None and len(pTbndset):
+            pTatomset = (pTbndset.atom1 + pTbndset.atom2).uniq()
+        else:
+            pTatomset = AtomSet()
         if len(pTatomset):
             geom = self.mol.geomContainer.geoms['AtomLabels']
             geom.Set(billboard=True, fontStyle='solid', fontScales=(.3,.3,.3,))
@@ -600,7 +611,8 @@ class AF_ProcessResidues(SetRotatableBonds, MVBondICOM):
         self.changeFlexResCt(0)
         self.vf.displayLines(self.currentNodes, topCommand=0, only=1)
         self.vf.colorByAtomType(self.currentNodes)
-        self.vf.labelByProperty(self.pTatomset, ('name', ), negate=True, topCommand=0, redraw=1)
+        if hasattr(self, 'pTatomset') and self.pTatomset is not None and len(self.pTatomset):
+            self.vf.labelByProperty(self.pTatomset, ('name', ), negate=True, topCommand=0, redraw=1)
         self.pTatomset = AtomSet()
         #set the PCOM to something else
         self.vf.setICOM(self.save1, modifier="Shift_L", mode='pick', topCommand = 0)
@@ -651,7 +663,7 @@ class AF_ProcessResidues(SetRotatableBonds, MVBondICOM):
             return
         for item in res.amidebonds:
             #only turn off the ones which were turned on
-            if item.possibleTors and item.activeTors:
+            if hasattr(item, 'possibleTors') and item.possibleTors and hasattr(item, 'activeTors') and item.activeTors:
                 item.activeTors = 0
                 self.torscount = self.torscount - 1
 
@@ -663,8 +675,8 @@ class AF_ProcessResidues(SetRotatableBonds, MVBondICOM):
         currentbonds=mol.geomContainer.atoms['bonded'].bonds[0]
         col = []
         for b in currentbonds:
-            if b.possibleTors:
-                if b.activeTors: col.append((0,1,0))
+            if hasattr(b, 'possibleTors') and b.possibleTors:
+                if hasattr(b, 'activeTors') and b.activeTors: col.append((0,1,0))
                 else: col.append((1,0,1))
             else:
                 col.append((1,0,0))
@@ -679,7 +691,8 @@ class AF_ProcessResidues(SetRotatableBonds, MVBondICOM):
         n=n+delta
         self.vf.flexDict['flex_residues_number']=n
         msg = 'current %d flexible residues'%n
-        self.vf.GUI.pickLabel.configure(text=msg)
+        if self.vf.hasGui and hasattr(self.vf.GUI, 'pickLabel'):
+            self.vf.GUI.pickLabel.configure(text=msg)
 
 
     def checkAromatic_cb(self, event=None):
@@ -819,7 +832,7 @@ class AF_ProcessHingeResidues(SetRotatableBonds, MVBondICOM):
         for b in leaves:
             b.activeTors = 0
             b.possibleTors = 0
-        res.torscount = len(bondlist.get(lambda x: x.activeTors==1))
+        res.torscount = len(bondlist.get(lambda x: hasattr(x, 'activeTors') and x.activeTors==1))
         #this field is not used in AutoDock4
         res.torsdof = res.torscount
         #res.rootlist = AtomSet([resatoms[0]]) ??is this necessary?
@@ -942,7 +955,8 @@ class AF_ProcessHingeResidues(SetRotatableBonds, MVBondICOM):
         n = n + delta
         self.vf.flexDict['flex_residues_number'] = n
         msg = 'current %d flexible residues'%n
-        self.vf.GUI.pickLabel.configure(text=msg)
+        if self.vf.hasGui and hasattr(self.vf.GUI, 'pickLabel'):
+            self.vf.GUI.pickLabel.configure(text=msg)
 
 
     def __call__(self, bonds,  **kw):
@@ -1939,7 +1953,8 @@ class AF_SetHinge(MVCommand, MVAtomICOM):
         n=n+delta
         self.vf.flexDict['flex_residues_number']=n
         msg = 'current %d flexible residues'%n
-        self.vf.GUI.pickLabel.configure(text=msg)
+        if self.vf.hasGui and hasattr(self.vf.GUI, 'pickLabel'):
+            self.vf.GUI.pickLabel.configure(text=msg)
 
 
     def __call__(self, xxx_todo_changeme, atoms,  **kw):
@@ -2053,7 +2068,7 @@ class AF_SetBondRotatableFlag(SetRotatableBonds):
         col = []
         for b in currentbonds:
             if b.possibleTors:
-                if b.activeTors: col.append((0,1,0))
+                if hasattr(b, 'activeTors') and b.activeTors: col.append((0,1,0))
                 else: col.append((1,0,1))
             else:
                 col.append((1,0,0))

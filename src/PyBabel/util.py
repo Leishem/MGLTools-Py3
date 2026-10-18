@@ -46,11 +46,13 @@ def bond_angle(a, b, c):
     
     dist = distance(a,b) * distance(b,c)
     if dist == 0: # SD 2010 - http://mgl.scripps.edu/forum/viewtopic.php?f=11&t=245&p=1882
-        raise ZeroDivisionError("Input used:", a, b, c)
+        return 109.5
 
     cos_theta = old_div(( (a[0] - b[0]) * (c[0] - b[0]) +
                   (a[1] - b[1]) * (c[1] - b[1]) +
                   (a[2] - b[2]) * (c[2] - b[2]) ), dist)
+    if cos_theta > 1.0: cos_theta = 1.0
+    elif cos_theta < -1.0: cos_theta = -1.0
     if cos_theta  + 1.0 < 0.0001: angle = 180.0
     else: angle = (math.acos(cos_theta)) * RAD_TO_DEG
     return angle

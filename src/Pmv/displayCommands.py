@@ -3063,7 +3063,7 @@ form buildFormDescr will be called for each formName.
                             indices.append((i,i+1))
                                      
                 for ch in range(0,len(mol.chains)-1):
-                      list =[]
+                      ch_list =[]
                     
                       if len(mol.chains)>1: 
                         a=mol.chains[ch].getAtoms().get(lambda x: x.name=='CA')
@@ -3071,9 +3071,9 @@ form buildFormDescr will be called for each formName.
                         for l in _set:
                             for k in a:
                                 if l==k:            
-                                    list.append(l)
-                        i =len(list)
-                        if _set !=list:
+                                    ch_list.append(l)
+                        i =len(ch_list)
+                        if _set !=ch_list:
                             if (i-1,i) in indices:
                                 ind=indices.index((i-1,i))
                                 del indices[ind]

@@ -102,12 +102,19 @@ class SetUserPreference(Command):
         
         if type(value) is tuple:
             value = value[0]
-        if isinstance(self.vf.userpref[key]['value'], int):
+        pref_val = self.vf.userpref[key]['value']
+        if isinstance(pref_val, bool):
+            if isinstance(value, str):
+                if value.lower() in ('true', 'yes', '1'):
+                    value = True
+                elif value.lower() in ('false', 'no', '0'):
+                    value = False
+        elif isinstance(pref_val, int):
             try:
                 value = int(value)
             except:
                 value = None
-        elif isinstance(self.vf.userpref[key]['value'], float):
+        elif isinstance(pref_val, float):
             try:
                 value = float(value)
             except:
@@ -149,10 +156,14 @@ class SetUserPreference(Command):
         self.doitWrapper(*(item,), **kw)
 
     def dismissForm(self):
-        self.form.destroy()
+        if hasattr(self, 'form') and self.form:
+            self.form.destroy()
+            self.form = None
 
     def dismissSmallForm(self):
-        self.smallForm.destroy()
+        if hasattr(self, 'smallForm') and self.smallForm:
+            self.smallForm.destroy()
+            self.smallForm = None
 
 
     def info_cb(self, doc):
@@ -180,13 +191,23 @@ class SetUserPreference(Command):
     def updateGUI(self, name,oldvalue, newvalue):
         """ Callback added to all the userpref so the Gui is updated when
         userpref is modified."""
+        if not hasattr(self, 'form') or self.form is None:
+            return
+        try:
+            if not self.form.root.winfo_exists():
+                return
+        except Exception:
+            return
         if str(self.vf.userpref[name]['value']) != str(oldvalue):
-            w = self.form.descr.entryByName[name]['widget']
-            #val = str(newvalue)
-            if isinstance(w, Pmw.ComboBox):
-                w.selectitem(newvalue)
-            elif isinstance(w,Pmw.EntryField):
-                w.setentry(str(newvalue))
+            try:
+                w = self.form.descr.entryByName[name]['widget']
+                #val = str(newvalue)
+                if isinstance(w, Pmw.ComboBox):
+                    w.selectitem(newvalue)
+                elif isinstance(w,Pmw.EntryField):
+                    w.setentry(str(newvalue))
+            except Exception:
+                pass
 
 
     def guiCallback(self):
@@ -241,12 +262,32 @@ class SetUserPreference(Command):
             else:
                              
                 if 'validateFunc' in value and value['validateFunc']:
-                    def valid(value, func=value['validateFunc']):
-                        test = func(value)
-                        if test == 1:
+                    def valid(text, func=value['validateFunc'], pref_key=key):
+                        val = text
+                        try:
+                            pref_val = self.vf.userpref[pref_key]['value']
+                            if isinstance(pref_val, bool):
+                                val = text
+                            elif isinstance(pref_val, int):
+                                val = int(text)
+                            elif isinstance(pref_val, float):
+                                val = float(text)
+                        except (ValueError, TypeError):
+                            return Pmw.PARTIAL
+
+                        try:
+                            test = func(val)
+                        except Exception:
+                            try:
+                                test = func(text)
+                            except Exception:
+                                test = 0
+
+                        if test == 1 or test is True or test == Pmw.OK:
                             return Pmw.OK
                         else:
                             return Pmw.PARTIAL
+
                     idf.append({'widgetType':Pmw.EntryField,
                                 'parent':group,
                                 'name':key,
@@ -261,7 +302,8 @@ class SetUserPreference(Command):
                                 'parent':group,
                                 'name':key,
                                 'wcfg':{'label_text':key,
-                                        'labelpos':'n'},
+                                        'labelpos':'n',
+                                        'value': value['value']},
                                 'gridcfg':{'sticky':'wens'}})
                     
                     

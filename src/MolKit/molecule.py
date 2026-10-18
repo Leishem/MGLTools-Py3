@@ -128,16 +128,22 @@ class AtomSet(TreeNodeSet):
                 
     def __getattr__(self, member):
         if member=='coords':# added because calling coords method is expensive
-            res = []
-            for a in self.data:
-                res.append(a._coords[a.conformation])
-            return res
+            try:
+                res = []
+                for a in self.data:
+                    res.append(a._coords[a.conformation])
+                return res
+            except Exception:
+                raise AttributeError('coords')
 
         elif member=='charge':# added because multiple charges possible
-            res = []
-            for a in self.data:
-                res.append(a._charges[a.chargeSet])
-            return res
+            try:
+                res = []
+                for a in self.data:
+                    res.append(a._charges[a.chargeSet])
+                return res
+            except Exception:
+                raise AttributeError('charge')
 
         result = TreeNodeSet.__getattr__(self, member)
         if result is None:
@@ -405,10 +411,16 @@ class Atom(TreeNode):
 
     def __getattr__(self, member):
         if member=='coords':# added because calling coords method is expensive
-            return self._coords[self.conformation]
+            try:
+                return self._coords[self.conformation]
+            except Exception:
+                raise AttributeError('coords')
         elif member=='charge':# added because calling coords method is expensive
-            return self._charges[self.chargeSet]
-        if not hasattr(self.__dict__, member):
+            try:
+                return self._charges[self.chargeSet]
+            except Exception:
+                raise AttributeError('charge')
+        if member not in self.__dict__:
             # DO NOT USE repr() in here else object becomes unpicklable
             # raise AttributeError('member %s not found in %s'%(member, repr(self)))
             raise AttributeError('member %s not found'%member)

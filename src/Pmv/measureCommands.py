@@ -25,6 +25,13 @@ from DejaVu.glfLabels import GlfLabels
 from ViewerFramework.VFCommand import CommandGUI
 from MolKit.molecule import Atom, AtomSet
 
+def validatePositiveInt(value):
+    try:
+        return int(value) > 0
+    except (ValueError, TypeError):
+        return False
+
+
 """
     MeasureCommands contains commands to measure distances, angles and 
     torsions between atoms:
@@ -757,7 +764,7 @@ Valid values are integers>0"""
         self.vf.userpref.add('Number of Measure Angles', 4,
                              callbackFunc = [self.setLength_cb],
                              category="Molecules",
-                             validateFunc = lambda x: x>0, doc=doc)
+                             validateFunc = validatePositiveInt, doc=doc)
         #used after startICOM is invoked
         doc = """Continuous update of angles if 'transformRoot only' is
 turned off  and viewer's current object is not Root."""
@@ -958,7 +965,7 @@ Valid values are integers>0"""
         self.vf.userpref.add('Measured Torsions', 4,
                              callbackFunc=[self.setLength_cb],
                              category="Molecules",
-                             validateFunc = lambda x: x>0, doc=doc)
+                             validateFunc = validatePositiveInt, doc=doc)
         #used after startICOM is invoked
         doc = """Continuous update of torsions if 'transformRoot only' is
 turned off  and viewer's current object is not Root."""

@@ -337,7 +337,7 @@ class Kill(Frame):
         list = splitfields(s, '\n')
         self.header.set(list[0] + '          ')
         del list[0]
-        self.frame.list.delete(0, AtEnd())
+        self.frame.list.delete(0, tkinter.END)
         for line in list:
             self.frame.list.insert(0, line)
     def do_motion(self, e):
