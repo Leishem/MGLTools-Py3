@@ -107,8 +107,10 @@ adt                                 # or pmv / vision
 python -m pytest                    # test suite (compares with MGLTools 1.5.6 outputs)
 ```
 
-Linux and macOS builds are supported by the source; release packages for them
-are not published yet.
+A portable Linux x86_64 package
+([`MGLTools-1.5.6-Py3-Linux-x86_64-Portable.tar.gz`](https://github.com/Leishem/MGLTools-Py3/releases/latest/download/MGLTools-1.5.6-Py3-Linux-x86_64-Portable.tar.gz))
+is published with each release. macOS builds are supported by the source; the
+macOS package will be published after validation on real Apple hardware.
 
 ## Known limitations
 
