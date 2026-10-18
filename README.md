@@ -6,6 +6,8 @@ NumPy 2 / modern OpenGL**.
 
 The Windows release is **portable**: no installation, no Python needed.
 Download, unzip, double-click `adt.exe`.
+A Linux x86_64 package is also available — see
+[Download and run (Linux)](#download-and-run-linux).
 
 > ### ⬇️ [Download for Windows (MGLTools-1.5.6-Py3-Win64-Portable.zip, ~110 MB)](https://github.com/Leishem/MGLTools-Py3/releases/latest/download/MGLTools-1.5.6-Py3-Win64-Portable.zip)
 >
@@ -67,6 +69,61 @@ adt-util.bat prepare_dpf42.py     -l ligand.pdbqt -r receptor.pdbqt -o dock.dpf
 Settings are stored in `%USERPROFILE%\.mgltools\1.5.6-py3`, separate from any
 original MGLTools 1.5.6 installation.
 
+## Download and run (Linux)
+
+The Linux package (x86_64) runs on the system's **Python 3.12** — the default on
+**Ubuntu 24.04**, where it is tested (also under WSL2 on Windows 11). Other
+distributions work if they provide Python 3.12 at `/usr/bin/python3.12`.
+
+1. Install the system packages (Ubuntu 24.04 / Debian-based):
+
+   ```
+   sudo apt update
+   sudo apt install python3.12 python3-tk libgl1 libglu1-mesa
+   ```
+
+2. Download and extract
+   **[`MGLTools-1.5.6-Py3-Linux-x86_64-Portable.tar.gz`](https://github.com/Leishem/MGLTools-Py3/releases/latest/download/MGLTools-1.5.6-Py3-Linux-x86_64-Portable.tar.gz)**:
+
+   ```
+   wget https://github.com/Leishem/MGLTools-Py3/releases/latest/download/MGLTools-1.5.6-Py3-Linux-x86_64-Portable.tar.gz
+   tar -xzf MGLTools-1.5.6-Py3-Linux-x86_64-Portable.tar.gz
+   cd MGLTools-1.5.6-Py3-Linux-x86_64-Portable
+   ```
+
+3. Start a program:
+
+   ```
+   ./adt       # AutoDockTools
+   ./pmv       # molecular viewer
+   ./vision    # Vision
+   ```
+
+The folder you get should look like this:
+
+```
+MGLTools-1.5.6-Py3-Linux-x86_64-Portable/
+    adt  pmv  vision   <- launchers
+    adt-util           <- command-line preparation scripts
+    python-env/        <- bundled Python packages (do not delete)
+```
+
+If a launcher says `Permission denied`, restore the execute bits:
+`chmod +x adt pmv vision adt-util python-env/bin/python*`.
+The built-in Python shell window needs IDLE (`sudo apt install idle-python3.12`);
+without it ADT still runs, with the shell disabled.
+
+Command-line preparation scripts, from the extracted folder:
+
+```
+./adt-util prepare_receptor4.py -r receptor.pdb -o receptor.pdbqt
+./adt-util prepare_ligand4.py   -l ligand.pdb   -o ligand.pdbqt
+./adt-util prepare_gpf4.py      -l ligand.pdbqt -r receptor.pdbqt -o grid.gpf
+./adt-util prepare_dpf42.py     -l ligand.pdbqt -r receptor.pdbqt -o dock.dpf
+```
+
+Run `./adt-util` with no arguments to list all available scripts.
+
 ## Reporting a problem
 
 Please [open an issue](../../issues/new/choose) and include:
@@ -107,10 +164,10 @@ adt                                 # or pmv / vision
 python -m pytest                    # test suite (compares with MGLTools 1.5.6 outputs)
 ```
 
-A portable Linux x86_64 package
-([`MGLTools-1.5.6-Py3-Linux-x86_64-Portable.tar.gz`](https://github.com/Leishem/MGLTools-Py3/releases/latest/download/MGLTools-1.5.6-Py3-Linux-x86_64-Portable.tar.gz))
-is published with each release. macOS builds are supported by the source; the
-macOS package will be published after validation on real Apple hardware.
+A portable Linux x86_64 package is published with each release — see
+[Download and run (Linux)](#download-and-run-linux). macOS builds are supported
+by the source; the macOS package will be published after validation on real
+Apple hardware.
 
 ## Known limitations
 
