@@ -7,15 +7,38 @@ NumPy 2 / modern OpenGL**.
 The Windows release is **portable**: no installation, no Python needed.
 Download, unzip, double-click `adt.exe`.
 
+> ### ⬇️ [Download for Windows (MGLTools-1.5.6-Py3-Win64-Portable.zip, ~110 MB)](https://github.com/Leishem/MGLTools-Py3/releases/latest/download/MGLTools-1.5.6-Py3-Win64-Portable.zip)
+>
+> **Do not use the green `<> Code` → *Download ZIP* button.** That gives you the
+> source code only — it has **no `adt.exe`**. The ready-to-run program is the
+> zip file above (also listed under **Releases** on the right side of this page).
+
 ![AutoDockTools 4.2 on Windows (Python 3): molecular surface of HIV protease](docs/screenshots/adt_windows_surface.png)
 
 ## Download and run (Windows)
 
-1. Download **`MGLTools-1.5.6-Py3-Win64-Portable.zip`** from the
-   [Releases page](../../releases/latest).
-2. Unzip it anywhere — a local folder or a USB drive.
-3. Double-click **`adt.exe`** (AutoDockTools), **`pmv.exe`** (molecular viewer)
-   or **`vision.exe`** (Vision).
+1. Download **[`MGLTools-1.5.6-Py3-Win64-Portable.zip`](https://github.com/Leishem/MGLTools-Py3/releases/latest/download/MGLTools-1.5.6-Py3-Win64-Portable.zip)**.
+   - Or open the [Releases page](https://github.com/Leishem/MGLTools-Py3/releases/latest),
+     scroll to **Assets** and click that zip file.
+   - ⚠️ Not the green **`<> Code` → Download ZIP** button, and not the
+     **Source code (zip)** / **Source code (tar.gz)** links under Assets —
+     those contain only source code and **no `adt.exe`**.
+2. Right-click the downloaded zip → **Extract All…** → **Extract**. Any folder
+   works, even a USB drive.
+3. Open the extracted folder and double-click **`adt.exe`** (AutoDockTools),
+   **`pmv.exe`** (molecular viewer) or **`vision.exe`** (Vision).
+
+The folder you get should look like this:
+
+```
+MGLTools-1.5.6-Py3-Win64-Portable    adt.exe        <- AutoDockTools
+    pmv.exe        <- molecular viewer
+    vision.exe     <- Vision
+    adt-util.bat   <- command-line preparation scripts
+    python\        <- bundled Python (do not delete)
+```
+
+If you don't see `adt.exe`, you downloaded the source code instead — go back to step 1.
 
 If Windows SmartScreen shows "Windows protected your PC", click
 **More info → Run anyway** (the launchers are not code-signed).
