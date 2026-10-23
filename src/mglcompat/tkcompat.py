@@ -12,7 +12,9 @@ Set MGL_TK_WARN=1 to print each skipped call.
 import os
 import tkinter
 
-_CONFLICT = "already has slaves managed by"
+# Tk 8.6 wording, then Tk 9 wording
+_CONFLICTS = ("already has slaves managed by",
+              "is already managing its content windows")
 _installed = False
 
 
@@ -21,7 +23,7 @@ def _lenient(fn, name):
         try:
             return fn(self, *args, **kw)
         except tkinter.TclError as e:
-            if _CONFLICT not in str(e):
+            if not any(c in str(e) for c in _CONFLICTS):
                 raise
             if os.environ.get("MGL_TK_WARN"):
                 import traceback

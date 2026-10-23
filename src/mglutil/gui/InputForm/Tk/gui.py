@@ -1474,7 +1474,14 @@ translation is done in checkValues()
                     val = e['widget'].get()
                     val = self.PMWnameToReal(e, e['widget'].get())
                 elif hasattr(e['widget'],'getint'):
-                    val = e['widget'].getint()
+                    # Python 2's Tkinter.Misc.getint was the int type, which
+                    # Pmw does not forward, so container megawidgets
+                    # (Pmw.Group...) had no getint and yielded no value. On
+                    # Python 3 it is a method Pmw forwards to the hull: skip it
+                    try:
+                        val = e['widget'].getint()
+                    except TypeError:
+                        val = None
                 elif hasattr(e['widget'],'getstring'):
                     val = self.PMWnameToReal(e, e['widget'].getstring())
                 else:
