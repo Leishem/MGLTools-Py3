@@ -124,6 +124,56 @@ Command-line preparation scripts, from the extracted folder:
 
 Run `./adt-util` with no arguments to list all available scripts.
 
+## Build and run (macOS)
+
+There is no macOS package yet; build from source. Tested on **macOS 27**
+(Apple Silicon) with Homebrew's Python 3.12 and **Tk 9.0**.
+
+1. Install the Command Line Tools, Python 3.12 and its Tk 9 module:
+
+   ```
+   xcode-select --install
+   brew install python@3.12 python-tk@3.12
+   ```
+
+2. Build in a virtual environment:
+
+   ```
+   git clone https://github.com/Leishem/MGLTools-Py3
+   cd MGLTools-Py3
+   /opt/homebrew/bin/python3.12 -m venv .venv
+   .venv/bin/pip install .
+   ```
+
+3. Start a program:
+
+   ```
+   .venv/bin/adt       # AutoDockTools
+   .venv/bin/pmv       # molecular viewer
+   .venv/bin/vision    # Vision
+   ```
+
+Command-line preparation scripts:
+
+```
+.venv/bin/python -m AutoDockTools.Utilities24.prepare_ligand4 -l ligand.pdb -o ligand.pdbqt
+```
+
+Notes:
+
+* Use Tk 9. With Tk 8.6.13 to 8.6.16 (for example from conda), ADT stays on
+  the splash screen on macOS 27: Tk's `update()` never returns.
+* If linking fails with `Compiling with an SDK that doesn't seem to exist`,
+  your Python was built against an SDK the Command Line Tools no longer ship.
+  Point the linker to the current one:
+
+  ```
+  SDK=$(xcrun --show-sdk-path)
+  LDSHARED="clang -bundle -undefined dynamic_lookup -isysroot $SDK" \
+  LDCXXSHARED="clang++ -bundle -undefined dynamic_lookup -isysroot $SDK" \
+  .venv/bin/pip install .
+  ```
+
 ## Reporting a problem
 
 Please [open an issue](../../issues/new/choose) and include:
@@ -165,9 +215,9 @@ python -m pytest                    # test suite (compares with MGLTools 1.5.6 o
 ```
 
 A portable Linux x86_64 package is published with each release — see
-[Download and run (Linux)](#download-and-run-linux). macOS builds are supported
-by the source; the macOS package will be published after validation on real
-Apple hardware.
+[Download and run (Linux)](#download-and-run-linux). For macOS, see
+[Build and run (macOS)](#build-and-run-macos); a macOS package is not
+published yet.
 
 ## Known limitations
 
