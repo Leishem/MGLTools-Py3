@@ -1513,7 +1513,9 @@ very similar with a few differences such as programType, title for file browser,
         #self.LogFile=llist[0]+'.'+self.logType
         pF=self.paramFile.get()
         cmd0 = self.cmd.get()
-        if cmd0=='': return
+        # the command is still empty when the form is first built; the log
+        # name only depends on the parameter file, so derive it anyway
+        if cmd0=='' and not pF: return
         if 'vina' in cmd0:
             self.cmd.set(self.execPath.get() + " --config " + pF + " &")
             if not len(pF) and  hasattr(self.vf, 'vinaDict')and  'configFile' in self.vf.vinaDict:
