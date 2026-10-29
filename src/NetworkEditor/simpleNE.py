@@ -418,7 +418,14 @@ instance of either the node or the connection.
             self.pyshell = getShell(self.mainThread, rootTk = self.root,
                                     enable_shell=True, enable_edit=False,
                                     debug=False)
-            self.pyshell.menubar.children['file'].delete('Close','Exit')
+            # IDLE's File menu labels vary (Python 3: "Close Window"; on
+            # macOS Aqua IDLE moves Close/Exit), so drop whichever exist
+            fileMenu = self.pyshell.menubar.children['file']
+            last = fileMenu.index('end')
+            for i in range(last if last is not None else -1, -1, -1):
+                if fileMenu.type(i) in ('command', 'cascade') and \
+                   fileMenu.entrycget(i, 'label').split(' ')[0] in ('Close', 'Exit'):
+                    fileMenu.delete(i)
             self.pyshell.menubar.children['file'].add_command(
                 label='Clear Ouput', command=self.clearPyShell )
             # hide the Python shell

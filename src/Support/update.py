@@ -76,7 +76,7 @@ class Update:
         else:
             print("Sorry no nightly builds is available for your platform.")
             print(sys.platform)
-        from user import home
+        from mglcompat.pyuser import home
         from Support.version import __version__
         self.rc = home + os.sep + ".mgltools" + os.sep + __version__
         self.updates_rc_dir = self.rc + os.sep + 'update'

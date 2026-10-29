@@ -960,7 +960,7 @@ append(Pmv.APBSCommands.Ion("+ion.toString()+"))")
                 if 'writePDB' not in self.vf.commands:
                     self.vf.browseCommands("fileCommands", 
                                                          commands=['writePDB',])
-                from user import home
+                from mglcompat.pyuser import home
                 tmp_pdb = home + os.path.sep + 'tmp.pdb'
                 filename = home + os.path.sep + filename
                 self.vf.writePDB(mol,tmp_pdb, pdbRec=('ATOM','HETATM'), log=0)            
@@ -3244,7 +3244,7 @@ class APBSRun(MVCommand):
                 try:
                     os.mkdir(params.projectFolder)
                 except:
-                    from user import home
+                    from mglcompat.pyuser import home
                     tmp = os.path.split(params.projectFolder)
                     params.projectFolder = home + os.sep + tmp[-1]
                     if not os.path.exists(params.projectFolder):
@@ -3252,7 +3252,7 @@ class APBSRun(MVCommand):
             try:
                 open(params.projectFolder+os.sep+'io.mc','w')
             except:
-                from user import home
+                from mglcompat.pyuser import home
                 tmp = os.path.split(params.projectFolder)
                 params.projectFolder = home + os.sep + tmp[-1]
                 if not os.path.exists(params.projectFolder):

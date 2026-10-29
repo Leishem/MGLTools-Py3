@@ -84,7 +84,7 @@ def createSplash():
     text += 'Vision script               : '+__file__+'\n'
     text += 'MGLTool packages  : '+'\n'
     
-    from user import home
+    from mglcompat.pyuser import home
     updates_rc_dir = home + os.path.sep + ".mgltools" + os.sep + 'update'
     latest_tested_rc = updates_rc_dir + os.sep + 'latest_tested'
     latest_rc = updates_rc_dir + os.sep + 'latest' #may or may not be tested
@@ -117,15 +117,15 @@ def launchVisionToRunNetworkAsApplication(splash=True):
     root = createRoot()
     if splash:
         splash, about = createSplash()
-        lSplashVisibleTimeStart = time.clock()  
+        lSplashVisibleTimeStart = time.perf_counter()  
     ed = createVision(root, interactive=True)
     ed.sourceFile(resourceFile='_visionrc')
     masterNet = ed.currentNetwork
     masterNet.isApplication = True
     if splash:
-        lSplashVisibleTimeEnd = time.clock()
+        lSplashVisibleTimeEnd = time.perf_counter()
         while lSplashVisibleTimeEnd - lSplashVisibleTimeStart < 2:
-            lSplashVisibleTimeEnd = time.clock()
+            lSplashVisibleTimeEnd = time.perf_counter()
         splash.finish()
     return masterNet
 
@@ -262,7 +262,7 @@ listOfDemandedOuts: list of values in the output ports listed in outs
         ##################################################################
         if noSplash is False:
             splash, about = createSplash()
-            lSplashVisibleTimeStart = time.clock()
+            lSplashVisibleTimeStart = time.perf_counter()
 
         ##################################################################
         # Start Vision
@@ -292,9 +292,9 @@ listOfDemandedOuts: list of values in the output ports listed in outs
         # Make sure splash is visible long enough before removing it
         ##################################################################
         if noSplash is False:
-            lSplashVisibleTimeEnd = time.clock()
+            lSplashVisibleTimeEnd = time.perf_counter()
             while lSplashVisibleTimeEnd - lSplashVisibleTimeStart < 2:
-                lSplashVisibleTimeEnd = time.clock()
+                lSplashVisibleTimeEnd = time.perf_counter()
             splash.finish()
 
         ##################################################################
@@ -328,7 +328,7 @@ listOfDemandedOuts: list of values in the output ports listed in outs
                 if runNetwork:
                     ed.softrunCurrentNet_cb()
             elif args[lArgIndex][-3:]=='.py':
-                exec(compile(open(netName, "rb").read(), netName, 'exec'))
+                exec(compile(open(args[lArgIndex], "rb").read(), args[lArgIndex], "exec"))
                 lArgIndex += 1
             else:
                 lArgIndex += 1
