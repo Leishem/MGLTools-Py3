@@ -1,4 +1,4 @@
-# MGLTools 1.5.6 for Python 3 — AutoDockTools GUI, portable for Windows
+# MGLTools 1.5.6 for Python 3 — AutoDockTools GUI, portable for Windows, Linux and macOS
 
 **AutoDockTools (ADT)**, the **Python Molecular Viewer (PMV)** and **Vision** from
 MGLTools 1.5.6, ported from Python 2.5 / Numeric / Togl to **Python 3 /
@@ -6,14 +6,17 @@ NumPy 2 / modern OpenGL**.
 
 The Windows release is **portable**: no installation, no Python needed.
 Download, unzip, double-click `adt.exe`.
-A Linux x86_64 package is also available — see
-[Download and run (Linux)](#download-and-run-linux).
+Linux x86_64 and macOS (Apple Silicon) packages are also available — see
+[Download and run (Linux)](#download-and-run-linux) and
+[Download and run (macOS)](#download-and-run-macos).
 
 > ### ⬇️ [Download for Windows (MGLTools-1.5.6-Py3-Win64-Portable.zip, ~110 MB)](https://github.com/Leishem/MGLTools-Py3/releases/latest/download/MGLTools-1.5.6-Py3-Win64-Portable.zip)
 >
 > **Do not use the green `<> Code` → *Download ZIP* button.** That gives you the
 > source code only — it has **no `adt.exe`**. The ready-to-run program is the
 > zip file above (also listed under **Releases** on the right side of this page).
+>
+> ### ⬇️ [Download for macOS, Apple Silicon (MGLTools-1.5.6-Py3-macOS-arm64-Portable.zip, ~92 MB)](https://github.com/Leishem/MGLTools-Py3/releases/download/v1.5.6-py3-macos-arm64/MGLTools-1.5.6-Py3-macOS-arm64-Portable.zip)
 
 ![AutoDockTools 4.2 on Windows (Python 3): molecular surface of HIV protease](docs/screenshots/adt_windows_surface.png)
 
@@ -124,6 +127,72 @@ Command-line preparation scripts, from the extracted folder:
 
 Run `./adt-util` with no arguments to list all available scripts.
 
+## Download and run (macOS)
+
+The macOS package is for **Apple Silicon** Macs (M1, M2, M3, M4 and later),
+macOS 11 Big Sur or newer. It is self-contained: its own Python 3.12, Tk and
+libraries are included, so nothing needs to be installed (no Homebrew, no Xcode).
+
+1. Download
+   **[`MGLTools-1.5.6-Py3-macOS-arm64-Portable.zip`](https://github.com/Leishem/MGLTools-Py3/releases/download/v1.5.6-py3-macos-arm64/MGLTools-1.5.6-Py3-macOS-arm64-Portable.zip)**
+   (or open the [macOS release](https://github.com/Leishem/MGLTools-Py3/releases/tag/v1.5.6-py3-macos-arm64)
+   and click the zip under **Assets**) and double-click it to unzip.
+2. Move the unzipped folder to your **Applications** folder.
+   - ⚠️ Do not run it from **Downloads**, **Desktop** or **Documents**: macOS
+     silently blocks apps that are not code-signed from reading files there,
+     so nothing would open. If you start it from one of those folders, the app
+     explains this and offers to move the folder for you.
+3. The first time only: right-click **`Fix-Gatekeeper.command`** → **Open** →
+   **Open**. This removes macOS's "downloaded from the internet" block (the
+   apps are not code-signed).
+4. Double-click **`AutoDockTools.app`**, **`PMV.app`** (molecular viewer) or
+   **`Vision.app`** (Vision).
+
+The folder you get should look like this:
+
+```
+MGLTools-1.5.6-Py3-macOS-arm64-Portable/
+    AutoDockTools.app        <- AutoDockTools
+    PMV.app                  <- molecular viewer
+    Vision.app               <- Vision
+    adt-util.command         <- command-line preparation scripts
+    Fix-Gatekeeper.command   <- run once after downloading
+    python/                  <- bundled Python (do not delete; keep next to the apps)
+```
+
+Errors are written to `~/.mgltools/adt.log` (`pmv.log`, `vision.log`).
+
+Command-line preparation scripts, from Terminal in the folder:
+
+```
+./adt-util.command prepare_receptor4.py -r receptor.pdb -o receptor.pdbqt
+./adt-util.command prepare_ligand4.py   -l ligand.pdb   -o ligand.pdbqt
+./adt-util.command prepare_gpf4.py      -l ligand.pdbqt -r receptor.pdbqt -o grid.gpf
+./adt-util.command prepare_dpf42.py     -l ligand.pdbqt -r receptor.pdbqt -o dock.dpf
+```
+
+### Supported systems and build
+
+| Mac | Status |
+|---|---|
+| Apple Silicon (M1 and later), macOS 11+ | Native arm64 — tested |
+| Intel Macs | Not supported — Apple has moved its whole Mac line to Apple Silicon, so no Intel build is made |
+
+The package was built and tested on:
+
+| | |
+|---|---|
+| Machine | Apple M1 |
+| macOS | 26.5.1 |
+| Compiler | Apple clang 15.0.0 (Xcode Command Line Tools) |
+| Python | 3.12.15 ([python-build-standalone](https://github.com/astral-sh/python-build-standalone) 20261013) |
+| Tk | 9.0.4 |
+| Libraries | NumPy 2.5.4, SciPy 1.18.1, PyOpenGL 3.1.10, Pillow 13.0.0, tkinter-gl 1.1 |
+| Minimum macOS | 11.0 (deployment target of the compiled modules) |
+
+Rebuild it with `tools/mac/make_portable_macos.sh` (needs the Xcode Command
+Line Tools and an internet connection to fetch the bundled Python).
+
 ## Reporting a problem
 
 Please [open an issue](../../issues/new/choose) and include:
@@ -131,13 +200,14 @@ Please [open an issue](../../issues/new/choose) and include:
 - **a screenshot** of the problem (and of the Python shell window if an error
   appears there),
 - your Windows version and processor (*Settings → System → About*) and graphics card,
+  or your Mac model and macOS version (Apple menu → *About This Mac*),
 - the steps that led to the problem and, if possible, the input files.
 
 ## What was validated
 
 | Check | Result |
 |---|---|
-| `prepare_receptor4`, `prepare_ligand4`, `prepare_gpf4`, `prepare_dpf42` on the ADT tutorial (HIV protease hsg1 + indinavir) | **byte-identical** output to the original MGLTools 1.5.6, on Windows and Linux |
+| `prepare_receptor4`, `prepare_ligand4`, `prepare_gpf4`, `prepare_dpf42` on the ADT tutorial (HIV protease hsg1 + indinavir) | **byte-identical** output to the original MGLTools 1.5.6, on Windows, Linux and macOS |
 | Molecular surface vs the original MSMS | vertices within ~0.1 Å of MSMS's surface; area within ~3 % |
 | GUI | loads molecules; lines, sticks & balls, CPK, ribbons, molecular surfaces, selection and colouring render correctly |
 
@@ -164,15 +234,17 @@ adt                                 # or pmv / vision
 python -m pytest                    # test suite (compares with MGLTools 1.5.6 outputs)
 ```
 
-A portable Linux x86_64 package is published with each release — see
-[Download and run (Linux)](#download-and-run-linux). macOS builds are supported
-by the source; the macOS package will be published after validation on real
-Apple hardware.
+Portable packages: Linux x86_64 is published with each release (see
+[Download and run (Linux)](#download-and-run-linux)); macOS Apple Silicon is
+built with `tools/mac/make_portable_macos.sh` (see
+[Download and run (macOS)](#download-and-run-macos)).
 
 ## Known limitations
 
 * Surfaces: channels narrower than the surface grid (~0.6 Å at the default
   density) may be closed, so a few internal-pocket patches can be missing.
+* macOS: the apps are not code-signed or notarized, hence the one-time
+  Gatekeeper step and the Downloads/Desktop/Documents restriction.
 * Not included: the GROMACS `.xtc` trajectory reader on Windows, web-service
   (Opal/ZSI) clients, and the Blender/Cinema 4D/Maya plugins.
 
