@@ -3409,7 +3409,9 @@ class SetBoxParameters(MVCommand):
         for item in ['gridcenter', 'npts','spacing']:
             if self.vf.gpo[item]['value'] != eval(item):
                 changeVals[item] = eval(item)
-        if self.vf.hasGui:
+        # the box widgets exist only once the Grid Box form has been opened;
+        # scripted/session calls set the gpo below without them
+        if self.vf.hasGui and hasattr(self, 'nxpts'):
             if 'gridcenter' in changeVals:
                 if changeVals['gridcenter']=='auto':
                     changeVals['gridcenterAuto'] = 1

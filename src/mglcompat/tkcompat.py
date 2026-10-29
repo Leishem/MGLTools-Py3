@@ -12,8 +12,37 @@ Set MGL_TK_WARN=1 to print each skipped call.
 import os
 import tkinter
 
-_CONFLICT = "already has slaves managed by"
+# Tk 8.6: "... which already has slaves managed by grid"
+# Tk 9.0: "...: grid is already managing its content windows"
+_CONFLICTS = ("already has slaves managed by",
+              "is already managing its content windows")
 _installed = False
+
+_SPLIT_INITIALFILE = r"""
+foreach mgl_cmd {tk_getSaveFile tk_getOpenFile} {
+    if {[info commands ::$mgl_cmd] eq "" ||
+        [info commands ::mgl_orig_$mgl_cmd] ne ""} continue
+    rename ::$mgl_cmd ::mgl_orig_$mgl_cmd
+    proc ::$mgl_cmd {args} [string map [list @CMD@ $mgl_cmd] {
+        set i [lsearch -exact $args -initialfile]
+        if {$i >= 0 && $i % 2 == 0} {
+            set f [lindex $args [expr {$i + 1}]]
+            set d [file dirname $f]
+            if {$d ne "." && $d ne ""} {
+                lset args [expr {$i + 1}] [file tail $f]
+                set j [lsearch -exact $args -initialdir]
+                if {$j >= 0 && $j % 2 == 0} {
+                    lset args [expr {$j + 1}] $d
+                } else {
+                    lappend args -initialdir $d
+                }
+            }
+        }
+        uplevel 1 [list ::mgl_orig_@CMD@ {*}$args]
+    }]
+}
+unset -nocomplain mgl_cmd
+"""
 
 
 def _lenient(fn, name):
@@ -21,7 +50,7 @@ def _lenient(fn, name):
         try:
             return fn(self, *args, **kw)
         except tkinter.TclError as e:
-            if _CONFLICT not in str(e):
+            if not any(c in str(e) for c in _CONFLICTS):
                 raise
             if os.environ.get("MGL_TK_WARN"):
                 import traceback
@@ -93,6 +122,30 @@ def install():
     # tk_menuBar was a no-op kept for compatibility in Python 2's tkinter.
     if not hasattr(tkinter.Misc, 'tk_menuBar'):
         tkinter.Misc.tk_menuBar = lambda self, *args: None
+
+    # MGLTools often passes a full path as a file dialog's initialfile
+    # (e.g. os.path.join(cwd, mol.name) + '.pdbqt'). Tk on Windows/X11
+    # accepts that, but the macOS panel puts it in the name field verbatim
+    # and Finder maps '/' in names to ':', so "Save" wrote
+    # ":Users:me:dir:hsg1.pdbqt" into cwd. Wrap the Tcl dialog commands in
+    # each new interpreter to move the folder to -initialdir. (Patching
+    # tkinter.filedialog would not stick: importing idlelib, as the Python
+    # shell does, deletes tkinter.filedialog/commondialog from sys.modules.)
+    _tk_init = tkinter.Tk.__init__
+
+    def tk_init(self, *args, **kw):
+        _tk_init(self, *args, **kw)
+        try:
+            self.tk.eval(_SPLIT_INITIALFILE)
+        except tkinter.TclError:
+            pass
+
+    tkinter.Tk.__init__ = tk_init
+    if tkinter._default_root is not None:     # root created before import
+        try:
+            tkinter._default_root.tk.eval(_SPLIT_INITIALFILE)
+        except tkinter.TclError:
+            pass
 
 
 install()

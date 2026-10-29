@@ -88,7 +88,7 @@ def runAPBS(PQR, INPUT):
    
     
     # Start the main timer
-    main_timer_start = time.clock()
+    main_timer_start = time.perf_counter()
 
 
 
@@ -260,7 +260,7 @@ def runAPBS(PQR, INPUT):
     sys.stdout.write("Thanks for using APBS!\n\n")
 
     # Stop the main timer
-    main_timer_stop = time.clock()
+    main_timer_stop = time.perf_counter()
     sys.stdout.write("Total execution time:  %1.6e sec\n" % (main_timer_stop - main_timer_start))
 
     #Return potentials
